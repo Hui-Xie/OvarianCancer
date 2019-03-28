@@ -47,5 +47,5 @@ class DataMgr:
             plt.imshow(array[sliceList[i],:,:])
         plt.show()
 
-    def cropVolume(self,array, center, radius):
+    def cropVolumeCopy(self,array, center, radius):
         return array[center-redius: center+radius+1,:,:].copy()
