@@ -1,6 +1,7 @@
 import os
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class DataMgr:
@@ -22,6 +23,7 @@ class DataMgr:
 
     def readImageAttributes(self, filename):
         image = sitk.ReadImage(filename)
+        # these attributes are in ITK axis order
         self.m_origin = image.GetOrigin()
         self.m_size = image.GetSize()
         self.m_spacing = image.GetSpacing()
@@ -75,3 +77,31 @@ class DataMgr:
 
     def cropVolumeCopy(self,array, center, radius):
         return array[center-redius: center+radius+1,:,:].copy()
+
+    def segmentation2OneHotArray(self, segmentationArray, k) -> np.ndarray:
+        '''
+        Convert segmenataion volume to one Hot array, used a ground truth in neural network
+        :param segmentationArray:
+        :param k:  number of classification including background 0
+        :return:
+        '''
+        shape = (k,)+segmentationArray.shape
+        oneHotArray = np.zeros(shape)
+        it = np.nditer(segmentationArray, flags=['multi_index'])
+        while not it.finished:
+             oneHotArray[(it[0],) + it.multi_index] = 1
+             it.iternext()
+        return oneHotArray
+
+    def oneHotArray2Segmentation(self, oneHotArray) -> np.ndarray:
+        shape = oneHotArray.shape[1:]
+        segmentationArray = np.zeros(shape, dtype=np.int16)
+        it = np.nditer(oneHotArray, flags=['multi_index'])
+        while not it.finished:
+            if 1 == it[0] and 0 != it.multi_index[0]:
+                segmentationArray[it.multi_index[1:]] = it.multi_index[0]
+            it.iternext()
+        return segmentationArray
+
+
+

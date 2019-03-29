@@ -1,5 +1,6 @@
 import sys
 from DataMgr import DataMgr
+import numpy as np
 
 
 def main():
@@ -32,6 +33,22 @@ def main():
     partImageArray = imageArray[20:200, 30:300, 40:250];
     dataMgr.saveImage(partImageArray, [20, 30, 40], "/home/hxie1/temp/testPartImage.nrrd")
 
+    for i in range(4):
+        oneSliceSeg = labelArray[sliceIndex[i]]
+        oneHotArray = dataMgr.segmentation2OneHotArray(oneSliceSeg, 4)
+        reconstructOneSliceSeg = dataMgr.oneHotArray2Segmentation(oneHotArray)
+        if np.array_equal(oneSliceSeg, reconstructOneSliceSeg):
+            print(f'Good at {i} seg slice, as its reconstrunct slice is same with original segSlice')
+        else:
+            print(f'oneSliceSeg has {np.count_nonzero(oneSliceSeg)} nonzeros')
+            print(f'reconstructOneSliceSeg has {np.count_nonzero(reconstructOneSliceSeg)} nonzeros')
+            print(f'Bad at {i} seg slice, as its reconstrunct slice is NOT same with original segSlice')
+
+
+
+
+
+    print("=============END=================")
 
 
 
