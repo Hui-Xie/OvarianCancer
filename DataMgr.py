@@ -80,7 +80,7 @@ class DataMgr:
 
     def segmentation2OneHotArray(self, segmentationArray, k) -> np.ndarray:
         '''
-        Convert segmenataion volume to one Hot array, used a ground truth in neural network
+        Convert segmenataion volume to one Hot array, used as ground truth in neural network
         :param segmentationArray:
         :param k:  number of classification including background 0
         :return:
@@ -94,13 +94,7 @@ class DataMgr:
         return oneHotArray
 
     def oneHotArray2Segmentation(self, oneHotArray) -> np.ndarray:
-        shape = oneHotArray.shape[1:]
-        segmentationArray = np.zeros(shape, dtype=np.int16)
-        it = np.nditer(oneHotArray, flags=['multi_index'])
-        while not it.finished:
-            if 1 == it[0] and 0 != it.multi_index[0]:
-                segmentationArray[it.multi_index[1:]] = it.multi_index[0]
-            it.iternext()
+        segmentationArray = oneHotArray.argmax(axis=0)
         return segmentationArray
 
 
