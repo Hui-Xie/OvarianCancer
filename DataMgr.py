@@ -20,6 +20,32 @@ class DataMgr:
         dataArray = sitk.GetArrayFromImage(image) #numpy axis order is a reverse of ITK axis order
         return dataArray
 
+    def readImageAttributes(self, filename):
+        image = sitk.ReadImage(filename)
+        self.m_origin = image.GetOrigin()
+        self.m_size = image.GetSize()
+        self.m_spacing = image.GetSpacing()
+        self.m_direction = image.GetDirection()
+
+    def saveImage(self, numpyArray, indexOffset, filename):
+        '''
+         saveImage from numpyArray
+         SimpleITK and numpy indexing access is in opposite order!
+        :param numpyArray:
+        :param indexOffset: in numpy nd array axis order
+        :param filename:
+        :return:
+        '''
+        image = sitk.GetImageFromArray(numpyArray)
+        offset = indexOffset.copy()[::-1]
+        Dims = len(self.m_origin)
+        origin = [self.m_origin[i]+ offset[i]*self.m_spacing[i]*self.m_direction[i*Dims+i] for i in range(Dims)]
+        image.SetOrigin(origin)
+        image.SetSpacing(self.m_spacing)
+        image.SetDirection(self.m_direction)
+        sitk.WriteImage(image, filename)
+        print(f'File output: {filename} ')
+
     def getLabelFile(self, imageFile):
         return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("/images/", "/labels/")
 

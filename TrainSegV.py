@@ -25,6 +25,13 @@ def main():
     dataMgr.displaySlices(imageArray.clip(-400, 500), sliceIndex)
     dataMgr.displaySlices(labelArray, sliceIndex)
 
+    dataMgr.readImageAttributes(imageFile)
+
+    dataMgr.saveImage(imageArray, [0,0,0], "/home/hxie1/temp/testFullImage.nrrd")
+
+    partImageArray = imageArray[20:200, 30:300, 40:250];
+    dataMgr.saveImage(partImageArray, [20, 30, 40], "/home/hxie1/temp/testPartImage.nrrd")
+
 
 
 
