@@ -3,6 +3,7 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import sys
 
 
 class DataMgr:
@@ -55,7 +56,9 @@ class DataMgr:
     def getLabeledSliceIndex(self, labelArray):
         nonzeroSlices = labelArray.sum((1,2)).nonzero(); # a tuple of arrays
         nonzeroSlices = nonzeroSlices[0]
-        print(nonzeroSlices)
+        if 0 == len(nonzeroSlices):
+            print("Infor: label file does not find any nonzero label. ")
+            sys.exit()
         result = []
         previous = nonzeroSlices[0]
         start = previous
@@ -76,12 +79,36 @@ class DataMgr:
             plt.imshow(array[sliceList[i],:,:])
         plt.show()
 
-    def cropVolumeCopy(self,array, center, radius):
-        return array[center-redius: center+radius+1,:,:].copy()
+    def cropVolumeCopy(self,array, dCenter, dRadius): # d means depth
+        '''
+        d means depth, we assume most axial images of patient are centered in its xy plane.
+        :param array:
+        :param dCenter:
+        :param dRadius:
+        :return:
+        '''
+        d1 = dCenter-dRadius
+        d1 = d1 if d1>=0 else 0
+        d2 = d1+2*dRadius +1
+        shape = array.shape
+        h1 = int((shape[1]-self.m_height)/2)
+        h2 = h1+ self.m_height
+        w1 = int((shape[2] - self.m_width) / 2)
+        w2 = w1 + self.m_width
+
+        return array[d1:d2, h1:h2, w1:w2].copy()
+
+    def cropSliceCopy(self, array, dIndex):
+        shape = array.shape
+        h1 = int((shape[1] - self.m_height) / 2)
+        h2 = h1 + self.m_height
+        w1 = int((shape[2] - self.m_width) / 2)
+        w2 = w1 + self.m_width
+        return array[dIndex, h1:h2, w1:w2].copy()
 
     def segmentation2OneHotArray(self, segmentationArray, k) -> np.ndarray:
         '''
-        Convert segmenataion volume to one Hot array used as ground truth in neural network
+        Convert segmentation volume to one Hot array used as ground truth in neural network
         :param segmentationArray:
         :param k:  number of classification including background 0
         :return:
@@ -116,7 +143,7 @@ class DataMgr:
     def dataLabelGenerator(self, shuffle):
         self.m_shuffle = shuffle
         imageFileList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
-        N = len(imageList)
+        N = len(imageFileList)
         shuffleList = list(range(N))
         if self.m_shuffle:
             random.shuffle(shuffleList)
@@ -124,27 +151,28 @@ class DataMgr:
         batch = 0
         dataList=[]
         oneHotLabelList= []
-        radius = (self.m_depth-1)/2
+        radius = int((self.m_depth-1)/2)
 
         for i in shuffleList:
             imageFile = imageFileList[i]
+            print(imageFile) # for debug
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
             sliceList = self.getLabeledSliceIndex(labelArray)
             for j in sliceList:
-                data = cropVolumeCopy(imageArray, j, radius)
-                label= labelArray[j].copy()
-                oneHotLabel = self.segmentation2OneHotArray(label, self.m_k)
-                if batch < self.m_batchSize:
-                    dataList.append(data)
-                    oneHotLabelList.append(oneHotLabel)
-                    batch +=1
-                else:
+                if batch >= self.m_batchSize:
                     yield np.stack(dataList, axis=0), np.stack(oneHotLabelList, axis=0)
                     batch = 0
                     dataList.clear()
                     oneHotLabelList.clear()
+                data = self.cropVolumeCopy(imageArray, j, radius)
+                label= self.cropSliceCopy(labelArray,j)
+                oneHotLabel = self.segmentation2OneHotArray(label, self.m_k)
+                dataList.append(data)
+                oneHotLabelList.append(oneHotLabel)
+                batch +=1
+
         # clean filed
         dataList.clear()
         oneHotLabelList.clear()

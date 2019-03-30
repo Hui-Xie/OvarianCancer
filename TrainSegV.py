@@ -10,6 +10,7 @@ def main():
 
     dataMgr = DataMgr(sys.argv[1], sys.argv[2])
     filesList = dataMgr.getFilesList(dataMgr.m_imagesDir, "_CT.nrrd")
+    dataMgr.setDataSize(4, 21,281,281,4)
     #imageFile = filesList[0]
     imageFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages/01626917_CT.nrrd"
 
@@ -46,9 +47,12 @@ def main():
 
 
     # test dataLabelGenerator
-    dataMgr.setInput
+    generator = dataMgr.dataLabelGenerator(False)
+    for data, label in generator:
+        print(f'data shape: {data.shape}')
+        print(f'label shape: {label.shape}')
 
-    dataMgr.dataGenerator(True)
+
 
 
     print("=============END=================")
