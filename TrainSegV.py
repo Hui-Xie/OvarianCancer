@@ -12,11 +12,9 @@ def main():
     filesList = dataMgr.getFilesList(dataMgr.m_imagesDir, "_CT.nrrd")
     dataMgr.setDataSize(4, 21,281,281,4)
     #imageFile = filesList[0]
-    imageFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages/01626917_CT.nrrd"
-
-
-
+    imageFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages/05739688_CT.nrrd"
     labelFile = dataMgr.getLabelFile(imageFile)
+
     print("labelFile: ", labelFile)
     labelArray = dataMgr.readImageFile(labelFile)
     sliceIndex = dataMgr.getLabeledSliceIndex(labelArray)
@@ -34,7 +32,7 @@ def main():
     partImageArray = imageArray[20:200, 30:300, 40:250];
     dataMgr.saveImage(partImageArray, [20, 30, 40], "/home/hxie1/temp/testPartImage.nrrd")
 
-    for i in range(4):
+    for i in range(len(sliceIndex)):
         oneSliceSeg = labelArray[sliceIndex[i]]
         oneHotArray = dataMgr.segmentation2OneHotArray(oneSliceSeg, 4)
         reconstructOneSliceSeg = dataMgr.oneHotArray2Segmentation(oneHotArray)
@@ -47,10 +45,10 @@ def main():
 
 
     # test dataLabelGenerator
-    generator = dataMgr.dataLabelGenerator(False)
-    for data, label in generator:
-        print(f'data shape: {data.shape}')
-        print(f'label shape: {label.shape}')
+    #generator = dataMgr.dataLabelGenerator(False)
+    #for data, label in generator:
+    #    print(f'data shape: {data.shape}')
+    #    print(f'label shape: {label.shape}')
 
 
 
