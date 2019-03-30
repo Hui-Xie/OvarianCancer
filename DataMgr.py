@@ -2,6 +2,7 @@ import os
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 
 
 class DataMgr:
@@ -49,7 +50,7 @@ class DataMgr:
         print(f'File output: {filename} ')
 
     def getLabelFile(self, imageFile):
-        return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("/images/", "/labels/")
+        return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("Images/", "Labels/")
 
     def getLabeledSliceIndex(self, labelArray):
         nonzeroSlices = labelArray.sum((1,2)).nonzero(); # a tuple of arrays
@@ -80,7 +81,7 @@ class DataMgr:
 
     def segmentation2OneHotArray(self, segmentationArray, k) -> np.ndarray:
         '''
-        Convert segmenataion volume to one Hot array, used as ground truth in neural network
+        Convert segmenataion volume to one Hot array used as ground truth in neural network
         :param segmentationArray:
         :param k:  number of classification including background 0
         :return:
@@ -96,6 +97,62 @@ class DataMgr:
     def oneHotArray2Segmentation(self, oneHotArray) -> np.ndarray:
         segmentationArray = oneHotArray.argmax(axis=0)
         return segmentationArray
+
+    def setDataSize(self, batchSize, depth, height, width, k):
+        '''
+        :param batchSize:
+        :param depth:  it must be odd
+        :param height:  it is better to be odd number for V model
+        :param width:   it is better to be odd number for V model
+        :param k: the number of classification of groundtruth
+        :return:
+        '''
+        self.m_batchSize = batchSize
+        self.m_depth = depth
+        self.m_height = height
+        self.m_width = width
+        self.m_k = k
+
+    def dataLabelGenerator(self, shuffle):
+        self.m_shuffle = shuffle
+        imageFileList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
+        N = len(imageList)
+        shuffleList = list(range(N))
+        if self.m_shuffle:
+            random.shuffle(shuffleList)
+
+        batch = 0
+        dataList=[]
+        oneHotLabelList= []
+        radius = (self.m_depth-1)/2
+
+        for i in shuffleList:
+            imageFile = imageFileList[i]
+            labelFile = self.getLabelFile(imageFile)
+            imageArray = self.readImageFile(imageFile)
+            labelArray = self.readImageFile(labelFile)
+            sliceList = self.getLabeledSliceIndex(labelArray)
+            for j in sliceList:
+                data = cropVolumeCopy(imageArray, j, radius)
+                label= labelArray[j].copy()
+                oneHotLabel = self.segmentation2OneHotArray(label, self.m_k)
+                if batch < self.m_batchSize:
+                    dataList.append(data)
+                    oneHotLabelList.append(oneHotLabel)
+                    batch +=1
+                else:
+                    yield np.stack(dataList, axis=0), np.stack(oneHotLabelList, axis=0)
+                    batch = 0
+                    dataList.clear()
+                    oneHotLabelList.clear()
+        # clean filed
+        dataList.clear()
+        oneHotLabelList.clear()
+
+
+
+
+
 
 
 

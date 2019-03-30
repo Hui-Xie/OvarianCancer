@@ -11,7 +11,7 @@ def main():
     dataMgr = DataMgr(sys.argv[1], sys.argv[2])
     filesList = dataMgr.getFilesList(dataMgr.m_imagesDir, "_CT.nrrd")
     #imageFile = filesList[0]
-    imageFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/images/01626917_CT.nrrd"
+    imageFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages/01626917_CT.nrrd"
 
 
 
@@ -45,7 +45,10 @@ def main():
             print(f'Bad at {i} seg slice, as its reconstrunct slice is NOT same with original segSlice')
 
 
+    # test dataLabelGenerator
+    dataMgr.setInput
 
+    dataMgr.dataGenerator(True)
 
 
     print("=============END=================")
