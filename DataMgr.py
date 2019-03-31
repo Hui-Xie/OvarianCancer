@@ -177,6 +177,24 @@ class DataMgr:
         dataList.clear()
         oneHotLabelList.clear()
 
+    def checkOrientConsistent(self, imagesDir, suffix):
+        print(f'Program is checking image directions. Please waiting......')
+        imagesList = self.getFilesList(imagesDir, suffix)
+        inconsistenNum = 0;
+        for filename in imagesList:
+            image = sitk.ReadImage(filename)
+            origin = image.GetOrigin()
+            direction = image.GetDirection()
+            Dims = len(origin)
+            fullDirection = [direction[i]for i in range(Dims*Dims)]
+            diagDirection = [direction[i * Dims + i]for i in range(Dims)]
+            diagSum = sum(x>0 for x in diagDirection)
+            if diagSum != 3:
+                print(f'{filename} has inconsistent direction: {fullDirection}')
+                inconsistenNum +=1
+        print(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
+
+
 
 
 
