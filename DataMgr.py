@@ -172,6 +172,7 @@ class DataMgr:
                     dataList.clear()
                     oneHotLabelList.clear()
                 data = self.cropVolumeCopy(imageArray, j, radius)
+                data = self.preprocessData(data)
                 label= self.cropSliceCopy(labelArray,j)
                 oneHotLabel = self.segmentation2OneHotArray(label, self.m_k)
                 dataList.append(data)
@@ -199,7 +200,24 @@ class DataMgr:
                 inconsistenNum +=1
         print(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
 
+    def preprocessData(self, array) -> np.ndarray:
+        data = array.clip(-300,300)
+        data = self.sliceNormalize(data)
+        return data
 
+    def sliceNormalize(self, array):
+        axesTuple = tuple([x for x in range(1, len(array.shape))])
+        min = np.min(array, axesTuple)
+        result = np.zeros(array.shape)
+        for i in range(len(min)):
+            result[i,:] = array[i,:] - mu[i]
+        ptp = np.ptp(array, axesTuple) # peak to peak
+        with np.nditer(ptp, op_flags=['readwrite']) as it:
+             for x in it:
+                 x = x if 0!=x else 1e-6
+        for i in range(len(ptp)):
+            result[i, :] /= ptp[i]
+        return result
 
 
 

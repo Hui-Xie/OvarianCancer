@@ -51,7 +51,12 @@ def main():
     #    print(f'label shape: {label.shape}')
 
 
-    dataMgr.checkOrientConsistent("/home/hxie1/data/R21Project/CTSegV_uniform/testImages", "_CT.nrrd")
+    #dataMgr.checkOrientConsistent("/home/hxie1/data/R21Project/CTSegV_uniform/testImages", "_CT.nrrd")
+
+    a= np.random.rand(3,4,5)
+    print(a)
+    b = dataMgr.sliceNormalize(a)
+    print(b)
 
 
     print("=============END=================")
