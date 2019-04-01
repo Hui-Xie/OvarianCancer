@@ -87,10 +87,15 @@ class DataMgr:
         :param dRadius:
         :return:
         '''
+        shape = array.shape
+
         d1 = dCenter-dRadius
         d1 = d1 if d1>=0 else 0
         d2 = d1+2*dRadius +1
-        shape = array.shape
+        if d2 > shape[0]:
+            d2 = shape[0]
+            d1 = d2- 2*dRadius -1
+                
         h1 = int((shape[1]-self.m_height)/2)
         h2 = h1+ self.m_height
         w1 = int((shape[2] - self.m_width) / 2)

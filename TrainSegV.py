@@ -51,7 +51,7 @@ def main():
     #    print(f'label shape: {label.shape}')
 
 
-    dataMgr.checkOrientConsistent("/home/hxie1/data/OvarianCancerCT/Extract/images", "_CT.nrrd")
+    dataMgr.checkOrientConsistent("/home/hxie1/data/R21Project/CTSegV_uniform/testImages", "_CT.nrrd")
 
 
     print("=============END=================")
