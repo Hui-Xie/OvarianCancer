@@ -25,7 +25,10 @@ class SegVModel (nn.Module):
         self.m_convT0 = nn.Conv2d(42,  4,  (1,1), stride=1)                   #output:4*281*281
 
     def forward(self, *input):
-        # input clip and normalization here
+        # input clip
+        # input normalization at each slice
+
+
         # from 3D to 2D, there is squeeze
         pass
 
