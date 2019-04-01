@@ -11,6 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7ceedc28-51ad-4626-9729-3a67dbae88dd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/DataMgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataMgr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SegVModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/SegVModel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TrainSegV.py" beforeDir="false" afterPath="$PROJECT_DIR$/TrainSegV.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -25,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TrainSegV.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="57" column="33" selection-start-line="57" selection-start-column="33" selection-end-line="57" selection-end-column="33" />
+            <state relative-caret-position="60">
+              <caret line="28" column="31" lean-forward="true" selection-start-line="28" selection-start-column="31" selection-end-line="28" selection-end-column="31" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -37,11 +38,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/DataMgr.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-133">
-              <caret line="174" column="48" lean-forward="true" selection-start-line="174" selection-start-column="48" selection-end-line="174" selection-end-column="48" />
+            <state relative-caret-position="-461">
+              <caret line="175" column="40" lean-forward="true" selection-start-line="175" selection-start-column="40" selection-end-line="175" selection-end-column="40" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -52,11 +53,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SegVModel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
+            <state relative-caret-position="199">
+              <caret line="62" column="17" lean-forward="true" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/anaconda3/lib/python3.7/site-packages/torch/nn/modules/module.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="146">
+              <caret line="534" selection-start-line="534" selection-end-line="534" />
             </state>
           </provider>
         </entry>
@@ -71,6 +81,14 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>x</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>xc</replace>
+    </replaceStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -81,9 +99,9 @@
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/CheckImageOrientation.py" />
+        <option value="$PROJECT_DIR$/DataMgr.py" />
         <option value="$PROJECT_DIR$/SegVModel.py" />
         <option value="$PROJECT_DIR$/TrainSegV.py" />
-        <option value="$PROJECT_DIR$/DataMgr.py" />
       </list>
     </option>
   </component>
@@ -141,7 +159,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/TrainSegV.py" />
-      <option name="PARAMETERS" value="$USER_HOME$/data/OvarianCancerCT/Extract_uniform/trainImages $USER_HOME$/data/OvarianCancerCT/Extract_uniform/testLabels" />
+      <option name="PARAMETERS" value="$USER_HOME$/data/OvarianCancerCT/Extract_uniform/trainImages $USER_HOME$/data/OvarianCancerCT/Extract_uniform/trainLabels" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -183,18 +201,18 @@
       <option name="presentableId" value="Default" />
       <updated>1553721305735</updated>
       <workItem from="1553721309201" duration="1977000" />
-      <workItem from="1553782265631" duration="84475000" />
+      <workItem from="1553782265631" duration="92003000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="86452000" />
+    <option name="totallyTimeSpent" value="93980000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="86" y="27" width="1717" height="991" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2840024" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2840024" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
@@ -202,7 +220,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.25759417" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.23329283" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39489672" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -231,7 +249,7 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/OvarianCancer$TrainSegV.coverage" NAME="TrainSegV Coverage Results" MODIFIED="1554147841491" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/OvarianCancer$TrainSegV.coverage" NAME="TrainSegV Coverage Results" MODIFIED="1554157467489" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
@@ -345,16 +363,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TrainSegV.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="57" column="33" selection-start-line="57" selection-start-column="33" selection-end-line="57" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.7/site-packages/numpy/lib/stride_tricks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="123">
@@ -362,10 +370,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.7/site-packages/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="146">
+          <caret line="534" selection-start-line="534" selection-end-line="534" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/SegVModel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="35" lean-forward="true" selection-start-line="35" selection-end-line="35" />
+        <state relative-caret-position="199">
+          <caret line="62" column="17" lean-forward="true" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
           </folding>
@@ -374,10 +389,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/DataMgr.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-133">
-          <caret line="174" column="48" lean-forward="true" selection-start-line="174" selection-start-column="48" selection-end-line="174" selection-end-column="48" />
+        <state relative-caret-position="-461">
+          <caret line="175" column="40" lean-forward="true" selection-start-line="175" selection-start-column="40" selection-end-line="175" selection-end-column="40" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TrainSegV.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="28" column="31" lean-forward="true" selection-start-line="28" selection-start-column="31" selection-end-line="28" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

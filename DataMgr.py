@@ -144,6 +144,7 @@ class DataMgr:
         self.m_height = height
         self.m_width = width
         self.m_k = k
+        print(f'batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}')
 
     def dataLabelGenerator(self, shuffle):
         self.m_shuffle = shuffle
@@ -168,9 +169,12 @@ class DataMgr:
             for j in sliceList:
                 if batch >= self.m_batchSize:
                     yield np.stack(dataList, axis=0), np.stack(oneHotLabelList, axis=0)
-                    batch = 0
-                    dataList.clear()
-                    oneHotLabelList.clear()
+                    if self.m_oneSampleTraining:
+                        continue
+                    else:
+                        batch = 0
+                        dataList.clear()
+                        oneHotLabelList.clear()
                 data = self.cropVolumeCopy(imageArray, j, radius)
                 data = self.preprocessData(data)
                 label= self.cropSliceCopy(labelArray,j)
@@ -219,7 +223,8 @@ class DataMgr:
             result[i, :] /= ptp[i]
         return result
 
-
+    def setOneSampleTraining(self, oneSampleTrain):
+        self.m_oneSampleTraining = oneSampleTrain
 
 
 

@@ -1,67 +1,50 @@
 import sys
 from DataMgr import DataMgr
+from SegVModel import SegVModel
 import numpy as np
+import torch.nn as nn
+import torch.optim as optim
 
+def printUsage(argv):
+    print("============Train Ovarian Cancer Segmentation V model=============")
+    print("Usage:")
+    print(argv[0], " <fullPathOfTrainImages>  <fullPathOfTrainLabels>")
 
 def main():
     if len(sys.argv) != 3:
         print("Error: input parameters error.")
+        printUsage(sys.argv)
         return -1
 
     dataMgr = DataMgr(sys.argv[1], sys.argv[2])
-    filesList = dataMgr.getFilesList(dataMgr.m_imagesDir, "_CT.nrrd")
-    dataMgr.setDataSize(4, 21,281,281,4)
-    #imageFile = filesList[0]
-    imageFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages/05739688_CT.nrrd"
-    labelFile = dataMgr.getLabelFile(imageFile)
+    dataMgr.setDataSize(4, 21,281,281,4)  #batchSize, depth, height, width, k
+    dataGenerator = dataMgr.dataLabelGenerator(True)
 
-    print("labelFile: ", labelFile)
-    labelArray = dataMgr.readImageFile(labelFile)
-    sliceIndex = dataMgr.getLabeledSliceIndex(labelArray)
-    print(sliceIndex)
+    net= SegVModel()
+    net.printParamtersSize()
 
-    print(imageFile)
-    imageArray = dataMgr.readImageFile(imageFile)
-    dataMgr.displaySlices(imageArray.clip(-400, 500), sliceIndex)
-    dataMgr.displaySlices(labelArray, sliceIndex)
+    lossFunc = nn.CrossEntropyLoss()
+    net.setLossFunc(lossFunc)
+    optimizer = optim.Adam(net.parameters())
+    net.setOptimizer(optimizer)
 
-    dataMgr.readImageAttributes(imageFile)
+    dataMgr.setOneSampleTraining(True) # for debug
+    device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
+    net.to(device)
 
-    dataMgr.saveImage(imageArray, [0,0,0], "/home/hxie1/temp/testFullImage.nrrd")
+    epochs = 2
+    for epoch in range(epochs):
+        runningLoss = 0.0
+        batches  = 0
+        for inputs, labels in dataGenerator:
+            intputs, labels = inputs.to(device), labels.to(device)
+            batchLoss = net.batchTrain(inputs, labels)
+            runningLoss += batchLoss
+            batches +=1
+            print(f'batch={batches}: batchLoss = {batchLoss}')
+        print(f'Epoch={epoch}: epochLoss={runningLoss/batches}')
 
-    partImageArray = imageArray[20:200, 30:300, 40:250];
-    dataMgr.saveImage(partImageArray, [20, 30, 40], "/home/hxie1/temp/testPartImage.nrrd")
-
-    for i in range(len(sliceIndex)):
-        oneSliceSeg = labelArray[sliceIndex[i]]
-        oneHotArray = dataMgr.segmentation2OneHotArray(oneSliceSeg, 4)
-        reconstructOneSliceSeg = dataMgr.oneHotArray2Segmentation(oneHotArray)
-        if np.array_equal(oneSliceSeg, reconstructOneSliceSeg):
-            print(f'Good at {i} seg slice, as its reconstrunct slice is same with original segSlice')
-        else:
-            print(f'oneSliceSeg has {np.count_nonzero(oneSliceSeg)} nonzeros')
-            print(f'reconstructOneSliceSeg has {np.count_nonzero(reconstructOneSliceSeg)} nonzeros')
-            print(f'Bad at {i} seg slice, as its reconstrunct slice is NOT same with original segSlice')
-
-
-    # test dataLabelGenerator
-    #generator = dataMgr.dataLabelGenerator(False)
-    #for data, label in generator:
-    #    print(f'data shape: {data.shape}')
-    #    print(f'label shape: {label.shape}')
-
-
-    #dataMgr.checkOrientConsistent("/home/hxie1/data/R21Project/CTSegV_uniform/testImages", "_CT.nrrd")
-
-    a= np.random.rand(3,4,5)
-    print(a)
-    b = dataMgr.sliceNormalize(a)
-    print(b)
-
-
-    print("=============END=================")
-
-
+    print("=============END Training of Ovarian Cancer Segmentation V model =================")
 
 if __name__ == "__main__":
     main()
