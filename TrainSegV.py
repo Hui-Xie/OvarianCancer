@@ -25,11 +25,19 @@ def main():
 
     lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
+
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
 
     dataMgr.setOneSampleTraining(True) # for debug
-    device = torch.device("cuda:3" if torch.cuda.is_available() else "cpu")
+    useDataParallel = True  # for debug
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if useDataParallel:
+        nGPU = torch.cuda.device_count()
+        if nGPU >1:
+            print(f'Info: program will use {nGPU} GPUs.')
+            net = nn.DataParallel(net)
     net.to(device)
 
     epochs = 2
@@ -39,7 +47,18 @@ def main():
         for inputs, labels in dataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
-            batchLoss = net.batchTrain(inputs, labels)
+
+            batchLoss = 0.0
+            if useDataParallel:
+                optimizer.zero_grad()
+                outputs = net.forward(inputs)
+                loss = lossFunc(outputs, labels)
+                loss.backward()
+                optimizer.step()
+                batchLoss = loss.item()
+            else:
+                batchLoss = net.batchTrain(inputs, labels)
+
             runningLoss += batchLoss
             batches += 1
             print(f'batch={batches}: batchLoss = {batchLoss}')

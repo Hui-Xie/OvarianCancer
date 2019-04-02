@@ -5,7 +5,6 @@ import torch.nn.functional as F
 class SegVModel (nn.Module):
     def __init__(self):
         super(SegVModel, self).__init__()
-        global batchSize
         self.m_conv1 = nn.Conv3d(1,   32,  (5,5,5), stride=(2,2,2))   #inputSize: 21*281*281; output:32*9*139*139
         self.m_bn1   = nn.BatchNorm3d(32)
         self.m_conv2 = nn.Conv3d(32,  64,  (5,3,3), stride=(2,2,2))   #output: 64*3*69*69
@@ -37,7 +36,7 @@ class SegVModel (nn.Module):
         x1 = self.m_bn1(F.relu(self.m_conv1(x )))
         x2 = self.m_bn2(F.relu(self.m_conv2(x1)))
         x3 = self.m_bn3(F.relu(self.m_conv3(x2)))
-        x3 = x3.squeeze()                         # from 3D to 2D, there is squeeze
+        x3 = x3.squeeze(dim=2)                         # from 3D to 2D, there is squeeze
         x4 = self.m_bn4(F.relu(self.m_conv4(x3)))
         x5 = self.m_bn5(F.relu(self.m_conv5(x4)))
         xc = self.m_bn6(F.relu(self.m_conv6(x5)))  # xc means x computing
@@ -55,7 +54,7 @@ class SegVModel (nn.Module):
         xc = torch.cat((xc, x1), 1)
         xc = self.m_bnT1(F.relu(self.m_convT1(xc)))
         xc = torch.cat((xc, x), 2)
-        xc = xc.squeeze()
+        xc = xc.squeeze(dim=1)
 
         xc = self.m_conv0(xc)
         return xc
