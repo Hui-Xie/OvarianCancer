@@ -22,7 +22,7 @@ def main():
     dataGenerator = dataMgr.dataLabelGenerator(True)
 
     net= SegVModel()
-    net.printParamtersSize()
+    net.printParamtersScale()
 
     lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
@@ -38,7 +38,8 @@ def main():
         runningLoss = 0.0
         batches  = 0
         for inputs, labels in dataGenerator:
-            intputs, labels = inputs.to(device), labels.to(device)
+            inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
+            inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.float)  # return a copy
             batchLoss = net.batchTrain(inputs, labels)
             runningLoss += batchLoss
             batches +=1

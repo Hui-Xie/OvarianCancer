@@ -77,11 +77,13 @@ class SegVModel (nn.Module):
         return loss.item()
 
 
-    def printParamtersSize(self):
+    def printParamtersScale(self):
         sum = 0
+        layers = 0
         params = self.parameters()
         for param in params:
+            layers +=1
             sum += param.nelement()
-        print(f"Network has total {sum} parameters.")
+        print(f"Network has total {sum} parameters in {layers} layers.")
 
 
