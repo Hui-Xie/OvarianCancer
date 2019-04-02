@@ -14,8 +14,9 @@ class NetMgr:
 
     def loadNet(self,netPath, forTrain):
         print(f'Program laod net from {netPath}.')
-        self.m_net.load_state_dict( torch.load(os.path.join(netPath,"Net.pt")), strict=False )
-        self.m_net.m_optimizer.load_state_dict( torch.load(os.path.join(netPath,"Optimizer.pt")), strict=False )
+        device = torch.device('cpu')
+        self.m_net.load_state_dict( torch.load(os.path.join(netPath,"Net.pt")), map_location=device)
+        self.m_net.m_optimizer.load_state_dict( torch.load(os.path.join(netPath,"Optimizer.pt")), map_location=device)
         if forTrain:
             self.m_net.train()
         else: # eval

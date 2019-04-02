@@ -33,6 +33,10 @@ def main():
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
 
+    netMgr = NetMgr(net)
+    if 0 != len(os.listdir(netPath)):
+        netMgr.loadNet(netPath, True)  # True for train
+
     #===========debug==================
     dataMgr.setOneSampleTraining(True) # for debug
     useDataParallel = True  # for debug
@@ -44,10 +48,6 @@ def main():
             print(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
     net.to(device)
-
-    netMgr = NetMgr(net)
-    if 0 != len(os.listdir(netPath)):
-        netMgr.loadNet(netPath, True)  # True for train
 
     epochs = 2
     for epoch in range(epochs):
