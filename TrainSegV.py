@@ -1,23 +1,27 @@
 import sys
-from DataMgr import DataMgr
-from SegVModel import SegVModel
+import os
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 
+from DataMgr import DataMgr
+from SegVModel import SegVModel
+from NetMgr  import NetMgr
+
 def printUsage(argv):
     print("============Train Ovarian Cancer Segmentation V model=============")
     print("Usage:")
-    print(argv[0], " <fullPathOfTrainImages>  <fullPathOfTrainLabels>")
+    print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>")
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
 
-    dataMgr = DataMgr(sys.argv[1], sys.argv[2])
+    netPath = sys.argv[1]
+    dataMgr = DataMgr(sys.argv[2], sys.argv[3])
     dataMgr.setDataSize(4, 21,281,281,4)  #batchSize, depth, height, width, k
 
     net= SegVModel()
@@ -29,6 +33,7 @@ def main():
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
 
+    #===========debug==================
     dataMgr.setOneSampleTraining(True) # for debug
     useDataParallel = True  # for debug
 
@@ -39,6 +44,10 @@ def main():
             print(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
     net.to(device)
+
+    netMgr = NetMgr(net)
+    if 0 != len(os.listdir(netPath)):
+        netMgr.loadNet(netPath, True)  # True for train
 
     epochs = 2
     for epoch in range(epochs):
@@ -65,6 +74,7 @@ def main():
 
         epochLoss = runningLoss/batches
         print(f'Epoch={epoch}: epochLoss={epochLoss}')
+        netMgr.saveNet(netPath)
 
     torch.cuda.empty_cache()
     print("=============END Training of Ovarian Cancer Segmentation V model =================")
