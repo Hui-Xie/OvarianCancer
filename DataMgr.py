@@ -156,7 +156,7 @@ class DataMgr:
 
         batch = 0
         dataList=[]
-        oneHotLabelList= []
+        labelList= []
         radius = int((self.m_depth-1)/2)
 
         for i in shuffleList:
@@ -168,24 +168,23 @@ class DataMgr:
             sliceList = self.getLabeledSliceIndex(labelArray)
             for j in sliceList:
                 if batch >= self.m_batchSize:
-                    yield np.stack(dataList, axis=0), np.stack(oneHotLabelList, axis=0)
+                    yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
                     if self.m_oneSampleTraining:
                         continue
                     else:
                         batch = 0
                         dataList.clear()
-                        oneHotLabelList.clear()
+                        labelList.clear()
                 data = self.cropVolumeCopy(imageArray, j, radius)
                 data = self.preprocessData(data)
                 label= self.cropSliceCopy(labelArray,j)
-                oneHotLabel = self.segmentation2OneHotArray(label, self.m_k)
                 dataList.append(data)
-                oneHotLabelList.append(oneHotLabel)
+                labelList.append(label)
                 batch +=1
 
         # clean filed
         dataList.clear()
-        oneHotLabelList.clear()
+        labelList.clear()
 
     def checkOrientConsistent(self, imagesDir, suffix):
         print(f'Program is checking image directions. Please waiting......')

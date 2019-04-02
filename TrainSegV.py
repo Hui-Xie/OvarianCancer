@@ -39,7 +39,7 @@ def main():
         batches  = 0
         for inputs, labels in dataGenerator:
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
-            inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.float)  # return a copy
+            inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
             batchLoss = net.batchTrain(inputs, labels)
             runningLoss += batchLoss
             batches +=1
