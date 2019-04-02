@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7ceedc28-51ad-4626-9729-3a67dbae88dd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/SegVModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/SegVModel.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TrainSegV.py" beforeDir="false" afterPath="$PROJECT_DIR$/TrainSegV.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -25,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/TrainSegV.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="380">
+              <caret line="73" lean-forward="true" selection-start-line="73" selection-end-line="73" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -76,7 +75,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SegVModel.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="310">
@@ -117,8 +116,8 @@
         <option value="$PROJECT_DIR$/CheckImageOrientation.py" />
         <option value="$PROJECT_DIR$/DataMgr.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/TrainSegV.py" />
         <option value="$PROJECT_DIR$/SegVModel.py" />
+        <option value="$PROJECT_DIR$/TrainSegV.py" />
       </list>
     </option>
   </component>
@@ -218,12 +217,12 @@
       <option name="presentableId" value="Default" />
       <updated>1553721305735</updated>
       <workItem from="1553721309201" duration="1977000" />
-      <workItem from="1553782265631" duration="109493000" />
+      <workItem from="1553782265631" duration="110364000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="111470000" />
+    <option name="totallyTimeSpent" value="112341000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
@@ -260,7 +259,7 @@
     <option name="version" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/OvarianCancer$TrainSegV.coverage" NAME="TrainSegV Coverage Results" MODIFIED="1554229930458" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/OvarianCancer$TrainSegV.coverage" NAME="TrainSegV Coverage Results" MODIFIED="1554230936763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
@@ -419,16 +418,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/TrainSegV.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.7/site-packages/torch/nn/modules/conv.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="149">
@@ -442,6 +431,16 @@
           <caret line="61" column="38" lean-forward="true" selection-start-line="61" selection-start-column="38" selection-end-line="61" selection-end-column="38" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/TrainSegV.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="73" lean-forward="true" selection-start-line="73" selection-end-line="73" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

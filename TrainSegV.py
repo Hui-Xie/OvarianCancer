@@ -66,6 +66,7 @@ def main():
         epochLoss = runningLoss/batches
         print(f'Epoch={epoch}: epochLoss={epochLoss}')
 
+    torch.cuda.empty_cache()
     print("=============END Training of Ovarian Cancer Segmentation V model =================")
 
 if __name__ == "__main__":
