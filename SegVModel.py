@@ -46,20 +46,21 @@ class SegVModel (nn.Module):
         xc = self.m_bn6(F.relu(self.m_conv6(x5)))  # xc means x computing
             
         xc = self.m_bnT6(F.relu(self.m_convT6(xc)))
-        xc = torch.cat((xc,x5),0)
+        xc = torch.cat((xc,x5),1)                 # channel is in dim 0, so concatenate at dim 1.
         xc = self.m_bnT5(F.relu(self.m_convT5(xc)))
-        xc = torch.cat((xc, x4), 0)
+        xc = torch.cat((xc, x4), 1)
         xc = self.m_bnT4(F.relu(self.m_convT4(xc)))
-        xc = xc.unsqueeze(1)
-        xc = torch.cat((xc, x3), 0)
+        xc = torch.cat((xc, x3), 1)               # first concatenate with squeezed x3, then unsqueeze
+        xc = xc.unsqueeze(2)
         xc = self.m_bnT3(F.relu(self.m_convT3(xc)))
-        xc = torch.cat((xc, x2), 0)
+        xc = torch.cat((xc, x2), 1)
         xc = self.m_bnT2(F.relu(self.m_convT2(xc)))
-        xc = torch.cat((xc, x1), 0)
+        xc = torch.cat((xc, x1), 1)
         xc = self.m_bnT1(F.relu(self.m_convT1(xc)))
-        xc = torch.cat((xc, x), 0)
+        xc = torch.cat((xc, x), 2)
+        xc = xc.squeeze()
 
-        xc = self.con0(xc)
+        xc = self.m_conv0(xc)
         return xc
 
     def setOptimizer(self, optimizer):
