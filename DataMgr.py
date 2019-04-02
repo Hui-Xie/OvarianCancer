@@ -214,7 +214,7 @@ class DataMgr:
         min = np.min(array, axesTuple)
         result = np.zeros(array.shape)
         for i in range(len(min)):
-            result[i,:] = array[i,:] - mu[i]
+            result[i,:] = array[i,:] - min[i]
         ptp = np.ptp(array, axesTuple) # peak to peak
         with np.nditer(ptp, op_flags=['readwrite']) as it:
              for x in it:

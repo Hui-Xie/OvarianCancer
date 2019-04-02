@@ -2,6 +2,7 @@ import sys
 from DataMgr import DataMgr
 from SegVModel import SegVModel
 import numpy as np
+import torch
 import torch.nn as nn
 import torch.optim as optim
 
