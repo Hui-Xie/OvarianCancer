@@ -2,9 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
-batchSize = 4
-
 class SegVModel (nn.Module):
     def __init__(self):
         super(SegVModel, self).__init__()

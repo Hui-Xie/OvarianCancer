@@ -161,7 +161,7 @@ class DataMgr:
 
         for i in shuffleList:
             imageFile = imageFileList[i]
-            print(imageFile, f"i = {i}") # for debug
+            #print(imageFile, f"i = {i}") # for debug
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)

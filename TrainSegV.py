@@ -19,7 +19,6 @@ def main():
 
     dataMgr = DataMgr(sys.argv[1], sys.argv[2])
     dataMgr.setDataSize(4, 21,281,281,4)  #batchSize, depth, height, width, k
-    dataGenerator = dataMgr.dataLabelGenerator(True)
 
     net= SegVModel()
     net.printParamtersScale()
@@ -36,15 +35,17 @@ def main():
     epochs = 2
     for epoch in range(epochs):
         runningLoss = 0.0
-        batches  = 0
-        for inputs, labels in dataGenerator:
+        batches = 0
+        for inputs, labels in dataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
             batchLoss = net.batchTrain(inputs, labels)
             runningLoss += batchLoss
-            batches +=1
+            batches += 1
             print(f'batch={batches}: batchLoss = {batchLoss}')
-        print(f'Epoch={epoch}: epochLoss={runningLoss/batches}')
+
+        epochLoss = runningLoss/batches
+        print(f'Epoch={epoch}: epochLoss={epochLoss}')
 
     print("=============END Training of Ovarian Cancer Segmentation V model =================")
 
