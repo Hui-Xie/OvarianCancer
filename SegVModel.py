@@ -73,6 +73,10 @@ class SegVModel (nn.Module):
         self.m_optimizer.step()
         return loss.item()
 
+    def batchTest(self, inputs, labels):
+        outputs = self.forward(inputs)
+        loss = self.m_lossFunc(outputs, labels)
+        return loss.item()
 
     def printParamtersScale(self):
         sum = 0

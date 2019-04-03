@@ -58,6 +58,8 @@ def main():
 
     epochs = 2
     for epoch in range(epochs):
+
+        #================Training===============
         runningLoss = 0.0
         batches = 0
         for inputs, labels in trainDataMgr.dataLabelGenerator(True):
@@ -76,11 +78,38 @@ def main():
 
             runningLoss += batchLoss
             batches += 1
-            print(f'batch={batches}: batchLoss = {batchLoss}')
+            #print(f'batch={batches}: batchLoss = {batchLoss}')
 
         epochLoss = runningLoss/batches
-        print(f'Epoch={epoch}: epochLoss={epochLoss}')
-        netMgr.saveNet(netPath)
+        print(f'Epoch={epoch}: TrainingEpochLoss={epochLoss}')
+
+        # save net parameters
+        if epochLoss != float('inf') and epochLoss != float('nan'):
+            netMgr.saveNet(netPath)
+        else:
+            print("Error: training loss is infinity. Program exit.")
+            sys.exit()
+
+        # ================Test===============
+        runningLoss = 0.0
+        batches = 0
+        for inputs, labels in testDataMgr.dataLabelGenerator(False):
+            inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labels)
+            inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
+
+            if useDataParallel:
+                outputs = net.forward(inputs)
+                loss = lossFunc(outputs, labels)
+                batchLoss = loss.item()
+            else:
+                batchLoss = net.batchTest(inputs, labels)
+
+            runningLoss += batchLoss
+            batches += 1
+            #print(f'batch={batches}: batchLoss = {batchLoss}')
+
+        epochLoss = runningLoss / batches
+        print(f'Epoch={epoch}: TestEpochLoss={epochLoss}')
 
     torch.cuda.empty_cache()
     print("=============END Training of Ovarian Cancer Segmentation V model =================")
