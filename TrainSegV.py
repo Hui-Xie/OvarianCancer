@@ -66,7 +66,9 @@ def main():
     net.to(device)
 
     # print model
+    print("\n===Net Architecture (with 3rd package bug of layer repeating)===")
     summary(net, trainDataMgr.getInputSize())
+    print("===================End of Net Architecture =====================\n")
 
     epochs = 3
     print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t")   # print output head
