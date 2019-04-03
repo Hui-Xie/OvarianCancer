@@ -13,7 +13,7 @@ class NetMgr:
         print("Program finished saving network.")
 
     def loadNet(self,netPath, forTrain):
-        print(f'Program load net from {netPath}.')
+        print(f'Program loads net from {netPath}.')
         # Save on GPU, Load on CPU
         device = torch.device('cpu')
         self.m_net.load_state_dict( torch.load(os.path.join(netPath,"Net.pt"), map_location=device))
