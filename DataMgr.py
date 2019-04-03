@@ -10,6 +10,7 @@ class DataMgr:
     def __init__(self, imagesDir, labelsDir):
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
+        self.m_oneSampleTraining = False
 
     def getFilesList(self, filesDir, suffix):
         originalCwd = os.getcwd()
