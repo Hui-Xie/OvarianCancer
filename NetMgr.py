@@ -13,10 +13,15 @@ class NetMgr:
         print("Program finished saving network.")
 
     def loadNet(self,netPath, forTrain):
-        print(f'Program laod net from {netPath}.')
+        print(f'Program load net from {netPath}.')
+        # Save on GPU, Load on CPU
         device = torch.device('cpu')
-        self.m_net.load_state_dict( torch.load(os.path.join(netPath,"Net.pt")), map_location=device)
-        self.m_net.m_optimizer.load_state_dict( torch.load(os.path.join(netPath,"Optimizer.pt")), map_location=device)
+        self.m_net.load_state_dict( torch.load(os.path.join(netPath,"Net.pt"), map_location=device))
+
+        # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
+        self.m_net.cuda()
+
+        self.m_net.m_optimizer.load_state_dict( torch.load(os.path.join(netPath,"Optimizer.pt"), map_location=device))
         if forTrain:
             self.m_net.train()
         else: # eval

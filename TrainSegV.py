@@ -40,6 +40,7 @@ def main():
     #===========debug==================
     dataMgr.setOneSampleTraining(True) # for debug
     useDataParallel = True  # for debug
+    # ===========debug==================
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
