@@ -150,6 +150,10 @@ class DataMgr:
         self.m_k = k
         print(f'batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}')
 
+    def getInputSize(self): #return a tuple without batchSize
+        channels = 1
+        return (channels, self.m_depth, self.m_height, self.m_width)
+
     def dataLabelGenerator(self, shuffle):
         self.m_shuffle = shuffle
         imageFileList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")

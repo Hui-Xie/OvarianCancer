@@ -1,9 +1,14 @@
 import sys
 import os
+import datetime
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
+torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
+sys.path.append(torchSummaryPath)
+from torchsummary import summary
 
 from DataMgr import DataMgr
 from SegVModel import SegVModel
@@ -15,6 +20,9 @@ def printUsage(argv):
     print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>")
 
 def main():
+    curTime = datetime.datetime.now()
+    print('Starting Time: ', str(curTime))
+
     if len(sys.argv) != 4:
         print("Error: input parameters error.")
         printUsage(sys.argv)
@@ -56,6 +64,9 @@ def main():
             print(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
     net.to(device)
+
+    # print model
+    summary(net, trainDataMgr.getInputSize())
 
     epochs = 3
     print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t")   # print output head
@@ -113,7 +124,7 @@ def main():
         print(f'{epoch} \t\t {trainingLoss} \t\t {testLoss} \t\t')
 
     torch.cuda.empty_cache()
-    print("=============END Training of Ovarian Cancer Segmentation V model =================")
+    print("=============END of Training of Ovarian Cancer Segmentation V Model =================")
 
 if __name__ == "__main__":
     main()
