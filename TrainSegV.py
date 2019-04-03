@@ -57,11 +57,12 @@ def main():
             net = nn.DataParallel(net)
     net.to(device)
 
-    epochs = 2
+    epochs = 3
+    print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t")   # print output head
     for epoch in range(epochs):
 
         #================Training===============
-        runningLoss = 0.0
+        trainingLoss = 0.0
         batches = 0
         for inputs, labels in trainDataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
@@ -77,22 +78,21 @@ def main():
             else:
                 batchLoss = net.batchTrain(inputs, labels)
 
-            runningLoss += batchLoss
+            trainingLoss += batchLoss
             batches += 1
             #print(f'batch={batches}: batchLoss = {batchLoss}')
 
-        epochLoss = runningLoss/batches
-        print(f'Epoch={epoch}: TrainingEpochLoss={epochLoss}')
+        trainingLoss /= batches
 
         # save net parameters
-        if epochLoss != float('inf') and epochLoss != float('nan'):
+        if trainingLoss != float('inf') and trainingLoss != float('nan'):
             netMgr.saveNet(netPath)
         else:
             print("Error: training loss is infinity. Program exit.")
             sys.exit()
 
         # ================Test===============
-        runningLoss = 0.0
+        testLoss = 0.0
         batches = 0
         for inputs, labels in testDataMgr.dataLabelGenerator(False):
             inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labels)
@@ -105,12 +105,12 @@ def main():
             else:
                 batchLoss = net.batchTest(inputs, labels)
 
-            runningLoss += batchLoss
+            testLoss += batchLoss
             batches += 1
             #print(f'batch={batches}: batchLoss = {batchLoss}')
 
-        epochLoss = runningLoss / batches
-        print(f'Epoch={epoch}: TestEpochLoss={epochLoss}')
+        testLoss /= batches
+        print(f'{epoch} \t\t {trainingLoss} \t\t {testLoss} \t\t')
 
     torch.cuda.empty_cache()
     print("=============END Training of Ovarian Cancer Segmentation V model =================")
