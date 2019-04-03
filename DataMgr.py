@@ -18,6 +18,9 @@ class DataMgr:
         os.chdir(originalCwd)
         return filesList
 
+    def getTestDirs(self):
+        return (self.m_imagesDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels'))
+
     def readImageFile(self, filename):
         image = sitk.ReadImage(filename)
         dataArray = sitk.GetArrayFromImage(image) #numpy axis order is a reverse of ITK axis order

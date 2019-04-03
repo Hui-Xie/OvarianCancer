@@ -21,8 +21,13 @@ def main():
         return -1
 
     netPath = sys.argv[1]
-    dataMgr = DataMgr(sys.argv[2], sys.argv[3])
-    dataMgr.setDataSize(4, 21,281,281,4)  #batchSize, depth, height, width, k
+    trainDataMgr = DataMgr(sys.argv[2], sys.argv[3])
+    trainDataMgr.setDataSize(4, 21,281,281,4)  #batchSize, depth, height, width, k
+
+    testImagesDir, testLabelsDir = trainDataMgr.getTestDirs()
+    testDataMgr = DataMgr(testImagesDir, testLabelsDir)
+    testDataMgr.setDataSize(4, 21, 281, 281, 4)  # batchSize, depth, height, width, k
+
 
     net= SegVModel()
     net.printParamtersScale()
@@ -36,9 +41,10 @@ def main():
     netMgr = NetMgr(net)
     if 0 != len(os.listdir(netPath)):
         netMgr.loadNet(netPath, True)  # True for train
-
+    else:
+        print("Network train from scratch.")
     #===========debug==================
-    dataMgr.setOneSampleTraining(True) # for debug
+    trainDataMgr.setOneSampleTraining(True) # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -54,7 +60,7 @@ def main():
     for epoch in range(epochs):
         runningLoss = 0.0
         batches = 0
-        for inputs, labels in dataMgr.dataLabelGenerator(True):
+        for inputs, labels in trainDataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
