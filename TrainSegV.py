@@ -45,6 +45,7 @@ def main():
         print("Network train from scratch.")
     #===========debug==================
     trainDataMgr.setOneSampleTraining(True) # for debug
+    testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
