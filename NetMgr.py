@@ -21,7 +21,7 @@ class NetMgr:
         # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
         self.m_net.cuda()
 
-        self.m_net.m_optimizer.load_state_dict( torch.load(os.path.join(netPath,"Optimizer.pt"), map_location=device))
+        self.m_net.m_optimizer.load_state_dict( torch.load(os.path.join(netPath,"Optimizer.pt")))
         if forTrain:
             self.m_net.train()
         else: # eval
