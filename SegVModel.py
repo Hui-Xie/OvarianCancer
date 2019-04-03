@@ -76,7 +76,7 @@ class SegVModel (nn.Module):
     def batchTest(self, inputs, labels):
         outputs = self.forward(inputs)
         loss = self.m_lossFunc(outputs, labels)
-        return loss.item()
+        return loss.item(),outputs
 
     def printParamtersScale(self):
         sum = 0

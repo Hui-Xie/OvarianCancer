@@ -54,8 +54,22 @@ def main():
     #===========debug==================
     trainDataMgr.setOneSampleTraining(True) # for debug
     testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = True  # for debug
+    useDataParallel = False  # for debug
     # ===========debug==================
+
+
+    # test Dice
+    # for inputs, labels in trainDataMgr.dataLabelGenerator(True):
+    #     outputs = np.random.rand(4,4,281,281)
+    #     segmentations = trainDataMgr.oneHotArray2Segmentation(outputs)
+    #     dices1 = trainDataMgr.getDiceSumList(segmentations, labels)
+    #     print("random dice: ", dices1)
+    #
+    #     dices2 = trainDataMgr.getDiceSumList(labels, labels)
+    #     print("groundtruth dice: ", dices2)
+    #     sys.exit()
+
+
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
@@ -71,7 +85,10 @@ def main():
     print("===================End of Net Architecture =====================\n")
 
     epochs = 3
-    print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t")   # print output head
+    K = testDataMgr.getNumClassification()
+    diceHead = (f'Dice_{i}' for i in range(K))
+    print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t\t ", '\t\t'.join(diceHead))   # print output head
+
     for epoch in range(epochs):
 
         #================Training===============
@@ -105,6 +122,7 @@ def main():
             sys.exit()
 
         # ================Test===============
+        diceList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
         for inputs, labels in testDataMgr.dataLabelGenerator(False):
@@ -116,14 +134,17 @@ def main():
                 loss = lossFunc(outputs, labels)
                 batchLoss = loss.item()
             else:
-                batchLoss = net.batchTest(inputs, labels)
+                batchLoss, outputs = net.batchTest(inputs, labels)
 
+            diceSumBatch = testDataMgr.getDiceSumList(outputs, labels)
+            diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
             testLoss += batchLoss
             batches += 1
             #print(f'batch={batches}: batchLoss = {batchLoss}')
 
         testLoss /= batches
-        print(f'{epoch} \t\t {trainingLoss} \t\t {testLoss} \t\t')
+        diceList = [x/(batches* testDataMgr.getBatchSize()) for x in diceList]
+        print(f'{epoch} \t\t {trainingLoss} \t\t {testLoss} \t\t\t', '\t\t'.join( (str(x) for x in diceList)))
 
     torch.cuda.empty_cache()
     print("=============END of Training of Ovarian Cancer Segmentation V Model =================")

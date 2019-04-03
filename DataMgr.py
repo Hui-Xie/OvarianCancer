@@ -131,8 +131,39 @@ class DataMgr:
         return oneHotArray
 
     def oneHotArray2Segmentation(self, oneHotArray) -> np.ndarray:
-        segmentationArray = oneHotArray.argmax(axis=0)
+        segmentationArray = oneHotArray.argmax(axis=1)
         return segmentationArray
+
+    def getDiceSumList(self, outputs, labels):
+        '''
+
+        :param segmentations: with N samples
+        :param labels: ground truth with N samples
+        :return: a list, whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
+        '''
+        segmentations = self.oneHotArray2Segmentation(outputs)
+        N = segmentations.shape[0]  # sample nunmber
+        K = self.m_k                # classification number
+        diceSumList = [0 for _ in range(K)]
+        for i in range(N):
+            diceSumList[0] += self.getDice((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
+            for j in range(1, K):
+                dice = self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
+                diceSumList[j] +=dice
+        return diceSumList
+
+    def getDice(self, segmentation, label):
+        '''
+
+        :param segmenatation:  0-1 elements array
+        :param label:  0-1 elements array
+        :return:
+        '''
+        nA = np.count_nonzero(segmentation)
+        nB = np.count_nonzero(label)
+        C = segmentation * label
+        nC = np.count_nonzero(C)
+        return nC*2.0/(nA+nB) if 0 != nA+nB else 1.0
 
     def setDataSize(self, batchSize, depth, height, width, k):
         '''
@@ -140,7 +171,7 @@ class DataMgr:
         :param depth:  it must be odd
         :param height:  it is better to be odd number for V model
         :param width:   it is better to be odd number for V model
-        :param k: the number of classification of groundtruth
+        :param k: the number of classification of groundtruth including background class.
         :return:
         '''
         self.m_batchSize = batchSize
@@ -150,9 +181,15 @@ class DataMgr:
         self.m_k = k
         print(f'batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}')
 
+    def getBatchSize(self):
+        return self.m_batchSize
+
     def getInputSize(self): #return a tuple without batchSize
         channels = 1
         return (channels, self.m_depth, self.m_height, self.m_width)
+
+    def getNumClassification(self):
+        return self.m_k
 
     def dataLabelGenerator(self, shuffle):
         self.m_shuffle = shuffle
