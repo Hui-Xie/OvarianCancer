@@ -58,7 +58,6 @@ def main():
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
-            batchLoss = 0.0
             if useDataParallel:
                 optimizer.zero_grad()
                 outputs = net.forward(inputs)
