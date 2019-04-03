@@ -51,12 +51,17 @@ def main():
         netMgr.loadNet(netPath, True)  # True for train
     else:
         print("Network train from scratch.")
+
+    # print model
+    print("\n===Net Architecture (with 3rd package bug of layer repeating)===")
+    summary(net, trainDataMgr.getInputSize())
+    print("===================End of Net Architecture =====================\n")
+
     #===========debug==================
     trainDataMgr.setOneSampleTraining(True) # for debug
     testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = False  # for debug
     # ===========debug==================
-
 
     # test Dice
     # for inputs, labels in trainDataMgr.dataLabelGenerator(True):
@@ -69,8 +74,6 @@ def main():
     #     print("groundtruth dice: ", dices2)
     #     sys.exit()
 
-
-
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
         nGPU = torch.cuda.device_count()
@@ -79,14 +82,11 @@ def main():
             net = nn.DataParallel(net)
     net.to(device)
 
-    # print model
-    print("\n===Net Architecture (with 3rd package bug of layer repeating)===")
-    summary(net, trainDataMgr.getInputSize())
-    print("===================End of Net Architecture =====================\n")
+
 
     epochs = 3
     K = testDataMgr.getNumClassification()
-    diceHead = (f'Dice_{i}' for i in range(K))
+    diceHead = (f'TestDice_{i}' for i in range(K))
     print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t\t ", '\t\t'.join(diceHead))   # print output head
 
     for epoch in range(epochs):
@@ -136,7 +136,7 @@ def main():
             else:
                 batchLoss, outputs = net.batchTest(inputs, labels)
 
-            diceSumBatch = testDataMgr.getDiceSumList(outputs, labels)
+            diceSumBatch = testDataMgr.getDiceSumList(outputs.cpu().numpy(), labels.cpu().numpy())
             diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
             testLoss += batchLoss
             batches += 1
