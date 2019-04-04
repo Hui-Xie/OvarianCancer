@@ -21,7 +21,7 @@ def printUsage(argv):
 
 def main():
     curTime = datetime.datetime.now()
-    print('Starting Time: ', str(curTime))
+    print('Program starting Time: ', str(curTime))
 
     if len(sys.argv) != 4:
         print("Error: input parameters error.")
@@ -58,9 +58,9 @@ def main():
     print("===================End of Net Architecture =====================\n")
 
     #===========debug==================
-    trainDataMgr.setOneSampleTraining(True) # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = False  # for debug
+    #trainDataMgr.setOneSampleTraining(True) # for debug
+    #testDataMgr.setOneSampleTraining(True)  # for debug
+    useDataParallel = True  # for debug
     # ===========debug==================
 
     # test Dice
@@ -86,8 +86,9 @@ def main():
 
     epochs = 3
     K = testDataMgr.getNumClassification()
+    print("Hints: TestDice_0 is the dice coeff for all classification.")
     diceHead = (f'TestDice_{i}' for i in range(K))
-    print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t\t ", '\t\t'.join(diceHead))   # print output head
+    print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t\t\t ", '\t\t\t'.join(diceHead))   # print output head
 
     for epoch in range(epochs):
 
@@ -148,7 +149,7 @@ def main():
         #===========print train and test progress===============
         testLoss /= batches
         diceList = [x/(batches* testDataMgr.getBatchSize()) for x in diceList]
-        print(f'{epoch} \t\t {trainingLoss} \t\t {testLoss} \t\t\t', '\t\t'.join( (str(x) for x in diceList)))
+        print(f'{epoch} \t\t {trainingLoss:.6f} \t\t {testLoss:.6f} \t\t\t', '\t\t'.join( (f'{x:.4f}' for x in diceList)))
 
     torch.cuda.empty_cache()
     print("=============END of Training of Ovarian Cancer Segmentation V Model =================")
