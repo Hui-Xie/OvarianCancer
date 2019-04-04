@@ -1,7 +1,6 @@
 import sys
 import os
 import datetime
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -38,7 +37,7 @@ def main():
 
 
     net= SegVModel()
-    net.printParamtersScale()
+    net.printParametersScale()
 
     lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
@@ -130,7 +129,8 @@ def main():
                 else:
                     batchLoss, outputs = net.batchTest(inputs, labels)
 
-                diceSumBatch = testDataMgr.getDiceSumList(outputs.cpu().numpy(), labelsCpu)
+                outputs = outputs.cpu().numpy()
+                diceSumBatch = testDataMgr.getDiceSumList(outputs, labelsCpu)
                 diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
                 testLoss += batchLoss
                 batches += 1

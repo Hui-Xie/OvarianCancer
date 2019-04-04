@@ -78,7 +78,7 @@ class SegVModel (nn.Module):
         loss = self.m_lossFunc(outputs, labels)
         return loss.item(),outputs
 
-    def printParamtersScale(self):
+    def printParametersScale(self):
         sum = 0
         params = self.parameters()
         for param in params:
