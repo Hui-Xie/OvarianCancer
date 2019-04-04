@@ -54,7 +54,7 @@ def main():
 
     # print model
     print("\n====================Net Architecture===========================")
-    summary(net, trainDataMgr.getInputSize())
+    summary(net.cuda(), trainDataMgr.getInputSize())
     print("===================End of Net Architecture =====================\n")
 
     #===========debug==================
@@ -86,9 +86,9 @@ def main():
 
     epochs = 3
     K = testDataMgr.getNumClassification()
-    print("Hints: TestDice_0 is the dice coeff for all classification.")
+    print("Hints: TestDice_0 is the dice coeff for all non-zero classifications.\n")
     diceHead = (f'TestDice_{i}' for i in range(K))
-    print(f"Epoch \t\t TrainingLoss \t\t\t\t TestLoss \t\t\t\t ", '\t\t\t'.join(diceHead))   # print output head
+    print(f"Epoch \t TrainingLoss \t TestLoss \t\t ", '\t'.join(diceHead))   # print output head
 
     for epoch in range(epochs):
 
@@ -149,7 +149,7 @@ def main():
         #===========print train and test progress===============
         testLoss /= batches
         diceList = [x/(batches* testDataMgr.getBatchSize()) for x in diceList]
-        print(f'{epoch} \t\t {trainingLoss:.6f} \t\t {testLoss:.6f} \t\t\t', '\t\t'.join( (f'{x:.4f}' for x in diceList)))
+        print(f'{epoch} \t\t {trainingLoss:.6f} \t\t {testLoss:.6f} \t\t', '\t\t'.join( (f'{x:.4f}' for x in diceList)))
 
     torch.cuda.empty_cache()
     print("=============END of Training of Ovarian Cancer Segmentation V Model =================")
