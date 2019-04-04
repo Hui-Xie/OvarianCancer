@@ -125,8 +125,8 @@ def main():
         diceList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
-        for inputs, labels in testDataMgr.dataLabelGenerator(False):
-            inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labels)
+        for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
+            inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
             if useDataParallel:
@@ -136,7 +136,7 @@ def main():
             else:
                 batchLoss, outputs = net.batchTest(inputs, labels)
 
-            diceSumBatch = testDataMgr.getDiceSumList(outputs.cpu().numpy(), labels.cpu().numpy())
+            diceSumBatch = testDataMgr.getDiceSumList(outputs.cpu().numpy(), labelsCpu)
             diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
             testLoss += batchLoss
             batches += 1
