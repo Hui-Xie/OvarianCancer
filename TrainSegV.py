@@ -30,11 +30,11 @@ def main():
 
     netPath = sys.argv[1]
     trainDataMgr = DataMgr(sys.argv[2], sys.argv[3])
-    trainDataMgr.setDataSize(64, 21,281,281,4)  #batchSize, depth, height, width, k
+    trainDataMgr.setDataSize(96, 21,281,281,4)  #batchSize, depth, height, width, k
 
     testImagesDir, testLabelsDir = trainDataMgr.getTestDirs()
     testDataMgr = DataMgr(testImagesDir, testLabelsDir)
-    testDataMgr.setDataSize(64, 21, 281, 281, 4)  # batchSize, depth, height, width, k
+    testDataMgr.setDataSize(96, 21, 281, 281, 4)  # batchSize, depth, height, width, k
 
 
     net= SegVModel()
