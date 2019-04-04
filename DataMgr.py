@@ -226,7 +226,7 @@ class DataMgr:
                 labelList.append(label)
                 batch +=1
 
-        if 0 != len(dataList) and 0 != len(labelList):
+        if 0 != len(dataList) and 0 != len(labelList): # PyTorch supports dynamic batchSize.
             yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
 
         # clean field
