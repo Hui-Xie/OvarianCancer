@@ -179,7 +179,7 @@ class DataMgr:
         self.m_height = height
         self.m_width = width
         self.m_k = k
-        print(f'batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}')
+        print(f'Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}')
 
     def getBatchSize(self):
         return self.m_batchSize
@@ -226,7 +226,6 @@ class DataMgr:
                 dataList.append(data)
                 labelList.append(label)
                 batch +=1
-
         # clean filed
         dataList.clear()
         labelList.clear()
