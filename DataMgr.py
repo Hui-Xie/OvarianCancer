@@ -225,7 +225,11 @@ class DataMgr:
                 dataList.append(data)
                 labelList.append(label)
                 batch +=1
-        # clean filed
+
+        if 0 != len(dataList) and 0 != len(labelList):
+            yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+
+        # clean field
         dataList.clear()
         labelList.clear()
 

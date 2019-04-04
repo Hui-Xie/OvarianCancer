@@ -113,11 +113,13 @@ def main():
 
         # ================Test===============
         net.eval()
+        nSamples = 0
         with torch.no_grad():
             diceList = [0 for _ in range(K)]
             testLoss = 0.0
             batches = 0
             for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
+                nSamples += inputs.shape[0]
                 inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                 inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
@@ -136,7 +138,7 @@ def main():
 
         #===========print train and test progress===============
         testLoss /= batches
-        diceList = [x/(batches* testDataMgr.getBatchSize()) for x in diceList]
+        diceList = [x/nSamples for x in diceList]
         print(f'{epoch} \t\t {trainingLoss:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceList)))
 
     torch.cuda.empty_cache()
