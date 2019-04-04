@@ -83,6 +83,7 @@ def main():
         #================Training===============
         trainingLoss = 0.0
         batches = 0
+        net.train()
         for inputs, labels in trainDataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
@@ -111,6 +112,7 @@ def main():
             sys.exit()
 
         # ================Test===============
+        net.eval()
         with torch.no_grad():
             diceList = [0 for _ in range(K)]
             testLoss = 0.0
