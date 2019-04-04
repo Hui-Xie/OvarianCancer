@@ -63,17 +63,6 @@ def main():
     useDataParallel = True  # for debug
     # ===========debug==================
 
-    # test Dice
-    # for inputs, labels in trainDataMgr.dataLabelGenerator(True):
-    #     outputs = np.random.rand(4,4,281,281)
-    #     segmentations = trainDataMgr.oneHotArray2Segmentation(outputs)
-    #     dices1 = trainDataMgr.getDiceSumList(segmentations, labels)
-    #     print("random dice: ", dices1)
-    #
-    #     dices2 = trainDataMgr.getDiceSumList(labels, labels)
-    #     print("groundtruth dice: ", dices2)
-    #     sys.exit()
-
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
         nGPU = torch.cuda.device_count()
@@ -81,8 +70,6 @@ def main():
             print(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
     net.to(device)
-
-
 
     epochs = 15000
     K = testDataMgr.getNumClassification()
@@ -144,8 +131,6 @@ def main():
                 testLoss += batchLoss
                 batches += 1
                 #print(f'batch={batches}: batchLoss = {batchLoss}')
-
-
 
         #===========print train and test progress===============
         testLoss /= batches

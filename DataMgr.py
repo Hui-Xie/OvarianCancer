@@ -142,14 +142,13 @@ class DataMgr:
         :return: a list, whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
         '''
         segmentations = self.oneHotArray2Segmentation(outputs)
-        N = segmentations.shape[0]  # sample nunmber
+        N = segmentations.shape[0]  # sample number
         K = self.m_k                # classification number
         diceSumList = [0 for _ in range(K)]
         for i in range(N):
             diceSumList[0] += self.getDice((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
             for j in range(1, K):
-                dice = self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
-                diceSumList[j] +=dice
+                diceSumList[j] += self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
         return diceSumList
 
     def getDice(self, segmentation, label):
