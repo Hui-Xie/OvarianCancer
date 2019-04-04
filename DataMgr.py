@@ -149,7 +149,7 @@ class DataMgr:
             diceSumList[0] += self.getDice((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
             for j in range(1, K):
                 diceSumList[j] += self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
-        return diceSumListA
+        return diceSumList
 
     def getDice(self, segmentation, label):
         '''
