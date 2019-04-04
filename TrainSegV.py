@@ -74,7 +74,7 @@ def main():
     epochs = 15000
     K = testDataMgr.getNumClassification()
     print("Hints: TestDice_0 is the dice coeff for all non-zero classifications.")
-    print("Hints: TestDice_1 is primary cancer(green), testDice_2 is metastasis(yellow), and testDice_3 is invaded lymph node(brown).\n")
+    print("Hints: TestDice_1 is for primary cancer(green), testDice_2 is for metastasis(yellow), and testDice_3 is for invaded lymph node(brown).\n")
     diceHead = (f'TestDice_{i}' for i in range(K))
     print(f"Epoch \t TrainingLoss \t TestLoss \t\t", '\t\t'.join(diceHead))   # print output head
 
@@ -119,7 +119,7 @@ def main():
             testLoss = 0.0
             batches = 0
             for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
-                nSamples += inputs.shape[0]
+                nSamples += inputs.shape[0]  # for dynamic batchSize
                 inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                 inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
