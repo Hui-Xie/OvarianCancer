@@ -85,7 +85,7 @@ def main():
             # TODO: add output files
             outputs = outputs.cpu().numpy()
             segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
-            testDataMgr.saveInputsSegmentations2Images(inputsCpu, segmentations, n)
+            testDataMgr.saveInputsSegmentations2Images(inputsCpu, labelsCpu, segmentations, n)
 
             diceSumBatch = testDataMgr.getDiceSumList(segmentations, labelsCpu)
             diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
@@ -99,7 +99,7 @@ def main():
     diceList = [x/n for x in diceList]
     print(f'{0} \t\t {0:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceList)))
 
-    print(f'\nTotal test {nSamples} images in {sys.argv[2]}.')
+    print(f'\nTotal test {n} images in {sys.argv[2]}.')
 
     torch.cuda.empty_cache()
     print("=============END of Test of Ovarian Cancer Segmentation V Model =================")

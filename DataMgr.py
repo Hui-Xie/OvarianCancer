@@ -12,6 +12,12 @@ class DataMgr:
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
         self.buildSegSliceTupleList()
+        self.createSegmentedDir()
+
+    def createSegmentedDir(self):
+        self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
+        if not os.path.exists(self.m_segDir):
+            os.mkdir(self.m_segDir)
 
     def getFilesList(self, filesDir, suffix):
         originalCwd = os.getcwd()
@@ -304,15 +310,42 @@ class DataMgr:
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
 
-    def saveInputsSegmentations2Images(self, inputs, segmentations, n):
+    def getStemName(self, path, removedSuffix):
+        baseName = os.path.basename(path)
+        base = baseName[0: baseName.find(removedSuffix)]
+        return base
+
+    def saveInputsSegmentations2Images(self, inputs, labels, segmentations, n):
+        '''
+
+        :param inputs:
+        :param labels:  ground truth
+        :param segmentations:
+        :param n:
+        :return:
+        '''
         N = inputs.shape[0]
         for i in range(N):
             (fileIndex, sliceIndex) = self.m_segSliceTupleList[n+i]
-            
+            originalImagePath = self.m_imagesList[fileIndex]
+            baseName = self.getStemName(originalImagePath, '_CT.nrrd')
+            baseNamePath = os.path.join(self.m_segDir, baseName+f'_{sliceIndex}')
+            inputImagePath = baseNamePath+ '.png'
+            input = inputs[i]  # inputs shape:32,1,21,281,281
+            inputSlice = input[0, int(input.shape[0]/2)]  # get the middle slice
+            plt.imsave(inputImagePath, inputSlice)
 
-        pass
+            segImagePath = baseNamePath+ '_Seg.png'
+            plt.imsave(segImagePath, segmentations[i])
+
+            groundtruthImagePath = baseNamePath + '_Label.png'
+            plt.imsave(groundtruthImagePath, labels[i])
+
+            overlapSegImage = inputSlice +  segmentations[i]
+            overlapSegPath = baseNamePath+ '_SegMerge.png'
+            plt.imsave(overlapSegPath,overlapSegImage)
 
 
-
-
-
+            overlapLabelImage = inputSlice +  labels[i]
+            overlapLabelPath = baseNamePath+ '_LabelMerge.png'
+            plt.imsave(overlapLabelPath,overlapLabelImage)
