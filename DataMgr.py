@@ -8,9 +8,10 @@ import sys
 
 class DataMgr:
     def __init__(self, imagesDir, labelsDir):
+        self.m_oneSampleTraining = False
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
-        self.m_oneSampleTraining = False
+        self.buildSegSliceTupleList()
 
     def getFilesList(self, filesDir, suffix):
         originalCwd = os.getcwd()
@@ -19,7 +20,23 @@ class DataMgr:
         os.chdir(originalCwd)
         return filesList
 
-    def getTestDirs(self):
+    def buildSegSliceTupleList(self):
+        '''
+        build segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
+        :return:
+        '''
+        self.m_segSliceTupleList = []
+        self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
+        for i, image in enumerate(self.m_imagesList):
+            label = self.getLabelFile(image)
+            labelArray = self.readImageFile(label)
+            sliceList = self.getLabeledSliceIndex(labelArray)
+            for j in sliceList:
+                self.m_segSliceTupleList.append((i,j))
+        print(f'{self.m_labelsDir} has {len(m_segSliceTupleList)} segmented slices.')
+
+
+    def getTestDirs(self):  # may need to delete this function
         return (self.m_imagesDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels'))
 
     def readImageFile(self, filename):
@@ -192,8 +209,7 @@ class DataMgr:
 
     def dataLabelGenerator(self, shuffle):
         self.m_shuffle = shuffle
-        imageFileList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
-        N = len(imageFileList)
+        N = len(self.m_segSliceTupleList)
         shuffleList = list(range(N))
         if self.m_shuffle:
             random.shuffle(shuffleList)
@@ -203,28 +219,27 @@ class DataMgr:
         labelList= []
         radius = int((self.m_depth-1)/2)
 
-        for i in shuffleList:
-            imageFile = imageFileList[i]
-            #print(imageFile, f"i = {i}") # for debug
+        for n in shuffleList:
+            (i,j) = self.m_segSliceTupleList[n]  # i is the imageID, j is the segmented slice index in image i.
+            imageFile = self.m_imagesList[i]
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
-            sliceList = self.getLabeledSliceIndex(labelArray)
-            for j in sliceList:
-                if batch >= self.m_batchSize:
-                    yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
-                    if self.m_oneSampleTraining:
-                        continue
-                    else:
-                        batch = 0
-                        dataList.clear()
-                        labelList.clear()
-                data = self.cropVolumeCopy(imageArray, j, radius)
-                data = self.preprocessData(data)
-                label= self.cropSliceCopy(labelArray,j)
-                dataList.append(data)
-                labelList.append(label)
-                batch +=1
+
+            if batch >= self.m_batchSize:
+                yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+                if self.m_oneSampleTraining:
+                    continue
+                else:
+                    batch = 0
+                    dataList.clear()
+                    labelList.clear()
+            data = self.cropVolumeCopy(imageArray, j, radius)
+            data = self.preprocessData(data)
+            label= self.cropSliceCopy(labelArray,j)
+            dataList.append(data)
+            labelList.append(label)
+            batch +=1
 
         if 0 != len(dataList) and 0 != len(labelList): # PyTorch supports dynamic batchSize.
             yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
