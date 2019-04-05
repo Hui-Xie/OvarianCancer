@@ -21,7 +21,7 @@ def printUsage(argv):
 
 def main():
     curTime = datetime.datetime.now()
-    print('Program starting Time: ', str(curTime))
+    print('\nProgram starting Time: ', str(curTime))
 
     if len(sys.argv) != 4:
         print("Error: input parameters error.")

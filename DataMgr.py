@@ -34,7 +34,7 @@ class DataMgr:
             sliceList = self.getLabeledSliceIndex(labelArray)
             for j in sliceList:
                 self.m_segSliceTupleList.append((i,j))
-        print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices.\n')
+        print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices.')
 
 
     def getTestDirs(self):  # may need to delete this function
@@ -196,7 +196,7 @@ class DataMgr:
         self.m_height = height
         self.m_width = width
         self.m_k = k
-        print(f'Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}')
+        print(f'Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
 
     def getBatchSize(self):
         return self.m_batchSize
