@@ -25,6 +25,7 @@ class DataMgr:
         build segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
         :return:
         '''
+        print('Building the Segmented Slice Tuple list, please waiting......')
         self.m_segSliceTupleList = []
         self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
         for i, image in enumerate(self.m_imagesList):
@@ -33,7 +34,7 @@ class DataMgr:
             sliceList = self.getLabeledSliceIndex(labelArray)
             for j in sliceList:
                 self.m_segSliceTupleList.append((i,j))
-        print(f'{self.m_labelsDir} has {len(m_segSliceTupleList)} segmented slices.')
+        print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices.\n')
 
 
     def getTestDirs(self):  # may need to delete this function
