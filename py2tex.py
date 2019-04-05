@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 12 16:54:05 2018
 
-@author: juikwang
-"""
 
 import subprocess
 import sys
