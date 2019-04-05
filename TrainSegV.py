@@ -49,7 +49,7 @@ def main():
     if 0 != len(os.listdir(netPath)):
         netMgr.loadNet(netPath, True)  # True for train
     else:
-        print("Network train from scratch.")
+        print("Network trains from scratch.")
 
     # print model
     print("\n====================Net Architecture===========================")
@@ -130,7 +130,8 @@ def main():
                     batchLoss, outputs = net.batchTest(inputs, labels)
 
                 outputs = outputs.cpu().numpy()
-                diceSumBatch = testDataMgr.getDiceSumList(outputs, labelsCpu)
+                segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
+                diceSumBatch = testDataMgr.getDiceSumList(segmentations, labelsCpu)
                 diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
                 testLoss += batchLoss
                 batches += 1

@@ -31,7 +31,7 @@ def main():
     netPath = sys.argv[1]
     testDataMgr = DataMgr(sys.argv[2], sys.argv[3])
     testDataMgr.setDataSize(32, 21, 281, 281, 4)  # batchSize, depth, height, width, k
-
+    testDataMgr.buildImageAttrList()
 
     net= SegVModel()
     net.printParametersScale()
@@ -41,7 +41,7 @@ def main():
 
     netMgr = NetMgr(net)
     if 0 != len(os.listdir(netPath)):
-        netMgr.loadNet(netPath, False)  # False for train
+        netMgr.loadNet(netPath, False)  # False for test
     else:
         print(f"Program can not find trained network in path: {netPath}")
         sys.exit()
@@ -68,14 +68,14 @@ def main():
     print(f"Epoch \t TrainingLoss \t TestLoss \t\t", '\t\t'.join(diceHead))   # print output head
 
     net.eval()
-    nSamples = 0
+    n = 0 # n indicate the first slice index in the dataMgr.m_segSliceTupleList
     with torch.no_grad():
         diceList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
-        for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
-            nSamples += inputs.shape[0]  # for dynamic batchSize
-            inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
+        for inputsCpu, labelsCpu in testDataMgr.dataLabelGenerator(False):
+
+            inputs, labels = torch.from_numpy(inputsCpu), torch.from_numpy(labelsCpu)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
             outputs = net.forward(inputs)
@@ -84,16 +84,19 @@ def main():
 
             # TODO: add output files
             outputs = outputs.cpu().numpy()
+            segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
+            testDataMgr.saveInputsSegmentations2Images(inputsCpu, segmentations, n)
 
-            diceSumBatch = testDataMgr.getDiceSumList(outputs, labelsCpu)
+            diceSumBatch = testDataMgr.getDiceSumList(segmentations, labelsCpu)
             diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
             testLoss += batchLoss
             batches += 1
+            n += inputsCpu.shape[0]  # for dynamic batchSize
             #print(f'batch={batches}: batchLoss = {batchLoss}')
 
     #===========print train and test progress===============
     testLoss /= batches
-    diceList = [x/nSamples for x in diceList]
+    diceList = [x/n for x in diceList]
     print(f'{0} \t\t {0:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceList)))
 
     print(f'\nTotal test {nSamples} images in {sys.argv[2]}.')

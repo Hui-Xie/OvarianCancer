@@ -36,6 +36,16 @@ class DataMgr:
                 self.m_segSliceTupleList.append((i,j))
         print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices.')
 
+    def buildImageAttrList(self):
+        '''
+        build a list of tuples including (origin, size, spacing, direction) in ITK axis order
+        :return: void
+        '''
+        print("Building image attributes list, please waiting......")
+        self.m_imageAttrList = []
+        for image in self.m_imagesList:
+            attr = self.getImageAttributes(image)
+            self.m_imageAttrList.append(attr)
 
     def getTestDirs(self):  # may need to delete this function
         return (self.m_imagesDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels'))
@@ -45,32 +55,39 @@ class DataMgr:
         dataArray = sitk.GetArrayFromImage(image) #numpy axis order is a reverse of ITK axis order
         return dataArray
 
-    def readImageAttributes(self, filename):
+    def getImageAttributes(self, filename):
+        '''
+        :param filename:
+        :return: a tuple including (origin, size, spacing, direction) in ITK axis order
+        '''
         image = sitk.ReadImage(filename)
         # these attributes are in ITK axis order
-        self.m_origin = image.GetOrigin()
-        self.m_size = image.GetSize()
-        self.m_spacing = image.GetSpacing()
-        self.m_direction = image.GetDirection()
+        origin = image.GetOrigin()
+        size = image.GetSize()
+        spacing = image.GetSpacing()
+        direction = image.GetDirection()
+        return (origin, size, spacing, direction)
 
-    def saveImage(self, numpyArray, indexOffset, filename):
+    def saveImage(self, imageAttr, numpyArray, indexOffset, filename):
         '''
          saveImage from numpyArray
          SimpleITK and numpy indexing access is in opposite order!
+        :param imageAttr, a tuple including (origin, size, spacing, direction) in ITK axis order
         :param numpyArray:
         :param indexOffset: in numpy nd array axis order
         :param filename:
         :return:
         '''
+        (origin, size, spacing, direction) = imageAttr
         image = sitk.GetImageFromArray(numpyArray)
         offset = indexOffset.copy()[::-1]
-        Dims = len(self.m_origin)
-        origin = [self.m_origin[i]+ offset[i]*self.m_spacing[i]*self.m_direction[i*Dims+i] for i in range(Dims)]
-        image.SetOrigin(origin)
-        image.SetSpacing(self.m_spacing)
-        image.SetDirection(self.m_direction)
+        Dims = len(m_origin)
+        newOrigin = [origin[i]+ offset[i]*spacing[i]*direction[i*Dims+i] for i in range(Dims)]
+        image.SetOrigin(newOrigin)
+        image.SetSpacing(spacing)
+        image.SetDirection(direction)
         sitk.WriteImage(image, filename)
-        print(f'File output: {filename} ')
+
 
     def getLabelFile(self, imageFile):
         return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("Images/", "Labels/")
@@ -152,14 +169,12 @@ class DataMgr:
         segmentationArray = oneHotArray.argmax(axis=1)
         return segmentationArray
 
-    def getDiceSumList(self, outputs, labels):
+    def getDiceSumList(self, segmentations, labels):
         '''
-
         :param segmentations: with N samples
         :param labels: ground truth with N samples
         :return: a list, whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
         '''
-        segmentations = self.oneHotArray2Segmentation(outputs)
         N = segmentations.shape[0]  # sample number
         K = self.m_k                # classification number
         diceSumList = [0 for _ in range(K)]
@@ -288,6 +303,14 @@ class DataMgr:
 
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
+
+    def saveInputsSegmentations2Images(self, inputs, segmentations, n):
+        N = inputs.shape[0]
+        for i in range(N):
+            (fileIndex, sliceIndex) = self.m_segSliceTupleList[n+i]
+            
+
+        pass
 
 
 
