@@ -125,37 +125,65 @@ class DataMgr:
             plt.imshow(array[sliceList[i],:,:])
         plt.show()
 
-    def cropVolumeCopy(self,array, dCenter, dRadius): # d means depth
+    def cropVolumeCopy(self,array, dc, hc, wc, dRadius): # d means depth
         '''
         d means depth, we assume most axial images of patient are centered in its xy plane.
         :param array:
-        :param dCenter:
+        :param dc: depth center
+        :param hc: height center
+        :param wc: width center
         :param dRadius:
         :return:
         '''
         shape = array.shape
 
-        d1 = dCenter-dRadius
+        d1 = dc-dRadius
         d1 = d1 if d1>=0 else 0
         d2 = d1+2*dRadius +1
         if d2 > shape[0]:
             d2 = shape[0]
             d1 = d2- 2*dRadius -1
 
-        h1 = int((shape[1]-self.m_height)/2)
-        h2 = h1+ self.m_height
-        w1 = int((shape[2] - self.m_width) / 2)
+        h1 = int(hc - self.m_height/2)
+        h1 = h1 if h1>=0 else 0
+        h2 = h1 + self.m_height
+        if h2 > shape[1]:
+            h2 = shape[1]
+            h1 = h2- self.m_height
+
+        w1 = int(wc - self.m_width / 2)
+        w1 = w1 if w1 >= 0 else 0
         w2 = w1 + self.m_width
+        if w2 > shape[2]:
+            w2 = shape[2]
+            w1 = w2 - self.m_width
 
         return array[d1:d2, h1:h2, w1:w2].copy()
 
-    def cropSliceCopy(self, array, dIndex):
+    def cropSliceCopy(self, array, dIndex, hc, wc):
         shape = array.shape
-        h1 = int((shape[1] - self.m_height) / 2)
+
+        h1 = int(hc - self.m_height / 2)
+        h1 = h1 if h1 >= 0 else 0
         h2 = h1 + self.m_height
-        w1 = int((shape[2] - self.m_width) / 2)
+        if h2 > shape[1]:
+            h2 = shape[1]
+            h1 = h2 - self.m_height
+
+        w1 = int(wc - self.m_width / 2)
+        w1 = w1 if w1 >= 0 else 0
         w2 = w1 + self.m_width
+        if w2 > shape[2]:
+            w2 = shape[2]
+            w1 = w2 - self.m_width
+
         return array[dIndex, h1:h2, w1:w2].copy()
+
+    def getLabelHWCenter(self, array2D):
+        nonzerosIndex = np.nonzero(array2D)
+        hc = int(nonzerosIndex[0].mean())
+        wc = int(nonzerosIndex[1].mean())
+        return (hc,wc)
 
     def segmentation2OneHotArray(self, segmentationArray, k) -> np.ndarray:
         '''
@@ -248,6 +276,7 @@ class DataMgr:
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
+            (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: hight center, wc: width center
 
             if batch >= self.m_batchSize:
                 yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
@@ -257,9 +286,9 @@ class DataMgr:
                     batch = 0
                     dataList.clear()
                     labelList.clear()
-            data = self.cropVolumeCopy(imageArray, j, radius)
+            data = self.cropVolumeCopy(imageArray, j, hc, wc, radius)
             data = self.preprocessData(data)
-            label= self.cropSliceCopy(labelArray,j)
+            label= self.cropSliceCopy(labelArray,j, hc, wc)
             dataList.append(data)
             labelList.append(label)
             batch +=1

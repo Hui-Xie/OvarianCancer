@@ -40,7 +40,7 @@ def main():
     net.setLossFunc(lossFunc)
 
     netMgr = NetMgr(net)
-    if 0 != len(os.listdir(netPath)):
+    if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(netPath, False)  # False for test
     else:
         print(f"Program can not find trained network in path: {netPath}")

@@ -46,7 +46,7 @@ def main():
     net.setOptimizer(optimizer)
 
     netMgr = NetMgr(net)
-    if 0 != len(os.listdir(netPath)):
+    if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(netPath, True)  # True for train
     else:
         print("Network trains from scratch.")
