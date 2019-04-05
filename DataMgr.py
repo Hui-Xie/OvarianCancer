@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import sys
+from scipy.misc import imsave
 
 
 class DataMgr:
@@ -333,19 +334,19 @@ class DataMgr:
             inputImagePath = baseNamePath+ '.png'
             input = inputs[i]  # inputs shape:32,1,21,281,281
             inputSlice = input[0, int(input.shape[0]/2)]  # get the middle slice
-            plt.imsave(inputImagePath, inputSlice)
+            imsave(inputImagePath, inputSlice)
 
             segImagePath = baseNamePath+ '_Seg.png'
-            plt.imsave(segImagePath, segmentations[i])
+            imsave(segImagePath, segmentations[i])
 
             groundtruthImagePath = baseNamePath + '_Label.png'
-            plt.imsave(groundtruthImagePath, labels[i])
+            imsave(groundtruthImagePath, labels[i])
 
             overlapSegImage = inputSlice +  segmentations[i]
             overlapSegPath = baseNamePath+ '_SegMerge.png'
-            plt.imsave(overlapSegPath,overlapSegImage)
+            imsave(overlapSegPath,overlapSegImage)
 
 
             overlapLabelImage = inputSlice +  labels[i]
             overlapLabelPath = baseNamePath+ '_LabelMerge.png'
-            plt.imsave(overlapLabelPath,overlapLabelImage)
+            imsave(overlapLabelPath,overlapLabelImage)
