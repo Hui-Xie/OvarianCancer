@@ -45,11 +45,11 @@ def main():
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
 
-    netMgr = NetMgr(net)
+    netMgr = NetMgr(net, netPath)
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
-        netMgr.loadNet(netPath, True)  # True for train
-        bestTestDice = netMgr.loadBestTestDice()
-        print(f'current best test dice: ', '\t\t'.join( (f'{x:.4f}' for x in bestTestDice)))
+        netMgr.loadNet(True)  # True for train
+        bestTestDiceList = netMgr.loadBestTestDice()
+        print(f'current best test dice: ', '\t\t'.join( (f'{x:.4f}' for x in bestTestDiceList)))
     else:
         print("Network trains from scratch.")
 
@@ -139,10 +139,10 @@ def main():
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            if diceList[1] >0.78 and diceList[2]>0.255 and diceList[1] > bestTestDice[1] and diceList[2] > bestTestDice[2]:
-                netMgr.saveNet(netPath)
-                bestTestDice = diceList
-                netMgr.saveBestTestDice(bestTestDice)
+            if diceList[1] >0.78 and diceList[2]>0.255 and diceList[1] > bestTestDiceList[1] and diceList[2] > bestTestDiceList[2]:
+                netMgr.saveNet()
+                bestTestDiceList = diceList
+                netMgr.saveBestTestDice(bestTestDiceList)
         else:
             print("Error: training loss is infinity. Program exit.")
             sys.exit()

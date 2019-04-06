@@ -39,9 +39,9 @@ def main():
     lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
 
-    netMgr = NetMgr(net)
+    netMgr = NetMgr(net, netPath)
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
-        netMgr.loadNet(netPath, False)  # False for test
+        netMgr.loadNet(False)  # False for test
     else:
         print(f"Program can not find trained network in path: {netPath}")
         sys.exit()
