@@ -49,7 +49,7 @@ def main():
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(True)  # True for train
         bestTestDiceList = netMgr.loadBestTestDice()
-        print(f'current best test dice: ', '\t\t'.join( (f'{x:.4f}' for x in bestTestDiceList)))
+        print('Current best test dice: ', bestTestDiceList)
     else:
         print("Network trains from scratch.")
 
