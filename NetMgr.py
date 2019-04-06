@@ -26,7 +26,7 @@ class NetMgr:
             self.m_net.eval()
 
     def saveBestTestDice(self, testDiceList):
-        testDiceArray = numpy.asarray(testDiceList)
+        testDiceArray = np.asarray(testDiceList)
         np.save(os.path.join(self.m_netPath,"bestTestDice.npy"), testDiceArray)
 
     def loadBestTestDice(self):
@@ -35,4 +35,4 @@ class NetMgr:
             bestTestDiceList = np.load(filename)
         else:
             bestTestDiceList= np.zeros((1,4))
-        return bestTestDiceList.tolist()
+        return bestTestDiceList.tolist()[0]

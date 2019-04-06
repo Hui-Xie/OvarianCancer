@@ -1,5 +1,4 @@
 import sys
-import os
 import datetime
 import torch
 import torch.nn as nn
@@ -46,6 +45,7 @@ def main():
     net.setOptimizer(optimizer)
 
     netMgr = NetMgr(net, netPath)
+    bestTestDiceList = [0,0,0,0]
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(True)  # True for train
         bestTestDiceList = netMgr.loadBestTestDice()

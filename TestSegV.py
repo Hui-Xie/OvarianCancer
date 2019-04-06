@@ -82,7 +82,6 @@ def main():
             loss = lossFunc(outputs, labels)
             batchLoss = loss.item()
 
-            # TODO: add output files
             outputs = outputs.cpu().numpy()
             segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
             testDataMgr.saveInputsSegmentations2Images(inputsCpu, labelsCpu, segmentations, n)
