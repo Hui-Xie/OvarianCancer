@@ -109,11 +109,11 @@ def main():
         net.eval()
         nSamples = 0
         with torch.no_grad():
-            diceList = [0 for _ in range(K)]
+            diceSumList = [0 for _ in range(K)]
+            diceCountList = [0 for _ in range(K)]
             testLoss = 0.0
             batches = 0
             for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
-                nSamples += inputs.shape[0]  # for dynamic batchSize
                 inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                 inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
@@ -126,22 +126,23 @@ def main():
 
                 outputs = outputs.cpu().numpy()
                 segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
-                diceSumBatch = testDataMgr.getDiceSumList(segmentations, labelsCpu)
-                diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
+                (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu)
+                diceSumList = [x+y for x,y in zip(diceSumList, diceSumBatch)]
+                diceCountList = [x+y for x,y in zip(diceCountList, diceCountBatch)]
                 testLoss += batchLoss
                 batches += 1
                 #print(f'batch={batches}: batchLoss = {batchLoss}')
 
         #===========print train and test progress===============
         testLoss /= batches
-        diceList = [x/nSamples for x in diceList]
-        print(f'{epoch} \t\t {trainingLoss:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceList)))
+        diceAvgList = [x/(y+1e-8) for x,y in zip(diceSumList, diceCountList)]
+        print(f'{epoch} \t\t {trainingLoss:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceAvgList)))
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            if diceList[0] > 0.33  and diceList[0] > bestTestDiceList[0]:
+            if diceAvgList[0] > 0.33  and diceAvgList[0] > bestTestDiceList[0]:
                 netMgr.saveNet()
-                bestTestDiceList = diceList
+                bestTestDiceList = diceAvgList
                 netMgr.saveBestTestDice(bestTestDiceList)
         else:
             print("Error: training loss is infinity. Program exit.")

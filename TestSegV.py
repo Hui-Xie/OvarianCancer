@@ -70,11 +70,11 @@ def main():
     net.eval()
     n = 0 # n indicate the first slice index in the dataMgr.m_segSliceTupleList
     with torch.no_grad():
-        diceList = [0 for _ in range(K)]
+        diceSumList = [0 for _ in range(K)]
+        diceCountList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
         for inputsCpu, labelsCpu in testDataMgr.dataLabelGenerator(False):
-
             inputs, labels = torch.from_numpy(inputsCpu), torch.from_numpy(labelsCpu)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
@@ -86,8 +86,10 @@ def main():
             segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
             testDataMgr.saveInputsSegmentations2Images(inputsCpu, labelsCpu, segmentations, n)
 
-            diceSumBatch = testDataMgr.getDiceSumList(segmentations, labelsCpu)
-            diceList = [x+y for x,y in zip(diceList, diceSumBatch)]
+            (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu)
+            diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
+            diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]
+
             testLoss += batchLoss
             batches += 1
             n += inputsCpu.shape[0]  # for dynamic batchSize
@@ -95,8 +97,8 @@ def main():
 
     #===========print train and test progress===============
     testLoss /= batches
-    diceList = [x/n for x in diceList]
-    print(f'{0} \t\t {0:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceList)))
+    diceAvgList = [x / (y + 1e-8) for x, y in zip(diceSumList, diceCountList)]
+    print(f'{0} \t\t {0:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceAvgList)))
 
     print(f'\nTotal test {n} images in {sys.argv[2]}.')
 

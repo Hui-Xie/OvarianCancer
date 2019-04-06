@@ -1,0 +1,40 @@
+\documentclass[12pt]{article}
+\usepackage[margin=0.8in]{geometry}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}  %do not interpret underscore
+
+\geometry{a4paper}
+
+\title{Ovarian Cancer Segmentation Test Report}
+\author{Hui Xie}
+
+\begin{document}
+\maketitle
+
+
+\begin{figure}
+	\begin{subfigure}{\linewidth}
+		\centering
+		\includegraphics[scale=0.7]{LabelFile}
+		\caption{Ground Truth+CT}
+	\end{subfigure}
+
+	\begin{subfigure}{\linewidth}
+		\centering
+		\includegraphics[scale=0.7]{CTFile}
+		\caption{CT}
+	\end{subfigure}
+
+	\begin{subfigure}{\linewidth}
+		\centering
+		\includegraphics[scale=0.7]{SegFile}
+    	\caption{Segmentation+CT}
+	\end{subfigure}
+
+\caption{\detokenize{PatientID_Slice}}
+\end{figure}
+
+\clearpage  % support huge number of fingures
+
+\end{document}

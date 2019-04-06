@@ -208,29 +208,40 @@ class DataMgr:
         '''
         :param segmentations: with N samples
         :param labels: ground truth with N samples
-        :return: a list, whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
+        :return: (diceSumList,diceCountList)
+                diceSumList: whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
+                diceCountList: indicate effective dice count
         '''
         N = segmentations.shape[0]  # sample number
         K = self.m_k                # classification number
         diceSumList = [0 for _ in range(K)]
+        diceCountList = [0 for _ in range(K)]
         for i in range(N):
-            diceSumList[0] += self.getDice((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
+            (dice,count) = self.getDice((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
+            diceSumList[0] += dice
+            diceCountList[0] += count
             for j in range(1, K):
-                diceSumList[j] += self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
-        return diceSumList
+                (dice, count) = self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
+                diceSumList[j] += dice
+                diceCountList[j] += count
+
+        return (diceSumList, diceCountList)
 
     def getDice(self, segmentation, label):
         '''
 
         :param segmenatation:  0-1 elements array
         :param label:  0-1 elements array
-        :return:
+        :return: (dice, count) count=1 indicates it is an effective dice, count=0 indicates there is no nonzero elements in label.
         '''
         nA = np.count_nonzero(segmentation)
         nB = np.count_nonzero(label)
         C = segmentation * label
         nC = np.count_nonzero(C)
-        return nC*2.0/(nA+nB) if 0 != nA+nB else 1.0
+        if 0 == nA+nB:
+            return (0, 0)
+        else:
+            return (nC*2.0/(nA+nB), 1)
 
     def setDataSize(self, batchSize, depth, height, width, k):
         '''
