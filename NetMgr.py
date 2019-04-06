@@ -1,5 +1,6 @@
 import os
 import torch
+import numpy as np
 
 
 class NetMgr:
@@ -22,3 +23,15 @@ class NetMgr:
             self.m_net.train()
         else: # eval
             self.m_net.eval()
+
+    def saveBestTestDice(self, testDiceList):
+        testDiceArray = numpy.asarray(testDiceList)
+        np.save(os.path.join(netPath,"bestTestDice.npy"), testDiceArray)
+
+    def loadBestTestDice(self):
+        filename = os.path.join(netPath,"bestTestDice.npy")
+        if os.path.isfile(filename):
+            bestTestDiceList = np.load(filename)
+        else:
+            bestTestDiceList= np.zeros((1,4))
+        return bestTestDiceList

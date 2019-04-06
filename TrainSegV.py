@@ -48,6 +48,8 @@ def main():
     netMgr = NetMgr(net)
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(netPath, True)  # True for train
+        bestTestDice = netMgr.loadBestTestDice()
+        print(f'current best test dice: ', '\t\t'.join( (f'{x:.4f}' for x in bestTestDice)))
     else:
         print("Network trains from scratch.")
 
@@ -103,13 +105,6 @@ def main():
 
         trainingLoss /= batches
 
-        # =============save net parameters==============
-        if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            netMgr.saveNet(netPath)
-        else:
-            print("Error: training loss is infinity. Program exit.")
-            sys.exit()
-
         # ================Test===============
         net.eval()
         nSamples = 0
@@ -141,6 +136,16 @@ def main():
         testLoss /= batches
         diceList = [x/nSamples for x in diceList]
         print(f'{epoch} \t\t {trainingLoss:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceList)))
+
+        # =============save net parameters==============
+        if trainingLoss != float('inf') and trainingLoss != float('nan'):
+            if diceList[1] >0.78 and diceList[2]>0.255 and diceList[1] > bestTestDice[1] and diceList[2] > bestTestDice[2]:
+                netMgr.saveNet(netPath)
+                bestTestDice = diceList
+                netMgr.saveBestTestDice(bestTestDice)
+        else:
+            print("Error: training loss is infinity. Program exit.")
+            sys.exit()
 
     torch.cuda.empty_cache()
     print("=============END of Training of Ovarian Cancer Segmentation V Model =================")
