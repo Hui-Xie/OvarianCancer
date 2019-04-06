@@ -49,7 +49,7 @@ latexItem = r'''
 \caption{\detokenize{PatientID_Slice}}
 \end{figure}
 
-\clearpage  % support huge number of fingures
+\clearpage  % support huge number of figures
 
 '''
 outputLatex = r'''/home/hxie1/temp/OvarianCancerReport.tex'''
