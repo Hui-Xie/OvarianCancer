@@ -5,9 +5,11 @@ latexHead = r'''
 
 \documentclass[12pt]{article}
 \usepackage[margin=0.3in]{geometry}
-\usepackage[pdftex]{graphicx}
-\usepackage[T1]{fontenc}  %do not interpret underscore
+%\usepackage[pdftex]{graphicx}
+\usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage[T1]{fontenc}  %do not interpret underscore
+
 \geometry{a4paper}
 
 \title{Ovarian Cancer Segmentation Test Report}
@@ -27,19 +29,19 @@ latexTail = r'''
 latexItem = r'''
 
 \begin{figure}
-	\begin{subfigure}{\textwidth}
+	\begin{subfigure}{\linewidth}
 		\centering
 		\includegraphics[scale=0.8]{LabelFile}
 		\caption{Ground Truth+CT}
 	\end{subfigure}
 
-	\begin{subfigure}{\textwidth}
+	\begin{subfigure}{\linewidth}
 		\centering
 		\includegraphics[scale=0.8]{CTFile}
 		\caption{CT}
 	\end{subfigure}
 
-	\begin{subfigure}{\textwidth}
+	\begin{subfigure}{\linewidth}
 		\centering
 		\includegraphics[scale=0.8]{SegFile}
     	\caption{Segmentation+CT}
@@ -47,6 +49,8 @@ latexItem = r'''
 
 \caption{\detokenize{PatientID_Slice}}
 \end{figure}
+
+\clearpage
 
 '''
 outputLatex = r'''/home/hxie1/temp/OvarianCancerReport.tex'''
