@@ -4,8 +4,7 @@ import os
 latexHead = r'''
 
 \documentclass[12pt]{article}
-\usepackage[margin=0.3in]{geometry}
-%\usepackage[pdftex]{graphicx}
+\usepackage[margin=0.8in]{geometry}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage[T1]{fontenc}  %do not interpret underscore
@@ -31,26 +30,26 @@ latexItem = r'''
 \begin{figure}
 	\begin{subfigure}{\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{LabelFile}
+		\includegraphics[scale=0.7]{LabelFile}
 		\caption{Ground Truth+CT}
 	\end{subfigure}
 
 	\begin{subfigure}{\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{CTFile}
+		\includegraphics[scale=0.7]{CTFile}
 		\caption{CT}
 	\end{subfigure}
 
 	\begin{subfigure}{\linewidth}
 		\centering
-		\includegraphics[scale=0.8]{SegFile}
+		\includegraphics[scale=0.7]{SegFile}
     	\caption{Segmentation+CT}
 	\end{subfigure}
 
 \caption{\detokenize{PatientID_Slice}}
 \end{figure}
 
-\clearpage
+\clearpage  % support too many fingures
 
 '''
 outputLatex = r'''/home/hxie1/temp/OvarianCancerReport.tex'''
