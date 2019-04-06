@@ -51,7 +51,8 @@ latexItem = r'''
 '''
 outputLatex = r'''/home/hxie1/temp/OvarianCancerReport.tex'''
 
-imagesPath = r'''/home/hxie1/c-xwu000/data/OvarianCancerCT/Extract_uniform/segmented'''
+#imagesPath = r'''/home/hxie1/c-xwu000/data/OvarianCancerCT/Extract_uniform/segmented'''
+imagesPath = r'''/home/hxie1/data/OvarianCancerCT/Extract_uniform/segmented'''
 
 with open(outputLatex, "w") as f:
     f.write(latexHead)
@@ -67,6 +68,7 @@ with open(outputLatex, "w") as f:
 
         basename = os.path.basename(ctFile)
         patientID_Slice = basename[0: basename.find('.png')]
+        patientID_Slice = 'PatitenID_Slice: ' + patientID_Slice
 
         item = latexItem.replace('LabelFile', labelFile).replace('CTFile', ctFile).replace('SegFile', segFile).replace('PatientID_Slice', patientID_Slice)
         f.write(item)
