@@ -140,7 +140,7 @@ def main():
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            if diceAvgList[0] > 0.33  and diceAvgList[0] > bestTestDiceList[0]:
+            if diceAvgList[0] > 0.18  and diceAvgList[0] > bestTestDiceList[0]:
                 netMgr.saveNet()
                 bestTestDiceList = diceAvgList
                 netMgr.saveBestTestDice(bestTestDiceList)
