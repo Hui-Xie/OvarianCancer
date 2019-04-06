@@ -75,6 +75,7 @@ with open(outputLatex, "w") as f:
 
         item = latexItem.replace('LabelFile', labelFile).replace('CTFile', ctFile).replace('SegFile', segFile).replace('PatientID_Slice', patientID_Slice)
         f.write(item)
+
     f.write(latexTail)
 
 print(f'{outputLatex} has been outputed.')
