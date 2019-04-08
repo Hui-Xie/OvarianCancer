@@ -64,7 +64,7 @@ def main():
     #trainDataMgr.setOneSampleTraining(True) # for debug
     #testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
-    alwaysSave = True  # always save the network parameter
+    alwaysSave = False  # always save the network parameter
     # ===========debug==================
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -145,7 +145,7 @@ def main():
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             if alwaysSave:
                 netMgr.saveNet()
-            elif diceAvgList[0] > 0.18  and diceAvgList[0] > bestTestDiceList[0]:
+            elif diceAvgList[0] > 0.30  and diceAvgList[0] > bestTestDiceList[0]:
                 netMgr.saveNet()
                 bestTestDiceList = diceAvgList
                 netMgr.saveBestTestDice(bestTestDiceList)
