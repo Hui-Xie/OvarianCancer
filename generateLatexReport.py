@@ -19,6 +19,20 @@ latexHead = r'''
 
 '''
 
+latextIntro = r'''
+
+\section{Introduction}
+
+\begin{verbatim}
+%add your specific content here
+
+\end{verbatim}
+
+\section{Test Result Figures}
+
+'''
+
+
 latexTail = r'''
 
 \end{document}
@@ -59,6 +73,7 @@ imagesPath = r'''/home/hxie1/data/OvarianCancerCT/Extract_uniform/segmented'''
 
 with open(outputLatex, "w") as f:
     f.write(latexHead)
+    f.write(latextIntro)
 
     originalCwd = os.getcwd()
     os.chdir(imagesPath)
