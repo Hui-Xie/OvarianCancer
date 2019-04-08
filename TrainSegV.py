@@ -1,5 +1,6 @@
 import sys
 import datetime
+import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -29,6 +30,7 @@ def main():
     netPath = sys.argv[1]
     trainDataMgr = DataMgr(sys.argv[2], sys.argv[3])
     trainDataMgr.setDataSize(64, 21,281,281,4)  #batchSize, depth, height, width, k
+    trainDataMgr.setMaxShift(15)                #translation data augmentation
 
     testImagesDir, testLabelsDir = trainDataMgr.getTestDirs()
     testDataMgr = DataMgr(testImagesDir, testLabelsDir)
@@ -83,6 +85,7 @@ def main():
     for epoch in range(epochs):
 
         #================Training===============
+        random.seed()
         trainingLoss = 0.0
         batches = 0
         net.train()
@@ -108,7 +111,6 @@ def main():
 
         # ================Test===============
         net.eval()
-        nSamples = 0
         with torch.no_grad():
             diceSumList = [0 for _ in range(K)]
             diceCountList = [0 for _ in range(K)]

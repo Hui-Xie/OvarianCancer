@@ -12,8 +12,12 @@ class DataMgr:
         self.m_oneSampleTraining = False
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
+        self.m_maxShift  = 0
         self.buildSegSliceTupleList()
         self.createSegmentedDir()
+
+    def setMaxShift(self, maxShift):
+        self.m_maxShift = maxShift
 
     def createSegmentedDir(self):
         self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
@@ -88,7 +92,7 @@ class DataMgr:
         (origin, size, spacing, direction) = imageAttr
         image = sitk.GetImageFromArray(numpyArray)
         offset = indexOffset.copy()[::-1]
-        Dims = len(m_origin)
+        Dims = len(origin)
         newOrigin = [origin[i]+ offset[i]*spacing[i]*direction[i*Dims+i] for i in range(Dims)]
         image.SetOrigin(newOrigin)
         image.SetSpacing(spacing)
@@ -269,6 +273,12 @@ class DataMgr:
     def getNumClassification(self):
         return self.m_k
 
+    def randomTranslation(self,hc, wc):
+        if 0 != self.m_maxShift:
+            hc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
+            wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
+        return (hc, wc)
+
     def dataLabelGenerator(self, shuffle):
         self.m_shuffle = shuffle
         N = len(self.m_segSliceTupleList)
@@ -287,7 +297,8 @@ class DataMgr:
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
-            (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: hight center, wc: width center
+            (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: height center, wc: width center
+            (hc,wc) = self.randomTranslation(hc, wc) # translation data augmentation
 
             if batch >= self.m_batchSize:
                 yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
