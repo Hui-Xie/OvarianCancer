@@ -12,12 +12,18 @@ class DataMgr:
         self.m_oneSampleTraining = False
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
+
         self.m_maxShift  = 0
+        self.m_flipProb = 0
+
         self.buildSegSliceTupleList()
         self.createSegmentedDir()
 
     def setMaxShift(self, maxShift):
         self.m_maxShift = maxShift
+
+    def setFlipProb(self, prob):
+        self.m_flipProb = prob
 
     def createSegmentedDir(self):
         self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
@@ -311,6 +317,10 @@ class DataMgr:
             data = self.cropVolumeCopy(imageArray, j, hc, wc, radius)
             data = self.preprocessData(data)
             label= self.cropSliceCopy(labelArray,j, hc, wc)
+
+            (data, label) = self.flipDataLabel(data, label)
+
+            data = np.expand_dims(data, 0)  # add channel dim as 1
             dataList.append(data)
             labelList.append(label)
             batch +=1
@@ -342,7 +352,6 @@ class DataMgr:
     def preprocessData(self, array) -> np.ndarray:
         data = array.clip(-300,300)
         data = self.sliceNormalize(data)
-        data = np.expand_dims(data, 0) # add channel dim as 1
         return data
 
     def sliceNormalize(self, array):
@@ -358,6 +367,12 @@ class DataMgr:
         for i in range(len(ptp)):
             result[i, :] /= ptp[i]
         return result
+
+    def flipDataLabel(self, data, label):
+        if 0 != self.m_flipProb and random.uniform(0,1) <= self.m_flipProb:
+            data  = np.flip(data, len(data.shape)-1)
+            label = np.flip(label, len(label.shape)-1)
+        return (data, label)
 
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
