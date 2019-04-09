@@ -280,7 +280,7 @@ class DataMgr:
         return self.m_k
 
     def randomTranslation(self,hc, wc):
-        if 0 != self.m_maxShift:
+        if self.m_maxShift > 0:
             hc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
             wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
         return (hc, wc)
@@ -369,7 +369,7 @@ class DataMgr:
         return result
 
     def flipDataLabel(self, data, label):
-        if 0 != self.m_flipProb and random.uniform(0,1) <= self.m_flipProb:
+        if self.m_flipProb >0 and random.uniform(0,1) <= self.m_flipProb:
             data  = np.flip(data, len(data.shape)-1)
             label = np.flip(label, len(label.shape)-1)
         return (data, label)
