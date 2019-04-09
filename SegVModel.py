@@ -33,26 +33,26 @@ class SegVModel (nn.Module):
         self.m_conv0 = nn.Conv2d(42,  4,  (1,1), stride=1)                   #output:4*281*281
 
     def forward(self, x):
-        x1 = self.m_bn1(F.relu(self.m_conv1(x )))
-        x2 = self.m_bn2(F.relu(self.m_conv2(x1)))
-        x3 = self.m_bn3(F.relu(self.m_conv3(x2)))
+        x1 = F.relu(self.m_bn1(self.m_conv1(x )))     #Conv->BatchNorm->ReLU will keep half postive input.
+        x2 = F.relu(self.m_bn2(self.m_conv2(x1)))
+        x3 = F.relu(self.m_bn3(self.m_conv3(x2)))
         x3 = x3.squeeze(dim=2)                         # from 3D to 2D, there is squeeze
-        x4 = self.m_bn4(F.relu(self.m_conv4(x3)))
-        x5 = self.m_bn5(F.relu(self.m_conv5(x4)))
-        xc = self.m_bn6(F.relu(self.m_conv6(x5)))  # xc means x computing
+        x4 = F.relu(self.m_bn4(self.m_conv4(x3)))
+        x5 = F.relu(self.m_bn5(self.m_conv5(x4)))
+        xc = F.relu(self.m_bn6(self.m_conv6(x5)))  # xc means x computing
             
-        xc = self.m_bnT6(F.relu(self.m_convT6(xc)))
+        xc = F.relu(self.m_bnT6(self.m_convT6(xc)))
         xc = torch.cat((xc,x5),1)                 # channel is in dim 0, so concatenate at dim 1.
-        xc = self.m_bnT5(F.relu(self.m_convT5(xc)))
+        xc = F.relu(self.m_bnT5(self.m_convT5(xc)))
         xc = torch.cat((xc, x4), 1)
-        xc = self.m_bnT4(F.relu(self.m_convT4(xc)))
+        xc = F.relu(self.m_bnT4(self.m_convT4(xc)))
         xc = torch.cat((xc, x3), 1)               # first concatenate with squeezed x3, then unsqueeze
         xc = xc.unsqueeze(2)
-        xc = self.m_bnT3(F.relu(self.m_convT3(xc)))
+        xc = F.relu(self.m_bnT3(self.m_convT3(xc)))
         xc = torch.cat((xc, x2), 1)
-        xc = self.m_bnT2(F.relu(self.m_convT2(xc)))
+        xc = F.relu(self.m_bnT2(self.m_convT2(xc)))
         xc = torch.cat((xc, x1), 1)
-        xc = self.m_bnT1(F.relu(self.m_convT1(xc)))
+        xc = F.relu(self.m_bnT1(self.m_convT1(xc)))
         xc = torch.cat((xc, x), 2)
         xc = xc.squeeze(dim=1)
 
