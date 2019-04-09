@@ -5,6 +5,11 @@ import torch.nn.functional as F
 class SegVModel (nn.Module):
     def __init__(self):
         super(SegVModel, self).__init__()
+
+        self.m_dropoutProb = 0.2
+        self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
+        self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
+
         self.m_conv1 = nn.Conv3d(1,   32,  (5,5,5), stride=(2,2,2))   #inputSize: 21*281*281; output:32*9*139*139
         self.m_bn1   = nn.BatchNorm3d(32)
         self.m_conv2 = nn.Conv3d(32,  64,  (5,3,3), stride=(2,2,2))   #output: 64*3*69*69
@@ -15,7 +20,7 @@ class SegVModel (nn.Module):
         self.m_bn4 = nn.BatchNorm2d(256)
         self.m_conv5 = nn.Conv2d(256, 512, (3,3),   stride=(2,2))     #output: 512*7*7
         self.m_bn5 = nn.BatchNorm2d(512)
-        self.m_conv6 = nn.Conv2d(512, 512, (3,3),   stride=(2, 2))    #output: 512*3*3
+        self.m_conv6 = nn.Conv2d(512, 512, (3,3),   stride=(2,2))    #output: 512*3*3
         self.m_bn6 = nn.BatchNorm2d(512)
 
         self.m_convT6 = nn.ConvTranspose2d(512,  512, (3,3),  stride=(2, 2))  #output: 512*7*7
@@ -33,26 +38,26 @@ class SegVModel (nn.Module):
         self.m_conv0 = nn.Conv2d(42,  4,  (1,1), stride=1)                   #output:4*281*281
 
     def forward(self, x):
-        x1 = F.relu(self.m_bn1(self.m_conv1(x )))     #Conv->BatchNorm->ReLU will keep half postive input.
-        x2 = F.relu(self.m_bn2(self.m_conv2(x1)))
-        x3 = F.relu(self.m_bn3(self.m_conv3(x2)))
+        x1 = self.m_dropout3d( F.relu(self.m_bn1(self.m_conv1(x ))))     #Conv->BatchNorm->ReLU will keep half postive input.
+        x2 = self.m_dropout3d( F.relu(self.m_bn2(self.m_conv2(x1))))
+        x3 = self.m_dropout3d( F.relu(self.m_bn3(self.m_conv3(x2))))
         x3 = x3.squeeze(dim=2)                         # from 3D to 2D, there is squeeze
-        x4 = F.relu(self.m_bn4(self.m_conv4(x3)))
-        x5 = F.relu(self.m_bn5(self.m_conv5(x4)))
-        xc = F.relu(self.m_bn6(self.m_conv6(x5)))  # xc means x computing
+        x4 = self.m_dropout2d( F.relu(self.m_bn4(self.m_conv4(x3))))
+        x5 = self.m_dropout2d( F.relu(self.m_bn5(self.m_conv5(x4))))
+        xc = self.m_dropout2d( F.relu(self.m_bn6(self.m_conv6(x5))))  # xc means x computing
             
-        xc = F.relu(self.m_bnT6(self.m_convT6(xc)))
+        xc = self.m_dropout2d( F.relu(self.m_bnT6(self.m_convT6(xc))))
         xc = torch.cat((xc,x5),1)                 # channel is in dim 0, so concatenate at dim 1.
-        xc = F.relu(self.m_bnT5(self.m_convT5(xc)))
+        xc = self.m_dropout2d( F.relu(self.m_bnT5(self.m_convT5(xc))))
         xc = torch.cat((xc, x4), 1)
-        xc = F.relu(self.m_bnT4(self.m_convT4(xc)))
+        xc = self.m_dropout2d( F.relu(self.m_bnT4(self.m_convT4(xc))))
         xc = torch.cat((xc, x3), 1)               # first concatenate with squeezed x3, then unsqueeze
         xc = xc.unsqueeze(2)
-        xc = F.relu(self.m_bnT3(self.m_convT3(xc)))
+        xc = self.m_dropout3d( F.relu(self.m_bnT3(self.m_convT3(xc))))
         xc = torch.cat((xc, x2), 1)
-        xc = F.relu(self.m_bnT2(self.m_convT2(xc)))
+        xc = self.m_dropout3d( F.relu(self.m_bnT2(self.m_convT2(xc))))
         xc = torch.cat((xc, x1), 1)
-        xc = F.relu(self.m_bnT1(self.m_convT1(xc)))
+        xc = self.m_dropout3d( F.relu(self.m_bnT1(self.m_convT1(xc))))
         xc = torch.cat((xc, x), 2)
         xc = xc.squeeze(dim=1)
 
@@ -84,5 +89,8 @@ class SegVModel (nn.Module):
         for param in params:
             sum += param.nelement()
         print(f"Network has total {sum} parameters.")
+
+    def setDropoutProb(self, prob):
+        self.m_dropoutProb = prob
 
 

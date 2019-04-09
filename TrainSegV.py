@@ -40,6 +40,7 @@ def main():
 
     net= SegVModel()
     net.printParametersScale()
+    net.setDropoutProb(0.2)
 
     lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
