@@ -28,6 +28,8 @@ print("pixels probability: ", pixelProb)
 weights = [1/x for x in pixelProb]
 print("Label weights in Cross Entropy: ", weights)
 
+print("\n")
+
 print("Slice statistics: ", sliceStatis)
 sumSlices = sliceStatis[0]
 print("slice probability: ", [x/sumSlices for x in sliceStatis])
