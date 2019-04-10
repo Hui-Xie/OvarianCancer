@@ -416,3 +416,23 @@ class DataMgr:
             overlapLabelImage = inputSlice +  labels[i]
             overlapLabelPath = baseNamePath+ '_LabelMerge.png'
             imsave(overlapLabelPath,overlapLabelImage)
+
+    def labelStatistic(self, labelArray, k):
+        statisList = [0]*k
+        for x in np.nditer(labelArray):
+            statisList[x] +=1
+        return statisList
+
+    def batchLabelStatistic(self, batchLabelArray, k):
+        N = batchLabelArray.shape[0]
+        labelStatisSum = [0]*k
+        sliceStatisSum = [0]*k
+        for i in range(N):
+            labelStatis = self.labelStatistic(batchLabelArray[i], k)
+            for index, x in enumerate(labelStatis):
+                if 0 !=x:
+                    sliceStatisSum[index] +=1
+            labelStatisSum = [x+y for x,y in zip(labelStatisSum, labelStatis)]
+        return (labelStatisSum, sliceStatisSum)
+
+
