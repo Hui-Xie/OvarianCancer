@@ -61,13 +61,13 @@ def main():
     net.to(device)
 
     K = testDataMgr.getNumClassification()
-    print("Hints: TestDice_0 is the dice coeff for all non-zero labels")
-    print("Hints: TestDice_1 is for primary cancer(green), testDice_2 is for metastasis(yellow), and testDice_3 is for invaded lymph node(brown).")
+    print("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
+    print("Hints: Test Dice_1 is for primary cancer(green), test Dice_2 is for metastasis(yellow), and test Dice_3 is for invaded lymph node(brown).")
     print("Hints: TPR_0 is the TPR for all non-zero labels")
     print("Hints: TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
-    diceHead = (f'TestDice_{i}' for i in range(K))
+    diceHead = (f'Dice_{i}' for i in range(K))
     TPRHead = (f'TPR_{i}' for i in range(K))
-    print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead), '\t'.join(TPRHead))  # print output head
+    print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead),'\t', '\t'.join(TPRHead))  # print output head
 
     net.eval()
     n = 0 # n indicate the first slice index in the dataMgr.m_segSliceTupleList
@@ -107,7 +107,7 @@ def main():
     testLoss /= batches
     diceAvgList = [x / (y + 1e-8) for x, y in zip(diceSumList, diceCountList)]
     TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
-    print(f'{0} \t {0:.4f} \t {testLoss:.4f} \t', '\t'.join((f'{x:.3f}' for x in diceAvgList)),'\t'.join((f'{x:.3f}' for x in TPRAvgList)))
+    print(f'{0} \t {0:.4f} \t {testLoss:.4f} \t', '\t'.join((f'{x:.3f}' for x in diceAvgList)),'\t', '\t'.join((f'{x:.3f}' for x in TPRAvgList)))
 
     print(f'\nTotal test {n} images in {sys.argv[2]}.')
 
