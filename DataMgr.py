@@ -351,7 +351,7 @@ class DataMgr:
 
     def preprocessData(self, array) -> np.ndarray:
         data = array.clip(-300,300)
-        #data = self.sliceNormalize(data)  # TODO this needs to reconsider, maybe return (norm(x) + x); or cancel
+        data = self.sliceNormalize(data)
         return data
 
     def sliceNormalize(self, array):
