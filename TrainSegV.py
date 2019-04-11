@@ -42,7 +42,7 @@ def main():
 
     net= SegVModel()
     net.printParametersScale()
-    net.setDropoutProb(0.1)
+    net.setDropoutProb(0)
 
     ceWeight = torch.tensor([0.1, 3.9, 6.8, 3065])
     lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
@@ -88,7 +88,7 @@ def main():
     print("Hints: TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
     diceHead = (f'TestDice_{i}' for i in range(K))
     TPRHead = (f'TPR_{i}' for i in range(K))
-    print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead), '\t'.join(TPRHead))   # print output head
+    print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead),'\t', '\t'.join(TPRHead))   # print output head
 
     for epoch in range(epochs):
 
@@ -156,7 +156,7 @@ def main():
         testLoss /= batches
         diceAvgList = [x/(y+1e-8) for x,y in zip(diceSumList, diceCountList)]
         TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
-        print(f'{epoch} \t {trainingLoss:.4f} \t {testLoss:.4f} \t', '\t'.join( (f'{x:.3f}' for x in diceAvgList)), '\t'.join( (f'{x:.3f}' for x in TPRAvgList)))
+        print(f'{epoch} \t {trainingLoss:.4f} \t {testLoss:.4f} \t', '\t'.join( (f'{x:.3f}' for x in diceAvgList)),'\t', '\t'.join( (f'{x:.3f}' for x in TPRAvgList)))
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
