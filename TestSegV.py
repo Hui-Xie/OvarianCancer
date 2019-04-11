@@ -36,7 +36,8 @@ def main():
     net= SegVModel()
     net.printParametersScale()
 
-    lossFunc = nn.CrossEntropyLoss()
+    ceWeight = torch.tensor([0.1, 3.9, 6.8, 3065])
+    lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     net.setLossFunc(lossFunc)
 
     netMgr = NetMgr(net, netPath)
