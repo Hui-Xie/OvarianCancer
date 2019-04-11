@@ -42,7 +42,7 @@ def main():
 
     net= SegVModel()
     net.printParametersScale()
-    net.setDropoutProb(0.3)
+    net.setDropoutProb(0.1)
 
     ceWeight = torch.tensor([0.1, 3.9, 6.8, 3065])
     lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
