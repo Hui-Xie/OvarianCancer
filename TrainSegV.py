@@ -44,7 +44,7 @@ def main():
     net.printParametersScale()
     net.setDropoutProb(0)
 
-    ceWeight = torch.tensor([0.1, 3.9, 6.8, 3065])
+    ceWeight = torch.FloatTensor([1, 39, 68, 30653])
     lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     net.setLossFunc(lossFunc)
 
