@@ -64,15 +64,20 @@ def main():
 
     K = testDataMgr.getNumClassification()
     print("Hints: TestDice_0 is the dice coeff for all non-zero labels")
-    print("Hints: TestDice_1 is for primary cancer(green), testDice_2 is for metastasis(yellow), and testDice_3 is for invaded lymph node(brown).\n")
+    print("Hints: TestDice_1 is for primary cancer(green), testDice_2 is for metastasis(yellow), and testDice_3 is for invaded lymph node(brown).")
+    print("Hints: TPR_0 is the TPR for all non-zero labels")
+    print("Hints: TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
     diceHead = (f'TestDice_{i}' for i in range(K))
-    print(f"Epoch \t TrainingLoss \t TestLoss \t\t", '\t\t'.join(diceHead))   # print output head
+    TPRHead = (f'TPR_{i}' for i in range(K))
+    print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead), '\t'.join(TPRHead))  # print output head
 
     net.eval()
     n = 0 # n indicate the first slice index in the dataMgr.m_segSliceTupleList
     with torch.no_grad():
         diceSumList = [0 for _ in range(K)]
         diceCountList = [0 for _ in range(K)]
+        TPRSumList = [0 for _ in range(K)]
+        TPRCountList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
         for inputsCpu, labelsCpu in testDataMgr.dataLabelGenerator(False):
@@ -88,8 +93,12 @@ def main():
             testDataMgr.saveInputsSegmentations2Images(inputsCpu, labelsCpu, segmentations, n)
 
             (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu)
+            (TPRSumBatch, TPRCountBatch) = testDataMgr.getTPRSumList(segmentations, labelsCpu)
+
             diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
             diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]
+            TPRSumList = [x + y for x, y in zip(TPRSumList, TPRSumBatch)]
+            TPRCountList = [x + y for x, y in zip(TPRCountList, TPRCountBatch)]
 
             testLoss += batchLoss
             batches += 1
@@ -99,7 +108,8 @@ def main():
     #===========print train and test progress===============
     testLoss /= batches
     diceAvgList = [x / (y + 1e-8) for x, y in zip(diceSumList, diceCountList)]
-    print(f'{0} \t\t {0:.7f} \t\t {testLoss:.7f} \t\t', '\t\t\t'.join( (f'{x:.4f}' for x in diceAvgList)))
+    TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
+    print(f'{0} \t {0:.4f} \t {testLoss:.4f} \t', '\t'.join((f'{x:.3f}' for x in diceAvgList)),'\t'.join((f'{x:.3f}' for x in TPRAvgList)))
 
     print(f'\nTotal test {n} images in {sys.argv[2]}.')
 

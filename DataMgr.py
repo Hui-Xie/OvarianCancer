@@ -253,6 +253,38 @@ class DataMgr:
         else:
             return (nC*2.0/(nA+nB), 1)
 
+    def getTPR(self, segmentation, label):#  sensitivity, recall, hit rate, or true positive rate (TPR)
+        nB = np.count_nonzero(label)
+        C = segmentation * label
+        nC = np.count_nonzero(C)
+        if 0 == nB:
+            return (0, 0)
+        else:
+            return (nC/nB, 1)
+
+    def getTPRSumList(self, segmentations, labels):
+        '''
+        :param segmentations: with N samples
+        :param labels: ground truth with N samples
+        :return: (TPRSumList,TPRCountList)
+                TPRSumList: whose element 0 indicates total TPR sum over N samples, element 1 indicate label1 TPR sum over N samples, etc
+                TPRCountList: indicate effective TPR count
+        '''
+        N = segmentations.shape[0]  # sample number
+        K = self.m_k                # classification number
+        TPRSumList = [0 for _ in range(K)]
+        TPRCountList = [0 for _ in range(K)]
+        for i in range(N):
+            (TPR,count) = self.getTPR((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
+            TPRSumList[0] += TPR
+            TPRCountList[0] += count
+            for j in range(1, K):
+                (TPR, count) = self.getTPR((segmentations[i]==j)*1, (labels[i]==j)*1 )
+                TPRSumList[j] += TPR
+                TPRCountList[j] += count
+
+        return (TPRSumList, TPRCountList)
+
     def setDataSize(self, batchSize, depth, height, width, k):
         '''
         :param batchSize:
