@@ -1,9 +1,7 @@
 import sys
-import os
 import datetime
 import torch
 import torch.nn as nn
-import torch.optim as optim
 
 torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
 sys.path.append(torchSummaryPath)

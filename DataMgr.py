@@ -110,7 +110,7 @@ class DataMgr:
         return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("Images/", "Labels/")
 
     def getLabeledSliceIndex(self, labelArray):
-        nonzeroSlices = labelArray.sum((1,2)).nonzero(); # a tuple of arrays
+        nonzeroSlices = labelArray.sum((1,2)).nonzero() # a tuple of arrays
         nonzeroSlices = nonzeroSlices[0]
         if 0 == len(nonzeroSlices):
             print("Infor: label file does not find any nonzero label. ")
@@ -206,8 +206,8 @@ class DataMgr:
         oneHotArray = np.zeros(shape)
         it = np.nditer(segmentationArray, flags=['multi_index'])
         while not it.finished:
-             oneHotArray[(it[0],) + it.multi_index] = 1
-             it.iternext()
+            oneHotArray[(it[0],) + it.multi_index] = 1
+            it.iternext()
         return oneHotArray
 
     def oneHotArray2Segmentation(self, oneHotArray) -> np.ndarray:
@@ -367,7 +367,7 @@ class DataMgr:
     def checkOrientConsistent(self, imagesDir, suffix):
         print(f'Program is checking image directions. Please waiting......')
         imagesList = self.getFilesList(imagesDir, suffix)
-        inconsistenNum = 0;
+        inconsistenNum = 0
         for filename in imagesList:
             image = sitk.ReadImage(filename)
             origin = image.GetOrigin()
