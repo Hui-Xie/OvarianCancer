@@ -12,6 +12,7 @@ from torchsummary import summary
 from DataMgr import DataMgr
 from SegVModel import SegVModel
 from NetMgr  import NetMgr
+from FocalCELoss import FocalCELoss
 
 def printUsage(argv):
     print("============Train Ovarian Cancer Segmentation V model=============")
