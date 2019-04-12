@@ -10,6 +10,7 @@ from torchsummary import summary
 from DataMgr import DataMgr
 from SegVModel import SegVModel
 from NetMgr  import NetMgr
+from FocalCELoss import FocalCELoss
 
 def printUsage(argv):
     print("============Test Ovarian Cancer Segmentation V model=============")
@@ -34,8 +35,10 @@ def main():
     net= SegVModel()
     net.printParametersScale()
 
-    ceWeight = torch.FloatTensor([1, 39, 68, 30653])
-    lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
+    #ceWeight = torch.FloatTensor([1, 39, 68, 30653])
+    #lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
+
+    lossFunc = FocalCELoss()
     #lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
 
