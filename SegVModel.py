@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class SegVModel (nn.Module):
     def __init__(self):
-        super(SegVModel, self).__init__()
+        super().__init__()
 
         self.m_dropoutProb = 0.2
         self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
