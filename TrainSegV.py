@@ -71,7 +71,6 @@ def main():
     #trainDataMgr.setOneSampleTraining(True) # for debug
     #testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
-    alwaysSave = False  # always save the network parameter
     # ===========debug==================
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -162,14 +161,10 @@ def main():
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            if alwaysSave:
-                netMgr.saveNet()
-            elif diceAvgList[0] > 0.30  and diceAvgList[0] > bestTestDiceList[0]:
-                netMgr.saveNet()
+            netMgr.save(diceAvgList)
+            if diceAvgList[0] > 0.30  and diceAvgList[0] > bestTestDiceList[0]:
                 bestTestDiceList = diceAvgList
-                netMgr.saveBestTestDice(bestTestDiceList)
-            else:
-                pass
+                netMgr.saveBest(bestTestDiceList)
         else:
             print("Error: training loss is infinity. Program exit.")
             sys.exit()
