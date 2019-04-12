@@ -64,8 +64,8 @@ def main():
     K = testDataMgr.getNumClassification()
     print("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
     print("Hints: Test Dice_1 is for primary cancer(green), test Dice_2 is for metastasis(yellow), and test Dice_3 is for invaded lymph node(brown).")
-    print("Hints: TPR_0 is the TPR for all non-zero labels")
-    print("Hints: TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
+    print("Hints: Test TPR_0 is the TPR for all non-zero labels")
+    print("Hints: Test TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
     diceHead = (f'Dice_{i}' for i in range(K))
     TPRHead = (f'TPR_{i}' for i in range(K))
     print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead),'\t', '\t'.join(TPRHead))  # print output head

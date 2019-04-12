@@ -40,7 +40,7 @@ class SegVModel (nn.Module):
     def forward(self, x):
 
         # without residual link within layer
-        '''
+
         x1 = self.m_dropout3d( F.relu(self.m_bn1(self.m_conv1(x ))))     #Conv->BatchNorm->ReLU will keep half postive input.
         x2 = self.m_dropout3d( F.relu(self.m_bn2(self.m_conv2(x1))))
         x3 = self.m_dropout3d( F.relu(self.m_bn3(self.m_conv3(x2))))
@@ -65,9 +65,10 @@ class SegVModel (nn.Module):
         xc = xc.squeeze(dim=1)
 
         xc = self.m_conv0(xc)
-        '''
 
-        #with residual link within layer
+
+        #with residual link within layer: the expeiriment result is not good.
+        '''
         x1 = self.m_conv1(x)
         x1 = self.m_dropout3d(F.relu(x1 + self.m_bn1(x1)))  # Conv->BatchNorm->ReLU will keep half postive input.
         x2 = self.m_conv2(x1)
@@ -110,6 +111,8 @@ class SegVModel (nn.Module):
         xc = xc.squeeze(dim=1)
 
         xc = self.m_conv0(xc)
+        
+        '''
 
         # return output
         return xc
