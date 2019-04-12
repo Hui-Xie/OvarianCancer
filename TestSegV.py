@@ -35,10 +35,9 @@ def main():
     net= SegVModel()
     net.printParametersScale()
 
-    #ceWeight = torch.FloatTensor([1, 39, 68, 30653])
-    #lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
-
-    lossFunc = FocalCELoss()
+    ceWeight = torch.FloatTensor([1, 39, 68, 30653])
+    lossFunc = FocalCELoss(weight=ceWeight)
+    # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     #lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
 

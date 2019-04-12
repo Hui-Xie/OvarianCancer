@@ -45,7 +45,9 @@ def main():
     net.setDropoutProb(0.2)
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
-    lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
+    lossFunc = FocalCELoss(weight=ceWeight)
+    # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
+    # lossFunc = nn.CrossEntropyLoss()
     net.setLossFunc(lossFunc)
 
     optimizer = optim.Adam(net.parameters())
