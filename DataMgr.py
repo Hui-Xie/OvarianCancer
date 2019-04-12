@@ -248,7 +248,7 @@ class DataMgr:
         nB = np.count_nonzero(label)
         C = segmentation * label
         nC = np.count_nonzero(C)
-        if 0 == (nA+nB):
+        if 0 == nB:  # the dice was calculated over the slice where a ground truth was available.
             return (0, 0)
         else:
             return (nC*2.0/(nA+nB), 1)
