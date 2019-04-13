@@ -7,6 +7,12 @@ class SegVModel(nn.Module):
         self.m_dropoutProb = 0.2
         self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
         self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
+        self.m_optimizer = None
+        self.m_lossFunc = None
+
+
+    def forward(self, x):
+        pass
 
     def setOptimizer(self, optimizer):
         self.m_optimizer = optimizer
@@ -28,11 +34,11 @@ class SegVModel(nn.Module):
         return loss.item(), outputs
 
     def printParametersScale(self):
-        sum = 0
+        sumPara = 0
         params = self.parameters()
         for param in params:
-            sum += param.nelement()
-        print(f"Network has total {sum} parameters.")
+            sumPara += param.nelement()
+        print(f"Network has total {sumPara} parameters.")
 
     def setDropoutProb(self, prob):
         self.m_dropoutProb = prob

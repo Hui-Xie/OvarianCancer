@@ -13,8 +13,20 @@ class DataMgr:
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
 
-        self.m_maxShift  = 0
+        self.m_maxShift = 0
         self.m_flipProb = 0
+        self.m_segDir = None
+        self.m_imagesList = []
+        self.m_segSliceTupleList = []
+        self.m_imageAttrList = []
+
+        self.m_batchSize = 0
+        self.m_depth = 0
+        self.m_height = 0
+        self.m_width = 0
+        self.m_k = 0
+
+        self.m_shuffle = True
 
         self.buildSegSliceTupleList()
         self.createSegmentedDir()
@@ -30,7 +42,8 @@ class DataMgr:
         if not os.path.exists(self.m_segDir):
             os.mkdir(self.m_segDir)
 
-    def getFilesList(self, filesDir, suffix):
+    @staticmethod
+    def getFilesList(filesDir, suffix):
         originalCwd = os.getcwd()
         os.chdir(filesDir)
         filesList = [os.path.abspath(x) for x in os.listdir(filesDir) if suffix in x]
@@ -38,10 +51,10 @@ class DataMgr:
         return filesList
 
     def buildSegSliceTupleList(self):
-        '''
+        """
         build segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
         :return:
-        '''
+        """
         print('Building the Segmented Slice Tuple list, please waiting......')
         self.m_segSliceTupleList = []
         self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
@@ -50,14 +63,14 @@ class DataMgr:
             labelArray = self.readImageFile(label)
             sliceList = self.getLabeledSliceIndex(labelArray)
             for j in sliceList:
-                self.m_segSliceTupleList.append((i,j))
+                self.m_segSliceTupleList.append((i, j))
         print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices.')
 
     def buildImageAttrList(self):
-        '''
+        """
         build a list of tuples including (origin, size, spacing, direction) in ITK axis order
         :return: void
-        '''
+        """
         print("Building image attributes list, please waiting......")
         self.m_imageAttrList = []
         for image in self.m_imagesList:
@@ -65,28 +78,31 @@ class DataMgr:
             self.m_imageAttrList.append(attr)
 
     def getTestDirs(self):  # may need to delete this function
-        return (self.m_imagesDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels'))
+        return self.m_imagesDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels')
 
-    def readImageFile(self, filename):
+    @staticmethod
+    def readImageFile(filename):
         image = sitk.ReadImage(filename)
-        dataArray = sitk.GetArrayFromImage(image) #numpy axis order is a reverse of ITK axis order
+        dataArray = sitk.GetArrayFromImage(image)   # numpy axis order is a reverse of ITK axis order
         return dataArray
 
-    def getImageAttributes(self, filename):
-        '''
+    @staticmethod
+    def getImageAttributes(filename):
+        """
         :param filename:
         :return: a tuple including (origin, size, spacing, direction) in ITK axis order
-        '''
+        """
         image = sitk.ReadImage(filename)
         # these attributes are in ITK axis order
         origin = image.GetOrigin()
         size = image.GetSize()
         spacing = image.GetSpacing()
         direction = image.GetDirection()
-        return (origin, size, spacing, direction)
+        return origin, size, spacing, direction
 
-    def saveImage(self, imageAttr, numpyArray, indexOffset, filename):
-        '''
+    @staticmethod
+    def saveImage(imageAttr, numpyArray, indexOffset, filename):
+        """
          saveImage from numpyArray
          SimpleITK and numpy indexing access is in opposite order!
         :param imageAttr, a tuple including (origin, size, spacing, direction) in ITK axis order
@@ -94,23 +110,24 @@ class DataMgr:
         :param indexOffset: in numpy nd array axis order
         :param filename:
         :return:
-        '''
+        """
         (origin, size, spacing, direction) = imageAttr
         image = sitk.GetImageFromArray(numpyArray)
         offset = indexOffset.copy()[::-1]
         Dims = len(origin)
-        newOrigin = [origin[i]+ offset[i]*spacing[i]*direction[i*Dims+i] for i in range(Dims)]
+        newOrigin = [origin[i] + offset[i]*spacing[i]*direction[i * Dims + i] for i in range(Dims)]
         image.SetOrigin(newOrigin)
         image.SetSpacing(spacing)
         image.SetDirection(direction)
         sitk.WriteImage(image, filename)
 
-
-    def getLabelFile(self, imageFile):
+    @staticmethod
+    def getLabelFile(imageFile):
         return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("Images/", "Labels/")
 
-    def getLabeledSliceIndex(self, labelArray):
-        nonzeroSlices = labelArray.sum((1,2)).nonzero() # a tuple of arrays
+    @staticmethod
+    def getLabeledSliceIndex(labelArray):
+        nonzeroSlices = labelArray.sum((1, 2)).nonzero() # a tuple of arrays
         nonzeroSlices = nonzeroSlices[0]
         if 0 == len(nonzeroSlices):
             print("Infor: label file does not find any nonzero label. ")
@@ -126,9 +143,10 @@ class DataMgr:
                 result.append((previous+start)/2)
                 start=previous=index
         result.append((previous + start) / 2)
-        return [int(round(x,0)) for x in result]
+        return [int(round(x, 0)) for x in result]
 
-    def displaySlices(self, array, sliceList):
+    @staticmethod
+    def displaySlices(array, sliceList):
         N = len(sliceList)
         for i in range(N):
             plt.subplot(1,N, i+1)
@@ -136,7 +154,7 @@ class DataMgr:
         plt.show()
 
     def cropVolumeCopy(self,array, dc, hc, wc, dRadius): # d means depth
-        '''
+        """
         d means depth, we assume most axial images of patient are centered in its xy plane.
         :param array:
         :param dc: depth center
@@ -144,7 +162,7 @@ class DataMgr:
         :param wc: width center
         :param dRadius:
         :return:
-        '''
+        """
         shape = array.shape
 
         d1 = dc-dRadius
@@ -189,19 +207,21 @@ class DataMgr:
 
         return array[dIndex, h1:h2, w1:w2].copy()
 
-    def getLabelHWCenter(self, array2D):
+    @staticmethod
+    def getLabelHWCenter(array2D):
         nonzerosIndex = np.nonzero(array2D)
         hc = int(nonzerosIndex[0].mean())
         wc = int(nonzerosIndex[1].mean())
-        return (hc,wc)
+        return hc,wc
 
-    def segmentation2OneHotArray(self, segmentationArray, k) -> np.ndarray:
-        '''
+    @staticmethod
+    def segmentation2OneHotArray(segmentationArray, k) -> np.ndarray:
+        """
         Convert segmentation volume to one Hot array used as ground truth in neural network
         :param segmentationArray:
         :param k:  number of classification including background 0
         :return:
-        '''
+        """
         shape = (k,)+segmentationArray.shape
         oneHotArray = np.zeros(shape)
         it = np.nditer(segmentationArray, flags=['multi_index'])
@@ -210,18 +230,19 @@ class DataMgr:
             it.iternext()
         return oneHotArray
 
-    def oneHotArray2Segmentation(self, oneHotArray) -> np.ndarray:
+    @staticmethod
+    def oneHotArray2Segmentation(oneHotArray) -> np.ndarray:
         segmentationArray = oneHotArray.argmax(axis=1)
         return segmentationArray
 
     def getDiceSumList(self, segmentations, labels):
-        '''
+        """
         :param segmentations: with N samples
         :param labels: ground truth with N samples
         :return: (diceSumList,diceCountList)
                 diceSumList: whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
                 diceCountList: indicate effective dice count
-        '''
+        """
         N = segmentations.shape[0]  # sample number
         K = self.m_k                # classification number
         diceSumList = [0 for _ in range(K)]
@@ -235,41 +256,43 @@ class DataMgr:
                 diceSumList[j] += dice
                 diceCountList[j] += count
 
-        return (diceSumList, diceCountList)
+        return diceSumList, diceCountList
 
-    def getDice(self, segmentation, label):
-        '''
+    @staticmethod
+    def getDice(segmentation, label):
+        """
 
-        :param segmenatation:  0-1 elements array
+        :param segmentation:  0-1 elements array
         :param label:  0-1 elements array
         :return: (dice, count) count=1 indicates it is an effective dice, count=0 indicates there is no nonzero elements in label.
-        '''
+        """
         nA = np.count_nonzero(segmentation)
         nB = np.count_nonzero(label)
         C = segmentation * label
         nC = np.count_nonzero(C)
         if 0 == nB:  # the dice was calculated over the slice where a ground truth was available.
-            return (0, 0)
+            return 0, 0
         else:
-            return (nC*2.0/(nA+nB), 1)
+            return nC*2.0/(nA+nB), 1
 
-    def getTPR(self, segmentation, label):#  sensitivity, recall, hit rate, or true positive rate (TPR)
+    @staticmethod
+    def getTPR(segmentation, label):  #  sensitivity, recall, hit rate, or true positive rate (TPR)
         nB = np.count_nonzero(label)
         C = segmentation * label
         nC = np.count_nonzero(C)
         if 0 == nB:
-            return (0, 0)
+            return 0, 0
         else:
-            return (nC/nB, 1)
+            return nC/nB, 1
 
     def getTPRSumList(self, segmentations, labels):
-        '''
+        """
         :param segmentations: with N samples
         :param labels: ground truth with N samples
         :return: (TPRSumList,TPRCountList)
                 TPRSumList: whose element 0 indicates total TPR sum over N samples, element 1 indicate label1 TPR sum over N samples, etc
                 TPRCountList: indicate effective TPR count
-        '''
+        """
         N = segmentations.shape[0]  # sample number
         K = self.m_k                # classification number
         TPRSumList = [0 for _ in range(K)]
@@ -283,17 +306,17 @@ class DataMgr:
                 TPRSumList[j] += TPR
                 TPRCountList[j] += count
 
-        return (TPRSumList, TPRCountList)
+        return TPRSumList, TPRCountList
 
     def setDataSize(self, batchSize, depth, height, width, k):
-        '''
+        """
         :param batchSize:
         :param depth:  it must be odd
         :param height:  it is better to be odd number for V model
         :param width:   it is better to be odd number for V model
         :param k: the number of classification of groundtruth including background class.
         :return:
-        '''
+        """
         self.m_batchSize = batchSize
         self.m_depth = depth
         self.m_height = height
@@ -306,7 +329,7 @@ class DataMgr:
 
     def getInputSize(self): #return a tuple without batchSize
         channels = 1
-        return (channels, self.m_depth, self.m_height, self.m_width)
+        return channels, self.m_depth, self.m_height, self.m_width
 
     def getNumClassification(self):
         return self.m_k
@@ -315,7 +338,7 @@ class DataMgr:
         if self.m_maxShift > 0:
             hc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
             wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
-        return (hc, wc)
+        return hc, wc
 
     def dataLabel3DGenerator(self, shuffle):
         self.m_shuffle = shuffle
@@ -386,16 +409,17 @@ class DataMgr:
         data = self.sliceNormalize(data)
         return data
 
-    def sliceNormalize(self, array):
+    @staticmethod
+    def sliceNormalize(array):
         axesTuple = tuple([x for x in range(1, len(array.shape))])
-        min = np.min(array, axesTuple)
+        minx = np.min(array, axesTuple)
         result = np.zeros(array.shape)
-        for i in range(len(min)):
-            result[i,:] = array[i,:] - min[i]
+        for i in range(len(minx)):
+            result[i,:] = array[i,:] - minx[i]
         ptp = np.ptp(array, axesTuple) # peak to peak
         with np.nditer(ptp, op_flags=['readwrite']) as it:
              for x in it:
-                 x = x if 0!=x else 1e-6
+                 if 0 == x:  x = 1e-6
         for i in range(len(ptp)):
             result[i, :] /= ptp[i]
         return result
@@ -404,25 +428,26 @@ class DataMgr:
         if self.m_flipProb >0 and random.uniform(0,1) <= self.m_flipProb:
             data  = np.flip(data, len(data.shape)-1)
             label = np.flip(label, len(label.shape)-1)
-        return (data, label)
+        return data, label
 
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
 
-    def getStemName(self, path, removedSuffix):
+    @staticmethod
+    def getStemName(path, removedSuffix):
         baseName = os.path.basename(path)
         base = baseName[0: baseName.find(removedSuffix)]
         return base
 
     def saveInputsSegmentations2Images(self, inputs, labels, segmentations, n):
-        '''
+        """
 
         :param inputs:
         :param labels:  ground truth
         :param segmentations:
         :param n:
         :return:
-        '''
+        """
         N = inputs.shape[0]
         for i in range(N):
             (fileIndex, sliceIndex) = self.m_segSliceTupleList[n+i]
@@ -430,8 +455,8 @@ class DataMgr:
             baseName = self.getStemName(originalImagePath, '_CT.nrrd')
             baseNamePath = os.path.join(self.m_segDir, baseName+f'_{sliceIndex}')
             inputImagePath = baseNamePath+ '.png'
-            input = inputs[i]  # inputs shape:32,1,21,281,281
-            inputSlice = input[0, int(input.shape[0]/2)]  # get the middle slice
+            inputx = inputs[i]  # inputs shape:32,1,21,281,281
+            inputSlice = inputx[0, int(inputx.shape[0]/2)]  # get the middle slice
             imsave(inputImagePath, inputSlice)
 
             segImagePath = baseNamePath+ '_Seg.png'
@@ -449,7 +474,8 @@ class DataMgr:
             overlapLabelPath = baseNamePath+ '_LabelMerge.png'
             imsave(overlapLabelPath,overlapLabelImage)
 
-    def labelStatistic(self, labelArray, k):
+    @staticmethod
+    def labelStatistic(labelArray, k):
         statisList = [0]*k
         for x in np.nditer(labelArray):
             statisList[x] +=1
@@ -465,6 +491,6 @@ class DataMgr:
                 if 0 !=x:
                     sliceStatisSum[index] +=1
             labelStatisSum = [x+y for x,y in zip(labelStatisSum, labelStatis)]
-        return (labelStatisSum, sliceStatisSum)
+        return labelStatisSum, sliceStatisSum
 
 
