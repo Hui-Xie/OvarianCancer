@@ -38,14 +38,13 @@ class NetMgr:
         filename = os.path.join(self.m_netPath,"bestTestDice.npy")
         if os.path.isfile(filename):
             bestTestDiceList = np.load(filename)
+            bestTestDiceList.tolist()
         else:
-            bestTestDiceList= np.zeros((1,4))
-        return bestTestDiceList.tolist()[0]
+            bestTestDiceList= [0]*4
+        return bestTestDiceList
 
     def saveBest(self, testDiceList, netPath=None):
-        netPath = self.m_netBestPath if netPath is None else netPath
-        self.saveNet(netPath)
-        self.saveBestTestDice(testDiceList, netPath)
+        self.save(testDiceList, netPath = self.m_netBestPath)
 
     def save(self, testDiceList, netPath=None):
         netPath = self.m_netPath if netPath is None else netPath
