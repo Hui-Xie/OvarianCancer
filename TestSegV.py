@@ -8,7 +8,7 @@ sys.path.append(torchSummaryPath)
 from torchsummary import summary
 
 from DataMgr import DataMgr
-from SegVModel import SegVModel
+from SegV3DModel import SegV3DModel
 from NetMgr  import NetMgr
 from FocalCELoss import FocalCELoss
 
@@ -32,7 +32,7 @@ def main():
     testDataMgr.setDataSize(32, 21, 281, 281, 4)  # batchSize, depth, height, width, k
     testDataMgr.buildImageAttrList()
 
-    net= SegVModel()
+    net= SegV3DModel()
     net.printParametersScale()
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
@@ -81,7 +81,7 @@ def main():
         TPRCountList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
-        for inputsCpu, labelsCpu in testDataMgr.dataLabelGenerator(False):
+        for inputsCpu, labelsCpu in testDataMgr.dataLabel3DGenerator(False):
             inputs, labels = torch.from_numpy(inputsCpu), torch.from_numpy(labelsCpu)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 

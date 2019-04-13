@@ -317,7 +317,7 @@ class DataMgr:
             wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
         return (hc, wc)
 
-    def dataLabelGenerator(self, shuffle):
+    def dataLabel3DGenerator(self, shuffle):
         self.m_shuffle = shuffle
         N = len(self.m_segSliceTupleList)
         shuffleList = list(range(N))

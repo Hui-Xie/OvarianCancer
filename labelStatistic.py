@@ -14,7 +14,7 @@ sliceStatis = [0, 0, 0, 0]  # the number of slices having label 0, 1, 2, 3
 
 print("Start to statistics the label data, please waiting......")
 
-for _, labelsCpu in trainDataMgr.dataLabelGenerator(False):
+for _, labelsCpu in trainDataMgr.dataLabel3DGenerator(False):
     (pixelList, sliceList) = trainDataMgr.batchLabelStatistic(labelsCpu, 4)
     pixelStatis = [x + y for x, y in zip(pixelStatis, pixelList)]
     sliceStatis = [x+y for x, y in zip(sliceStatis,sliceList)]

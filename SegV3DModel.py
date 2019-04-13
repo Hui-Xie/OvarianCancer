@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class SegVModel (nn.Module):
+class SegV3DModel (nn.Module):
     def __init__(self):
         super().__init__()
 
