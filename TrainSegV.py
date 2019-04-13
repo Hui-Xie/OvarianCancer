@@ -45,7 +45,7 @@ def main():
 
     net= SegV3DModel()
     net.printParametersScale()
-    net.setDropoutProb(0.25)
+    net.setDropoutProb(0.3)
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
     lossFunc = FocalCELoss(weight=ceWeight)
