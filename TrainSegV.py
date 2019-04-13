@@ -56,7 +56,7 @@ def main():
     trainDataMgr.setFlipProb(0.3)                 #flip data augmentation
 
     net.printParametersScale()
-    net.setDropoutProb(0.3)
+    net.setDropoutProb(0.2)
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
     lossFunc = FocalCELoss(weight=ceWeight)
@@ -84,7 +84,7 @@ def main():
     #===========debug==================
     #trainDataMgr.setOneSampleTraining(True) # for debug
     #testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = False  # for debug
+    useDataParallel = True  # for debug
     # ===========debug==================
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

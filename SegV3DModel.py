@@ -61,7 +61,7 @@ class SegV3DModel (SegVModel):
         xc = self.m_dropout3d( F.relu(self.m_bnT2(self.m_convT2(xc))))
         xc = torch.cat((xc, x1), 1)
         xc = self.m_dropout3d( F.relu(self.m_bnT1(self.m_convT1(xc))))
-        xc = torch.cat((xc, x), 2)
+        xc = torch.cat((xc, x), 2) # here concatenate at dim=2 is for further reducing dimension.
         xc = xc.squeeze(dim=1)
 
         xc = self.m_conv0(xc)
