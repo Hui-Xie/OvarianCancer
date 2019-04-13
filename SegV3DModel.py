@@ -50,7 +50,7 @@ class SegV3DModel (SegVModel):
         xc = self.m_dropout2d( F.relu(self.m_bn6(self.m_conv6(x5))))  # xc means x computing
             
         xc = self.m_dropout2d( F.relu(self.m_bnT6(self.m_convT6(xc))))
-        xc = torch.cat((xc,x5),1)                 # channel is in dim 0, so concatenate at dim 1.
+        xc = torch.cat((xc,x5),1)                 # batchsize is in dim 0, so concatenate at dim 1.
         xc = self.m_dropout2d( F.relu(self.m_bnT5(self.m_convT5(xc))))
         xc = torch.cat((xc, x4), 1)
         xc = self.m_dropout2d( F.relu(self.m_bnT4(self.m_convT4(xc))))

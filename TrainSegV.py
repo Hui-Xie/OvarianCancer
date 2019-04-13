@@ -84,7 +84,7 @@ def main():
     #===========debug==================
     #trainDataMgr.setOneSampleTraining(True) # for debug
     #testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = True  # for debug
+    useDataParallel = False  # for debug
     # ===========debug==================
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

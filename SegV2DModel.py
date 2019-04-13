@@ -58,7 +58,7 @@ class SegV2DModel(SegVModel):
         xc = self.m_dropout2d(F.relu(self.m_bnT2(self.m_convT2(xc))))
         xc = torch.cat((xc, x1), 1)
         xc = self.m_dropout2d(F.relu(self.m_bnT1(self.m_convT1(xc))))
-        xc = torch.cat((xc, x), 1)   # todo 2->1
+        xc = torch.cat((xc, x), 1)
 
         xc = self.m_conv0(xc)
 
