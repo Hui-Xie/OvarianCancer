@@ -187,7 +187,10 @@ class DataMgr:
             w2 = shape[2]
             w1 = w2 - self.m_width
 
-        return array[d1:d2, h1:h2, w1:w2].copy()
+        if  0 != dRadius:
+            return array[d1:d2, h1:h2, w1:w2].copy()
+        else:
+            return array[d1:d2, h1:h2, w1:w2].copy().squeeze(axis=0)
 
     def cropSliceCopy(self, array, dIndex, hc, wc):
         shape = array.shape
@@ -309,7 +312,7 @@ class DataMgr:
 
         return TPRSumList, TPRCountList
 
-    def setDataSize(self, batchSize, depth, height, width, k):
+    def setDataSize(self, batchSize, depth, height, width, k, dataName):
         """
         :param batchSize:
         :param depth:  it must be odd
@@ -323,14 +326,17 @@ class DataMgr:
         self.m_height = height
         self.m_width = width
         self.m_k = k
-        print(f'Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
+        print(f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
 
     def getBatchSize(self):
         return self.m_batchSize
 
     def getInputSize(self): #return a tuple without batchSize
         channels = 1
-        return channels, self.m_depth, self.m_height, self.m_width
+        if self.m_depth > 1:
+            return channels, self.m_depth, self.m_height, self.m_width
+        else:
+            return channels, self.m_height, self.m_width
 
     def getNumClassification(self):
         return self.m_k
@@ -341,7 +347,12 @@ class DataMgr:
             wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
         return hc, wc
 
-    def dataLabel3DGenerator(self, shuffle):
+    def dataLabelGenerator(self, shuffle):
+        """
+        support 2D or 3D data shuffle
+        :param shuffle: True or False
+        :return:
+        """
         self.m_shuffle = shuffle
         N = len(self.m_segSliceTupleList)
         shuffleList = list(range(N))
@@ -349,7 +360,7 @@ class DataMgr:
             random.shuffle(shuffleList)
 
         batch = 0
-        dataList=[]
+        dataList=[]  # for yield
         labelList= []
         radius = int((self.m_depth-1)/2)
 
@@ -370,7 +381,11 @@ class DataMgr:
                     batch = 0
                     dataList.clear()
                     labelList.clear()
-            data = self.cropVolumeCopy(imageArray, j, hc, wc, radius)
+            if 0 != radius:
+                data = self.cropVolumeCopy(imageArray, j, hc, wc, radius)
+            else:
+                data = self.cropSliceCopy(imageArray, j, hc, wc)
+
             data = self.preprocessData(data)
             label= self.cropSliceCopy(labelArray,j, hc, wc)
 
@@ -406,24 +421,34 @@ class DataMgr:
         print(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
 
     def preprocessData(self, array)-> np.ndarray:
-        data = array.clip(-300,300)
+        data = array.clip(-300,300)    # adjust window level, also erase abnormal value
         data = self.sliceNormalize(data)
         return data
 
     @staticmethod
     def sliceNormalize(array):
-        axesTuple = tuple([x for x in range(1, len(array.shape))])
-        minx = np.min(array, axesTuple)
-        result = np.zeros(array.shape)
-        for i in range(len(minx)):
-            result[i,:] = array[i,:] - minx[i]
-        ptp = np.ptp(array, axesTuple) # peak to peak
-        with np.nditer(ptp, op_flags=['readwrite']) as it:
-             for x in it:
-                 if 0 == x:  x = 1e-6
-        for i in range(len(ptp)):
-            result[i, :] /= ptp[i]
-        return result
+        if 3 == array.ndim:
+            axesTuple = tuple([x for x in range(1, len(array.shape))])
+            minx = np.min(array, axesTuple)
+            result = np.zeros(array.shape)
+            for i in range(len(minx)):
+                result[i,:] = array[i,:] - minx[i]
+            ptp = np.ptp(array, axesTuple) # peak to peak
+            with np.nditer(ptp, op_flags=['readwrite']) as it:
+                for x in it:
+                    if 0 == x:  x = 1e-6
+            for i in range(len(ptp)):
+                result[i, :] /= ptp[i]
+            return result
+        elif 2 == array.ndim:
+            minx = np.min(array)
+            maxx = np.max(array)
+            ptp = maxx-minx if maxx-minx != 0 else 1e-6
+            result = (array - minx)/ptp
+            return result
+        else:
+            print("Error: the input to sliceNormalize has abnormal dimension.")
+            sys.exit(0)
 
     def flipDataLabel(self, data, label):
         if self.m_flipProb >0 and random.uniform(0,1) <= self.m_flipProb:

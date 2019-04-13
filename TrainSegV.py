@@ -11,6 +11,7 @@ from torchsummary import summary
 
 from DataMgr import DataMgr
 from SegV3DModel import SegV3DModel
+from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
 from FocalCELoss import FocalCELoss
 
@@ -19,31 +20,41 @@ from FocalCELoss import FocalCELoss
 def printUsage(argv):
     print("============Train Ovarian Cancer Segmentation V model=============")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>")
+    print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>  <2D|3D>")
 
 def main():
     curTime = datetime.datetime.now()
     print('\nProgram starting Time: ', str(curTime))
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
 
     netPath = sys.argv[1]
+    imagesPath = sys.argv[2]
+    labelsPath = sys.argv[3]
+    is2DInput = True if sys.argv[4] == "2D" else False
     print(f"Info: netPath = {netPath}\n")
 
-    trainDataMgr = DataMgr(sys.argv[2], sys.argv[3])
-    trainDataMgr.setDataSize(64, 21,281,281,4)    #batchSize, depth, height, width, k
+    trainDataMgr = DataMgr(imagesPath, labelsPath)
+    testDataMgr = DataMgr(*trainDataMgr.getTestDirs())
+
+    if is2DInput:
+        print("Info: program uses 2D input.")
+        trainDataMgr.setDataSize(64, 1, 281, 281, 4, "TrainData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(64, 1, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        net = SegV2DModel()
+
+    else:
+        print("Info: program uses 3D input.")
+        trainDataMgr.setDataSize(64, 21, 281, 281, 4, "TrainData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(64, 21, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        net = SegV3DModel()
+
     trainDataMgr.setMaxShift(25)                  #translation data augmentation
     trainDataMgr.setFlipProb(0.3)                 #flip data augmentation
 
-    testImagesDir, testLabelsDir = trainDataMgr.getTestDirs()
-    testDataMgr = DataMgr(testImagesDir, testLabelsDir)
-    testDataMgr.setDataSize(64, 21, 281, 281, 4)  # batchSize, depth, height, width, k
-
-
-    net= SegV3DModel()
     net.printParametersScale()
     net.setDropoutProb(0.3)
 
@@ -101,7 +112,7 @@ def main():
         trainingLoss = 0.0
         batches = 0
         net.train()
-        for inputs, labels in trainDataMgr.dataLabel3DGenerator(True):
+        for inputs, labels in trainDataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
@@ -130,7 +141,7 @@ def main():
             TPRCountList = [0 for _ in range(K)]
             testLoss = 0.0
             batches = 0
-            for inputs, labelsCpu in testDataMgr.dataLabel3DGenerator(False):
+            for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
                 inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                 inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
@@ -165,7 +176,7 @@ def main():
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             netMgr.save(diceAvgList)
-            if diceAvgList[0] > 0.25  and diceAvgList[0] > bestTestDiceList[0]:
+            if diceAvgList[1] > 0.50  and diceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
                 bestTestDiceList = diceAvgList
                 netMgr.saveBest(bestTestDiceList)
         else:

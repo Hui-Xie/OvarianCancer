@@ -9,6 +9,7 @@ from torchsummary import summary
 
 from DataMgr import DataMgr
 from SegV3DModel import SegV3DModel
+from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
 from FocalCELoss import FocalCELoss
 
@@ -16,23 +17,37 @@ def printUsage(argv):
     print("============Test Ovarian Cancer Segmentation V model=============")
     print("read all test files, and output their segmentation results.")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTestImages>  <fullPathOfTestLabels>")
+    print(argv[0], "<netSavedPath> <fullPathOfTestImages>  <fullPathOfTestLabels> <2D|3D>")
 
 def main():
     curTime = datetime.datetime.now()
     print('\nProgram starting Time: ', str(curTime))
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
 
     netPath = sys.argv[1]
-    testDataMgr = DataMgr(sys.argv[2], sys.argv[3])
-    testDataMgr.setDataSize(32, 21, 281, 281, 4)  # batchSize, depth, height, width, k
+    imagesPath = sys.argv[2]
+    labelsPath = sys.argv[3]
+    is2DInput = True if sys.argv[4] == "2D" else False
+    print(f"Info: netPath = {netPath}\n")
+
+    testDataMgr = DataMgr(imagesPath, labelsPath)
+
+
+    if is2DInput:
+        print("Info: program uses 2D input.")
+        testDataMgr.setDataSize(32, 1, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        net = SegV2DModel()
+    else:
+        print("Info: program uses 3D input.")
+        testDataMgr.setDataSize(32, 21, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        net = SegV3DModel()
+
     testDataMgr.buildImageAttrList()
 
-    net= SegV3DModel()
     net.printParametersScale()
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
@@ -81,7 +96,7 @@ def main():
         TPRCountList = [0 for _ in range(K)]
         testLoss = 0.0
         batches = 0
-        for inputsCpu, labelsCpu in testDataMgr.dataLabel3DGenerator(False):
+        for inputsCpu, labelsCpu in testDataMgr.dataLabelGenerator(False):
             inputs, labels = torch.from_numpy(inputsCpu), torch.from_numpy(labelsCpu)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
@@ -112,7 +127,7 @@ def main():
     TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
     print(f'{0} \t {0:.4f} \t {testLoss:.4f} \t', '\t'.join((f'{x:.3f}' for x in diceAvgList)),'\t', '\t'.join((f'{x:.3f}' for x in TPRAvgList)))
 
-    print(f'\nTotal test {n} images in {sys.argv[2]}.')
+    print(f'\nTotal test {n} images in {imagesPath}.')
 
     torch.cuda.empty_cache()
     print("=============END of Test of Ovarian Cancer Segmentation V Model =================")
