@@ -7,6 +7,7 @@ import sys
 from scipy.misc import imsave
 
 
+# noinspection SyntaxError
 class DataMgr:
     def __init__(self, imagesDir, labelsDir):
         self.m_oneSampleTraining = False
@@ -215,7 +216,7 @@ class DataMgr:
         return hc,wc
 
     @staticmethod
-    def segmentation2OneHotArray(segmentationArray, k) -> np.ndarray:
+    def segmentation2OneHotArray(segmentationArray, k)-> np.ndarray:
         """
         Convert segmentation volume to one Hot array used as ground truth in neural network
         :param segmentationArray:
@@ -231,7 +232,7 @@ class DataMgr:
         return oneHotArray
 
     @staticmethod
-    def oneHotArray2Segmentation(oneHotArray) -> np.ndarray:
+    def oneHotArray2Segmentation(oneHotArray)-> np.ndarray:
         segmentationArray = oneHotArray.argmax(axis=1)
         return segmentationArray
 
@@ -404,7 +405,7 @@ class DataMgr:
                 inconsistenNum +=1
         print(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
 
-    def preprocessData(self, array) -> np.ndarray:
+    def preprocessData(self, array)-> np.ndarray:
         data = array.clip(-300,300)
         data = self.sliceNormalize(data)
         return data
