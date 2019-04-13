@@ -2,13 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class SegV3DModel (nn.Module):
+from SegVModel import SegVModel
+
+class SegV3DModel (SegVModel):
     def __init__(self):
         super().__init__()
-
-        self.m_dropoutProb = 0.2
-        self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
-        self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
 
         self.m_conv1 = nn.Conv3d(1,   32,  (5,5,5), stride=(2,2,2))   #inputSize: 21*281*281; output:32*9*139*139
         self.m_bn1   = nn.BatchNorm3d(32)
@@ -116,35 +114,3 @@ class SegV3DModel (nn.Module):
 
         # return output
         return xc
-
-    def setOptimizer(self, optimizer):
-        self.m_optimizer = optimizer
-
-    def setLossFunc(self, lossFunc):
-        self.m_lossFunc = lossFunc
-
-    def batchTrain(self, inputs, labels):
-        self.m_optimizer.zero_grad()
-        outputs = self.forward(inputs)
-        loss = self.m_lossFunc(outputs, labels)
-        loss.backward()
-        self.m_optimizer.step()
-        return loss.item()
-
-    def batchTest(self, inputs, labels):
-        outputs = self.forward(inputs)
-        loss = self.m_lossFunc(outputs, labels)
-        return loss.item(),outputs
-
-    def printParametersScale(self):
-        sum = 0
-        params = self.parameters()
-        for param in params:
-            sum += param.nelement()
-        print(f"Network has total {sum} parameters.")
-
-    def setDropoutProb(self, prob):
-        self.m_dropoutProb = prob
-        print(f"Info: network dropout rate = {self.m_dropoutProb}")
-
-
