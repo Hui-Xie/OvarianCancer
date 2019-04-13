@@ -43,7 +43,7 @@ def main():
 
     net= SegVModel()
     net.printParametersScale()
-    net.setDropoutProb(0.2)
+    net.setDropoutProb(0.25)
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
     lossFunc = FocalCELoss(weight=ceWeight)
@@ -163,7 +163,7 @@ def main():
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             netMgr.save(diceAvgList)
-            if diceAvgList[0] > 0.30  and diceAvgList[0] > bestTestDiceList[0]:
+            if diceAvgList[0] > 0.25  and diceAvgList[0] > bestTestDiceList[0]:
                 bestTestDiceList = diceAvgList
                 netMgr.saveBest(bestTestDiceList)
         else:
