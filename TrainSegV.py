@@ -56,7 +56,7 @@ def main():
     trainDataMgr.setFlipProb(0.3)                 #flip data augmentation
 
     net.printParametersScale()
-    net.setDropoutProb(0.2)
+    net.setDropoutProb(0.3)
 
     ceWeight = torch.FloatTensor([1, 39, 68, 30653])
     lossFunc = FocalCELoss(weight=ceWeight)
