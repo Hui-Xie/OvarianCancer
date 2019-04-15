@@ -381,13 +381,17 @@ class DataMgr:
                     batch = 0
                     dataList.clear()
                     labelList.clear()
+
+            label = self.cropSliceCopy(labelArray, j, hc, wc)
+            if 0 == np.count_nonzero(label):   # skip the label without any meaningful labels
+                continue
+
             if 0 != radius:
                 data = self.cropVolumeCopy(imageArray, j, hc, wc, radius)
             else:
                 data = self.cropSliceCopy(imageArray, j, hc, wc)
 
             data = self.preprocessData(data)
-            label= self.cropSliceCopy(labelArray,j, hc, wc)
 
             (data, label) = self.flipDataLabel(data, label)
 
