@@ -16,6 +16,7 @@ class DataMgr:
 
         self.m_maxShift = 0
         self.m_flipProb = 0
+        self.m_rot90sProb = 0  # support 90, 180, 270 degree rotation
         self.m_noiseProb = 0  # noise probability
         self.m_noiseMean = 0
         self.m_noiseStd  = 0
@@ -41,6 +42,9 @@ class DataMgr:
 
     def setFlipProb(self, prob):
         self.m_flipProb = prob
+
+    def setRot90sProb(self, prob):
+        self.m_rot90sProb = prob
 
     def setAddedNoise(self, prob, mean, std):
         self.m_noiseProb = prob
@@ -379,6 +383,8 @@ class DataMgr:
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
+
+            imageArray, labelArray = self.rotate90s(imageArray, labelArray)  # rotation data augmentation
             (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: height center, wc: width center
             (hc,wc) = self.randomTranslation(hc, wc) # translation data augmentation
 
@@ -442,7 +448,7 @@ class DataMgr:
     @staticmethod
     def sliceNormalize(array):
         if 3 == array.ndim:
-            axesTuple = tuple([x for x in range(1, len(array.shape))])
+            axesTuple = tuple([x for x in range(1, array.ndim)])
             minx = np.min(array, axesTuple)
             result = np.zeros(array.shape)
             for i in range(len(minx)):
@@ -466,8 +472,15 @@ class DataMgr:
 
     def flipDataLabel(self, data, label):
         if self.m_flipProb >0 and random.uniform(0,1) <= self.m_flipProb:
-            data  = np.flip(data, len(data.shape)-1)
-            label = np.flip(label, len(label.shape)-1)
+            data  = np.flip(data, data.ndim-1)
+            label = np.flip(label, label.ndim-1)
+        return data, label
+
+    def rotate90s(self, data, label):
+        if self.m_rot90sProb >0 and random.uniform(0,1) <= self.m_rot90sProb:
+            k = random.randrange(1, 4, 1)  # k*90 is the real rotataion degree
+            data  = np.rot90(data, k, tuple(range(1,data.ndim)))
+            label = np.rot90(label, k, tuple(range(1,label.ndim)))
         return data, label
 
     def addGaussianNoise(self, data):
