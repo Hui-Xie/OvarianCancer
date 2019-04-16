@@ -16,6 +16,10 @@ class DataMgr:
 
         self.m_maxShift = 0
         self.m_flipProb = 0
+        self.m_noiseProb = 0  # noise probability
+        self.m_noiseMean = 0
+        self.m_noiseStd  = 0
+
         self.m_segDir = None
         self.m_imagesList = []
         self.m_segSliceTupleList = []
@@ -37,6 +41,11 @@ class DataMgr:
 
     def setFlipProb(self, prob):
         self.m_flipProb = prob
+
+    def setAddedNoise(self, prob, mean, std):
+        self.m_noiseProb = prob
+        self.m_noiseMean = mean
+        self.m_noiseStd  = std
 
     def createSegmentedDir(self):
         self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
@@ -427,6 +436,7 @@ class DataMgr:
     def preprocessData(self, array)-> np.ndarray:
         data = array.clip(-300,300)    # adjust window level, also erase abnormal value
         data = self.sliceNormalize(data)
+        data = self.addGaussianNoise(data)
         return data
 
     @staticmethod
@@ -459,6 +469,12 @@ class DataMgr:
             data  = np.flip(data, len(data.shape)-1)
             label = np.flip(label, len(label.shape)-1)
         return data, label
+
+    def addGaussianNoise(self, data):
+        if self.m_noiseProb >0 and random.uniform(0,1) <= self.m_noiseProb:
+            noise = np.random.normal(self.m_noiseMean, self.m_noiseStd, data.shape)
+            data += noise
+        return data
 
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
