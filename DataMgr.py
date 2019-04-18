@@ -35,7 +35,8 @@ class DataMgr:
         self.m_shuffle = True
 
         self.m_binaryLabel = False
-        self.m_binaryLabelValue = 0  # the ground truth label value, for example 1,2,3
+        self.m_remainedLabels = []  # the ground truth label value, for example 1,2,3
+        self.m_suppressedLabels = []
 
         self.buildSegSliceTupleList()
         self.createSegmentedDir()
@@ -54,14 +55,28 @@ class DataMgr:
         self.m_noiseMean = mean
         self.m_noiseStd  = std
 
-    def setBinaryLabel(self,k):
-        self.m_binaryLabel = True
-        self.m_binaryLabelValue = k
+    def setRemainedLabel(self,maxLabel, ks):
+        if 0 in ks:
+            self.m_remainedLabels = list(ks)
+            self.m_suppressedLabels = self.getSuppressedLabels(maxLabel, self.m_remainedLabels)
+            if 2 == len(self.m_remainedLabels):
+                self.m_binaryLabel = True
+        else:
+            print("Error: background 0 should be in the remained label list")
+            sys.exit(-1)
 
     def createSegmentedDir(self):
         self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
         if not os.path.exists(self.m_segDir):
             os.mkdir(self.m_segDir)
+
+    @staticmethod
+    def getSuppressedLabels(maxLabel, remainedLabels):
+        labels = [x for x in range(maxLabel+1)]
+        for i, x in enumerate(labels):
+            if x in remainedLabels:
+               del labels[i]
+        return labels
 
     @staticmethod
     def getFilesList(filesDir, suffix):
@@ -361,11 +376,17 @@ class DataMgr:
     def getNumClassification(self):
         return self.m_k
 
-    def changeLabelkto0(self, labelArray, k):
-        numk = np.count_nonzero((labelArray == k)*1)
-        if numk != 0:
-            index = np.nonzero((labelArray == k)*1)
-            labelArray[index] = 0
+    def changeSuppressedLabelsTo0(self, labelArray):  # ks is a tuple or a list
+        for k in self.m_suppressedLabels:
+            numk = np.count_nonzero((labelArray == k)*1)
+            if numk != 0:
+                index = np.nonzero((labelArray == k)*1)
+                labelArray[index] = 0
+
+        if self.m_binaryLabel and not 1 in self.m_remainedLabels:
+            index = np.nonzero(labelArray)
+            labelArray[index] = 1
+
         return labelArray
 
     def randomTranslation(self,hc, wc):
@@ -396,7 +417,8 @@ class DataMgr:
             imageFile = self.m_imagesList[i]
             labelFile = self.getLabelFile(imageFile)
             labelArray = self.readImageFile(labelFile)
-            labelArray = self.changeLabelkto0(labelArray, 3)   # erase label 3 as it only has 5 slices in dataset
+
+            labelArray = self.changeSuppressedLabelsTo0(labelArray)   # always erase label 3 as it only has 5 slices in dataset
             if 0 == np.count_nonzero(labelArray[j]):
                 continue
 

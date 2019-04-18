@@ -17,13 +17,14 @@ def printUsage(argv):
     print("============Test Ovarian Cancer Segmentation V model=============")
     print("read all test files, and output their segmentation results.")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTestImages>  <fullPathOfTestLabels> <2D|3D>")
+    print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>  <2D|3D> <labelTuple>")
+    print("eg. labelTuple: (0,1,2,3), or (0,1), (0,2)")
 
 def main():
     curTime = datetime.datetime.now()
     print('\nProgram starting Time: ', str(curTime))
 
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
@@ -33,19 +34,19 @@ def main():
     labelsPath = sys.argv[3]
     is2DInput = True if sys.argv[4] == "2D" else False
     print(f"Info: netPath = {netPath}\n")
+    labelTuple = eval(sys.argv[5])
+    K = len(labelTuple)
 
     testDataMgr = DataMgr(imagesPath, labelsPath)
-
+    testDataMgr.setRemainedLabel(3, labelTuple)
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        testDataMgr.setDataSize(32, 1, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        K = testDataMgr.getNumClassification()
+        testDataMgr.setDataSize(32, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV2DModel(K)
     else:
         print("Info: program uses 3D input.")
-        testDataMgr.setDataSize(32, 21, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        K = testDataMgr.getNumClassification()
+        testDataMgr.setDataSize(32, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     testDataMgr.buildImageAttrList()

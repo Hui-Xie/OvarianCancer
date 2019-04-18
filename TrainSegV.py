@@ -20,13 +20,14 @@ from FocalCELoss import FocalCELoss
 def printUsage(argv):
     print("============Train Ovarian Cancer Segmentation V model=============")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>  <2D|3D>")
+    print(argv[0], "<netSavedPath> <fullPathOfTrainImages>  <fullPathOfTrainLabels>  <2D|3D> <labelTuple>")
+    print("eg. labelTuple: (0,1,2,3), or (0,1), (0,2)")
 
 def main():
     curTime = datetime.datetime.now()
     print('\nProgram starting Time: ', str(curTime))
 
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
@@ -35,23 +36,26 @@ def main():
     imagesPath = sys.argv[2]
     labelsPath = sys.argv[3]
     is2DInput = True if sys.argv[4] == "2D" else False
+    labelTuple = eval(sys.argv[5])
+    K = len(labelTuple)
+
     print(f"Info: netPath = {netPath}\n")
 
     trainDataMgr = DataMgr(imagesPath, labelsPath)
     testDataMgr = DataMgr(*trainDataMgr.getTestDirs())
+    trainDataMgr.setRemainedLabel(3, labelTuple)
+    testDataMgr.setRemainedLabel(3, labelTuple)
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        trainDataMgr.setDataSize(64, 1, 281, 281, 3, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
-        testDataMgr.setDataSize(64, 1, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        K = testDataMgr.getNumClassification()
+        trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV2DModel(K)
 
     else:
         print("Info: program uses 3D input.")
-        trainDataMgr.setDataSize(64, 21, 281, 281, 3, "TrainData")  # batchSize, depth, height, width, k
-        testDataMgr.setDataSize(64, 21, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        K = testDataMgr.getNumClassification()
+        trainDataMgr.setDataSize(64, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(64, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     trainDataMgr.setMaxShift(25)                  #translation data augmentation

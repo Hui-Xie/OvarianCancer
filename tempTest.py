@@ -12,3 +12,16 @@ with np.nditer(A, op_flags=['readwrite']) as it:
 
 print("modified A = ", A)
 
+
+maxLabel = 3
+
+remainedLabels = (0,2)
+
+totalLabels = [x for x in range(maxLabel+1)]
+for i, x in enumerate(totalLabels):
+    if x in remainedLabels:
+       del totalLabels[i]
+
+print(totalLabels)
+
+
