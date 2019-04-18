@@ -7,7 +7,7 @@ from SegVModel import SegVModel
 #  2D model
 
 class SegV2DModel(SegVModel):
-    def __init__(self):
+    def __init__(self, K):   # K is the final output classification number.
         super().__init__()
 
         self.m_conv1 = nn.Conv2d(1, 32, (5, 5), stride=(2, 2))  # inputSize: 281*281; output:32*139*139
@@ -35,7 +35,7 @@ class SegV2DModel(SegVModel):
         self.m_bnT2 = nn.BatchNorm2d(32)
         self.m_convT1 = nn.ConvTranspose2d(64, 31, (5, 5), stride=(2, 2))  # output:31*281*281
         self.m_bnT1 = nn.BatchNorm2d(31)
-        self.m_conv0 = nn.Conv2d(32, 3, (1, 1), stride=1)  # output:3*281*281
+        self.m_conv0 = nn.Conv2d(32, K, (1, 1), stride=1)  # output:K*281*281
 
     def forward(self, x):
         # without residual link within layer

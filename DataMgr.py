@@ -395,12 +395,14 @@ class DataMgr:
             (i,j) = self.m_segSliceTupleList[n]  # i is the imageID, j is the segmented slice index in image i.
             imageFile = self.m_imagesList[i]
             labelFile = self.getLabelFile(imageFile)
-            imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
-
             labelArray = self.changeLabel3to0(labelArray)   # erase label 3 as it only has 5 slices in dataset
+            if 0 == np.count_nonzero(labelArray[j]):
+                continue
 
+            imageArray = self.readImageFile(imageFile)
             imageArray, labelArray = self.rotate90s(imageArray, labelArray)  # rotation data augmentation
+
             (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: height center, wc: width center
             (hc,wc) = self.randomTranslation(hc, wc) # translation data augmentation
 

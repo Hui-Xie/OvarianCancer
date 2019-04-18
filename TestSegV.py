@@ -40,11 +40,13 @@ def main():
     if is2DInput:
         print("Info: program uses 2D input.")
         testDataMgr.setDataSize(32, 1, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel()
+        K = testDataMgr.getNumClassification()
+        net = SegV2DModel(K)
     else:
         print("Info: program uses 3D input.")
         testDataMgr.setDataSize(32, 21, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        net = SegV3DModel()
+        K = testDataMgr.getNumClassification()
+        net = SegV3DModel(K)
 
     testDataMgr.buildImageAttrList()
 

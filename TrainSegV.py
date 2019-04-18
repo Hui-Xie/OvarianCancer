@@ -44,13 +44,15 @@ def main():
         print("Info: program uses 2D input.")
         trainDataMgr.setDataSize(64, 1, 281, 281, 3, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(64, 1, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel()
+        K = testDataMgr.getNumClassification()
+        net = SegV2DModel(K)
 
     else:
         print("Info: program uses 3D input.")
         trainDataMgr.setDataSize(64, 21, 281, 281, 3, "TrainData")  # batchSize, depth, height, width, k
         testDataMgr.setDataSize(64, 21, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
-        net = SegV3DModel()
+        K = testDataMgr.getNumClassification()
+        net = SegV3DModel(K)
 
     trainDataMgr.setMaxShift(25)                  #translation data augmentation
     trainDataMgr.setFlipProb(0.3)                 #flip data augmentation
@@ -98,7 +100,7 @@ def main():
     net.to(device)
 
     epochs = 15000
-    K = testDataMgr.getNumClassification()
+
     print("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
     print("Hints: Test Dice_1 is for primary cancer(green), test Dice_2 is for metastasis(yellow), and test Dice_3 is for invaded lymph node(brown).")
     print("Hints: Test TPR_0 is the TPR for all non-zero labels")

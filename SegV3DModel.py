@@ -7,7 +7,7 @@ from SegVModel import SegVModel
 #  3D model
 
 class SegV3DModel (SegVModel):
-    def __init__(self):
+    def __init__(self, K):   # K is the final output classification number.
         super().__init__()
 
         self.m_conv1 = nn.Conv3d(1, 32, (5, 5, 5), stride=(2, 2, 2))  # inputSize: 21*281*281; output:32*9*139*139
@@ -35,7 +35,7 @@ class SegV3DModel (SegVModel):
         self.m_bnT2 = nn.BatchNorm3d(32)
         self.m_convT1 = nn.ConvTranspose3d(64, 1, (5, 5, 5), stride=(2, 2, 2))  # output:21*281*281
         self.m_bnT1 = nn.BatchNorm3d(1)
-        self.m_conv0 = nn.Conv2d(42, 3, (1, 1), stride=1)  # output:3*281*281
+        self.m_conv0 = nn.Conv2d(42, K, (1, 1), stride=1)  # output:3*281*281
 
     def forward(self, x):
 
