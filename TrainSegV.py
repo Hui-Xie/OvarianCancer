@@ -42,14 +42,14 @@ def main():
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        trainDataMgr.setDataSize(64, 1, 281, 281, 4, "TrainData")  # batchSize, depth, height, width, k
-        testDataMgr.setDataSize(64, 1, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(64, 1, 281, 281, 3, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        testDataMgr.setDataSize(64, 1, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
         net = SegV2DModel()
 
     else:
         print("Info: program uses 3D input.")
-        trainDataMgr.setDataSize(64, 21, 281, 281, 4, "TrainData")  # batchSize, depth, height, width, k
-        testDataMgr.setDataSize(64, 21, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(64, 21, 281, 281, 3, "TrainData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(64, 21, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel()
 
     trainDataMgr.setMaxShift(25)                  #translation data augmentation
@@ -60,7 +60,7 @@ def main():
     net.printParametersScale()
     net.setDropoutProb(0.3)
 
-    ceWeight = torch.FloatTensor([1, 39, 68, 30653])
+    ceWeight = torch.FloatTensor([1, 39, 68])  # 30653
     lossFunc = FocalCELoss(weight=ceWeight)
     # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     # lossFunc = nn.CrossEntropyLoss()
@@ -70,7 +70,7 @@ def main():
     net.setOptimizer(optimizer)
 
     netMgr = NetMgr(net, netPath)
-    bestTestDiceList = [0,0,0,0]
+    bestTestDiceList = [0,0,0]
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(True)  # True for train
         bestTestDiceList = netMgr.loadBestTestDice()

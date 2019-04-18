@@ -361,6 +361,12 @@ class DataMgr:
     def getNumClassification(self):
         return self.m_k
 
+    def changeLabel3to0(self, labelArray):
+        with np.nditer(labelArray, op_flags=['readwrite']) as it:
+            for x in it:
+                if 3 == x:
+                    x[...] = 0
+
     def randomTranslation(self,hc, wc):
         if self.m_maxShift > 0:
             hc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
@@ -390,6 +396,8 @@ class DataMgr:
             labelFile = self.getLabelFile(imageFile)
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
+
+            self.changeLabel3to0(labelArray)   # erase label 3 as it only has 5 slices in dataset
 
             imageArray, labelArray = self.rotate90s(imageArray, labelArray)  # rotation data augmentation
             (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: height center, wc: width center
@@ -463,7 +471,8 @@ class DataMgr:
             ptp = np.ptp(array, axesTuple) # peak to peak
             with np.nditer(ptp, op_flags=['readwrite']) as it:
                 for x in it:
-                    if 0 == x:  x = 1e-6
+                    if 0 == x:
+                        x[...] = 1e-6
             for i in range(len(ptp)):
                 result[i, :] /= ptp[i]
             return result

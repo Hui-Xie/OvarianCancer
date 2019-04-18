@@ -40,7 +40,7 @@ class NetMgr:
             bestTestDiceList = np.load(filename)
             bestTestDiceList.tolist()
         else:
-            bestTestDiceList = [0]*4
+            bestTestDiceList = [0]*3   # for 3 classifications
         return bestTestDiceList
 
     def saveBest(self, testDiceList, netPath=None):

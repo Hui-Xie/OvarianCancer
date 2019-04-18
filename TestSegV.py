@@ -39,18 +39,18 @@ def main():
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        testDataMgr.setDataSize(32, 1, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(32, 1, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
         net = SegV2DModel()
     else:
         print("Info: program uses 3D input.")
-        testDataMgr.setDataSize(32, 21, 281, 281, 4, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(32, 21, 281, 281, 3, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel()
 
     testDataMgr.buildImageAttrList()
 
     net.printParametersScale()
 
-    ceWeight = torch.FloatTensor([1, 39, 68, 30653])
+    ceWeight = torch.FloatTensor([1, 39, 68])
     lossFunc = FocalCELoss(weight=ceWeight)
     # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     #lossFunc = nn.CrossEntropyLoss()
