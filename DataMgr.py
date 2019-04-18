@@ -34,6 +34,9 @@ class DataMgr:
 
         self.m_shuffle = True
 
+        self.m_binaryLabel = False
+        self.m_binaryLabelValue = 0  # the ground truth label value, for example 1,2,3
+
         self.buildSegSliceTupleList()
         self.createSegmentedDir()
 
@@ -50,6 +53,10 @@ class DataMgr:
         self.m_noiseProb = prob
         self.m_noiseMean = mean
         self.m_noiseStd  = std
+
+    def setBinaryLabel(self,k):
+        self.m_binaryLabel = True
+        self.m_binaryLabelValue = k
 
     def createSegmentedDir(self):
         self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
