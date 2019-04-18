@@ -361,10 +361,10 @@ class DataMgr:
     def getNumClassification(self):
         return self.m_k
 
-    def changeLabel3to0(self, labelArray):
-        num3 = np.count_nonzero((labelArray == 3)*1)
-        if num3 != 0:
-            index = np.nonzero((labelArray == 3)*1)
+    def changeLabelkto0(self, labelArray, k):
+        numk = np.count_nonzero((labelArray == k)*1)
+        if numk != 0:
+            index = np.nonzero((labelArray == k)*1)
             labelArray[index] = 0
         return labelArray
 
@@ -396,7 +396,7 @@ class DataMgr:
             imageFile = self.m_imagesList[i]
             labelFile = self.getLabelFile(imageFile)
             labelArray = self.readImageFile(labelFile)
-            labelArray = self.changeLabel3to0(labelArray)   # erase label 3 as it only has 5 slices in dataset
+            labelArray = self.changeLabelkto0(labelArray, 3)   # erase label 3 as it only has 5 slices in dataset
             if 0 == np.count_nonzero(labelArray[j]):
                 continue
 

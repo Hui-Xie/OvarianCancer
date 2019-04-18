@@ -35,7 +35,7 @@ class SegV3DModel (SegVModel):
         self.m_bnT2 = nn.BatchNorm3d(32)
         self.m_convT1 = nn.ConvTranspose3d(64, 1, (5, 5, 5), stride=(2, 2, 2))  # output:21*281*281
         self.m_bnT1 = nn.BatchNorm3d(1)
-        self.m_conv0 = nn.Conv2d(42, K, (1, 1), stride=1)  # output:3*281*281
+        self.m_conv0 = nn.Conv2d(42, K, (1, 1), stride=1)  # output:K*281*281
 
     def forward(self, x):
 
