@@ -61,6 +61,9 @@ class DataMgr:
             self.m_suppressedLabels = self.getSuppressedLabels(maxLabel, self.m_remainedLabels)
             if 2 == len(self.m_remainedLabels):
                 self.m_binaryLabel = True
+            print("Infor: program test labels: ", self.m_remainedLabels)
+            print("Infor: program suppressed labels: ", self.m_suppressedLabels)
+
         else:
             print("Error: background 0 should be in the remained label list")
             sys.exit(-1)
@@ -378,10 +381,8 @@ class DataMgr:
 
     def changeSuppressedLabelsTo0(self, labelArray):  # ks is a tuple or a list
         for k in self.m_suppressedLabels:
-            numk = np.count_nonzero((labelArray == k)*1)
-            if numk != 0:
-                index = np.nonzero((labelArray == k)*1)
-                labelArray[index] = 0
+            index = np.nonzero((labelArray == k)*1)
+            labelArray[index] = 0
 
         if self.m_binaryLabel and not 1 in self.m_remainedLabels:
             index = np.nonzero(labelArray)
@@ -420,7 +421,7 @@ class DataMgr:
 
             labelArray = self.changeSuppressedLabelsTo0(labelArray)   # always erase label 3 as it only has 5 slices in dataset
             if 0 == np.count_nonzero(labelArray[j]):
-                continue
+                 continue
 
             imageArray = self.readImageFile(imageFile)
             imageArray, labelArray = self.rotate90s(imageArray, labelArray)  # rotation data augmentation

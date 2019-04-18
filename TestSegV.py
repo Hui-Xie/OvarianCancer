@@ -125,7 +125,8 @@ def main():
             #print(f'batch={batches}: batchLoss = {batchLoss}')
 
     #===========print train and test progress===============
-    testLoss /= batches
+    if 0 != batches:
+        testLoss /= batches
     diceAvgList = [x / (y + 1e-8) for x, y in zip(diceSumList, diceCountList)]
     TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
     print(f'{0} \t {0:.4f} \t {testLoss:.4f} \t', '\t'.join((f'{x:.3f}' for x in diceAvgList)),'\t', '\t'.join((f'{x:.3f}' for x in TPRAvgList)))
