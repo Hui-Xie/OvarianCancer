@@ -362,10 +362,11 @@ class DataMgr:
         return self.m_k
 
     def changeLabel3to0(self, labelArray):
-        with np.nditer(labelArray, op_flags=['readwrite']) as it:
-            for x in it:
-                if 3 == x:
-                    x[...] = 0
+        num3 = np.count_nonzero((labelArray == 3)*1)
+        if num3 != 0:
+            index = np.nonzero((labelArray == 3)*1)
+            labelArray[index] = 0
+        return labelArray
 
     def randomTranslation(self,hc, wc):
         if self.m_maxShift > 0:
@@ -397,7 +398,7 @@ class DataMgr:
             imageArray = self.readImageFile(imageFile)
             labelArray = self.readImageFile(labelFile)
 
-            self.changeLabel3to0(labelArray)   # erase label 3 as it only has 5 slices in dataset
+            labelArray = self.changeLabel3to0(labelArray)   # erase label 3 as it only has 5 slices in dataset
 
             imageArray, labelArray = self.rotate90s(imageArray, labelArray)  # rotation data augmentation
             (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: height center, wc: width center
