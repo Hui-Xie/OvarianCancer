@@ -72,10 +72,10 @@ def main():
     net.setOptimizer(optimizer)
 
     netMgr = NetMgr(net, netPath)
-    bestTestDiceList = [0,0,0]
+    bestTestDiceList = [0]*K
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(True)  # True for train
-        bestTestDiceList = netMgr.loadBestTestDice()
+        bestTestDiceList = netMgr.loadBestTestDice(K)
         print('Current best test dice: ', bestTestDiceList)
     else:
         print("Network trains from scratch.")

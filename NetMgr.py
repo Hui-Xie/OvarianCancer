@@ -34,13 +34,13 @@ class NetMgr:
         testDiceArray = np.asarray(testDiceList)
         np.save(os.path.join(netPath, "bestTestDice.npy"), testDiceArray)
 
-    def loadBestTestDice(self):
+    def loadBestTestDice(self, K):
         filename = os.path.join(self.m_netPath, "bestTestDice.npy")
         if os.path.isfile(filename):
             bestTestDiceList = np.load(filename)
             bestTestDiceList.tolist()
         else:
-            bestTestDiceList = [0]*3   # for 3 classifications
+            bestTestDiceList = [0]*K   # for 3 classifications
         return bestTestDiceList
 
     def saveBest(self, testDiceList, netPath=None):
