@@ -67,8 +67,8 @@ def main():
 
     net.printParametersScale()
     if 2 in trainDataMgr.m_remainedLabels:
-        net.setDropoutProb(0.2)           # metastases is hard to learn, so it need a smaller dropout rate.
-    else: 
+        net.setDropoutProb(0.1)           # metastases is hard to learn, so it need a smaller dropout rate.
+    else:
         net.setDropoutProb(0.3)
 
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight())
