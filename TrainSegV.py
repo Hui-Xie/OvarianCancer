@@ -66,7 +66,10 @@ def main():
     trainDataMgr.setAddedNoise(0.3, 0.0,  0.1)     #add gaussian noise augmentation after data normalization of [0,1]
 
     net.printParametersScale()
-    net.setDropoutProb(0.3)
+    if 2 in trainDataMgr.m_remainedLabels:
+        net.setDropoutProb(0.2)           # metastases is hard to learn, so it need a smaller dropout rate.
+    else: 
+        net.setDropoutProb(0.3)
 
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight())
     lossFunc = FocalCELoss(weight=ceWeight)
