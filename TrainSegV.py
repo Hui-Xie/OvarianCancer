@@ -76,6 +76,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.7, patience=30, min_lr=1e-7)
 
     netMgr = NetMgr(net, netPath)
     bestTestDiceList = [0]*K
@@ -181,6 +182,7 @@ def main():
         #===========print train and test progress===============
         if 0 != batches:
             testLoss /= batches
+            lrScheduler.step(testLoss)
         diceAvgList = [x/(y+1e-8) for x,y in zip(diceSumList, diceCountList)]
         TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
         print(f'{epoch} \t {trainingLoss:.4f} \t {testLoss:.4f} \t', '\t'.join( (f'{x:.3f}' for x in diceAvgList)),'\t', '\t'.join( (f'{x:.3f}' for x in TPRAvgList)))
