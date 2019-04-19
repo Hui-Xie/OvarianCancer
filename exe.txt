@@ -1,1 +1,1 @@
-/home/hxie1/anaconda3/bin/python  /home/hxie1/Projects/OvarianCancer/TrainSegV.py /home/hxie1/temp_netParameters/OvarianCancer /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels 2D|3D
+/home/hxie1/anaconda3/bin/python  /home/hxie1/Projects/OvarianCancer/TrainSegV.py /home/hxie1/temp_netParameters/OvarianCancer /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels 2D (0,1)
