@@ -38,7 +38,6 @@ class DataMgr:
         self.m_remainedLabels = []  # the ground truth label value, for example 1,2,3
         self.m_suppressedLabels = []
 
-        self.buildSegSliceTupleList()
         self.createSegmentedDir()
 
     def setMaxShift(self, maxShift):
@@ -58,7 +57,7 @@ class DataMgr:
     def setRemainedLabel(self,maxLabel, ks):
         if 0 in ks:
             self.m_remainedLabels = list(ks)
-            self.m_suppressedLabels = self.getSuppressedLabels(maxLabel, self.m_remainedLabels)
+            self.m_suppressedLabels = self.getSuppressedLabels(maxLabel)
             if 2 == len(self.m_remainedLabels):
                 self.m_binaryLabel = True
             print("Infor: program test labels: ", self.m_remainedLabels)
@@ -73,13 +72,14 @@ class DataMgr:
         if not os.path.exists(self.m_segDir):
             os.mkdir(self.m_segDir)
 
-    @staticmethod
-    def getSuppressedLabels(maxLabel, remainedLabels):
+
+    def getSuppressedLabels(self, maxLabel):
         labels = [x for x in range(maxLabel+1)]
-        for i, x in enumerate(labels):
-            if x in remainedLabels:
-               del labels[i]
-        return labels
+        result = labels[:]
+        for x in labels:
+            if x in self.m_remainedLabels:
+               del result[result.index(x)]
+        return result
 
     @staticmethod
     def getFilesList(filesDir, suffix):
@@ -103,7 +103,7 @@ class DataMgr:
             sliceList = self.getLabeledSliceIndex(labelArray)
             for j in sliceList:
                 self.m_segSliceTupleList.append((i, j))
-        print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices.')
+        print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
 
     def buildImageAttrList(self):
         """
@@ -164,14 +164,13 @@ class DataMgr:
     def getLabelFile(imageFile):
         return imageFile.replace("_CT.nrrd", "_Seg.nrrd").replace("Images/", "Labels/")
 
-    @staticmethod
-    def getLabeledSliceIndex(labelArray):
+    def getLabeledSliceIndex(self,labelArray):
+        labelArray = self.suppressedLabels(labelArray, binarize=False)
         nonzeroSlices = labelArray.sum((1, 2)).nonzero() # a tuple of arrays
         nonzeroSlices = nonzeroSlices[0]
-        if 0 == len(nonzeroSlices):
-            print("Infor: label file does not find any nonzero label. ")
-            sys.exit()
         result = []
+        if 0 == len(nonzeroSlices):
+            return result
         previous = nonzeroSlices[0]
         start = previous
         for index in nonzeroSlices:
@@ -379,12 +378,12 @@ class DataMgr:
     def getNumClassification(self):
         return self.m_k
 
-    def changeSuppressedLabelsTo0(self, labelArray):  # ks is a tuple or a list
+    def suppressedLabels(self, labelArray, binarize = True):
         for k in self.m_suppressedLabels:
             index = np.nonzero((labelArray == k)*1)
             labelArray[index] = 0
 
-        if self.m_binaryLabel and not 1 in self.m_remainedLabels:
+        if binarize and self.m_binaryLabel and not 1 in self.m_remainedLabels:
             index = np.nonzero(labelArray)
             labelArray[index] = 1
 
@@ -419,7 +418,7 @@ class DataMgr:
             labelFile = self.getLabelFile(imageFile)
             labelArray = self.readImageFile(labelFile)
 
-            labelArray = self.changeSuppressedLabelsTo0(labelArray)   # always erase label 3 as it only has 5 slices in dataset
+            labelArray = self.suppressedLabels(labelArray, binarize=True)   # always erase label 3 as it only has 5 slices in dataset
             if 0 == np.count_nonzero(labelArray[j]):
                  continue
 

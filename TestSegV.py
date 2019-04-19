@@ -39,6 +39,7 @@ def main():
 
     testDataMgr = DataMgr(imagesPath, labelsPath)
     testDataMgr.setRemainedLabel(3, labelTuple)
+    testDataMgr.buildSegSliceTupleList()
 
     if is2DInput:
         print("Info: program uses 2D input.")

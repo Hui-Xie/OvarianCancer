@@ -45,6 +45,8 @@ def main():
     testDataMgr = DataMgr(*trainDataMgr.getTestDirs())
     trainDataMgr.setRemainedLabel(3, labelTuple)
     testDataMgr.setRemainedLabel(3, labelTuple)
+    trainDataMgr.buildSegSliceTupleList()
+    testDataMgr.buildSegSliceTupleList()
 
     if is2DInput:
         print("Info: program uses 2D input.")
