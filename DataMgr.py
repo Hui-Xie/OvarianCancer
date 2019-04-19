@@ -67,6 +67,23 @@ class DataMgr:
             print("Error: background 0 should be in the remained label list")
             sys.exit(-1)
 
+    def getCEWeight(self):
+        labelPortion = [0.95995, 0.0254, 0.01462,0.00003] # this is portion of 0,1,2,3 label, whose sum = 1
+        N = len(self.m_remainedLabels)
+        ceWeight = [0.0]*N
+        accumu = 0.0
+        for i, x in enumerate(self.m_remainedLabels):
+            if 0 == x:
+                position0 = i
+                continue
+            else:
+                ceWeight[i] = 1/labelPortion[x]
+                accumu += labelPortion[x]
+        ceWeight[position0] = 1/(1-accumu)  # unused labels belong to background 0
+        print("Infor: Cross Entropy Weight: ", ceWeight)
+        return ceWeight
+
+
     def createSegmentedDir(self):
         self.m_segDir =  os.path.join(os.path.dirname(self.m_labelsDir), 'segmented')
         if not os.path.exists(self.m_segDir):
@@ -229,24 +246,24 @@ class DataMgr:
         else:
             return array[d1:d2, h1:h2, w1:w2].copy().squeeze(axis=0)
 
-    def cropSliceCopy(self, array, dIndex, hc, wc):
-        shape = array.shape
+    def cropSliceCopy(self, slice, hc, wc):
+        shape = slice.shape
 
         h1 = int(hc - self.m_height / 2)
         h1 = h1 if h1 >= 0 else 0
         h2 = h1 + self.m_height
-        if h2 > shape[1]:
-            h2 = shape[1]
+        if h2 > shape[0]:
+            h2 = shape[0]
             h1 = h2 - self.m_height
 
         w1 = int(wc - self.m_width / 2)
         w1 = w1 if w1 >= 0 else 0
         w2 = w1 + self.m_width
-        if w2 > shape[2]:
-            w2 = shape[2]
+        if w2 > shape[1]:
+            w2 = shape[1]
             w1 = w2 - self.m_width
 
-        return array[dIndex, h1:h2, w1:w2].copy()
+        return slice[h1:h2, w1:w2].copy()
 
     @staticmethod
     def getLabelHWCenter(array2D):
@@ -417,15 +434,16 @@ class DataMgr:
             imageFile = self.m_imagesList[i]
             labelFile = self.getLabelFile(imageFile)
             labelArray = self.readImageFile(labelFile)
+            labelArrayJ = np.copy(labelArray[j])
 
-            labelArray = self.suppressedLabels(labelArray, binarize=True)   # always erase label 3 as it only has 5 slices in dataset
-            if 0 == np.count_nonzero(labelArray[j]):
+            labelArrayJ = self.suppressedLabels(labelArrayJ, binarize=True)   # always erase label 3 as it only has 5 slices in dataset
+            if 0 == np.count_nonzero(labelArrayJ):
                  continue
 
             imageArray = self.readImageFile(imageFile)
-            imageArray, labelArray = self.rotate90s(imageArray, labelArray)  # rotation data augmentation
+            imageArray, labelArrayJ = self.rotate90s(imageArray, labelArrayJ)  # rotation data augmentation
 
-            (hc,wc) =  self.getLabelHWCenter(labelArray[j]) # hc: height center, wc: width center
+            (hc,wc) =  self.getLabelHWCenter(labelArrayJ) # hc: height center, wc: width center
             (hc,wc) = self.randomTranslation(hc, wc) # translation data augmentation
 
             if batch >= self.m_batchSize:
@@ -437,14 +455,14 @@ class DataMgr:
                     dataList.clear()
                     labelList.clear()
 
-            label = self.cropSliceCopy(labelArray, j, hc, wc)
+            label = self.cropSliceCopy(labelArrayJ, j, hc, wc)
             if 0 == np.count_nonzero(label):   # skip the label without any meaningful labels
                 continue
 
             if 0 != radius:
                 data = self.cropVolumeCopy(imageArray, j, hc, wc, radius)
             else:
-                data = self.cropSliceCopy(imageArray, j, hc, wc)
+                data = self.cropSliceCopy(imageArray[j], hc, wc)
 
             data = self.preprocessData(data)
 
@@ -521,7 +539,14 @@ class DataMgr:
         if self.m_rot90sProb >0 and random.uniform(0,1) <= self.m_rot90sProb:
             k = random.randrange(1, 4, 1)  # k*90 is the real rotataion degree
             data  = np.rot90(data, k, tuple(range(1,data.ndim)))
-            label = np.rot90(label, k, tuple(range(1,label.ndim)))
+            if data.ndim == label.ndim:
+                label = np.rot90(label, k, tuple(range(1,label.ndim)))
+            elif data.ndim == label.ndim+1:
+                label = np.rot90(label, k)
+            else:
+                print("Error: in rotate90s, the ndim of data and label does not match.")
+                sys.exi(-1)
+
         return data, label
 
     def addGaussianNoise(self, data):

@@ -68,7 +68,7 @@ def main():
     net.printParametersScale()
     net.setDropoutProb(0.3)
 
-    ceWeight = torch.FloatTensor([1, 39, 68])  # 30653
+    ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight())
     lossFunc = FocalCELoss(weight=ceWeight)
     # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     # lossFunc = nn.CrossEntropyLoss()

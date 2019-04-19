@@ -54,7 +54,7 @@ def main():
 
     net.printParametersScale()
 
-    ceWeight = torch.FloatTensor([1, 39, 68])
+    ceWeight = torch.FloatTensor(testDataMgr.getCEWeight())
     lossFunc = FocalCELoss(weight=ceWeight)
     # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
     #lossFunc = nn.CrossEntropyLoss()
