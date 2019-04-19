@@ -111,7 +111,7 @@ class DataMgr:
         build segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
         :return:
         """
-        print('Building the Segmented Slice Tuple list, please waiting......')
+        print('Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......')
         self.m_segSliceTupleList = []
         self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
         for i, image in enumerate(self.m_imagesList):
@@ -455,7 +455,7 @@ class DataMgr:
                     dataList.clear()
                     labelList.clear()
 
-            label = self.cropSliceCopy(labelArrayJ, j, hc, wc)
+            label = self.cropSliceCopy(labelArrayJ, hc, wc)
             if 0 == np.count_nonzero(label):   # skip the label without any meaningful labels
                 continue
 
