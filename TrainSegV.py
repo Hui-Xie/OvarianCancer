@@ -53,7 +53,7 @@ def main():
         trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(64, K)  # 128 is the number of filters in the first layer.  # Todo  temparately use 64 instead of 128.
+            net = SegV2DModel(96, K)  # 128 is the number of filters in the first layer.  # Todo  temparately use 96 instead of 128.
         else:
             net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
 
