@@ -53,7 +53,7 @@ def main():
         trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(128, K)  # 128 is the number of filters in the first layer.
+            net = SegV2DModel(64, K)  # 128 is the number of filters in the first layer.  # Todo  temparately use 64 instead of 128.
         else:
             net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
 
@@ -104,17 +104,12 @@ def main():
     useDataParallel = True  # for debug
     # ===========debug==================
 
-    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    if 2 in trainDataMgr.m_remainedLabels:
-        device = torch.device("cuda:1" if torch.cuda.device_count()> 1 else "cpu")
-    else:
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:
             print(f'Info: program will use {nGPU} GPUs.')
-            net = nn.DataParallel(net, output_device=device)
+            net = nn.DataParallel(net)
     net.to(device)
 
     epochs = 15000
