@@ -110,6 +110,11 @@ def main():
         if nGPU >1:
             print(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
+
+    if 2 in trainDataMgr.m_remainedLabels:
+        device = torch.device("cuda:1" if torch.cuda.device_count()> 1 else "cpu")
+    else:
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     net.to(device)
 
     epochs = 15000
