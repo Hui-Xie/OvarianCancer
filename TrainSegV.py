@@ -52,7 +52,10 @@ def main():
         print("Info: program uses 2D input.")
         trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel(K)
+        if 2 in trainDataMgr.m_remainedLabels:
+            net = SegV2DModel(128, K)  # 128 is the number of filters in the first layer.
+        else:
+            net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
 
     else:
         print("Info: program uses 3D input.")
