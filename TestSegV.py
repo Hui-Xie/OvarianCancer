@@ -11,7 +11,7 @@ from DataMgr import DataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
-from FocalCELoss import FocalCELoss
+from CustomizedLoss import FocalCELoss
 
 def printUsage(argv):
     print("============Test Ovarian Cancer Segmentation V model=============")
