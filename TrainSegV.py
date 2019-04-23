@@ -53,7 +53,7 @@ def main():
         trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(160, K)  # 160 is the number of filters in the first layer for metastases network.
+            net = SegV2DModel(128, K)  # 160 is the number of filters in the first layer for metastases network.
         else:
             net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
 
@@ -70,7 +70,7 @@ def main():
 
     net.printParametersScale()
     if 2 in trainDataMgr.m_remainedLabels:
-        net.setDropoutProb(0.3)           # metastases is hard to learn, so it need a smaller dropout rate.
+        net.setDropoutProb(0.2)           # metastases is hard to learn, so it need a smaller dropout rate.
     else:
         net.setDropoutProb(0.3)
 
