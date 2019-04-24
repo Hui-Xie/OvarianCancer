@@ -105,7 +105,7 @@ def main():
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
             outputs = net.forward(inputs)
-            loss = torch.Tensor(0)
+            loss = torch.tensor(0.0)
             for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeightList):
                 loss += lossFunc(outputs, labels) * weight
             batchLoss = loss.item()

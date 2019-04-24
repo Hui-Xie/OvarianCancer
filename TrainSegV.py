@@ -45,6 +45,13 @@ def main():
     testDataMgr = DataMgr(*trainDataMgr.getTestDirs())
     trainDataMgr.setRemainedLabel(3, labelTuple)
     testDataMgr.setRemainedLabel(3, labelTuple)
+
+    # ===========debug==================
+    trainDataMgr.setOneSampleTraining(True)  # for debug
+    testDataMgr.setOneSampleTraining(True)  # for debug
+    useDataParallel = True  # for debug
+    # ===========debug==================
+
     trainDataMgr.buildSegSliceTupleList()
     testDataMgr.buildSegSliceTupleList()
 
@@ -74,7 +81,9 @@ def main():
     else:
         net.setDropoutProb(0.3)
 
-    ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight())
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss)
     boundaryLoss = BoundaryLoss()
@@ -98,13 +107,8 @@ def main():
     summary(net.cuda(), trainDataMgr.getInputSize())
     print("===================End of Net Architecture =====================\n")
 
-    #===========debug==================
-    #trainDataMgr.setOneSampleTraining(True) # for debug
-    #testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = True  # for debug
-    # ===========debug==================
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:
@@ -129,7 +133,9 @@ def main():
         trainingLoss = 0.0
         batches = 0
         net.train()
-        lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
+        if useDataParallel:
+            lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
+
         for inputs, labels in trainDataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
@@ -137,7 +143,7 @@ def main():
             if useDataParallel:
                 optimizer.zero_grad()
                 outputs = net.forward(inputs)
-                loss = torch.tensor(0)
+                loss = torch.tensor(0.0).cuda()
                 for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
                     loss += lossFunc(outputs, labels) * weight
                 loss.backward()
@@ -168,8 +174,8 @@ def main():
 
                 if useDataParallel:
                     outputs = net.forward(inputs)
-                    loss = torch.Tensor(0)
-                    for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeightList):
+                    loss = torch.tensor(0.0).cuda()
+                    for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
                         loss += lossFunc(outputs, labels) * weight
                     batchLoss = loss.item()
                 else:

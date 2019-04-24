@@ -42,7 +42,7 @@ class BoundaryLoss(_Loss):
     def forward(self, inputx, target):
         segProb = torch.narrow(F.softmax(inputx, 1),1, 1,1)
 
-        targetNot = (target == 0).numpy()
+        targetNot = (target == 0).cpu().numpy()
         shape = targetNot.shape
         ndim = targetNot.ndim
         N = shape[0]
@@ -50,7 +50,7 @@ class BoundaryLoss(_Loss):
         for i in range(N):
             levelSet[i] = ndimage.distance_transform_edt(targetNot[i])
 
-        levelSetTensor = torch.from_numpy(levelSet)
+        levelSetTensor = torch.from_numpy(levelSet).float().cuda()
         ret = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
 
         if self.reduction != 'none':
