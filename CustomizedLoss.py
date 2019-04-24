@@ -31,6 +31,7 @@ class FocalCELoss(_WeightedLoss):
 class BoundaryLoss(_Loss):
     """
     Boundary Loss, please refer paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
+    Only support binary classification case now.
     """
     __constants__ = ['reduction']
 
@@ -52,5 +53,7 @@ class BoundaryLoss(_Loss):
         levelSetTensor = torch.from_numpy(levelSet)
         ret = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
 
+        if self.reduction != 'none':
+            ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
         return ret
 
