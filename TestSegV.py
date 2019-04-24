@@ -106,7 +106,7 @@ def main():
 
             outputs = net.forward(inputs)
             loss = torch.Tensor(0)
-            for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeighList):
+            for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeightList):
                 loss += lossFunc(outputs, labels) * weight
             batchLoss = loss.item()
 

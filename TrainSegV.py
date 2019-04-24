@@ -104,7 +104,7 @@ def main():
     useDataParallel = True  # for debug
     # ===========debug==================
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:
@@ -136,8 +136,9 @@ def main():
             if useDataParallel:
                 optimizer.zero_grad()
                 outputs = net.forward(inputs)
-                loss = torch.Tensor(0)
-                for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeighList):
+                loss = torch.tensor(0)
+                lossWeightList = torch.Tensor(net.module.m_lossWeightList)
+                for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
                     loss += lossFunc(outputs, labels) * weight
                 loss.backward()
                 optimizer.step()
@@ -168,7 +169,7 @@ def main():
                 if useDataParallel:
                     outputs = net.forward(inputs)
                     loss = torch.Tensor(0)
-                    for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeighList):
+                    for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeightList):
                         loss += lossFunc(outputs, labels) * weight
                     batchLoss = loss.item()
                 else:

@@ -10,7 +10,7 @@ class SegVModel(nn.Module):
         self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
         self.m_optimizer = None
         self.m_lossFuncList = []
-        self.m_lossWeighList = []
+        self.m_lossWeightList = []
 
 
     def forward(self, x):
@@ -21,13 +21,13 @@ class SegVModel(nn.Module):
 
     def appendLossFunc(self, lossFunc, weight = 1.0):
         self.m_lossFuncList.append(lossFunc)
-        self.m_lossWeighList.append(weight)
+        self.m_lossWeightList.append(weight)
 
     def batchTrain(self, inputs, labels):
         self.m_optimizer.zero_grad()
         outputs = self.forward(inputs)
         loss = torch.Tensor(0)
-        for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeighList):
+        for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             loss += lossFunc(outputs,labels)*weight
         loss.backward()
         self.m_optimizer.step()
@@ -36,7 +36,7 @@ class SegVModel(nn.Module):
     def batchTest(self, inputs, labels):
         outputs = self.forward(inputs)
         loss = torch.Tensor(0)
-        for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeighList):
+        for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             loss += lossFunc(outputs, labels) * weight
         return loss.item(), outputs
 
