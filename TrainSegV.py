@@ -63,7 +63,7 @@ def main():
         testDataMgr.setDataSize(64, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
-    trainDataMgr.setMaxShift(25)                  #translation data augmentation
+    trainDataMgr.setMaxShift(25, 0.5)             #translation data augmentation and its probability
     trainDataMgr.setFlipProb(0.3)                 #flip data augmentation
     trainDataMgr.setRot90sProb(0.3)               #rotate along 90, 180, 270
     trainDataMgr.setAddedNoise(0.3, 0.0,  0.1)     #add gaussian noise augmentation after data normalization of [0,1]

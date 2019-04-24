@@ -15,6 +15,7 @@ class DataMgr:
         self.m_labelsDir = labelsDir
 
         self.m_maxShift = 0
+        self.m_translationProb = 0
         self.m_flipProb = 0
         self.m_rot90sProb = 0  # support 90, 180, 270 degree rotation
         self.m_noiseProb = 0  # noise probability
@@ -40,8 +41,9 @@ class DataMgr:
 
         self.createSegmentedDir()
 
-    def setMaxShift(self, maxShift):
+    def setMaxShift(self, maxShift, translationProb = 0.5):
         self.m_maxShift = maxShift
+        self.m_translationProb = translationProb
 
     def setFlipProb(self, prob):
         self.m_flipProb = prob
@@ -407,7 +409,7 @@ class DataMgr:
         return labelArray
 
     def randomTranslation(self,hc, wc):
-        if self.m_maxShift > 0:
+        if self.m_maxShift > 0 and random.uniform(0,1) <= self.m_translationProb:
             hc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
             wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
         return hc, wc
