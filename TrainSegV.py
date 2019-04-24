@@ -129,6 +129,7 @@ def main():
         trainingLoss = 0.0
         batches = 0
         net.train()
+        lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
         for inputs, labels in trainDataMgr.dataLabelGenerator(True):
             inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
@@ -137,7 +138,6 @@ def main():
                 optimizer.zero_grad()
                 outputs = net.forward(inputs)
                 loss = torch.tensor(0)
-                lossWeightList = torch.Tensor(net.module.m_lossWeightList)
                 for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
                     loss += lossFunc(outputs, labels) * weight
                 loss.backward()
