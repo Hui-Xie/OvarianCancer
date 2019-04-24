@@ -11,7 +11,7 @@ from DataMgr import DataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
-from CustomizedLoss import FocalCELoss
+from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 def printUsage(argv):
     print("============Test Ovarian Cancer Segmentation V model=============")
@@ -55,10 +55,10 @@ def main():
     net.printParametersScale()
 
     ceWeight = torch.FloatTensor(testDataMgr.getCEWeight())
-    lossFunc = FocalCELoss(weight=ceWeight)
-    # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
-    #lossFunc = nn.CrossEntropyLoss()
-    net.setLossFunc(lossFunc)
+    focalLoss = FocalCELoss(weight=ceWeight)
+    net.appendLossFunc(focalLoss)
+    boundaryLoss = BoundaryLoss()
+    net.appendLossFunc(boundaryLoss)
 
     netMgr = NetMgr(net, netPath)
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
@@ -105,7 +105,9 @@ def main():
             inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
             outputs = net.forward(inputs)
-            loss = lossFunc(outputs, labels)
+            loss = torch.Tensor(0)
+            for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeighList):
+                loss += lossFunc(outputs, labels) * weight
             batchLoss = loss.item()
 
             outputs = outputs.cpu().numpy()

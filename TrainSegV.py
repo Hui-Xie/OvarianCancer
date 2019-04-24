@@ -13,7 +13,7 @@ from DataMgr import DataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
-from CustomizedLoss import FocalCELoss
+from CustomizedLoss import FocalCELoss,BoundaryLoss
 
 
 
@@ -75,10 +75,10 @@ def main():
         net.setDropoutProb(0.3)
 
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight())
-    lossFunc = FocalCELoss(weight=ceWeight)
-    # lossFunc = nn.CrossEntropyLoss(weight=ceWeight)
-    # lossFunc = nn.CrossEntropyLoss()
-    net.setLossFunc(lossFunc)
+    focalLoss = FocalCELoss(weight=ceWeight)
+    net.appendLossFunc(focalLoss)
+    boundaryLoss = BoundaryLoss()
+    net.appendLossFunc(boundaryLoss)
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
@@ -136,7 +136,9 @@ def main():
             if useDataParallel:
                 optimizer.zero_grad()
                 outputs = net.forward(inputs)
-                loss = lossFunc(outputs, labels)
+                loss = torch.Tensor(0)
+                for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeighList):
+                    loss += lossFunc(outputs, labels) * weight
                 loss.backward()
                 optimizer.step()
                 batchLoss = loss.item()
@@ -165,7 +167,9 @@ def main():
 
                 if useDataParallel:
                     outputs = net.forward(inputs)
-                    loss = lossFunc(outputs, labels)
+                    loss = torch.Tensor(0)
+                    for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeighList):
+                        loss += lossFunc(outputs, labels) * weight
                     batchLoss = loss.item()
                 else:
                     batchLoss, outputs = net.batchTest(inputs, labels)
