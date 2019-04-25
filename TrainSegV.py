@@ -62,7 +62,7 @@ def main():
         if 2 in trainDataMgr.m_remainedLabels:
             net = SegV2DModel(110, K)  # 128 is the number of filters in the first layer for metastases network.
         else:
-            net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
+            net = SegV2DModel(96, K)  # 96 is the number of filters in the first layer.
 
     else:
         print("Info: program uses 3D input.")
