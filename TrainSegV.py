@@ -57,17 +57,17 @@ def main():
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
-        testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(110, K)  # 128 is the number of filters in the first layer for metastases network.
+            net = SegV2DModel(256, K)  # 128 is the number of filters in the first layer for metastases network.
         else:
-            net = SegV2DModel(96, K)  # 96 is the number of filters in the first layer.
+            net = SegV2DModel(128, K)  # 96 is the number of filters in the first layer.
 
     else:
         print("Info: program uses 3D input.")
-        trainDataMgr.setDataSize(64, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
-        testDataMgr.setDataSize(64, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(8, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(8, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     trainDataMgr.setMaxShift(25, 0.5)             #translation data augmentation and its probability
@@ -96,12 +96,12 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss()
+    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
     net.appendLossFunc(boundaryLoss, 0)
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.7, patience=30, min_lr=1e-7)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-8)
 
     # print model
     print("\n====================Net Architecture===========================")
@@ -128,7 +128,7 @@ def main():
     for epoch in range(epochs):
 
         #================Update Loss weight==============
-        if epoch > 50:
+        if epoch > 50 and (epoch -50) % 5 == 0 :
             lossWeightList = net.module.getLossWeightList() if  useDataParallel else net.getLossWeightList()
             lossWeightList[0] -= 0.01
             lossWeightList[1] += 0.01

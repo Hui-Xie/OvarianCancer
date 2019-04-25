@@ -35,8 +35,9 @@ class BoundaryLoss(_Loss):
     """
     __constants__ = ['reduction']
 
-    def __init__(self, size_average=None, reduce=None, reduction='mean'):
+    def __init__(self, lambdaCoeff=0.001, size_average=None, reduce=None, reduction='mean'):
         super().__init__(size_average, reduce, reduction)
+        self.m_lambda=lambdaCoeff # weight coefficient
 
     @weak_script_method
     def forward(self, inputx, target):
@@ -55,5 +56,5 @@ class BoundaryLoss(_Loss):
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
-        return ret
+        return ret*self.m_lambda
 

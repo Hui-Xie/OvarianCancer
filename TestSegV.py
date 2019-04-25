@@ -43,11 +43,11 @@ def main():
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        testDataMgr.setDataSize(32, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
     else:
         print("Info: program uses 3D input.")
-        testDataMgr.setDataSize(32, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(8, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     testDataMgr.buildImageAttrList()
