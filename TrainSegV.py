@@ -60,9 +60,9 @@ def main():
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(256, K)  # 128 is the number of filters in the first layer for metastases network.
+            net = SegV2DModel(512, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(128, K)  # 96 is the number of filters in the first layer.
+            net = SegV2DModel(256, K)
 
     else:
         print("Info: program uses 3D input.")
