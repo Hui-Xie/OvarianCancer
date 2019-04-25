@@ -57,17 +57,17 @@ def main():
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
-        testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(4, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        testDataMgr.setDataSize(4, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
             net = SegV2DModel(512, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(256, K)
+            net = SegV2DModel(192, K)
 
     else:
         print("Info: program uses 3D input.")
-        trainDataMgr.setDataSize(8, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
-        testDataMgr.setDataSize(8, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(4, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(4, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     trainDataMgr.setMaxShift(25, 0.5)             #translation data augmentation and its probability
