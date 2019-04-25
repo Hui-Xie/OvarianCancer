@@ -60,7 +60,7 @@ def main():
         trainDataMgr.setDataSize(64, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(64, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(128, K)  # 160 is the number of filters in the first layer for metastases network.
+            net = SegV2DModel(110, K)  # 128 is the number of filters in the first layer for metastases network.
         else:
             net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
 
@@ -75,6 +75,16 @@ def main():
     trainDataMgr.setRot90sProb(0.3)               #rotate along 90, 180, 270
     trainDataMgr.setAddedNoise(0.3, 0.0,  0.1)     #add gaussian noise augmentation after data normalization of [0,1]
 
+    # Load network
+    netMgr = NetMgr(net, netPath)
+    bestTestDiceList = [0] * K
+    if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
+        netMgr.loadNet(True)  # True for train
+        bestTestDiceList = netMgr.loadBestTestDice(K)
+        print('Current best test dice: ', bestTestDiceList)
+    else:
+        print("Network trains from scratch.")
+
     net.printParametersScale()
     if 2 in trainDataMgr.m_remainedLabels:
         net.setDropoutProb(0.2)           # metastases is hard to learn, so it need a smaller dropout rate.
@@ -85,29 +95,18 @@ def main():
 
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
-    net.appendLossFunc(focalLoss)
+    net.appendLossFunc(focalLoss, 1)
     boundaryLoss = BoundaryLoss()
-    net.appendLossFunc(boundaryLoss)
+    net.appendLossFunc(boundaryLoss, 0)
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.7, patience=30, min_lr=1e-7)
 
-    netMgr = NetMgr(net, netPath)
-    bestTestDiceList = [0]*K
-    if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
-        netMgr.loadNet(True)  # True for train
-        bestTestDiceList = netMgr.loadBestTestDice(K)
-        print('Current best test dice: ', bestTestDiceList)
-    else:
-        print("Network trains from scratch.")
-
     # print model
     print("\n====================Net Architecture===========================")
     summary(net.cuda(), trainDataMgr.getInputSize())
     print("===================End of Net Architecture =====================\n")
-
-
 
     if useDataParallel:
         nGPU = torch.cuda.device_count()
@@ -127,6 +126,22 @@ def main():
     print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead),'\t', '\t'.join(TPRHead))   # print output head
 
     for epoch in range(epochs):
+
+        #================Update Loss weight==============
+        if epoch > 50:
+            lossWeightList = net.module.getLossWeightList() if  useDataParallel else net.getLossWeightList()
+            lossWeightList[0] -= 0.01
+            lossWeightList[1] += 0.01
+            if lossWeightList[0] < 0.01:
+                lossWeightList[0] = 0.01
+            if lossWeightList[1] > 0.99:
+                lossWeightList[1] = 0.99
+
+            if useDataParallel:
+                net.module.updateLossWeightList(lossWeightList)
+            else:
+                net.updateLossWeightList(lossWeightList)
+
 
         #================Training===============
         random.seed()
@@ -207,7 +222,7 @@ def main():
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             netMgr.save(diceAvgList)
-            if diceAvgList[1] > 0.50  and diceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
+            if diceAvgList[1] > 0.20  and diceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
                 bestTestDiceList = diceAvgList
                 netMgr.saveBest(bestTestDiceList)
         else:

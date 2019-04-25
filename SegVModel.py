@@ -23,6 +23,12 @@ class SegVModel(nn.Module):
         self.m_lossFuncList.append(lossFunc)
         self.m_lossWeightList.append(weight)
 
+    def updateLossWeightList(self, weightList):
+        self.m_lossWeightList = weightList
+
+    def getLossWeightList(self):
+        return self.m_lossWeightList
+
     def batchTrain(self, inputs, labels):
         self.m_optimizer.zero_grad()
         outputs = self.forward(inputs)
