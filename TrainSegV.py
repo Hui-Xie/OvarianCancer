@@ -57,12 +57,12 @@ def main():
 
     if is2DInput:
         print("Info: program uses 2D input.")
-        trainDataMgr.setDataSize(4, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
-        testDataMgr.setDataSize(4, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(512, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
+            net = SegV2DModel(192, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(192, K)
+            net = SegV2DModel(128, K)
 
     else:
         print("Info: program uses 3D input.")
@@ -96,8 +96,8 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
-    net.appendLossFunc(boundaryLoss, 0)
+    # boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
+    # net.appendLossFunc(boundaryLoss, 0)
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
@@ -128,8 +128,8 @@ def main():
     for epoch in range(epochs):
 
         #================Update Loss weight==============
-        if epoch > 50 and (epoch -50) % 5 == 0 :
-            lossWeightList = net.module.getLossWeightList() if  useDataParallel else net.getLossWeightList()
+        lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
+        if len(lossWeightList) >1 and epoch > 50 and (epoch -50) % 5 == 0 :
             lossWeightList[0] -= 0.01
             lossWeightList[1] += 0.01
             if lossWeightList[0] < 0.01:
