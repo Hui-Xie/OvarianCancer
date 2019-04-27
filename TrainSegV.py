@@ -15,8 +15,7 @@ from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
 from CustomizedLoss import FocalCELoss,BoundaryLoss
 
-
-
+import numpy as np
 
 def printUsage(argv):
     print("============Train Ovarian Cancer Segmentation V model=============")
@@ -52,7 +51,7 @@ def main():
     # ===========debug==================
     trainDataMgr.setOneSampleTraining(True)  # for debug
     testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = False  # for debug
+    useDataParallel = True  # for debug
     # ===========debug==================
 
     trainDataMgr.buildSegSliceTupleList()
@@ -78,6 +77,10 @@ def main():
     trainDataMgr.setRot90sProb(0.3)               #rotate along 90, 180, 270
     trainDataMgr.setAddedNoise(0.3, 0.0,  0.1)     #add gaussian noise augmentation after data normalization of [0,1]
 
+    optimizer = optim.Adam(net.parameters())
+    net.setOptimizer(optimizer)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-8)
+
     # Load network
     netMgr = NetMgr(net, netPath)
     bestTestDiceList = [0] * K
@@ -102,9 +105,7 @@ def main():
     # boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
     # net.appendLossFunc(boundaryLoss, 0)
 
-    optimizer = optim.Adam(net.parameters())
-    net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-8)
+
 
     # print model
     print("\n====================Net Architecture===========================")
@@ -155,7 +156,7 @@ def main():
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
 
         for (inputs1, labels1), (inputs2, labels2) in zip(trainDataMgr.dataLabelGenerator(True), trainDataMgr.dataLabelGenerator(True)):
-            lambdaInBeta = random.beta(alpha, alpha)
+            lambdaInBeta = np.random.beta(alpha, alpha)
             inputs = inputs1* lambdaInBeta + inputs2*(1-lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
             labels1= torch.from_numpy(labels1).to(device, dtype=torch.long)
@@ -172,7 +173,7 @@ def main():
                 optimizer.step()
                 batchLoss = loss.item()
             else:
-                batchLoss = net.batchTrain(inputs, labels1, labels2, lambdaInBeta)
+                batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
 
             trainingLoss += batchLoss

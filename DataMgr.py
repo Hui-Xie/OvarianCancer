@@ -123,7 +123,7 @@ class DataMgr:
             for j in sliceList:
                 self.m_segSliceTupleList.append((i, j))
 
-            if self.m_oneSampleTraining:
+            if self.m_oneSampleTraining and len(self.m_segSliceTupleList)>1:
                 break
         print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
 
