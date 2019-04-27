@@ -44,7 +44,7 @@ def main():
     if is2DInput:
         print("Info: program uses 2D input.")
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel(64, K)  # 64 is the number of filters in the first layer.
+        net = SegV2DModel(128, K)  # 128 is the number of filters in the first layer for primary cancer.
     else:
         print("Info: program uses 3D input.")
         testDataMgr.setDataSize(8, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
@@ -57,8 +57,8 @@ def main():
     ceWeight = torch.FloatTensor(testDataMgr.getCEWeight())
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss)
-    boundaryLoss = BoundaryLoss()
-    net.appendLossFunc(boundaryLoss)
+    # boundaryLoss = BoundaryLoss()
+    # net.appendLossFunc(boundaryLoss)
 
     netMgr = NetMgr(net, netPath)
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
@@ -74,7 +74,7 @@ def main():
     summary(net.cuda(), testDataMgr.getInputSize())
     print("===================End of Net Architecture =====================\n")
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:
@@ -106,7 +106,7 @@ def main():
 
             outputs = net.forward(inputs)
             loss = torch.tensor(0.0)
-            for lossFunc, weight in zip(net.m_lossFuncList, net.m_lossWeightList):
+            for lossFunc, weight in zip(net.module.m_lossFuncList, net.module.m_lossWeightList):
                 loss += lossFunc(outputs, labels) * weight
             batchLoss = loss.item()
 
