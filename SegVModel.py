@@ -39,6 +39,17 @@ class SegVModel(nn.Module):
         self.m_optimizer.step()
         return loss.item()
 
+    def batchTrainMixup(self, inputs, labels1, labels2, lambdaInBeta):
+        self.m_optimizer.zero_grad()
+        outputs = self.forward(inputs)
+        loss = torch.tensor(0.0).cuda()
+        for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
+            loss += lossFunc(outputs,labels1)*weight*lambdaInBeta
+            loss += lossFunc(outputs,labels2)*weight*(1-lambdaInBeta)
+        loss.backward()
+        self.m_optimizer.step()
+        return loss.item()
+
     def batchTest(self, inputs, labels):
         outputs = self.forward(inputs)
         loss = torch.tensor(0.0).cuda()

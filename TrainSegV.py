@@ -17,6 +17,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 
 
 
+
 def printUsage(argv):
     print("============Train Ovarian Cancer Segmentation V model=============")
     print("Usage:")
@@ -39,6 +40,8 @@ def main():
     labelTuple = eval(sys.argv[5])
     K = len(labelTuple)
 
+    alpha = 0.4 # for Beta distribution
+
     print(f"Info: netPath = {netPath}\n")
 
     trainDataMgr = DataMgr(imagesPath, labelsPath)
@@ -47,9 +50,9 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
-    testDataMgr.setOneSampleTraining(False)  # for debug
-    useDataParallel = True  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
+    testDataMgr.setOneSampleTraining(True)  # for debug
+    useDataParallel = False  # for debug
     # ===========debug==================
 
     trainDataMgr.buildSegSliceTupleList()
@@ -151,21 +154,26 @@ def main():
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
 
-        for inputs, labels in trainDataMgr.dataLabelGenerator(True):
-            inputs, labels= torch.from_numpy(inputs), torch.from_numpy(labels)
-            inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
+        for (inputs1, labels1), (inputs2, labels2) in zip(trainDataMgr.dataLabelGenerator(True), trainDataMgr.dataLabelGenerator(True)):
+            lambdaInBeta = random.beta(alpha, alpha)
+            inputs = inputs1* lambdaInBeta + inputs2*(1-lambdaInBeta)
+            inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
+            labels1= torch.from_numpy(labels1).to(device, dtype=torch.long)
+            labels2 = torch.from_numpy(labels2).to(device, dtype=torch.long)
 
             if useDataParallel:
                 optimizer.zero_grad()
                 outputs = net.forward(inputs)
                 loss = torch.tensor(0.0).cuda()
                 for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                    loss += lossFunc(outputs, labels) * weight
+                    loss += lossFunc(outputs, labels1) * weight*lambdaInBeta
+                    loss += lossFunc(outputs, labels2) * weight * (1-lambdaInBeta)
                 loss.backward()
                 optimizer.step()
                 batchLoss = loss.item()
             else:
-                batchLoss = net.batchTrain(inputs, labels)
+                batchLoss = net.batchTrain(inputs, labels1, labels2, lambdaInBeta)
+
 
             trainingLoss += batchLoss
             batches += 1
