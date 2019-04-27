@@ -39,6 +39,12 @@ def main():
 
     testDataMgr = DataMgr(imagesPath, labelsPath)
     testDataMgr.setRemainedLabel(3, labelTuple)
+
+    # ===========debug==================
+    testDataMgr.setOneSampleTraining(False)  # for debug
+    useDataParallel = True  # for debug
+    # ===========debug==================
+
     testDataMgr.buildSegSliceTupleList()
 
     if is2DInput:
@@ -54,7 +60,9 @@ def main():
 
     net.printParametersScale()
 
-    ceWeight = torch.FloatTensor(testDataMgr.getCEWeight())
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    ceWeight = torch.FloatTensor(testDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss)
     # boundaryLoss = BoundaryLoss()
@@ -67,14 +75,12 @@ def main():
         print(f"Program can not find trained network in path: {netPath}")
         sys.exit()
 
-    useDataParallel = True
-
     # print model
     print("\n====================Net Architecture===========================")
     summary(net.cuda(), testDataMgr.getInputSize())
     print("===================End of Net Architecture =====================\n")
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:

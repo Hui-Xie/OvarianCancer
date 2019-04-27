@@ -586,7 +586,13 @@ class DataMgr:
             baseNamePath = os.path.join(self.m_segDir, baseName+f'_{sliceIndex}')
             inputImagePath = baseNamePath+ '.png'
             inputx = inputs[i]  # inputs shape:32,1,21,281,281
-            inputSlice = inputx[0, int(inputx.shape[0]/2)]  # get the middle slice
+            if inputx.ndim ==4:
+                inputSlice = inputx[0, int(inputx.shape[0]/2)]  # get the middle slice
+            elif inputx.ndim ==3:
+                inputSlice = inputx[0]
+            else:
+                print("Error: image dimension eror in saveInputsSegmentations2Images")
+                sys.exit(-1)
             imsave(inputImagePath, inputSlice)
 
             segImagePath = baseNamePath+ '_Seg.png'
