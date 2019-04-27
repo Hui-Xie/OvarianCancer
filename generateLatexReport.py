@@ -66,7 +66,9 @@ latexItem = r'''
 \clearpage  % support huge number of figures
 
 '''
-outputLatex = r'''/home/hxie1/temp/OvarianCancerReport.tex'''
+
+# you may need to modify the output file directory and name
+outputLatex = r'''/home/hxie1/data/OvarianCancerCT/OCTestFor01_20190427.tex'''
 
 #imagesPath = r'''/home/hxie1/c-xwu000/data/OvarianCancerCT/Extract_uniform/segmented'''
 imagesPath = r'''/home/hxie1/data/OvarianCancerCT/Extract_uniform/segmented'''
