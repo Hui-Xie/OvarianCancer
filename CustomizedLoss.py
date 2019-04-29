@@ -33,7 +33,7 @@ class BoundaryLoss(_Loss):
     """
     Boundary Loss, please refer paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
     outside boundary, it is positive distance, a penalty to increase loss;
-    inside  boundary, it is negative distance, a rewward to reduce loss;
+    inside  boundary, it is negative distance, a reward to reduce loss;
     Only support binary classification case now.
     """
     __constants__ = ['reduction']
