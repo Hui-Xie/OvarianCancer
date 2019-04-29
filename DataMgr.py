@@ -21,6 +21,9 @@ class DataMgr:
         self.m_noiseProb = 0  # noise probability
         self.m_noiseMean = 0
         self.m_noiseStd  = 0
+        self.m_jitterProb = 0
+        self.m_jitterRadius = 0
+
 
         self.m_segDir = None
         self.m_imagesList = []
@@ -55,6 +58,10 @@ class DataMgr:
         self.m_noiseProb = prob
         self.m_noiseMean = mean
         self.m_noiseStd  = std
+
+    def setJitterNoise(self, prob, radius):
+        self.m_jitterProb = prob
+        self.m_jitterRadius = radius
 
     def setRemainedLabel(self,maxLabel, ks):
         if 0 in ks:
@@ -505,6 +512,7 @@ class DataMgr:
     def preprocessData(self, array)-> np.ndarray:
         data = array.clip(-300,300)    # adjust window level, also erase abnormal value
         data = self.sliceNormalize(data)
+        data = self.jitterNoise(data)
         data = self.addGaussianNoise(data)
         return data
 
@@ -542,7 +550,7 @@ class DataMgr:
 
     def rotate90s(self, data, label):
         if self.m_rot90sProb >0 and random.uniform(0,1) <= self.m_rot90sProb:
-            k = random.randrange(1, 4, 1)  # k*90 is the real rotataion degree
+            k = random.randrange(1, 4, 1)  # k*90 is the real rotation degree
             data  = np.rot90(data, k, tuple(range(1,data.ndim)))
             if data.ndim == label.ndim:
                 label = np.rot90(label, k, tuple(range(1,label.ndim)))
@@ -559,6 +567,33 @@ class DataMgr:
             noise = np.random.normal(self.m_noiseMean, self.m_noiseStd, data.shape)
             data += noise
         return data
+
+    def jitterNoise(self,data):
+        if self.m_jitterProb > 0 and random.uniform(0, 1) <= self.m_jitterProb:
+            ret = np.zeros(data.shape)
+            dataIt = np.nditer(data, flags=['multi_index'])
+            shape = data.shape
+            while not dataIt.finished:
+                index = dataIt.multi_index
+                indexNew = self.indexDrift(index, shape, self.m_jitterRadius)
+                ret[index] = data[indexNew]
+                dataIt.iternext()
+            return ret
+        else:
+            return data
+
+    @staticmethod
+    def indexDrift(index, shape, radius):
+        ndim = len(shape)
+        retIndex = ()
+        for i in range(ndim):
+            newIndex = index[i]+ random.randrange(-radius, radius+1, 1)
+            if newIndex >= shape[i]:
+                newIndex = shape[i]-1
+            if newIndex <0:
+                newIndex = 0
+            retIndex +=(newIndex,)
+        return retIndex
 
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
