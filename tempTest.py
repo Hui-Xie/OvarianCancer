@@ -1,18 +1,16 @@
 
+#  test BoundaryLoss
 import numpy as np
+import torch
+from CustomizedLoss import BoundaryLoss
 
-A = np.array([[0, 1 , 2 , 3], [0, 0, 3, 3]])
+boundaryLoss = BoundaryLoss(lambdaCoeff=1)
 
+inputx = np.random.rand(3,7,8)
+inputx = torch.from_numpy(inputx).to("cuda")
+target = np.zeros((3,7,8), dtype=int)
+for i in range(3):
+    target[i, 2:6, 3:7] =1
+target = torch.from_numpy(target).to("cuda")
 
-maxLabel = 3
-
-remainedLabels = (0,2)
-
-totalLabels = [x for x in range(maxLabel+1)]
-for i, x in enumerate(totalLabels):
-    if x in remainedLabels:
-       del totalLabels[i]
-
-print(totalLabels)
-
-
+ret = boundaryLoss(inputx, target)

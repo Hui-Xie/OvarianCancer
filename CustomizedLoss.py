@@ -3,6 +3,7 @@ from torch.nn.modules.loss import _WeightedLoss, _Loss
 from torch._jit_internal import weak_module, weak_script_method
 import torch
 from scipy import ndimage
+from scipy.ndimage.morphology import binary_dilation
 import numpy as np
 
 
@@ -31,6 +32,8 @@ class FocalCELoss(_WeightedLoss):
 class BoundaryLoss(_Loss):
     """
     Boundary Loss, please refer paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
+    outside boundary, it is positive distance, a penalty to increase loss;
+    inside  boundary, it is negative distance, a rewward to reduce loss;
     Only support binary classification case now.
     """
     __constants__ = ['reduction']
@@ -43,15 +46,26 @@ class BoundaryLoss(_Loss):
     def forward(self, inputx, target):
         segProb = torch.narrow(F.softmax(inputx, 1),1, 1,1)
 
-        targetNot = (target == 0).cpu().numpy()
+        targetNot = (target == 0).cpu().numpy().astype(int)
+        targetNumpy = target.cpu().numpy().astype(int)
         shape = targetNot.shape
         ndim = targetNot.ndim
         N = shape[0]
         levelSet = np.zeros(shape)
-        for i in range(N):
-            levelSet[i] = ndimage.distance_transform_edt(targetNot[i])
 
-        levelSetTensor = torch.from_numpy(levelSet).float().cuda()
+        k = np.ones((3,3),dtype=int)  # for 4-connected boundary
+        for i in range(N):
+            print("targetNumpy[i]")
+            print(targetNumpy[i])
+            boundary = binary_dilation(targetNot[i],k) & targetNumpy[i]
+            inside = targetNumpy[i]-boundary
+            signMatrix = inside*(-1)+ targetNot[i]
+            levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
+            print("levelSet[i]")
+            print(levelSet[i].astype(int))
+
+        # levelSetTensor = torch.from_numpy(levelSet).float().cuda()
+        levelSetTensor = torch.from_numpy(levelSet).double().cuda()
         ret = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
 
         if self.reduction != 'none':
