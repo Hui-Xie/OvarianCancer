@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import sys
 
 from SegVModel import SegVModel
 
@@ -15,6 +16,9 @@ class SegV2DModel(SegVModel):
 
         """
         super().__init__()
+        if F <=1:
+            print("Error: the number of filter in first layer is too small.")
+            sys.exit(-1)
 
         self.m_conv1 = nn.Conv2d(1, F, (5, 5), stride=(2, 2))  # inputSize: 281*281; output:F*139*139
         self.m_bn1 = nn.BatchNorm2d(F)

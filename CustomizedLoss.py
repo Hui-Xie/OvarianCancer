@@ -45,27 +45,23 @@ class BoundaryLoss(_Loss):
     @weak_script_method
     def forward(self, inputx, target):
         segProb = torch.narrow(F.softmax(inputx, 1),1, 1,1)
+        segProb = torch.squeeze(segProb, 1)
 
-        targetNot = (target == 0).cpu().numpy().astype(int)
         targetNumpy = target.cpu().numpy().astype(int)
+        targetNot = (target == 0).cpu().numpy().astype(int)
         shape = targetNot.shape
         ndim = targetNot.ndim
         N = shape[0]
         levelSet = np.zeros(shape)
 
-        k = np.ones((3,3),dtype=int)  # for 4-connected boundary
+        k = np.ones((3,3),dtype=int)  # dilation filter for for 4-connected boundary
         for i in range(N):
-            print("targetNumpy[i]")
-            print(targetNumpy[i])
             boundary = binary_dilation(targetNot[i],k) & targetNumpy[i]
             inside = targetNumpy[i]-boundary
             signMatrix = inside*(-1)+ targetNot[i]
             levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
-            print("levelSet[i]")
-            print(levelSet[i].astype(int))
 
-        # levelSetTensor = torch.from_numpy(levelSet).float().cuda()
-        levelSetTensor = torch.from_numpy(levelSet).double().cuda()
+        levelSetTensor = torch.from_numpy(levelSet).float().cuda()
         ret = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
 
         if self.reduction != 'none':
