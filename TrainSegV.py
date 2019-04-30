@@ -53,9 +53,9 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = False  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
+    testDataMgr.setOneSampleTraining(False)  # for debug
+    useDataParallel = True  # for debug
     # ===========debug==================
 
     trainDataMgr.buildSegSliceTupleList()
@@ -68,7 +68,7 @@ def main():
         if 2 in trainDataMgr.m_remainedLabels:
             net = SegV2DModel(192, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(3, K)
+            net = SegV2DModel(128, K)
 
     else:
         print("Info: program uses 3D input.")
