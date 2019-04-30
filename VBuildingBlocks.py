@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 
-class ConvSequential(nn.Moddule):
+class ConvSequential(nn.Module):
     def __init__(self, inCh, outCh):
         super().__init__()
         self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))

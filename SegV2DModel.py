@@ -83,6 +83,7 @@ class SegV2DModel(SegVModel):
         x = self.m_dropout2d(self.m_dropout2d(self.m_up2(x, x2)))
         x = self.m_dropout2d(self.m_dropout2d(self.m_up1(x, x1)))
 
+        x = torch.cat((x,x0),1)
         x = self.m_output(x)
 
         return x
