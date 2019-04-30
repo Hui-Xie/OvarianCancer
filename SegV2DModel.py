@@ -30,12 +30,12 @@ class SegV2DModel(SegVModel):
         self.m_bn4 = nn.BatchNorm2d(8*F)
         self.m_conv5 = nn.Conv2d(8*F, 16*F, (3, 3), stride=(2, 2))  # output: 16F*7*7
         self.m_bn5 = nn.BatchNorm2d(16*F)
-        # self.m_conv6 = nn.Conv2d(16*F, 16*F, (3, 3), stride=(2, 2))  # output: 16F*3*3
-        # self.m_bn6 = nn.BatchNorm2d(16*F)
+        self.m_conv6 = nn.Conv2d(16*F, 16*F, (3, 3), stride=(2, 2))  # output: 16F*3*3
+        self.m_bn6 = nn.BatchNorm2d(16*F)
 
-        # self.m_convT6 = nn.ConvTranspose2d(16*F, 16*F, (3, 3), stride=(2, 2))  # output: 16F*7*7
-        # self.m_bnT6 = nn.BatchNorm2d(16*F)
-        self.m_convT5 = nn.ConvTranspose2d(16*F, 8*F, (3, 3), stride=(2, 2))  # output: 8F*15*15
+        self.m_convT6 = nn.ConvTranspose2d(16*F, 16*F, (3, 3), stride=(2, 2))  # output: 16F*7*7
+        self.m_bnT6 = nn.BatchNorm2d(16*F)
+        self.m_convT5 = nn.ConvTranspose2d(32*F, 8*F, (3, 3), stride=(2, 2))  # output: 8F*15*15
         self.m_bnT5 = nn.BatchNorm2d(8*F)
         self.m_convT4 = nn.ConvTranspose2d(16*F, 4*F, (5, 5), stride=(2, 2))  # output: 4F*33*33
         self.m_bnT4 = nn.BatchNorm2d(4*F)
@@ -54,10 +54,13 @@ class SegV2DModel(SegVModel):
         x2 = self.m_dropout2d(F.relu(self.m_bn2(self.m_conv2(x1))))
         x3 = self.m_dropout2d(F.relu(self.m_bn3(self.m_conv3(x2))))
         x4 = self.m_dropout2d(F.relu(self.m_bn4(self.m_conv4(x3))))
-        x5 = F.relu(self.m_bn5(self.m_conv5(x4)))                   # the bottom of V model do not need dropout
+        x5 = self.m_dropout2d(F.relu(self.m_bn5(self.m_conv5(x4))))
+        xc = self.m_dropout2d(F.relu(self.m_bn6(self.m_conv6(x5))))  # xc means x computing
 
-        xc = F.relu(self.m_bnT5(self.m_convT5(x5)))
-        xc = torch.cat((xc, x4), 1)                                # batchsize is in dim 0, so concatenate at dim 1.
+        xc = self.m_dropout2d(F.relu(self.m_bnT6(self.m_convT6(xc))))
+        xc = torch.cat((xc, x5), 1)                         # batchsize is in dim 0, so concatenate at dim 1.
+        xc = self.m_dropout2d(F.relu(self.m_bnT5(self.m_convT5(xc))))
+        xc = torch.cat((xc, x4), 1)
         xc = self.m_dropout2d(F.relu(self.m_bnT4(self.m_convT4(xc))))
         xc = torch.cat((xc, x3), 1)
         xc = self.m_dropout2d(F.relu(self.m_bnT3(self.m_convT3(xc))))
