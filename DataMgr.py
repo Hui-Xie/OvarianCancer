@@ -568,8 +568,8 @@ class DataMgr:
             data += noise
         return data
 
-    def jitterNoise(self,data):
-        if self.m_jitterProb > 0 and random.uniform(0, 1) <= self.m_jitterProb:
+    def jitterNoise(self, data):
+        if self.m_jitterProb > 0 and self.m_jitterRadius >0  and  random.uniform(0, 1) <= self.m_jitterProb:
             ret = np.zeros(data.shape)
             dataIt = np.nditer(data, flags=['multi_index'])
             shape = data.shape

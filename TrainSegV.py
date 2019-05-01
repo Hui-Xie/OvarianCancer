@@ -68,7 +68,7 @@ def main():
         if 2 in trainDataMgr.m_remainedLabels:
             net = SegV2DModel(192, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(64, K)
+            net = SegV2DModel(96, K)
 
     else:
         print("Info: program uses 3D input.")
@@ -79,7 +79,7 @@ def main():
     trainDataMgr.setMaxShift(25, 0.5)             #translation data augmentation and its probability
     trainDataMgr.setFlipProb(0.3)                 #flip data augmentation
     trainDataMgr.setRot90sProb(0.3)               #rotate along 90, 180, 270
-    trainDataMgr.setJitterNoise(0.3, 5)           #add Jitter noise
+    # trainDataMgr.setJitterNoise(0.3, 1)           #add Jitter noise
     trainDataMgr.setAddedNoise(0.3, 0.0,  0.1)     #add gaussian noise augmentation after data normalization of [0,1]
 
     optimizer = optim.Adam(net.parameters())
@@ -124,8 +124,9 @@ def main():
             net = nn.DataParallel(net)
     net.to(device)
 
-    epochs = 15000
+    net.printLossFunctions()
 
+    epochs = 15000
     print("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
     print("Hints: Test Dice_1 is for primary cancer(green), test Dice_2 is for metastasis(yellow), and test Dice_3 is for invaded lymph node(brown).")
     print("Hints: Test TPR_0 is the TPR for all non-zero labels")
@@ -138,7 +139,7 @@ def main():
 
         #================Update Loss weight==============
         lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
-        if len(lossWeightList) >1 and epoch > 50 and (epoch -50) % 5 == 0 :
+        if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
             lossWeightList[0] -= 0.01
             lossWeightList[1] += 0.01
             if lossWeightList[0] < 0.01:

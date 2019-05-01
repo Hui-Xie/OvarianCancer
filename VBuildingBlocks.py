@@ -20,7 +20,7 @@ class ConvSequential(nn.Module):
         x1 = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
         x2 = self.m_convSeq(x1)
         # for residual edge
-        if input.shape[1] == x2.shape[1]:
+        if input.shape == x2.shape:
             return input + x2
         else:
             return x1+x2
