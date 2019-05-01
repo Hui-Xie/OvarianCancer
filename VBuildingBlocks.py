@@ -25,6 +25,12 @@ class ConvSequential(nn.Module):
         else:
             return x1+x2
 
+class ConvDense(nn.Module):
+    def __init__(self, inCh, outCh, nLayers):
+        super().__init__()
+
+    def forward(self, input):
+        pass
 
 class Down2dBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride):
