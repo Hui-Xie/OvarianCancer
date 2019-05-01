@@ -68,7 +68,7 @@ def main():
         if 2 in trainDataMgr.m_remainedLabels:
             net = SegV2DModel(192, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(96, K)
+            net = SegV2DModel(128, K)
 
     else:
         print("Info: program uses 3D input.")
