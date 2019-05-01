@@ -27,10 +27,11 @@ class SegV2DModel(SegVModel):
         self.m_down3 = Down2dBB(2 * C, 4 * C, (5, 5), stride=(2, 2))    # output: 4C*33*33
         self.m_down4 = Down2dBB(4 * C, 8 * C, (5, 5), stride=(2, 2))    # output: 8C*15*15
         self.m_down5 = Down2dBB(8 * C, 16 * C, (3, 3), stride=(2, 2))   # output: 16C*7*7
-        self.m_down6 = Down2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2))  # output: 16C*3*3
+        # self.m_down6 = Down2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2))  # output: 16C*3*3
 
-        self.m_up6   = Up2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2))    # output: 16C*7*7
-        self.m_up5   = Up2dBB(32 * C, 8 * C, (3, 3), stride=(2, 2))     # output: 8C*15*15
+        # self.m_up6   = Up2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2))    # output: 16C*7*7
+        # self.m_up5   = Up2dBB(32 * C, 8 * C, (3, 3), stride=(2, 2))     # output: 8C*15*15
+        self.m_up5   = Up2dBB(16 * C, 8 * C, (3, 3), stride=(2, 2))  # output: 8C*15*15
         self.m_up4   = Up2dBB(16 * C, 4 * C, (5, 5), stride=(2, 2))     # output: 4C*33*33
         self.m_up3   = Up2dBB(8 * C, 2 * C, (5, 5), stride=(2, 2))      # output: 2C*69*69
         self.m_up2   = Up2dBB(4 * C, C, (3, 3), stride=(2, 2))          # output:C*139*139
@@ -74,10 +75,11 @@ class SegV2DModel(SegVModel):
         x3 = self.m_dropout2d(self.m_down3(x2))
         x4 = self.m_dropout2d(self.m_down4(x3))
         x5 = self.m_dropout2d(self.m_down5(x4))
-        x6 = self.m_dropout2d(self.m_down6(x5))
+        # x6 = self.m_dropout2d(self.m_down6(x5))
 
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up6(x6)))
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up5(x, x5)))
+        # x = self.m_dropout2d(self.m_dropout2d(self.m_up6(x6)))
+        # x = self.m_dropout2d(self.m_dropout2d(self.m_up5(x, x5)))
+        x = self.m_dropout2d(self.m_dropout2d(self.m_up5(x5)))
         x = self.m_dropout2d(self.m_dropout2d(self.m_up4(x, x4)))
         x = self.m_dropout2d(self.m_dropout2d(self.m_up3(x, x3)))
         x = self.m_dropout2d(self.m_dropout2d(self.m_up2(x, x2)))

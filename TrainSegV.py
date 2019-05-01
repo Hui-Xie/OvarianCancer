@@ -108,7 +108,7 @@ def main():
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
-    net.appendLossFunc(boundaryLoss, 1)
+    net.appendLossFunc(boundaryLoss, 0)
 
 
 
@@ -124,7 +124,10 @@ def main():
             net = nn.DataParallel(net)
     net.to(device)
 
-    net.printLossFunctions()
+    if useDataParallel:
+        net.module.printLossFunctions()
+    else:
+        net.printLossFunctions()
 
     epochs = 15000
     print("Hints: Test Dice_0 is the dice coeff for all non-zero labels")

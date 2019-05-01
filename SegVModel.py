@@ -25,7 +25,7 @@ class SegVModel(nn.Module):
         self.m_lossWeightList.append(weight)
 
     def printLossFunctions(self):
-        print(f'Loss Functions List: ', f'\t'.join(f'{type(loss).__name__} with weight {weight}; ' for loss, weight in zip(self.m_lossFuncList. self.m_lossWeightList)) )
+        print(f'Loss Functions List: ', f'\t'.join(f'{type(loss).__name__} with weight of {weight}; ' for loss, weight in zip(self.m_lossFuncList, self.m_lossWeightList)) )
 
     def updateLossWeightList(self, weightList):
         self.m_lossWeightList = weightList
