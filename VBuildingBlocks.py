@@ -3,27 +3,37 @@ import torch
 import torch.nn.functional as F
 
 class ConvSequential(nn.Module):
-    def __init__(self, inCh, outCh):
+    def __init__(self, inCh, outCh, nLayers = 3):
         super().__init__()
+        self.m_nLayers = nLayers
         self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
         self.m_bn1 =  nn.BatchNorm2d(outCh)
-        self.m_convSeq = nn.Sequential(
-            nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
-            nn.BatchNorm2d(outCh),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
-            nn.BatchNorm2d(outCh),
-            nn.ReLU(inplace=True)
-        )
+        # self.m_convSeq = nn.Sequential(
+        #     nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
+        #     nn.BatchNorm2d(outCh),
+        #     nn.ReLU(inplace=True),
+        #     nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
+        #     nn.BatchNorm2d(outCh),
+        #     nn.ReLU(inplace=True)
+        # )
+        self.m_convSeq = nn.ModuleList()
+        for _ in range(1, self.m_nLayers):
+            self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
+            self.m_convSeq.append(nn.BatchNorm2d(outCh))
+            self.m_convSeq.append(nn.ReLU(inplace=True))
 
     def forward(self, input):
         x1 = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
-        x2 = self.m_convSeq(x1)
+        x = x1
+        for layer in self.m_convSeq:
+            x = layer(x)
+        # x = self.m_convSeq(x)
+
         # for residual edge
-        if input.shape == x2.shape:
-            return input + x2
+        if input.shape == x.shape:
+            return input + x
         else:
-            return x1+x2
+            return x1+x
 
 class ConvDense(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
@@ -66,7 +76,7 @@ class Down2dBB(nn.Module): # down sample 2D building block
         super().__init__()
         self.m_conv1 = nn.Conv2d(inCh, outCh, filter1st, stride)   # stride to replace maxpooling
         self.m_bn1   = nn.BatchNorm2d(outCh)
-        # self.m_convBlock = ConvSequential(outCh, outCh)
+        # self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
         self.m_convBlock = ConvDense(outCh, outCh, nLayers)
 
     def forward(self, input):
@@ -81,7 +91,7 @@ class Up2dBB(nn.Module): # up sample 2D building block
         super().__init__()
         self.m_convT1 = nn.ConvTranspose2d(inCh, outCh, filter1st, stride)   # stride to replace upsample
         self.m_bn1   = nn.BatchNorm2d(outCh)
-        # self.m_convBlock = ConvSequential(outCh, outCh)
+        # self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
         self.m_convBlock = ConvDense(outCh, outCh, nLayers)
 
     def forward(self, downInput, skipInput=None):
