@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 
 class ConvSequential(nn.Module):
-    def __init__(self, inCh, outCh, nLayers = 3):
+    def __init__(self, inCh, outCh, nLayers):
         super().__init__()
         self.m_nLayers = nLayers
         self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
