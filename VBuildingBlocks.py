@@ -49,7 +49,7 @@ class ConvDense(nn.Module):
 
         # add 1*1 convoluitonal layer to adjust output channels
         self.m_convList.append(nn.Conv2d(inCh+outCh, outCh, (1, 1), stride=(1, 1)))
-        self.m_bnList.append(nn.BatchNorm2d(outChL))
+        self.m_bnList.append(nn.BatchNorm2d(outCh))
         self.m_reluList.append(nn.ReLU(inplace=True))
         self.cuda()
 
@@ -58,7 +58,7 @@ class ConvDense(nn.Module):
         for i in range(self.m_nLayers):
             x = torch.cat((self.m_reluList[i](self.m_bnList[i](self.m_convList[i](x))), x), 1)
         n = self.m_nLayers  # the final element in the ModuleList
-        x =  self.m_reluList[n](self.m_bnList[n](self.m_convList[n](x)))
+        x = self.m_reluList[n](self.m_bnList[n](self.m_convList[n](x)))
         return x
 
 class Down2dBB(nn.Module): # down sample 2D building block
