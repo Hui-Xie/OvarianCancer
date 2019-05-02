@@ -27,10 +27,37 @@ class ConvSequential(nn.Module):
 
 class ConvDense(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
+        """
+        the total convolutional layers are nLayers plus one 1*1 convolutional layer to fit final outChannel.
+        :param inCh: input channels
+        :param outCh: output channels
+        :param nLayers: total convolutional layers,except the 1*1 convolutional layer
+        """
         super().__init__()
+        self.m_convList = []
+        self.m_bnList = []
+        self.m_reluList = []
+        self.m_nLayers = nLayers
+        k = outCh // nLayers
+
+        for i in range(nLayers):
+            inChL  = inCh+ i*k  # inChannels in Layer
+            outChL = k if i != nLayers-1 else outCh-k*(nLayers-1)
+            self.m_convList.append(nn.Conv2d(inChL, outChL, (3, 3), stride=(1, 1), padding=(1, 1)))
+            self.m_bnList.append(nn.BatchNorm2d(outChL))
+            self.m_reluList.append(nn.ReLU(inplace=True))
+
+        # add 1*1 convoluitonal layer to adjust output channels
+        self.m_convList.append(nn.Conv2d(inCh+outCh, outCh, (1, 1), stride=(1, 1)))
+        self.m_bnList.append(nn.BatchNorm2d(outChL))
+        self.m_reluList.append(nn.ReLU(inplace=True))
 
     def forward(self, input):
-        pass
+        x = input
+        for i in range(self.m_nLayers):
+            x = torch.cat((self.m_reluList[i](self.m_bnList[i](self.m_convList[i](x))), x), 1)
+        x =  self.m_reluList[i](self.m_bnList[i](self.m_convList[i](x)))
+        return x
 
 class Down2dBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride):
