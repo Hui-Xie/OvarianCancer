@@ -53,9 +53,9 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
-    testDataMgr.setOneSampleTraining(False)  # for debug
-    useDataParallel = True  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
+    testDataMgr.setOneSampleTraining(True)  # for debug
+    useDataParallel = False  # for debug
     # ===========debug==================
 
     trainDataMgr.buildSegSliceTupleList()
@@ -109,8 +109,6 @@ def main():
     net.appendLossFunc(focalLoss, 1)
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
     net.appendLossFunc(boundaryLoss, 0)
-
-
 
     # print model
     print("\n====================Net Architecture===========================")

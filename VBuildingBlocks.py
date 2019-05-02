@@ -34,9 +34,9 @@ class ConvDense(nn.Module):
         :param nLayers: total convolutional layers,except the 1*1 convolutional layer
         """
         super().__init__()
-        self.m_convList = []
-        self.m_bnList = []
-        self.m_reluList = []
+        self.m_convList = nn.ModuleList()
+        self.m_bnList = nn.ModuleList()
+        self.m_reluList = nn.ModuleList()
         self.m_nLayers = nLayers
         k = outCh // nLayers
 
@@ -51,12 +51,14 @@ class ConvDense(nn.Module):
         self.m_convList.append(nn.Conv2d(inCh+outCh, outCh, (1, 1), stride=(1, 1)))
         self.m_bnList.append(nn.BatchNorm2d(outChL))
         self.m_reluList.append(nn.ReLU(inplace=True))
+        self.cuda()
 
     def forward(self, input):
         x = input
         for i in range(self.m_nLayers):
             x = torch.cat((self.m_reluList[i](self.m_bnList[i](self.m_convList[i](x))), x), 1)
-        x =  self.m_reluList[i](self.m_bnList[i](self.m_convList[i](x)))
+        n = self.m_nLayers  # the final element in the ModuleList
+        x =  self.m_reluList[n](self.m_bnList[n](self.m_convList[n](x)))
         return x
 
 class Down2dBB(nn.Module): # down sample 2D building block
