@@ -84,13 +84,16 @@ class Down2dBB(nn.Module): # down sample 2D building block
         self.m_conv1 = nn.Conv2d(inCh, outCh, filter1st, stride)   # stride to replace maxpooling
         self.m_bn1   = nn.BatchNorm2d(outCh)
         if useConvSeq:
-            self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
+            self.m_convSeq = ConvSequential(outCh, outCh, nLayers)
         else:
             self.m_convBlock = ConvDense(outCh, outCh, nLayers)
 
     def forward(self, input):
         x = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
-        x = self.m_convBlock(x)
+        if useConvSeq:
+            x = self.m_convSeq(x)
+        else:
+            x = self.m_convBlock(x)
         return x
 
 
@@ -101,14 +104,17 @@ class Up2dBB(nn.Module): # up sample 2D building block
         self.m_convT1 = nn.ConvTranspose2d(inCh, outCh, filter1st, stride)   # stride to replace upsample
         self.m_bn1   = nn.BatchNorm2d(outCh)
         if useConvSeq:
-            self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
+            self.m_convSeq = ConvSequential(outCh, outCh, nLayers)
         else:
             self.m_convBlock = ConvDense(outCh, outCh, nLayers)
 
     def forward(self, downInput, skipInput=None):
         x = downInput if skipInput is None else torch.cat((downInput, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
         x = F.relu(self.m_bn1(self.m_convT1(x)),  inplace=True)
-        x = self.m_convBlock(x)
+        if useConvSeq:
+            x = self.m_convSeq(x)
+        else:
+            x = self.m_convBlock(x)
         return x
 
 
