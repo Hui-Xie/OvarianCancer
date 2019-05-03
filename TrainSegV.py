@@ -53,8 +53,8 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
+    testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -107,8 +107,9 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
-    net.appendLossFunc(boundaryLoss, 0)
+    # boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
+    boundaryLoss = BoundaryLoss(lambdaCoeff=1)
+    net.appendLossFunc(boundaryLoss, 1)
 
     # print model
     print("\n====================Net Architecture===========================")
@@ -140,18 +141,19 @@ def main():
 
         #================Update Loss weight==============
         lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
-        if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
-            lossWeightList[0] -= 0.01
-            lossWeightList[1] += 0.01
-            if lossWeightList[0] < 0.01:
-                lossWeightList[0] = 0.01
-            if lossWeightList[1] > 0.99:
-                lossWeightList[1] = 0.99
+        if False:
+            if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
+                lossWeightList[0] -= 0.01
+                lossWeightList[1] += 0.01
+                if lossWeightList[0] < 0.01:
+                    lossWeightList[0] = 0.01
+                if lossWeightList[1] > 0.99:
+                    lossWeightList[1] = 0.99
 
-            if useDataParallel:
-                net.module.updateLossWeightList(lossWeightList)
-            else:
-                net.updateLossWeightList(lossWeightList)
+                if useDataParallel:
+                    net.module.updateLossWeightList(lossWeightList)
+                else:
+                    net.updateLossWeightList(lossWeightList)
 
 
         #================Training===============
