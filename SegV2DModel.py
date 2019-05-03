@@ -8,6 +8,9 @@ from VBuildingBlocks import *
 
 #  2D model
 
+useConvSeq = True
+
+
 class SegV2DModel(SegVModel):
     def __init__(self, C, K):
         """
@@ -21,10 +24,13 @@ class SegV2DModel(SegVModel):
             print("Error: the number of filter in first layer is too small.")
             sys.exit(-1)
 
-        N = 4  # the number of layer in each dense block.
+        if useConvSeq:
+            N = 3  # the number of layer in each dense block.
+            self.m_input = ConvSequential(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
+        else:
+            N = 4
+            self.m_input = ConvDense(1, C, nLayers=N)
 
-        # self.m_input = ConvSequential(1, C)                             # inputSize: 1*281*281; output:C*281*281
-        self.m_input = ConvDense(1, C, nLayers=N)
         self.m_down1 = Down2dBB(C, C, (5, 5), stride=(2, 2), nLayers=N)            # output:C*139*139
         self.m_down2 = Down2dBB(C, 2 * C, (3, 3), stride=(2, 2), nLayers=N)        # output: 2C*69*69
         self.m_down3 = Down2dBB(2 * C, 4 * C, (5, 5), stride=(2, 2), nLayers=N)    # output: 4C*33*33
