@@ -68,7 +68,7 @@ latexItem = r'''
 '''
 
 # you may need to modify the output file directory and name
-outputLatex = r'''/home/hxie1/data/OvarianCancerCT/OCTestFor01_20190427.tex'''
+outputLatex = r'''/home/hxie1/data/OvarianCancerCT/OCTestFor01_20190503.tex'''
 
 #imagesPath = r'''/home/hxie1/c-xwu000/data/OvarianCancerCT/Extract_uniform/segmented'''
 imagesPath = r'''/home/hxie1/data/OvarianCancerCT/Extract_uniform/segmented'''

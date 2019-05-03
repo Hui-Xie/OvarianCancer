@@ -64,9 +64,9 @@ def main():
 
     ceWeight = torch.FloatTensor(testDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
-    net.appendLossFunc(focalLoss)
-    # boundaryLoss = BoundaryLoss()
-    # net.appendLossFunc(boundaryLoss)
+    net.appendLossFunc(focalLoss, 1)
+    boundaryLoss = BoundaryLoss()
+    net.appendLossFunc(boundaryLoss, 0)
 
     netMgr = NetMgr(net, netPath)
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
