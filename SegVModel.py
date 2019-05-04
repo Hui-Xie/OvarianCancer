@@ -24,8 +24,8 @@ class SegVModel(nn.Module):
         self.m_lossFuncList.append(lossFunc)
         self.m_lossWeightList.append(weight)
 
-    def printLossFunctions(self):
-        print(f'Loss Functions List: ', f'\t'.join(f'{type(loss).__name__} with weight of {weight}; ' for loss, weight in zip(self.m_lossFuncList, self.m_lossWeightList)) )
+    def lossFunctionsInfo(self):
+        return f'Loss Functions List: ' + f'\t'.join(f'{type(loss).__name__} with weight of {weight}; ' for loss, weight in zip(self.m_lossFuncList, self.m_lossWeightList))
 
     def updateLossWeightList(self, weightList):
         self.m_lossWeightList = weightList
@@ -61,15 +61,15 @@ class SegVModel(nn.Module):
             loss += lossFunc(outputs, labels) * weight
         return loss.item(), outputs
 
-    def printParametersScale(self):
+    def getParametersScale(self):
         sumPara = 0
         params = self.parameters()
         for param in params:
             sumPara += param.nelement()
-        print(f"Network has total {sumPara} parameters.")
+        return f"Network has total {sumPara} parameters."
 
     def setDropoutProb(self, prob):
         self.m_dropoutProb = prob
-        print(f"Info: network dropout rate = {self.m_dropoutProb}")
+        return f"Info: network dropout rate = {self.m_dropoutProb}"
 
 

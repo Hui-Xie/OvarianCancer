@@ -17,7 +17,6 @@ class NetMgr:
         torch.save(self.m_net.m_optimizer.state_dict(), os.path.join(netPath, "Optimizer.pt"))
 
     def loadNet(self, isTrain):
-        print(f'Program loads net from {self.m_netPath}.')
         # Save on GPU, Load on CPU
         device = torch.device('cpu')
         self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=device))

@@ -9,7 +9,8 @@ from scipy.misc import imsave
 
 # noinspection SyntaxError
 class DataMgr:
-    def __init__(self, imagesDir, labelsDir):
+    def __init__(self, imagesDir, labelsDir, logInfoFun=print):
+        self.m_logInfo = logInfoFun
         self.m_oneSampleTraining = False
         self.m_imagesDir = imagesDir
         self.m_labelsDir = labelsDir
@@ -69,11 +70,11 @@ class DataMgr:
             self.m_suppressedLabels = self.getSuppressedLabels(maxLabel)
             if 2 == len(self.m_remainedLabels):
                 self.m_binaryLabel = True
-            print("Infor: program test labels: ", self.m_remainedLabels)
-            print("Infor: program suppressed labels: ", self.m_suppressedLabels)
+            self.m_logInfo(f"Infor: program test labels: {self.m_remainedLabels}")
+            self.m_logInfo(f"Infor: program suppressed labels: {self.m_suppressedLabels}")
 
         else:
-            print("Error: background 0 should be in the remained label list")
+            self.m_logInfo(f"Error: background 0 should be in the remained label list")
             sys.exit(-1)
 
     def getCEWeight(self):
@@ -89,7 +90,7 @@ class DataMgr:
                 ceWeight[i] = 1/labelPortion[x]
                 accumu += labelPortion[x]
         ceWeight[position0] = 1/(1-accumu)  # unused labels belong to background 0
-        print("Infor: Cross Entropy Weight: ", ceWeight)
+        self.m_logInfo(f"Infor: Cross Entropy Weight: {ceWeight}")
         return ceWeight
 
 
@@ -120,7 +121,7 @@ class DataMgr:
         build segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
         :return:
         """
-        print('Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......')
+        self.m_logInfo(f'Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......')
         self.m_segSliceTupleList = []
         self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
         for i, image in enumerate(self.m_imagesList):
@@ -132,14 +133,14 @@ class DataMgr:
 
             if self.m_oneSampleTraining and len(self.m_segSliceTupleList)>1:
                 break
-        print(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
+        self.m_logInfo(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
 
     def buildImageAttrList(self):
         """
         build a list of tuples including (origin, size, spacing, direction) in ITK axis order
         :return: void
         """
-        print("Building image attributes list, please waiting......")
+        self.m_logInfo(f"Building image attributes list, please waiting......")
         self.m_imageAttrList = []
         for image in self.m_imagesList:
             attr = self.getImageAttributes(image)
@@ -392,7 +393,7 @@ class DataMgr:
         self.m_height = height
         self.m_width = width
         self.m_k = k
-        print(f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
+        self.m_logInfo(f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
 
     def getBatchSize(self):
         return self.m_batchSize
@@ -493,7 +494,7 @@ class DataMgr:
         labelList.clear()
 
     def checkOrientConsistent(self, imagesDir, suffix):
-        print(f'Program is checking image directions. Please waiting......')
+        self.m_logInfo(f'Program is checking image directions. Please waiting......')
         imagesList = self.getFilesList(imagesDir, suffix)
         inconsistenNum = 0
         for filename in imagesList:
@@ -505,9 +506,9 @@ class DataMgr:
             diagDirection = [direction[i * Dims + i]for i in range(Dims)]
             diagSum = sum(x>0 for x in diagDirection)
             if diagSum != 3:
-                print(f'{filename} has inconsistent direction: {fullDirection}')
+                self.m_logInfo(f'{filename} has inconsistent direction: {fullDirection}')
                 inconsistenNum +=1
-        print(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
+        self.m_logInfo(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
 
     def preprocessData(self, array)-> np.ndarray:
         data = array.clip(-300,300)    # adjust window level, also erase abnormal value
@@ -539,7 +540,7 @@ class DataMgr:
             result = (array - minx)/ptp
             return result
         else:
-            print("Error: the input to sliceNormalize has abnormal dimension.")
+            self.m_logInfo("Error: the input to sliceNormalize has abnormal dimension.")
             sys.exit(0)
 
     def flipDataLabel(self, data, label):
@@ -557,7 +558,7 @@ class DataMgr:
             elif data.ndim == label.ndim+1:
                 label = np.rot90(label, k)
             else:
-                print("Error: in rotate90s, the ndim of data and label does not match.")
+                self.m_logInfo("Error: in rotate90s, the ndim of data and label does not match.")
                 sys.exi(-1)
 
         return data, label
@@ -626,7 +627,7 @@ class DataMgr:
             elif inputx.ndim ==3:
                 inputSlice = inputx[0]
             else:
-                print("Error: image dimension eror in saveInputsSegmentations2Images")
+                self.m_logInfo(f"Error: image dimension eror in saveInputsSegmentations2Images")
                 sys.exit(-1)
             imsave(inputImagePath, inputSlice)
 

@@ -1,7 +1,9 @@
 import sys
+import os
 import datetime
 import torch
 import torch.nn as nn
+import logging
 
 torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
 sys.path.append(torchSummaryPath)
@@ -13,6 +15,16 @@ from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
+
+# you may need to change the file name and log Notes below for every training.
+testLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/test_20190504.txt'''
+logNotes = r'''
+            major program changes: ....
+            '''
+
+logging.basicConfig(filename=testLogFile,filemode='a+',level=logging.INFO, format='%(message)s')
+
+
 def printUsage(argv):
     print("============Test Ovarian Cancer Segmentation V model=============")
     print("read all test files, and output their segmentation results.")
@@ -21,23 +33,30 @@ def printUsage(argv):
     print("eg. labelTuple: (0,1,2,3), or (0,1), (0,2)")
 
 def main():
-    curTime = datetime.datetime.now()
-    print('\nProgram starting Time: ', str(curTime))
-
     if len(sys.argv) != 6:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
 
+    print(f'Program ID {os.getpid()}\n')
+    print(f'Program commands: {sys.argv}')
+    print(f'log is in {testLogFile}')
+    print(f'.........')
+
+    logging.info(f'Program ID {os.getpid()}\n')
+
+    curTime = datetime.datetime.now()
+    logging.info(f'\nProgram starting Time: {str(curTime)}')
+
     netPath = sys.argv[1]
     imagesPath = sys.argv[2]
     labelsPath = sys.argv[3]
     is2DInput = True if sys.argv[4] == "2D" else False
-    print(f"Info: netPath = {netPath}\n")
+    logging.info(f"Info: netPath = {netPath}\n")
     labelTuple = eval(sys.argv[5])
     K = len(labelTuple)
 
-    testDataMgr = DataMgr(imagesPath, labelsPath)
+    testDataMgr = DataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
@@ -48,7 +67,7 @@ def main():
     testDataMgr.buildSegSliceTupleList()
 
     if is2DInput:
-        print("Info: program uses 2D input.")
+        logging.info(f"Info: program uses 2D input.")
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV2DModel(128, K)  # 128 is the number of filters in the first layer for primary cancer.
     else:
@@ -58,7 +77,7 @@ def main():
 
     testDataMgr.buildImageAttrList()
 
-    net.printParametersScale()
+    logging.info(net.getParametersScale())
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -71,31 +90,36 @@ def main():
     netMgr = NetMgr(net, netPath)
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet(False)  # False for test
+        logging.info(f'Program loads net from {netPath}.')
     else:
-        print(f"Program can not find trained network in path: {netPath}")
+        logging.info(f"Program can not find trained network in path: {netPath}")
         sys.exit()
 
     # print model
-    print("\n====================Net Architecture===========================")
-    summary(net.cuda(), testDataMgr.getInputSize())
-    print("===================End of Net Architecture =====================\n")
+    logging.info("\n====================Net Architecture===========================")
+    stdoutBackup = sys.stdout
+    with open(testLogFile, 'a+') as log:
+        sys.stdout = log
+        summary(net.cuda(), testDataMgr.getInputSize())
+    sys.stdout = stdoutBackup
+    logging.info("===================End of Net Architecture =====================\n")
 
 
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:
-            print(f'Info: program will use {nGPU} GPUs.')
+            logging.info(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
     net.to(device)
 
     K = testDataMgr.getNumClassification()
-    print("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
-    print("Hints: Test Dice_1 is for primary cancer(green), test Dice_2 is for metastasis(yellow), and test Dice_3 is for invaded lymph node(brown).")
-    print("Hints: Test TPR_0 is the TPR for all non-zero labels")
-    print("Hints: Test TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
+    logging.info("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
+    logging.info("Hints: Test Dice_1 is for primary cancer(green), \ntest Dice_2 is for metastasis(yellow), \nand test Dice_3 is for invaded lymph node(brown).")
+    logging.info("Hints: Test TPR_0 is the TPR for all non-zero labels")
+    logging.info("Hints: Test TPR_1 is for primary cancer(green), \nTPR_2 is for metastasis(yellow), \nand TPR_3 is for invaded lymph node(brown).\n")
     diceHead = (f'Dice_{i}' for i in labelTuple)
     TPRHead = (f'TPR_{i}' for i in labelTuple)
-    print(f"Epoch \t TrainingLoss \t TestLoss \t", '\t'.join(diceHead),'\t', '\t'.join(TPRHead))  # print output head
+    logging.info(f"Epoch \t TrainingLoss \t TestLoss \t"+ f'\t'.join(diceHead) + f'\t'+  f'\t'.join(TPRHead))  # print output head
 
     net.eval()
     n = 0 # n indicate the first slice index in the dataMgr.m_segSliceTupleList
@@ -138,12 +162,13 @@ def main():
         testLoss /= batches
     diceAvgList = [x / (y + 1e-8) for x, y in zip(diceSumList, diceCountList)]
     TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
-    print(f'{0} \t {0:.4f} \t {testLoss:.4f} \t', '\t'.join((f'{x:.3f}' for x in diceAvgList)),'\t', '\t'.join((f'{x:.3f}' for x in TPRAvgList)))
+    logging.info(f'{0} \t {0:.4f} \t {testLoss:.4f} \t'+ f'\t'.join((f'{x:.3f}' for x in diceAvgList))+ f'\t'+  f'\t'.join((f'{x:.3f}' for x in TPRAvgList)))
 
-    print(f'\nTotal test {n} images in {imagesPath}.')
+    logging.info(f'\nTotal test {n} images in {imagesPath}.')
 
     torch.cuda.empty_cache()
-    print("=============END of Test of Ovarian Cancer Segmentation V Model =================")
+    logging.info("=============END of Test of Ovarian Cancer Segmentation V Model =================")
+    print(f'Program ID {os.getpid()}  exits.\n')
 
 if __name__ == "__main__":
     main()
