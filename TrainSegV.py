@@ -22,9 +22,12 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/dense_20190504.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/ResNetBlock_20190504.txt'''
 logNotes = r'''
-            major program changes: ....
+Major program changes: ConvSeqential use ReLU-BN-Conv structure, 
+                       and each block has 5 layers, 
+                       Residual connect to each Conv
+                       use boundary loss with weight 0 at beginning, and pretrain CE loss. 
             '''
 
 logging.basicConfig(filename=trainLogFile,filemode='a+',level=logging.INFO, format='%(message)s')
@@ -76,9 +79,9 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = False  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
+    testDataMgr.setOneSampleTraining(False)  # for debug
+    useDataParallel = True  # for debug
     # ===========debug==================
 
     trainDataMgr.buildSegSliceTupleList()
@@ -131,9 +134,8 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    #boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.01)
-    net.appendLossFunc(boundaryLoss, 1)
+    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
+    net.appendLossFunc(boundaryLoss, 0)
 
     # logging.info model
     logging.info(f"\n====================Net Architecture===========================")
@@ -169,19 +171,19 @@ def main():
 
         #================Update Loss weight==============
         lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
-        if False:
-            if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
-                lossWeightList[0] -= 0.01
-                lossWeightList[1] += 0.01
-                if lossWeightList[0] < 0.01:
-                    lossWeightList[0] = 0.01
-                if lossWeightList[1] > 0.99:
-                    lossWeightList[1] = 0.99
 
-                if useDataParallel:
-                    net.module.updateLossWeightList(lossWeightList)
-                else:
-                    net.updateLossWeightList(lossWeightList)
+        if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
+            lossWeightList[0] -= 0.01
+            lossWeightList[1] += 0.01
+            if lossWeightList[0] < 0.01:
+                lossWeightList[0] = 0.01
+            if lossWeightList[1] > 0.99:
+                lossWeightList[1] = 0.99
+
+            if useDataParallel:
+                net.module.updateLossWeightList(lossWeightList)
+            else:
+                net.updateLossWeightList(lossWeightList)
 
 
         #================Training===============

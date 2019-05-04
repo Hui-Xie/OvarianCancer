@@ -7,40 +7,61 @@ useConvSeq = True
 class ConvSequential(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
-        self.m_nLayers = nLayers
-        self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
-        self.m_bn1 =  nn.BatchNorm2d(outCh)
-        if useConvSeq:
-            self.m_convSeq = nn.Sequential(
-                 nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
-                 nn.BatchNorm2d(outCh),
-                 nn.ReLU(inplace=True),
-                 nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
-                 nn.BatchNorm2d(outCh),
-                 nn.ReLU(inplace=True)
-             )
-        else:
-            self.m_convSeq = nn.ModuleList()
-            for _ in range(1, self.m_nLayers):
-                self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
+        self.m_nLayers = nLayers   # the number of conv
+        # self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
+        # self.m_bn1 =  nn.BatchNorm2d(outCh)
+        # if useConvSeq:
+        #     self.m_convSeq = nn.Sequential(
+        #          nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
+        #          nn.BatchNorm2d(outCh),
+        #          nn.ReLU(inplace=True),
+        #          nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)),
+        #          nn.BatchNorm2d(outCh),
+        #          nn.ReLU(inplace=True)
+        #      )
+        # else:
+        #     self.m_convSeq = nn.ModuleList()
+        #     for _ in range(1, self.m_nLayers):
+        #         self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
+        #         self.m_convSeq.append(nn.BatchNorm2d(outCh))
+        #         self.m_convSeq.append(nn.ReLU(inplace=True))
+        self.m_convSeq = nn.ModuleList()
+        for i in range(self.m_nLayers):
+            self.m_convSeq.append(nn.ReLU(inplace=True))
+            if 0 == i:
+                self.m_convSeq.append(nn.BatchNorm2d(inCh))
+                self.m_convSeq.append(nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
+            else:
                 self.m_convSeq.append(nn.BatchNorm2d(outCh))
-                self.m_convSeq.append(nn.ReLU(inplace=True))
+                self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
+
 
     def forward(self, input):
-        x1 = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
-        x = x1
-        if useConvSeq:
-            x = self.m_convSeq(x)
-        else:
-            for layer in self.m_convSeq:
-                x = layer(x)
+        # x1 = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
+        # x = x1
+        # if useConvSeq:
+        #     x = self.m_convSeq(x)
+        # else:
+        #     for layer in self.m_convSeq:
+        #         x = layer(x)
+        #
+        #
+        # # for residual edge
+        # if input.shape == x.shape:
+        #     return input + x
+        # else:
+        #     return x1+x
+        x0 = input
+        x  = x0
+        for i, layer in enumerate(self.m_convSeq):
+            x = layer(x)
+            if (i+1)%3 == 0 and x.shape == x0.shape:
+                x  = x+x0
+                x0 = x
+        return x
 
 
-        # for residual edge
-        if input.shape == x.shape:
-            return input + x
-        else:
-            return x1+x
+
 
 class ConvDense(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
@@ -81,15 +102,18 @@ class ConvDense(nn.Module):
 class Down2dBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers=3):
         super().__init__()
+        self.m_bn1 = nn.BatchNorm2d(inCh)
         self.m_conv1 = nn.Conv2d(inCh, outCh, filter1st, stride)   # stride to replace maxpooling
-        self.m_bn1   = nn.BatchNorm2d(outCh)
+        # self.m_bn1 = nn.BatchNorm2d(outCh)
         if useConvSeq:
             self.m_convSeq = ConvSequential(outCh, outCh, nLayers)
         else:
             self.m_convBlock = ConvDense(outCh, outCh, nLayers)
 
     def forward(self, input):
-        x = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
+        # ReLU-BN-Conv
+        # x = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
+        x = self.m_conv1(self.m_bn1(F.relu(input, inplace=True)))
         if useConvSeq:
             x = self.m_convSeq(x)
         else:
@@ -101,8 +125,9 @@ class Down2dBB(nn.Module): # down sample 2D building block
 class Up2dBB(nn.Module): # up sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers= 3):
         super().__init__()
+        self.m_bn1 = nn.BatchNorm2d(inCh)
         self.m_convT1 = nn.ConvTranspose2d(inCh, outCh, filter1st, stride)   # stride to replace upsample
-        self.m_bn1   = nn.BatchNorm2d(outCh)
+        # self.m_bn1   = nn.BatchNorm2d(outCh)
         if useConvSeq:
             self.m_convSeq = ConvSequential(outCh, outCh, nLayers)
         else:
@@ -110,7 +135,8 @@ class Up2dBB(nn.Module): # up sample 2D building block
 
     def forward(self, downInput, skipInput=None):
         x = downInput if skipInput is None else torch.cat((downInput, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
-        x = F.relu(self.m_bn1(self.m_convT1(x)),  inplace=True)
+        # x = F.relu(self.m_bn1(self.m_convT1(x)),  inplace=True)
+        x = self.m_convT1(self.m_bn1(F.relu(x, inplace=True)))
         if useConvSeq:
             x = self.m_convSeq(x)
         else:

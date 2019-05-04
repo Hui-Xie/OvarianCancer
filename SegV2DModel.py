@@ -25,7 +25,7 @@ class SegV2DModel(SegVModel):
             sys.exit(-1)
 
         if useConvSeq:
-            N = 3  # the number of layer in each dense block.
+            N = 4  # the number of layer in each dense block.
             self.m_input = ConvSequential(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
         else:
             N = 4
@@ -46,7 +46,9 @@ class SegV2DModel(SegVModel):
         self.m_up2   = Up2dBB(4 * C, C, (3, 3), stride=(2, 2), nLayers=N)          # output:C*139*139
         self.m_up1   = Up2dBB(2 * C, C, (5, 5), stride=(2, 2), nLayers=N)          # output:C*281*281
 
+        self.m_outputBn = nn.BatchNorm2d(2 * C)
         self.m_output = nn.Conv2d(2*C, K, (1, 1), stride=1)             # output:K*281*281
+
 
 
         # ==== Old code for single conv in each layer of V model ==========
@@ -95,6 +97,7 @@ class SegV2DModel(SegVModel):
         x = self.m_dropout2d(self.m_dropout2d(self.m_up1(x, x1)))
 
         x = torch.cat((x,x0),1)
+        x = self.m_outputBn(x)
         x = self.m_output(x)
 
         return x

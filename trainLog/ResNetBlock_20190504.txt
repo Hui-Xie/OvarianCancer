@@ -1,0 +1,19 @@
+Program ID 32292
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/test', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
+
+Major program changes: ConvSeqential use ReLU-BN-Conv structure, 
+                       and each block has 5 layers, 
+                       Residual connect to each Conv
+                       use boundary loss with weight 0 at beginning, and pretrain CE loss. 
+            
+
+Program starting Time: 2019-05-04 16:26:34.613812
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/test
+
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
