@@ -154,7 +154,7 @@ def main():
     net.to(device)
 
     if useDataParallel:
-        logging.info(net.module.printLossFunctions())
+        logging.info(net.module.lossFunctionsInfo())
     else:
         logging.info(net.lossFunctionsInfo())
 
