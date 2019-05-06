@@ -1,13 +1,22 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
+import sys
 
 useConvSeq = True
 
 class ConvSequential(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
+        if nLayers < 2:
+            print("Error: ConvSequential needs at least 2 conve layers.")
+            sys.exit(-1)
+
         self.m_nLayers = nLayers   # the number of conv
+        self.m_skipStartIndex = 0 if inCh == outCh else 1
+
+
+
         # self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
         # self.m_bn1 =  nn.BatchNorm2d(outCh)
         # if useConvSeq:
@@ -27,12 +36,16 @@ class ConvSequential(nn.Module):
         #         self.m_convSeq.append(nn.ReLU(inplace=True))
         self.m_convSeq = nn.ModuleList()
         for i in range(self.m_nLayers):
-            self.m_convSeq.append(nn.ReLU(inplace=True))
             if 0 == i:
                 self.m_convSeq.append(nn.BatchNorm2d(inCh))
-                self.m_convSeq.append(nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
             else:
                 self.m_convSeq.append(nn.BatchNorm2d(outCh))
+
+            self.m_convSeq.append(nn.ReLU(inplace=True))
+
+            if 0 == i:
+                self.m_convSeq.append(nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
+            else:
                 self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
 
 
@@ -51,17 +64,20 @@ class ConvSequential(nn.Module):
         #     return input + x
         # else:
         #     return x1+x
-        x0 = input
-        x  = x0
+
+        x = input
+        if self.m_skipStartIndex == 0:
+            x0  = x
         for i, layer in enumerate(self.m_convSeq):
             x = layer(x)
-            if (i+1)%3 == 0 and x.shape == x0.shape:
+            if 2 == i and self.m_skipStartIndex ==1:
+                x0 = x
+            if (i+1- self.m_skipStartIndex*3)%6 == 0 and x.shape == x0.shape and i != self.m_nLayers*3 -4:  # a skip connection skip at least 2 layers
                 x  = x+x0
                 x0 = x
+        if (self.m_nLayers - self.m_skipStartIndex) %2  != 0:
+            x = x+ x0
         return x
-
-
-
 
 class ConvDense(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
