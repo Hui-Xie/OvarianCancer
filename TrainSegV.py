@@ -22,11 +22,11 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/ResNetBlock_20190504.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Skip2_20190506.txt'''
 logNotes = r'''
-Major program changes: ConvSeqential use ReLU-BN-Conv structure, 
+Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure, 
                        and each block has 5 layers, 
-                       Residual connect to each Conv
+                       Residual connect to each Conv, and skip at least 2 layers.
                        use boundary loss with weight 0 at beginning, and pretrain CE loss. 
             '''
 

@@ -25,7 +25,7 @@ class SegV2DModel(SegVModel):
             sys.exit(-1)
 
         if useConvSeq:
-            N = 4  # the number of layer in each dense block.
+            N = 5  # the number of layer in each dense block.
             self.m_input = ConvSequential(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
         else:
             N = 4
