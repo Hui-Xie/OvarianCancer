@@ -25,6 +25,7 @@ import numpy as np
 trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190507.txt'''
 logNotes = r'''
 Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure; 
+                       ConsDense also use BatchNorm-reLU-Conv structure.
                        Add ConvSegDecreaseChannels
                        and each block has 5 layers, 
                        Residual connect to each Conv, 
