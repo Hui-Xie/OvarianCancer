@@ -46,9 +46,9 @@ class SegV2DModel(SegVModel):
         self.m_up2   = Up2dBB(4 * C, C, (3, 3), stride=(2, 2), nLayers=N)          # output:C*139*139
         self.m_up1   = Up2dBB(2 * C, C, (5, 5), stride=(2, 2), nLayers=N)          # output:C*281*281
 
-        self.m_outputBn = nn.BatchNorm2d(2 * C)
-        self.m_output = nn.Conv2d(2*C, K, (1, 1), stride=1)             # output:K*281*281
-
+        # self.m_outputBn = nn.BatchNorm2d(2 * C)
+        # self.m_output = nn.Conv2d(2*C, K, (1, 1), stride=1)             # output:K*281*281
+        self.m_output = ConvSeqDecreaseChannels(2*C, K, 3)
 
 
         # ==== Old code for single conv in each layer of V model ==========
@@ -88,17 +88,17 @@ class SegV2DModel(SegVModel):
         x5 = self.m_dropout2d(self.m_down5(x4))
         # x6 = self.m_dropout2d(self.m_down6(x5))
 
-        # x = self.m_dropout2d(self.m_dropout2d(self.m_up6(x6)))
-        # x = self.m_dropout2d(self.m_dropout2d(self.m_up5(x, x5)))
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up5(x5)))
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up4(x, x4)))
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up3(x, x3)))
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up2(x, x2)))
-        x = self.m_dropout2d(self.m_dropout2d(self.m_up1(x, x1)))
+        # x = self.m_dropout2d(self.m_up6(x6))
+        # x = self.m_dropout2d(self.m_up5(x, x5))
+        x = self.m_dropout2d(self.m_up5(x5))
+        x = self.m_dropout2d(self.m_up4(x, x4))
+        x = self.m_dropout2d(self.m_up3(x, x3))
+        x = self.m_dropout2d(self.m_up2(x, x2))
+        x = self.m_dropout2d(self.m_up1(x, x1))
 
-        x = torch.cat((x,x0),1)
-        x = self.m_outputBn(x)
-        x = self.m_output(x)
+        #x = torch.cat((x,x0),1)
+        #x = self.m_outputBn(x)
+        x = self.m_output(x, x0)
 
         return x
 
