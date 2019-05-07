@@ -24,8 +24,8 @@ class ConvSeqDecreaseChannels(nn.Module):
             self.m_convSeq.append(nn.Conv2d(inChL, outChL, (3, 3), stride=(1, 1), padding=(1, 1)))
 
 
-    def forward(self, input, skipInput=None):
-        x = input if skipInput is None else torch.cat((input, skipInput), 1)
+    def forward(self, inputx, skipInput=None):
+        x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)
         for layer in self.m_convSeq:
             x = layer(x)
         return x
@@ -75,7 +75,7 @@ class ConvSequential(nn.Module):
                 self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
 
 
-    def forward(self, input):
+    def forward(self, inputx):
         # x1 = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
         # x = x1
         # if useConvSeq:
@@ -91,7 +91,7 @@ class ConvSequential(nn.Module):
         # else:
         #     return x1+x
 
-        x = input
+        x = inputx
         if self.m_skipStartIndex == 0:
             x0  = x
         for i, layer in enumerate(self.m_convSeq):
@@ -135,8 +135,8 @@ class ConvDense(nn.Module):
         self.m_reluList.append(nn.ReLU(inplace=True))
         self.m_convList.append(nn.Conv2d(inCh+outCh, outCh, (1, 1), stride=(1, 1)))
 
-    def forward(self, input):
-        x = input
+    def forward(self, inputx):
+        x = inputx
         for i in range(0, self.m_nLayers*2, 2):
             x0 = x
             x = self.m_convList[i](self.m_reLuList[i](self.m_bnList[i](x)))
@@ -156,9 +156,9 @@ class Down2dBB(nn.Module): # down sample 2D building block
         else:
             self.m_convBlock = ConvDense(outCh, outCh, nLayers)
 
-    def forward(self, input):
+    def forward(self, inputx):
         # BN-ReLU- Conv
-        x = self.m_conv1(F.relu(self.m_bn1(input), inplace=True))
+        x = self.m_conv1(F.relu(self.m_bn1(inputx), inplace=True))
         x = self.m_convBlock(x)
         return x
 
