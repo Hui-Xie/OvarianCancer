@@ -1,0 +1,22 @@
+Program ID 23450
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
+
+Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure; 
+                       Add ConvSegDecreaseChannels
+                       and each block has 5 layers, 
+                       Residual connect to each Conv, 
+                       skip at least 2 layers.
+                       output layer use conv with 3*3 fiter instead of 1*1 filter. 
+                       use boundary loss with weight 0 at beginning, and pretrain CE loss. 
+            
+
+Program starting Time: 2019-05-07 12:26:21.254955
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1
+
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
