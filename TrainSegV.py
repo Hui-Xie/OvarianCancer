@@ -34,6 +34,7 @@ Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure;
                        use boundary loss with weight 0 at beginning, and pretrain CE loss. 
                        special convInput Module
                        convOutput moudel uses 1*1 conv to tranparent gradident 
+                       ConvOutput use residual module.
             '''
 
 logging.basicConfig(filename=trainLogFile,filemode='a+',level=logging.INFO, format='%(message)s')
@@ -85,8 +86,8 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
+    testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
