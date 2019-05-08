@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190508.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190508_2.txt'''
 logNotes = r'''
 Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure; 
                        ConsDense also use BatchNorm-reLU-Conv structure.
@@ -85,8 +85,8 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
-    testDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
+    testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 

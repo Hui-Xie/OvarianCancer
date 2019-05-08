@@ -21,15 +21,23 @@ class ConvInput(nn.Module):
         return x
 
 class ConvOutput(nn.Module):
-    def __init__(self, inCh, outCh):
+    def __init__(self, inCh, outCh, nLayers, K):
+        """
+
+        :param inCh:
+        :param outCh:
+        :param K:  final output class before softmax
+        """
         super().__init__()
-        self.m_bn1   =  nn.BatchNorm2d(inCh)
-        self.m_conv1 =  nn.Conv2d(inCh, outCh, (1, 1), stride=(1, 1))
+        self.m_convBlock =  ConvSequential(inCh, outCh, nLayers)
+        self.m_bn = nn.BatchNorm2d(outCh)
+        self.m_conv11= nn.Conv2d(outCh, K, (1, 1), stride=(1, 1))
 
     def forward(self, inputx, skipInput=None):
         x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
-        x = self.m_bn1(x)
-        x = self.m_conv1(x)
+        x = self.m_convBlock(x)
+        x = self.m_bn(x)
+        x = self.m_conv11(x)
         return x
 
 class ConvSeqDecreaseChannels(nn.Module):

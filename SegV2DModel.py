@@ -48,7 +48,7 @@ class SegV2DModel(SegVModel):
 
         # self.m_outputBn = nn.BatchNorm2d(2 * C)
         # self.m_output = nn.Conv2d(2*C, K, (1, 1), stride=1)             # output:K*281*281
-        self.m_output = ConvOutput(2*C, K)
+        self.m_output = ConvOutput(2*C, 2*C, N, K)
 
 
         # ==== Old code for single conv in each layer of V model ==========
