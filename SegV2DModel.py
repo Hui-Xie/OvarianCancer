@@ -26,7 +26,7 @@ class SegV2DModel(SegVModel):
 
         if useConvSeq:
             N = 5  # the number of layer in each dense block.
-            self.m_input = ConvSequential(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
+            self.m_input = ConvInput(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
         else:
             N = 4
             self.m_input = ConvDense(1, C, nLayers=N)
@@ -48,7 +48,7 @@ class SegV2DModel(SegVModel):
 
         # self.m_outputBn = nn.BatchNorm2d(2 * C)
         # self.m_output = nn.Conv2d(2*C, K, (1, 1), stride=1)             # output:K*281*281
-        self.m_output = ConvSeqDecreaseChannels(2*C, K, 2)
+        self.m_output = ConvOutput(2*C, K)
 
 
         # ==== Old code for single conv in each layer of V model ==========

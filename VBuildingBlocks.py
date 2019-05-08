@@ -5,6 +5,32 @@ import sys
 
 useConvSeq = True
 
+class ConvInput(nn.Module):
+    def __init__(self, inCh, outCh, nLayers):
+        super().__init__()
+        if nLayers < 2:
+            print("Error: ConvSeqDecreaseChannels needs at least 2 conve layers.")
+            sys.exit(-1)
+        self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
+        self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
+
+    def forward(self, inputx):
+        x = inputx
+        x = self.m_conv1(x)
+        x = self.m_convBlock(x)
+        return x
+
+class ConvOutput(nn.Module):
+    def __init__(self, inCh, outCh):
+        super().__init__()
+        self.m_bn1   =  nn.BatchNorm2d(inCh)
+        self.m_conv1 =  nn.Conv2d(inCh, outCh, (1, 1), stride=(1, 1))
+
+    def forward(self, inputx, skipInput=None):
+        x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
+        x = self.m_bn1(x)
+        x = self.m_conv1(x)
+        return x
 
 class ConvSeqDecreaseChannels(nn.Module):
     def __init__(self, inCh, outCh, nLayers):

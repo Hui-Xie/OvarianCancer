@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190507.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190508.txt'''
 logNotes = r'''
 Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure; 
                        ConsDense also use BatchNorm-reLU-Conv structure.
@@ -32,6 +32,8 @@ Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure;
                        skip at least 2 layers.
                        output layer use conv with 3*3 fiter instead of 1*1 filter. 
                        use boundary loss with weight 0 at beginning, and pretrain CE loss. 
+                       special convInput Module
+                       convOutput moudel uses 1*1 conv to tranparent gradident 
             '''
 
 logging.basicConfig(filename=trainLogFile,filemode='a+',level=logging.INFO, format='%(message)s')
