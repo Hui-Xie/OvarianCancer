@@ -298,3 +298,13 @@ Hints: Test TPR_0 is the TPR for all non-zero labels
 Hints: Test TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).
 
 Epoch 	 TrainingLoss 	 TestLoss 	Dice_0	Dice_1	TPR_0	TPR_1
+0 	 0.1304 	 0.0807 	0.288	0.288	0.995	0.995
+1 	 0.0911 	 0.0756 	0.305	0.305	0.986	0.986
+2 	 0.0856 	 0.0724 	0.330	0.330	0.975	0.975
+3 	 0.0770 	 0.0622 	0.349	0.349	0.977	0.977
+4 	 0.0621 	 2.2545 	0.159	0.159	0.524	0.524
+5 	 0.0597 	 1.9055 	0.228	0.228	0.999	0.999
+6 	 0.0553 	 0.0468 	0.483	0.483	0.979	0.979
+7 	 0.0499 	 0.2748 	0.341	0.341	0.994	0.994
+8 	 0.0574 	 0.0794 	0.420	0.420	0.998	0.998
+9 	 0.0548 	 0.0521 	0.426	0.426	0.994	0.994
