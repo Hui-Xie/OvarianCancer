@@ -22,9 +22,9 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190508_2.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190509.txt'''
 logNotes = r'''
-Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure; 
+Major program changes: ConvResidual use BatchNorm-reLU-Conv structure; 
                        ConsDense also use BatchNorm-reLU-Conv structure.
                        Add ConvSegDecreaseChannels
                        and each block has 5 layers, 
@@ -35,6 +35,8 @@ Major program changes: ConvSeqential use BatchNorm-reLU-Conv structure;
                        special convInput Module
                        convOutput moudel uses 1*1 conv to tranparent gradident 
                        ConvOutput use residual module.
+                       Use Dense Net in the Building Block
+                       add ConvBlock to wrapp the ConvResidual and ConvDense
             '''
 
 logging.basicConfig(filename=trainLogFile,filemode='a+',level=logging.INFO, format='%(message)s')

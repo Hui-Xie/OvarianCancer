@@ -3,44 +3,9 @@ import torch
 import torch.nn.functional as F
 import sys
 
-useConvSeq = True
+useResidual = True  # use residual module in each building block, otherwise use DenseBlock
 
-class ConvInput(nn.Module):
-    def __init__(self, inCh, outCh, nLayers):
-        super().__init__()
-        if nLayers < 2:
-            print("Error: ConvSeqDecreaseChannels needs at least 2 conve layers.")
-            sys.exit(-1)
-        self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
-        self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
-
-    def forward(self, inputx):
-        x = inputx
-        x = self.m_conv1(x)
-        x = self.m_convBlock(x)
-        return x
-
-class ConvOutput(nn.Module):
-    def __init__(self, inCh, outCh, nLayers, K):
-        """
-
-        :param inCh:
-        :param outCh:
-        :param K:  final output class before softmax
-        """
-        super().__init__()
-        self.m_convBlock =  ConvSequential(inCh, outCh, nLayers)
-        self.m_bn = nn.BatchNorm2d(outCh)
-        self.m_conv11= nn.Conv2d(outCh, K, (1, 1), stride=(1, 1))
-
-    def forward(self, inputx, skipInput=None):
-        x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
-        x = self.m_convBlock(x)
-        x = self.m_bn(x)
-        x = self.m_conv11(x)
-        return x
-
-class ConvSeqDecreaseChannels(nn.Module):
+class ConvDecreaseChannels(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
         if nLayers < 2:
@@ -65,7 +30,7 @@ class ConvSeqDecreaseChannels(nn.Module):
         return x
 
 
-class ConvSequential(nn.Module):
+class ConvResidual(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
         if nLayers < 2:
@@ -180,15 +145,59 @@ class ConvDense(nn.Module):
         x = self.m_convList[n](self.m_reLuList[n](self.m_bnList[n](x)))
         return x
 
+class ConvBlock(nn.Module):
+    def __init__(self, inCh, outCh, nLayers):
+        super().__init__()
+        if useResidual:   # use residual links
+            self.m_convBlock = ConvResidual(inCh, outCh, nLayers)
+        else:             # use Dense Links
+            self.m_convBlock = ConvDense(inCh, outCh, nLayers)
+
+    def forward(self, inputx):
+        return self.m_convBlock(inputx)
+
+
+class ConvInput(nn.Module):
+    def __init__(self, inCh, outCh, nLayers):
+        super().__init__()
+        if nLayers < 2:
+            print("Error: ConvSeqDecreaseChannels needs at least 2 conve layers.")
+            sys.exit(-1)
+        self.m_conv1 = nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1))
+        self.m_convBlock = ConvBlock(outCh, outCh, nLayers)
+
+    def forward(self, inputx):
+        x = inputx
+        x = self.m_conv1(x)
+        x = self.m_convBlock(x)
+        return x
+
+class ConvOutput(nn.Module):
+    def __init__(self, inCh, outCh, nLayers, K):
+        """
+
+        :param inCh:
+        :param outCh:
+        :param K:  final output class before softmax
+        """
+        super().__init__()
+        self.m_convBlock =  ConvBlock(inCh, outCh, nLayers)
+        self.m_bn = nn.BatchNorm2d(outCh)
+        self.m_conv11= nn.Conv2d(outCh, K, (1, 1), stride=(1, 1))
+
+    def forward(self, inputx, skipInput=None):
+        x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
+        x = self.m_convBlock(x)
+        x = self.m_bn(x)
+        x = self.m_conv11(x)
+        return x
+
 class Down2dBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers=3):
         super().__init__()
         self.m_bn1 = nn.BatchNorm2d(inCh)
         self.m_conv1 = nn.Conv2d(inCh, outCh, filter1st, stride)   # stride to replace maxpooling
-        if useConvSeq:
-            self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
-        else:
-            self.m_convBlock = ConvDense(outCh, outCh, nLayers)
+        self.m_convBlock = ConvBlock(outCh, outCh, nLayers)
 
     def forward(self, inputx):
         # BN-ReLU- Conv
@@ -197,16 +206,13 @@ class Down2dBB(nn.Module): # down sample 2D building block
         return x
 
 
-
 class Up2dBB(nn.Module): # up sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers= 3):
         super().__init__()
         self.m_bn1 = nn.BatchNorm2d(inCh)
         self.m_convT1 = nn.ConvTranspose2d(inCh, outCh, filter1st, stride)   # stride to replace upsample
-        if useConvSeq:
-            self.m_convBlock = ConvSequential(outCh, outCh, nLayers)
-        else:
-            self.m_convBlock = ConvDense(outCh, outCh, nLayers)
+        self.m_convBlock = ConvBlock(outCh, outCh, nLayers)
+
 
     def forward(self, downInput, skipInput=None):
         x = downInput if skipInput is None else torch.cat((downInput, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
