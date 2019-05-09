@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 import sys
 
-useResidual = True  # use residual module in each building block, otherwise use DenseBlock
+useResidual = False  # use residual module in each building block, otherwise use DenseBlock
 
 class ConvDecreaseChannels(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
@@ -138,11 +138,11 @@ class ConvDense(nn.Module):
         x = inputx
         for i in range(0, self.m_nLayers*2, 2):
             x0 = x
-            x = self.m_convList[i](self.m_reLuList[i](self.m_bnList[i](x)))
-            x = self.m_convList[i+1](self.m_reLuList[i+1](self.m_bnList[i+1](x)))
+            x = self.m_convList[i](self.m_reluList[i](self.m_bnList[i](x)))
+            x = self.m_convList[i+1](self.m_reluList[i+1](self.m_bnList[i+1](x)))
             x = torch.cat((x, x0), 1)
         n = self.m_nLayers*2  # the final element in the ModuleList
-        x = self.m_convList[n](self.m_reLuList[n](self.m_bnList[n](x)))
+        x = self.m_convList[n](self.m_reluList[n](self.m_bnList[n](x)))
         return x
 
 class ConvBlock(nn.Module):
