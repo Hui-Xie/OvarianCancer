@@ -100,7 +100,7 @@ class ConvResidual(nn.Module):
             if (i+1- self.m_skipStartIndex*3)%6 == 0 and x.shape == x0.shape and i != self.m_nLayers*3 -4:  # a skip connection skip at least 2 layers
                 x  = x+x0
                 x0 = x
-        if (self.m_nLayers - self.m_skipStartIndex) %2  != 0:
+        if (self.m_nLayers - self.m_skipStartIndex) %2 != 0 and x.shape == x0.shape:
             x = x+ x0
         return x
 
