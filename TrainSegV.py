@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190509.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_Dense20190509.txt'''
 logNotes = r'''
 Major program changes: ConvResidual use BatchNorm-reLU-Conv structure; 
                        ConsDense also use BatchNorm-reLU-Conv structure.
