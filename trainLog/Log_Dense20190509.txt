@@ -1,4 +1,4 @@
-Program ID 18523
+Program ID 20342
 
 Program command: 
  ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
@@ -18,7 +18,7 @@ Major program changes: ConvResidual use BatchNorm-reLU-Conv structure;
                        add ConvBlock to wrapp the ConvResidual and ConvDense
             
 
-Program starting Time: 2019-05-09 11:18:22.101398
+Program starting Time: 2019-05-09 11:30:12.321908
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1
 
 Infor: program test labels: [0, 1]

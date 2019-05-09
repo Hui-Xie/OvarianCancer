@@ -30,12 +30,12 @@ class SegV2DModel(SegVModel):
         self.m_down2 = Down2dBB(C, 2 * C, (3, 3), stride=(2, 2), nLayers=N)        # output: 2C*69*69
         self.m_down3 = Down2dBB(2 * C, 4 * C, (5, 5), stride=(2, 2), nLayers=N)    # output: 4C*33*33
         self.m_down4 = Down2dBB(4 * C, 8 * C, (5, 5), stride=(2, 2), nLayers=N)    # output: 8C*15*15
-        self.m_down5 = Down2dBB(8 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)   # output: 16C*7*7
+        self.m_down5 = Down2dBB(8 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N-1)   # output: 16C*7*7
         # self.m_down6 = Down2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)  # output: 16C*3*3
 
         # self.m_up6   = Up2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)    # output: 16C*7*7
         # self.m_up5   = Up2dBB(32 * C, 8 * C, (3, 3), stride=(2, 2), nLayers=N)     # output: 8C*15*15
-        self.m_up5   = Up2dBB(16 * C, 8 * C, (3, 3), stride=(2, 2), nLayers=N)  # output: 8C*15*15
+        self.m_up5   = Up2dBB(16 * C, 8 * C, (3, 3), stride=(2, 2), nLayers=N-1)  # output: 8C*15*15
         self.m_up4   = Up2dBB(16 * C, 4 * C, (5, 5), stride=(2, 2), nLayers=N)     # output: 4C*33*33
         self.m_up3   = Up2dBB(8 * C, 2 * C, (5, 5), stride=(2, 2), nLayers=N)      # output: 2C*69*69
         self.m_up2   = Up2dBB(4 * C, C, (3, 3), stride=(2, 2), nLayers=N)          # output:C*139*139
