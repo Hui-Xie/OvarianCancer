@@ -21,8 +21,8 @@ class SegV2DModel(SegVModel):
             print("Error: the number of filter in first layer is too small.")
             sys.exit(-1)
 
-        N = 2                    # the number of layer in each building block in each lay of V model.
-        # 2 is for denseNet, 4 is for residual links.
+        N = 4                    # the number of layer in each building block in each lay of V model.
+        # 3 is for denseNet, 4 is for residual links.
 
         self.m_input = ConvInput(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
 
