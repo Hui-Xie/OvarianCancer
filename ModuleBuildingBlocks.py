@@ -110,9 +110,10 @@ class ConvResidual(nn.Module):
             x = convBlock(x)
             if 0 == i and self.m_skipStartIndex ==1:
                 x0 = x
-            if (i+1- self.m_skipStartIndex)%2 == 0 and x.shape == x0.shape and i != self.m_nLayers -2:  # a skip connection skips at least 2 layers
+            if i > 0 and (i+1- self.m_skipStartIndex)%2 == 0 and x.shape == x0.shape and i != self.m_nLayers -2:  # a skip connection skips at least 2 layers
                 x  = x+x0
                 x0 = x
+           
         if (self.m_nLayers - self.m_skipStartIndex) %2 != 0 and x.shape == x0.shape:
             x = x+ x0
         return x
