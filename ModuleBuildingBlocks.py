@@ -5,6 +5,27 @@ import sys
 
 useResidual = False  # use residual module in each building block, otherwise use DenseBlock
 
+class BN_ReLU_Conv2d(nn.Module):
+    def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1)):
+        super().__init__()
+        if filterSize == (1,1):
+            padding = (0,0)
+        self.m_bn1   = nn.BatchNorm2d(inCh)
+        self.m_relu1 = nn.ReLU(inplace=True)
+        self.m_conv1 = nn.Conv2d(inCh, outCh, filterSize, stride, padding)
+
+    def forward(self, inputx):
+        x = self.m_conv1(self.m_relu1(self.m_bn1(inputx)))
+        return x
+
+class Conv2d_BN_ReLU(BN_ReLU_Conv2d):
+    def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1)):
+        super().__init__(inCh, outCh, filterSize, stride, padding)
+
+    def forward(self, inputx):
+        x = self.m_relu1(self.m_bn1(self.m_conv1(inputx)))
+        return x
+
 class ConvDecreaseChannels(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
@@ -59,20 +80,12 @@ class ConvResidual(nn.Module):
         #         self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
         #         self.m_convSeq.append(nn.BatchNorm2d(outCh))
         #         self.m_convSeq.append(nn.ReLU(inplace=True))
-        self.m_convSeq = nn.ModuleList()
+        self.m_convBlocks = nn.ModuleList()
         for i in range(self.m_nLayers):
             if 0 == i:
-                self.m_convSeq.append(nn.BatchNorm2d(inCh))
+                self.m_convBlocks.append(BN_ReLU_Conv2d(inCh,outCh))
             else:
-                self.m_convSeq.append(nn.BatchNorm2d(outCh))
-
-            self.m_convSeq.append(nn.ReLU(inplace=True))
-
-            if 0 == i:
-                self.m_convSeq.append(nn.Conv2d(inCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
-            else:
-                self.m_convSeq.append(nn.Conv2d(outCh, outCh, (3, 3), stride=(1, 1), padding=(1, 1)))
-
+                self.m_convBlocks.append(BN_ReLU_Conv2d(outCh, outCh))
 
     def forward(self, inputx):
         # x1 = F.relu(self.m_bn1(self.m_conv1(input)), inplace=True)
@@ -93,11 +106,11 @@ class ConvResidual(nn.Module):
         x = inputx
         if self.m_skipStartIndex == 0:
             x0  = x
-        for i, layer in enumerate(self.m_convSeq):
-            x = layer(x)
-            if 2 == i and self.m_skipStartIndex ==1:
+        for i, convBlock in enumerate(self.m_convBlocks):
+            x = convBlock(x)
+            if 0 == i and self.m_skipStartIndex ==1:
                 x0 = x
-            if (i+1- self.m_skipStartIndex*3)%6 == 0 and x.shape == x0.shape and i != self.m_nLayers*3 -4:  # a skip connection skip at least 2 layers
+            if (i+1- self.m_skipStartIndex)%2 == 0 and x.shape == x0.shape and i != self.m_nLayers -2:  # a skip connection skips at least 2 layers
                 x  = x+x0
                 x0 = x
         if (self.m_nLayers - self.m_skipStartIndex) %2 != 0 and x.shape == x0.shape:

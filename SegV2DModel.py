@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import sys
 
 from SegVModel import SegVModel
-from VBuildingBlocks import *
+from ModuleBuildingBlocks import *
 
 #  2D model
 
