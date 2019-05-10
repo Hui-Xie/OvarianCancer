@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_DenseF96_20190510.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_Dense_F96_CBROrder_20190510_2.txt'''
 logNotes = r'''
 Major program changes: ConvResidual use BatchNorm-reLU-Conv structure; 
                        ConsDense also use BatchNorm-reLU-Conv structure.
@@ -39,6 +39,9 @@ Major program changes: ConvResidual use BatchNorm-reLU-Conv structure;
                        add ConvBlock to wrapp the ConvResidual and ConvDense
                        first layer filter = 96, reducing from 128 of previous experiment
                        the nLayers in block is 4, increase from 2 of previous experiment
+                       add Bn-Relu-Conv module with paparamter
+                       use Conv-ReLu-Bn order (CBR)
+                       use Mixup and DenseNet
                        
             '''
 
@@ -77,7 +80,7 @@ def main():
     labelTuple = eval(sys.argv[5])
     K = len(labelTuple)
 
-    useMixup = False
+    useMixup = True
     alpha = 0.4  # for Beta distribution
     if useMixup:
         logging.info(f"Info: program uses mixeup with alpha={alpha}.")
