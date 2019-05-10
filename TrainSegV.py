@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_Dense20190509.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_DenseF96_20190510.txt'''
 logNotes = r'''
 Major program changes: ConvResidual use BatchNorm-reLU-Conv structure; 
                        ConsDense also use BatchNorm-reLU-Conv structure.
@@ -37,7 +37,7 @@ Major program changes: ConvResidual use BatchNorm-reLU-Conv structure;
                        ConvOutput use residual module.
                        Use Dense Net in the Building Block
                        add ConvBlock to wrapp the ConvResidual and ConvDense
-                       first layer filter = 64, reducing from 128 of previous experiment
+                       first layer filter = 96, reducing from 128 of previous experiment
                        the nLayers in block is 4, increase from 2 of previous experiment
                        
             '''
@@ -106,7 +106,7 @@ def main():
         if 2 in trainDataMgr.m_remainedLabels:
             net = SegV2DModel(192, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
         else:
-            net = SegV2DModel(64, K)
+            net = SegV2DModel(96, K)
 
     else:
         logging.info(f"Info: program uses 3D input.")
