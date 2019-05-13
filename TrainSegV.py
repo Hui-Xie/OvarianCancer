@@ -73,12 +73,6 @@ def main():
     labelTuple = eval(sys.argv[5])
     K = len(labelTuple)
 
-    useMixup = True
-    alpha = 0.4  # for Beta distribution
-    if useMixup:
-        logging.info(f"Info: program uses mixeup with alpha={alpha}.")
-
-
     logging.info(f"Info: netPath = {netPath}\n")
 
     trainDataMgr = DataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
@@ -112,6 +106,7 @@ def main():
     trainDataMgr.setRot90sProb(0.3)               #rotate along 90, 180, 270
     # trainDataMgr.setJitterNoise(0.3, 1)           #add Jitter noise
     trainDataMgr.setAddedNoise(0.3, 0.0,  0.1)     #add gaussian noise augmentation after data normalization of [0,1]
+    trainDataMgr.setMixup(alpha=0.4, prob=0.5)     # set Mixup
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
@@ -199,52 +194,33 @@ def main():
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
 
-        if useMixup: # use MIXUP.
-            for (inputs1, labels1), (inputs2, labels2) in zip(trainDataMgr.dataLabelGenerator(True), trainDataMgr.dataLabelGenerator(True)):
-                lambdaInBeta = np.random.beta(alpha, alpha)
-                inputs = inputs1* lambdaInBeta + inputs2*(1-lambdaInBeta)
-                inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
-                labels1= torch.from_numpy(labels1).to(device, dtype=torch.long)
-                labels2 = torch.from_numpy(labels2).to(device, dtype=torch.long)
+        for (inputs1, labels1), (inputs2, labels2) in zip(trainDataMgr.dataLabelGenerator(True), trainDataMgr.dataLabelGenerator(True)):
+            lambdaInBeta = trainDataMgr.getLambdaInBeta()
+            inputs = inputs1* lambdaInBeta + inputs2*(1-lambdaInBeta)
+            inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
+            labels1= torch.from_numpy(labels1).to(device, dtype=torch.long)
+            labels2 = torch.from_numpy(labels2).to(device, dtype=torch.long)
 
-                if useDataParallel:
-                    optimizer.zero_grad()
-                    outputs = net.forward(inputs)
-                    loss = torch.tensor(0.0).cuda()
-                    for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                        if weight == 0:
-                            continue
+            if useDataParallel:
+                optimizer.zero_grad()
+                outputs = net.forward(inputs)
+                loss = torch.tensor(0.0).cuda()
+                for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
+                    if weight == 0:
+                        continue
+                    if lambdaInBeta != 0:
                         loss += lossFunc(outputs, labels1) * weight*lambdaInBeta
+                    if 1-lambdaInBeta != 0:
                         loss += lossFunc(outputs, labels2) * weight * (1-lambdaInBeta)
-                    loss.backward()
-                    optimizer.step()
-                    batchLoss = loss.item()
-                else:
-                    batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
+                loss.backward()
+                optimizer.step()
+                batchLoss = loss.item()
+            else:
+                batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
 
-                trainingLoss += batchLoss
-                batches += 1
-        else:  # DO NOT USE MIXUP
-            for inputs, labels in trainDataMgr.dataLabelGenerator(True):
-                inputs, labels = torch.from_numpy(inputs).to(device, dtype=torch.float), torch.from_numpy(labels).to(device,dtype=torch.long)
-
-                if useDataParallel:
-                    optimizer.zero_grad()
-                    outputs = net.forward(inputs)
-                    loss = torch.tensor(0.0).cuda()
-                    for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                        if weight == 0:
-                            continue
-                        loss += lossFunc(outputs, labels) * weight
-                    loss.backward()
-                    optimizer.step()
-                    batchLoss = loss.item()
-                else:
-                    batchLoss = net.batchTrain(inputs, labels)
-
-                trainingLoss += batchLoss
-                batches += 1
+            trainingLoss += batchLoss
+            batches += 1
 
         if 0 != batches:
             trainingLoss /= batches

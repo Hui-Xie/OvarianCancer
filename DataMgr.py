@@ -24,7 +24,8 @@ class DataMgr:
         self.m_noiseStd  = 0
         self.m_jitterProb = 0
         self.m_jitterRadius = 0
-
+        self.m_alpha    = 0.4
+        self.m_mixupProb = 0
 
         self.m_segDir = None
         self.m_imagesList = []
@@ -63,6 +64,18 @@ class DataMgr:
     def setJitterNoise(self, prob, radius):
         self.m_jitterProb = prob
         self.m_jitterRadius = radius
+
+    def setMixup(self, alpha, prob):
+        self.m_alpha = alpha
+        self.m_mixupProb = prob
+        self.m_logInfo(f"Info: program uses Mixup with alpha={self.m_alpha}, and mixupProb = {self.m_mixupProb}.")
+
+    def getLambdaInBeta(self):
+        if self.m_mixupProb > 0 and random.uniform(0, 1) <= self.m_mixupProb:
+            lambdaInBeta = np.random.beta(self.m_alpha, self.m_alpha)
+        else:
+            lambdaInBeta = 1.0
+        return  lambdaInBeta
 
     def setRemainedLabel(self,maxLabel, ks):
         if 0 in ks:

@@ -13,7 +13,6 @@ class SegVModel(nn.Module):
         self.m_lossFuncList = []
         self.m_lossWeightList = []
 
-
     def forward(self, x):
         pass
 
@@ -52,8 +51,10 @@ class SegVModel(nn.Module):
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             if weight == 0:
                 continue
-            loss += lossFunc(outputs,labels1)*weight*lambdaInBeta
-            loss += lossFunc(outputs,labels2)*weight*(1-lambdaInBeta)
+            if lambdaInBeta != 0:
+                loss += lossFunc(outputs,labels1)*weight*lambdaInBeta
+            if 1-lambdaInBeta != 0:
+                loss += lossFunc(outputs,labels2)*weight*(1-lambdaInBeta)
         loss.backward()
         self.m_optimizer.step()
         return loss.item()
