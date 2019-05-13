@@ -24,24 +24,17 @@ import numpy as np
 # you may need to change the file name and log Notes below for every training.
 trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_Dense_F96_CBROrder_20190513.txt'''
 logNotes = r'''
-Major program changes: ConvResidual use BatchNorm-reLU-Conv structure; 
-                       ConsDense also use BatchNorm-reLU-Conv structure.
-                       Add ConvSegDecreaseChannels
-                       and each block has 5 layers, 
-                       Residual connect to each Conv, 
-                       skip at least 2 layers.
+Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
+                       Dense Layer = 4 
                        output layer use conv with 3*3 fiter instead of 1*1 filter. 
                        use boundary loss with weight 0 at beginning, and pretrain CE loss. 
                        special convInput Module
-                       convOutput moudel uses 1*1 conv to tranparent gradident 
+                       convOutput moudel uses 1*1 conv to get tranparent gradient 
                        ConvOutput use residual module.
-                       Use Dense Net in the Building Block
-                       add ConvBlock to wrapp the ConvResidual and ConvDense
-                       first layer filter = 96, reducing from 128 of previous experiment
-                       the nLayers in block is 4, increase from 2 of previous experiment
-                       add Bn-Relu-Conv module with paparamter
-                       use Conv-Bn-ReLU order (CBR)
+                       first layer filter = 96
                        use Mixup and DenseNet
+                       Boundary Loss supports multi-class.
+                       For 0,1,2 three classes clasfication for primary and metastases
                        
             '''
 
@@ -106,10 +99,7 @@ def main():
         logging.info(f"Info: program uses 2D input.")
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        if 2 in trainDataMgr.m_remainedLabels:
-            net = SegV2DModel(192, K)  # when increase the number of filter in first layer, you may consider to reduce batchSize because of GPU memory limits.
-        else:
-            net = SegV2DModel(96, K)
+        net = SegV2DModel(96, K)
 
     else:
         logging.info(f"Info: program uses 3D input.")
