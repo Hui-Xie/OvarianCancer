@@ -212,6 +212,8 @@ def main():
                     outputs = net.forward(inputs)
                     loss = torch.tensor(0.0).cuda()
                     for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
+                        if weight == 0:
+                            continue
                         loss += lossFunc(outputs, labels1) * weight*lambdaInBeta
                         loss += lossFunc(outputs, labels2) * weight * (1-lambdaInBeta)
                     loss.backward()
@@ -232,6 +234,8 @@ def main():
                     outputs = net.forward(inputs)
                     loss = torch.tensor(0.0).cuda()
                     for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
+                        if weight == 0:
+                            continue
                         loss += lossFunc(outputs, labels) * weight
                     loss.backward()
                     optimizer.step()
@@ -262,6 +266,8 @@ def main():
                     outputs = net.forward(inputs)
                     loss = torch.tensor(0.0).cuda()
                     for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
+                        if weight == 0:
+                            continue
                         loss += lossFunc(outputs, labels) * weight
                     batchLoss = loss.item()
                 else:

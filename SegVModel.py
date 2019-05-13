@@ -38,6 +38,8 @@ class SegVModel(nn.Module):
         outputs = self.forward(inputs)
         loss = torch.tensor(0.0).cuda()
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
+            if weight == 0:
+                continue
             loss += lossFunc(outputs,labels)*weight
         loss.backward()
         self.m_optimizer.step()
@@ -48,6 +50,8 @@ class SegVModel(nn.Module):
         outputs = self.forward(inputs)
         loss = torch.tensor(0.0).cuda()
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
+            if weight == 0:
+                continue
             loss += lossFunc(outputs,labels1)*weight*lambdaInBeta
             loss += lossFunc(outputs,labels2)*weight*(1-lambdaInBeta)
         loss.backward()
@@ -58,6 +62,8 @@ class SegVModel(nn.Module):
         outputs = self.forward(inputs)
         loss = torch.tensor(0.0).cuda()
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
+            if weight == 0:
+                continue
             loss += lossFunc(outputs, labels) * weight
         return loss.item(), outputs
 

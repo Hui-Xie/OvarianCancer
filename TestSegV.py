@@ -137,6 +137,8 @@ def main():
             outputs = net.forward(inputs)
             loss = torch.tensor(0.0)
             for lossFunc, weight in zip(net.module.m_lossFuncList, net.module.m_lossWeightList):
+                if weight == 0:
+                    continue
                 loss += lossFunc(outputs, labels) * weight
             batchLoss = loss.item()
 
