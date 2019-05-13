@@ -81,8 +81,8 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
+    testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -160,12 +160,12 @@ def main():
 
     epochs = 15000
     logging.info(f"Hints: Test Dice_0 is the dice coeff for all non-zero labels")
-    logging.info(f"Hints: Test Dice_1 is for primary cancer(green), test Dice_2 is for metastasis(yellow), and test Dice_3 is for invaded lymph node(brown).")
+    logging.info(f"Hints: Test Dice_1 is for primary cancer(green), \t\n test Dice_2 is for metastasis(yellow), \t\n and test Dice_3 is for invaded lymph node(brown).")
     logging.info(f"Hints: Test TPR_0 is the TPR for all non-zero labels")
-    logging.info(f"Hints: Test TPR_1 is for primary cancer(green), TPR_2 is for metastasis(yellow), and TPR_3 is for invaded lymph node(brown).\n")
+    logging.info(f"Hints: Test TPR_1 is for primary cancer(green), \t\n TPR_2 is for metastasis(yellow), \t\n and TPR_3 is for invaded lymph node(brown).\n")
     diceHead = (f'Dice_{i}' for i in labelTuple)
     TPRHead = (f'TPR_{i}' for i in labelTuple)
-    logging.info(f"Epoch \t TrainingLoss \t TestLoss \t"+f'\t'.join(diceHead) +f'\t' + f'\t'.join(TPRHead))   # logging.info output head
+    logging.info(f'Epoch \t TrainingLoss\t' +f'\t'.join(diceHead) +f'\t' +f'\t'.join(TPRHead) +f'\t TestLoss \t' +f'\t'.join(diceHead) +f'\t' + f'\t'.join(TPRHead))   # logging.info output head
 
     for epoch in range(epochs):
 
@@ -188,18 +188,22 @@ def main():
 
         #================Training===============
         random.seed()
+        trainDiceSumList = [0 for _ in range(K)]
+        trainDiceCountList = [0 for _ in range(K)]
+        trainTPRSumList = [0 for _ in range(K)]
+        trainTPRCountList = [0 for _ in range(K)]
         trainingLoss = 0.0
         batches = 0
         net.train()
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
 
-        for (inputs1, labels1), (inputs2, labels2) in zip(trainDataMgr.dataLabelGenerator(True), trainDataMgr.dataLabelGenerator(True)):
+        for (inputs1, labels1Cpu), (inputs2, labels2Cpu) in zip(trainDataMgr.dataLabelGenerator(True), trainDataMgr.dataLabelGenerator(True)):
             lambdaInBeta = trainDataMgr.getLambdaInBeta()
             inputs = inputs1* lambdaInBeta + inputs2*(1-lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
-            labels1= torch.from_numpy(labels1).to(device, dtype=torch.long)
-            labels2 = torch.from_numpy(labels2).to(device, dtype=torch.long)
+            labels1= torch.from_numpy(labels1Cpu).to(device, dtype=torch.long)
+            labels2 = torch.from_numpy(labels2Cpu).to(device, dtype=torch.long)
 
             if useDataParallel:
                 optimizer.zero_grad()
@@ -218,6 +222,9 @@ def main():
             else:
                 batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
+            if lambdaInBeta == 1:
+                trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
+                    = trainDataMgr.updateDiceTPRSumList(outputs, labels1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             batches += 1
@@ -228,10 +235,10 @@ def main():
         # ================Test===============
         net.eval()
         with torch.no_grad():
-            diceSumList = [0 for _ in range(K)]
-            diceCountList = [0 for _ in range(K)]
-            TPRSumList = [0 for _ in range(K)]
-            TPRCountList = [0 for _ in range(K)]
+            testDiceSumList = [0 for _ in range(K)]
+            testDiceCountList = [0 for _ in range(K)]
+            testTPRSumList = [0 for _ in range(K)]
+            testTPRCountList = [0 for _ in range(K)]
             testLoss = 0.0
             batches = 0
             for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
@@ -249,17 +256,9 @@ def main():
                 else:
                     batchLoss, outputs = net.batchTest(inputs, labels)
 
-                outputs = outputs.cpu().numpy()
-                segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
-                
-                (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu)
-                (TPRSumBatch, TPRCountBatch) = testDataMgr.getTPRSumList(segmentations, labelsCpu)
-                
-                diceSumList = [x+y for x,y in zip(diceSumList, diceSumBatch)]
-                diceCountList = [x+y for x,y in zip(diceCountList, diceCountBatch)]
-                TPRSumList = [x + y for x, y in zip(TPRSumList, TPRSumBatch)]
-                TPRCountList = [x + y for x, y in zip(TPRCountList, TPRCountBatch)]
-                
+                testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
+                    = testDataMgr.updateDiceTPRSumList(outputs, labelsCpu, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
+
                 testLoss += batchLoss
                 batches += 1
                 #logging.info(f'batch={batches}: batchLoss = {batchLoss}')
@@ -268,15 +267,20 @@ def main():
         if 0 != batches:
             testLoss /= batches
             lrScheduler.step(testLoss)
-        diceAvgList = [x/(y+1e-8) for x,y in zip(diceSumList, diceCountList)]
-        TPRAvgList = [x / (y + 1e-8) for x, y in zip(TPRSumList, TPRCountList)]
-        logging.info(f'{epoch} \t {trainingLoss:.4f} \t {testLoss:.4f} \t'+f'\t'.join( (f'{x:.3f}' for x in diceAvgList))+f'\t'+f'\t'.join( (f'{x:.3f}' for x in TPRAvgList)))
+            
+        trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
+        trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
+        testDiceAvgList = [x/(y+1e-8) for x,y in zip(testDiceSumList, testDiceCountList)]
+        testTPRAvgList  = [x/(y+1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
+
+        logging.info(f'{epoch} \t {trainingLoss:.4f} \t'+f'\t'.join( (f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList)) \
+                              +f'\t{testLoss:.4f}\t'+f'\t'.join( (f'{x:.3f}' for x in testDiceAvgList))+f'\t'+f'\t'.join( (f'{x:.3f}' for x in testTPRAvgList)))
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            netMgr.save(diceAvgList)
-            if diceAvgList[1] > 0.20  and diceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
-                bestTestDiceList = diceAvgList
+            netMgr.save(testDiceAvgList)
+            if testDiceAvgList[1] > 0.20  and testDiceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
+                bestTestDiceList = testDiceAvgList
                 netMgr.saveBest(bestTestDiceList)
         else:
             logging.info(f"Error: training loss is infinity. Program exit.")

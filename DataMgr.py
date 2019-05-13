@@ -679,3 +679,16 @@ class DataMgr:
         return labelStatisSum, sliceStatisSum
 
 
+    def updateDiceTPRSumList(self, outputsGPU, labelsCpu, diceSumList, diceCountList, TPRSumList, TPRCountList):
+        outputs = outputsGPU.cpu().detach().numpy()
+        segmentations = DataMgr.oneHotArray2Segmentation(outputs)
+
+        (diceSumBatch, diceCountBatch) = self.getDiceSumList(segmentations, labelsCpu)
+        (TPRSumBatch, TPRCountBatch) = self.getTPRSumList(segmentations, labelsCpu)
+
+        diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
+        diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]
+        TPRSumList = [x + y for x, y in zip(TPRSumList, TPRSumBatch)]
+        TPRCountList = [x + y for x, y in zip(TPRCountList, TPRCountBatch)]
+
+        return diceSumList, diceCountList, TPRSumList, TPRCountList
