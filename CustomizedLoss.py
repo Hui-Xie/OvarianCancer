@@ -52,7 +52,7 @@ class BoundaryLoss(_Loss):
         ndim = targetNumpy.ndim
         N = shape[0]     # batch Size
         dilateFilter = np.ones((3, 3), dtype=int)  # dilation filter for for 4-connected boundary
-        ret = torch.tensor.zeros(N,1).cuda()
+        ret = torch.zeros(N,1).cuda()
 
         for k in range(1,self.m_k):
             segProb = torch.narrow(softmaxInput,1, k,1)
@@ -66,12 +66,15 @@ class BoundaryLoss(_Loss):
                 if np.count_nonzero(targetk) == 0:
                     continue
                 boundary = binary_dilation(targetkNot[i],dilateFilter) & targetk[i]
-                inside = targetk[i] - boundary
+                inside = targetk[i] ^ boundary  # xor operator
                 signMatrix = inside*(-1)+ targetkNot[i]
                 levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
 
             levelSetTensor = torch.from_numpy(levelSet).float().cuda()
-            ret += torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]), keepdim=True)
+            for i in range(2, ndim):
+                x = torch.squeeze(x, dim=i)
+            ret += x
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
