@@ -40,7 +40,7 @@ Major program changes: ConvResidual use BatchNorm-reLU-Conv structure;
                        first layer filter = 96, reducing from 128 of previous experiment
                        the nLayers in block is 4, increase from 2 of previous experiment
                        add Bn-Relu-Conv module with paparamter
-                       use Conv-ReLu-Bn order (CBR)
+                       use Conv-Bn-ReLU order (CBR)
                        use Mixup and DenseNet
                        
             '''
