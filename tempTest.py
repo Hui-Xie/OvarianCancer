@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from CustomizedLoss import BoundaryLoss
 
-boundaryLoss = BoundaryLoss(lambdaCoeff=1)
+boundaryLoss = BoundaryLoss(lambdaCoeff=1, k=2)
 
 inputx = np.random.rand(3,7,8)
 inputx = torch.from_numpy(inputx).to("cuda")

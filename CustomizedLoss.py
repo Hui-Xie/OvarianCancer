@@ -38,31 +38,40 @@ class BoundaryLoss(_Loss):
     """
     __constants__ = ['reduction']
 
-    def __init__(self, lambdaCoeff=0.001, size_average=None, reduce=None, reduction='mean'):
+    def __init__(self, lambdaCoeff=0.001, k=2, size_average=None, reduce=None, reduction='mean'):
         super().__init__(size_average, reduce, reduction)
         self.m_lambda=lambdaCoeff # weight coefficient
+        self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
+
 
     @weak_script_method
     def forward(self, inputx, target):
-        segProb = torch.narrow(F.softmax(inputx, 1),1, 1,1)
-        segProb = torch.squeeze(segProb, 1)
-
+        softmaxInput = F.softmax(inputx, 1)
         targetNumpy = target.cpu().numpy().astype(int)
-        targetNot = (target == 0).cpu().numpy().astype(int)
-        shape = targetNot.shape
-        ndim = targetNot.ndim
-        N = shape[0]
-        levelSet = np.zeros(shape)
+        shape = targetNumpy.shape
+        ndim = targetNumpy.ndim
+        N = shape[0]     # batch Size
+        dilateFilter = np.ones((3, 3), dtype=int)  # dilation filter for for 4-connected boundary
+        ret = torch.tensor.zeros(N,1).cuda()
 
-        k = np.ones((3,3),dtype=int)  # dilation filter for for 4-connected boundary
-        for i in range(N):
-            boundary = binary_dilation(targetNot[i],k) & targetNumpy[i]
-            inside = targetNumpy[i]-boundary
-            signMatrix = inside*(-1)+ targetNot[i]
-            levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
+        for k in range(1,self.m_k):
+            segProb = torch.narrow(softmaxInput,1, k,1)
+            segProb = torch.squeeze(segProb, 1)
 
-        levelSetTensor = torch.from_numpy(levelSet).float().cuda()
-        ret = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
+            targetk = (targetNumpy == k)
+            targetkNot = (targetNumpy != k)
+            levelSet = np.zeros(shape)
+
+            for i in range(N):
+                if np.count_nonzero(targetk) == 0:
+                    continue
+                boundary = binary_dilation(targetkNot[i],dilateFilter) & targetk[i]
+                inside = targetk[i] - boundary
+                signMatrix = inside*(-1)+ targetkNot[i]
+                levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
+
+            levelSetTensor = torch.from_numpy(levelSet).float().cuda()
+            ret += torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)

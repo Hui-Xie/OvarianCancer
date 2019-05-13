@@ -84,7 +84,7 @@ def main():
     ceWeight = torch.FloatTensor(testDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss()
+    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K)
     net.appendLossFunc(boundaryLoss, 0)
 
     netMgr = NetMgr(net, netPath)

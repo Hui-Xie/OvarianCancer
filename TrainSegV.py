@@ -149,7 +149,7 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001)
+    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K)
     net.appendLossFunc(boundaryLoss, 0)
 
     # logging.info model
