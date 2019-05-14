@@ -167,7 +167,8 @@ def main():
     TPRHead1 = (f'TPR_{i}' for i in labelTuple)
     diceHead2 = (f'Dice{i}' for i in labelTuple)
     TPRHead2 = (f'TPR_{i}' for i in labelTuple)
-    logging.info(f"Epoch\tTrainLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tTestLoss \t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2))   # logging.info output head
+    logging.info(f"Epoch\tTrainLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1)\
+                    + f"\tTestLoss \t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2))   # logging.info output head
 
     for epoch in range(epochs):
 
@@ -275,8 +276,8 @@ def main():
         testDiceAvgList = [x/(y+1e-8) for x,y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x/(y+1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
-        logging.info(f'{epoch} \t {trainingLoss:.4f} \t'+ f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+ f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList)) \
-                              + f'\t{testLoss:.4f}\t'+ f'\t'.join( (f'{x:.3f}' for x in testDiceAvgList))+ f'\t'+ f'\t'.join( (f'{x:.3f}' for x in testTPRAvgList)))
+        logging.info(f'{epoch}\t{trainingLoss:.4f}\t'+ f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+ f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList)) \
+                              + f'\t{testLoss:.4f}\t'+ f'\t'.join((f'{x:.3f}' for x in testDiceAvgList))+ f'\t'+ f'\t'.join( (f'{x:.3f}' for x in testTPRAvgList)))
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
