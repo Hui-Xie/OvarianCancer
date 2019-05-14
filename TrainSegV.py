@@ -31,9 +31,9 @@ Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
                        special convInput Module
                        convOutput moudel uses 1*1 conv to get tranparent gradient 
                        ConvOutput use residual module.
-                       first layer filter = 96
+                       first layer filter = 128
                        use Mixup and DenseNet
-                       Boundary Loss supports multi-class.
+                       Boundary Loss supports multi-class, and weight
                        For 0,1,2 three classes clasfication for primary and metastases
                        
             '''
@@ -93,7 +93,7 @@ def main():
         logging.info(f"Info: program uses 2D input.")
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel(96, K)
+        net = SegV2DModel(128, K)
 
     else:
         logging.info(f"Info: program uses 3D input.")
@@ -134,7 +134,7 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K)
+    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K, weight=ceWeight)
     net.appendLossFunc(boundaryLoss, 0)
 
     # logging.info model
