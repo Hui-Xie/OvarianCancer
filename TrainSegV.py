@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_PM_20190513.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190514.txt'''
 logNotes = r'''
 Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
                        Dense Layer = 4 
@@ -81,8 +81,8 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
-    testDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
+    testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -167,8 +167,8 @@ def main():
     TPRHead1 = (f'TPR_{i}' for i in labelTuple)
     diceHead2 = (f'Dice{i}' for i in labelTuple)
     TPRHead2 = (f'TPR_{i}' for i in labelTuple)
-    logging.info(f"Epoch\tTrainLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1)\
-                    + f"\tTestLoss \t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2))   # logging.info output head
+    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1)\
+                    + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2))   # logging.info output head
 
     for epoch in range(epochs):
 
