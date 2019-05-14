@@ -1,4 +1,4 @@
-Program ID 13050
+Program ID 13369
 
 Program command: 
  ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1,2']
@@ -18,7 +18,7 @@ Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
                        
             
 
-Program starting Time: 2019-05-14 11:37:32.806694
+Program starting Time: 2019-05-14 11:45:04.055807
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2
 
 Infor: program test labels: [0, 1, 2]
