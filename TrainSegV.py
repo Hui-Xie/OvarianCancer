@@ -35,6 +35,7 @@ Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
                        use Mixup and DenseNet
                        Boundary Loss supports multi-class, and weight
                        For 0,1,2 three classes clasfication for primary and metastases
+                       dropout rate = 0.0
                        
             '''
 
@@ -124,10 +125,7 @@ def main():
         logging.info(f"Network trains from scratch.")
 
     logging.info(net.getParametersScale())
-    if 2 in trainDataMgr.m_remainedLabels:
-        logging.info(net.setDropoutProb(0.2))           # metastases is hard to learn, so it need a smaller dropout rate.
-    else:
-        logging.info(net.setDropoutProb(0.3))
+    logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

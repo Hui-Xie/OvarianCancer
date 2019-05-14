@@ -7,8 +7,8 @@ class SegVModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.m_dropoutProb = 0.2
-        self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
-        self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
+        self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb, inplace=True)
+        self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb, inplace=True)
         self.m_optimizer = None
         self.m_lossFuncList = []
         self.m_lossWeightList = []
