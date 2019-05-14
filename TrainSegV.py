@@ -276,7 +276,7 @@ def main():
         testDiceAvgList = [x/(y+1e-8) for x,y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x/(y+1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
-        logging.info(f'{epoch}\t{trainingLoss:.4f}\t'+ f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+ f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList)) \
+        logging.info(f'{epoch}\t{trainingLoss:.4f}\t'+ f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+ f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList))\
                               + f'\t{testLoss:.4f}\t'+ f'\t'.join((f'{x:.3f}' for x in testDiceAvgList))+ f'\t'+ f'\t'.join( (f'{x:.3f}' for x in testTPRAvgList)))
 
         # =============save net parameters==============
