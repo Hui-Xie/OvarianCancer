@@ -163,9 +163,11 @@ def main():
     logging.info(f"Hints: Test Dice_1 is for primary cancer(green), \t\n test Dice_2 is for metastasis(yellow), \t\n and test Dice_3 is for invaded lymph node(brown).")
     logging.info(f"Hints: Test TPR_0 is the TPR for all non-zero labels")
     logging.info(f"Hints: Test TPR_1 is for primary cancer(green), \t\n TPR_2 is for metastasis(yellow), \t\n and TPR_3 is for invaded lymph node(brown).\n")
-    diceHead = (f'Dice_{i}' for i in labelTuple)
-    TPRHead = (f'TPR_{i}' for i in labelTuple)
-    logging.info(f'Epoch \t TrainingLoss\t' +f'\t'.join(diceHead) +f'\t' +f'\t'.join(TPRHead) +f'\t TestLoss \t' +f'\t'.join(diceHead) +f'\t' + f'\t'.join(TPRHead))   # logging.info output head
+    diceHead1 = (f'Dice{i}' for i in labelTuple)  # generator object can be use only once.
+    TPRHead1 = (f'TPR_{i}' for i in labelTuple)
+    diceHead2 = (f'Dice{i}' for i in labelTuple)
+    TPRHead2 = (f'TPR_{i}' for i in labelTuple)
+    logging.info(f"Epoch\tTrainLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tTestLoss \t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2))   # logging.info output head
 
     for epoch in range(epochs):
 
@@ -273,8 +275,8 @@ def main():
         testDiceAvgList = [x/(y+1e-8) for x,y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x/(y+1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
-        logging.info(f'{epoch} \t {trainingLoss:.4f} \t'+f'\t'.join( (f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList)) \
-                              +f'\t{testLoss:.4f}\t'+f'\t'.join( (f'{x:.3f}' for x in testDiceAvgList))+f'\t'+f'\t'.join( (f'{x:.3f}' for x in testTPRAvgList)))
+        logging.info(f'{epoch} \t {trainingLoss:.4f} \t'+ f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList))+f'\t'+ f'\t'.join( (f'{x:.3f}' for x in trainTPRAvgList)) \
+                              + f'\t{testLoss:.4f}\t'+ f'\t'.join( (f'{x:.3f}' for x in testDiceAvgList))+ f'\t'+ f'\t'.join( (f'{x:.3f}' for x in testTPRAvgList)))
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
