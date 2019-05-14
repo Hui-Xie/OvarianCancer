@@ -6,7 +6,7 @@ import torch.nn.functional as F
 class SegVModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.m_dropoutProb = 0.2
+        self.m_dropoutProb = 0
         self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
         self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
         self.m_optimizer = None
@@ -77,6 +77,8 @@ class SegVModel(nn.Module):
 
     def setDropoutProb(self, prob):
         self.m_dropoutProb = prob
+        self.m_dropout2d.p = prob
+        self.m_dropout3d.p = prob
         return f"Info: network dropout rate = {self.m_dropoutProb}"
 
 
