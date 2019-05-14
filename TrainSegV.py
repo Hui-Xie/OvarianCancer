@@ -93,7 +93,7 @@ def main():
         logging.info(f"Info: program uses 2D input.")
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel(128, K)
+        net = SegV2DModel(112, K)
 
     else:
         logging.info(f"Info: program uses 3D input.")
