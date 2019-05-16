@@ -22,7 +22,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190514.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190516.txt'''
 logNotes = r'''
 Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
                        Dense Layer = 4 
@@ -34,8 +34,9 @@ Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
                        first layer filter = 128
                        use Mixup and DenseNet
                        Boundary Loss supports multi-class, and weight
-                       For 0,1,2 three classes clasfication for primary and metastases
-                       dropout rate = 0.0
+                       Only  0,1 two classes clasfication for primary
+                       cancel dropout layers in the network.
+                       using ResPath bridge V model
                        
             '''
 
@@ -85,7 +86,13 @@ def main():
     trainDataMgr.setOneSampleTraining(False)  # for debug
     testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
+    outputTrainDice = False
+    if outputTrainDice:
+        logging.info(f"Info: program output training dice.")
+    else:
+        logging.info(f"Info: program does not output training dice.")
     # ===========debug==================
+
 
     trainDataMgr.buildSegSliceTupleList()
     testDataMgr.buildSegSliceTupleList()
@@ -127,7 +134,8 @@ def main():
     logging.info(net.getParametersScale())
     #  logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    net.to(device)
 
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
@@ -148,7 +156,7 @@ def main():
         nGPU = torch.cuda.device_count()
         if nGPU >1:
             logging.info(f'Info: program will use {nGPU} GPUs.')
-            net = nn.DataParallel(net)
+            net = nn.DataParallel(net, device_ids=[0,1,2,3], output_device=device)
     net.to(device)
 
     if useDataParallel:
@@ -223,7 +231,7 @@ def main():
             else:
                 batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
-            if lambdaInBeta == 1:
+            if lambdaInBeta == 1 and outputTrainDice:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
                     = trainDataMgr.updateDiceTPRSumList(outputs, labels1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
