@@ -135,8 +135,7 @@ def main():
     #  logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    net.to(device)
-
+    
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
@@ -152,12 +151,12 @@ def main():
     sys.stdout = stdoutBackup
     logging.info(f"===================End of Net Architecture =====================\n")
 
+    net.to(device)
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:
             logging.info(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net, device_ids=[0,1,2,3], output_device=device)
-    net.to(device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())

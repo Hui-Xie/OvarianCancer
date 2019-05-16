@@ -1,0 +1,30 @@
+Program ID 26149
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
+
+Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
+                       Dense Layer = 4 
+                       output layer use conv with 3*3 fiter instead of 1*1 filter. 
+                       use boundary loss with weight 0 at beginning, and pretrain CE loss. 
+                       special convInput Module
+                       convOutput moudel uses 1*1 conv to get tranparent gradient 
+                       ConvOutput use residual module.
+                       first layer filter = 128
+                       use Mixup and DenseNet
+                       Boundary Loss supports multi-class, and weight
+                       Only  0,1 two classes clasfication for primary
+                       cancel dropout layers in the network.
+                       using ResPath bridge V model
+                       
+            
+
+Program starting Time: 2019-05-16 14:35:40.195879
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1
+
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Info: program does not output training dice.
+Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
