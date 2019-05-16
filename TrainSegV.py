@@ -125,7 +125,7 @@ def main():
         logging.info(f"Network trains from scratch.")
 
     logging.info(net.getParametersScale())
-    logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
+    #  logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

@@ -2,8 +2,8 @@ import torch.nn as nn
 import torch
 import sys
 
-useResidual = False       # use residual module in each building block, otherwise use DenseBlock
-useBnReConvOrder = False   # use Bn-ReLU-Conv2d order in each layer, otherwise use Conv2d-Bn-ReLU order
+useSkip2Residual = False       # use residual module in each building block, otherwise use DenseBlock
+useBnReConvOrder = False       # use Bn-ReLU-Conv2d order in each layer, otherwise use Conv2d-Bn-ReLU order
 
 class BN_ReLU_Conv2d(nn.Module):
     def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1), order= True):
@@ -65,7 +65,8 @@ class ConvDecreaseChannels(nn.Module):
             x = block(x)
         return x
 
-class ConvResidual(nn.Module):
+
+class Skip2Convs(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
         if nLayers < 2:
@@ -96,6 +97,39 @@ class ConvResidual(nn.Module):
         if (self.m_nLayers - self.m_skipStartIndex) %2 != 0 and x.shape == x0.shape:
             x = x+ x0
         return x
+
+class Conv33_11Residual(nn.Module):
+    def __init__(self, inCh, outCh):
+        super().__init__()
+        self.m_33conv = BN_ReLU_Conv2d(inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1), order=useBnReConvOrder)
+        self.m_11conv = BN_ReLU_Conv2d(inCh, outCh, filterSize=(1,1), stride=(1, 1), padding=(0,0), order=useBnReConvOrder)
+
+    def forward(self, inputx):
+        x = self.m_33conv(inputx) + self.m_11conv(inputx)
+        return x
+
+class ResPath(nn.Module):
+    r"""
+    Please refer paper: MultiResUNet : Rethinking the U-Net Architecture for Multimodal Biomedical Image Segmentation
+    link: https://arxiv.org/abs/1902.04049
+
+    """
+    def __init__(self, inCh, outCh, nLayers):
+        super().__init__()
+        self.m_convBlocks = nn.ModuleList()
+        self.m_nLayers = nLayers
+        for i in range(nLayers):
+            if i==0:
+                self.m_convBlocks.append(Conv33_11Residual(inCh,outCh))
+            else:
+                self.m_convBlocks.append(Conv33_11Residual(outCh, outCh))
+
+    def forward(self, inputx):
+        x = inputx
+        for i in range(self.m_nLayers):
+            x = self.m_convBlocks[i](x)
+        return x
+
 
 class ConvDense(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
@@ -133,8 +167,8 @@ class ConvDense(nn.Module):
 class ConvBuildingBlock(nn.Module):
     def __init__(self, inCh, outCh, nLayers):
         super().__init__()
-        if useResidual:   # use residual links
-            self.m_convBlock = ConvResidual(inCh, outCh, nLayers)
+        if useSkip2Residual:   # use residual links
+            self.m_convBlock = Skip2Convs(inCh, outCh, nLayers)
         else:             # use Dense Links
             self.m_convBlock = ConvDense(inCh, outCh, nLayers)
 

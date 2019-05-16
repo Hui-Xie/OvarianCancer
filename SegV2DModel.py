@@ -23,6 +23,7 @@ class SegV2DModel(SegVModel):
 
         N = 4                    # the number of layer in each building block in each lay of V model.
         # 3 is for denseNet, 4 is for residual links.
+        Depth = 5                # the depth of V model
 
         self.m_input = ConvInput(1, C, N)                          # inputSize: 1*281*281; output:C*281*281
 
@@ -32,6 +33,12 @@ class SegV2DModel(SegVModel):
         self.m_down4 = Down2dBB(4 * C, 8 * C, (5, 5), stride=(2, 2), nLayers=N)    # output: 8C*15*15
         self.m_down5 = Down2dBB(8 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)   # output: 16C*7*7
         # self.m_down6 = Down2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)  # output: 16C*3*3
+
+        # the bridges between encoder and decoder
+        self.m_resPath1 = ResPath(C, C, Depth - 1)
+        self.m_resPath2 = ResPath(2*C, 2*C, Depth - 2)
+        self.m_resPath3 = ResPath(4*C, 4*C, Depth - 3)
+        self.m_resPath4 = ResPath(8*C, 8*C, Depth - 4)
 
         # self.m_up6   = Up2dBB(16 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)    # output: 16C*7*7
         # self.m_up5   = Up2dBB(32 * C, 8 * C, (3, 3), stride=(2, 2), nLayers=N)     # output: 8C*15*15
@@ -76,20 +83,20 @@ class SegV2DModel(SegVModel):
 
     def forward(self, input):
         x0 = self.m_input(input)
-        x1 = self.m_dropout2d(self.m_down1(x0))
-        x2 = self.m_dropout2d(self.m_down2(x1))
-        x3 = self.m_dropout2d(self.m_down3(x2))
-        x4 = self.m_dropout2d(self.m_down4(x3))
-        x5 = self.m_dropout2d(self.m_down5(x4))
+        x1 = self.m_down1(x0)
+        x2 = self.m_down2(x1)
+        x3 = self.m_down3(x2)
+        x4 = self.m_down4(x3)
+        x5 = self.m_down5(x4)
         # x6 = self.m_dropout2d(self.m_down6(x5))
 
         # x = self.m_dropout2d(self.m_up6(x6))
         # x = self.m_dropout2d(self.m_up5(x, x5))
-        x = self.m_dropout2d(self.m_up5(x5))
-        x = self.m_dropout2d(self.m_up4(x, x4))
-        x = self.m_dropout2d(self.m_up3(x, x3))
-        x = self.m_dropout2d(self.m_up2(x, x2))
-        x = self.m_dropout2d(self.m_up1(x, x1))
+        x = self.m_up5(x5)
+        x = self.m_up4(x, self.m_resPath4(x4))
+        x = self.m_up3(x, self.m_resPath3(x3))
+        x = self.m_up2(x, self.m_resPath2(x2))
+        x = self.m_up1(x, self.m_resPath1(x1))
 
         #x = torch.cat((x,x0),1)
         #x = self.m_outputBn(x)
