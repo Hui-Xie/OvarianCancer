@@ -135,7 +135,7 @@ def main():
     #  logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    
+
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
