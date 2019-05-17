@@ -1,7 +1,7 @@
-Program ID 427
+Program ID 3954
 
 Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/test', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
 
 Major program changes: 
                        Restore May 1st 11:51 nework which got test dice 78% for primary
@@ -19,8 +19,8 @@ Major program changes:
                        
             
 
-Program starting Time: 2019-05-17 11:29:46.266543
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/test
+Program starting Time: 2019-05-17 11:36:32.119988
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1
 
 Infor: program test labels: [0, 1]
 Infor: program suppressed labels: [2, 3]
@@ -28,9 +28,9 @@ Infor: program test labels: [0, 1]
 Infor: program suppressed labels: [2, 3]
 Info: program does not output training dice.
 Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
-Directory of /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels has 3 segmented slices for remained labels [0, 1].
+Directory of /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels has 164 segmented slices for remained labels [0, 1].
 Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
-Directory of /home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels has 2 segmented slices for remained labels [0, 1].
+Directory of /home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels has 31 segmented slices for remained labels [0, 1].
 Info: program uses 2D input.
 TrainData Input:  batchSize=8, depth=1, height=281, width=281, NumClassfication=2
 
@@ -320,14 +320,23 @@ Hints: Test TPR_1 is for primary cancer(green),
  and TPR_3 is for invaded lymph node(brown).
 
 Epoch	TrLoss	Dice0	Dice1	TPR_0	TPR_1	TsLoss	Dice0	Dice1	TPR_0	TPR_1
-0	0.3488	0.000	0.000	0.000	0.000	0.1879	0.000	0.000	0.000	0.000
-1	0.1059	0.000	0.000	0.000	0.000	0.1809	0.000	0.000	0.000	0.000
-2	0.0631	0.000	0.000	0.000	0.000	0.1723	0.108	0.108	0.742	0.742
-3	0.0673	0.000	0.000	0.000	0.000	0.1648	0.086	0.086	1.000	1.000
-4	0.0620	0.000	0.000	0.000	0.000	0.1600	0.086	0.086	1.000	1.000
-5	0.0564	0.000	0.000	0.000	0.000	0.1574	0.086	0.086	1.000	1.000
-6	0.0504	0.000	0.000	0.000	0.000	0.1562	0.086	0.086	1.000	1.000
-7	0.0530	0.000	0.000	0.000	0.000	0.1560	0.086	0.086	1.000	1.000
-8	0.0541	0.000	0.000	0.000	0.000	0.1558	0.086	0.086	1.000	1.000
-9	0.1019	0.000	0.000	0.000	0.000	0.1554	0.086	0.086	1.000	1.000
-10	0.0592	0.000	0.000	0.000	0.000	0.1552	0.087	0.087	1.000	1.000
+0	0.1059	0.000	0.000	0.000	0.000	0.0882	0.275	0.275	0.997	0.997
+1	0.0746	0.000	0.000	0.000	0.000	0.0677	0.310	0.310	0.991	0.991
+2	0.0621	0.000	0.000	0.000	0.000	0.0564	0.443	0.443	0.959	0.959
+3	0.0672	0.000	0.000	0.000	0.000	0.0960	0.319	0.319	1.000	1.000
+4	0.0556	0.000	0.000	0.000	0.000	0.0593	0.419	0.419	0.994	0.994
+5	0.0560	0.000	0.000	0.000	0.000	0.0617	0.395	0.395	0.989	0.989
+6	0.0593	0.000	0.000	0.000	0.000	0.0612	0.553	0.553	0.936	0.936
+7	0.0578	0.000	0.000	0.000	0.000	0.0435	0.564	0.564	0.964	0.964
+8	0.0583	0.000	0.000	0.000	0.000	0.0362	0.570	0.570	0.982	0.982
+9	0.0578	0.000	0.000	0.000	0.000	0.0517	0.486	0.486	0.968	0.968
+10	0.0533	0.000	0.000	0.000	0.000	0.0360	0.543	0.543	0.982	0.982
+11	0.0593	0.000	0.000	0.000	0.000	0.0415	0.564	0.564	0.982	0.982
+12	0.0529	0.000	0.000	0.000	0.000	0.0454	0.422	0.422	0.997	0.997
+13	0.0475	0.000	0.000	0.000	0.000	0.0387	0.472	0.472	0.985	0.985
+14	0.0548	0.000	0.000	0.000	0.000	0.0383	0.489	0.489	0.989	0.989
+15	0.0514	0.000	0.000	0.000	0.000	0.0399	0.467	0.467	0.991	0.991
+16	0.0494	0.000	0.000	0.000	0.000	0.0443	0.541	0.541	0.967	0.967
+17	0.0497	0.000	0.000	0.000	0.000	0.0409	0.617	0.617	0.964	0.964
+18	0.0525	0.000	0.000	0.000	0.000	0.0510	0.579	0.579	0.957	0.957
+19	0.0482	0.000	0.000	0.000	0.000	0.0406	0.477	0.477	0.988	0.988
