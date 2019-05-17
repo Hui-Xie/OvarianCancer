@@ -16,27 +16,28 @@ from torchsummary import summary
 from DataMgr import DataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
+from SegV2DModel_78 import SegV2DModel_78
 from NetMgr  import NetMgr
 from CustomizedLoss import FocalCELoss,BoundaryLoss
 
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190516.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190517.txt'''
 logNotes = r'''
-Major program changes: ConvDense uses Conv-Bn-ReLU order (CBR)
-                       Dense Layer = 4 
-                       output layer use conv with 3*3 fiter instead of 1*1 filter. 
+Major program changes: 
+                       Restore May 1st 11:51 nework which got test dice 78% for primary
+                       ConvDense uses Conv-Bn-ReLU order (CBR)
+                       useSkip2Conv = 3 
+                       output layer use 1*1 filter. 
                        use boundary loss with weight 0 at beginning, and pretrain CE loss. 
-                       special convInput Module
-                       convOutput moudel uses 1*1 conv to get tranparent gradient 
-                       ConvOutput use residual module.
+                       special convInput Module    
                        first layer filter = 128
-                       use Mixup and DenseNet
+                       use Mixup
                        Boundary Loss supports multi-class, and weight
                        Only  0,1 two classes clasfication for primary
-                       cancel dropout layers in the network.
-                       using ResPath bridge V model
+                       Encoder do not use dropout, Decoder use dropout.
+                       
                        
             '''
 
@@ -101,7 +102,9 @@ def main():
         logging.info(f"Info: program uses 2D input.")
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel(112, K)
+        # net = SegV2DModel(112, K)
+        net = SegV2DModel_78(128, K)
+
 
     else:
         logging.info(f"Info: program uses 3D input.")
@@ -132,7 +135,7 @@ def main():
         logging.info(f"Network trains from scratch.")
 
     logging.info(net.getParametersScale())
-    #  logging.info(net.setDropoutProb(0))           # metastases is hard to learn, so it need a smaller dropout rate.
+    logging.info(net.setDropoutProb(0.3))           # metastases is hard to learn, so it need a smaller dropout rate.
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
