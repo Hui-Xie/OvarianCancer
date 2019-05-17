@@ -32,7 +32,7 @@ Major program changes:
                        output layer use 1*1 filter. 
                        use boundary loss with weight 0 at beginning, and pretrain CE loss. 
                        special convInput Module    
-                       first layer filter = 128
+                       first layer filter = 96
                        use Mixup
                        Boundary Loss supports multi-class, and weight
                        Only  0,1 two classes clasfication for primary
@@ -84,8 +84,8 @@ def main():
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
-    testDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
+    testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = False
     if outputTrainDice:
@@ -103,7 +103,7 @@ def main():
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         # net = SegV2DModel(112, K)
-        net = SegV2DModel_78(128, K)
+        net = SegV2DModel_78(96, K)
 
 
     else:

@@ -1,0 +1,333 @@
+Program ID 427
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/test', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1']
+
+Major program changes: 
+                       Restore May 1st 11:51 nework which got test dice 78% for primary
+                       ConvDense uses Conv-Bn-ReLU order (CBR)
+                       useSkip2Conv = 3 
+                       output layer use 1*1 filter. 
+                       use boundary loss with weight 0 at beginning, and pretrain CE loss. 
+                       special convInput Module    
+                       first layer filter = 96
+                       use Mixup
+                       Boundary Loss supports multi-class, and weight
+                       Only  0,1 two classes clasfication for primary
+                       Encoder do not use dropout, Decoder use dropout.
+                       
+                       
+            
+
+Program starting Time: 2019-05-17 11:29:46.266543
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/test
+
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Infor: program test labels: [0, 1]
+Infor: program suppressed labels: [2, 3]
+Info: program does not output training dice.
+Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
+Directory of /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels has 3 segmented slices for remained labels [0, 1].
+Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
+Directory of /home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels has 2 segmented slices for remained labels [0, 1].
+Info: program uses 2D input.
+TrainData Input:  batchSize=8, depth=1, height=281, width=281, NumClassfication=2
+
+TestData Input:  batchSize=8, depth=1, height=281, width=281, NumClassfication=2
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Network trains from scratch.
+Network has total 337066946 parameters.
+Info: network dropout rate = 0.3
+Infor: Cross Entropy Weight: [1.0260619741432382, 39.37007874015748]
+
+====================Net Architecture===========================
+----------------------------------------------------------------
+        Layer (type)               Output Shape         Param #
+================================================================
+            Conv2d-1         [-1, 96, 281, 281]             960
+       BatchNorm2d-2         [-1, 96, 281, 281]             192
+              ReLU-3         [-1, 96, 281, 281]               0
+    BN_ReLU_Conv2d-4         [-1, 96, 281, 281]               0
+            Conv2d-5         [-1, 96, 281, 281]          83,040
+       BatchNorm2d-6         [-1, 96, 281, 281]             192
+              ReLU-7         [-1, 96, 281, 281]               0
+    BN_ReLU_Conv2d-8         [-1, 96, 281, 281]               0
+            Conv2d-9         [-1, 96, 281, 281]          83,040
+      BatchNorm2d-10         [-1, 96, 281, 281]             192
+             ReLU-11         [-1, 96, 281, 281]               0
+   BN_ReLU_Conv2d-12         [-1, 96, 281, 281]               0
+       Skip2Convs-13         [-1, 96, 281, 281]               0
+ConvBuildingBlock-14         [-1, 96, 281, 281]               0
+        ConvInput-15         [-1, 96, 281, 281]               0
+           Conv2d-16         [-1, 96, 139, 139]         230,496
+      BatchNorm2d-17         [-1, 96, 139, 139]             192
+             ReLU-18         [-1, 96, 139, 139]               0
+   BN_ReLU_Conv2d-19         [-1, 96, 139, 139]               0
+           Conv2d-20         [-1, 96, 139, 139]          83,040
+      BatchNorm2d-21         [-1, 96, 139, 139]             192
+             ReLU-22         [-1, 96, 139, 139]               0
+   BN_ReLU_Conv2d-23         [-1, 96, 139, 139]               0
+           Conv2d-24         [-1, 96, 139, 139]          83,040
+      BatchNorm2d-25         [-1, 96, 139, 139]             192
+             ReLU-26         [-1, 96, 139, 139]               0
+   BN_ReLU_Conv2d-27         [-1, 96, 139, 139]               0
+           Conv2d-28         [-1, 96, 139, 139]          83,040
+      BatchNorm2d-29         [-1, 96, 139, 139]             192
+             ReLU-30         [-1, 96, 139, 139]               0
+   BN_ReLU_Conv2d-31         [-1, 96, 139, 139]               0
+       Skip2Convs-32         [-1, 96, 139, 139]               0
+ConvBuildingBlock-33         [-1, 96, 139, 139]               0
+         Down2dBB-34         [-1, 96, 139, 139]               0
+           Conv2d-35          [-1, 192, 69, 69]         166,080
+      BatchNorm2d-36          [-1, 192, 69, 69]             384
+             ReLU-37          [-1, 192, 69, 69]               0
+   BN_ReLU_Conv2d-38          [-1, 192, 69, 69]               0
+           Conv2d-39          [-1, 192, 69, 69]         331,968
+      BatchNorm2d-40          [-1, 192, 69, 69]             384
+             ReLU-41          [-1, 192, 69, 69]               0
+   BN_ReLU_Conv2d-42          [-1, 192, 69, 69]               0
+           Conv2d-43          [-1, 192, 69, 69]         331,968
+      BatchNorm2d-44          [-1, 192, 69, 69]             384
+             ReLU-45          [-1, 192, 69, 69]               0
+   BN_ReLU_Conv2d-46          [-1, 192, 69, 69]               0
+           Conv2d-47          [-1, 192, 69, 69]         331,968
+      BatchNorm2d-48          [-1, 192, 69, 69]             384
+             ReLU-49          [-1, 192, 69, 69]               0
+   BN_ReLU_Conv2d-50          [-1, 192, 69, 69]               0
+       Skip2Convs-51          [-1, 192, 69, 69]               0
+ConvBuildingBlock-52          [-1, 192, 69, 69]               0
+         Down2dBB-53          [-1, 192, 69, 69]               0
+           Conv2d-54          [-1, 384, 33, 33]       1,843,584
+      BatchNorm2d-55          [-1, 384, 33, 33]             768
+             ReLU-56          [-1, 384, 33, 33]               0
+   BN_ReLU_Conv2d-57          [-1, 384, 33, 33]               0
+           Conv2d-58          [-1, 384, 33, 33]       1,327,488
+      BatchNorm2d-59          [-1, 384, 33, 33]             768
+             ReLU-60          [-1, 384, 33, 33]               0
+   BN_ReLU_Conv2d-61          [-1, 384, 33, 33]               0
+           Conv2d-62          [-1, 384, 33, 33]       1,327,488
+      BatchNorm2d-63          [-1, 384, 33, 33]             768
+             ReLU-64          [-1, 384, 33, 33]               0
+   BN_ReLU_Conv2d-65          [-1, 384, 33, 33]               0
+           Conv2d-66          [-1, 384, 33, 33]       1,327,488
+      BatchNorm2d-67          [-1, 384, 33, 33]             768
+             ReLU-68          [-1, 384, 33, 33]               0
+   BN_ReLU_Conv2d-69          [-1, 384, 33, 33]               0
+       Skip2Convs-70          [-1, 384, 33, 33]               0
+ConvBuildingBlock-71          [-1, 384, 33, 33]               0
+         Down2dBB-72          [-1, 384, 33, 33]               0
+           Conv2d-73          [-1, 768, 15, 15]       7,373,568
+      BatchNorm2d-74          [-1, 768, 15, 15]           1,536
+             ReLU-75          [-1, 768, 15, 15]               0
+   BN_ReLU_Conv2d-76          [-1, 768, 15, 15]               0
+           Conv2d-77          [-1, 768, 15, 15]       5,309,184
+      BatchNorm2d-78          [-1, 768, 15, 15]           1,536
+             ReLU-79          [-1, 768, 15, 15]               0
+   BN_ReLU_Conv2d-80          [-1, 768, 15, 15]               0
+           Conv2d-81          [-1, 768, 15, 15]       5,309,184
+      BatchNorm2d-82          [-1, 768, 15, 15]           1,536
+             ReLU-83          [-1, 768, 15, 15]               0
+   BN_ReLU_Conv2d-84          [-1, 768, 15, 15]               0
+           Conv2d-85          [-1, 768, 15, 15]       5,309,184
+      BatchNorm2d-86          [-1, 768, 15, 15]           1,536
+             ReLU-87          [-1, 768, 15, 15]               0
+   BN_ReLU_Conv2d-88          [-1, 768, 15, 15]               0
+       Skip2Convs-89          [-1, 768, 15, 15]               0
+ConvBuildingBlock-90          [-1, 768, 15, 15]               0
+         Down2dBB-91          [-1, 768, 15, 15]               0
+           Conv2d-92           [-1, 1536, 7, 7]      10,618,368
+      BatchNorm2d-93           [-1, 1536, 7, 7]           3,072
+             ReLU-94           [-1, 1536, 7, 7]               0
+   BN_ReLU_Conv2d-95           [-1, 1536, 7, 7]               0
+           Conv2d-96           [-1, 1536, 7, 7]      21,235,200
+      BatchNorm2d-97           [-1, 1536, 7, 7]           3,072
+             ReLU-98           [-1, 1536, 7, 7]               0
+   BN_ReLU_Conv2d-99           [-1, 1536, 7, 7]               0
+          Conv2d-100           [-1, 1536, 7, 7]      21,235,200
+     BatchNorm2d-101           [-1, 1536, 7, 7]           3,072
+            ReLU-102           [-1, 1536, 7, 7]               0
+  BN_ReLU_Conv2d-103           [-1, 1536, 7, 7]               0
+          Conv2d-104           [-1, 1536, 7, 7]      21,235,200
+     BatchNorm2d-105           [-1, 1536, 7, 7]           3,072
+            ReLU-106           [-1, 1536, 7, 7]               0
+  BN_ReLU_Conv2d-107           [-1, 1536, 7, 7]               0
+      Skip2Convs-108           [-1, 1536, 7, 7]               0
+ConvBuildingBlock-109           [-1, 1536, 7, 7]               0
+        Down2dBB-110           [-1, 1536, 7, 7]               0
+          Conv2d-111           [-1, 1536, 3, 3]      21,235,200
+     BatchNorm2d-112           [-1, 1536, 3, 3]           3,072
+            ReLU-113           [-1, 1536, 3, 3]               0
+  BN_ReLU_Conv2d-114           [-1, 1536, 3, 3]               0
+          Conv2d-115           [-1, 1536, 3, 3]      21,235,200
+     BatchNorm2d-116           [-1, 1536, 3, 3]           3,072
+            ReLU-117           [-1, 1536, 3, 3]               0
+  BN_ReLU_Conv2d-118           [-1, 1536, 3, 3]               0
+          Conv2d-119           [-1, 1536, 3, 3]      21,235,200
+     BatchNorm2d-120           [-1, 1536, 3, 3]           3,072
+            ReLU-121           [-1, 1536, 3, 3]               0
+  BN_ReLU_Conv2d-122           [-1, 1536, 3, 3]               0
+          Conv2d-123           [-1, 1536, 3, 3]      21,235,200
+     BatchNorm2d-124           [-1, 1536, 3, 3]           3,072
+            ReLU-125           [-1, 1536, 3, 3]               0
+  BN_ReLU_Conv2d-126           [-1, 1536, 3, 3]               0
+      Skip2Convs-127           [-1, 1536, 3, 3]               0
+ConvBuildingBlock-128           [-1, 1536, 3, 3]               0
+        Down2dBB-129           [-1, 1536, 3, 3]               0
+ ConvTranspose2d-130           [-1, 1536, 7, 7]      21,235,200
+     BatchNorm2d-131           [-1, 1536, 7, 7]           3,072
+            ReLU-132           [-1, 1536, 7, 7]               0
+ BN_ReLU_ConvT2d-133           [-1, 1536, 7, 7]               0
+          Conv2d-134           [-1, 1536, 7, 7]      21,235,200
+     BatchNorm2d-135           [-1, 1536, 7, 7]           3,072
+            ReLU-136           [-1, 1536, 7, 7]               0
+  BN_ReLU_Conv2d-137           [-1, 1536, 7, 7]               0
+          Conv2d-138           [-1, 1536, 7, 7]      21,235,200
+     BatchNorm2d-139           [-1, 1536, 7, 7]           3,072
+            ReLU-140           [-1, 1536, 7, 7]               0
+  BN_ReLU_Conv2d-141           [-1, 1536, 7, 7]               0
+          Conv2d-142           [-1, 1536, 7, 7]      21,235,200
+     BatchNorm2d-143           [-1, 1536, 7, 7]           3,072
+            ReLU-144           [-1, 1536, 7, 7]               0
+  BN_ReLU_Conv2d-145           [-1, 1536, 7, 7]               0
+      Skip2Convs-146           [-1, 1536, 7, 7]               0
+ConvBuildingBlock-147           [-1, 1536, 7, 7]               0
+          Up2dBB-148           [-1, 1536, 7, 7]               0
+       Dropout2d-149           [-1, 1536, 7, 7]               0
+ ConvTranspose2d-150          [-1, 768, 15, 15]      21,234,432
+     BatchNorm2d-151          [-1, 768, 15, 15]           1,536
+            ReLU-152          [-1, 768, 15, 15]               0
+ BN_ReLU_ConvT2d-153          [-1, 768, 15, 15]               0
+          Conv2d-154          [-1, 768, 15, 15]       5,309,184
+     BatchNorm2d-155          [-1, 768, 15, 15]           1,536
+            ReLU-156          [-1, 768, 15, 15]               0
+  BN_ReLU_Conv2d-157          [-1, 768, 15, 15]               0
+          Conv2d-158          [-1, 768, 15, 15]       5,309,184
+     BatchNorm2d-159          [-1, 768, 15, 15]           1,536
+            ReLU-160          [-1, 768, 15, 15]               0
+  BN_ReLU_Conv2d-161          [-1, 768, 15, 15]               0
+          Conv2d-162          [-1, 768, 15, 15]       5,309,184
+     BatchNorm2d-163          [-1, 768, 15, 15]           1,536
+            ReLU-164          [-1, 768, 15, 15]               0
+  BN_ReLU_Conv2d-165          [-1, 768, 15, 15]               0
+      Skip2Convs-166          [-1, 768, 15, 15]               0
+ConvBuildingBlock-167          [-1, 768, 15, 15]               0
+          Up2dBB-168          [-1, 768, 15, 15]               0
+       Dropout2d-169          [-1, 768, 15, 15]               0
+ ConvTranspose2d-170          [-1, 384, 33, 33]      14,745,984
+     BatchNorm2d-171          [-1, 384, 33, 33]             768
+            ReLU-172          [-1, 384, 33, 33]               0
+ BN_ReLU_ConvT2d-173          [-1, 384, 33, 33]               0
+          Conv2d-174          [-1, 384, 33, 33]       1,327,488
+     BatchNorm2d-175          [-1, 384, 33, 33]             768
+            ReLU-176          [-1, 384, 33, 33]               0
+  BN_ReLU_Conv2d-177          [-1, 384, 33, 33]               0
+          Conv2d-178          [-1, 384, 33, 33]       1,327,488
+     BatchNorm2d-179          [-1, 384, 33, 33]             768
+            ReLU-180          [-1, 384, 33, 33]               0
+  BN_ReLU_Conv2d-181          [-1, 384, 33, 33]               0
+          Conv2d-182          [-1, 384, 33, 33]       1,327,488
+     BatchNorm2d-183          [-1, 384, 33, 33]             768
+            ReLU-184          [-1, 384, 33, 33]               0
+  BN_ReLU_Conv2d-185          [-1, 384, 33, 33]               0
+      Skip2Convs-186          [-1, 384, 33, 33]               0
+ConvBuildingBlock-187          [-1, 384, 33, 33]               0
+          Up2dBB-188          [-1, 384, 33, 33]               0
+       Dropout2d-189          [-1, 384, 33, 33]               0
+ ConvTranspose2d-190          [-1, 192, 69, 69]       3,686,592
+     BatchNorm2d-191          [-1, 192, 69, 69]             384
+            ReLU-192          [-1, 192, 69, 69]               0
+ BN_ReLU_ConvT2d-193          [-1, 192, 69, 69]               0
+          Conv2d-194          [-1, 192, 69, 69]         331,968
+     BatchNorm2d-195          [-1, 192, 69, 69]             384
+            ReLU-196          [-1, 192, 69, 69]               0
+  BN_ReLU_Conv2d-197          [-1, 192, 69, 69]               0
+          Conv2d-198          [-1, 192, 69, 69]         331,968
+     BatchNorm2d-199          [-1, 192, 69, 69]             384
+            ReLU-200          [-1, 192, 69, 69]               0
+  BN_ReLU_Conv2d-201          [-1, 192, 69, 69]               0
+          Conv2d-202          [-1, 192, 69, 69]         331,968
+     BatchNorm2d-203          [-1, 192, 69, 69]             384
+            ReLU-204          [-1, 192, 69, 69]               0
+  BN_ReLU_Conv2d-205          [-1, 192, 69, 69]               0
+      Skip2Convs-206          [-1, 192, 69, 69]               0
+ConvBuildingBlock-207          [-1, 192, 69, 69]               0
+          Up2dBB-208          [-1, 192, 69, 69]               0
+       Dropout2d-209          [-1, 192, 69, 69]               0
+ ConvTranspose2d-210         [-1, 96, 139, 139]         331,872
+     BatchNorm2d-211         [-1, 96, 139, 139]             192
+            ReLU-212         [-1, 96, 139, 139]               0
+ BN_ReLU_ConvT2d-213         [-1, 96, 139, 139]               0
+          Conv2d-214         [-1, 96, 139, 139]          83,040
+     BatchNorm2d-215         [-1, 96, 139, 139]             192
+            ReLU-216         [-1, 96, 139, 139]               0
+  BN_ReLU_Conv2d-217         [-1, 96, 139, 139]               0
+          Conv2d-218         [-1, 96, 139, 139]          83,040
+     BatchNorm2d-219         [-1, 96, 139, 139]             192
+            ReLU-220         [-1, 96, 139, 139]               0
+  BN_ReLU_Conv2d-221         [-1, 96, 139, 139]               0
+          Conv2d-222         [-1, 96, 139, 139]          83,040
+     BatchNorm2d-223         [-1, 96, 139, 139]             192
+            ReLU-224         [-1, 96, 139, 139]               0
+  BN_ReLU_Conv2d-225         [-1, 96, 139, 139]               0
+      Skip2Convs-226         [-1, 96, 139, 139]               0
+ConvBuildingBlock-227         [-1, 96, 139, 139]               0
+          Up2dBB-228         [-1, 96, 139, 139]               0
+       Dropout2d-229         [-1, 96, 139, 139]               0
+ ConvTranspose2d-230         [-1, 96, 281, 281]         460,896
+     BatchNorm2d-231         [-1, 96, 281, 281]             192
+            ReLU-232         [-1, 96, 281, 281]               0
+ BN_ReLU_ConvT2d-233         [-1, 96, 281, 281]               0
+          Conv2d-234         [-1, 96, 281, 281]          83,040
+     BatchNorm2d-235         [-1, 96, 281, 281]             192
+            ReLU-236         [-1, 96, 281, 281]               0
+  BN_ReLU_Conv2d-237         [-1, 96, 281, 281]               0
+          Conv2d-238         [-1, 96, 281, 281]          83,040
+     BatchNorm2d-239         [-1, 96, 281, 281]             192
+            ReLU-240         [-1, 96, 281, 281]               0
+  BN_ReLU_Conv2d-241         [-1, 96, 281, 281]               0
+          Conv2d-242         [-1, 96, 281, 281]          83,040
+     BatchNorm2d-243         [-1, 96, 281, 281]             192
+            ReLU-244         [-1, 96, 281, 281]               0
+  BN_ReLU_Conv2d-245         [-1, 96, 281, 281]               0
+      Skip2Convs-246         [-1, 96, 281, 281]               0
+ConvBuildingBlock-247         [-1, 96, 281, 281]               0
+          Up2dBB-248         [-1, 96, 281, 281]               0
+       Dropout2d-249         [-1, 96, 281, 281]               0
+          Conv2d-250          [-1, 2, 281, 281]             386
+================================================================
+Total params: 337,066,946
+Trainable params: 337,066,946
+Non-trainable params: 0
+----------------------------------------------------------------
+Input size (MB): 0.30
+Forward/backward pass size (MB): 3049.48
+Params size (MB): 1285.81
+Estimated Total Size (MB): 4335.59
+----------------------------------------------------------------
+===================End of Net Architecture =====================
+
+Info: program will use 4 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 	BoundaryLoss with weight of 0; 
+Hints: Test Dice_0 is the dice coeff for all non-zero labels
+Hints: Test Dice_1 is for primary cancer(green), 	
+ test Dice_2 is for metastasis(yellow), 	
+ and test Dice_3 is for invaded lymph node(brown).
+Hints: Test TPR_0 is the TPR for all non-zero labels
+Hints: Test TPR_1 is for primary cancer(green), 	
+ TPR_2 is for metastasis(yellow), 	
+ and TPR_3 is for invaded lymph node(brown).
+
+Epoch	TrLoss	Dice0	Dice1	TPR_0	TPR_1	TsLoss	Dice0	Dice1	TPR_0	TPR_1
+0	0.3488	0.000	0.000	0.000	0.000	0.1879	0.000	0.000	0.000	0.000
+1	0.1059	0.000	0.000	0.000	0.000	0.1809	0.000	0.000	0.000	0.000
+2	0.0631	0.000	0.000	0.000	0.000	0.1723	0.108	0.108	0.742	0.742
+3	0.0673	0.000	0.000	0.000	0.000	0.1648	0.086	0.086	1.000	1.000
+4	0.0620	0.000	0.000	0.000	0.000	0.1600	0.086	0.086	1.000	1.000
+5	0.0564	0.000	0.000	0.000	0.000	0.1574	0.086	0.086	1.000	1.000
+6	0.0504	0.000	0.000	0.000	0.000	0.1562	0.086	0.086	1.000	1.000
+7	0.0530	0.000	0.000	0.000	0.000	0.1560	0.086	0.086	1.000	1.000
+8	0.0541	0.000	0.000	0.000	0.000	0.1558	0.086	0.086	1.000	1.000
+9	0.1019	0.000	0.000	0.000	0.000	0.1554	0.086	0.086	1.000	1.000
+10	0.0592	0.000	0.000	0.000	0.000	0.1552	0.087	0.087	1.000	1.000
