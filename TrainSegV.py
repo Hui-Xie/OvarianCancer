@@ -314,10 +314,12 @@ def main():
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             if mergeTrainTestData:
                 testDiceAvgList = trainDiceAvgList
-            netMgr.save(testDiceAvgList)
-            if testDiceAvgList[1] > 0.20  and testDiceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
-                bestTestDiceList = testDiceAvgList
-                netMgr.saveBest(bestTestDiceList)
+
+            if epoch % 5 == 0:
+                netMgr.save(testDiceAvgList)
+                if testDiceAvgList[1] > 0.20  and testDiceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
+                    bestTestDiceList = testDiceAvgList
+                    netMgr.saveBest(bestTestDiceList)
         else:
             logging.info(f"Error: training loss is infinity. Program exit.")
             sys.exit()
