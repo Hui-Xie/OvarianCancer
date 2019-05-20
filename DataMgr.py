@@ -148,6 +148,29 @@ class DataMgr:
                 break
         self.m_logInfo(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
 
+    def expandSegSliceTupleList(self, imagesDir):
+        """
+        expand segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
+        :return:
+        """
+        self.m_logInfo(f'Expanding the Segmented Slice Tuple list from {imagesDir}, which may need 8 mins, please waiting......')
+        lastLenTuples  = len(self.m_segSliceTupleList)
+        lastLenImages  = len(self.m_imagesList)
+        self.m_imagesList += self.getFilesList(imagesDir, "_CT.nrrd")
+        for i, image in enumerate(self.m_imagesList):
+            if i < lastLenImages:
+                continue
+            label = self.getLabelFile(image)
+            labelArray = self.readImageFile(label)
+            sliceList = self.getLabeledSliceIndex(labelArray)
+            for j in sliceList:
+                self.m_segSliceTupleList.append((i, j))
+
+            if self.m_oneSampleTraining and len(self.m_segSliceTupleList)>1:
+                break
+        self.m_logInfo(f'Directory of {imagesDir} has added {len(self.m_segSliceTupleList)- lastLenTuples} segmented slices for remained labels {self.m_remainedLabels}.')
+        self.m_logInfo(f'Now totally has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
+
     def buildImageAttrList(self):
         """
         build a list of tuples including (origin, size, spacing, direction) in ITK axis order

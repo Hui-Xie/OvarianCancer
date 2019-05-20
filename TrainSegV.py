@@ -23,20 +23,13 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190517.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190520.txt'''
 logNotes = r'''
 Major program changes: 
-                       Restore May 1st 11:51 nework which got test dice 78% for primary
-                       ConvDense uses Conv-Bn-ReLU order (CBR)
-                       useSkip2Conv = 3 
-                       output layer use 1*1 filter. 
-                       use boundary loss with weight 0 at beginning, and pretrain CE loss. 
-                       special convInput Module    
-                       first layer filter = 96
-                       use Mixup
-                       Boundary Loss supports multi-class, and weight
-                       Only  0,1 two classes clasfication for primary
-                       Encoder do not use dropout, Decoder use dropout.
+                       merge train and test dataset;
+                       for primary and metastases 3 classes classification
+                       Use ResPath
+                                             
                        
                        
             '''
@@ -78,16 +71,22 @@ def main():
 
     logging.info(f"Info: netPath = {netPath}\n")
 
+    mergeTrainTestData = True
+
     trainDataMgr = DataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
-    testDataMgr = DataMgr(*trainDataMgr.getTestDirs(), logInfoFun=logging.info)
     trainDataMgr.setRemainedLabel(3, labelTuple)
-    testDataMgr.setRemainedLabel(3, labelTuple)
+
+    if not mergeTrainTestData:
+        testDataMgr = DataMgr(*trainDataMgr.getTestDirs(), logInfoFun=logging.info)
+        testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
+
     trainDataMgr.setOneSampleTraining(False)  # for debug
-    testDataMgr.setOneSampleTraining(False)  # for debug
+    if not mergeTrainTestData:
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
-    outputTrainDice = False
+    outputTrainDice = True
     if outputTrainDice:
         logging.info(f"Info: program output training dice.")
     else:
@@ -96,20 +95,25 @@ def main():
 
 
     trainDataMgr.buildSegSliceTupleList()
-    testDataMgr.buildSegSliceTupleList()
+    if mergeTrainTestData:
+        trainDataMgr.expandSegSliceTupleList(trainDataMgr.getTestDirs()[0])
+    else:
+        testDataMgr.buildSegSliceTupleList()
 
     if is2DInput:
         logging.info(f"Info: program uses 2D input.")
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
-        testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        # net = SegV2DModel(112, K)
-        net = SegV2DModel_78(96, K)
+        if not mergeTrainTestData:
+            testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        net = SegV2DModel(112, K)
+        # net = SegV2DModel_78(96, K)
 
 
     else:
         logging.info(f"Info: program uses 3D input.")
         trainDataMgr.setDataSize(4, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
-        testDataMgr.setDataSize(4, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        if not mergeTrainTestData:
+            testDataMgr.setDataSize(4, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     trainDataMgr.setMaxShift(25, 0.5)             #translation data augmentation and its probability
@@ -144,6 +148,8 @@ def main():
     net.appendLossFunc(focalLoss, 1)
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K, weight=ceWeight)
     net.appendLossFunc(boundaryLoss, 0)
+
+    fixedBoundaryLossWeight = True
 
     # logging.info model
     logging.info(f"\n====================Net Architecture===========================")
@@ -183,18 +189,28 @@ def main():
         #================Update Loss weight==============
         lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
 
-        if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
-            lossWeightList[0] -= 0.01
-            lossWeightList[1] += 0.01
-            if lossWeightList[0] < 0.01:
-                lossWeightList[0] = 0.01
-            if lossWeightList[1] > 0.99:
-                lossWeightList[1] = 0.99
+        if fixedBoundaryLossWeight:
+            if 105 == epoch:
+                lossWeightList[0] = 0.32
+                lossWeightList[1] = 0.68
+                logging.info(f"before just epoch {epoch}, fix loss weight as {lossWeightList}")
+                if useDataParallel:
+                    net.module.updateLossWeightList(lossWeightList)
+                else:
+                    net.updateLossWeightList(lossWeightList)
+        else:
+            if len(lossWeightList) >1 and epoch > 100 and (epoch -100) % 5 == 0 :
+                lossWeightList[0] -= 0.01
+                lossWeightList[1] += 0.01
+                if lossWeightList[0] < 0.01:
+                    lossWeightList[0] = 0.01
+                if lossWeightList[1] > 0.99:
+                    lossWeightList[1] = 0.99
 
-            if useDataParallel:
-                net.module.updateLossWeightList(lossWeightList)
-            else:
-                net.updateLossWeightList(lossWeightList)
+                if useDataParallel:
+                    net.module.updateLossWeightList(lossWeightList)
+                else:
+                    net.updateLossWeightList(lossWeightList)
 
 
         #================Training===============
@@ -204,7 +220,7 @@ def main():
         trainTPRSumList = [0 for _ in range(K)]
         trainTPRCountList = [0 for _ in range(K)]
         trainingLoss = 0.0
-        batches = 0
+        trainBatches = 0
         net.train()
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
@@ -233,54 +249,56 @@ def main():
             else:
                 batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
-            if lambdaInBeta == 1 and outputTrainDice:
+            if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
                     = trainDataMgr.updateDiceTPRSumList(outputs, labels1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
-            batches += 1
+            trainBatches += 1
 
-        if 0 != batches:
-            trainingLoss /= batches
+        if 0 != trainBatches:
+            trainingLoss /= trainBatches
 
-        # ================Test===============
-        net.eval()
-        with torch.no_grad():
-            testDiceSumList = [0 for _ in range(K)]
-            testDiceCountList = [0 for _ in range(K)]
-            testTPRSumList = [0 for _ in range(K)]
-            testTPRCountList = [0 for _ in range(K)]
-            testLoss = 0.0
-            batches = 0
-            for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
-                inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
-                inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
-
-                if useDataParallel:
-                    outputs = net.forward(inputs)
-                    loss = torch.tensor(0.0).cuda()
-                    for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                        if weight == 0:
-                            continue
-                        loss += lossFunc(outputs, labels) * weight
-                    batchLoss = loss.item()
-                else:
-                    batchLoss, outputs = net.batchTest(inputs, labels)
-
-                testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
-                    = testDataMgr.updateDiceTPRSumList(outputs, labelsCpu, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
-
-                testLoss += batchLoss
-                batches += 1
-                #logging.info(f'batch={batches}: batchLoss = {batchLoss}')
-
-        #===========print train and test progress===============
-        if 0 != batches:
-            testLoss /= batches
-            lrScheduler.step(testLoss)
-            
         trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
         trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
+
+        # ================Test===============
+        testDiceSumList = [0 for _ in range(K)]
+        testDiceCountList = [0 for _ in range(K)]
+        testTPRSumList = [0 for _ in range(K)]
+        testTPRCountList = [0 for _ in range(K)]
+        testLoss = 0.0
+        testBatches = 0
+        if not mergeTrainTestData:
+            net.eval()
+            with torch.no_grad():
+                for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
+                    inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
+                    inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
+
+                    if useDataParallel:
+                        outputs = net.forward(inputs)
+                        loss = torch.tensor(0.0).cuda()
+                        for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
+                            if weight == 0:
+                                continue
+                            loss += lossFunc(outputs, labels) * weight
+                        batchLoss = loss.item()
+                    else:
+                        batchLoss, outputs = net.batchTest(inputs, labels)
+
+                    testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
+                        = testDataMgr.updateDiceTPRSumList(outputs, labelsCpu, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
+
+                    testLoss += batchLoss
+                    testBatches += 1
+                    #logging.info(f'batch={batches}: batchLoss = {batchLoss}')
+
+                #===========print train and test progress===============
+                if 0 != testBatches:
+                    testLoss /= testBatches
+                    lrScheduler.step(testLoss)
+
         testDiceAvgList = [x/(y+1e-8) for x,y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x/(y+1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
@@ -289,6 +307,8 @@ def main():
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
+            if mergeTrainTestData:
+                testDiceAvgList = trainDiceAvgList
             netMgr.save(testDiceAvgList)
             if testDiceAvgList[1] > 0.20  and testDiceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
                 bestTestDiceList = testDiceAvgList
