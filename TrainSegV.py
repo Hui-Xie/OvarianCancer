@@ -128,7 +128,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-8)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=50, min_lr=1e-8)
 
     # Load network
     netMgr = NetMgr(net, netPath)
@@ -301,6 +301,8 @@ def main():
                 if 0 != testBatches:
                     testLoss /= testBatches
                     lrScheduler.step(testLoss)
+        else:
+            lrScheduler.step(trainingLoss)
 
         testDiceAvgList = [x/(y+1e-8) for x,y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x/(y+1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
