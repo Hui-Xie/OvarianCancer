@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 import sys
 
-useSkip2Residual = True       # use residual module in each building block, otherwise use DenseBlock
+useSkip2Residual = False       # use residual module in each building block, otherwise use DenseBlock
 useBnReConvOrder = False       # use Bn-ReLU-Conv2d order in each layer, otherwise use Conv2d-Bn-ReLU order
 
 class BN_ReLU_Conv2d(nn.Module):

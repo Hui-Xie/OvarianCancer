@@ -28,7 +28,10 @@ logNotes = r'''
 Major program changes: 
                        merge train and test dataset;
                        for primary and metastases 3 classes classification
+                       use conv-BN-Relu order;
+                       use Dense module
                        Use ResPath
+                       the nunmber of filters in 1st layer = 96
                                              
                        
                        
@@ -105,7 +108,7 @@ def main():
         trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         if not mergeTrainTestData:
             testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
-        net = SegV2DModel(112, K)
+        net = SegV2DModel(96, K)
         # net = SegV2DModel_78(96, K)
 
 
