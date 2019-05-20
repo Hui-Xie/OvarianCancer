@@ -670,3 +670,4 @@ Hints: Test TPR_1 is for primary cancer(green),
  and TPR_3 is for invaded lymph node(brown).
 
 Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2
+0	0.3741	0.173	0.142	0.088	0.910	0.327	0.585	0.0000	0.000	0.000	0.000	0.000	0.000	0.000
