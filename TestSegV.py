@@ -89,7 +89,7 @@ def main():
 
     netMgr = NetMgr(net, netPath)
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
-        netMgr.loadNet(False)  # False for test
+        netMgr.loadNet("test")  # False for test
         logging.info(f'Program loads net from {netPath}.')
     else:
         logging.info(f"Program can not find trained network in path: {netPath}")

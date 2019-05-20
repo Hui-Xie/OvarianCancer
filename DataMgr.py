@@ -46,6 +46,8 @@ class DataMgr:
 
         self.createSegmentedDir()
 
+        self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
+
     def setMaxShift(self, maxShift, translationProb = 0.5):
         self.m_maxShift = maxShift
         self.m_translationProb = translationProb
@@ -129,6 +131,10 @@ class DataMgr:
         os.chdir(originalCwd)
         return filesList
 
+    def expandImagesDir(self,imagesDir, suffix="_CT.nrrd"):
+        self.m_imagesList += self.getFilesList(imagesDir, suffix)
+        self.m_logInfo(f'Expanding images dir: {imagesDir}')
+
     def buildSegSliceTupleList(self):
         """
         build segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
@@ -136,7 +142,6 @@ class DataMgr:
         """
         self.m_logInfo(f'Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......')
         self.m_segSliceTupleList = []
-        self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
         for i, image in enumerate(self.m_imagesList):
             label = self.getLabelFile(image)
             labelArray = self.readImageFile(label)
@@ -147,29 +152,6 @@ class DataMgr:
             if self.m_oneSampleTraining and len(self.m_segSliceTupleList)>1:
                 break
         self.m_logInfo(f'Directory of {self.m_labelsDir} has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
-
-    def expandSegSliceTupleList(self, imagesDir):
-        """
-        expand segmented slice tuple list, in each tuple (fileID, segmentedSliceID)
-        :return:
-        """
-        self.m_logInfo(f'Expanding the Segmented Slice Tuple list from {imagesDir}, which may need 8 mins, please waiting......')
-        lastLenTuples  = len(self.m_segSliceTupleList)
-        lastLenImages  = len(self.m_imagesList)
-        self.m_imagesList += self.getFilesList(imagesDir, "_CT.nrrd")
-        for i, image in enumerate(self.m_imagesList):
-            if i < lastLenImages:
-                continue
-            label = self.getLabelFile(image)
-            labelArray = self.readImageFile(label)
-            sliceList = self.getLabeledSliceIndex(labelArray)
-            for j in sliceList:
-                self.m_segSliceTupleList.append((i, j))
-
-            if self.m_oneSampleTraining and len(self.m_segSliceTupleList)>1:
-                break
-        self.m_logInfo(f'Directory of {imagesDir} has added {len(self.m_segSliceTupleList)- lastLenTuples} segmented slices for remained labels {self.m_remainedLabels}.')
-        self.m_logInfo(f'Now totally has {len(self.m_segSliceTupleList)} segmented slices for remained labels {self.m_remainedLabels}.')
 
     def buildImageAttrList(self):
         """
@@ -294,6 +276,25 @@ class DataMgr:
             return array[d1:d2, h1:h2, w1:w2].copy()
         else:
             return array[d1:d2, h1:h2, w1:w2].copy().squeeze(axis=0)
+
+    def cropContinuousVolume(self, array, d1, d2, hc, wc):
+        shape = array.shape
+
+        h1 = int(hc - self.m_height / 2)
+        h1 = h1 if h1 >= 0 else 0
+        h2 = h1 + self.m_height
+        if h2 > shape[1]:
+            h2 = shape[1]
+            h1 = h2 - self.m_height
+
+        w1 = int(wc - self.m_width / 2)
+        w1 = w1 if w1 >= 0 else 0
+        w2 = w1 + self.m_width
+        if w2 > shape[2]:
+            w2 = shape[2]
+            w1 = w2 - self.m_width
+
+        return array[d1:d2, h1:h2, w1:w2].copy()
 
     def cropSliceCopy(self, slice, hc, wc):
         shape = slice.shape

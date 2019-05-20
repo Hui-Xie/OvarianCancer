@@ -1,0 +1,28 @@
+Program ID 15097
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/generateLatent.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1,2']
+
+Major program changes of V model: 
+                       merge train and test dataset;
+                       for primary and metastases 3 classes classification
+                       use conv-BN-Relu order;
+                       use Dense module
+                       Use ResPath
+                       the nunmber of filters in 1st layer = 96
+
+            
+
+Program starting Time: 2019-05-20 17:14:51.709036
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2
+
+Infor: program test labels: [0, 1, 2]
+Infor: program suppressed labels: [3]
+Expanding images dir: /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages
+Info: program uses 2D input.
+TrainData Input:  batchSize=8, depth=1, height=281, width=281, NumClassfication=3
+
+Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2.
+Current best test dice: [0.31556856 0.59765444 0.22741195]
+Network has total 126201123 parameters.
+Info: program will use 4 GPUs.

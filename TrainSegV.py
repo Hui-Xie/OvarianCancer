@@ -23,7 +23,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190520.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190520_test.txt'''
 logNotes = r'''
 Major program changes: 
                        merge train and test dataset;
@@ -96,12 +96,10 @@ def main():
         logging.info(f"Info: program does not output training dice.")
     # ===========debug==================
 
-
-    trainDataMgr.buildSegSliceTupleList()
     if mergeTrainTestData:
-        trainDataMgr.expandSegSliceTupleList(trainDataMgr.getTestDirs()[0])
-    else:
-        testDataMgr.buildSegSliceTupleList()
+        trainDataMgr.expandImagesDir(trainDataMgr.getTestDirs()[0])
+    trainDataMgr.buildSegSliceTupleList()
+
 
     if is2DInput:
         logging.info(f"Info: program uses 2D input.")
@@ -134,10 +132,11 @@ def main():
     netMgr = NetMgr(net, netPath)
     bestTestDiceList = [0] * K
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
-        netMgr.loadNet(True)  # True for train
+        netMgr.loadNet("train")  # True for train
         logging.info(f'Program loads net from {netPath}.')
-        bestTestDiceList = netMgr.loadBestTestDice(K)
-        logging.info(f'Current best test dice: {bestTestDiceList}')
+        if not mergeTrainTestData:
+            bestTestDiceList = netMgr.loadBestTestDice(K)
+            logging.info(f'Current best test dice: {bestTestDiceList}')
     else:
         logging.info(f"Network trains from scratch.")
 
@@ -187,6 +186,7 @@ def main():
     logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1)\
                     + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2))   # logging.info output head
 
+    lastTrainingLoss = 1000
     for epoch in range(epochs):
 
         #================Update Loss weight==============
@@ -222,6 +222,7 @@ def main():
         trainDiceCountList = [0 for _ in range(K)]
         trainTPRSumList = [0 for _ in range(K)]
         trainTPRCountList = [0 for _ in range(K)]
+
         trainingLoss = 0.0
         trainBatches = 0
         net.train()
@@ -313,9 +314,12 @@ def main():
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             if mergeTrainTestData:
-                testDiceAvgList = trainDiceAvgList
+                netMgr.saveNet()
+                if trainingLoss < lastTrainingLoss:
+                    lastTrainingLoss = trainingLoss
+                    netMgr.saveNet(netMgr.m_netBestPath)
 
-            if epoch % 5 == 0:
+            else:
                 netMgr.save(testDiceAvgList)
                 if testDiceAvgList[1] > 0.20  and testDiceAvgList[1] > bestTestDiceList[1]:  # compare the primary dice.
                     bestTestDiceList = testDiceAvgList
