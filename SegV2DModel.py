@@ -3,12 +3,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import sys
 
-from SegVModel import SegVModel
+from BasicModel import BasicModel
 from ModuleBuildingBlocks import *
 
 #  2D model
 
-class SegV2DModel(SegVModel):
+class SegV2DModel(BasicModel):
     def __init__(self, C, K):
         """
 

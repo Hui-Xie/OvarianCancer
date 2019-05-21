@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 import logging
 import os
+import numpy as np
 
 from LatentDataMgr import LatentDataMgr
 from SegV2DModel import SegV2DModel
@@ -126,8 +127,14 @@ def main():
                     latentV = net.module.halfForward(inputs)
                 else:
                     latentV = net.halfForward(inputs)
+                # concatenation in the slices dim
                 assembleLatent = torch.cat((assembleLatent, latentV))
+
             assembleLatent = assembleLatent.cpu().numpy().astype(float)
+            shape = assembleLatent.shape
+            newShape = (shape[0], shape[1],shape[2]*shape[3])
+            assembleLatent = np.reshape(assembleLatent, newShape)
+            assembleLatent = np.swapaxes(assembleLatent, 0, 1) # make features space at dim0, slices in dim1, a slice in dim2.
         dataMgr.saveLatentV(assembleLatent, patientID)
 
     torch.cuda.empty_cache()

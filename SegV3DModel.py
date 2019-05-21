@@ -2,11 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from SegVModel import SegVModel
+from BasicModel import BasicModel
 
 #  3D model
 
-class SegV3DModel (SegVModel):
+class SegV3DModel (BasicModel):
     def __init__(self, K):   # K is the final output classification number.
         super().__init__()
 

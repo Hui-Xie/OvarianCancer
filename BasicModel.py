@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 
 
-class SegVModel(nn.Module):
+class BasicModel(nn.Module):
     def __init__(self):
         super().__init__()
         self.m_dropoutProb = 0.3

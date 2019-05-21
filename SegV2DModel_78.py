@@ -4,12 +4,12 @@ import torch
 import torch.nn as nn
 import sys
 
-from SegVModel import SegVModel
+from BasicModel import BasicModel
 from ModuleBuildingBlocks import *
 
 #  2D model
 
-class SegV2DModel_78(SegVModel):
+class SegV2DModel_78(BasicModel):
     def __init__(self, C, K):
         """
         :param C: channels, The number of filters of the first layer, and it is better 64.
