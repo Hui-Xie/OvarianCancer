@@ -84,7 +84,7 @@ def main():
         testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
-
+    restartTrainAfter100Epochs = True
     trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
         testDataMgr.setOneSampleTraining(False)  # for debug
@@ -146,9 +146,13 @@ def main():
 
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
-    net.appendLossFunc(focalLoss, 1)
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K, weight=ceWeight)
-    net.appendLossFunc(boundaryLoss, 0)
+    if not restartTrainAfter100Epochs:
+        net.appendLossFunc(focalLoss, 1)
+        net.appendLossFunc(boundaryLoss, 0)
+    else:
+        net.appendLossFunc(focalLoss, 0.32)
+        net.appendLossFunc(boundaryLoss, 0.68)
 
     fixedBoundaryLossWeight = True
 

@@ -3601,3 +3601,30 @@ Hints: Test TPR_1 is for primary cancer(green),
  and TPR_3 is for invaded lymph node(brown).
 
 Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2
+0	0.1524	0.408	0.592	0.311	0.955	0.930	0.912	0.0000	0.000	0.000	0.000	0.000	0.000	0.000
+1	0.1105	0.000	0.000	0.000	0.000	0.000	0.000	0.0000	0.000	0.000	0.000	0.000	0.000	0.000
+Program ID 14046
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV.py', '/home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels', '2D', '0,1,2']
+
+Major program changes: 
+                       merge train and test dataset;
+                       for primary and metastases 3 classes classification
+                       use conv-BN-Relu order;
+                       use Dense module
+                       Use ResPath
+                       the nunmber of filters in 1st layer = 96
+                                             
+                       
+                       
+            
+
+Program starting Time: 2019-05-21 17:17:53.539410
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2
+
+Infor: program test labels: [0, 1, 2]
+Infor: program suppressed labels: [3]
+Info: program output training dice.
+Expanding images dir: /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages
+Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......
