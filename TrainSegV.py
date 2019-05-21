@@ -134,9 +134,8 @@ def main():
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
         logging.info(f'Program loads net from {netPath}.')
-        if not mergeTrainTestData:
-            bestTestDiceList = netMgr.loadBestTestDice(K)
-            logging.info(f'Current best test dice: {bestTestDiceList}')
+        bestTestDiceList = netMgr.loadBestTestDice(K)
+        logging.info(f'Current best test dice: {bestTestDiceList}')
     else:
         logging.info(f"Network trains from scratch.")
 
@@ -315,9 +314,9 @@ def main():
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             if mergeTrainTestData:
                 netMgr.saveNet()
-                if trainingLoss < lastTrainingLoss:
-                    lastTrainingLoss = trainingLoss
-                    netMgr.saveNet(netMgr.m_netBestPath)
+                if epoch % 5 == 0 and trainDiceAvgList[1] > bestTestDiceList[1]:
+                    bestTestDiceList = trainDiceAvgList
+                    netMgr.saveBest(bestTestDiceList)
 
             else:
                 netMgr.save(testDiceAvgList)

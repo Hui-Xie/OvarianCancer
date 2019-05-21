@@ -1,7 +1,8 @@
 from BasicModel import BasicModel
 from ModuleBuildingBlocks import *
+import torch
 
-#  2D model
+# Predictive Model for treatment response
 
 class PredictModel(BasicModel):
     def __init__(self, C, K):
@@ -20,7 +21,10 @@ class PredictModel(BasicModel):
                        nn.Linear(C//32, C//64),
                        nn.BatchNorm1d(C//64),
                        nn.ReLU(inplace=True),
-                       nn.Linear(C // 32, K))
+                       nn.Linear(C//64, C//64),
+                       nn.BatchNorm1d(C//64),
+                       nn.ReLU(inplace=True),
+                       nn.Linear(C//64, K))
 
     def forward(self, inputx):
         x = self.m_input(inputx)
@@ -29,5 +33,6 @@ class PredictModel(BasicModel):
         x = self.m_down3(x)
         x = self.m_down4(x)
         x = self.m_down5(x)
+        x = torch.squeeze(x)
         x = self.m_fc11(x)
         return x
