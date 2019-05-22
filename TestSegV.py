@@ -9,7 +9,7 @@ torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
 sys.path.append(torchSummaryPath)
 from torchsummary import summary
 
-from DataMgr import DataMgr
+from SegDataMgr import SegDataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
@@ -56,7 +56,7 @@ def main():
     labelTuple = eval(sys.argv[5])
     K = len(labelTuple)
 
-    testDataMgr = DataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
+    testDataMgr = SegDataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================

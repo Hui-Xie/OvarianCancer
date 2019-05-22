@@ -13,7 +13,7 @@ torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
 sys.path.append(torchSummaryPath)
 from torchsummary import summary
 
-from DataMgr import DataMgr
+from SegDataMgr import SegDataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from SegV2DModel_78 import SegV2DModel_78
@@ -76,11 +76,11 @@ def main():
 
     mergeTrainTestData = True
 
-    trainDataMgr = DataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
+    trainDataMgr = SegDataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
     trainDataMgr.setRemainedLabel(3, labelTuple)
 
     if not mergeTrainTestData:
-        testDataMgr = DataMgr(*trainDataMgr.getTestDirs(), logInfoFun=logging.info)
+        testDataMgr = SegDataMgr(*trainDataMgr.getTestDirs(), logInfoFun=logging.info)
         testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
