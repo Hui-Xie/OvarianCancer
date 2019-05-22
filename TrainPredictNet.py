@@ -15,12 +15,12 @@ from PredictModel import PredictModel
 from NetMgr import NetMgr
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictLog_20190521.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictLog_20190522.txt'''
 logNotes = r'''
 Major program changes: 
                       the nunmber of filters in 1st layer in V model = 96
-                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlane)
-                      PredictModel is convs+FC network.
+                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
+                      PredictModel is convsDenseModule+FC network.
                       
 
             '''
@@ -32,11 +32,10 @@ def printUsage(argv):
     print("============Train Ovarian Cancer Predictive Model=============")
     print("Usage:")
     print(argv[0], "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfLabels> ")
-    print("eg. labelTuple: (0,1,2,3), or (0,1), (0,2)")
 
 
 def main():
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 5:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
