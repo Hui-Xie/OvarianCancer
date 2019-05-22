@@ -194,8 +194,7 @@ def main():
             with torch.no_grad():
                 for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
                     inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
-                    inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device,
-                                                                                     dtype=torch.long)  # return a copy
+                    inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 
                     if useDataParallel:
                         outputs = net.forward(inputs)
@@ -213,7 +212,7 @@ def main():
 
                     testLoss += batchLoss
                     testBatches += 1
-                    # logging.info(f'batch={batches}: batchLoss = {batchLoss}')
+
 
                 # ===========print train and test progress===============
                 if 0 != testBatches:
@@ -223,7 +222,7 @@ def main():
         else:
             lrScheduler.step(trainingLoss)
 
-         logging.info(
+        logging.info(
             f'{epoch}\t{trainingLoss:.4f}\t' + f'{trainAccuracy:.3f}' + f'\t' +f'\t{testLoss:.4f}\t' + f'{testAccuracy:.3f}')
 
         # =============save net parameters==============
