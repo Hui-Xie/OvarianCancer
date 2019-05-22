@@ -51,12 +51,12 @@ def main():
         printUsage(sys.argv)
         return -1
 
-    print(f'Program ID {os.getpid()}\n')
+    print(f'Program ID of Segmentaion V Model: {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
-    print(f'log is in {trainLogFile}')
+    print(f'Training log is in {trainLogFile}')
     print(f'.........')
 
-    logging.info(f'Program ID {os.getpid()}\n')
+    logging.info(f'Program ID of Segmentaion V Model: {os.getpid()}\n')
     logging.info(f'Program command: \n {sys.argv}')
     logging.info(logNotes)
 

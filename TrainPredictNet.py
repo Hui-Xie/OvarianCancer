@@ -10,7 +10,7 @@ import torch.optim as optim
 import logging
 import os
 
-from DataMgr import DataMgr
+from LatentDataMgr import LatentDataMgr
 from PredictModel import PredictModel
 from NetMgr import NetMgr
 
@@ -40,12 +40,12 @@ def main():
         printUsage(sys.argv)
         return -1
 
-    print(f'Program ID {os.getpid()}\n')
+    print(f'Program ID of Prdict Network training:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
-    print(f'log is in {trainLogFile}')
+    print(f'Training log is in {trainLogFile}')
     print(f'.........')
 
-    logging.info(f'Program ID {os.getpid()}\n')
+    logging.info(f'Program ID of Prdict Network training:{os.getpid()}\n')
     logging.info(f'Program command: \n {sys.argv}')
     logging.info(logNotes)
 
@@ -53,18 +53,17 @@ def main():
     logging.info(f'\nProgram starting Time: {str(curTime)}')
 
     netPath = sys.argv[1]
-    imagesPath = sys.argv[2]
-    labelsPath = sys.argv[3]
-    is2DInput = True if sys.argv[4] == "2D" else False
-    labelTuple = eval(sys.argv[5])
-    K = len(labelTuple)
+    trainingInputsPath = sys.argv[2]
+    testInputsPath = sys.argv[3]
+    labelsPath = sys.argv[4]
+
+    K = 2 # treatment response 1 or 0
 
     logging.info(f"Info: netPath = {netPath}\n")
 
-    mergeTrainTestData = True
+    mergeTrainTestData = False
 
-    trainDataMgr = DataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
-    trainDataMgr.setRemainedLabel(3, labelTuple)
+    trainDataMgr = LatentDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
         testDataMgr = DataMgr(*trainDataMgr.getTestDirs(), logInfoFun=logging.info)

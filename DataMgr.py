@@ -7,7 +7,6 @@ import sys
 from scipy.misc import imsave
 
 
-# noinspection SyntaxError
 class DataMgr:
     def __init__(self, imagesDir, labelsDir, logInfoFun=print):
         self.m_logInfo = logInfoFun
