@@ -25,17 +25,18 @@ class NetMgr:
             self.m_net.cuda()
             self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt")))
             self.m_net.train()
-        if mode == "test":   # eval
+        elif mode == "test":   # eval
             self.m_net.eval()
+        else:
+            print("Error: loadNet mode is incorrect.")
 
-
-    def saveBestTestDice(self, testDiceList, netPath=None):
+    def saveBestTestPerf(self, testPerf, netPath=None):
         netPath = self.m_netPath if netPath is None else netPath
-        testDiceArray = np.asarray(testDiceList)
-        np.save(os.path.join(netPath, "bestTestDice.npy"), testDiceArray)
+        testDiceArray = np.asarray(testPerf)
+        np.save(os.path.join(netPath, "bestTestPerf.npy"), testDiceArray)
 
-    def loadBestTestDice(self, K):
-        filename = os.path.join(self.m_netPath, "bestTestDice.npy")
+    def loadBestTestPerf(self, K):
+        filename = os.path.join(self.m_netPath, "bestTestPerf.npy")
         if os.path.isfile(filename):
             bestTestDiceList = np.load(filename)
             bestTestDiceList.tolist()
@@ -43,11 +44,11 @@ class NetMgr:
             bestTestDiceList = [0]*K   # for 3 classifications
         return bestTestDiceList
 
-    def saveBest(self, testDiceList, netPath=None):
+    def saveBest(self, testPerf, netPath=None):
         netPath = self.m_netBestPath if netPath is None else netPath
-        self.save(testDiceList, netPath)
+        self.save(testPerf, netPath)
 
-    def save(self, testDiceList, netPath=None):
+    def save(self, testPerf, netPath=None):
         netPath = self.m_netPath if netPath is None else netPath
         self.saveNet(netPath)
-        self.saveBestTestDice(testDiceList, netPath)
+        self.saveBestTestPerf(testPerf, netPath)

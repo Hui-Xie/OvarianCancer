@@ -97,7 +97,7 @@ def main():
     # ===========debug==================
 
     if mergeTrainTestData:
-        trainDataMgr.expandImagesDir(trainDataMgr.getTestDirs()[0])
+        trainDataMgr.expandInputsDir(trainDataMgr.getTestDirs()[0])
     trainDataMgr.buildSegSliceTupleList()
 
 
@@ -134,7 +134,7 @@ def main():
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
         logging.info(f'Program loads net from {netPath}.')
-        bestTestDiceList = netMgr.loadBestTestDice(K)
+        bestTestDiceList = netMgr.loadBestTestPerf(K)
         logging.info(f'Current best test dice: {bestTestDiceList}')
     else:
         logging.info(f"Network trains from scratch.")

@@ -143,7 +143,7 @@ def main():
             batchLoss = loss.item()
 
             outputs = outputs.cpu().numpy()
-            segmentations = testDataMgr.oneHotArray2Segmentation(outputs)
+            segmentations = testDataMgr.oneHotArray2Labels(outputs)
             testDataMgr.saveInputsSegmentations2Images(inputsCpu, labelsCpu, segmentations, n)
 
             (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu)

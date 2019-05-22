@@ -6,8 +6,8 @@ from scipy.misc import imsave
 from DataMgr import DataMgr
 
 class SegDataMgr(DataMgr):
-    def __init__(self, imagesDir, labelsDir, logInfoFun=print):
-        super.__init__(imagesDir, labelsDir, logInfoFun)
+    def __init__(self, inputsDir, labelsDir, logInfoFun=print):
+        super.__init__(inputsDir, labelsDir, logInfoFun)
         self.m_maxShift = 0
         self.m_translationProb = 0
         self.m_flipProb = 0
@@ -27,7 +27,7 @@ class SegDataMgr(DataMgr):
         self.m_suppressedLabels = []
 
         self.createSegmentedDir()
-        self.m_imagesList = self.getFilesList(self.m_imagesDir, "_CT.nrrd")
+        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, "_CT.nrrd")
 
     def setMaxShift(self, maxShift, translationProb = 0.5):
         self.m_maxShift = maxShift
@@ -97,7 +97,7 @@ class SegDataMgr(DataMgr):
         """
         self.m_logInfo(f'Building the Segmented Slice Tuple list, which may need 8 mins, please waiting......')
         self.m_segSliceTupleList = []
-        for i, image in enumerate(self.m_imagesList):
+        for i, image in enumerate(self.m_inputFilesList):
             label = self.getLabelFile(image)
             labelArray = self.readImageFile(label)
             sliceList = self.getLabeledSliceIndex(labelArray)
@@ -115,12 +115,12 @@ class SegDataMgr(DataMgr):
         """
         self.m_logInfo(f"Building image attributes list, please waiting......")
         self.m_imageAttrList = []
-        for image in self.m_imagesList:
+        for image in self.m_inputFilesList:
             attr = self.getImageAttributes(image)
             self.m_imageAttrList.append(attr)
 
     def getTestDirs(self):  # may need to delete this function
-        return self.m_imagesDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels')
+        return self.m_inputsDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels')
 
     def getLabeledSliceIndex(self,labelArray):
         labelArray = self.suppressedLabels(labelArray, binarize=False)
@@ -191,24 +191,24 @@ class SegDataMgr(DataMgr):
         else:
             return nC/nB, 1
 
-    def getTPRSumList(self, segmentations, labels):
+    def getTPRSumList(self, predictLabels, labels):
         """
-        :param segmentations: with N samples
+        :param predictLabels: with N samples
         :param labels: ground truth with N samples
         :return: (TPRSumList,TPRCountList)
                 TPRSumList: whose element 0 indicates total TPR sum over N samples, element 1 indicate label1 TPR sum over N samples, etc
                 TPRCountList: indicate effective TPR count
         """
-        N = segmentations.shape[0]  # sample number
+        N = predictLabels.shape[0]  # sample number
         K = self.m_k                # classification number
         TPRSumList = [0 for _ in range(K)]
         TPRCountList = [0 for _ in range(K)]
         for i in range(N):
-            (TPR,count) = self.getTPR((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
+            (TPR,count) = self.getTPR((predictLabels[i] != 0) * 1, (labels[i] != 0) * 1)
             TPRSumList[0] += TPR
             TPRCountList[0] += count
             for j in range(1, K):
-                (TPR, count) = self.getTPR((segmentations[i]==j)*1, (labels[i]==j)*1 )
+                (TPR, count) = self.getTPR((predictLabels[i] == j) * 1, (labels[i] == j) * 1)
                 TPRSumList[j] += TPR
                 TPRCountList[j] += count
 
@@ -250,7 +250,7 @@ class SegDataMgr(DataMgr):
 
         for n in shuffleList:
             (i,j) = self.m_segSliceTupleList[n]  # i is the imageID, j is the segmented slice index in image i.
-            imageFile = self.m_imagesList[i]
+            imageFile = self.m_inputFilesList[i]
             labelFile = self.getLabelFile(imageFile)
             labelArray = self.readImageFile(labelFile)
             labelArrayJ = np.copy(labelArray[j])
@@ -371,7 +371,7 @@ class SegDataMgr(DataMgr):
         N = inputs.shape[0]
         for i in range(N):
             (fileIndex, sliceIndex) = self.m_segSliceTupleList[n+i]
-            originalImagePath = self.m_imagesList[fileIndex]
+            originalImagePath = self.m_inputFilesList[fileIndex]
             baseName = self.getStemName(originalImagePath, '_CT.nrrd')
             baseNamePath = os.path.join(self.m_segDir, baseName+f'_{sliceIndex}')
             inputImagePath = baseNamePath+ '.png'
@@ -400,10 +400,7 @@ class SegDataMgr(DataMgr):
             overlapLabelPath = baseNamePath+ '_LabelMerge.png'
             imsave(overlapLabelPath,overlapLabelImage)
 
-    @staticmethod
-    def oneHotArray2Segmentation(oneHotArray)-> np.ndarray:
-        segmentationArray = oneHotArray.argmax(axis=1)
-        return segmentationArray
+
 
     @staticmethod
     def labelStatistic(labelArray, k):
@@ -427,10 +424,10 @@ class SegDataMgr(DataMgr):
 
     def updateDiceTPRSumList(self, outputsGPU, labelsCpu, diceSumList, diceCountList, TPRSumList, TPRCountList):
         outputs = outputsGPU.cpu().detach().numpy()
-        segmentations = self.oneHotArray2Segmentation(outputs)
+        predictLabels= self.oneHotArray2Labels(outputs)
 
-        (diceSumBatch, diceCountBatch) = self.getDiceSumList(segmentations, labelsCpu)
-        (TPRSumBatch, TPRCountBatch) = self.getTPRSumList(segmentations, labelsCpu)
+        (diceSumBatch, diceCountBatch) = self.getDiceSumList(predictLabels, labelsCpu)
+        (TPRSumBatch, TPRCountBatch) = self.getTPRSumList(predictLabels, labelsCpu)
 
         diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
         diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]

@@ -7,16 +7,16 @@ import sys
 
 
 class DataMgr:
-    def __init__(self, imagesDir, labelsDir, logInfoFun=print):
+    def __init__(self, inputsDir, labelsDir, logInfoFun=print):
         self.m_logInfo = logInfoFun
         self.m_oneSampleTraining = False
-        self.m_imagesDir = imagesDir
+        self.m_inputsDir = inputsDir
         self.m_labelsDir = labelsDir
 
         self.m_alpha    = 0.4
         self.m_mixupProb = 0
 
-        self.m_imagesList = []
+        self.m_inputFilesList = []
 
         self.m_batchSize = 0
         self.m_depth = 0
@@ -25,6 +25,36 @@ class DataMgr:
         self.m_k = 0
 
         self.m_shuffle = True
+
+    def setDataSize(self, batchSize, depth, height, width, k, dataName):
+        """
+        :param batchSize:
+        :param depth:  it must be odd
+        :param height:  it is better to be odd number for V model
+        :param width:   it is better to be odd number for V model
+        :param k: the number of classification of groundtruth including background class.
+        :return:
+        """
+        self.m_batchSize = batchSize
+        self.m_depth = depth
+        self.m_height = height
+        self.m_width = width
+        self.m_k = k
+        self.m_logInfo(
+            f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
+
+    def getBatchSize(self):
+        return self.m_batchSize
+
+    def getInputSize(self):  # return a tuple without batchSize
+        channels = 1
+        if self.m_depth > 1:
+            return channels, self.m_depth, self.m_height, self.m_width
+        else:
+            return channels, self.m_height, self.m_width
+
+    def getNumClassification(self):
+        return self.m_k
 
     def setMixup(self, alpha, prob):
         self.m_alpha = alpha
@@ -47,8 +77,8 @@ class DataMgr:
         os.chdir(originalCwd)
         return filesList
 
-    def expandImagesDir(self,imagesDir, suffix="_CT.nrrd"):
-        self.m_imagesList += self.getFilesList(imagesDir, suffix)
+    def expandInputsDir(self, imagesDir, suffix="_CT.nrrd"):
+        self.m_inputFilesList += self.getFilesList(imagesDir, suffix)
         self.m_logInfo(f'Expanding images dir: {imagesDir}')
 
     @staticmethod
@@ -204,38 +234,6 @@ class DataMgr:
             it.iternext()
         return oneHotArray
 
-
-    def setDataSize(self, batchSize, depth, height, width, k, dataName):
-        """
-        :param batchSize:
-        :param depth:  it must be odd
-        :param height:  it is better to be odd number for V model
-        :param width:   it is better to be odd number for V model
-        :param k: the number of classification of groundtruth including background class.
-        :return:
-        """
-        self.m_batchSize = batchSize
-        self.m_depth = depth
-        self.m_height = height
-        self.m_width = width
-        self.m_k = k
-        self.m_logInfo(f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
-
-    def getBatchSize(self):
-        return self.m_batchSize
-
-    def getInputSize(self): #return a tuple without batchSize
-        channels = 1
-        if self.m_depth > 1:
-            return channels, self.m_depth, self.m_height, self.m_width
-        else:
-            return channels, self.m_height, self.m_width
-
-    def getNumClassification(self):
-        return self.m_k
-
-
-
     def checkOrientConsistent(self, imagesDir, suffix):
         self.m_logInfo(f'Program is checking image directions. Please waiting......')
         imagesList = self.getFilesList(imagesDir, suffix)
@@ -252,7 +250,6 @@ class DataMgr:
                 self.m_logInfo(f'{filename} has inconsistent direction: {fullDirection}')
                 inconsistenNum +=1
         self.m_logInfo(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
-
 
 
     def sliceNormalize(self, array):
@@ -281,7 +278,6 @@ class DataMgr:
             sys.exit(0)
 
 
-
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
 
@@ -291,3 +287,7 @@ class DataMgr:
         base = baseName[0: baseName.find(removedSuffix)]
         return base
 
+    @staticmethod
+    def oneHotArray2Labels(oneHotArray) -> np.ndarray:
+        labelsArray = oneHotArray.argmax(axis=1)
+        return labelsArray

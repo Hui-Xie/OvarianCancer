@@ -12,7 +12,7 @@ import logging
 import os
 import numpy as np
 
-from LatentDataMgr import LatentDataMgr
+from LatentGenerator import LatentGenerator
 from SegV2DModel import SegV2DModel
 from SegV3DModel import SegV3DModel
 from NetMgr import NetMgr
@@ -20,7 +20,7 @@ from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 
 # you may need to change the file name and log Notes below for every training.
-generateLatentLog = r'''/home/hxie1/Projects/OvarianCancer/trainLog/latentLog_20190520.txt'''
+generateLatentLog = r'''/home/hxie1/Projects/OvarianCancer/trainLog/latentGeneratorLog_20190520.txt'''
 logNotes = r'''
 Major program changes of V model: 
                        merge train and test dataset;
@@ -73,7 +73,7 @@ def main():
 
     mergeTrainTestData = True
 
-    dataMgr = LatentDataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
+    dataMgr = LatentGenerator(imagesPath, labelsPath, logInfoFun=logging.info)
     dataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
@@ -82,7 +82,7 @@ def main():
     outputTrainDice = True
     # ===========debug==================
 
-    dataMgr.expandImagesDir(dataMgr.getTestDirs()[0])
+    dataMgr.expandInputsDir(dataMgr.getTestDirs()[0])
 
     if is2DInput:
         logging.info(f"Info: program uses 2D input.")
@@ -99,7 +99,7 @@ def main():
     if 2 == len(dataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("test")  # True for train
         logging.info(f'Program loads net from {netPath}.')
-        bestTestDiceList = netMgr.loadBestTestDice(K)
+        bestTestDiceList = netMgr.loadBestTestPerf(K)
         logging.info(f'Current best test dice: {bestTestDiceList}')
     else:
         logging.info(f"Network trains from scratch.")
@@ -116,7 +116,7 @@ def main():
             net = nn.DataParallel(net, device_ids=[0, 1, 2, 3], output_device=device)
 
     net.eval()
-    for image in dataMgr.m_imagesList:
+    for image in dataMgr.m_inputFilesList:
         patientID = dataMgr.getStemName(image, "_CT.nrrd")
         with torch.no_grad():
             assembleLatent = torch.tensor([]).to(device)
