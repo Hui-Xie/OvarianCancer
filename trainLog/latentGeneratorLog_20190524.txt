@@ -55,3 +55,4 @@ Current best test dice: [0.62349606 0.7630179  0.53718191]
 Network has total 126201123 parameters.
 total 162 input files to generate latent vector. 
 Info: program will use 4 GPUs.
+=============END of Generating latent vector from V model =================
