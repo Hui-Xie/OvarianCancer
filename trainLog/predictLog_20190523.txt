@@ -1,0 +1,52 @@
+Program ID of Prdict Network training:13215
+
+Program command: 
+ ['TrainPredictNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/Predict', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/train', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/test', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json']
+
+Major program changes: 
+                      the nunmber of filters in 1st layer in V model = 96
+                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
+                      PredictModel is convsDenseModule+FC network.
+                      there total 162 patient data, in which, 130 with smaller patientId as training data, 
+                                                          and 32 with bigger patientID as test data
+                                                         
+                      
+
+            
+
+Program starting Time: 2019-05-23 16:49:00.370520
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Predict
+
+Now program get 130 input files.
+Now program get 32 input files.
+TrainData Input:  batchSize=16, depth=1536, height=51, width=49, NumClassfication=2
+
+TestData Input:  batchSize=16, depth=1536, height=51, width=49, NumClassfication=2
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Network trains from scratch.
+Network has total 29,359,778 parameters.
+Infor: Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Info: program will use 4 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+
+Epoch	TrLoss	TrainAccuracy	TsLoss	TestAccuracy
+0	0.1901	0.375		0.1990	0.438
+1	0.1870	0.281		0.1944	0.375
+2	0.1878	0.333		0.1906	0.188
+3	0.1785	0.453		0.1886	0.188
+4	0.1723	0.575		0.1852	0.312
+5	0.1694	0.510		0.1815	0.312
+6	0.1765	0.500		0.1727	0.438
+7	0.1710	0.594		0.1736	0.375
+8	0.1748	0.562		0.1788	0.438
+9	0.1678	0.525		0.1754	0.312
+10	0.1693	0.562		0.1774	0.500
+11	0.1758	0.521		0.1783	0.750
+12	0.1687	0.547		0.1791	0.438
+13	0.1755	0.594		0.1793	0.375
+14	0.1699	0.594		0.1822	0.875
+15	0.1690	0.458		0.1838	0.375
+16	0.1679	0.600		0.1852	0.500
