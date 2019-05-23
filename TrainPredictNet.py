@@ -10,11 +10,6 @@ import torch.optim as optim
 import logging
 import os
 
-torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
-sys.path.append(torchSummaryPath)
-from torchsummary import summary
-
-
 from LatentDataMgr import LatentDataMgr
 from PredictModel import PredictModel
 from NetMgr import NetMgr
@@ -122,15 +117,6 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-
-
-    logging.info(f"\n====================Net Architecture===========================")
-    stdoutBackup = sys.stdout
-    with open(trainLogFile, 'a+') as log:
-        sys.stdout = log
-        summary(net.cuda(), trainDataMgr.getInputSize())
-    sys.stdout = stdoutBackup
-    logging.info(f"===================End of Net Architecture =====================\n")
 
     net.to(device)
     if useDataParallel:
