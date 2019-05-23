@@ -79,7 +79,8 @@ class DataMgr:
 
     def expandInputsDir(self, imagesDir, suffix="_CT.nrrd"):
         self.m_inputFilesList += self.getFilesList(imagesDir, suffix)
-        self.m_logInfo(f'Expanding images dir: {imagesDir}')
+        self.m_logInfo(f'Expanding inputs dir: {imagesDir}')
+        self.m_logInfo(f'Now dataMgr has {len(self.m_inputFilesList)} input files.')
 
     @staticmethod
     def readImageFile(filename):

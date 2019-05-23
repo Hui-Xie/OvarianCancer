@@ -11,6 +11,7 @@ class LatentDataMgr(DataMgr):
     def __init__(self, imagesDir, labelsPath, logInfoFun=print):
         super().__init__(imagesDir, labelsPath, logInfoFun)
         self.m_inputFilesList = self.getFilesList(self.m_inputsDir, "_Latent.npy")
+        self.m_logInfo(f"Now program get {len(self.m_inputFilesList)} input files.")
         self.m_labelsList = []
         self.getLabelsList()
 
@@ -45,12 +46,11 @@ class LatentDataMgr(DataMgr):
         for n in shuffleList:
             if batch >= self.m_batchSize:
                 yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+                batch = 0
+                dataList.clear()
+                labelList.clear()
                 if self.m_oneSampleTraining:
-                    continue
-                else:
-                    batch = 0
-                    dataList.clear()
-                    labelList.clear()
+                    break
 
             latentFile = self.m_inputFilesList[n]
             label = self.m_labelsList[n]
@@ -60,8 +60,10 @@ class LatentDataMgr(DataMgr):
             labelList.append(label)
             batch +=1
 
-        if 0 != len(dataList) and 0 != len(labelList): # PyTorch supports dynamic batchSize.
-            yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+        #  a batch size of 1 and a single feature per channel will has problem in batchnorm.
+        #  drop_last data.
+        #if 0 != len(dataList) and 0 != len(labelList): # PyTorch supports dynamic batchSize.
+        #    yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
 
         # clean field
         dataList.clear()

@@ -10,6 +10,11 @@ import torch.optim as optim
 import logging
 import os
 
+torchSummaryPath = "/home/hxie1/Projects/pytorch-summary/torchsummary"
+sys.path.append(torchSummaryPath)
+from torchsummary import summary
+
+
 from LatentDataMgr import LatentDataMgr
 from PredictModel import PredictModel
 from NetMgr import NetMgr
@@ -73,16 +78,16 @@ def main():
         testDataMgr = LatentDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
     if mergeTrainTestData:
         trainDataMgr.expandInputsDir(testInputsPath, suffix="_Latent.npy")
 
-    batchSize  = 8
+    batchSize  = 16
     C = 1536  # number of input features
     H = 51    # height of input
     W = 49    # width of input
@@ -117,6 +122,15 @@ def main():
     ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
+
+
+    logging.info(f"\n====================Net Architecture===========================")
+    stdoutBackup = sys.stdout
+    with open(trainLogFile, 'a+') as log:
+        sys.stdout = log
+        summary(net.cuda(), trainDataMgr.getInputSize())
+    sys.stdout = stdoutBackup
+    logging.info(f"===================End of Net Architecture =====================\n")
 
     net.to(device)
     if useDataParallel:
@@ -179,7 +193,7 @@ def main():
             trainingLoss += batchLoss
             trainBatches += 1
 
-        if 0 != trainBatches:
+        if 0 != trainBatches and 0 != nTrainTotal:
             trainingLoss /= trainBatches
             trainAccuracy = nTrainCorrect/nTrainTotal
 
@@ -217,7 +231,7 @@ def main():
 
 
                 # ===========print train and test progress===============
-                if 0 != testBatches:
+                if 0 != testBatches and 0 != nTestTotal:
                     testLoss /= testBatches
                     testAccuracy = nTestCorrect/nTestTotal
                     lrScheduler.step(testLoss)

@@ -266,12 +266,11 @@ class SegDataMgr(DataMgr):
 
             if batch >= self.m_batchSize:
                 yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+                batch = 0
+                dataList.clear()
+                labelList.clear()
                 if self.m_oneSampleTraining:
-                    continue
-                else:
-                    batch = 0
-                    dataList.clear()
-                    labelList.clear()
+                    break
 
             label = self.cropSliceCopy(labelArrayJ, hc, wc)
             if 0 == np.count_nonzero(label):   # skip the label without any meaningful labels
