@@ -23,7 +23,7 @@ from CustomizedLoss import FocalCELoss,BoundaryLoss
 import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190520.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190523.txt'''
 logNotes = r'''
 Major program changes: 
                        merge train and test dataset;
@@ -32,6 +32,7 @@ Major program changes:
                        use Dense module
                        Use ResPath
                        the nunmber of filters in 1st layer = 96
+                        temperately test
                                              
                        
                        
@@ -85,9 +86,9 @@ def main():
 
     # ===========debug==================
     restartTrainAfter100Epochs = True
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     if outputTrainDice:

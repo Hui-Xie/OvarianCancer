@@ -7,7 +7,7 @@ from DataMgr import DataMgr
 
 class SegDataMgr(DataMgr):
     def __init__(self, inputsDir, labelsDir, logInfoFun=print):
-        super.__init__(inputsDir, labelsDir, logInfoFun)
+        super().__init__(inputsDir, labelsDir, logInfoFun)
         self.m_maxShift = 0
         self.m_translationProb = 0
         self.m_flipProb = 0

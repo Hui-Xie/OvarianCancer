@@ -9,7 +9,7 @@ import json
 
 class LatentDataMgr(DataMgr):
     def __init__(self, imagesDir, labelsPath, logInfoFun=print):
-        super.__init__(imagesDir, labelsPath, logInfoFun)
+        super().__init__(imagesDir, labelsPath, logInfoFun)
         self.m_inputFilesList = self.getFilesList(self.m_inputsDir, "_Latent.npy")
         self.m_labelsList = []
         self.getLabelsList()
