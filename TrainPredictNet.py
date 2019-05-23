@@ -170,9 +170,8 @@ def main():
                 batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
             if lambdaInBeta == 1 :
-               nTrainCorrect += labels1.eq(outputs).sum()
+               nTrainCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum()
                nTrainTotal += labels1.shape[0]
-
 
             trainingLoss += batchLoss
             trainBatches += 1
