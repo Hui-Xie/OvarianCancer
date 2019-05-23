@@ -86,9 +86,9 @@ def main():
 
     # ===========debug==================
     restartTrainAfter100Epochs = True
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     if outputTrainDice:
