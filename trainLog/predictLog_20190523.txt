@@ -1,0 +1,33 @@
+Program ID of Prdict Network training:24370
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainPredictNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/Predict', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/train', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/test', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json']
+
+Major program changes: 
+                      the nunmber of filters in 1st layer in V model = 96
+                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
+                      PredictModel is convsDenseModule+FC network.
+                      there total 162 patient data, in which, 130 with smaller patientId as training data, 
+                                                          and 32 with bigger patientID as test data
+                                                         
+                      
+
+            
+
+Program starting Time: 2019-05-23 14:58:03.944967
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Predict
+
+TrainData Input:  batchSize=8, depth=1536, height=51, width=49, NumClassfication=2
+
+TestData Input:  batchSize=8, depth=1536, height=51, width=49, NumClassfication=2
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Network trains from scratch.
+Network has total 29,359,778 parameters.
+Infor: Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Info: program will use 4 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+
+Epoch	TrLoss	TrainAccuracy	TsLoss	TestAccuracy

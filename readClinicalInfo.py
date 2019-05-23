@@ -27,6 +27,28 @@ for i in range(1, sheet.nrows):
 # output information
 print(f"Program discards {nDiscards} patients data as there are no optimialOutcome for them.")
 print(f"Program get {len(IDResponseDict)} patients data for optimalOutcome.")
+print(f"first 130 patient with smaller patientID as training data, and remaining patients with bigger patient ID as test data.")
+
+# statistics
+train1 = 0
+train0 = 0
+test1 = 0
+test0 = 0
+for patientID in IDResponseDict.keys():
+    if int(patientID) <=88032071: # train data
+        if IDResponseDict[patientID] == 1:
+            train1 += 1
+        else:
+            train0 += 1
+    else:                         # test data
+        if IDResponseDict[patientID] == 1:
+            test1 += 1
+        else:
+            test0 += 1
+
+print(f"In training set, {train1} 1s, and {train0} 0s")
+print(f"In     test set, {test1}  1s, and {test0}  0s")
+print(f"total {len(IDResponseDict)} patients")
 
 # output dictionary
 jsonData = json.dumps(IDResponseDict)

@@ -74,7 +74,7 @@ class SegDataMgr(DataMgr):
                 ceWeight[i] = 1 / labelPortion[x]
                 accumu += labelPortion[x]
         ceWeight[position0] = 1 / (1 - accumu)  # unused labels belong to background 0
-        self.m_logInfo(f"Infor: Cross Entropy Weight: {ceWeight}")
+        self.m_logInfo(f"Infor: Cross Entropy Weight: {ceWeight} for label {self.m_remainedLabels}")
         return ceWeight
 
     def createSegmentedDir(self):

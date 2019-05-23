@@ -16,12 +16,15 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictLog_20190522.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictLog_20190523.txt'''
 logNotes = r'''
 Major program changes: 
                       the nunmber of filters in 1st layer in V model = 96
                       latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
                       PredictModel is convsDenseModule+FC network.
+                      there total 162 patient data, in which, 130 with smaller patientId as training data, 
+                                                          and 32 with bigger patientID as test data
+                                                         
                       
 
             '''
@@ -70,9 +73,9 @@ def main():
         testDataMgr = LatentDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -98,12 +101,12 @@ def main():
 
     # Load network
     netMgr = NetMgr(net, netPath)
-    bestTestDiceList = [0] * K
+    bestTestPerf = 0
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
         logging.info(f'Program loads net from {netPath}.')
-        bestTestPerf = netMgr.loadBestTestPerf(K)
-        logging.info(f'Current best test dice: {bestTestDiceList}')
+        bestTestPerf = netMgr.loadBestTestPerf()
+        logging.info(f'Current best test dice: {bestTestPerf}')
     else:
         logging.info(f"Network trains from scratch.")
 
@@ -128,9 +131,9 @@ def main():
         logging.info(net.lossFunctionsInfo())
 
     epochs = 150000
-    logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 ")
+    logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
 
-    logging.info(f"Epoch\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"\tTsLoss\t" + f"TestAccuracy" )  # logging.info output head
+    logging.info(f"Epoch\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"TsLoss\t" + f"TestAccuracy" )  # logging.info output head
 
     for epoch in range(epochs):
         # ================Training===============
@@ -170,7 +173,7 @@ def main():
                 batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
             if lambdaInBeta == 1 :
-               nTrainCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum()
+               nTrainCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum().item()
                nTrainTotal += labels1.shape[0]
 
             trainingLoss += batchLoss
@@ -206,7 +209,7 @@ def main():
                     else:
                         batchLoss, outputs = net.batchTest(inputs, labels)
 
-                    nTestCorrect += labels1.eq(outputs).sum()
+                    nTestCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum().item()
                     nTestTotal += labels1.shape[0]
 
                     testLoss += batchLoss
@@ -234,7 +237,7 @@ def main():
 
             else:
                 netMgr.save(testAccuracy)
-                if testAccuracy > bestTestPerf:  # compare the primary dice.
+                if testAccuracy > bestTestPerf:
                     bestTestPerf = testAccuracy
                     netMgr.saveBest(bestTestPerf)
         else:

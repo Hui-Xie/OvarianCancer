@@ -32,17 +32,23 @@ class NetMgr:
 
     def saveBestTestPerf(self, testPerf, netPath=None):
         netPath = self.m_netPath if netPath is None else netPath
-        testDiceArray = np.asarray(testPerf)
-        np.save(os.path.join(netPath, "bestTestPerf.npy"), testDiceArray)
+        testPerfArray = np.asarray(testPerf)
+        np.save(os.path.join(netPath, "bestTestPerf.npy"), testPerfArray)
 
-    def loadBestTestPerf(self, K):
+    def loadBestTestPerf(self, K=1):
         filename = os.path.join(self.m_netPath, "bestTestPerf.npy")
         if os.path.isfile(filename):
-            bestTestDiceList = np.load(filename)
-            bestTestDiceList.tolist()
+            bestTestPerf = np.load(filename)
+            if K >1:
+                bestTestPerf.tolist()
+            else:
+                bestTestPerf = bestTestPerf.item(0)
         else:
-            bestTestDiceList = [0]*K   # for 3 classifications
-        return bestTestDiceList
+            if K>1:
+                bestTestPerf = [0]*K   # for 3 classifications
+            else:
+                bestTestPerf = 0
+        return bestTestPerf
 
     def saveBest(self, testPerf, netPath=None):
         netPath = self.m_netBestPath if netPath is None else netPath

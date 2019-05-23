@@ -73,7 +73,7 @@ class BasicModel(nn.Module):
         params = self.parameters()
         for param in params:
             sumPara += param.nelement()
-        return f"Network has total {sumPara} parameters."
+        return f"Network has total {sumPara:,d} parameters."
 
     def setDropoutProb(self, prob):
         self.m_dropoutProb = prob

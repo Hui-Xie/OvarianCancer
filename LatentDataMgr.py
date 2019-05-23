@@ -68,18 +68,10 @@ class LatentDataMgr(DataMgr):
         labelList.clear()
 
 
-    def getCEWeight(self):  # Todo modify basiing on data statistics of classes in training sample.
-        labelPortion = [0.6, 0.4]  # this is portion of 0,1 label, whose sum = 1
-        N = len(self.m_remainedLabels)
-        ceWeight = [0.0] * N
-        accumu = 0.0
-        for i, x in enumerate(self.m_remainedLabels):
-            if 0 == x:
-                position0 = i
-                continue
-            else:
-                ceWeight[i] = 1 / labelPortion[x]
-                accumu += labelPortion[x]
-        ceWeight[position0] = 1 / (1 - accumu)  # unused labels belong to background 0
-        self.m_logInfo(f"Infor: Cross Entropy Weight: {ceWeight}")
+    def getCEWeight(self):
+        labelPortion = [0.3, 0.7]  # this is portion of 0,1 label, whose sum = 1
+        ceWeight = [0.0, 0.0]
+        for i in range(2):
+            ceWeight[i] = 1.0/labelPortion[i]
+        self.m_logInfo(f"Infor: Cross Entropy Weight: {ceWeight} for label[0, 1]")
         return ceWeight
