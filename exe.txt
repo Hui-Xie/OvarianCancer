@@ -1,1 +1,3 @@
 /home/hxie1/anaconda3/bin/python  /home/hxie1/Projects/OvarianCancer/TrainSegV.py /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2 /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels 2D 0,1,2
+
+python3.7 generateLatentVector.py /home/hxie1/temp_netParameters/OvarianCancer/test /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels  2D 0,1,2

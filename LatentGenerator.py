@@ -5,9 +5,10 @@ import os
 import numpy as np
 
 class LatentGenerator(DataMgr):
-    def __init__(self, imagesDir, labelsDir, logInfoFun=print):
-        super().__init__(imagesDir, labelsDir, logInfoFun)
+    def __init__(self, inputsDir, labelsDir, logInfoFun=print):
+        super().__init__(inputsDir, labelsDir, logInfoFun)
         self.createLatentDir()
+        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, "_CT.nrrd")
 
     def sectionGenerator(self, imageFile, heightVolume):
         """

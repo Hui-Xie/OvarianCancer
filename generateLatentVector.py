@@ -16,19 +16,19 @@ from LatentGenerator import LatentGenerator
 from SegV2DModel import SegV2DModel
 from SegV3DModel import SegV3DModel
 from NetMgr import NetMgr
-from CustomizedLoss import FocalCELoss, BoundaryLoss
-
 
 # you may need to change the file name and log Notes below for every training.
-generateLatentLog = r'''/home/hxie1/Projects/OvarianCancer/trainLog/latentGeneratorLog_20190520.txt'''
+generateLatentLog = r'''/home/hxie1/Projects/OvarianCancer/trainLog/latentGeneratorLog_20190524.txt'''
 logNotes = r'''
-Major program changes of V model: 
+Major program changes: 
                        merge train and test dataset;
                        for primary and metastases 3 classes classification
                        use conv-BN-Relu order;
                        use Dense module
                        Use ResPath
                        the nunmber of filters in 1st layer = 96
+                       network path: /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2/763%TrinaryNetwork20190520_Best
+                       the network has dice0 62.3%, primary dice 76.3%, metastases dice 53.7%. 
 
             '''
 
@@ -50,7 +50,7 @@ def main():
 
     print(f'Program ID {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
-    print(f'Latent log is in {generateLatentLog}')
+    print(f'Latent Vector generating log is in {generateLatentLog}')
     print(f'.........')
 
     logging.info(f'Program ID {os.getpid()}\n')
@@ -71,15 +71,11 @@ def main():
 
     logging.info(f"Info: netPath = {netPath}\n")
 
-    mergeTrainTestData = True
-
     dataMgr = LatentGenerator(imagesPath, labelsPath, logInfoFun=logging.info)
-    dataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
-    outputTrainDice = True
     # ===========debug==================
 
     dataMgr.expandInputsDir(dataMgr.getTestDirs()[0])
@@ -95,16 +91,18 @@ def main():
 
     # Load network
     netMgr = NetMgr(net, netPath)
-    bestTestDiceList = [0] * K
+    bestTestPerf = [0] * K
     if 2 == len(dataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("test")  # True for train
         logging.info(f'Program loads net from {netPath}.')
-        bestTestDiceList = netMgr.loadBestTestPerf(K)
-        logging.info(f'Current best test dice: {bestTestDiceList}')
+        bestTestPerf = netMgr.loadBestTestPerf(K)
+        logging.info(f'Current best test dice: {bestTestPerf}')
     else:
         logging.info(f"Network trains from scratch.")
 
     logging.info(net.getParametersScale())
+
+    logging.info(f"total {len(dataMgr.m_inputFilesList)} input files to generate latent vector. ")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -120,7 +118,7 @@ def main():
         patientID = dataMgr.getStemName(image, "_CT.nrrd")
         with torch.no_grad():
             assembleLatent = torch.tensor([]).to(device)
-            for inputs in dataMgr.sectionGenerator(image,heightVolume):
+            for inputs in dataMgr.sectionGenerator(image, heightVolume):
                 inputs = torch.from_numpy(inputs)
                 inputs = inputs.to(device, dtype=torch.float)
                 if useDataParallel:
@@ -138,9 +136,9 @@ def main():
         dataMgr.saveLatentV(assembleLatent, patientID)
 
     torch.cuda.empty_cache()
-    logging.info(f"=============END of Training of Ovarian Cancer Segmentation V Model =================")
+    logging.info(f"=============END of Generating latent vector from V model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
-    print(f"=============END of Training of Ovarian Cancer Segmentation V Model =================")
+    print(f"=============END of Generating latent vector from V model=================")
 
 
 if __name__ == "__main__":

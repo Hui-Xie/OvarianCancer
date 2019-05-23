@@ -119,8 +119,7 @@ class SegDataMgr(DataMgr):
             attr = self.getImageAttributes(image)
             self.m_imageAttrList.append(attr)
 
-    def getTestDirs(self):  # may need to delete this function
-        return self.m_inputsDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels')
+
 
     def getLabeledSliceIndex(self,labelArray):
         labelArray = self.suppressedLabels(labelArray, binarize=False)

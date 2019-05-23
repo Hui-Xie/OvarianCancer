@@ -291,3 +291,6 @@ class DataMgr:
     def oneHotArray2Labels(oneHotArray) -> np.ndarray:
         labelsArray = oneHotArray.argmax(axis=1)
         return labelsArray
+
+    def getTestDirs(self):  # may need to delete this function
+        return self.m_inputsDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels')
