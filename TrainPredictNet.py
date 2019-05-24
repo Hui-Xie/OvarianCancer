@@ -24,6 +24,28 @@ Major program changes:
                       PredictModel is convsDenseModule+FC network.
                       there total 162 patient data, in which, 130 with smaller patientId as training data, 
                                                           and 32 with bigger patientID as test data
+
+Experiment setting:
+Input: 1536*51*49 Tensor as latent vector,
+       where 1536 is the  number of filter at the bottleneck of V model, 
+             51 is the number of slices of ROI CT image with size 51*281*281 for input to V model, 
+             49 =7*7 is the flatted feature map for each filter.
+
+Predictive Model: 1,  first 4-layer dense conv block reducing feature space into 768 with tensor size 768*51*49 
+                  2,  and 4 dense conv blocks each of which includes a stride 2 conv and 4-layers dense conv block; now the the tensor is with size 48*2*2
+                  3,  and a simple conv-batchNorm-Relu layer with filter size(2,2) change the tensor with size of  48*1;
+                  4,  and 2 fully connected layers  changes the tensor into size 2*1;
+                  5  final a softmax for binary classification;
+                  Total network learning parameters are 29 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/PredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.
+                                                          
                                                          
                       
 
