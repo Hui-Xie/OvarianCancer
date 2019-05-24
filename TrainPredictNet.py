@@ -133,7 +133,7 @@ def main():
     epochs = 150000
     logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
 
-    logging.info(f"Epoch\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"TsLoss\t" + f"TestAccuracy" )  # logging.info output head
+    logging.info(f"Epoch\t\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"TsLoss\t" + f"TestAccuracy" )  # logging.info output head
 
     for epoch in range(epochs):
         # ================Training===============
@@ -225,7 +225,7 @@ def main():
             lrScheduler.step(trainingLoss)
 
         logging.info(
-            f'{epoch}\t{trainingLoss:.4f}\t' + f'{trainAccuracy:.3f}' + f'\t' +f'\t{testLoss:.4f}\t' + f'{testAccuracy:.3f}')
+            f'{epoch}\t\t{trainingLoss:.4f}\t' + f'{trainAccuracy:.3f}' + f'\t' +f'\t{testLoss:.4f}\t' + f'{testAccuracy:.3f}')
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
