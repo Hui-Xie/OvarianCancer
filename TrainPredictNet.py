@@ -119,7 +119,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=50, min_lr=1e-8)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=500, min_lr=1e-8)
 
     # Load network
     netMgr = NetMgr(net, netPath)
