@@ -243,7 +243,7 @@ class ConvOutput(nn.Module):
 class DownBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
-        self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0, 0), order=useBnReConvOrder)
+        self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0,)*len(filter1st), order=useBnReConvOrder)
         self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*len(filter1st), stride=(1,)*len(filter1st), padding=(1,)*len(filter1st))
 
     def forward(self, inputx):

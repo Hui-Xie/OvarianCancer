@@ -50,9 +50,9 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                                                           
                                                          
 Experiment setting for Image3d to response:
-Input: 147*281*281 raw image,
+Input: 73*141*141 sacled raw image 
        
-Predictive Model: 1,  first 4-layer dense conv block with channel size 256.
+Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
                   3,  and 2 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
@@ -137,10 +137,10 @@ def main():
         W = 49    # width of input
     else:
         batchSize = 4
-        C = 256  # number of channels after the first input layer
-        D = 147  # depth of input
-        H = 281  # height of input
-        W = 281  # width of input
+        C = 64  # number of channels after the first input layer
+        D = 73 #147  # depth of input
+        H = 141 #281  # height of input
+        W = 141 #281  # width of input
 
     trainDataMgr.setDataSize(batchSize, D, H, W, K,"TrainData")
                             # batchSize, depth, height, width, k, # do not consider lymph node with label 3
