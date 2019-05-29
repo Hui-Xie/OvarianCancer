@@ -11,12 +11,25 @@ class BN_ReLU_Conv(nn.Module):
         self.m_useBnReConvOrder = order
         if filterSize == (1,1):
             padding = (0,0)
+        if filterSize == (1,1,1):
+            padding = (0, 0, 0)
         if useBnReConvOrder:
-            self.m_bn1 = nn.BatchNorm2d(inCh)
+            if len(filterSize) == 2:
+                self.m_bn1 = nn.BatchNorm2d(inCh)
+            else:
+                self.m_bn1 = nn.BatchNorm3d(inCh)
         else:
-            self.m_bn1 = nn.BatchNorm2d(outCh)
+            if len(filterSize) == 2:
+                self.m_bn1 = nn.BatchNorm2d(outCh)
+            else:
+                self.m_bn1 = nn.BatchNorm3d(outCh)
+
         self.m_relu1 = nn.ReLU(inplace=True)
-        self.m_conv1 = nn.Conv2d(inCh, outCh, filterSize, stride, padding)
+
+        if len(filterSize) == 2:
+            self.m_conv1 = nn.Conv2d(inCh, outCh, filterSize, stride, padding)
+        else:
+            self.m_conv1 = nn.Conv3d(inCh, outCh, filterSize, stride, padding)
 
     def forward(self, inputx):
         if self.m_useBnReConvOrder:
@@ -25,16 +38,26 @@ class BN_ReLU_Conv(nn.Module):
             x = self.m_relu1(self.m_bn1(self.m_conv1(inputx)))
         return x
 
-class BN_ReLU_ConvT2d(nn.Module):  # ConvTransposed
+class BN_ReLU_ConvT(nn.Module):  # ConvTransposed
     def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), order = True):
         super().__init__()
         self.m_useBnReConvOrder = order
         if useBnReConvOrder:
-            self.m_bn1 = nn.BatchNorm2d(inCh)
+            if len(filterSize) == 2:
+                self.m_bn1 = nn.BatchNorm2d(inCh)
+            else:
+                self.m_bn1 = nn.BatchNorm3d(inCh)
         else:
-            self.m_bn1 = nn.BatchNorm2d(outCh)
+            if len(filterSize) == 2:
+                self.m_bn1 = nn.BatchNorm2d(outCh)
+            else:
+                self.m_bn1 = nn.BatchNorm3d(outCh)
+
         self.m_relu1 = nn.ReLU(inplace=True)
-        self.m_convT1 = nn.ConvTranspose2d(inCh, outCh, filterSize, stride)
+        if len(filterSize) == 2:
+            self.m_convT1 = nn.ConvTranspose2d(inCh, outCh, filterSize, stride)
+        else:
+            self.m_convT1 = nn.ConvTranspose3d(inCh, outCh, filterSize, stride)
 
     def forward(self, inputx):
         if self.m_useBnReConvOrder:
@@ -45,7 +68,7 @@ class BN_ReLU_ConvT2d(nn.Module):  # ConvTransposed
 
 
 class ConvDecreaseChannels(nn.Module):
-    def __init__(self, inCh, outCh, nLayers):
+    def __init__(self, inCh, outCh, nLayers, filterSize=(3,3), stride=(1,1), padding=(1,1)):
         super().__init__()
         if nLayers < 2:
             print("Error: ConvDecreaseChannels needs at least 2 conv layers.")
@@ -57,7 +80,7 @@ class ConvDecreaseChannels(nn.Module):
         for i in range(self.m_nLayers):
             inChL = inCh - i*step
             outChL = inChL-step if i !=self.m_nLayers-1 else outCh
-            self.m_convBlocks.append(BN_ReLU_Conv(inChL, outChL, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder))
+            self.m_convBlocks.append(BN_ReLU_Conv(inChL, outChL, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder))
 
     def forward(self, inputx, skipInput=None):
         x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)
@@ -67,7 +90,7 @@ class ConvDecreaseChannels(nn.Module):
 
 
 class Skip2Convs(nn.Module):
-    def __init__(self, inCh, outCh, nLayers):
+    def __init__(self, inCh, outCh, nLayers, filterSize=(3,3), stride=(1, 1), padding=(1,1)):
         super().__init__()
         if nLayers < 2:
             print("Error: ConvResidual needs at least 2 conv layers.")
@@ -78,9 +101,9 @@ class Skip2Convs(nn.Module):
         self.m_convBlocks = nn.ModuleList()
         for i in range(self.m_nLayers):
             if 0 == i:
-                self.m_convBlocks.append(BN_ReLU_Conv(inCh, outCh, order=useBnReConvOrder))
+                self.m_convBlocks.append(BN_ReLU_Conv(inCh, outCh, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder))
             else:
-                self.m_convBlocks.append(BN_ReLU_Conv(outCh, outCh, order=useBnReConvOrder))
+                self.m_convBlocks.append(BN_ReLU_Conv(outCh, outCh, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder))
 
     def forward(self, inputx):
         x = inputx
@@ -99,10 +122,10 @@ class Skip2Convs(nn.Module):
         return x
 
 class Conv33_11Residual(nn.Module):
-    def __init__(self, inCh, outCh):
+    def __init__(self, inCh, outCh, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         super().__init__()
-        self.m_33conv = BN_ReLU_Conv(inCh, outCh, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder)
-        self.m_11conv = BN_ReLU_Conv(inCh, outCh, filterSize=(1, 1), stride=(1, 1), padding=(0, 0), order=useBnReConvOrder)
+        self.m_33conv = BN_ReLU_Conv(inCh, outCh, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder)
+        self.m_11conv = BN_ReLU_Conv(inCh, outCh, filterSize=(1,)*len(filterSize), stride=(1,)*len(filterSize), padding=(0,)*len(filterSize), order=useBnReConvOrder)
 
     def forward(self, inputx):
         x = self.m_33conv(inputx) + self.m_11conv(inputx)
@@ -114,15 +137,15 @@ class ResPath(nn.Module):
     link: https://arxiv.org/abs/1902.04049
 
     """
-    def __init__(self, inCh, outCh, nLayers):
+    def __init__(self, inCh, outCh, nLayers, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         super().__init__()
         self.m_convBlocks = nn.ModuleList()
         self.m_nLayers = nLayers
         for i in range(nLayers):
             if i==0:
-                self.m_convBlocks.append(Conv33_11Residual(inCh,outCh))
+                self.m_convBlocks.append(Conv33_11Residual(inCh,outCh, filterSize=filterSize, stride=stride, padding=padding))
             else:
-                self.m_convBlocks.append(Conv33_11Residual(outCh, outCh))
+                self.m_convBlocks.append(Conv33_11Residual(outCh, outCh, filterSize=filterSize, stride=stride, padding=padding))
 
     def forward(self, inputx):
         x = inputx
@@ -132,7 +155,7 @@ class ResPath(nn.Module):
 
 
 class ConvDense(nn.Module):
-    def __init__(self, inCh, outCh, nLayers):
+    def __init__(self, inCh, outCh, nLayers, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         """
         :param inCh: input channels
         :param outCh: output channels
@@ -147,11 +170,11 @@ class ConvDense(nn.Module):
         for i in range(nLayers):
             inChL  = inCh+ i*k  # inChannels in Layer
             outChL = k if i != nLayers-1 else outCh-k*(nLayers-1)
-            self.m_convBlocks.append(BN_ReLU_Conv(inChL, midChL, filterSize=(1, 1), stride=(1, 1), padding=(0, 0), order=useBnReConvOrder))
-            self.m_convBlocks.append(BN_ReLU_Conv(midChL, outChL, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder))
+            self.m_convBlocks.append(BN_ReLU_Conv(inChL, midChL, filterSize=(1,)*len(filterSize), stride=(1,)*len(filterSize), padding=(0,)*len(filterSize), order=useBnReConvOrder))
+            self.m_convBlocks.append(BN_ReLU_Conv(midChL, outChL, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder))
 
         # add 1*1 convoluitonal layer to adjust output channels
-        self.m_convBlocks.append(BN_ReLU_Conv(inCh + outCh, outCh, (1, 1), stride=(1, 1), padding=(0, 0), order=useBnReConvOrder))
+        self.m_convBlocks.append(BN_ReLU_Conv(inCh + outCh, outCh, filterSize=(1,)*len(filterSize), stride=(1,)*len(filterSize), padding=(0,)*len(filterSize), order=useBnReConvOrder))
 
     def forward(self, inputx):
         x = inputx
@@ -165,25 +188,25 @@ class ConvDense(nn.Module):
         return x
 
 class ConvBuildingBlock(nn.Module):
-    def __init__(self, inCh, outCh, nLayers):
+    def __init__(self, inCh, outCh, nLayers, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         super().__init__()
         if useSkip2Residual:   # use residual links
-            self.m_convBlock = Skip2Convs(inCh, outCh, nLayers)
+            self.m_convBlock = Skip2Convs(inCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding)
         else:             # use Dense Links
-            self.m_convBlock = ConvDense(inCh, outCh, nLayers)
+            self.m_convBlock = ConvDense(inCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding)
 
     def forward(self, inputx):
         return self.m_convBlock(inputx)
 
 
 class ConvInput(nn.Module):
-    def __init__(self, inCh, outCh, nLayers):
+    def __init__(self, inCh, outCh, nLayers, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         super().__init__()
         if nLayers < 2:
             print("Error: ConvInput needs at least 2 conv layers.")
             sys.exit(-1)
-        self.m_convLayer = BN_ReLU_Conv(inCh, outCh, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers)
+        self.m_convLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder)
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding )
 
     def forward(self, inputx):
         x = inputx
@@ -192,7 +215,7 @@ class ConvInput(nn.Module):
         return x
 
 class ConvOutput(nn.Module):
-    def __init__(self, inCh, outCh, nLayers, K):
+    def __init__(self, inCh, outCh, nLayers, K, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         """
 
         :param inCh:
@@ -200,9 +223,13 @@ class ConvOutput(nn.Module):
         :param K:  final output class before softmax
         """
         super().__init__()
-        self.m_convBlocks =  ConvBuildingBlock(inCh, outCh, nLayers)
-        self.m_bn = nn.BatchNorm2d(outCh)
-        self.m_conv11 = nn.Conv2d(outCh, K, (1, 1), stride=(1, 1))
+        self.m_convBlocks =  ConvBuildingBlock(inCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding)
+        if len(filterSize) == 2:
+            self.m_bn = nn.BatchNorm2d(outCh)
+            self.m_conv11 = nn.Conv2d(outCh, K, (1, 1), stride=(1, 1))
+        else:
+            self.m_bn = nn.BatchNorm3d(outCh)
+            self.m_conv11 = nn.Conv3d(outCh, K, (1, 1, 1), stride=(1, 1, 1))
 
     def forward(self, inputx, skipInput=None):
         x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)         # batchsize is in dim 0, so concatenate at dim 1.
@@ -217,7 +244,7 @@ class Down2dBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
         self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0, 0), order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers)
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*len(filter1st), stride=(1,)*len(filter1st), padding=(1,)*len(filter1st))
 
     def forward(self, inputx):
         x = self.m_downLayer(inputx)
@@ -228,8 +255,8 @@ class Down2dBB(nn.Module): # down sample 2D building block
 class Up2dBB(nn.Module): # up sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
-        self.m_upLayer = BN_ReLU_ConvT2d(inCh, outCh, filterSize=filter1st, stride=stride, order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers)
+        self.m_upLayer = BN_ReLU_ConvT(inCh, outCh, filterSize=filter1st, stride=stride, order=useBnReConvOrder)
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*len(filter1st), stride=(1,)*len(filter1st), padding=(1,)*len(filter1st))
 
 
     def forward(self, downInput, skipInput=None):
