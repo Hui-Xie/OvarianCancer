@@ -50,7 +50,7 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                                                           
                                                          
 Experiment setting for Image3d to response:
-Input: 73*141*141 sacled raw image 
+Input: 73*141*141 scaled raw image 
        
 Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
