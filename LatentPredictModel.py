@@ -12,10 +12,10 @@ class LatentPredictModel(BasicModel):
         N = 4  # the number of layer in each building block
         self.m_input = ConvInput(C, C//2, N)                             # inputSize: C*51*49; output:C//2*51*49
 
-        self.m_down1 = Down2dBB(C//2, C//4, (3, 5), stride=(2, 2), nLayers=N)  # output:C//4*25*23
-        self.m_down2 = Down2dBB(C//4, C//8, (5, 3), stride=(2, 2), nLayers=N)  # output: C//8*11*11
-        self.m_down3 = Down2dBB(C//8, C//16, (3, 3), stride=(2, 2), nLayers=N)  # output: C//16*5*5
-        self.m_down4 = Down2dBB(C//16, C//32, (3, 3), stride=(2, 2), nLayers=N)  # output: C//32*2*2
+        self.m_down1 = DownBB(C // 2, C // 4, (3, 5), stride=(2, 2), nLayers=N)  # output:C//4*25*23
+        self.m_down2 = DownBB(C // 4, C // 8, (5, 3), stride=(2, 2), nLayers=N)  # output: C//8*11*11
+        self.m_down3 = DownBB(C // 8, C // 16, (3, 3), stride=(2, 2), nLayers=N)  # output: C//16*5*5
+        self.m_down4 = DownBB(C // 16, C // 32, (3, 3), stride=(2, 2), nLayers=N)  # output: C//32*2*2
         self.m_down5 = BN_ReLU_Conv(C // 32, C // 32, filterSize=(2, 2), stride=(1, 1), padding=(0, 0), order=False)   # output: C//32*1*1
         self.m_fc11   = nn.Sequential(
                        nn.Linear(C//32, C//64),

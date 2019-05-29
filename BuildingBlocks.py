@@ -206,7 +206,7 @@ class ConvInput(nn.Module):
             print("Error: ConvInput needs at least 2 conv layers.")
             sys.exit(-1)
         self.m_convLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding )
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder)
 
     def forward(self, inputx):
         x = inputx
@@ -240,7 +240,7 @@ class ConvOutput(nn.Module):
             x = self.m_conv11(x)   # no need bn and relu
         return x
 
-class Down2dBB(nn.Module): # down sample 2D building block
+class DownBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
         self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0, 0), order=useBnReConvOrder)
@@ -252,7 +252,7 @@ class Down2dBB(nn.Module): # down sample 2D building block
         return x
 
 
-class Up2dBB(nn.Module): # up sample 2D building block
+class UpBB(nn.Module): # up sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
         self.m_upLayer = BN_ReLU_ConvT(inCh, outCh, filterSize=filter1st, stride=stride, order=useBnReConvOrder)

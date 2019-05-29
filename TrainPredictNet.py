@@ -121,7 +121,7 @@ def main():
         W = 49    # width of input
     else:
         batchSize = 4
-        C = 1  # number of input features
+        C = 1024  # number of channels after the first input layer
         D = 147  # depth of input
         H = 281  # height of input
         W = 281  # width of input
@@ -130,8 +130,12 @@ def main():
                             # batchSize, depth, height, width, k, # do not consider lymph node with label 3
     if not mergeTrainTestData:
         testDataMgr.setDataSize(batchSize, D, H, W, K, "TestData")  # batchSize, depth, height, width, k
-    net = LatentPredictModel(C, K)
 
+    if inputModel == 'latent':
+        net = LatentPredictModel(C, K)
+    else:
+        net = Image3dResponseDataMgr(C, K)
+        
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 
     optimizer = optim.Adam(net.parameters())
