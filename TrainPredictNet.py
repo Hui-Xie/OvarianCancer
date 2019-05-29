@@ -10,13 +10,13 @@ import torch.optim as optim
 import logging
 import os
 
-from LatentDataMgr import LatentDataMgr
+from LatentResponseDataMgr import LatentResponseDataMgr
 from PredictModel import PredictModel
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictLog_20190523.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictImage3DLog_20190529.txt'''
 logNotes = r'''
 Major program changes: 
                       the nunmber of filters in 1st layer in V model = 96
@@ -25,7 +25,7 @@ Major program changes:
                       there total 162 patient data, in which, 130 with smaller patientId as training data, 
                                                           and 32 with bigger patientID as test data
 
-Experiment setting:
+Experiment setting for Latent to response:
 Input: 1536*51*49 Tensor as latent vector,
        where 1536 is the  number of filter at the bottleneck of V model, 
              51 is the number of slices of ROI CT image with size 51*281*281 for input to V model, 
@@ -89,10 +89,10 @@ def main():
 
     mergeTrainTestData = False
 
-    trainDataMgr = LatentDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
+    trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
-        testDataMgr = LatentDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
+        testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
 
     # ===========debug==================
     trainDataMgr.setOneSampleTraining(False)  # for debug
