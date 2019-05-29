@@ -191,9 +191,9 @@ class ConvBuildingBlock(nn.Module):
     def __init__(self, inCh, outCh, nLayers, filterSize=(3, 3), stride=(1, 1), padding=(1, 1)):
         super().__init__()
         if useSkip2Residual:   # use residual links
-            self.m_convBlock = Skip2Convs(inCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding)
+            self.m_convBlock = Skip2Convs(inCh, outCh, nLayers, filterSize = filterSize, stride=stride, padding=padding)
         else:             # use Dense Links
-            self.m_convBlock = ConvDense(inCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding)
+            self.m_convBlock = ConvDense(inCh, outCh, nLayers, filterSize = filterSize, stride=stride, padding=padding)
 
     def forward(self, inputx):
         return self.m_convBlock(inputx)
