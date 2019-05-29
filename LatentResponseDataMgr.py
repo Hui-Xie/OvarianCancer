@@ -10,9 +10,8 @@ import json
 class LatentResponseDataMgr(ResponseDataMgr):
     def __init__(self, inputsDir, labelsPath, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, logInfoFun)
-        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, "_Latent.npy")
-        self.m_logInfo(f"Now program get {len(self.m_inputFilesList)} input files.")
-
+        self.m_inputsSuffix = "_Latent.npy"
+        self.initializeInputsResponseList()
 
     def dataLabelGenerator(self, shuffle):
         """

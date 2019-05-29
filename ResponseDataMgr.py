@@ -4,6 +4,10 @@ import json
 class ResponseDataMgr(DataMgr):
     def __init__(self, inputsDir, labelsPath, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, logInfoFun)
+
+    def initializeInputsResponseList(self):
+        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputsSuffix)
+        self.m_logInfo(f"Now program get {len(self.m_inputFilesList)} input files.")
         self.m_labelsList = []
         self.getLabelsList()
 
@@ -11,12 +15,11 @@ class ResponseDataMgr(DataMgr):
         with open(self.m_labelsDir) as f:
             allPatientRespsDict = json.load(f)
 
-        for latent in self.m_inputFilesList:
-            patientID = self.getStemName(latent, "_Latent.npy")
-            if len(patientID)>8:
+        for file in self.m_inputFilesList:
+            patientID = self.getStemName(file, self.m_inputsSuffix)
+            if len(patientID) > 8:
                 patientID = patientID[0:8]
             self.m_labelsList.append(allPatientRespsDict[patientID])
-
 
     def getCEWeight(self):
         labelPortion = [0.3, 0.7]  # this is portion of 0,1 label, whose sum = 1

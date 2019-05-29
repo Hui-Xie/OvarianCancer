@@ -27,7 +27,8 @@ class SegDataMgr(DataMgr):
         self.m_suppressedLabels = []
 
         self.createSegmentedDir()
-        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, "_CT.nrrd")
+        self.m_inputsSuffix = "_CT.nrrd"
+        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputsSuffix)
 
     def setMaxShift(self, maxShift, translationProb = 0.5):
         self.m_maxShift = maxShift

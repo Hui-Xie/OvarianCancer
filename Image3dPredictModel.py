@@ -14,10 +14,10 @@ class Image3dPredictModel(BasicModel):
 
         self.m_down1 = DownBB(C,      C // 2,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output:C//2*73*140*140
         self.m_down2 = DownBB(C // 2, C // 4,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//4*36*69*69
-        self.m_down3 = DownBB(C // 4, C // 8,   fliter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//8*17*34*34
-        self.m_down4 = DownBB(C // 8, C // 16,  fliter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//16*8*16*16
-        self.m_down5 = DownBB(C // 16, C // 32, fliter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//32*3*7*7
-        self.m_down6 = DownBB(C // 32, C // 32, fliter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//32*1*3*3
+        self.m_down3 = DownBB(C // 4, C // 8,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//8*17*34*34
+        self.m_down4 = DownBB(C // 8, C // 16,  filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//16*8*16*16
+        self.m_down5 = DownBB(C // 16, C // 32, filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//32*3*7*7
+        self.m_down6 = DownBB(C // 32, C // 32, filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C//32*1*3*3
 
         self.m_fc11   = nn.Sequential(
                        nn.Linear(C//32 *9 , C//32 * 3),

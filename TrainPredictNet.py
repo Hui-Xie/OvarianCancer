@@ -152,8 +152,6 @@ def main():
     else:
         net = Image3dPredictModel(C, K)
 
-    print("I am here at line 155!")
-
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 
     optimizer = optim.Adam(net.parameters())

@@ -12,6 +12,7 @@ class DataMgr:
         self.m_oneSampleTraining = False
         self.m_inputsDir = inputsDir
         self.m_labelsDir = labelsDir
+        self.m_inputsSuffix = ""
 
         self.m_alpha    = 0.4
         self.m_mixupProb = 0
@@ -77,7 +78,7 @@ class DataMgr:
         os.chdir(originalCwd)
         return filesList
 
-    def expandInputsDir(self, imagesDir, suffix="_CT.nrrd"):
+    def expandInputsDir(self, imagesDir, suffix):
         self.m_inputFilesList += self.getFilesList(imagesDir, suffix)
         self.m_logInfo(f'Expanding inputs dir: {imagesDir}')
         self.m_logInfo(f'Now dataMgr has {len(self.m_inputFilesList)} input files.')
