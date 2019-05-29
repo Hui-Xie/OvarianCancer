@@ -13,11 +13,12 @@ import os
 from LatentResponseDataMgr import LatentResponseDataMgr
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from LatentPredictModel import LatentPredictModel
+from Image3dPredictModel import Image3dPredictModel
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/predictImage3DLog_20190529.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3DPredictLog_20190529.txt'''
 logNotes = r'''
 Major program changes: 
                       the nunmber of filters in 1st layer in V model = 96
@@ -38,7 +39,7 @@ Predictive Model: 1,  first 4-layer dense conv block reducing feature space into
                   4,  and 2 fully connected layers  changes the tensor into size 2*1;
                   5  final a softmax for binary classification;
                   Total network learning parameters are 29 millions.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/PredictModel.py
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/LatentPredictModel.py
 
 Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
 
@@ -48,7 +49,22 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                     No other data augmentation, and no dropout.
                                                           
                                                          
-                      
+Experiment setting for Image3d to response:
+Input: 147*281*281 raw image,
+       
+Predictive Model: 1,  first 4-layer dense conv block with channel size 1024.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  3,  and 2 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 29 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.                      
 
             '''
 
@@ -134,8 +150,10 @@ def main():
     if inputModel == 'latent':
         net = LatentPredictModel(C, K)
     else:
-        net = Image3dResponseDataMgr(C, K)
-        
+        net = Image3dPredictModel(C, K)
+
+    print("I am here at line 155!")
+
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 
     optimizer = optim.Adam(net.parameters())

@@ -206,7 +206,7 @@ class ConvInput(nn.Module):
             print("Error: ConvInput needs at least 2 conv layers.")
             sys.exit(-1)
         self.m_convLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding, order=useBnReConvOrder)
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=filterSize, stride=stride, padding=padding)
 
     def forward(self, inputx):
         x = inputx
