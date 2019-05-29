@@ -124,9 +124,9 @@ def main():
             trainDataMgr.expandInputsDir(testInputsPath, suffix="_CT.nrrd")
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
