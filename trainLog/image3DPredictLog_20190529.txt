@@ -1,4 +1,4 @@
-Program ID of Prdict Network training:19341
+Program ID of Prdict Network training:21411
 
 Program command: 
  ['/home/hxie1/Projects/OvarianCancer/TrainPredictNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/Predict', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json', 'image3d']
@@ -51,7 +51,7 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
 
             
 
-Program starting Time: 2019-05-29 15:08:05.962729
+Program starting Time: 2019-05-29 15:21:32.171758
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Predict
 
 Now program get 130 input files.

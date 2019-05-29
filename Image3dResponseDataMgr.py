@@ -44,7 +44,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             label = self.m_labelsList[n]
             image3d = self.readImageFile(imageFile)
             shape = image3d.shape
-            zoomFactor = [shape[0]/self.m_depth, shape[1]/self.m_height,  shape[2]/self.m_width]
+            zoomFactor = [self.m_depth/shape[0], self.m_height/shape[1], self.m_width/shape[2]]
             image3d = ndimage.zoom(image3d, zoomFactor)
 
             dataList.append(image3d)
