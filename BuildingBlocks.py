@@ -5,7 +5,7 @@ import sys
 useSkip2Residual = False       # use residual module in each building block, otherwise use DenseBlock
 useBnReConvOrder = False       # use Bn-ReLU-Conv2d order in each layer, otherwise use Conv2d-Bn-ReLU order
 
-class BN_ReLU_Conv2d(nn.Module):
+class BN_ReLU_Conv(nn.Module):
     def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1), order= False):
         super().__init__()
         self.m_useBnReConvOrder = order
@@ -57,7 +57,7 @@ class ConvDecreaseChannels(nn.Module):
         for i in range(self.m_nLayers):
             inChL = inCh - i*step
             outChL = inChL-step if i !=self.m_nLayers-1 else outCh
-            self.m_convBlocks.append(BN_ReLU_Conv2d(inChL, outChL, filterSize=(3,3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder))
+            self.m_convBlocks.append(BN_ReLU_Conv(inChL, outChL, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder))
 
     def forward(self, inputx, skipInput=None):
         x = inputx if skipInput is None else torch.cat((inputx, skipInput), 1)
@@ -78,9 +78,9 @@ class Skip2Convs(nn.Module):
         self.m_convBlocks = nn.ModuleList()
         for i in range(self.m_nLayers):
             if 0 == i:
-                self.m_convBlocks.append(BN_ReLU_Conv2d(inCh, outCh, order=useBnReConvOrder))
+                self.m_convBlocks.append(BN_ReLU_Conv(inCh, outCh, order=useBnReConvOrder))
             else:
-                self.m_convBlocks.append(BN_ReLU_Conv2d(outCh, outCh, order=useBnReConvOrder))
+                self.m_convBlocks.append(BN_ReLU_Conv(outCh, outCh, order=useBnReConvOrder))
 
     def forward(self, inputx):
         x = inputx
@@ -101,8 +101,8 @@ class Skip2Convs(nn.Module):
 class Conv33_11Residual(nn.Module):
     def __init__(self, inCh, outCh):
         super().__init__()
-        self.m_33conv = BN_ReLU_Conv2d(inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1), order=useBnReConvOrder)
-        self.m_11conv = BN_ReLU_Conv2d(inCh, outCh, filterSize=(1,1), stride=(1, 1), padding=(0,0), order=useBnReConvOrder)
+        self.m_33conv = BN_ReLU_Conv(inCh, outCh, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder)
+        self.m_11conv = BN_ReLU_Conv(inCh, outCh, filterSize=(1, 1), stride=(1, 1), padding=(0, 0), order=useBnReConvOrder)
 
     def forward(self, inputx):
         x = self.m_33conv(inputx) + self.m_11conv(inputx)
@@ -147,11 +147,11 @@ class ConvDense(nn.Module):
         for i in range(nLayers):
             inChL  = inCh+ i*k  # inChannels in Layer
             outChL = k if i != nLayers-1 else outCh-k*(nLayers-1)
-            self.m_convBlocks.append(BN_ReLU_Conv2d(inChL, midChL,  filterSize=(1,1), stride=(1,1), padding=(0,0), order=useBnReConvOrder))
-            self.m_convBlocks.append(BN_ReLU_Conv2d(midChL, outChL, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder))
+            self.m_convBlocks.append(BN_ReLU_Conv(inChL, midChL, filterSize=(1, 1), stride=(1, 1), padding=(0, 0), order=useBnReConvOrder))
+            self.m_convBlocks.append(BN_ReLU_Conv(midChL, outChL, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder))
 
         # add 1*1 convoluitonal layer to adjust output channels
-        self.m_convBlocks.append(BN_ReLU_Conv2d(inCh+outCh, outCh, (1, 1), stride=(1, 1), padding=(0,0), order=useBnReConvOrder))
+        self.m_convBlocks.append(BN_ReLU_Conv(inCh + outCh, outCh, (1, 1), stride=(1, 1), padding=(0, 0), order=useBnReConvOrder))
 
     def forward(self, inputx):
         x = inputx
@@ -182,7 +182,7 @@ class ConvInput(nn.Module):
         if nLayers < 2:
             print("Error: ConvInput needs at least 2 conv layers.")
             sys.exit(-1)
-        self.m_convLayer = BN_ReLU_Conv2d(inCh, outCh, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder)
+        self.m_convLayer = BN_ReLU_Conv(inCh, outCh, filterSize=(3, 3), stride=(1, 1), padding=(1, 1), order=useBnReConvOrder)
         self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers)
 
     def forward(self, inputx):
@@ -216,7 +216,7 @@ class ConvOutput(nn.Module):
 class Down2dBB(nn.Module): # down sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
-        self.m_downLayer = BN_ReLU_Conv2d(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0, 0), order=useBnReConvOrder)
+        self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0, 0), order=useBnReConvOrder)
         self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers)
 
     def forward(self, inputx):

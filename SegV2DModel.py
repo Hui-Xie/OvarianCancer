@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import sys
 
 from BasicModel import BasicModel
-from ModuleBuildingBlocks import *
+from BuildingBlocks import *
 
 #  2D model
 

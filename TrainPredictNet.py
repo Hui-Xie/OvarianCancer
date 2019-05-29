@@ -11,7 +11,8 @@ import logging
 import os
 
 from LatentResponseDataMgr import LatentResponseDataMgr
-from PredictModel import PredictModel
+from Image3dResponseDataMgr import Image3dResponseDataMgr
+from LatentPredictModel import LatentPredictModel
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
@@ -57,11 +58,11 @@ logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, fo
 def printUsage(argv):
     print("============Train Ovarian Cancer Predictive Model=============")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfLabels> ")
+    print(argv[0], "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfLabels> <latent|image3d>")
 
 
 def main():
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
@@ -82,6 +83,7 @@ def main():
     trainingInputsPath = sys.argv[2]
     testInputsPath = sys.argv[3]
     labelsPath = sys.argv[4]
+    inputModel = sys.argv[5]  # latent or image3d
 
     K = 2 # treatment response 1 or 0
 
@@ -89,31 +91,46 @@ def main():
 
     mergeTrainTestData = False
 
-    trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
+    if inputModel == 'latent':
+        trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
+    else:
+        trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
-        testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
+        if inputModel == 'latent':
+            testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
+        else:
+            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
+    else:
+        if inputModel == 'latent':
+            trainDataMgr.expandInputsDir(testInputsPath, suffix="_Latent.npy")
+        else:
+            trainDataMgr.expandInputsDir(testInputsPath, suffix="_CT.nrrd")
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
-    if mergeTrainTestData:
-        trainDataMgr.expandInputsDir(testInputsPath, suffix="_Latent.npy")
+    if inputModel == 'latent':
+        batchSize  = 16
+        C = D = 1536  # number of input features
+        H = 51    # height of input
+        W = 49    # width of input
+    else:
+        batchSize = 4
+        C = 1  # number of input features
+        D = 147  # depth of input
+        H = 281  # height of input
+        W = 281  # width of input
 
-    batchSize  = 16
-    C = 1536  # number of input features
-    H = 51    # height of input
-    W = 49    # width of input
-
-    trainDataMgr.setDataSize(batchSize, C, H, W, K,"TrainData")
+    trainDataMgr.setDataSize(batchSize, D, H, W, K,"TrainData")
                             # batchSize, depth, height, width, k, # do not consider lymph node with label 3
     if not mergeTrainTestData:
-        testDataMgr.setDataSize(batchSize, C, H, W, K, "TestData")  # batchSize, depth, height, width, k
-    net = PredictModel(C, K)
+        testDataMgr.setDataSize(batchSize, D, H, W, K, "TestData")  # batchSize, depth, height, width, k
+    net = LatentPredictModel(C, K)
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 
