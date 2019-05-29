@@ -47,6 +47,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             zoomFactor = [self.m_depth/shape[0], self.m_height/shape[1], self.m_width/shape[2]]
             image3d = ndimage.zoom(image3d, zoomFactor)
 
+            image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
             dataList.append(image3d)
             labelList.append(label)
             batch +=1

@@ -6,7 +6,7 @@ useSkip2Residual = False       # use residual module in each building block, oth
 useBnReConvOrder = False       # use Bn-ReLU-Conv2d order in each layer, otherwise use Conv2d-Bn-ReLU order
 
 class BN_ReLU_Conv(nn.Module):
-    def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1), order= False):
+    def __init__(self, inCh, outCh, filterSize=(3,3), stride=(1, 1), padding=(1,1), order= useBnReConvOrder):
         super().__init__()
         self.m_useBnReConvOrder = order
         if filterSize == (1,1):
