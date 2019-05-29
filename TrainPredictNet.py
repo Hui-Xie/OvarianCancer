@@ -56,7 +56,7 @@ Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
                   3,  and 2 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
-                  Total network learning parameters are 29 millions.
+                  Total network learning parameters are 1.56 millions.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
 Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
