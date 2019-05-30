@@ -19,6 +19,7 @@ from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
 trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3DPredictLog_20190529.txt'''
+# trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_20190530.txt'''
 logNotes = r'''
 Major program changes: 
                       the nunmber of filters in 1st layer in V model = 96
@@ -64,7 +65,10 @@ Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately
 Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
 
 Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.                      
+                    No other data augmentation, and no dropout.  
+                    
+                    change patience of learningRate scheduler to 30.
+                                         
 
             '''
 
