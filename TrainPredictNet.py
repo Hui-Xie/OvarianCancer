@@ -275,8 +275,8 @@ def main():
                     else:
                         batchLoss, outputs = net.batchTest(inputs, labels)
 
-                    nTestCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum().item()
-                    nTestTotal += labels1.shape[0]
+                    nTestCorrect += labels.eq(torch.argmax(outputs,dim=1)).sum().item()
+                    nTestTotal += labels.shape[0]
 
                     testLoss += batchLoss
                     testBatches += 1
