@@ -5,10 +5,14 @@ from scipy import ndimage
 import numpy as np
 from DataMgr import DataMgr
 
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
 suffix = "_CT.nrrd"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom/readme.txt"
+inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages"
+outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom/readme.txt"
+
+# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
+# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom"
+# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom/readme.txt"
 
 goalSize = (73,141,141)
 
@@ -29,8 +33,8 @@ for file in filesList:
 N = len(filesList)
 
 with open(readmeFile,"w") as f:
-    f.write(f"total {N} files in this directory")
-    f.write(f"goalSize: {goalSize}")
-    f.write(f"inputsDir = {inputsDir}")
+    f.write(f"total {N} files in this directory\n")
+    f.write(f"goalSize: {goalSize}\n")
+    f.write(f"inputsDir = {inputsDir}\n")
 
 

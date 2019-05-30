@@ -11,7 +11,7 @@ from ResponseDataMgr import ResponseDataMgr
 class Image3dResponseDataMgr(ResponseDataMgr):
     def __init__(self, inputsDir, labelsPath, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, logInfoFun)
-        self.m_inputsSuffix = "_CT.nrrd"
+        self.m_inputsSuffix = "_zoom.npy"  # "_CT.nrrd"
         self.initializeInputsResponseList()
 
 
@@ -41,13 +41,17 @@ class Image3dResponseDataMgr(ResponseDataMgr):
                     break
 
             imageFile = self.m_inputFilesList[n]
-            label = self.m_labelsList[n]
-            image3d = self.readImageFile(imageFile)
-            shape = image3d.shape
-            zoomFactor = [self.m_depth/shape[0], self.m_height/shape[1], self.m_width/shape[2]]
-            image3d = ndimage.zoom(image3d, zoomFactor)
+            if "_CT.nrrd" == self.m_inputsSuffix:
+                image3d = self.readImageFile(imageFile)
+                shape = image3d.shape
+                zoomFactor = [self.m_depth / shape[0], self.m_height / shape[1], self.m_width / shape[2]]
+                image3d = ndimage.zoom(image3d, zoomFactor)
+            else:  # load zoomed and fixed-size numpy array
+                image3d = np.load(imageFile)
 
             image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
+            label = self.m_labelsList[n]
+
             dataList.append(image3d)
             labelList.append(label)
             batch +=1
