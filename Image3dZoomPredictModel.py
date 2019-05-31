@@ -4,7 +4,7 @@ import torch
 
 # Predictive Model for treatment response
 
-class Image3dPredictModel(BasicModel):
+class Image3dZoomPredictModel(BasicModel):
     def __init__(self, C,  K):
         super().__init__()
         # input size: C*D*H*W,  and output K class classification

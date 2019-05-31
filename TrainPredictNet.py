@@ -13,7 +13,7 @@ import os
 from LatentResponseDataMgr import LatentResponseDataMgr
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from LatentPredictModel import LatentPredictModel
-from Image3dPredictModel import Image3dPredictModel
+from Image3dZoomPredictModel import Image3dZoomPredictModel
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
@@ -154,7 +154,7 @@ def main():
     if inputModel == 'latent':
         net = LatentPredictModel(C, K)
     else:
-        net = Image3dPredictModel(C, K)
+        net = Image3dZoomPredictModel(C, K)
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 
