@@ -4,6 +4,8 @@ python3.7 generateLatentVector.py /home/hxie1/temp_netParameters/OvarianCancer/t
 
 python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/train  /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/test /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json latent
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json image3d
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json image3dZoom
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/traincImages_zoom  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3d
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/traincImages_zoom  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dZoom
+
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/traincImages_ROI  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dROI

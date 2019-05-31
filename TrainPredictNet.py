@@ -13,12 +13,12 @@ import os
 from LatentResponseDataMgr import LatentResponseDataMgr
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from LatentPredictModel import LatentPredictModel
-from Image3dZoomPredictModel import Image3dZoomPredictModel
+from Image3dPredictModel import Image3dPredictModel
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/latentPredictLog_20190531.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3dROIPredictLog_20190531.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_20190530.txt'''
 logNotes = r'''
 Major program changes: 
@@ -78,7 +78,7 @@ logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, fo
 def printUsage(argv):
     print("============Train Ovarian Cancer Predictive Model=============")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfLabels> <latent|image3d>")
+    print(argv[0], "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfLabels> <latent|image3dZoom|image3dROI>")
 
 
 def main():
@@ -103,7 +103,7 @@ def main():
     trainingInputsPath = sys.argv[2]
     testInputsPath = sys.argv[3]
     labelsPath = sys.argv[4]
-    inputModel = sys.argv[5]  # latent or image3d
+    inputModel = sys.argv[5]  # latent or image3dZoom or image3dROI
 
     K = 2 # treatment response 1 or 0
 
@@ -128,9 +128,9 @@ def main():
             trainDataMgr.expandInputsDir(testInputsPath, suffix="_CT.nrrd")
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -139,12 +139,23 @@ def main():
         C = D = 1536  # number of input features
         H = 51    # height of input
         W = 49    # width of input
-    else:
+    elif inputModel == 'image3dZoom':
         batchSize = 4
         C = 64  # number of channels after the first input layer
         D = 73 #147  # depth of input
         H = 141 #281  # height of input
         W = 141 #281  # width of input
+        nDownSample = 5
+    elif inputModel == 'image3dROI':
+        batchSize = 4
+        C = 64  # number of channels after the first input layer
+        D = 51  # 147  # depth of input
+        H = 281  # 281  # height of input
+        W = 281  # 281  # width of input
+        nDownSample = 5
+    else:
+        print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
+        sys.exit(-1)
 
     trainDataMgr.setDataSize(batchSize, D, H, W, K,"TrainData")
                             # batchSize, depth, height, width, k, # do not consider lymph node with label 3
@@ -154,7 +165,7 @@ def main():
     if inputModel == 'latent':
         net = LatentPredictModel(C, K)
     else:
-        net = Image3dZoomPredictModel(C, K)
+        net = Image3dPredictModel(C, K, (D, H, W), nDownSample)
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 
