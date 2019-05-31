@@ -18,7 +18,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3DPredictLog_20190529.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/latentPredictLog_20190531.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_20190530.txt'''
 logNotes = r'''
 Major program changes: 
