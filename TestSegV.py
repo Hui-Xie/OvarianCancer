@@ -56,7 +56,8 @@ def main():
     labelTuple = eval(sys.argv[5])
     K = len(labelTuple)
 
-    testDataMgr = SegDataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
+    inputSuffix = "_CT.nrrd"
+    testDataMgr = SegDataMgr(imagesPath, labelsPath, inputSuffix, logInfoFun=logging.info)
     testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================

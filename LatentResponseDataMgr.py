@@ -8,10 +8,9 @@ from ResponseDataMgr import ResponseDataMgr
 import json
 
 class LatentResponseDataMgr(ResponseDataMgr):
-    def __init__(self, inputsDir, labelsPath, logInfoFun=print):
-        super().__init__(inputsDir, labelsPath, logInfoFun)
-        self.m_inputsSuffix = "_Latent.npy"
-        self.initializeInputsResponseList()
+    def __init__(self, inputsDir, labelsPath, inputSuffix, logInfoFun=print):
+        super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
+
 
     def dataLabelGenerator(self, shuffle):
         """

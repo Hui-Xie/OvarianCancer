@@ -50,12 +50,12 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                     No other data augmentation, and no dropout.
                                                           
                                                          
-Experiment setting for Image3d to response:
+Experiment setting for Image3d Zoom to response:
 Input: 73*141*141 scaled 3D CT raw image as numpy array 
        
 Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
-                  3,  and 2 fully connected layers  changes the tensor into size 2*1;
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
                   Total network learning parameters are 1.56 millions.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
@@ -68,7 +68,25 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                     No other data augmentation, and no dropout.  
                     
                     change patience of learningRate scheduler to 30.
-                                         
+
+Experiment setting for Image3d ROI to response:
+Input: 51*281*281  3D CT raw image ROI as numpy array 
+       
+Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are ___ millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+                    
+                    change patience of learningRate scheduler to 30.                                         
 
             '''
 
@@ -104,6 +122,16 @@ def main():
     testInputsPath = sys.argv[3]
     labelsPath = sys.argv[4]
     inputModel = sys.argv[5]  # latent or image3dZoom or image3dROI
+    if inputModel == 'latent':
+        inputSuffix = "_Latent.npy"
+    elif inputModel == 'image3dZoom':
+        inputSuffix = "_zoom.npy"
+    elif inputModel == 'image3dROI':
+        inputSuffix = "_roi.npy"
+    else:
+        inputSuffix = "_Error"
+        print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
+        sys.exit(-1)
 
     K = 2 # treatment response 1 or 0
 
@@ -112,15 +140,15 @@ def main():
     mergeTrainTestData = False
 
     if inputModel == 'latent':
-        trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
+        trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
     else:
-        trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, labelsPath, logInfoFun=logging.info)
+        trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
         if inputModel == 'latent':
-            testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
+            testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
         else:
-            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath, logInfoFun=logging.info)
+            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath,  inputSuffix, logInfoFun=logging.info)
     else:
         if inputModel == 'latent':
             trainDataMgr.expandInputsDir(testInputsPath, suffix="_Latent.npy")

@@ -77,11 +77,12 @@ def main():
 
     mergeTrainTestData = True
 
-    trainDataMgr = SegDataMgr(imagesPath, labelsPath, logInfoFun=logging.info)
+    inputSuffix = "_CT.nrrd"
+    trainDataMgr = SegDataMgr(imagesPath, labelsPath, inputSuffix, logInfoFun=logging.info)
     trainDataMgr.setRemainedLabel(3, labelTuple)
 
     if not mergeTrainTestData:
-        testDataMgr = SegDataMgr(*trainDataMgr.getTestDirs(), logInfoFun=logging.info)
+        testDataMgr = SegDataMgr(*trainDataMgr.getTestDirs(), inputSuffix,  logInfoFun=logging.info)
         testDataMgr.setRemainedLabel(3, labelTuple)
 
     # ===========debug==================

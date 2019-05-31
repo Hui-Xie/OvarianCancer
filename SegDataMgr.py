@@ -6,8 +6,8 @@ from scipy.misc import imsave
 from DataMgr import DataMgr
 
 class SegDataMgr(DataMgr):
-    def __init__(self, inputsDir, labelsDir, logInfoFun=print):
-        super().__init__(inputsDir, labelsDir, logInfoFun)
+    def __init__(self, inputsDir, labelsDir, inputSuffix, logInfoFun=print):
+        super().__init__(inputsDir, labelsDir, inputSuffix, logInfoFun)
         self.m_maxShift = 0
         self.m_translationProb = 0
         self.m_flipProb = 0
@@ -27,8 +27,7 @@ class SegDataMgr(DataMgr):
         self.m_suppressedLabels = []
 
         self.createSegmentedDir()
-        self.m_inputsSuffix = "_CT.nrrd"
-        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputsSuffix)
+        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputSuffix)
 
     def setMaxShift(self, maxShift, translationProb = 0.5):
         self.m_maxShift = maxShift

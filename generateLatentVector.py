@@ -71,7 +71,7 @@ def main():
 
     logging.info(f"Info: netPath = {netPath}\n")
 
-    dataMgr = LatentGenerator(imagesPath, labelsPath, logInfoFun=logging.info)
+    dataMgr = LatentGenerator(imagesPath, labelsPath, "_CT.nrrd", logInfoFun=logging.info)
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug

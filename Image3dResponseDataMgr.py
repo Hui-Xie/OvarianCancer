@@ -9,12 +9,8 @@ from ResponseDataMgr import ResponseDataMgr
 
 
 class Image3dResponseDataMgr(ResponseDataMgr):
-    def __init__(self, inputsDir, labelsPath, logInfoFun=print):
-        super().__init__(inputsDir, labelsPath, logInfoFun)
-        self.m_inputsSuffix = "_zoom.npy"  # "_CT.nrrd"
-        self.initializeInputsResponseList()
-
-
+    def __init__(self, inputsDir, labelsPath, inputSuffix, logInfoFun=print):
+        super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
 
     def dataLabelGenerator(self, shuffle):
         """
@@ -41,7 +37,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
                     break
 
             imageFile = self.m_inputFilesList[n]
-            if "_CT.nrrd" == self.m_inputsSuffix:
+            if "_CT.nrrd" == self.m_inputSuffix:
                 image3d = self.readImageFile(imageFile)
                 shape = image3d.shape
                 zoomFactor = [self.m_depth / shape[0], self.m_height / shape[1], self.m_width / shape[2]]
