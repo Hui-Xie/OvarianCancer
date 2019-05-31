@@ -72,11 +72,11 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
 Experiment setting for Image3d ROI to response:
 Input: 51*281*281  3D CT raw image ROI as numpy array 
        
-Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
+Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
-                  Total network learning parameters are ___ millions.
+                  Total network learning parameters are 94.5 millions.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
 Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
@@ -156,9 +156,9 @@ def main():
             trainDataMgr.expandInputsDir(testInputsPath, suffix="_CT.nrrd")
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -176,11 +176,11 @@ def main():
         nDownSample = 5
     elif inputModel == 'image3dROI':
         batchSize = 4
-        C = 64  # number of channels after the first input layer
+        C = 24  # number of channels after the first input layer
         D = 51  # 147  # depth of input
         H = 281  # 281  # height of input
         W = 281  # 281  # width of input
-        nDownSample = 5
+        nDownSample = 4
     else:
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
@@ -194,6 +194,7 @@ def main():
         net = LatentPredictModel(C, K)
     else:
         net = Image3dPredictModel(C, K, (D, H, W), nDownSample)
+        logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
 

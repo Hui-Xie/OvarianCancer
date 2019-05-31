@@ -9,20 +9,15 @@ class Image3dPredictModel(BasicModel):
         super().__init__()
         self.m_inputSize = inputSize
         self.m_nDownSample = nDownSample
-        bottleNeckSize  = self.getBottleNeckSize()
-        lenBn = self.getProduct(bottleNeckSize)  # len of BottleNeck
+        self.m_bottleNeckSize  = self.getBottleNeckSize()
+        lenBn = self.getProduct(self.m_bottleNeckSize)  # len of BottleNeck
 
-        # input size: C*D*H*W,  and output K class classification
-        # C = 1024  # the number of channels after the first input layer.
         N = 4  # the number of layer in each building block
-        self.m_input = ConvInput(1, C, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize: 1*73*141*141; output:C*73*141*141
+        self.m_input = ConvInput(1, C, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
 
-        self.m_down1 = DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output:C*36*70*70
-        self.m_down2 = DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C*17*34*34
-        self.m_down3 = DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C*8*16*16
-        self.m_down4 = DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C*3*7*7
-        self.m_down5 = DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N)          # output: C*1*3*3
-
+        self.m_downList = nn.ModuleList()
+        for _  in range(self.m_nDownSample):
+            self.m_downList.append(DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
 
         self.m_fc11   = nn.Sequential(
                        nn.Linear(C*lenBn , C*lenBn//2),
@@ -35,11 +30,8 @@ class Image3dPredictModel(BasicModel):
 
     def forward(self, inputx):
         x = self.m_input(inputx)
-        x = self.m_down1(x)
-        x = self.m_down2(x)
-        x = self.m_down3(x)
-        x = self.m_down4(x)
-        x = self.m_down5(x)
+        for down in self.m_downList:
+            x = down(x)
         x = torch.reshape(x, (1,x.numel()))
         x = self.m_fc11(x)
         return x
@@ -51,6 +43,7 @@ class Image3dPredictModel(BasicModel):
             for i in range(dim):
                 xSize[i] = (xSize[i]-3)//2 +1
         xSize = tuple(xSize)
+        print(f"the output size of bottle neck layer : {xSize}")
         return xSize
 
     @staticmethod
