@@ -18,7 +18,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3dROIPredictLog_20190531.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3dROIPredictLog_20190603.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_20190530.txt'''
 logNotes = r'''
 Major program changes: 
@@ -105,12 +105,12 @@ def main():
         printUsage(sys.argv)
         return -1
 
-    print(f'Program ID of Prdict Network training:  {os.getpid()}\n')
+    print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
     print(f'Training log is in {trainLogFile}')
     print(f'.........')
 
-    logging.info(f'Program ID of Prdict Network training:{os.getpid()}\n')
+    logging.info(f'Program ID of Predictive Network training:{os.getpid()}\n')
     logging.info(f'Program command: \n {sys.argv}')
     logging.info(logNotes)
 
@@ -151,14 +151,14 @@ def main():
             testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath,  inputSuffix, logInfoFun=logging.info)
     else:
         if inputModel == 'latent':
-            trainDataMgr.expandInputsDir(testInputsPath, suffix="_Latent.npy")
+            trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
         else:
-            trainDataMgr.expandInputsDir(testInputsPath, suffix="_CT.nrrd")
+            trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -169,15 +169,15 @@ def main():
         W = 49    # width of input
     elif inputModel == 'image3dZoom':
         batchSize = 4
-        C = 64  # number of channels after the first input layer
-        D = 73 #147  # depth of input
-        H = 141 #281  # height of input
-        W = 141 #281  # width of input
+        C = 24  # number of channels after the first input layer
+        D = 147 #147  # depth of input
+        H = 281 #281  # height of input
+        W = 281 #281  # width of input
         nDownSample = 5
     elif inputModel == 'image3dROI':
         batchSize = 4
         C = 24  # number of channels after the first input layer
-        D = 51  # 147  # depth of input
+        D = 147  # 147  # depth of input
         H = 281  # 281  # height of input
         W = 281  # 281  # width of input
         nDownSample = 4
@@ -203,7 +203,7 @@ def main():
 
     # patient =30 for CT -> prediction
     # patient = 500 for lante -> prediction
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-8)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-9)
 
     # Load network
     netMgr = NetMgr(net, netPath)

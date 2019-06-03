@@ -6,15 +6,15 @@ import numpy as np
 from DataMgr import DataMgr
 
 suffix = "_CT.nrrd"
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom/readme.txt"
+#inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages"
+#outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom_147_281_281"
+#readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom_147_281_281/readme.txt"
 
-# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
-# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom"
-# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom/readme.txt"
+inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
+outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom_147_281_281"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom_147_281_281/readme.txt"
 
-goalSize = (73,141,141)
+goalSize = (147,281,281)
 
 originalCwd = os.getcwd()
 os.chdir(inputsDir)
