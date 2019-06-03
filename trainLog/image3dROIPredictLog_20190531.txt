@@ -193,3 +193,247 @@ Epoch		TrLoss	TrainAccuracy	TsLoss	TestAccuracy
 97		0.1731	0.675		0.1690	0.786
 98		0.1731	0.662		0.1691	0.786
 99		0.1724	0.690		0.1689	0.786
+Program ID of Prdict Network training:15530
+
+Program command: 
+ ['TrainPredictNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/Predict', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json', 'image3dROI']
+
+Major program changes: 
+                      the nunmber of filters in 1st layer in V model = 96
+                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
+                      PredictModel is convsDenseModule+FC network.
+                      there total 162 patient data, in which, 130 with smaller patientId as training data, 
+                                                          and 32 with bigger patientID as test data
+
+Experiment setting for Latent to response:
+Input: 1536*51*49 Tensor as latent vector,
+       where 1536 is the  number of filter at the bottleneck of V model, 
+             51 is the number of slices of ROI CT image with size 51*281*281 for input to V model, 
+             49 =7*7 is the flatted feature map for each filter.
+
+Predictive Model: 1,  first 4-layer dense conv block reducing feature space into 768 with tensor size 768*51*49 
+                  2,  and 4 dense conv blocks each of which includes a stride 2 conv and 4-layers dense conv block; now the the tensor is with size 48*2*2
+                  3,  and a simple conv-batchNorm-Relu layer with filter size(2,2) change the tensor with size of  48*1;
+                  4,  and 2 fully connected layers  changes the tensor into size 2*1;
+                  5  final a softmax for binary classification;
+                  Total network learning parameters are 29 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/LatentPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.
+                                                          
+                                                         
+Experiment setting for Image3d Zoom to response:
+Input: 73*141*141 scaled 3D CT raw image as numpy array 
+       
+Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 1.56 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+                    
+                    change patience of learningRate scheduler to 30.
+
+Experiment setting for Image3d ROI to response:
+Input: 51*281*281  3D CT raw image ROI as numpy array 
+       
+Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 94.5 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+                    
+                    change patience of learningRate scheduler to 30.                                         
+
+            
+
+Program starting Time: 2019-06-03 09:16:13.395777
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Predict
+
+Now program get 130 input files.
+Now program get 32 input files.
+TrainData Input:  batchSize=4, depth=51, height=281, width=281, NumClassfication=2
+
+TestData Input:  batchSize=4, depth=51, height=281, width=281, NumClassfication=2
+
+Info: the size of bottle neck in the net = 24* (2, 16, 16)
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/Predict.
+Current best test dice: 0.7857142857142857
+Network has total 94,551,002 parameters.
+Infor: Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Info: program will use 4 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+
+Epoch		TrLoss	TrainAccuracy	TsLoss	TestAccuracy
+0		0.1739	0.650		0.1691	0.786
+1		0.1731	0.676		0.1693	0.786
+2		0.1740	0.625		0.1694	0.786
+3		0.1724	0.721		0.1695	0.786
+4		0.1729	0.795		0.1694	0.786
+5		0.1734	0.658		0.1695	0.786
+Program ID of Prdict Network training:3007
+
+Program command: 
+ ['TrainPredictNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/Predict', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json', 'image3dROI']
+
+Major program changes: 
+                      the nunmber of filters in 1st layer in V model = 96
+                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
+                      PredictModel is convsDenseModule+FC network.
+                      there total 162 patient data, in which, 130 with smaller patientId as training data, 
+                                                          and 32 with bigger patientID as test data
+
+Experiment setting for Latent to response:
+Input: 1536*51*49 Tensor as latent vector,
+       where 1536 is the  number of filter at the bottleneck of V model, 
+             51 is the number of slices of ROI CT image with size 51*281*281 for input to V model, 
+             49 =7*7 is the flatted feature map for each filter.
+
+Predictive Model: 1,  first 4-layer dense conv block reducing feature space into 768 with tensor size 768*51*49 
+                  2,  and 4 dense conv blocks each of which includes a stride 2 conv and 4-layers dense conv block; now the the tensor is with size 48*2*2
+                  3,  and a simple conv-batchNorm-Relu layer with filter size(2,2) change the tensor with size of  48*1;
+                  4,  and 2 fully connected layers  changes the tensor into size 2*1;
+                  5  final a softmax for binary classification;
+                  Total network learning parameters are 29 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/LatentPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.
+                                                          
+                                                         
+Experiment setting for Image3d Zoom to response:
+Input: 73*141*141 scaled 3D CT raw image as numpy array 
+       
+Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 1.56 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+                    
+                    change patience of learningRate scheduler to 30.
+
+Experiment setting for Image3d ROI to response:
+Input: 51*281*281  3D CT raw image ROI as numpy array 
+       
+Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 94.5 millions.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+
+Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+                    
+                    change patience of learningRate scheduler to 30.                                         
+
+            
+
+Program starting Time: 2019-06-03 09:26:02.004917
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/Predict
+
+Now program get 130 input files.
+Now program get 32 input files.
+TrainData Input:  batchSize=4, depth=51, height=281, width=281, NumClassfication=2
+
+TestData Input:  batchSize=4, depth=51, height=281, width=281, NumClassfication=2
+
+Info: the size of bottle neck in the net = 24* (2, 16, 16)
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/Predict.
+Current best test dice: 0.7857142857142857
+Network has total 94,551,002 parameters.
+Infor: Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Info: program will use 4 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+
+Epoch		TrLoss	TrainAccuracy	TsLoss	TestAccuracy
+0		0.1716	0.703		0.1692	0.786
+1		0.1733	0.656		0.1691	0.786
+2		0.1732	0.633		0.1691	0.786
+3		0.1730	0.714		0.1692	0.786
+4		0.1733	0.618		0.1693	0.786
+5		0.1722	0.750		0.1691	0.786
+6		0.1720	0.732		0.1690	0.786
+7		0.1729	0.735		0.1687	0.786
+8		0.1727	0.662		0.1687	0.786
+9		0.1724	0.706		0.1686	0.786
+10		0.1725	0.675		0.1685	0.786
+11		0.1720	0.676		0.1684	0.786
+12		0.1714	0.734		0.1682	0.786
+13		0.1716	0.722		0.1680	0.786
+14		0.1745	0.605		0.1681	0.786
+15		0.1723	0.692		0.1681	0.786
+16		0.1727	0.773		0.1681	0.786
+17		0.1733	0.708		0.1682	0.786
+18		0.1744	0.648		0.1683	0.786
+19		0.1726	0.712		0.1683	0.786
+20		0.1715	0.500		0.1682	0.786
+21		0.1743	0.632		0.1684	0.786
+22		0.1730	0.662		0.1685	0.786
+23		0.1731	0.691		0.1686	0.786
+24		0.1733	0.646		0.1686	0.786
+25		0.1718	0.722		0.1685	0.786
+26		0.1736	0.643		0.1687	0.786
+27		0.1711	0.732		0.1684	0.786
+28		0.1735	0.667		0.1683	0.786
+29		0.1726	0.712		0.1684	0.786
+30		0.1722	0.654		0.1682	0.786
+31		0.1722	0.667		0.1680	0.786
+32		0.1737	0.632		0.1682	0.786
+33		0.1721	0.711		0.1682	0.786
+34		0.1728	0.750		0.1680	0.786
+35		0.1737	0.633		0.1682	0.786
+36		0.1729	0.658		0.1683	0.786
+37		0.1722	0.676		0.1683	0.786
+38		0.1725	0.708		0.1680	0.786
+39		0.1724	0.671		0.1681	0.786
+40		0.1717	0.681		0.1679	0.786
+41		0.1732	0.617		0.1678	0.786
+42		0.1722	0.713		0.1679	0.786
+43		0.1736	0.625		0.1680	0.786
+44		0.1719	0.750		0.1679	0.786
+45		0.1725	0.682		0.1678	0.786
