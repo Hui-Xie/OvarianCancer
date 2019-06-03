@@ -51,7 +51,7 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                                                           
                                                          
 Experiment setting for Image3d Zoom to response:
-Input: 73*141*141 scaled 3D CT raw image as numpy array 
+Input: 147*281*281 scaled 3D CT raw image as numpy array 
        
 Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
@@ -73,10 +73,10 @@ Experiment setting for Image3d ROI to response:
 Input: 147*281*281  3D CT raw image ROI as numpy array 
        
 Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
-                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
-                  Total network learning parameters are 94.5 millions.
+                  Total network learning parameters are 236K.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
 Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
