@@ -303,7 +303,6 @@ def main():
                 for inputs, labelsCpu in testDataMgr.dataLabelGenerator(True):
                     inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                     inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
-
                     if useDataParallel:
                         outputs = net.forward(inputs)
                         loss = torch.tensor(0.0).cuda()
