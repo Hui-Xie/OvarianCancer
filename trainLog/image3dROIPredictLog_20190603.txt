@@ -93,3 +93,4 @@ Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0
 
 
 Epoch		TrLoss	TrainAccuracy	TsLoss	TestAccuracy
+0		0.1756	0.633		0.1645	0.786
