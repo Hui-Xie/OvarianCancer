@@ -6,22 +6,22 @@ import numpy as np
 from DataMgr import DataMgr
 
 suffix = "_CT.nrrd"
-# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages"
-# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI"
-# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI/readme.txt"
+inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages"
+outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281/readme.txt"
 
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI/readme.txt"
+# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
+# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281"
+# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281/readme.txt"
 
-goalSize = (51,281,281)
+goalSize = (147,281,281)
 
 originalCwd = os.getcwd()
 os.chdir(inputsDir)
 filesList = [os.path.abspath(x) for x in os.listdir(inputsDir) if suffix in x]
 os.chdir(originalCwd)
 
-dataMgr = DataMgr("", "", "")
+dataMgr = DataMgr("", "", suffix)
 dataMgr.setDataSize(0, goalSize[0], goalSize[1],goalSize[2], 0, "ConvertNrrd2ROI")
 radius = goalSize[0]//2
 
