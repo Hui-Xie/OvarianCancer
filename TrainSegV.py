@@ -281,7 +281,7 @@ def main():
         if not mergeTrainTestData:
             net.eval()
             with torch.no_grad():
-                for inputs, labelsCpu in testDataMgr.dataLabelGenerator(False):
+                for inputs, labelsCpu in testDataMgr.dataLabelGenerator(True):
                     inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                     inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
 

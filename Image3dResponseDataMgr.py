@@ -14,7 +14,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
     def dataLabelGenerator(self, shuffle):
         """
-        3D - treatResponse pair
+        3D - treatment Response pair
 
         """
         self.m_shuffle = shuffle
@@ -28,14 +28,6 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         labelList= []
 
         for n in shuffleList:
-            if batch >= self.m_batchSize:
-                yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
-                batch = 0
-                dataList.clear()
-                labelList.clear()
-                if self.m_oneSampleTraining:
-                    break
-
             imageFile = self.m_inputFilesList[n]
             if "_CT.nrrd" == self.m_inputSuffix:
                 image3d = self.readImageFile(imageFile)
@@ -51,6 +43,14 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             dataList.append(image3d)
             labelList.append(label)
             batch +=1
+
+            if batch >= self.m_batchSize:
+                yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+                batch = 0
+                dataList.clear()
+                labelList.clear()
+                if self.m_oneSampleTraining:
+                    break
 
         #  a batch size of 1 and a single feature per channel will has problem in batchnorm.
         #  drop_last data.
