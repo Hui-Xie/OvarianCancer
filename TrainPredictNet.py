@@ -18,7 +18,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3dROIPredictLog_20190603.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3dZoomPredictLog_20190603.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_20190530.txt'''
 logNotes = r'''
 Major program changes: 
@@ -53,21 +53,8 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
 Experiment setting for Image3d Zoom to response:
 Input: 147*281*281 scaled 3D CT raw image as numpy array 
        
-Predictive Model: 1,  first 3-layer dense conv block with channel size 64.
-                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 1.56 millions.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+others same with Image3d ROI model.
 
-Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-                    
-                    change patience of learningRate scheduler to 30.
 
 Experiment setting for Image3d ROI to response:
 Input: 147*281*281  3D CT raw image ROI as numpy array 
