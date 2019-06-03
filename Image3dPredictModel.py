@@ -12,12 +12,16 @@ class Image3dPredictModel(BasicModel):
         self.m_bottleNeckSize  = self.getBottleNeckSize()
         lenBn = self.getProduct(self.m_bottleNeckSize)  # len of BottleNeck
 
-        N = 4  # the number of layer in each building block
-        self.m_input = ConvInput(1, C, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
+        N = 3  # the number of layer in each building block
+        self.m_input = ConvInput(1, C//2, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
 
         self.m_downList = nn.ModuleList()
-        for _  in range(self.m_nDownSample):
-            self.m_downList.append(DownBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
+        for i  in range(self.m_nDownSample):
+            if 0 == i:
+                self.m_downList.append(DownBB(C//2, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
+            else:
+                self.m_downList.append(DownBB(C, C, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
+        # for inputSize 147*281*281, after 6 downsamples, the output size is (1*3*3)
 
         self.m_fc11   = nn.Sequential(
                        nn.Linear(C*lenBn , C*lenBn//2),

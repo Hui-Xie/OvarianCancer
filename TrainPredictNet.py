@@ -70,7 +70,7 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
                     change patience of learningRate scheduler to 30.
 
 Experiment setting for Image3d ROI to response:
-Input: 51*281*281  3D CT raw image ROI as numpy array 
+Input: 147*281*281  3D CT raw image ROI as numpy array 
        
 Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 4-layers dense conv block; 
@@ -156,9 +156,9 @@ def main():
             trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
@@ -173,14 +173,14 @@ def main():
         D = 147 #147  # depth of input
         H = 281 #281  # height of input
         W = 281 #281  # width of input
-        nDownSample = 5
+        nDownSample = 6
     elif inputModel == 'image3dROI':
         batchSize = 4
         C = 24  # number of channels after the first input layer
         D = 147  # 147  # depth of input
         H = 281  # 281  # height of input
         W = 281  # 281  # width of input
-        nDownSample = 4
+        nDownSample = 6
     else:
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
