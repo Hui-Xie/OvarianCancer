@@ -1,4 +1,4 @@
-#  train predictive Network
+#  train Skywatcher Model for segmentation and treatment response together
 
 import sys
 import datetime
@@ -9,55 +9,23 @@ import torch.optim as optim
 import logging
 import os
 
-from LatentResponseDataMgr import LatentResponseDataMgr
 from Image3dResponseDataMgr import Image3dResponseDataMgr
-from LatentPredictModel import LatentPredictModel
-from Image3dPredictModel import Image3dPredictModel
+from SkyWatcherModel import SkyWatcherModel
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/image3dZoomPredictLog_20190603.txt'''
-# trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_20190530.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190605.txt'''
 logNotes = r'''
 Major program changes: 
-                      the nunmber of filters in 1st layer in V model = 96
-                      latent Vector size: 1536*51*49 (featureMap* slices * axisPlaneLatentVector)
-                      PredictModel is convsDenseModule+FC network.
-                      there total 162 patient data, in which, 130 with smaller patientId as training data, 
-                                                          and 32 with bigger patientID as test data
-
-Experiment setting for Latent to response:
-Input: 1536*51*49 Tensor as latent vector,
-       where 1536 is the  number of filter at the bottleneck of V model, 
-             51 is the number of slices of ROI CT image with size 51*281*281 for input to V model, 
-             49 =7*7 is the flatted feature map for each filter.
-
-Predictive Model: 1,  first 4-layer dense conv block reducing feature space into 768 with tensor size 768*51*49 
-                  2,  and 4 dense conv blocks each of which includes a stride 2 conv and 4-layers dense conv block; now the the tensor is with size 48*2*2
-                  3,  and a simple conv-batchNorm-Relu layer with filter size(2,2) change the tensor with size of  48*1;
-                  4,  and 2 fully connected layers  changes the tensor into size 2*1;
-                  5  final a softmax for binary classification;
-                  Total network learning parameters are 29 millions.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/LatentPredictModel.py
-
-Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.
-                                                          
-                                                         
-Experiment setting for Image3d Zoom to response:
-Input: 147*281*281 scaled 3D CT raw image as numpy array 
-       
-others same with Image3d ROI model.
-
+                      
 
 Experiment setting for Image3d ROI to response:
-Input: 147*281*281  3D CT raw image ROI as numpy array 
-       
+Input CT data: 147*281*281  3D CT raw image ROI
+segmentation label: 127*255*255 segmentation label with value (0,1,2) which erases lymph node label
+
+This is a multi-task learning. 
+
 Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
@@ -65,14 +33,21 @@ Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
                   Total network learning parameters are 236K.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
-Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+response Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+segmenation loss function: focus loss + boundary loss
 
-Data:            training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+Data:   training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+        We used patient ID as index to order all patients data, and then used about the first 80\% of patients as training data, 
+        and the remaining 20% of patients as test data. 
+        Sorting with patient ID is to make sure the division of training and test set is blind to the patient's detailed stage, 
+        shape and size of cancer.  
+        Therefore you will see that patient IDs of all test data are beginning at 8 or 9. 
+        This training/test division is exactly same with segmentation network experiment before. 
 
 Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
                     No other data augmentation, and no dropout.  
-                    
-                    change patience of learningRate scheduler to 30.                                         
+
+                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
 
             '''
 
@@ -80,9 +55,10 @@ logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, fo
 
 
 def printUsage(argv):
-    print("============Train Ovarian Cancer Predictive Model=============")
+    print("============Train SkyWatcher Model for Ovarian Cancer =============")
     print("Usage:")
-    print(argv[0], "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfResponse> <latent|image3dZoom|image3dROI>")
+    print(argv[0],
+          "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfResponse> <latent|image3dZoom|image3dROI>")
 
 
 def main():
@@ -119,7 +95,7 @@ def main():
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
 
-    K = 2 # treatment response 1 or 0
+    K = 2  # treatment response 1 or 0
 
     logging.info(f"Info: netPath = {netPath}\n")
 
@@ -134,7 +110,7 @@ def main():
         if inputModel == 'latent':
             testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
         else:
-            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath,  inputSuffix, logInfoFun=logging.info)
+            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
     else:
         if inputModel == 'latent':
             trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
@@ -149,16 +125,16 @@ def main():
     # ===========debug==================
 
     if inputModel == 'latent':
-        batchSize  = 16
+        batchSize = 16
         C = D = 1536  # number of input features
-        H = 51    # height of input
-        W = 49    # width of input
+        H = 51  # height of input
+        W = 49  # width of input
     elif inputModel == 'image3dZoom':
         batchSize = 4
         C = 24  # number of channels after the first input layer
-        D = 147 #147  # depth of input
-        H = 281 #281  # height of input
-        W = 281 #281  # width of input
+        D = 147  # 147  # depth of input
+        H = 281  # 281  # height of input
+        W = 281  # 281  # width of input
         nDownSamples = 6
     elif inputModel == 'image3dROI':
         batchSize = 4
@@ -171,8 +147,8 @@ def main():
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
 
-    trainDataMgr.setDataSize(batchSize, D, H, W, K,"TrainData")
-                            # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+    trainDataMgr.setDataSize(batchSize, D, H, W, K, "TrainData")
+    # batchSize, depth, height, width, k, # do not consider lymph node with label 3
     if not mergeTrainTestData:
         testDataMgr.setDataSize(batchSize, D, H, W, K, "TestData")  # batchSize, depth, height, width, k
 
@@ -225,7 +201,8 @@ def main():
     epochs = 150000
     logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
 
-    logging.info(f"Epoch\t\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"TsLoss\t" + f"TestAccuracy" )  # logging.info output head
+    logging.info(
+        f"Epoch\t\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"TsLoss\t" + f"TestAccuracy")  # logging.info output head
 
     for epoch in range(epochs):
         # ================Training===============
@@ -264,17 +241,16 @@ def main():
             else:
                 batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
 
-            if lambdaInBeta == 1 :
-               nTrainCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum().item()
-               nTrainTotal += labels1.shape[0]
+            if lambdaInBeta == 1:
+                nTrainCorrect += labels1.eq(torch.argmax(outputs, dim=1)).sum().item()
+                nTrainTotal += labels1.shape[0]
 
             trainingLoss += batchLoss
             trainBatches += 1
 
         if 0 != trainBatches and 0 != nTrainTotal:
             trainingLoss /= trainBatches
-            trainAccuracy = nTrainCorrect/nTrainTotal
-
+            trainAccuracy = nTrainCorrect / nTrainTotal
 
         # ================Test===============
 
@@ -288,7 +264,8 @@ def main():
             with torch.no_grad():
                 for inputs, labelsCpu in testDataMgr.dataResponseGenerator(True):
                     inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
-                    inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
+                    inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device,
+                                                                                     dtype=torch.long)  # return a copy
                     if useDataParallel:
                         outputs = net.forward(inputs)
                         loss = torch.tensor(0.0).cuda()
@@ -300,23 +277,22 @@ def main():
                     else:
                         batchLoss, outputs = net.batchTest(inputs, labels)
 
-                    nTestCorrect += labels.eq(torch.argmax(outputs,dim=1)).sum().item()
+                    nTestCorrect += labels.eq(torch.argmax(outputs, dim=1)).sum().item()
                     nTestTotal += labels.shape[0]
 
                     testLoss += batchLoss
                     testBatches += 1
 
-
                 # ===========print train and test progress===============
                 if 0 != testBatches and 0 != nTestTotal:
                     testLoss /= testBatches
-                    testAccuracy = nTestCorrect/nTestTotal
+                    testAccuracy = nTestCorrect / nTestTotal
                     lrScheduler.step(testLoss)
         else:
             lrScheduler.step(trainingLoss)
 
         logging.info(
-            f'{epoch}\t\t{trainingLoss:.4f}\t' + f'{trainAccuracy:.5f}' + f'\t' +f'\t{testLoss:.4f}\t' + f'{testAccuracy:.5f}')
+            f'{epoch}\t\t{trainingLoss:.4f}\t' + f'{trainAccuracy:.5f}' + f'\t' + f'\t{testLoss:.4f}\t' + f'{testAccuracy:.5f}')
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):

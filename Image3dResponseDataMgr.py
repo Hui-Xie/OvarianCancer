@@ -14,7 +14,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
     def dataResponseGenerator(self, shuffle):
         """
-        3D - treatment Response pair
+        yield (3DImage  - treatment Response) Tuple
 
         """
         self.m_shuffle = shuffle
@@ -27,8 +27,8 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList=[]  # for yield
         responseList= []
 
-        for n in shuffleList:
-            imageFile = self.m_inputFilesList[n]
+        for i in shuffleList:
+            imageFile = self.m_inputFilesList[i]
             if "_CT.nrrd" == self.m_inputSuffix:
                 image3d = self.readImageFile(imageFile)
                 shape = image3d.shape
@@ -38,7 +38,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
                 image3d = np.load(imageFile)
 
             image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
-            response = self.m_responseList[n]
+            response = self.m_responseList[i]
 
             dataList.append(image3d)
             responseList.append(response)
@@ -60,5 +60,57 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         # clean field
         dataList.clear()
         responseList.clear()
+
+    def dataSegResponseGenerator(self, shuffle):
+        """
+        yied (3DImage  -- Segmentation --  treatment Response) Tuple
+
+        """
+        self.m_shuffle = shuffle
+        N = len(self.m_inputFilesList)
+        shuffleList = list(range(N))
+        if self.m_shuffle:
+            random.shuffle(shuffleList)
+
+        batch = 0
+        dataList = []  # for yield
+        segList = []
+        responseList = []
+
+        for i in shuffleList:
+            imageFile = self.m_inputFilesList[i]
+            labelFile = imageFile.replace("Images_", "Labels_")
+
+            image3d = np.load(imageFile)
+            image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
+            seg3d   = np.load(labelFile)
+            seg3d   = np.expand_dims(seg3d, 0)   # add channel dim as 1
+
+            response = self.m_responseList[i]
+
+            dataList.append(image3d)
+            segList.append(seg3d)
+            responseList.append(response)
+            batch += 1
+
+            if batch >= self.m_batchSize:
+                yield np.stack(dataList, axis=0), np.stack(segList, axis=0), np.stack(responseList, axis=0)
+                batch = 0
+                dataList.clear()
+                segList.clear()
+                responseList.clear()
+                if self.m_oneSampleTraining:
+                    break
+
+        #  a batch size of 1 and a single feature per channel will has problem in batchnorm.
+        #  drop_last data.
+        # if 0 != len(dataList) and 0 != len(responseList): # PyTorch supports dynamic batchSize.
+        #    yield np.stack(dataList, axis=0), np.stack(responseList, axis=0)
+
+        # clean field
+        dataList.clear()
+        responseList.clear()
+
+
 
 

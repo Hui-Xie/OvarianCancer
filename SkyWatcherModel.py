@@ -48,7 +48,7 @@ class SkyWatcherModel(BasicModel):
             x = down(x)
         # here x is the output at crossing point of sky watcher
 
-        # xr means x rightside output
+        # xr means x rightside output, or response output
         xr = x
         xr = torch.reshape(xr, (1,xr.numel()))
         xr = self.m_fc11(xr)
