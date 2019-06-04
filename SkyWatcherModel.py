@@ -5,7 +5,7 @@ import torch
 # SkyWatcher Model, simultaneously train segmentation and treatment response
 
 class SkyWatcherModel(BasicModel):
-    def __init__(self, C,  K, inputSize, nDownSamples):
+    def __init__(self, C,  Kr, Kup, inputSize, nDownSamples):
         super().__init__()
         self.m_inputSize = inputSize
         self.m_nDownSamples = nDownSamples
@@ -21,7 +21,7 @@ class SkyWatcherModel(BasicModel):
                 self.m_downList.append(DownBB(C//2, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
             else:
                 self.m_downList.append(DownBB(C, C, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
-        # for inputSize 147*281*281, after 6 downsamples, the output size is (1*3*3)
+        # from inputSize 147*281*281, after 6 downsamples, the output size is (1*3*3)
 
         self.m_fc11   = nn.Sequential(
                        nn.Linear(C*lenBn , C*lenBn//2),
@@ -30,22 +30,33 @@ class SkyWatcherModel(BasicModel):
                        nn.Linear(C*lenBn//2, C*lenBn//4),
                        nn.InstanceNorm1d(C*lenBn//4),
                        nn.ReLU(inplace=True),
-                       nn.Linear(C*lenBn//4, K))
+                       nn.Linear(C*lenBn//4, Kr))
 
         self.m_upList = nn.ModuleList()
         for i  in range(self.m_nDownSamples):
-            if 0 == self.m_nDownSample -1:
-                self.m_upList.append(DownBB(C, C//2,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
+            if i != self.m_nDownSample -1:
+                self.m_upList.append(UpBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
             else:
-                self.m_upList.append(DownBB(C, C, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
+                self.m_upList.append(UpBB(C, C//2, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
+        # from the  bottle neck size (1*3*3), after 6 downsamples, deconv get output size: (127*255*255)
 
-
+        self.m_upOutput = nn.Conv3d(C//2, Kup, (1,1,1), stride=(1,1,1))
 
     def forward(self, inputx):
         x = self.m_input(inputx)
         for down in self.m_downList:
             x = down(x)
-        x = torch.reshape(x, (1,x.numel()))
-        x = self.m_fc11(x)
-        return x
+        # here x is the output at crossing point of sky watcher
+
+        # xr means x rightside output
+        xr = x
+        xr = torch.reshape(xr, (1,xr.numel()))
+        xr = self.m_fc11(xr)
+
+        # xup means the output using upList
+        xup = x
+        for up in self.m_upList:
+            xup = up(x)
+        xup = self.upOutput(xup)
+        return xr, xup
 

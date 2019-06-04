@@ -87,7 +87,7 @@ class BasicModel(nn.Module):
         xSize = list(inputSize)
         for _ in range(nDownSamples):
             for i in range(dim):
-                xSize[i] = (xSize[i] - 3) // 2 + 1
+                xSize[i] = (xSize[i] - 3) // 2 + 1 # padding =0
         xSize = tuple(xSize)
         print(f"the output size of Downsample layer : {xSize} after {nDownSamples} convolutions with stride 2 and {(3,) * dim} convolution")
         return xSize
@@ -98,7 +98,7 @@ class BasicModel(nn.Module):
         xSize = list(inputSize)
         for _ in range(nUpSamples):
             for i in range(dim):
-                xSize[i] = (xSize[i] - 1)*2+ 3
+                xSize[i] = (xSize[i] - 1)*2+3  # padding =0
         xSize = tuple(xSize)
         print(f"the output size of output layer : {xSize} after {nUpSamples} deconvolutions with stride 2 and {(3,) * dim} transposed convolution")
         return xSize
