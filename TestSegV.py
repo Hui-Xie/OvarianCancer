@@ -82,7 +82,7 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    ceWeight = torch.FloatTensor(testDataMgr.getCEWeight()).to(device)
+    ceWeight = torch.FloatTensor(testDataMgr.getSegCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K)

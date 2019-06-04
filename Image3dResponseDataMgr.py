@@ -111,6 +111,21 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList.clear()
         responseList.clear()
 
-
+    def getSegCEWeight(self):
+        labelPortion = [0.95995, 0.0254, 0.01462, 0.00003]  # this is portion of 0,1,2,3 label, whose sum = 1
+        remainedLabels = (0,1,2)
+        N = 3
+        ceWeight = [0.0] * N
+        accumu = 0.0
+        for i, x in enumerate(remainedLabels):
+            if 0 == x:
+                position0 = i
+                continue
+            else:
+                ceWeight[i] = 1 / labelPortion[x]
+                accumu += labelPortion[x]
+        ceWeight[position0] = 1 / (1 - accumu)  # unused labels belong to background 0
+        self.m_logInfo(f"Infor: Segmentation Cross Entropy Weight: {ceWeight} for label {remainedLabels}")
+        return ceWeight
 
 

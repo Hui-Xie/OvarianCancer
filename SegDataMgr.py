@@ -61,7 +61,7 @@ class SegDataMgr(DataMgr):
             self.m_logInfo(f"Error: background 0 should be in the remained label list")
             sys.exit(-1)
 
-    def getCEWeight(self):
+    def getSegCEWeight(self):
         labelPortion = [0.95995, 0.0254, 0.01462, 0.00003]  # this is portion of 0,1,2,3 label, whose sum = 1
         N = len(self.m_remainedLabels)
         ceWeight = [0.0] * N

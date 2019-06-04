@@ -136,10 +136,9 @@ def main():
         else:
             testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath,  inputSuffix, logInfoFun=logging.info)
     else:
-        if inputModel == 'latent':
-            trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
-        else:
-            trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
+        trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
+        trainDataMgr.initializeInputsResponseList()
+
 
     # ===========debug==================
     trainDataMgr.setOneSampleTraining(False)  # for debug

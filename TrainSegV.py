@@ -146,7 +146,7 @@ def main():
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
+    ceWeight = torch.FloatTensor(trainDataMgr.getSegCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K, weight=ceWeight)
     if not restartTrainAfter100Epochs:

@@ -37,7 +37,7 @@ response Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class s
 segmenation loss function: focus loss + boundary loss
 
 Data:   training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
-        We used patient ID as index to order all patients data, and then used about the first 80\% of patients as training data, 
+        We used patient ID as index to order all patients data, and then used about the first 80% of patients as training data, 
         and the remaining 20% of patients as test data. 
         Sorting with patient ID is to make sure the division of training and test set is blind to the patient's detailed stage, 
         shape and size of cancer.  
@@ -58,11 +58,11 @@ def printUsage(argv):
     print("============Train SkyWatcher Model for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfResponse> <latent|image3dZoom|image3dROI>")
+          "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfResponse> ")
 
 
 def main():
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 5:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
@@ -72,7 +72,7 @@ def main():
     print(f'Training log is in {trainLogFile}')
     print(f'.........')
 
-    logging.info(f'Program ID of Predictive Network training:{os.getpid()}\n')
+    logging.info(f'Program ID of SkyWatcher Network training:{os.getpid()}\n')
     logging.info(f'Program command: \n {sys.argv}')
     logging.info(logNotes)
 
@@ -82,89 +82,53 @@ def main():
     netPath = sys.argv[1]
     trainingInputsPath = sys.argv[2]
     testInputsPath = sys.argv[3]
-    labelsPath = sys.argv[4]
-    inputModel = sys.argv[5]  # latent or image3dZoom or image3dROI
-    if inputModel == 'latent':
-        inputSuffix = "_Latent.npy"
-    elif inputModel == 'image3dZoom':
-        inputSuffix = "_zoom.npy"
-    elif inputModel == 'image3dROI':
-        inputSuffix = "_roi.npy"
-    else:
-        inputSuffix = "_Error"
-        print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
-        sys.exit(-1)
+    responsePath = sys.argv[4]
+    inputSuffix = "_roi.npy"
 
-    K = 2  # treatment response 1 or 0
+    Kr = 2  # treatment response 1 or 0
+    Kup = 3  # segmentation classification number
 
     logging.info(f"Info: netPath = {netPath}\n")
 
     mergeTrainTestData = False
 
-    if inputModel == 'latent':
-        trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
-    else:
-        trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
+    trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
-        if inputModel == 'latent':
-            testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
-        else:
-            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
+        testDataMgr = Image3dResponseDataMgr(testInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
     else:
-        if inputModel == 'latent':
-            trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
-        else:
-            trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
+        trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
+        trainDataMgr.initializeInputsResponseList()
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     # ===========debug==================
 
-    if inputModel == 'latent':
-        batchSize = 16
-        C = D = 1536  # number of input features
-        H = 51  # height of input
-        W = 49  # width of input
-    elif inputModel == 'image3dZoom':
-        batchSize = 4
-        C = 24  # number of channels after the first input layer
-        D = 147  # 147  # depth of input
-        H = 281  # 281  # height of input
-        W = 281  # 281  # width of input
-        nDownSamples = 6
-    elif inputModel == 'image3dROI':
-        batchSize = 4
-        C = 24  # number of channels after the first input layer
-        D = 147  # 147  # depth of input
-        H = 281  # 281  # height of input
-        W = 281  # 281  # width of input
-        nDownSamples = 6
-    else:
-        print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
-        sys.exit(-1)
 
-    trainDataMgr.setDataSize(batchSize, D, H, W, K, "TrainData")
+    batchSize = 4
+    C = 24   # number of channels after the first input layer
+    D = 147  # depth of input
+    H = 281  # height of input
+    W = 281  # width of input
+    nDownSamples = 6
+
+
+    trainDataMgr.setDataSize(batchSize, D, H, W, Kr, "TrainData")
     # batchSize, depth, height, width, k, # do not consider lymph node with label 3
     if not mergeTrainTestData:
-        testDataMgr.setDataSize(batchSize, D, H, W, K, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(batchSize, D, H, W, Kr, "TestData")  # batchSize, depth, height, width, k
 
-    if inputModel == 'latent':
-        net = LatentPredictModel(C, K)
-    else:
-        net = Image3dPredictModel(C, K, (D, H, W), nDownSamples)
-        logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
+    net = SkyWatcherModel(C, Kr, Kup, (D, H, W), nDownSamples)
+    logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
-    trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
+    trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
 
-    # patient =30 for CT -> prediction
-    # patient = 500 for lante -> prediction
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-9)
 
     # Load network
@@ -182,8 +146,8 @@ def main():
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    ceWeight = torch.FloatTensor(trainDataMgr.getResponseCEWeight()).to(device)
-    focalLoss = FocalCELoss(weight=ceWeight)
+    responseCEWeight = torch.FloatTensor(trainDataMgr.getResponseCEWeight()).to(device)
+    focalLoss = FocalCELoss(weight=responseCEWeight)
     net.appendLossFunc(focalLoss, 1)
 
     net.to(device)
