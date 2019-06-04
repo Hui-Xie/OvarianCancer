@@ -207,7 +207,7 @@ def main():
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    ceWeight = torch.FloatTensor(trainDataMgr.getCEWeight()).to(device)
+    ceWeight = torch.FloatTensor(trainDataMgr.getResponseCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
 
@@ -240,8 +240,8 @@ def main():
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
 
-        for (inputs1, labels1Cpu), (inputs2, labels2Cpu) in zip(trainDataMgr.dataLabelGenerator(True),
-                                                                trainDataMgr.dataLabelGenerator(True)):
+        for (inputs1, labels1Cpu), (inputs2, labels2Cpu) in zip(trainDataMgr.dataResponseGenerator(True),
+                                                                trainDataMgr.dataResponseGenerator(True)):
             lambdaInBeta = trainDataMgr.getLambdaInBeta()
             inputs = inputs1 * lambdaInBeta + inputs2 * (1 - lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
@@ -287,7 +287,7 @@ def main():
         if not mergeTrainTestData:
             net.eval()
             with torch.no_grad():
-                for inputs, labelsCpu in testDataMgr.dataLabelGenerator(True):
+                for inputs, labelsCpu in testDataMgr.dataResponseGenerator(True):
                     inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
                     inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device, dtype=torch.long)  # return a copy
                     if useDataParallel:

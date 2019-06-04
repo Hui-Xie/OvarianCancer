@@ -12,7 +12,7 @@ class LatentResponseDataMgr(ResponseDataMgr):
         super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
 
 
-    def dataLabelGenerator(self, shuffle):
+    def dataResponseGenerator(self, shuffle):
         """
         for simple sample input to the predict network: the input size: 1536*51*49,
              where 1536 = 16*96, number of feature map
@@ -28,32 +28,32 @@ class LatentResponseDataMgr(ResponseDataMgr):
 
         batch = 0
         dataList=[]  # for yield
-        labelList= []
+        responseList= []
 
         for n in shuffleList:
-            if batch >= self.m_batchSize:
-                yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
-                batch = 0
-                dataList.clear()
-                labelList.clear()
-                if self.m_oneSampleTraining:
-                    break
-
             latentFile = self.m_inputFilesList[n]
-            label = self.m_labelsList[n]
+            label = self.m_responseList[n]
             latent = np.load(latentFile)
 
             dataList.append(latent)
-            labelList.append(label)
+            responseList.append(label)
             batch +=1
+
+            if batch >= self.m_batchSize:
+                yield np.stack(dataList, axis=0), np.stack(responseList, axis=0)
+                batch = 0
+                dataList.clear()
+                responseList.clear()
+                if self.m_oneSampleTraining:
+                    break
 
         #  a batch size of 1 and a single feature per channel will has problem in batchnorm.
         #  drop_last data.
-        #if 0 != len(dataList) and 0 != len(labelList): # PyTorch supports dynamic batchSize.
-        #    yield np.stack(dataList, axis=0), np.stack(labelList, axis=0)
+        #if 0 != len(dataList) and 0 != len(responseList): # PyTorch supports dynamic batchSize.
+        #    yield np.stack(dataList, axis=0), np.stack(responseList, axis=0)
 
         # clean field
         dataList.clear()
-        labelList.clear()
+        responseList.clear()
 
 
