@@ -2,13 +2,16 @@
 #  test BoundaryLoss
 import numpy as np
 
-from Image3dPredictModel import Image3dPredictModel
+from BasicModel import BasicModel
 
-model = Image3dPredictModel(12, 2, inputSize =(73,141,141), nDownSample=5)
+inputSize = (147,281,281)
+nDownSamples = 6
 
-xSize = model.getBottleNeckSize()
+xSize = BasicModel.getDownSampleSize(inputSize, nDownSamples);
+print(f"bottle neck size: {xSize}")
 
-print(xSize)
+segSize = BasicModel.getUpSampleSize(xSize, nDownSamples)
+print(f"segmentation size: {segSize}")
 
 
 # filename =  "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI/72133468B_roi.npy"

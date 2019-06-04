@@ -2,14 +2,14 @@ from BasicModel import BasicModel
 from BuildingBlocks import *
 import torch
 
-# Predictive Model for treatment response
+# SkyWatcher Model, simultaneously train segmentation and treatment response
 
-class Image3dPredictModel(BasicModel):
+class SkyWatcherModel(BasicModel):
     def __init__(self, C,  K, inputSize, nDownSamples):
         super().__init__()
         self.m_inputSize = inputSize
         self.m_nDownSamples = nDownSamples
-        self.m_bottleNeckSize  = self.getUpSampleSize(self.m_inputSize, self.m_nDownSamples)
+        self.m_bottleNeckSize  = self.getDownSampleSize(self.m_inputSize, self.m_nDownSamples)
         lenBn = self.getProduct(self.m_bottleNeckSize)  # len of BottleNeck
 
         N = 3  # the number of layer in each building block
@@ -32,6 +32,15 @@ class Image3dPredictModel(BasicModel):
                        nn.ReLU(inplace=True),
                        nn.Linear(C*lenBn//4, K))
 
+        self.m_upList = nn.ModuleList()
+        for i  in range(self.m_nDownSamples):
+            if 0 == self.m_nDownSample -1:
+                self.m_upList.append(DownBB(C, C//2,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
+            else:
+                self.m_upList.append(DownBB(C, C, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
+
+
+
     def forward(self, inputx):
         x = self.m_input(inputx)
         for down in self.m_downList:
@@ -39,3 +48,4 @@ class Image3dPredictModel(BasicModel):
         x = torch.reshape(x, (1,x.numel()))
         x = self.m_fc11(x)
         return x
+

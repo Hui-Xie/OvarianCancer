@@ -81,4 +81,34 @@ class BasicModel(nn.Module):
         self.m_dropout3d.p = prob
         return f"Info: network dropout rate = {self.m_dropoutProb}"
 
+    @staticmethod
+    def getDownSampleSize(inputSize, nDownSamples):
+        dim = len(inputSize)
+        xSize = list(inputSize)
+        for _ in range(nDownSamples):
+            for i in range(dim):
+                xSize[i] = (xSize[i] - 3) // 2 + 1
+        xSize = tuple(xSize)
+        print(f"the output size of Downsample layer : {xSize} after {nDownSamples} convolutions with stride 2 and {(3,) * dim} convolution")
+        return xSize
+
+    @staticmethod
+    def getUpSampleSize(inputSize, nUpSamples):
+        dim = len(inputSize)
+        xSize = list(inputSize)
+        for _ in range(nUpSamples):
+            for i in range(dim):
+                xSize[i] = (xSize[i] - 1)*2+ 3
+        xSize = tuple(xSize)
+        print(f"the output size of output layer : {xSize} after {nUpSamples} deconvolutions with stride 2 and {(3,) * dim} transposed convolution")
+        return xSize
+
+    @staticmethod
+    def getProduct(aTuple):
+        prod = 1
+        for x in aTuple:
+            prod *= x
+        return prod
+
+
 

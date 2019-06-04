@@ -160,14 +160,14 @@ def main():
         D = 147 #147  # depth of input
         H = 281 #281  # height of input
         W = 281 #281  # width of input
-        nDownSample = 6
+        nDownSamples = 6
     elif inputModel == 'image3dROI':
         batchSize = 4
         C = 24  # number of channels after the first input layer
         D = 147  # 147  # depth of input
         H = 281  # 281  # height of input
         W = 281  # 281  # width of input
-        nDownSample = 6
+        nDownSamples = 6
     else:
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
@@ -180,7 +180,7 @@ def main():
     if inputModel == 'latent':
         net = LatentPredictModel(C, K)
     else:
-        net = Image3dPredictModel(C, K, (D, H, W), nDownSample)
+        net = Image3dPredictModel(C, K, (D, H, W), nDownSamples)
         logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
