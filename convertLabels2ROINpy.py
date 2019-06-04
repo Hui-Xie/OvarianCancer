@@ -6,13 +6,13 @@ import numpy as np
 from DataMgr import DataMgr
 
 suffix = "_Seg.nrrd"
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_147_281_281"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_147_281_281/readme.txt"
+# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels"
+# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_147_281_281"
+# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_147_281_281/readme.txt"
 
-# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels"
-# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_147_281_281"
-# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_147_281_281/readme.txt"
+inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels"
+outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_147_281_281"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_147_281_281/readme.txt"
 
 goalSize = (147,281,281)
 
@@ -47,6 +47,6 @@ N = len(filesList)
 
 with open(readmeFile,"w") as f:
     f.write(f"total {N} files in this directory\n")
-    f.write(f"all output numpy array have erased label>=3")
+    f.write(f"all output numpy array have erased label>=3\n")
     f.write(f"goalSize: {goalSize}\n")
     f.write(f"inputsDir = {inputsDir}\n")
