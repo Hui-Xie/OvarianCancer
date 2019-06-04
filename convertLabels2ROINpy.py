@@ -6,15 +6,15 @@ import numpy as np
 from DataMgr import DataMgr
 
 suffix = "_Seg.nrrd"
-# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels"
-# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_147_281_281"
-# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_147_281_281/readme.txt"
+inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels"
+outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_127_255_255"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testLabels_ROI_127_255_255/readme.txt"
 
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_147_281_281"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_147_281_281/readme.txt"
+# inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels"
+# outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_127_255_255"
+# readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels_ROI_127_255_255/readme.txt"
 
-goalSize = (147,281,281)
+goalSize = (127,255,255)
 
 originalCwd = os.getcwd()
 os.chdir(inputsDir)
