@@ -190,12 +190,14 @@ def main():
         trainAccuracy = 0
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
+        else:
+            lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
         if 105 == epoch:
             lossWeightList[0] = 1     # for response cross entropy
             lossWeightList[1] = 0.32  # for seg Cross Entropy
             lossWeightList[2] = 0.68  # for seg boundary loss
-            logging.info(f"before just epoch {epoch}, fix loss weight as {lossWeightList}")
+            logging.info(f"before just epoch {epoch}, refix loss weight as {lossWeightList}")
             if useDataParallel:
                 net.module.updateLossWeightList(lossWeightList)
             else:

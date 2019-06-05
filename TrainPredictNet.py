@@ -237,6 +237,8 @@ def main():
         trainAccuracy = 0
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
+        else:
+            lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
         for (inputs1, labels1Cpu), (inputs2, labels2Cpu) in zip(trainDataMgr.dataResponseGenerator(True),
                                                                 trainDataMgr.dataResponseGenerator(True)):
