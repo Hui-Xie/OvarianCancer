@@ -15,6 +15,7 @@ print(f"segmentation size: {segSize}")
 
 dataMgr = DataMgr("", "", "")
 
+seg = np.random.rand(4,3)
 x = np.array([[3, 0, 0], [0, 0, 0], [5, 6, 0], [0,0,0]])
 
 print(x)
@@ -24,6 +25,11 @@ print("after convert")
 dataMgr.convertAllZeroSliceToValue(x, -100)
 print(x)
 
+print("seg:")
+print(seg)
+
+print("after ignore negtive by label x")
+print (dataMgr.ignoreNegativeLabels(seg,x))
 
 
 

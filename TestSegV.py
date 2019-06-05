@@ -147,8 +147,8 @@ def main():
             segmentations = testDataMgr.oneHotArray2Labels(outputs)
             testDataMgr.saveInputsSegmentations2Images(inputsCpu, labelsCpu, segmentations, n)
 
-            (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu)
-            (TPRSumBatch, TPRCountBatch) = testDataMgr.getTPRSumList(segmentations, labelsCpu)
+            (diceSumBatch, diceCountBatch) = testDataMgr.getDiceSumList(segmentations, labelsCpu, K)
+            (TPRSumBatch, TPRCountBatch) = testDataMgr.getTPRSumList(segmentations, labelsCpu, K)
 
             diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
             diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]

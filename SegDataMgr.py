@@ -140,78 +140,9 @@ class SegDataMgr(DataMgr):
         result.append((previous + start) / 2)
         return [int(round(x, 0)) for x in result]
 
-    def getDiceSumList(self, segmentations, labels):
-        """
-        :param segmentations: with N samples
-        :param labels: ground truth with N samples
-        :return: (diceSumList,diceCountList)
-                diceSumList: whose element 0 indicates total dice sum over N samples, element 1 indicate label1 dice sum over N samples, etc
-                diceCountList: indicate effective dice count
-        """
-        N = segmentations.shape[0]  # sample number
-        K = self.m_k                # classification number
-        diceSumList = [0 for _ in range(K)]
-        diceCountList = [0 for _ in range(K)]
-        for i in range(N):
-            (dice,count) = self.getDice((segmentations[i] != 0) * 1, (labels[i] != 0) * 1)
-            diceSumList[0] += dice
-            diceCountList[0] += count
-            for j in range(1, K):
-                (dice, count) = self.getDice((segmentations[i]==j)*1, (labels[i]==j)*1 )
-                diceSumList[j] += dice
-                diceCountList[j] += count
 
-        return diceSumList, diceCountList
 
-    @staticmethod
-    def getDice(segmentation, label):
-        """
 
-        :param segmentation:  0-1 elements array
-        :param label:  0-1 elements array
-        :return: (dice, count) count=1 indicates it is an effective dice, count=0 indicates there is no nonzero elements in label.
-        """
-        nA = np.count_nonzero(segmentation)
-        nB = np.count_nonzero(label)
-        C = segmentation * label
-        nC = np.count_nonzero(C)
-        if 0 == nB:  # the dice was calculated over the slice where a ground truth was available.
-            return 0, 0
-        else:
-            return nC*2.0/(nA+nB), 1
-
-    @staticmethod
-    def getTPR(segmentation, label):  #  sensitivity, recall, hit rate, or true positive rate (TPR)
-        nB = np.count_nonzero(label)
-        C = segmentation * label
-        nC = np.count_nonzero(C)
-        if 0 == nB:
-            return 0, 0
-        else:
-            return nC/nB, 1
-
-    def getTPRSumList(self, predictLabels, labels):
-        """
-        :param predictLabels: with N samples
-        :param labels: ground truth with N samples
-        :return: (TPRSumList,TPRCountList)
-                TPRSumList: whose element 0 indicates total TPR sum over N samples, element 1 indicate label1 TPR sum over N samples, etc
-                TPRCountList: indicate effective TPR count
-        """
-        N = predictLabels.shape[0]  # sample number
-        K = self.m_k                # classification number
-        TPRSumList = [0 for _ in range(K)]
-        TPRCountList = [0 for _ in range(K)]
-        for i in range(N):
-            (TPR,count) = self.getTPR((predictLabels[i] != 0) * 1, (labels[i] != 0) * 1)
-            TPRSumList[0] += TPR
-            TPRCountList[0] += count
-            for j in range(1, K):
-                (TPR, count) = self.getTPR((predictLabels[i] == j) * 1, (labels[i] == j) * 1)
-                TPRSumList[j] += TPR
-                TPRCountList[j] += count
-
-        return TPRSumList, TPRCountList
 
     def suppressedLabels(self, labelArray, binarize = True):
         for k in self.m_suppressedLabels:
@@ -420,16 +351,3 @@ class SegDataMgr(DataMgr):
         return labelStatisSum, sliceStatisSum
 
 
-    def updateDiceTPRSumList(self, outputsGPU, labelsCpu, diceSumList, diceCountList, TPRSumList, TPRCountList):
-        outputs = outputsGPU.cpu().detach().numpy()
-        predictLabels= self.oneHotArray2Labels(outputs)
-
-        (diceSumBatch, diceCountBatch) = self.getDiceSumList(predictLabels, labelsCpu)
-        (TPRSumBatch, TPRCountBatch) = self.getTPRSumList(predictLabels, labelsCpu)
-
-        diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
-        diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]
-        TPRSumList = [x + y for x, y in zip(TPRSumList, TPRSumBatch)]
-        TPRCountList = [x + y for x, y in zip(TPRCountList, TPRCountBatch)]
-
-        return diceSumList, diceCountList, TPRSumList, TPRCountList
