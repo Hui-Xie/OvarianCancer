@@ -34,7 +34,7 @@ Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
 response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-segmentation loss function: focus loss  with weight [***] for [0,1,2] class
+segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
 
 Data:   training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
         We used patient ID as index to order all patients data, and then used about the first 80% of patients as training data, 
@@ -110,7 +110,7 @@ def main():
 
 
     batchSize = 4
-    C = 24   # number of channels after the first input layer
+    C = 6   # number of channels after the first input layer
     D = 147  # depth of input
     H = 281  # height of input
     W = 281  # width of input
@@ -188,13 +188,14 @@ def main():
     TPRHead1 = (f'TPR_{i}' for i in range(Kup))
     diceHead2 = (f'Dice{i}' for i in range(Kup))
     TPRHead2 = (f'TPR_{i}' for i in range(Kup))
-    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"Accuracy"\
-                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"Accuracy")  # logging.info output head
 
-    logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
+    logging.info(f"\n\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
 
-    logging.info(
-        f"Epoch\t\tTrLoss\t" + "TrainAccuracy" + f"\t" + f"TsLoss\t" + f"TestAccuracy")  # logging.info output head
+
+    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccur"\
+                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccur")  # logging.info output head
+
+
 
     for epoch in range(epochs):
         # ================Training===============
@@ -343,8 +344,8 @@ def main():
         testTPRAvgList = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
         logging.info(
-            f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) +  f'{trainAccuracy:.5f}'\
-            + f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'{testAccuracy:.5f}')
+            f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) +  f'\t{trainAccuracy:.4f}'\
+            + f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{testAccuracy:.4f}')
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):

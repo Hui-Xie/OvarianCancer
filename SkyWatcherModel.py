@@ -34,7 +34,7 @@ class SkyWatcherModel(BasicModel):
 
         self.m_upList = nn.ModuleList()
         for i  in range(self.m_nDownSamples):
-            if i != self.m_nDownSample -1:
+            if i != self.m_nDownSamples -1:
                 self.m_upList.append(UpBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
             else:
                 self.m_upList.append(UpBB(C, C//2, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
@@ -61,7 +61,7 @@ class SkyWatcherModel(BasicModel):
         xup = crossingx
         for up in self.m_upList:
             xup = up(xup)
-        xup = self.upOutput(xup)
+        xup = self.m_upOutput(xup)
         return xup
 
 

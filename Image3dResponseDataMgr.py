@@ -88,8 +88,6 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             seg3d   = np.load(labelFile)
             if convertAllZeroSlices:
                 self.convertAllZeroSliceToValue(seg3d, -100)  # -100 is default ignore_index in CrossEntropyLoss
-            seg3d   = np.expand_dims(seg3d, 0)   # add channel dim as 1
-
             response = self.m_responseList[i]
 
             dataList.append(image3d)
