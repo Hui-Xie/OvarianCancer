@@ -191,13 +191,23 @@ def main():
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
 
-        for (inputs1, labels1Cpu), (inputs2, labels2Cpu) in zip(trainDataMgr.dataResponseGenerator(True),
-                                                                trainDataMgr.dataResponseGenerator(True)):
+        if 105 == epoch:
+            lossWeightList[0] = 1     # for response cross entropy
+            lossWeightList[1] = 0.32  # for seg Cross Entropy
+            lossWeightList[2] = 0.68  # for seg boundary loss
+            logging.info(f"before just epoch {epoch}, fix loss weight as {lossWeightList}")
+            if useDataParallel:
+                net.module.updateLossWeightList(lossWeightList)
+            else:
+                net.updateLossWeightList(lossWeightList)
+
+        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(trainDataMgr.dataSegResponseGenerator(True),
+                                                                trainDataMgr.dataSegResponseGenerator(True)):
             lambdaInBeta = trainDataMgr.getLambdaInBeta()
             inputs = inputs1 * lambdaInBeta + inputs2 * (1 - lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
-            labels1 = torch.from_numpy(labels1Cpu).to(device, dtype=torch.long)
-            labels2 = torch.from_numpy(labels2Cpu).to(device, dtype=torch.long)
+            seg1 = torch.from_numpy(seg1Cpu).to(device, dtype=torch.long)
+            seg2 = torch.from_numpy(seg2Cpu).to(device, dtype=torch.long)
 
             if useDataParallel:
                 optimizer.zero_grad()
@@ -207,18 +217,18 @@ def main():
                     if weight == 0:
                         continue
                     if lambdaInBeta != 0:
-                        loss += lossFunc(outputs, labels1) * weight * lambdaInBeta
+                        loss += lossFunc(outputs, seg1) * weight * lambdaInBeta
                     if 1 - lambdaInBeta != 0:
-                        loss += lossFunc(outputs, labels2) * weight * (1 - lambdaInBeta)
+                        loss += lossFunc(outputs, seg2) * weight * (1 - lambdaInBeta)
                 loss.backward()
                 optimizer.step()
                 batchLoss = loss.item()
             else:
-                batchLoss = net.batchTrainMixup(inputs, labels1, labels2, lambdaInBeta)
+                batchLoss = net.batchTrainMixup(inputs, seg1, seg2, lambdaInBeta)
 
             if lambdaInBeta == 1:
-                nTrainCorrect += labels1.eq(torch.argmax(outputs, dim=1)).sum().item()
-                nTrainTotal += labels1.shape[0]
+                nTrainCorrect += seg1.eq(torch.argmax(outputs, dim=1)).sum().item()
+                nTrainTotal += seg1.shape[0]
 
             trainingLoss += batchLoss
             trainBatches += 1
