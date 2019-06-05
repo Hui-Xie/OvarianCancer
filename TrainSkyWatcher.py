@@ -33,8 +33,8 @@ Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
                   Total network learning parameters are 236K.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
-response Loss Function:   Cross Entropy with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-segmenation loss function: focus loss + boundary loss
+response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+segmentation loss function: focus loss  with weight [***] for [0,1,2] class
 
 Data:   training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
         We used patient ID as index to order all patients data, and then used about the first 80% of patients as training data, 
@@ -156,10 +156,12 @@ def main():
     # lossFunc1 and lossFunc2 are for segmentation.
     # After 100 epochs, we need to change foclas and segBoundaryLoss to 0.32: 0.68
     segCEWeight = torch.FloatTensor(trainDataMgr.getSegCEWeight()).to(device)
-    segFocalLoss = FocalCELoss(weight=segCEWeight)
-    segBoundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=Kup, weight=segCEWeight)
+    segFocalLoss = FocalCELoss(weight=segCEWeight, ignore_index=-100) # ignore all zero slices
     net.appendLossFunc(segFocalLoss, 1)
-    net.appendLossFunc(segBoundaryLoss, 0)
+
+    # boundaryLoss does not support 3D input.
+    # segBoundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=Kup, weight=segCEWeight)
+    # net.appendLossFunc(segBoundaryLoss, 0)
     # ========= end of loss function =================
 
     net.to(device)
@@ -216,17 +218,6 @@ def main():
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
-
-        if 105 == epoch:
-            oldLossWeightList = lossWeightList.copy()
-            lossWeightList[0] = 1     # for response cross entropy
-            lossWeightList[1] = 0.32  # for seg Cross Entropy
-            lossWeightList[2] = 0.68  # for seg boundary loss
-            logging.info(f"before just epoch {epoch}, reset loss weight as {lossWeightList} from old weight {oldLossWeightList}")
-            if useDataParallel:
-                net.module.updateLossWeightList(lossWeightList)
-            else:
-                net.updateLossWeightList(lossWeightList)
 
         for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(trainDataMgr.dataSegResponseGenerator(True),
                                                                                       trainDataMgr.dataSegResponseGenerator(True)):

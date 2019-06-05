@@ -61,7 +61,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList.clear()
         responseList.clear()
 
-    def dataSegResponseGenerator(self, shuffle):
+    def dataSegResponseGenerator(self, shuffle, convertAllZeroSlices=True):
         """
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
@@ -86,6 +86,8 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             image3d = np.load(imageFile)
             image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
             seg3d   = np.load(labelFile)
+            if convertAllZeroSlices:
+                self.convertAllZeroSliceToValue(seg3d, -100)  # -100 is default ignore_index in CrossEntropyLoss
             seg3d   = np.expand_dims(seg3d, 0)   # add channel dim as 1
 
             response = self.m_responseList[i]

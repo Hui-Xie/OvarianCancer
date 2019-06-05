@@ -296,3 +296,14 @@ class DataMgr:
 
     def getTestDirs(self):  # may need to delete this function
         return self.m_inputsDir.replace('/trainImages', '/testImages'), self.m_labelsDir.replace('/trainLabels', '/testLabels')
+
+    @staticmethod
+    def convertAllZeroSliceToValue(segArray, toValue):
+        nonzeroIndex = np.nonzero(segArray)
+        nonzeroSlices  = set(nonzeroIndex[0])
+        allSlices = set(range(segArray.shape[0]))
+        zeroSlices = list(allSlices- nonzeroSlices)
+        segArray[zeroSlices] = toValue
+
+
+
