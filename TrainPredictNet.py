@@ -268,6 +268,9 @@ def main():
             if lambdaInBeta == 1 :
                nTrainCorrect += labels1.eq(torch.argmax(outputs,dim=1)).sum().item()
                nTrainTotal += labels1.shape[0]
+            if lambdaInBeta == 0:
+                nTrainCorrect += labels2.eq(torch.argmax(outputs, dim=1)).sum().item()
+                nTrainTotal += labels2.shape[0]
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -294,9 +297,8 @@ def main():
                         outputs = net.forward(inputs)
                         loss = torch.tensor(0.0).cuda()
                         for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                            if weight == 0:
-                                continue
-                            loss += lossFunc(outputs, labels) * weight
+                            if weight != 0:
+                                loss += lossFunc(outputs, labels) * weight
                         batchLoss = loss.item()
                     else:
                         batchLoss, outputs = net.batchTest(inputs, labels)

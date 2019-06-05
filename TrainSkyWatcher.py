@@ -105,6 +105,7 @@ def main():
     if not mergeTrainTestData:
         testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
+    outputTrainDice = True
     # ===========debug==================
 
 
@@ -174,6 +175,20 @@ def main():
         logging.info(net.lossFunctionsInfo())
 
     epochs = 1500000
+    logging.info(f"Hints: Test Dice_0 is the dice coeff for all non-zero labels")
+    logging.info(
+        f"Hints: Test Dice_1 is for primary cancer(green), \t\n test Dice_2 is for metastasis(yellow), \t\n and test Dice_3 is for invaded lymph node(brown).")
+    logging.info(f"Hints: Test TPR_0 is the TPR for all non-zero labels")
+    logging.info(
+        f"Hints: Test TPR_1 is for primary cancer(green), \t\n TPR_2 is for metastasis(yellow), \t\n and TPR_3 is for invaded lymph node(brown).\n")
+    logging.info(f"Dice is based on the 2D segmented slices from weak annotation, not 3D dice.")
+    diceHead1 = (f'Dice{i}' for i in range(Kup))  # generator object can be use only once.
+    TPRHead1 = (f'TPR_{i}' for i in range(Kup))
+    diceHead2 = (f'Dice{i}' for i in range(Kup))
+    TPRHead2 = (f'TPR_{i}' for i in range(Kup))
+    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"Accuracy"\
+                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"Accuracy")  # logging.info output head
+
     logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
 
     logging.info(
@@ -181,56 +196,89 @@ def main():
 
     for epoch in range(epochs):
         # ================Training===============
+        net.train()
         random.seed()
+
         trainingLoss = 0.0
         trainBatches = 0
-        net.train()
+
         nTrainCorrect = 0
         nTrainTotal = 0
         trainAccuracy = 0
+
+        trainDiceSumList = [0 for _ in range(Kup)]
+        trainDiceCountList = [0 for _ in range(Kup)]
+        trainTPRSumList = [0 for _ in range(Kup)]
+        trainTPRCountList = [0 for _ in range(Kup)]
+
+
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
         if 105 == epoch:
+            oldLossWeightList = lossWeightList.copy()
             lossWeightList[0] = 1     # for response cross entropy
             lossWeightList[1] = 0.32  # for seg Cross Entropy
             lossWeightList[2] = 0.68  # for seg boundary loss
-            logging.info(f"before just epoch {epoch}, refix loss weight as {lossWeightList}")
+            logging.info(f"before just epoch {epoch}, reset loss weight as {lossWeightList} from old weight {oldLossWeightList}")
             if useDataParallel:
                 net.module.updateLossWeightList(lossWeightList)
             else:
                 net.updateLossWeightList(lossWeightList)
 
         for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(trainDataMgr.dataSegResponseGenerator(True),
-                                                                trainDataMgr.dataSegResponseGenerator(True)):
+                                                                                      trainDataMgr.dataSegResponseGenerator(True)):
             lambdaInBeta = trainDataMgr.getLambdaInBeta()
             inputs = inputs1 * lambdaInBeta + inputs2 * (1 - lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
             seg1 = torch.from_numpy(seg1Cpu).to(device, dtype=torch.long)
             seg2 = torch.from_numpy(seg2Cpu).to(device, dtype=torch.long)
+            response1 = torch.from_numpy(response1Cpu).to(device, dtype=torch.long)
+            response2 = torch.from_numpy(response2Cpu).to(device, dtype=torch.long)
 
             if useDataParallel:
                 optimizer.zero_grad()
-                outputs = net.forward(inputs)
+                xr, xup = net.forward(inputs)
                 loss = torch.tensor(0.0).cuda()
-                for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
+
+                for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList, lossWeightList)):
+                    if i ==0:
+                        outputs = xr
+                        gt1, gt2 = (response1, response2)
+                    else:
+                        outputs = xup
+                        gt1, gt2 = (seg1, seg2)
+
                     if weight == 0:
                         continue
                     if lambdaInBeta != 0:
-                        loss += lossFunc(outputs, seg1) * weight * lambdaInBeta
+                        loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
                     if 1 - lambdaInBeta != 0:
-                        loss += lossFunc(outputs, seg2) * weight * (1 - lambdaInBeta)
+                        loss += lossFunc(outputs, gt2) * weight * (1 - lambdaInBeta)
                 loss.backward()
                 optimizer.step()
                 batchLoss = loss.item()
             else:
-                batchLoss = net.batchTrainMixup(inputs, seg1, seg2, lambdaInBeta)
+                logging.info(f"SkyWatcher Training must use Dataparallel. Program exit.")
+                sys.exit(-5)
 
+            # compute response accuracy
             if lambdaInBeta == 1:
-                nTrainCorrect += seg1.eq(torch.argmax(outputs, dim=1)).sum().item()
-                nTrainTotal += seg1.shape[0]
+                nTrainCorrect += response1.eq(torch.argmax(xr, dim=1)).sum().item()
+                nTrainTotal += response1.shape[0]
+            if lambdaInBeta == 0:
+                nTrainCorrect += response2.eq(torch.argmax(xr, dim=1)).sum().item()
+                nTrainTotal += response2.shape[0]
+
+            # compute segmentation dice and TPR
+            if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
+                trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
+                    = trainDataMgr.updateDiceTPRSumList(xup, seg1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+            if lambdaInBeta == 0 and outputTrainDice and epoch % 5 == 0:
+                trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
+                    = trainDataMgr.updateDiceTPRSumList(xup, seg2Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -239,33 +287,55 @@ def main():
             trainingLoss /= trainBatches
             trainAccuracy = nTrainCorrect / nTrainTotal
 
+        trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
+        trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
+
         # ================Test===============
+        net.eval()
 
         testLoss = 0.0
         testBatches = 0
+
         nTestCorrect = 0
         nTestTotal = 0
         testAccuracy = 0
+
+        testDiceSumList = [0 for _ in range(Kup)]
+        testDiceCountList = [0 for _ in range(Kup)]
+        testTPRSumList = [0 for _ in range(Kup)]
+        testTPRCountList = [0 for _ in range(Kup)]
+
         if not mergeTrainTestData:
-            net.eval()
+
             with torch.no_grad():
-                for inputs, labelsCpu in testDataMgr.dataResponseGenerator(True):
-                    inputs, labels = torch.from_numpy(inputs), torch.from_numpy(labelsCpu)
-                    inputs, labels = inputs.to(device, dtype=torch.float), labels.to(device,
-                                                                                     dtype=torch.long)  # return a copy
+                for inputs, segCpu, responseCpu in testDataMgr.dataSegResponseGenerator(True):
+                    inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
+                    inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
                     if useDataParallel:
-                        outputs = net.forward(inputs)
+                        xr, xup = net.forward(inputs)
                         loss = torch.tensor(0.0).cuda()
-                        for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                            if weight == 0:
-                                continue
-                            loss += lossFunc(outputs, labels) * weight
+
+                        for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList, lossWeightList)):
+                            if i == 0:
+                                outputs = xr
+                                gt = response
+                            else:
+                                outputs = xup
+                                gt = seg
+
+                            if weight != 0:
+                               loss += lossFunc(outputs, gt) * weight
+
                         batchLoss = loss.item()
                     else:
-                        batchLoss, outputs = net.batchTest(inputs, labels)
+                        logging.info(f"SkyWatcher Test must use Dataparallel. Program exit.")
+                        sys.exit(-5)
 
-                    nTestCorrect += labels.eq(torch.argmax(outputs, dim=1)).sum().item()
-                    nTestTotal += labels.shape[0]
+                    nTestCorrect += response.eq(torch.argmax(xr, dim=1)).sum().item()
+                    nTestTotal += response.shape[0]
+
+                    testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
+                        = testDataMgr.updateDiceTPRSumList(xup, segCpu, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
 
                     testLoss += batchLoss
                     testBatches += 1
@@ -278,8 +348,12 @@ def main():
         else:
             lrScheduler.step(trainingLoss)
 
+        testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
+        testTPRAvgList = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
+
         logging.info(
-            f'{epoch}\t\t{trainingLoss:.4f}\t' + f'{trainAccuracy:.5f}' + f'\t' + f'\t{testLoss:.4f}\t' + f'{testAccuracy:.5f}')
+            f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) +  f'{trainAccuracy:.5f}'\
+            + f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'{testAccuracy:.5f}')
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
@@ -299,7 +373,7 @@ def main():
             sys.exit()
 
     torch.cuda.empty_cache()
-    logging.info(f"=============END of Training of Ovarian Cancer Predict Model =================")
+    logging.info(f"=============END of Training of SkyWatcher Predict Model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
 
 

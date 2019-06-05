@@ -261,6 +261,9 @@ def main():
             if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
                     = trainDataMgr.updateDiceTPRSumList(outputs, labels1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+            if lambdaInBeta == 0 and outputTrainDice and epoch % 5 == 0:
+                trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
+                    = trainDataMgr.updateDiceTPRSumList(outputs, labels2Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -289,9 +292,8 @@ def main():
                         outputs = net.forward(inputs)
                         loss = torch.tensor(0.0).cuda()
                         for lossFunc, weight in zip(net.module.m_lossFuncList, lossWeightList):
-                            if weight == 0:
-                                continue
-                            loss += lossFunc(outputs, labels) * weight
+                            if weight != 0:
+                                loss += lossFunc(outputs, labels) * weight
                         batchLoss = loss.item()
                     else:
                         batchLoss, outputs = net.batchTest(inputs, labels)
