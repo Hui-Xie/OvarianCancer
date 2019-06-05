@@ -12,7 +12,7 @@ import os
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from SkyWatcherModel import SkyWatcherModel
 from NetMgr import NetMgr
-from CustomizedLoss import FocalCELoss
+from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
 trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190605.txt'''
@@ -146,9 +146,20 @@ def main():
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+
+    # lossFunc0 is for treatment response
     responseCEWeight = torch.FloatTensor(trainDataMgr.getResponseCEWeight()).to(device)
-    focalLoss = FocalCELoss(weight=responseCEWeight)
-    net.appendLossFunc(focalLoss, 1)
+    responseFocalLoss = FocalCELoss(weight=responseCEWeight)
+    net.appendLossFunc(responseFocalLoss, 1)
+
+    # lossFunc1 and lossFunc2 are for segmentation.
+    # After 100 epochs, we need to change foclas and segBoundaryLoss to 0.32: 0.68
+    segCEWeight = torch.FloatTensor(trainDataMgr.getSegCEWeight()).to(device)
+    segFocalLoss = FocalCELoss(weight=segCEWeight)
+    segBoundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=Kup, weight=segCEWeight)
+    net.appendLossFunc(segFocalLoss, 1)
+    net.appendLossFunc(segBoundaryLoss, 0)
+    # ========= end of loss function =================
 
     net.to(device)
     if useDataParallel:
@@ -162,7 +173,7 @@ def main():
     else:
         logging.info(net.lossFunctionsInfo())
 
-    epochs = 150000
+    epochs = 1500000
     logging.info(f"Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
 
     logging.info(

@@ -42,21 +42,32 @@ class SkyWatcherModel(BasicModel):
 
         self.m_upOutput = nn.Conv3d(C//2, Kup, (1,1,1), stride=(1,1,1))
 
-    def forward(self, inputx):
+    def encoderForward(self, inputx):
         x = self.m_input(inputx)
         for down in self.m_downList:
             x = down(x)
         # here x is the output at crossing point of sky watcher
+        return x
 
+    def responseForward(self, crossingx):
         # xr means x rightside output, or response output
-        xr = x
-        xr = torch.reshape(xr, (1,xr.numel()))
+        xr = crossingx
+        xr = torch.reshape(xr, (1, xr.numel()))
         xr = self.m_fc11(xr)
+        return xr
 
+    def decoderForward(self, crossingx):
         # xup means the output using upList
-        xup = x
+        xup = crossingx
         for up in self.m_upList:
-            xup = up(x)
+            xup = up(xup)
         xup = self.upOutput(xup)
+        return xup
+
+
+    def forward(self, inputx):
+        x = self.encoderForward(inputx)
+        xr = self.responseForward(x)
+        xup = self.decoderForward(x)
         return xr, xup
 
