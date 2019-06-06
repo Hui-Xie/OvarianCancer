@@ -15,7 +15,8 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190606.txt'''
+# trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190606.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190606.txt'''
 logNotes = r'''
 Major program changes: 
                      delete the m_k in the DataMgr class.
@@ -196,7 +197,7 @@ def main():
     logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura"\
                  + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura")  # logging.info output head
 
-
+    oldTestLoss = 1000
 
     for epoch in range(epochs):
         # ================Training===============
@@ -363,7 +364,8 @@ def main():
 
             else:
                 netMgr.save(testAccuracy)
-                if testAccuracy > bestTestPerf:
+                if testAccuracy > bestTestPerf or testLoss < oldTestLoss:
+                    oldTestLoss = testLoss
                     bestTestPerf = testAccuracy
                     netMgr.saveBest(bestTestPerf)
         else:
