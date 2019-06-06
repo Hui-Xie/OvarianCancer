@@ -276,8 +276,10 @@ def main():
             trainingLoss += batchLoss
             trainBatches += 1
 
-        if 0 != trainBatches and 0 != nTrainTotal:
+        if 0 != trainBatches:
             trainingLoss /= trainBatches
+
+        if 0 != nTrainTotal:
             trainAccuracy = nTrainCorrect / nTrainTotal
 
         trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
@@ -334,15 +336,18 @@ def main():
                     testBatches += 1
 
                 # ===========print train and test progress===============
-                if 0 != testBatches and 0 != nTestTotal:
+                if 0 != testBatches:
                     testLoss /= testBatches
-                    testAccuracy = nTestCorrect / nTestTotal
                     lrScheduler.step(testLoss)
+
+                if 0 != nTestTotal:
+                    testAccuracy = nTestCorrect / nTestTotal
+
         else:
             lrScheduler.step(trainingLoss)
 
         testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
-        testTPRAvgList = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
+        testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
         logging.info(
             f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) +  f'\t{trainAccuracy:.4f}'\
