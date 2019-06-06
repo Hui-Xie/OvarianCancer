@@ -276,8 +276,10 @@ def main():
             trainingLoss += batchLoss
             trainBatches += 1
 
-        if 0 != trainBatches and 0 != nTrainTotal:
+        if 0 != trainBatches:
             trainingLoss /= trainBatches
+
+        if 0 != nTrainTotal:
             trainAccuracy = nTrainCorrect/nTrainTotal
 
 
@@ -312,10 +314,12 @@ def main():
 
 
                 # ===========print train and test progress===============
-                if 0 != testBatches and 0 != nTestTotal:
+                if 0 != testBatches:
                     testLoss /= testBatches
-                    testAccuracy = nTestCorrect/nTestTotal
                     lrScheduler.step(testLoss)
+                if 0 != nTestTotal:
+                    testAccuracy = nTestCorrect/nTestTotal
+
         else:
             lrScheduler.step(trainingLoss)
 
