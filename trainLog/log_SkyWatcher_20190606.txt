@@ -1,0 +1,72 @@
+Program ID of SkyWatcher Network training:25818
+
+Program command: 
+ ['TrainSkyWatcher.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281', '/home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json']
+
+Major program changes: 
+                     delete the m_k in the DataMgr class.
+                      
+
+Experiment setting for Image3d ROI to response:
+Input CT data: 147*281*281  3D CT raw image ROI
+segmentation label: 127*255*255 segmentation label with value (0,1,2) which erases lymph node label
+
+This is a multi-task learning. 
+
+Predictive Model: 1,  first 3-layer dense conv block with channel size 6.
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 25K.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+
+response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+
+Data:   training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
+        We used patient ID as index to order all patients data, and then used about the first 80% of patients as training data, 
+        and the remaining 20% of patients as test data. 
+        Sorting with patient ID is to make sure the division of training and test set is blind to the patient's detailed stage, 
+        shape and size of cancer.  
+        Therefore you will see that patient IDs of all test data are beginning at 8 or 9. 
+        This training/test division is exactly same with segmentation network experiment before. 
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+
+                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
+
+            
+
+Program starting Time: 2019-06-06 10:24:30.470813
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher
+
+Now program get 130 input files.
+Now program get 32 input files.
+TrainData Input:  batchSize=4, depth=147, height=281, width=281
+
+TestData Input:  batchSize=4, depth=147, height=281, width=281
+
+Info: the size of bottle neck in the net = 6* (1, 3, 3)
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Network trains from scratch.
+Network has total 27,596 parameters.
+Infor: Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Infor: Segmentation Cross Entropy Weight: [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+Info: program will use 4 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 	FocalCELoss with weight of 1; 
+Hints: Test Dice_0 is the dice coeff for all non-zero labels
+Hints: Test Dice_1 is for primary cancer(green), 	
+ test Dice_2 is for metastasis(yellow), 	
+ and test Dice_3 is for invaded lymph node(brown).
+Hints: Test TPR_0 is the TPR for all non-zero labels
+Hints: Test TPR_1 is for primary cancer(green), 	
+ TPR_2 is for metastasis(yellow), 	
+ and TPR_3 is for invaded lymph node(brown).
+
+Dice is based on all 2D segmented slices in the volume from weak annotation, not real 3D dice.
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura

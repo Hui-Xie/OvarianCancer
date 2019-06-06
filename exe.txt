@@ -1,15 +1,15 @@
-/home/hxie1/anaconda3/bin/python  /home/hxie1/Projects/OvarianCancer/TrainSegV.py /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2 /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels 2D 0,1,2
+/home/hxie1/anaconda3/bin/python  /home/hxie1/Projects/OvarianCancer/TrainSegV.py /home/hxie1/temp_netParameters/OvarianCancer/Label0_1_2 /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels 2D 0,1,2  &
 
-python3.7 generateLatentVector.py /home/hxie1/temp_netParameters/OvarianCancer/test /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels  2D 0,1,2
+python3.7 generateLatentVector.py /home/hxie1/temp_netParameters/OvarianCancer/test /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels  2D 0,1,2  &
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/train  /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/test /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json latent
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/train  /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/test /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json latent &
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json image3dZoom
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages /home/hxie1/data/OvarianCancerCT/Extract_uniform/latent/patientResponseDict.json image3dZoom &
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dZoom
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dZoom &
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281 /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dROI
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281 /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dROI &
 
-python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom_147_281_281  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom_147_281_281 /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dZoom
+python3.7 TrainPredictNet.py /home/hxie1/temp_netParameters/OvarianCancer/Predict  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom_147_281_281  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom_147_281_281 /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json image3dZoom &
 
-python3.7 TrainSkyWatch.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281 /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json
+python3.7 TrainSkyWatcher.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher  /home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI_147_281_281  /home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_ROI_147_281_281 /home/hxie1/data/OvarianCancerCT/Extract_uniform/patientResponseDict.json &
