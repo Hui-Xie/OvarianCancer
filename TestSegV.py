@@ -69,11 +69,11 @@ def main():
 
     if is2DInput:
         logging.info(f"Info: program uses 2D input.")
-        testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(8, 1, 281, 281, "TestData")  # batchSize, depth, height, width
         net = SegV2DModel(128, K)  # 128 is the number of filters in the first layer for primary cancer.
     else:
         print("Info: program uses 3D input.")
-        testDataMgr.setDataSize(8, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(8, 21, 281, 281, "TestData")  # batchSize, depth, height, width
         net = SegV3DModel(K)
 
     testDataMgr.buildImageAttrList()
@@ -113,7 +113,6 @@ def main():
             net = nn.DataParallel(net)
     net.to(device)
 
-    K = testDataMgr.getNumClassification()
     logging.info("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
     logging.info("Hints: Test Dice_1 is for primary cancer(green), \ntest Dice_2 is for metastasis(yellow), \nand test Dice_3 is for invaded lymph node(brown).")
     logging.info("Hints: Test TPR_0 is the TPR for all non-zero labels")

@@ -5,7 +5,7 @@ imagePath = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
 labelPath = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainLabels"
 
 trainDataMgr = SegDataMgr(imagePath, labelPath, "_CT.nrrd")
-trainDataMgr.setDataSize(64, 21,281,281,4, "TrainData")  #batchSize, depth, height, width, k
+trainDataMgr.setDataSize(64, 21,281,281,"TrainData")  #batchSize, depth, height, width
 trainDataMgr.setMaxShift(25)                #translation data augmentation
 trainDataMgr.setFlipProb(0.3)               #flip data augmentation
 

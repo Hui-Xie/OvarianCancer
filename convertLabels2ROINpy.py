@@ -22,7 +22,7 @@ filesList = [os.path.abspath(x) for x in os.listdir(inputsDir) if suffix in x]
 os.chdir(originalCwd)
 
 dataMgr = DataMgr("", "", suffix)
-dataMgr.setDataSize(0, goalSize[0], goalSize[1],goalSize[2], 0, "ConvertNrrd2ROI")
+dataMgr.setDataSize(0, goalSize[0], goalSize[1],goalSize[2], "ConvertNrrd2ROI")
 radius = goalSize[0]//2
 
 for file in filesList:

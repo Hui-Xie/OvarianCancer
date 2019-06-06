@@ -170,10 +170,11 @@ def main():
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
 
-    trainDataMgr.setDataSize(batchSize, D, H, W, K,"TrainData")
-                            # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+    trainDataMgr.setDataSize(batchSize, D, H, W, "TrainData")
+                            # batchSize, depth, height, width,
+                            # do not consider lymph node with label 3
     if not mergeTrainTestData:
-        testDataMgr.setDataSize(batchSize, D, H, W, K, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(batchSize, D, H, W, "TestData")  # batchSize, depth, height, width
 
     if inputModel == 'latent':
         net = LatentPredictModel(C, K)

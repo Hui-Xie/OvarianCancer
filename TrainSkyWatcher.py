@@ -117,10 +117,10 @@ def main():
     nDownSamples = 6
 
 
-    trainDataMgr.setDataSize(batchSize, D, H, W, Kr, "TrainData")
-    # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+    trainDataMgr.setDataSize(batchSize, D, H, W, "TrainData")
+    # batchSize, depth, height, width, and do not consider lymph node with label 3
     if not mergeTrainTestData:
-        testDataMgr.setDataSize(batchSize, D, H, W, Kr, "TestData")  # batchSize, depth, height, width, k
+        testDataMgr.setDataSize(batchSize, D, H, W, "TestData")  # batchSize, depth, height, width
 
     net = SkyWatcherModel(C, Kr, Kup, (D, H, W), nDownSamples)
     logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
@@ -267,10 +267,10 @@ def main():
             # compute segmentation dice and TPR
             if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = trainDataMgr.updateDiceTPRSumList(xup, seg1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                    = trainDataMgr.updateDiceTPRSumList(xup, seg1Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
             if lambdaInBeta == 0 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = trainDataMgr.updateDiceTPRSumList(xup, seg2Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                    = trainDataMgr.updateDiceTPRSumList(xup, seg2Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -327,7 +327,7 @@ def main():
                     nTestTotal += response.shape[0]
 
                     testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
-                        = testDataMgr.updateDiceTPRSumList(xup, segCpu, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
+                        = testDataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
 
                     testLoss += batchLoss
                     testBatches += 1

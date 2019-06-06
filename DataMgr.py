@@ -23,11 +23,10 @@ class DataMgr:
         self.m_depth = 0
         self.m_height = 0
         self.m_width = 0
-        self.m_k = 0
 
         self.m_shuffle = True
 
-    def setDataSize(self, batchSize, depth, height, width, k, dataName):
+    def setDataSize(self, batchSize, depth, height, width, dataName):
         """
         :param batchSize:
         :param depth:  it must be odd
@@ -40,9 +39,8 @@ class DataMgr:
         self.m_depth = depth
         self.m_height = height
         self.m_width = width
-        self.m_k = k
         self.m_logInfo(
-            f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}, NumClassfication={self.m_k}\n')
+            f'{dataName} Input:  batchSize={self.m_batchSize}, depth={self.m_depth}, height={self.m_height}, width={self.m_width}\n')
 
     def getBatchSize(self):
         return self.m_batchSize
@@ -53,9 +51,6 @@ class DataMgr:
             return channels, self.m_depth, self.m_height, self.m_width
         else:
             return channels, self.m_height, self.m_width
-
-    def getNumClassification(self):
-        return self.m_k
 
     def setMixup(self, alpha, prob):
         self.m_alpha = alpha
@@ -413,14 +408,14 @@ class DataMgr:
         result = segmentations* ((negLabels*(-1)) + posiZeroLabels*1)
         return result
 
-    def updateDiceTPRSumList(self, outputsGPU, labelsCpu, diceSumList, diceCountList, TPRSumList, TPRCountList):
+    def updateDiceTPRSumList(self, outputsGPU, labelsCpu, K, diceSumList, diceCountList, TPRSumList, TPRCountList):
         outputs = outputsGPU.cpu().detach().numpy()
         predictLabels= self.oneHotArray2Labels(outputs)
 
         predictLabels = DataMgr.ignoreNegativeLabels(predictLabels,labelsCpu)
 
-        (diceSumBatch, diceCountBatch) = self.getDiceSumList(predictLabels, labelsCpu, self.m_k)
-        (TPRSumBatch, TPRCountBatch) = self.getTPRSumList(predictLabels, labelsCpu, self.m_k)
+        (diceSumBatch, diceCountBatch) = self.getDiceSumList(predictLabels, labelsCpu, K)
+        (TPRSumBatch, TPRCountBatch) = self.getTPRSumList(predictLabels, labelsCpu, K)
 
         diceSumList = [x + y for x, y in zip(diceSumList, diceSumBatch)]
         diceCountList = [x + y for x, y in zip(diceCountList, diceCountBatch)]

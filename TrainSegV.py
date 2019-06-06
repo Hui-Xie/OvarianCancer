@@ -105,18 +105,18 @@ def main():
 
     if is2DInput:
         logging.info(f"Info: program uses 2D input.")
-        trainDataMgr.setDataSize(8, 1, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        trainDataMgr.setDataSize(8, 1, 281, 281, "TrainData")  # batchSize, depth, height, width, and do not consider lymph node with label 3
         if not mergeTrainTestData:
-            testDataMgr.setDataSize(8, 1, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+            testDataMgr.setDataSize(8, 1, 281, 281, "TestData")  # batchSize, depth, height, width
         net = SegV2DModel(96, K)
         # net = SegV2DModel_78(96, K)
 
 
     else:
         logging.info(f"Info: program uses 3D input.")
-        trainDataMgr.setDataSize(4, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
+        trainDataMgr.setDataSize(4, 21, 281, 281, "TrainData")  # batchSize, depth, height, width
         if not mergeTrainTestData:
-            testDataMgr.setDataSize(4, 21, 281, 281, K, "TestData")  # batchSize, depth, height, width, k
+            testDataMgr.setDataSize(4, 21, 281, 281, "TestData")  # batchSize, depth, height, width
         net = SegV3DModel(K)
 
     trainDataMgr.setMaxShift(25, 0.5)             #translation data augmentation and its probability
@@ -260,10 +260,10 @@ def main():
 
             if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = trainDataMgr.updateDiceTPRSumList(outputs, labels1Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                    = trainDataMgr.updateDiceTPRSumList(outputs, labels1Cpu, K, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
             if lambdaInBeta == 0 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = trainDataMgr.updateDiceTPRSumList(outputs, labels2Cpu, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                    = trainDataMgr.updateDiceTPRSumList(outputs, labels2Cpu, K, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -299,7 +299,7 @@ def main():
                         batchLoss, outputs = net.batchTest(inputs, labels)
 
                     testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
-                        = testDataMgr.updateDiceTPRSumList(outputs, labelsCpu, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
+                        = testDataMgr.updateDiceTPRSumList(outputs, labelsCpu, K, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
 
                     testLoss += batchLoss
                     testBatches += 1

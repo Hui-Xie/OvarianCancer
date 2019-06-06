@@ -82,11 +82,11 @@ def main():
 
     if is2DInput:
         logging.info(f"Info: program uses 2D input.")
-        dataMgr.setDataSize(8, 1, 281, 281, K,"TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
+        dataMgr.setDataSize(8, 1, 281, 281, "TrainData")  # batchSize, depth, height, width, k, # do not consider lymph node with label 3
         net = SegV2DModel(96, K)
     else:
         logging.info(f"Info: program uses 3D input.")
-        dataMgr.setDataSize(4, 21, 281, 281, K, "TrainData")  # batchSize, depth, height, width, k
+        dataMgr.setDataSize(4, 21, 281, 281, "TrainData")  # batchSize, depth, height, width, k
         net = SegV3DModel(K)
 
     # Load network
