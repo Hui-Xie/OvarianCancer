@@ -15,9 +15,10 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190605.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190606.txt'''
 logNotes = r'''
 Major program changes: 
+                     delete the m_k in the DataMgr class.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -26,11 +27,11 @@ segmentation label: 127*255*255 segmentation label with value (0,1,2) which eras
 
 This is a multi-task learning. 
 
-Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
+Predictive Model: 1,  first 3-layer dense conv block with channel size 6.
                   2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
-                  Total network learning parameters are 236K.
+                  Total network learning parameters are 25K.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
 
 response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
@@ -101,9 +102,9 @@ def main():
         trainDataMgr.initializeInputsResponseList()
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     # ===========debug==================
@@ -183,17 +184,17 @@ def main():
     logging.info(f"Hints: Test TPR_0 is the TPR for all non-zero labels")
     logging.info(
         f"Hints: Test TPR_1 is for primary cancer(green), \t\n TPR_2 is for metastasis(yellow), \t\n and TPR_3 is for invaded lymph node(brown).\n")
-    logging.info(f"Dice is based on the 2D segmented slices from weak annotation, not 3D dice.")
+    logging.info(f"Dice is based on all 2D segmented slices in the volume from weak annotation, not real 3D dice.")
     diceHead1 = (f'Dice{i}' for i in range(Kup))  # generator object can be use only once.
     TPRHead1 = (f'TPR_{i}' for i in range(Kup))
     diceHead2 = (f'Dice{i}' for i in range(Kup))
     TPRHead2 = (f'TPR_{i}' for i in range(Kup))
 
-    logging.info(f"\n\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n\n")
+    logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
 
-    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccur"\
-                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccur")  # logging.info output head
+    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura"\
+                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura")  # logging.info output head
 
 
 
