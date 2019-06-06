@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 import logging
 import os
+import numpy as np
 
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from SkyWatcherModel import SkyWatcherModel
@@ -103,9 +104,9 @@ def main():
         trainDataMgr.initializeInputsResponseList()
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
+    trainDataMgr.setOneSampleTraining(True)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+        testDataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     # ===========debug==================
@@ -125,6 +126,7 @@ def main():
         testDataMgr.setDataSize(batchSize, D, H, W, "TestData")  # batchSize, depth, height, width
 
     net = SkyWatcherModel(C, Kr, Kup, (D, H, W), nDownSamples)
+    net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
@@ -194,8 +196,8 @@ def main():
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
 
-    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura"\
-                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura")  # logging.info output head
+    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura" + f"\tTPR_r" \
+                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r")  # logging.info output head
 
     oldTestLoss = 1000
 
@@ -207,9 +209,10 @@ def main():
         trainingLoss = 0.0
         trainBatches = 0
 
-        nTrainCorrect = 0
-        nTrainTotal = 0
-        trainAccuracy = 0
+        epochPredict = None
+        epochResponse = None
+        responseTrainAccuracy = 0
+        responseTrainTPR = 0
 
         trainDiceSumList = [0 for _ in range(Kup)]
         trainDiceCountList = [0 for _ in range(Kup)]
@@ -258,13 +261,16 @@ def main():
                 logging.info(f"SkyWatcher Training must use Dataparallel. Program exit.")
                 sys.exit(-5)
 
-            # compute response accuracy
+            # accumulate response and predict value
             if lambdaInBeta == 1:
-                nTrainCorrect += response1.eq(torch.argmax(xr, dim=1)).sum().item()
-                nTrainTotal += response1.shape[0]
+                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
             if lambdaInBeta == 0:
-                nTrainCorrect += response2.eq(torch.argmax(xr, dim=1)).sum().item()
-                nTrainTotal += response2.shape[0]
+                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                epochPredict = np.concatenate((epochPredict, batchPredict))  if epochPredict is not None else batchPredict
+                epochResponse = np.concatenate((epochResponse, response2Cpu))  if epochResponse is not None else response2Cpu
+
 
             # compute segmentation dice and TPR
             if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
@@ -280,8 +286,9 @@ def main():
         if 0 != trainBatches:
             trainingLoss /= trainBatches
 
-        if 0 != nTrainTotal:
-            trainAccuracy = nTrainCorrect / nTrainTotal
+        responseTrainAccuracy = trainDataMgr.getAccuracy(epochPredict, epochResponse)
+        responseTrainTPR = trainDataMgr.getTPR(epochPredict, epochResponse)
+
 
         trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
         trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
@@ -292,9 +299,10 @@ def main():
         testLoss = 0.0
         testBatches = 0
 
-        nTestCorrect = 0
-        nTestTotal = 0
-        testAccuracy = 0
+        epochPredict = None
+        epochResponse = None
+        responseTestAccuracy = 0
+        responseTestTPR = 0
 
         testDiceSumList = [0 for _ in range(Kup)]
         testDiceCountList = [0 for _ in range(Kup)]
@@ -327,8 +335,10 @@ def main():
                         logging.info(f"SkyWatcher Test must use Dataparallel. Program exit.")
                         sys.exit(-5)
 
-                    nTestCorrect += response.eq(torch.argmax(xr, dim=1)).sum().item()
-                    nTestTotal += response.shape[0]
+                    # accumulate response and predict value
+                    batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                    epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                    epochResponse = np.concatenate((epochResponse, responseCpu)) if epochResponse is not None else responseCpu
 
                     testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
                         = testDataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
@@ -341,8 +351,8 @@ def main():
                     testLoss /= testBatches
                     lrScheduler.step(testLoss)
 
-                if 0 != nTestTotal:
-                    testAccuracy = nTestCorrect / nTestTotal
+                responseTestAccuracy = testDataMgr.getAccuracy(epochPredict, epochResponse)
+                responseTestTPR = testDataMgr.getTPR(epochPredict, epochResponse)
 
         else:
             lrScheduler.step(trainingLoss)
@@ -350,23 +360,25 @@ def main():
         testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
-        logging.info(
-            f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) +  f'\t{trainAccuracy:.4f}'\
-            + f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{testAccuracy:.4f}')
+
+        outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t {responseTrainTPR:.4f}'
+        outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}' + f'\t {responseTestTPR:.4f}'
+
+        logging.info(outputString)
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             if mergeTrainTestData:
                 netMgr.saveNet()
-                if trainAccuracy > bestTestPerf:
-                    bestTestPerf = trainAccuracy
+                if responseTrainAccuracy > bestTestPerf:
+                    bestTestPerf = responseTrainAccuracy
                     netMgr.saveBest(bestTestPerf)
 
             else:
-                netMgr.save(testAccuracy)
-                if testAccuracy > bestTestPerf or testLoss < oldTestLoss:
+                netMgr.save(responseTestAccuracy)
+                if responseTestAccuracy > bestTestPerf or testLoss < oldTestLoss:
                     oldTestLoss = testLoss
-                    bestTestPerf = testAccuracy
+                    bestTestPerf = responseTestAccuracy
                     netMgr.saveBest(bestTestPerf)
         else:
             logging.info(f"Error: training loss is infinity. Program exit.")

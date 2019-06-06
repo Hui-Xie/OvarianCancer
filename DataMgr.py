@@ -301,6 +301,20 @@ class DataMgr:
         segArray[zeroSlices] = toValue
 
     @staticmethod
+    def getAccuracy(predicts, labels):
+        """
+        :param predicts:  nump array for n predicts
+        :param labels:    nump array for n labels.
+        :return:
+        """
+        nSame = np.equal(predicts,labels).sum()
+        if labels is None:
+            return 0
+        else:
+            return nSame/labels.shape[0]
+
+
+    @staticmethod
     def getDiceSumList(segmentations, labels, K):
         """
         :param segmentations: with N samples
@@ -348,15 +362,17 @@ class DataMgr:
             return nC*2.0/(nA+nB), 1
 
     @staticmethod
-    def getTPR(segmentation, label):  # sensitivity, recall, hit rate, or true positive rate (TPR)
+    def getTPR(predict, label):  # sensitivity, recall, hit rate, or true positive rate (TPR)
         """
-        :param segmentation:
+        :param predict:
         :param label:
         :return:
         :Notes: support 2D and 3D array,
                 value <0 will be ignored.
         """
-        seg1 = segmentation >0
+        if predict is None:
+            return 0
+        seg1 = predict > 0
         label1 = label >0
         nB = np.count_nonzero(label1)
         C = seg1 * label1
@@ -367,9 +383,9 @@ class DataMgr:
             return nC / nB, 1
 
     @staticmethod
-    def getTPRSumList(predictLabels, labels, K):
+    def getTPRSumList(predicts, labels, K):
         """
-        :param predictLabels: with N samples
+        :param predicts: with N samples
         :param labels: ground truth with N samples
         :param K:   classification number
         :return: (TPRSumList,TPRCountList)
@@ -378,16 +394,16 @@ class DataMgr:
         :Notes: support 2D and 3D array,
                 value <0 will be ignored.
         """
-        N = predictLabels.shape[0]  # sample number
+        N = predicts.shape[0]  # sample number
 
         TPRSumList = [0 for _ in range(K)]
         TPRCountList = [0 for _ in range(K)]
         for i in range(N):
-            (TPR, count) = DataMgr.getTPR((predictLabels[i] > 0) , (labels[i] > 0) )
+            (TPR, count) = DataMgr.getTPR((predicts[i] > 0), (labels[i] > 0))
             TPRSumList[0] += TPR
             TPRCountList[0] += count
             for j in range(1, K):
-                (TPR, count) = DataMgr.getTPR((predictLabels[i] == j), (labels[i] == j) )
+                (TPR, count) = DataMgr.getTPR((predicts[i] == j), (labels[i] == j))
                 TPRSumList[j] += TPR
                 TPRCountList[j] += count
 
