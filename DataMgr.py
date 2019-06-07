@@ -24,8 +24,6 @@ class DataMgr:
         self.m_height = 0
         self.m_width = 0
 
-        self.m_shuffle = True
-
         self.m_trainingSetIndices = []
         self.m_validationSetIndices = []
 

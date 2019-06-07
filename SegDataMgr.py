@@ -161,24 +161,22 @@ class SegDataMgr(DataMgr):
             wc += random.randrange(-self.m_maxShift, self.m_maxShift+1)
         return hc, wc
 
-    def dataLabelGenerator(self, shuffle):
+    def dataLabelGenerator(self, inputFileIndices, shuffle=True):
         """
         support 2D or 3D data shuffle
         :param shuffle: True or False
         :return:
         """
-        self.m_shuffle = shuffle
-        N = len(self.m_segSliceTupleList)
-        shuffleList = list(range(N))
-        if self.m_shuffle:
-            random.shuffle(shuffleList)
+        shuffledList = inputFileIndices.copy()
+        if shuffle:
+            random.shuffle(shuffledList)
 
         batch = 0
         dataList=[]  # for yield
         labelList= []
         radius = int((self.m_depth-1)/2)
 
-        for n in shuffleList:
+        for n in shuffledList:
             (i,j) = self.m_segSliceTupleList[n]  # i is the imageID, j is the segmented slice index in image i.
             imageFile = self.m_inputFilesList[i]
             labelFile = self.getLabelFile(imageFile)

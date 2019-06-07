@@ -21,6 +21,7 @@ trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190607
 logNotes = r'''
 Major program changes: 
                      delete the m_k in the DataMgr class.
+                     merge train and test dataMgr into one.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -84,7 +85,7 @@ def main():
 
     netPath = sys.argv[1]
     dataInputsPath = sys.argv[2]
-    labelInputsPath = sys.argv[3]
+    labelInputsPath = sys.argv[3]  # may not use.
     responsePath = sys.argv[4]
     inputSuffix = "_roi.npy"
 
@@ -95,18 +96,10 @@ def main():
 
     mergeTrainTestData = False
 
-    trainDataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
-
-    if not mergeTrainTestData:
-        testDataMgr = Image3dResponseDataMgr(labelInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
-    else:
-        trainDataMgr.expandInputsDir(labelInputsPath, suffix=inputSuffix)
-        trainDataMgr.initializeInputsResponseList()
+    dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(False)  # for debug
-    if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(False)  # for debug
+    dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     # ===========debug==================
@@ -120,16 +113,14 @@ def main():
     nDownSamples = 6
 
 
-    trainDataMgr.setDataSize(batchSize, D, H, W, "TrainData")
+    dataMgr.setDataSize(batchSize, D, H, W, "TrainData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
-    if not mergeTrainTestData:
-        testDataMgr.setDataSize(batchSize, D, H, W, "TestData")  # batchSize, depth, height, width
 
     net = SkyWatcherModel(C, Kr, Kup, (D, H, W), nDownSamples)
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
-    trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
+    dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
@@ -139,7 +130,7 @@ def main():
     # Load network
     netMgr = NetMgr(net, netPath)
     bestTestPerf = 0
-    if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
+    if 2 == len(dataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
         logging.info(f'Program loads net from {netPath}.')
         bestTestPerf = netMgr.loadBestTestPerf()
@@ -153,13 +144,13 @@ def main():
 
 
     # lossFunc0 is for treatment response
-    responseCEWeight = torch.FloatTensor(trainDataMgr.getResponseCEWeight()).to(device)
+    responseCEWeight = torch.FloatTensor(dataMgr.getResponseCEWeight()).to(device)
     responseFocalLoss = FocalCELoss(weight=responseCEWeight)
     net.appendLossFunc(responseFocalLoss, 1)
 
     # lossFunc1 and lossFunc2 are for segmentation.
     # After 100 epochs, we need to change foclas and segBoundaryLoss to 0.32: 0.68
-    segCEWeight = torch.FloatTensor(trainDataMgr.getSegCEWeight()).to(device)
+    segCEWeight = torch.FloatTensor(dataMgr.getSegCEWeight()).to(device)
     segFocalLoss = FocalCELoss(weight=segCEWeight, ignore_index=-100) # ignore all zero slices
     net.appendLossFunc(segFocalLoss, 1)
 
@@ -225,9 +216,9 @@ def main():
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
-        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(trainDataMgr.dataSegResponseGenerator(True),
-                                                                                      trainDataMgr.dataSegResponseGenerator(True)):
-            lambdaInBeta = trainDataMgr.getLambdaInBeta()
+        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True),
+                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True)):
+            lambdaInBeta = dataMgr.getLambdaInBeta()
             inputs = inputs1 * lambdaInBeta + inputs2 * (1 - lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
             seg1 = torch.from_numpy(seg1Cpu).to(device, dtype=torch.long)
@@ -274,10 +265,10 @@ def main():
             # compute segmentation dice and TPR
             if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = trainDataMgr.updateDiceTPRSumList(xup, seg1Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                    = dataMgr.updateDiceTPRSumList(xup, seg1Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
             if lambdaInBeta == 0 and outputTrainDice and epoch % 5 == 0:
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = trainDataMgr.updateDiceTPRSumList(xup, seg2Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                    = dataMgr.updateDiceTPRSumList(xup, seg2Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -285,8 +276,8 @@ def main():
         if 0 != trainBatches:
             trainingLoss /= trainBatches
 
-        responseTrainAccuracy = trainDataMgr.getAccuracy(epochPredict, epochResponse)
-        responseTrainTPR = trainDataMgr.getTPR(epochPredict, epochResponse)[0]
+        responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
+        responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
 
 
 
@@ -312,7 +303,7 @@ def main():
         if not mergeTrainTestData:
 
             with torch.no_grad():
-                for inputs, segCpu, responseCpu in testDataMgr.dataSegResponseGenerator(True):
+                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True):
                     inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                     inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
                     if useDataParallel:
@@ -341,7 +332,7 @@ def main():
                     epochResponse = np.concatenate((epochResponse, responseCpu)) if epochResponse is not None else responseCpu
 
                     testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
-                        = testDataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
+                        = dataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
 
                     testLoss += batchLoss
                     testBatches += 1
@@ -351,8 +342,8 @@ def main():
                     testLoss /= testBatches
                     lrScheduler.step(testLoss)
 
-                responseTestAccuracy = testDataMgr.getAccuracy(epochPredict, epochResponse)
-                responseTestTPR = testDataMgr.getTPR(epochPredict, epochResponse)[0]
+                responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
+                responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
 
         else:
             lrScheduler.step(trainingLoss)

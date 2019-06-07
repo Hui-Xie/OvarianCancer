@@ -12,7 +12,7 @@ class LatentResponseDataMgr(ResponseDataMgr):
         super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
 
 
-    def dataResponseGenerator(self, shuffle):
+    def dataResponseGenerator(self, inputFileIndices, shuffle=True):
         """
         for simple sample input to the predict network: the input size: 1536*51*49,
              where 1536 = 16*96, number of feature map
@@ -20,19 +20,17 @@ class LatentResponseDataMgr(ResponseDataMgr):
                     49   : feature plane flatted in one dimension.
 
         """
-        self.m_shuffle = shuffle
-        N = len(self.m_inputFilesList)
-        shuffleList = list(range(N))
-        if self.m_shuffle:
-            random.shuffle(shuffleList)
+        shuffledList = inputFileIndices.copy()
+        if shuffle:
+            random.shuffle(shuffledList)
 
         batch = 0
         dataList=[]  # for yield
         responseList= []
 
-        for n in shuffleList:
-            latentFile = self.m_inputFilesList[n]
-            label = self.m_responseList[n]
+        for i in shuffledList:
+            latentFile = self.m_inputFilesList[i]
+            label = self.m_responseList[i]
             latent = np.load(latentFile)
 
             dataList.append(latent)

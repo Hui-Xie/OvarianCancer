@@ -12,22 +12,20 @@ class Image3dResponseDataMgr(ResponseDataMgr):
     def __init__(self, inputsDir, labelsPath, inputSuffix, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
 
-    def dataResponseGenerator(self, shuffle):
+    def dataResponseGenerator(self, inputFileIndices, shuffle=True):
         """
         yield (3DImage  - treatment Response) Tuple
 
         """
-        self.m_shuffle = shuffle
-        N = len(self.m_inputFilesList)
-        shuffleList = list(range(N))
-        if self.m_shuffle:
-            random.shuffle(shuffleList)
+        shuffledList = inputFileIndices.copy()
+        if shuffle:
+            random.shuffle(shuffledList)
 
         batch = 0
         dataList=[]  # for yield
         responseList= []
 
-        for i in shuffleList:
+        for i in shuffledList:
             imageFile = self.m_inputFilesList[i]
             if "_CT.nrrd" == self.m_inputSuffix:
                 image3d = self.readImageFile(imageFile)
@@ -61,23 +59,21 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList.clear()
         responseList.clear()
 
-    def dataSegResponseGenerator(self, shuffle, convertAllZeroSlices=True):
+    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True):
         """
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
         """
-        self.m_shuffle = shuffle
-        N = len(self.m_inputFilesList)
-        shuffleList = list(range(N))
-        if self.m_shuffle:
-            random.shuffle(shuffleList)
+        shuffledList = inputFileIndices.copy()
+        if shuffle:
+            random.shuffle(shuffledList)
 
         batch = 0
         dataList = []  # for yield
         segList = []
         responseList = []
 
-        for i in shuffleList:
+        for i in shuffledList:
             imageFile = self.m_inputFilesList[i]
 
             # for inputSize 147*281*281, and segmentation size of 127*255*255

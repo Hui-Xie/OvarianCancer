@@ -55,6 +55,6 @@ class ResponseDataMgr(DataMgr):
         self.m_validationSetIndices += self.m_res1FileIndices[0:nValidation1]
         self.m_trainingSetIndices  = self.m_res0FileIndices[nValidation0:]
         self.m_trainingSetIndices  += self.m_res1FileIndices[nValidation1:]
-        self.m_logInfo(f"==== Regenerate training set and validation set by random === ")
+        self.m_logInfo(f"==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== ")
         self.m_logInfo(f"Infor: Validation Set has {len(self.m_validationSetIndices)} files,and Training Set has {len(self.m_trainingSetIndices)} files")
 
