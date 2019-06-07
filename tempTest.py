@@ -1,40 +1,7 @@
 
-#  test BoundaryLoss
-import numpy as np
-from DataMgr import DataMgr
-from BasicModel import BasicModel
+responseTestTPR = None
 
-inputSize = (147,281,281)
-nDownSamples = 6
+outputString = "ABC"
+outputString += f'\t{responseTestTPR:.4f}'
 
-xSize = BasicModel.getDownSampleSize(inputSize, nDownSamples);
-print(f"bottle neck size: {xSize}")
-
-segSize = BasicModel.getUpSampleSize(xSize, nDownSamples)
-print(f"segmentation size: {segSize}")
-
-dataMgr = DataMgr("", "", "")
-
-seg = np.random.rand(4,3)
-x = np.array([[3, 0, 0], [0, 0, 0], [5, 6, 0], [0,0,0]])
-
-print(x)
-
-print("after convert")
-
-dataMgr.convertAllZeroSliceToValue(x, -100)
-print(x)
-
-print("seg:")
-print(seg)
-
-print("after ignore negtive by label x")
-print (dataMgr.ignoreNegativeLabels(seg,x))
-
-
-
-
-# filename =  "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_ROI/72133468B_roi.npy"
-# array = np.load(filename)
-# print(array.shape)
-
+print(outputString)

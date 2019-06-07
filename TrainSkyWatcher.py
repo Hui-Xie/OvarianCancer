@@ -17,7 +17,7 @@ from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190606.txt'''
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190606.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190607.txt'''
 logNotes = r'''
 Major program changes: 
                      delete the m_k in the DataMgr class.
@@ -104,9 +104,9 @@ def main():
         trainDataMgr.initializeInputsResponseList()
 
     # ===========debug==================
-    trainDataMgr.setOneSampleTraining(True)  # for debug
+    trainDataMgr.setOneSampleTraining(False)  # for debug
     if not mergeTrainTestData:
-        testDataMgr.setOneSampleTraining(True)  # for debug
+        testDataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     # ===========debug==================
@@ -211,8 +211,8 @@ def main():
 
         epochPredict = None
         epochResponse = None
-        responseTrainAccuracy = 0
-        responseTrainTPR = 0
+        responseTrainAccuracy = 0.0
+        responseTrainTPR = 0.0
 
         trainDiceSumList = [0 for _ in range(Kup)]
         trainDiceCountList = [0 for _ in range(Kup)]
@@ -262,14 +262,13 @@ def main():
                 sys.exit(-5)
 
             # accumulate response and predict value
-            if lambdaInBeta == 1:
+            if lambdaInBeta == 1 or lambdaInBeta == 0:
                 batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
-            if lambdaInBeta == 0:
-                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
-                epochPredict = np.concatenate((epochPredict, batchPredict))  if epochPredict is not None else batchPredict
-                epochResponse = np.concatenate((epochResponse, response2Cpu))  if epochResponse is not None else response2Cpu
+                if lambdaInBeta == 1:
+                    epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
+                else:
+                    epochResponse = np.concatenate((epochResponse, response2Cpu))  if epochResponse is not None else response2Cpu
 
 
             # compute segmentation dice and TPR
@@ -287,7 +286,8 @@ def main():
             trainingLoss /= trainBatches
 
         responseTrainAccuracy = trainDataMgr.getAccuracy(epochPredict, epochResponse)
-        responseTrainTPR = trainDataMgr.getTPR(epochPredict, epochResponse)
+        responseTrainTPR = trainDataMgr.getTPR(epochPredict, epochResponse)[0]
+
 
 
         trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
@@ -301,8 +301,8 @@ def main():
 
         epochPredict = None
         epochResponse = None
-        responseTestAccuracy = 0
-        responseTestTPR = 0
+        responseTestAccuracy = 0.0
+        responseTestTPR = 0.0
 
         testDiceSumList = [0 for _ in range(Kup)]
         testDiceCountList = [0 for _ in range(Kup)]
@@ -352,7 +352,7 @@ def main():
                     lrScheduler.step(testLoss)
 
                 responseTestAccuracy = testDataMgr.getAccuracy(epochPredict, epochResponse)
-                responseTestTPR = testDataMgr.getTPR(epochPredict, epochResponse)
+                responseTestTPR = testDataMgr.getTPR(epochPredict, epochResponse)[0]
 
         else:
             lrScheduler.step(trainingLoss)
@@ -361,9 +361,8 @@ def main():
         testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
 
-        outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t {responseTrainTPR:.4f}'
-        outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}' + f'\t {responseTestTPR:.4f}'
-
+        outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}'
+        outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}'+f'\t{responseTestTPR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============

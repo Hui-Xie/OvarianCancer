@@ -307,11 +307,10 @@ class DataMgr:
         :param labels:    nump array for n labels.
         :return:
         """
-        nSame = np.equal(predicts,labels).sum()
         if labels is None:
             return 0
-        else:
-            return nSame/labels.shape[0]
+        nSame = np.equal(predicts,labels).sum()
+        return nSame/labels.shape[0]
 
 
     @staticmethod
@@ -366,12 +365,12 @@ class DataMgr:
         """
         :param predict:
         :param label:
-        :return:
+        :return: A tuple
         :Notes: support 2D and 3D array,
                 value <0 will be ignored.
         """
         if predict is None:
-            return 0
+            return 0, 0
         seg1 = predict > 0
         label1 = label >0
         nB = np.count_nonzero(label1)
