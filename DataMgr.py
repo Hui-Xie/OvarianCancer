@@ -26,6 +26,9 @@ class DataMgr:
 
         self.m_shuffle = True
 
+        self.m_trainingSetIndices = []
+        self.m_validationSetIndices = []
+
     def setDataSize(self, batchSize, depth, height, width, dataName):
         """
         :param batchSize:

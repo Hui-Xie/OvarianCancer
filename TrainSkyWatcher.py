@@ -61,7 +61,7 @@ def printUsage(argv):
     print("============Train SkyWatcher Model for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <fullPathOfTrainInputs>  <fullPathOfTestInputs> <fullPathOfResponse> ")
+          "<netSavedPath> <fullPathOfData>  <fullPathOfLabels> <fullPathOfResponseFile> ")
 
 
 def main():
@@ -83,8 +83,8 @@ def main():
     logging.info(f'\nProgram starting Time: {str(curTime)}')
 
     netPath = sys.argv[1]
-    trainingInputsPath = sys.argv[2]
-    testInputsPath = sys.argv[3]
+    dataInputsPath = sys.argv[2]
+    labelInputsPath = sys.argv[3]
     responsePath = sys.argv[4]
     inputSuffix = "_roi.npy"
 
@@ -95,12 +95,12 @@ def main():
 
     mergeTrainTestData = False
 
-    trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
+    trainDataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
-        testDataMgr = Image3dResponseDataMgr(testInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
+        testDataMgr = Image3dResponseDataMgr(labelInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
     else:
-        trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
+        trainDataMgr.expandInputsDir(labelInputsPath, suffix=inputSuffix)
         trainDataMgr.initializeInputsResponseList()
 
     # ===========debug==================
