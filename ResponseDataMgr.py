@@ -6,9 +6,10 @@ class ResponseDataMgr(DataMgr):
     def __init__(self, inputsDir, labelsPath, inputSuffix, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
         self.m_responseList = []
-        self.initializeInputsResponseList()
         self.m_res0FileIndices = []
         self.m_res1FileIndices = []
+        self.initializeInputsResponseList()
+
 
     def initializeInputsResponseList(self):
         self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputSuffix)
@@ -42,7 +43,7 @@ class ResponseDataMgr(DataMgr):
                 self.m_res0FileIndices.append(i)
             else: # res == 1
                 self.m_res1FileIndices.append(i)
-        self.m_logInfo(f"Infor: In all data of {len(self.m_responseList)} files, respone 0 has {len(self.m_res0FileIndices)} and response 1 has {len(self.m_res1FileIndices)}")
+        self.m_logInfo(f"Infor: In all data of {len(self.m_responseList)} files, respone 0 has {len(self.m_res0FileIndices)} files,\n\t  and response 1 has {len(self.m_res1FileIndices)} files ")
 
     def divideTrainingValidationSet(self):
         validationRate = 0.2

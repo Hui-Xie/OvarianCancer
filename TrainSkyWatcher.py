@@ -99,7 +99,7 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(False)  # for debug
+    dataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     # ===========debug==================
@@ -113,7 +113,7 @@ def main():
     nDownSamples = 6
 
 
-    dataMgr.setDataSize(batchSize, D, H, W, "TrainData")
+    dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
 
     net = SkyWatcherModel(C, Kr, Kup, (D, H, W), nDownSamples)
