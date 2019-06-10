@@ -9,38 +9,34 @@ class SkyWatcherModel(BasicModel):
         super().__init__()
         self.m_inputSize = inputSize
         self.m_nDownSamples = nDownSamples
-        self.m_bottleNeckSize  = self.getDownSampleSize(self.m_inputSize, self.m_nDownSamples)
-        lenBn = self.getProduct(self.m_bottleNeckSize)  # len of BottleNeck
 
         N = 3  # the number of layer in each building block
         self.m_input = ConvInput(1, C//2, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
 
-        self.m_downList = nn.ModuleList()
-        for i  in range(self.m_nDownSamples):
-            if 0 == i:
-                self.m_downList.append(DownBB(C//2, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
-            else:
-                self.m_downList.append(DownBB(C, C, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
-        # from inputSize 147*281*281, after 6 downsamples, the output size is (1*3*3)
+        self.m_downList, outputSize = self.addDownBBList(self.m_inputSize,C,C, 3, N)  # outputSize ={2*16*16}
 
+        self.m_downList.append( DownBB(C, C, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))      # outpusSize =(1*7*7}
+        outputSize = self.getConvOutputTensorSize(outputSize,(2,3,3), (2,2,2), (0,0,0))
+        self.m_bottleNeckSize = outputSize
+
+        # for response prediction
+        self.m_11Conv = BN_ReLU_Conv(C, 1, (1,1,1), (1,1,1), (0,0,0), False)           # outpusSize =(1*7*7}
+        lenBn = 49
         self.m_fc11   = nn.Sequential(
-                       nn.Linear(C*lenBn , C*lenBn//2),
-                       nn.InstanceNorm1d(C*lenBn//2),
+                       nn.Linear(lenBn , lenBn//2),
+                       nn.InstanceNorm1d(lenBn//2),
                        nn.ReLU(inplace=True),
-                       nn.Linear(C*lenBn//2, C*lenBn//4),
-                       nn.InstanceNorm1d(C*lenBn//4),
+                       nn.Linear(lenBn//2, lenBn//4),
+                       nn.InstanceNorm1d(lenBn//4),
                        nn.ReLU(inplace=True),
-                       nn.Linear(C*lenBn//4, Kr))
+                       nn.Linear(lenBn//4, Kr))
 
-        self.m_upList = nn.ModuleList()
-        for i  in range(self.m_nDownSamples):
-            if i != self.m_nDownSamples -1:
-                self.m_upList.append(UpBB(C, C,   filter1st = (3, 3, 3), stride=(2, 2, 2), nLayers=N))
-            else:
-                self.m_upList.append(UpBB(C, C//2, filter1st=(3, 3, 3), stride=(2, 2, 2), nLayers=N))
-        # from the  bottle neck size (1*3*3), after 6 downsamples, deconv get output size: (127*255*255)
+        # for segmentation reconstruction
+        outputSize = self.getConvTransposeOutputTensorSize(outputSize, (2,3,3), (2,2,2), (0,0,0))
+        self.m_upList, outputSize = self.addUpBBList(outputSize, C, C, 3, N)  # outputSize = 23*127*127
+        self.m_upList.insert(0, DownBB(C, C, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))
 
-        self.m_upOutput = nn.Conv3d(C//2, Kup, (1,1,1), stride=(1,1,1))
+        self.m_upOutput = nn.Conv3d(C, Kup, (1,1,1), stride=(1,1,1))                   # outputSize = 23*127*127
 
     def encoderForward(self, inputx):
         x = self.m_input(inputx)
@@ -52,6 +48,7 @@ class SkyWatcherModel(BasicModel):
     def responseForward(self, crossingx):
         # xr means x rightside output, or response output
         xr = crossingx
+        xr = self.m_11Conv(xr)
         xr = torch.reshape(xr, (1, xr.numel()))
         xr = self.m_fc11(xr)
         return xr

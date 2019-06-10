@@ -240,11 +240,12 @@ class ConvOutput(nn.Module):
             x = self.m_conv11(x)   # no need bn and relu
         return x
 
-class DownBB(nn.Module): # down sample 2D building block
-    def __init__(self, inCh, outCh, filter1st, stride, nLayers):
+class DownBB(nn.Module): 
+    def __init__(self, inCh, outCh, filter1st, stride, nLayers, bReduceDim=False):
         super().__init__()
-        self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0,)*len(filter1st), order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*len(filter1st), stride=(1,)*len(filter1st), padding=(1,)*len(filter1st))
+        dim = len(filter1st)
+        self.m_downLayer = BN_ReLU_Conv(inCh, outCh, filterSize=filter1st, stride=stride, padding=(0,)*dim, order=useBnReConvOrder)
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*dim, stride=(1,)*dim, padding=(1,)*dim)
 
     def forward(self, inputx):
         x = self.m_downLayer(inputx)
@@ -255,8 +256,9 @@ class DownBB(nn.Module): # down sample 2D building block
 class UpBB(nn.Module): # up sample 2D building block
     def __init__(self, inCh, outCh, filter1st, stride, nLayers):
         super().__init__()
+        dim = len(filter1st)
         self.m_upLayer = BN_ReLU_ConvT(inCh, outCh, filterSize=filter1st, stride=stride, order=useBnReConvOrder)
-        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*len(filter1st), stride=(1,)*len(filter1st), padding=(1,)*len(filter1st))
+        self.m_convBlocks = ConvBuildingBlock(outCh, outCh, nLayers, filterSize=(3,)*dim, stride=(1,)*dim, padding=(1,)*dim)
 
 
     def forward(self, downInput, skipInput=None):

@@ -9,7 +9,7 @@ class Image3dPredictModel(BasicModel):
         super().__init__()
         self.m_inputSize = inputSize
         self.m_nDownSamples = nDownSamples
-        self.m_bottleNeckSize  = self.getUpSampleSize(self.m_inputSize, self.m_nDownSamples)
+        # self.m_bottleNeckSize  = self.getDownSampleSize(self.m_inputSize, self.m_nDownSamples)
         lenBn = self.getProduct(self.m_bottleNeckSize)  # len of BottleNeck
 
         N = 3  # the number of layer in each building block

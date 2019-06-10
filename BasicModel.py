@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 import torch.nn.init as init
+from BuildingBlocks import *
 
 
 class BasicModel(nn.Module):
@@ -83,25 +84,21 @@ class BasicModel(nn.Module):
         return f"Info: network dropout rate = {self.m_dropoutProb}"
 
     @staticmethod
-    def getDownSampleSize(inputSize, nDownSamples):
+    def getConvOutputTensorSize(inputSize, filter, stride, padding):
         dim = len(inputSize)
         xSize = list(inputSize)
-        for _ in range(nDownSamples):
-            for i in range(dim):
-                xSize[i] = (xSize[i] - 3) // 2 + 1 # padding =0
+        for i in range(dim):
+            xSize[i] = (xSize[i] + 2*padding[i]- filter[i]) // stride[i] + 1
         xSize = tuple(xSize)
-        print(f"the output size of Downsample layer : {xSize} after {nDownSamples} convolutions with stride 2 and {(3,) * dim} convolution")
         return xSize
 
     @staticmethod
-    def getUpSampleSize(inputSize, nUpSamples):
+    def getConvTransposeOutputTensorSize(inputSize, filter, stride, padding):
         dim = len(inputSize)
         xSize = list(inputSize)
-        for _ in range(nUpSamples):
-            for i in range(dim):
-                xSize[i] = (xSize[i] - 1)*2+3  # padding =0
+        for i in range(dim):
+            xSize[i] = (xSize[i] - 1)*stride[i] - 2* padding[i]+filter[i]
         xSize = tuple(xSize)
-        print(f"the output size of output layer : {xSize} after {nUpSamples} deconvolutions with stride 2 and {(3,) * dim} transposed convolution")
         return xSize
 
     @staticmethod
@@ -110,6 +107,52 @@ class BasicModel(nn.Module):
         for x in aTuple:
             prod *= x
         return prod
+
+    @staticmethod
+    def isTensorSizeLessThan(tensorSize, value):
+        for x in tensorSize:
+            if x < value:
+                 return True
+        return False
+
+    @staticmethod
+    def addDownBBList(inputSize, Cin, Cout, nDownSamples, nInBB):
+        downList = nn.ModuleList()
+        outputSize = inputSize
+        dim = len(inputSize)
+        filter = (3,) * dim
+        stride = (2,) * dim
+        padding = (0,) * dim
+        for i in range(nDownSamples):
+            if 0 == i:
+                downList.append(DownBB(Cin, Cout, filter1st=filter, stride=stride, nLayers=nInBB))
+            else:
+                downList.append(DownBB(Cout, Cout, filter1st=filter, stride=stride, nLayers=nInBB))
+
+            outputSize = BasicModel.getConvOutputTensorSize(outputSize, filter, stride, padding)
+            if BasicModel.isTensorSizeLessThan(outputSize, 3):
+                print(f"Warning: at the {i}th downSample with inputSize = {inputSize}, the outputSize = {outputSize}  has elements less than 3.")
+                break
+
+        return downList, outputSize
+
+    @staticmethod
+    def addUpBBList(inputSize, Cin, Cout, nUpSamples, nInBB):
+        downList = nn.ModuleList()
+        outputSize = inputSize
+        dim = len(inputSize)
+        filter = (3,) * dim
+        stride = (2,) * dim
+        padding = (0,) * dim
+        for i in range(nUpSamples):
+            if 0 == i:
+                downList.append(UpBB(Cin, Cout, filter1st=filter, stride=stride, nLayers=nInBB))
+            else:
+                downList.append(UpBB(Cout, Cout, filter1st=filter, stride=stride, nLayers=nInBB))
+
+            outputSize = BasicModel.getConvTransposeOutputTensorSize(outputSize, filter, stride, padding)
+        return downList, outputSize
+
 
     @staticmethod
     def initializeWeights(m):

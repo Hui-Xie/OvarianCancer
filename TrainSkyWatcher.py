@@ -17,7 +17,7 @@ from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190606.txt'''
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190607.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                      delete the m_k in the DataMgr class.
@@ -107,10 +107,10 @@ def main():
 
     batchSize = 4
     C = 6   # number of channels after the first input layer
-    D = 147  # depth of input
-    H = 281  # height of input
-    W = 281  # width of input
-    nDownSamples = 6
+    D = 29  # depth of input
+    H = 140  # height of input
+    W = 140  # width of input
+    nDownSamples = 3
 
 
     dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
