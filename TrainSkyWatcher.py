@@ -21,6 +21,7 @@ trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20
 logNotes = r'''
 Major program changes: 
                       merge train and test dataMgr into one.
+                      when epoch %5 ==0, do not use mixup.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -211,7 +212,11 @@ def main():
 
         for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True),
                                                                                       dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True)):
-            lambdaInBeta = dataMgr.getLambdaInBeta()
+            if epoch % 5 == 0:
+                lambdaInBeta = 1                          # this will make the comparison in the segmention per 5 epochs meaningful.
+            else:
+                lambdaInBeta = dataMgr.getLambdaInBeta()
+
             inputs = inputs1 * lambdaInBeta + inputs2 * (1 - lambdaInBeta)
             inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
             seg1 = torch.from_numpy(seg1Cpu).to(device, dtype=torch.long)
