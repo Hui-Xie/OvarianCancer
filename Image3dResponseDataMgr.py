@@ -77,7 +77,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             imageFile = self.m_inputFilesList[i]
 
             # for inputSize 147*281*281, and segmentation size of 127*255*255
-            labelFile = imageFile.replace("Images_ROI_147_281_281", "Labels_ROI_127_255_255")
+            labelFile = imageFile.replace("Images_ROI_29_140_140", "Labels_ROI_23_127_127")
 
             image3d = np.load(imageFile)
             image3d = np.expand_dims(image3d, 0)  # add channel dim as 1

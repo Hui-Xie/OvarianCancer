@@ -11,7 +11,7 @@ class SkyWatcherModel(BasicModel):
         self.m_nDownSamples = nDownSamples
 
         N = 3  # the number of layer in each building block
-        self.m_input = ConvInput(1, C//2, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
+        self.m_input = ConvInput(1, C, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
 
         self.m_downList, outputSize = self.addDownBBList(self.m_inputSize,C,C, 3, N)  # outputSize ={2*16*16}
 
@@ -34,7 +34,7 @@ class SkyWatcherModel(BasicModel):
         # for segmentation reconstruction
         outputSize = self.getConvTransposeOutputTensorSize(outputSize, (2,3,3), (2,2,2), (0,0,0))
         self.m_upList, outputSize = self.addUpBBList(outputSize, C, C, 3, N)  # outputSize = 23*127*127
-        self.m_upList.insert(0, DownBB(C, C, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))
+        self.m_upList.insert(0, UpBB(C, C, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))
 
         self.m_upOutput = nn.Conv3d(C, Kup, (1,1,1), stride=(1,1,1))                   # outputSize = 23*127*127
 

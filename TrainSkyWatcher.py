@@ -16,37 +16,32 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-# trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190606.txt'''
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190610.txt'''
+# trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
-                     delete the m_k in the DataMgr class.
-                     merge train and test dataMgr into one.
+                      merge train and test dataMgr into one.
                       
 
 Experiment setting for Image3d ROI to response:
-Input CT data: 147*281*281  3D CT raw image ROI
-segmentation label: 127*255*255 segmentation label with value (0,1,2) which erases lymph node label
+Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
+segmentation label: 23*127*127 with spacing size(5*2*2) segmentation label with value (0,1,2) which erases lymph node label
 
 This is a multi-task learning. 
 
-Predictive Model: 1,  first 3-layer dense conv block with channel size 6.
-                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
+                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
-                  Total network learning parameters are 27 K.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/Image3dPredictModel.py
+                  Total network learning parameters are 8 million.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
 
 response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
 segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
 
-Data:   training data has 130 patients, and test data has 32 patients with training/test rate 80/20.
-        We used patient ID as index to order all patients data, and then used about the first 80% of patients as training data, 
-        and the remaining 20% of patients as test data. 
-        Sorting with patient ID is to make sure the division of training and test set is blind to the patient's detailed stage, 
-        shape and size of cancer.  
-        Therefore you will see that patient IDs of all test data are beginning at 8 or 9. 
-        This training/test division is exactly same with segmentation network experiment before. 
+Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
+        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
+        
 
 Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
                     No other data augmentation, and no dropout.  
@@ -99,14 +94,14 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(True)  # for debug
+    dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     outputTrainDice = True
     # ===========debug==================
 
 
     batchSize = 4
-    C = 6   # number of channels after the first input layer
+    C = 128   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
