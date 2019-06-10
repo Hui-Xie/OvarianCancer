@@ -5,13 +5,12 @@ import torch
 # SkyWatcher Model, simultaneously train segmentation and treatment response
 
 class SkyWatcherModel(BasicModel):
-    def __init__(self, C,  Kr, Kup, inputSize, nDownSamples):
+    def __init__(self, C,  Kr, Kup, inputSize):
         super().__init__()
         self.m_inputSize = inputSize
-        self.m_nDownSamples = nDownSamples
 
         N = 3  # the number of layer in each building block
-        self.m_input = ConvInput(1, C, N-1, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
+        self.m_input = ConvInput(1, C, N, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
 
         self.m_downList, outputSize = self.addDownBBList(self.m_inputSize,C,C, 3, N)  # outputSize ={2*16*16}
 

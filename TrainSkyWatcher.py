@@ -105,13 +105,11 @@ def main():
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
-    nDownSamples = 3
-
 
     dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
 
-    net = SkyWatcherModel(C, Kr, Kup, (D, H, W), nDownSamples)
+    net = SkyWatcherModel(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
