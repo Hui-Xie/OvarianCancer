@@ -61,7 +61,7 @@ class SkyWatcherModel(BasicModel):
         return xup
 
 
-    def forward(self, inputx, bPurePrediction = False):
+    def forward(self, inputx, bPurePrediction=False):
         x = self.encoderForward(inputx)
         xr = self.responseForward(x)
         if bPurePrediction:
