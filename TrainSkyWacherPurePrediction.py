@@ -23,7 +23,8 @@ Major program changes:
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 128 
+                      Number of filters in encoder is 128, GP0 occupies 7.2G memory.
+                       
 
 Experiment setting for Image3d ROI to response:
 Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
