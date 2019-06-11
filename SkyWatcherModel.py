@@ -61,9 +61,12 @@ class SkyWatcherModel(BasicModel):
         return xup
 
 
-    def forward(self, inputx):
+    def forward(self, inputx, bPurePrediction = False):
         x = self.encoderForward(inputx)
         xr = self.responseForward(x)
-        xup = self.decoderForward(x)
-        return xr, xup
+        if bPurePrediction:
+            return xr
+        else:
+            xup = self.decoderForward(x)
+            return xr, xup
 
