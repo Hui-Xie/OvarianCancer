@@ -214,14 +214,11 @@ def main():
             # accumulate response and predict value
             if lambdaInBeta == 1 or lambdaInBeta == 0:
                 batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
-                epochPredict = np.concatenate(
-                    (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 if lambdaInBeta == 1:
-                    epochResponse = np.concatenate(
-                        (epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
+                    epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
                 else:
-                    epochResponse = np.concatenate(
-                        (epochResponse, response2Cpu)) if epochResponse is not None else response2Cpu
+                    epochResponse = np.concatenate((epochResponse, response2Cpu)) if epochResponse is not None else response2Cpu
 
             trainingLoss += batchLoss
             trainBatches += 1
