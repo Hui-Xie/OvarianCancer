@@ -16,12 +16,13 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190610.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_MoreFilter_20190612.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
+                      Along the encoder, use more filters. And the first layer has 64 filters.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -102,7 +103,7 @@ def main():
 
 
     batchSize = 4
-    C = 128   # number of channels after the first input layer
+    C = 64   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
@@ -112,7 +113,7 @@ def main():
 
     net = SkyWatcherModel(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
-    logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
+    logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 
     dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 

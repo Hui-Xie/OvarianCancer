@@ -12,14 +12,16 @@ class SkyWatcherModel(BasicModel):
         N = 3  # the number of layer in each building block
         self.m_input = ConvInput(1, C, N, filterSize=(3, 3, 3), stride=(1, 1, 1), padding=(1, 1, 1))     # inputSize = output
 
-        self.m_downList, outputSize = self.addDownBBList(self.m_inputSize,C,C, 3, N)  # outputSize ={2*16*16}
+        # self.m_downList, outputSize = self.addDownBBList(self.m_inputSize,C,C, 3, N)  # outputSize ={2*16*16}
+        self.m_downList, outputSize, Cnew = self.addDownBBListWithMoreFilters(self.m_inputSize, C, 3, N)  # outputSize ={2*16*16}
 
-        self.m_downList.append( DownBB(C, C, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))      # outpusSize =(1*7*7}
+        self.m_downList.append( DownBB(Cnew, 2*Cnew, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))      # outpusSize =(1*7*7}
         outputSize = self.getConvOutputTensorSize(outputSize,(2,3,3), (2,2,2), (0,0,0))
-        self.m_bottleNeckSize = outputSize
+        Cnew = 2*Cnew
+        self.m_bottleNeckSize = (Cnew,) + outputSize
 
         # for response prediction
-        self.m_11Conv = BN_ReLU_Conv(C, 1, (1,1,1), (1,1,1), (0,0,0), False)           # outpusSize =(1*7*7}
+        self.m_11Conv = BN_ReLU_Conv(Cnew, 1, (1,1,1), (1,1,1), (0,0,0), False)           # outpusSize =(1*7*7}
         lenBn = 49
         self.m_fc11   = nn.Sequential(
                        nn.Linear(lenBn , lenBn//2),
@@ -32,10 +34,12 @@ class SkyWatcherModel(BasicModel):
 
         # for segmentation reconstruction
         outputSize = self.getConvTransposeOutputTensorSize(outputSize, (2,3,3), (2,2,2), (0,0,0))
-        self.m_upList, outputSize = self.addUpBBList(outputSize, C, C, 3, N)  # outputSize = 23*127*127
-        self.m_upList.insert(0, UpBB(C, C, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))
+        # self.m_upList, outputSize = self.addUpBBList(outputSize, C, C, 3, N)  # outputSize = 23*127*127
+        self.m_upList, outputSize, Cnewnew = self.addUpBBListWithLessFilters(outputSize, Cnew//2, 3, N)  # outputSize = 23*127*127
+        self.m_upList.insert(0, UpBB(Cnew, Cnew//2, filter1st=(2,3,3), stride=(2,2,2), nLayers=N))
+        Cnew = Cnewnew
 
-        self.m_upOutput = nn.Conv3d(C, Kup, (1,1,1), stride=(1,1,1))                   # outputSize = 23*127*127
+        self.m_upOutput = nn.Conv3d(Cnew, Kup, (1,1,1), stride=(1,1,1))                   # outputSize = 23*127*127
 
     def encoderForward(self, inputx):
         x = self.m_input(inputx)

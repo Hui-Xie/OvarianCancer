@@ -108,7 +108,7 @@ def main():
 
     net = SkyWatcherModel(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
-    logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
+    logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 
     dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
