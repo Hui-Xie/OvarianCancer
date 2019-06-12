@@ -153,6 +153,56 @@ class BasicModel(nn.Module):
             outputSize = BasicModel.getConvTransposeOutputTensorSize(outputSize, filter, stride, padding)
         return downList, outputSize
 
+    @staticmethod
+    def addDownBBListWithMoreFilters(inputSize, Cin, nDownSamples, nInBB):
+        """
+
+        :param inputSize:
+        :param Cin:
+        :param nDownSamples:
+        :param nInBB:
+        :return: downList, outputSize, C at the final layer.
+        """
+        downList = nn.ModuleList()
+        outputSize = inputSize
+        dim = len(inputSize)
+        filter = (3,) * dim
+        stride = (2,) * dim
+        padding = (0,) * dim
+        C = Cin   # channels number
+        for i in range(nDownSamples):
+            downList.append(DownBB(C,  2*C, filter1st=filter, stride=stride, nLayers=nInBB))
+            outputSize = BasicModel.getConvOutputTensorSize(outputSize, filter, stride, padding)
+            C = 2*C
+            if BasicModel.isTensorSizeLessThan(outputSize, 3):
+                print(
+                    f"Warning: at the {i}th downSample with inputSize = {inputSize}, the outputSize = {outputSize}  has elements less than 3.")
+                break
+
+        return downList, outputSize, C
+
+    @staticmethod
+    def addUpBBListWithLessFilters(inputSize, Cin, nUpSamples, nInBB):
+        """
+
+        :param inputSize:
+        :param Cin:
+        :param nUpSamples:
+        :param nInBB:
+        :return: downList, outputSize, C at the final layer
+        """
+        downList = nn.ModuleList()
+        outputSize = inputSize
+        dim = len(inputSize)
+        filter = (3,) * dim
+        stride = (2,) * dim
+        padding = (0,) * dim
+        C = Cin
+        for i in range(nUpSamples):
+            downList.append(UpBB(C, C//2, filter1st=filter, stride=stride, nLayers=nInBB))
+            outputSize = BasicModel.getConvTransposeOutputTensorSize(outputSize, filter, stride, padding)
+            C = C//2
+        return downList, outputSize, C
 
     @staticmethod
     def initializeWeights(m):
