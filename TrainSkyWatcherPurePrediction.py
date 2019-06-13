@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_20190611_2.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_20190613.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
@@ -24,6 +24,7 @@ Major program changes:
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
                       Number of filters in encoder is 128, GP0 occupies 7.2G memory.
+                      Only epoch %5 ==0, print log
                        
 
 Experiment setting for Image3d ROI to response:
@@ -213,13 +214,10 @@ def main():
                 sys.exit(-5)
 
             # accumulate response and predict value
-            if lambdaInBeta == 1 or lambdaInBeta == 0:
+            if epoch % 5 == 0:
                 batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                if lambdaInBeta == 1:
-                    epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
-                else:
-                    epochResponse = np.concatenate((epochResponse, response2Cpu)) if epochResponse is not None else response2Cpu
+                epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -227,8 +225,11 @@ def main():
         if 0 != trainBatches:
             trainingLoss /= trainBatches
 
-        responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
-        responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+        if epoch % 5 == 0:
+            responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
+            responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+        else:
+            continue
 
         # ================Test===============
         net.eval()
