@@ -353,13 +353,14 @@ def main():
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             if mergeTrainTestData:
                 netMgr.saveNet()
-                if responseTrainAccuracy > bestTestPerf:
+                if responseTrainAccuracy >= bestTestPerf and trainingLoss < oldTrainingLoss:
+                    oldTrainingLoss = trainingLoss
                     bestTestPerf = responseTrainAccuracy
                     netMgr.saveBest(bestTestPerf)
 
             else:
                 netMgr.save(responseTestAccuracy)
-                if responseTestAccuracy > bestTestPerf or testLoss < oldTestLoss:
+                if responseTestAccuracy >= bestTestPerf and testLoss < oldTestLoss:
                     oldTestLoss = testLoss
                     bestTestPerf = responseTestAccuracy
                     netMgr.saveBest(bestTestPerf)
