@@ -43,12 +43,15 @@ class ResponseDataMgr(DataMgr):
                 self.m_res0FileIndices.append(i)
             else: # res == 1
                 self.m_res1FileIndices.append(i)
-        self.m_logInfo(f"Infor: In all data of {len(self.m_responseList)} files, respone 0 has {len(self.m_res0FileIndices)} files,\n\t  and response 1 has {len(self.m_res1FileIndices)} files ")
+        self.m_logInfo(f"Infor: In all data of {len(self.m_responseList)} files, respone 0 has {len(self.m_res0FileIndices)} files,\n\t  and response 1 has {len(self.m_res1FileIndices)} files, "\
+                       + f"where positive response rate = {len(self.m_res1FileIndices)/len(self.m_responseList)} in full data")
 
     def divideTrainingValidationSet(self):
         validationRate = 0.2
-        nValidation0 = int(len(self.m_res0FileIndices) * validationRate)
-        nValidation1 = int(len(self.m_res1FileIndices) * validationRate)
+        N0 = len(self.m_res0FileIndices)
+        N1 = len(self.m_res1FileIndices)
+        nValidation0 = int( N0* validationRate)
+        nValidation1 = int( N1* validationRate)
         random.seed()
         random.shuffle(self.m_res0FileIndices)
         random.shuffle(self.m_res1FileIndices)
@@ -58,4 +61,6 @@ class ResponseDataMgr(DataMgr):
         self.m_trainingSetIndices  += self.m_res1FileIndices[nValidation1:]
         self.m_logInfo(f"==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== ")
         self.m_logInfo(f"Infor: Validation Set has {len(self.m_validationSetIndices)} files,and Training Set has {len(self.m_trainingSetIndices)} files")
+        self.m_logInfo(f"Infor: In Validataion set, positive response rate = {nValidation1/(nValidation0+ nValidation1)}")
+        self.m_logInfo(f"Infor: In trainning set, positive response rate = {(N1-nValidation1)/(N0-nValidation0+ N1-nValidation1)}")
 

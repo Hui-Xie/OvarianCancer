@@ -23,7 +23,7 @@ Major program changes:
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 256.
+                      Number of filters in encoder is 256, GPU0 occupies memory of 12GB.
                       Only epoch %5 ==0, print log
                        
 
