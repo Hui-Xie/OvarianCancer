@@ -11,7 +11,7 @@ import os
 import numpy as np
 
 from Image3dResponseDataMgr import Image3dResponseDataMgr
-from SkyWatcherModel import SkyWatcherModel
+from SkyWatcherModel2 import SkyWatcherModel2
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
@@ -112,7 +112,7 @@ def main():
     dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
 
-    net = SkyWatcherModel(C, Kr, Kup, (D, H, W))
+    net = SkyWatcherModel2(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 

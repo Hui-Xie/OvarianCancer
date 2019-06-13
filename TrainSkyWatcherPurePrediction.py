@@ -11,19 +11,19 @@ import os
 import numpy as np
 
 from Image3dResponseDataMgr import Image3dResponseDataMgr
-from SkyWatcherModel import SkyWatcherModel
+from SkyWatcherModel1 import SkyWatcherModel1
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_20190613.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_F256_20190613.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 128, GP0 occupies 7.2G memory.
+                      Number of filters in encoder is 256.
                       Only epoch %5 ==0, print log
                        
 
@@ -99,7 +99,7 @@ def main():
     # ===========debug==================
 
     batchSize = 4
-    C = 128  # number of channels after the first input layer
+    C = 256  # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
@@ -107,7 +107,7 @@ def main():
     dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
 
-    net = SkyWatcherModel(C, Kr, Kup, (D, H, W))
+    net = SkyWatcherModel1(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 
