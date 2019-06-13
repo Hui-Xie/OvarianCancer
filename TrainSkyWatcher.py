@@ -99,7 +99,7 @@ def main():
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
-    outputTrainDice = True
+    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
@@ -183,8 +183,8 @@ def main():
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
 
-    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r"\
-                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r")  # logging.info output head
+    logging.info(f"Epoch\tTrLoss" + f"\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r"\
+                 + f"\t\tTsLoss"  + f"\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r")  # logging.info output head
 
     oldTestLoss = 1000
 
@@ -230,9 +230,10 @@ def main():
             if useDataParallel:
                 optimizer.zero_grad()
                 xr, xup = net.forward(inputs)
-                loss = torch.tensor(0.0).cuda()
+                loss = torch.tensor(0.0).to(device)
 
-                for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList, lossWeightList)):
+                for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                                           lossWeightList)):
                     if i ==0:
                         outputs = xr
                         gt1, gt2 = (response1, response2)
@@ -300,25 +301,24 @@ def main():
                 for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True):
                     inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                     inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
-                    if useDataParallel:
-                        xr, xup = net.forward(inputs)
-                        loss = torch.tensor(0.0).cuda()
 
-                        for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList, lossWeightList)):
-                            if i == 0:
-                                outputs = xr
-                                gt = response
-                            else:
-                                outputs = xup
-                                gt = seg
+                    xr, xup = net.forward(inputs)
+                    loss = torch.tensor(0.0).to(device)
 
-                            if weight != 0:
-                               loss += lossFunc(outputs, gt) * weight
+                    for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                                               lossWeightList)):
+                        if i == 0:
+                            outputs = xr
+                            gt = response
+                        else:
+                            outputs = xup
+                            gt = seg
 
-                        batchLoss = loss.item()
-                    else:
-                        logging.info(f"SkyWatcher Test must use Dataparallel. Program exit.")
-                        sys.exit(-5)
+                        if weight != 0:
+                           loss += lossFunc(outputs, gt) * weight
+
+                    batchLoss = loss.item()
+
 
                     # accumulate response and predict value
 
@@ -350,7 +350,7 @@ def main():
         testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
         outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
-        outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}'+f'\t{responseTestTPR:.4f}'+ f'\t{responseTestTNR:.4f}'
+        outputString += f'\t\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}'+f'\t{responseTestTPR:.4f}'+ f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============
