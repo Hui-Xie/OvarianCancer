@@ -16,4 +16,4 @@ python3.7 TrainSkyWatcher.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWat
 
 python3.7 TrainSkyWatcher.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Labels_ROI_23_127_127 /home/hxie1/data/OvarianCancerCT/patientResponseDict.json &
 
-python3.7 TrainSkyWatcherPurePrediction.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json &
+python3.7 TrainSkyWatcherPurePrediction.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json &

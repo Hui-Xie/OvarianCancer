@@ -1,13 +1,13 @@
-Program ID of SkyWatcher Network training:26029
+Program ID of SkyWatcher Network training:27277
 
 Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/temp', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
+ ['TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
 
 Major program changes: 
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64, GPU0 occupies memory of 12GB.
+                      Number of filters in encoder is 64.
                       Only epoch %5 ==0, print log
                        
 
@@ -34,8 +34,8 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
 
             
 
-Program starting Time: 2019-06-13 16:19:03.287590
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/temp
+Program starting Time: 2019-06-13 16:30:56.181326
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
 
 Now program get 140 input files.
 Infor: In all data of 140 files, respone 0 has 41 files,
@@ -58,4 +58,4 @@ Loss Functions List: FocalCELoss with weight of 1;
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-0	0.1731	0.6696	0.9494	0.0000		0.1728	0.7083	1.0000	0.0000
+0	0.1734	0.4732	0.4051	0.6364		0.1734	0.6667	1.0000	0.0000
