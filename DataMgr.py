@@ -383,6 +383,28 @@ class DataMgr:
             return nC / nB, 1
 
     @staticmethod
+    def getTNR(predict, label):  # specificity, selectivity or true negative rate (TNR)
+        """
+        :param predict:
+        :param label:
+        :return: A tuple
+        :Notes: support 2D and 3D array,
+                value <0 will be ignored.
+        """
+        if predict is None:
+            return 0, 0
+        seg1 = predict == 0
+        label1 = label == 0
+        nB = np.count_nonzero(label1)
+        C = seg1 * label1
+        nC = np.count_nonzero(C)
+        if 0 == nB:
+            return 0, 0
+        else:
+            return nC / nB, 1
+
+
+    @staticmethod
     def getTPRSumList(predicts, labels, K):
         """
         :param predicts: with N samples

@@ -156,7 +156,7 @@ def main():
 
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
-    logging.info(f"Epoch\tTrLoss\t" + f"\tAccura" + f"\tTPR_r"  + f"\tTsLoss\t" + f"\tAccura" + f"\tTPR_r")  # logging.info output head
+    logging.info(f"Epoch\tTrLoss\t" + f"\tAccura" + f"\tTPR_r"+ f"\tTNR_r"  + f"\tTsLoss\t" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
 
     oldTestLoss = 1000
     oldTrainingLoss = 1000
@@ -173,6 +173,7 @@ def main():
         epochResponse = None
         responseTrainAccuracy = 0.0
         responseTrainTPR = 0.0
+        responseTrainTNR = 0.0
 
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
@@ -229,6 +230,7 @@ def main():
         if epoch % 5 == 0:
             responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
             responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+            responseTrainTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
         else:
             continue
 
@@ -242,6 +244,7 @@ def main():
         epochResponse = None
         responseTestAccuracy = 0.0
         responseTestTPR = 0.0
+        responseTestTNR = 0.0
 
         if not mergeTrainTestData:
 
@@ -279,12 +282,14 @@ def main():
 
                 responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
                 responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+                responseTestTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
+
 
         else:
             lrScheduler.step(trainingLoss)
 
-        outputString = f'{epoch}\t{trainingLoss:.4f}\t' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}'
-        outputString +=           f'\t{testLoss:.4f}\t' + f'\t{responseTestAccuracy:.4f}'  + f'\t{responseTestTPR:.4f}'
+        outputString = f'{epoch}\t{trainingLoss:.4f}\t' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        outputString +=           f'\t{testLoss:.4f}\t' + f'\t{responseTestAccuracy:.4f}'  + f'\t{responseTestTPR:.4f}'  + f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============

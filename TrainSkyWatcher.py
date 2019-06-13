@@ -183,8 +183,8 @@ def main():
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
 
-    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura" + f"\tTPR_r" \
-                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r")  # logging.info output head
+    logging.info(f"Epoch\tTrLoss\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r"\
+                 + f"\tTsLoss\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r")  # logging.info output head
 
     oldTestLoss = 1000
 
@@ -200,6 +200,7 @@ def main():
         epochResponse = None
         responseTrainAccuracy = 0.0
         responseTrainTPR = 0.0
+        responseTrainTNR = 0.0
 
         trainDiceSumList = [0 for _ in range(Kup)]
         trainDiceCountList = [0 for _ in range(Kup)]
@@ -270,6 +271,7 @@ def main():
         if epoch % 5 == 0:
             responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
             responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+            responseTrainTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
             trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
             trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
         else:
@@ -285,6 +287,7 @@ def main():
         epochResponse = None
         responseTestAccuracy = 0.0
         responseTestTPR = 0.0
+        responseTestTNR = 0.0
 
         testDiceSumList = [0 for _ in range(Kup)]
         testDiceCountList = [0 for _ in range(Kup)]
@@ -337,6 +340,7 @@ def main():
                 if epoch % 5 == 0:
                     responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
                     responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+                    responseTestTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
 
         else:
             lrScheduler.step(trainingLoss)
@@ -345,8 +349,8 @@ def main():
         testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
 
-        outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}'
-        outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}'+f'\t{responseTestTPR:.4f}'
+        outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}'+f'\t{responseTestTPR:.4f}'+ f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============

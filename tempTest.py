@@ -1,7 +1,10 @@
 
-responseTestTPR = None
+from DataMgr import DataMgr
+import numpy as np
 
-outputString = "ABC"
-outputString += f'\t{responseTestTPR:.4f}'
+prediction= np.array([1,0,1,0,1,0])
+label = np.array([1,1,1,0,0,0])
 
-print(outputString)
+TNR = DataMgr.getTNR(prediction, label)
+
+print(TNR)
