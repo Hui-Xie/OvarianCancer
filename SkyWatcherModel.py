@@ -19,7 +19,7 @@ class SkyWatcherModel(BasicModel):
         # xr means x rightside output, or response output
         xr = crossingx
         xr = self.m_11Conv(xr)
-        xr = torch.reshape(xr, (1, xr.numel()))
+        xr = torch.reshape(xr, (xr.shape[0], xr.numel()//xr.shape[0]))
         xr = self.m_fc11(xr)
         return xr
 

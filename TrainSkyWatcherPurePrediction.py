@@ -16,14 +16,14 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_F256_20190613.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_F64_20190613.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 256, GPU0 occupies memory of 12GB.
+                      Number of filters in encoder is 64, GPU0 occupies memory of 12GB.
                       Only epoch %5 ==0, print log
                        
 
@@ -93,13 +93,13 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(True)  # for debug
-    useDataParallel = True  # for debug
-    outputTrainDice = True
+    dataMgr.setOneSampleTraining(False)  # for debug
+    useDataParallel = False  # for debug
+    GPU_ID = 2 # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
     batchSize = 4
-    C = 256  # number of channels after the first input layer
+    C = 64  # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
@@ -131,7 +131,7 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
 
     # lossFunc0 is for treatment response
     responseCEWeight = torch.FloatTensor(dataMgr.getResponseCEWeight()).to(device)
@@ -156,7 +156,7 @@ def main():
 
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
-    logging.info(f"Epoch\tTrLoss\t" + f"\tAccura" + f"\tTPR_r"+ f"\tTNR_r"  + f"\tTsLoss\t" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
+    logging.info(f"Epoch\tTrLoss" + f"\tAccura" + f"\tTPR_r"+ f"\tTNR_r"  + f"\t\tTsLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
 
     oldTestLoss = 1000
     oldTrainingLoss = 1000
@@ -193,27 +193,26 @@ def main():
             response1 = torch.from_numpy(response1Cpu).to(device, dtype=torch.long)
             response2 = torch.from_numpy(response2Cpu).to(device, dtype=torch.long)
 
-            if useDataParallel:
-                optimizer.zero_grad()
-                xr = net.forward(inputs, bPurePrediction=True)
-                loss = torch.tensor(0.0).cuda()
 
-                for (lossFunc, weight) in zip(net.module.m_lossFuncList, lossWeightList):
-                    outputs = xr
-                    gt1, gt2 = (response1, response2)
+            optimizer.zero_grad()
+            xr = net.forward(inputs, bPurePrediction=True)
+            loss = torch.tensor(0.0).to(device)
 
-                    if weight == 0:
-                        continue
-                    if lambdaInBeta != 0:
-                        loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
-                    if 1 - lambdaInBeta != 0:
-                        loss += lossFunc(outputs, gt2) * weight * (1 - lambdaInBeta)
-                loss.backward()
-                optimizer.step()
-                batchLoss = loss.item()
-            else:
-                logging.info(f"SkyWatcher Training must use Dataparallel. Program exit.")
-                sys.exit(-5)
+            for (lossFunc, weight) in zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                          lossWeightList):
+                outputs = xr
+                gt1, gt2 = (response1, response2)
+
+                if weight == 0:
+                    continue
+                if lambdaInBeta != 0:
+                    loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
+                if 1 - lambdaInBeta != 0:
+                    loss += lossFunc(outputs, gt2) * weight * (1 - lambdaInBeta)
+            loss.backward()
+            optimizer.step()
+            batchLoss = loss.item()
+
 
             # accumulate response and predict value
             if epoch % 5 == 0:
@@ -252,20 +251,16 @@ def main():
                 for inputs, responseCpu in dataMgr.dataResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True):
                     inputs, response = torch.from_numpy(inputs), torch.from_numpy(responseCpu)
                     inputs, response = inputs.to(device, dtype=torch.float), response.to(device, dtype=torch.long)  # return a copy
-                    if useDataParallel:
-                        xr = net.forward(inputs, bPurePrediction=True)
-                        loss = torch.tensor(0.0).cuda()
 
-                        for (lossFunc, weight) in zip(net.module.m_lossFuncList, lossWeightList):
-                            outputs = xr
-                            gt = response
-                            if weight != 0:
-                                loss += lossFunc(outputs, gt) * weight
-
-                        batchLoss = loss.item()
-                    else:
-                        logging.info(f"SkyWatcher Test must use Dataparallel. Program exit.")
-                        sys.exit(-5)
+                    xr = net.forward(inputs, bPurePrediction=True)
+                    loss = torch.tensor(0.0).to(device)
+                    for (lossFunc, weight) in zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                                  lossWeightList):
+                        outputs = xr
+                        gt = response
+                        if weight != 0:
+                            loss += lossFunc(outputs, gt) * weight
+                    batchLoss = loss.item()
 
                     # accumulate response and predict value
                     batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
@@ -288,8 +283,8 @@ def main():
         else:
             lrScheduler.step(trainingLoss)
 
-        outputString = f'{epoch}\t{trainingLoss:.4f}\t' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
-        outputString +=           f'\t{testLoss:.4f}\t' + f'\t{responseTestAccuracy:.4f}'  + f'\t{responseTestTPR:.4f}'  + f'\t{responseTestTNR:.4f}'
+        outputString = f'{epoch}\t{trainingLoss:.4f}' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        outputString +=         f'\t\t{testLoss:.4f}' + f'\t{responseTestAccuracy:.4f}'  + f'\t{responseTestTPR:.4f}'  + f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============

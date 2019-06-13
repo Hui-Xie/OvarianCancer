@@ -278,6 +278,10 @@ class DataMgr:
 
     def setOneSampleTraining(self, oneSampleTrain):
         self.m_oneSampleTraining = oneSampleTrain
+        if self.m_oneSampleTraining:
+            self.m_logInfo("Infor: program is in One Sample debug model.")
+        else:
+            self.m_logInfo("Infor: program is in multi samples running model.")
 
     @staticmethod
     def getStemName(path, removedSuffix):
