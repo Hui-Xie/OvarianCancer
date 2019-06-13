@@ -16,12 +16,13 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_MoreFilter_20190612.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_MoreFilter_20190613.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
+                      And Only when epoch %5 ==0, print log and save.
                       Along the encoder, use more filters. And the first layer has 64 filters.
                       
 
@@ -252,22 +253,13 @@ def main():
                 sys.exit(-5)
 
             # accumulate response and predict value
-            if lambdaInBeta == 1 or lambdaInBeta == 0:
+            if epoch % 5 == 0:
                 batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                if lambdaInBeta == 1:
-                    epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
-                else:
-                    epochResponse = np.concatenate((epochResponse, response2Cpu))  if epochResponse is not None else response2Cpu
-
-
-            # compute segmentation dice and TPR
-            if lambdaInBeta == 1 and outputTrainDice and epoch % 5 == 0:
+                epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = dataMgr.updateDiceTPRSumList(xup, seg1Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
-            if lambdaInBeta == 0 and outputTrainDice and epoch % 5 == 0:
-                trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = dataMgr.updateDiceTPRSumList(xup, seg2Cpu, Kup, trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList)
+                                         = dataMgr.updateDiceTPRSumList(xup, seg1Cpu, Kup, trainDiceSumList, trainDiceCountList,
+                                                                                           trainTPRSumList, trainTPRCountList)
 
             trainingLoss += batchLoss
             trainBatches += 1
@@ -275,13 +267,13 @@ def main():
         if 0 != trainBatches:
             trainingLoss /= trainBatches
 
-        responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
-        responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
-
-
-
-        trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
-        trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
+        if epoch % 5 == 0:
+            responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
+            responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+            trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
+            trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
+        else:
+            continue  # only epoch %5 ==0, run validation set.
 
         # ================Test===============
         net.eval()
@@ -326,6 +318,7 @@ def main():
                         sys.exit(-5)
 
                     # accumulate response and predict value
+
                     batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
                     epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                     epochResponse = np.concatenate((epochResponse, responseCpu)) if epochResponse is not None else responseCpu
@@ -341,15 +334,16 @@ def main():
                     testLoss /= testBatches
                     lrScheduler.step(testLoss)
 
-                responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
-                responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+                if epoch % 5 == 0:
+                    responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
+                    responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
 
         else:
             lrScheduler.step(trainingLoss)
 
+
         testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
-
 
         outputString =  f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}'
         outputString += f'\t{testLoss:.4f}\t' + f'\t'.join((f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}'+f'\t{responseTestTPR:.4f}'
