@@ -1,7 +1,7 @@
-Program ID of SkyWatcher Network training:27760
+Program ID of SkyWatcher Network training:13067
 
 Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
+ ['TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
 
 Major program changes: 
                       merge train and test dataMgr into one.
@@ -9,6 +9,7 @@ Major program changes:
                       Directly use 3D data for treatment prediction without segmentation. 
                       Number of filters in encoder is 64.
                       Only epoch %5 ==0, print log
+                      CE weight of (0,1) change to (8, 2)
                        
 
 Experiment setting for Image3d ROI to response:
@@ -34,7 +35,7 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
 
             
 
-Program starting Time: 2019-06-14 11:04:40.697903
+Program starting Time: 2019-06-14 14:11:13.951378
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
 
 Now program get 140 input files.
@@ -42,431 +43,30 @@ Infor: In all data of 140 files, respone 0 has 41 files,
 	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
 ==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
 Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
+Infor: In Validataion set, 19 1's, and positive response rate = 0.7037037037037037
+Infor: In trainning set, 80 1's,  positive response rate = 0.7079646017699115
 Infor: program is in multi samples running model.
 TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
 
 Info: the size of bottle neck in the net = (1, 7, 7)
 
 Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction.
-Current best test dice: 0.75
+Network trains from scratch.
 Network has total 2,040,828 parameters.
-Infor: Response Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Infor: Response Cross Entropy Weight: [7.0, 2.0] for label[0, 1]
 Loss Functions List: FocalCELoss with weight of 1; 
 
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-Program ID of SkyWatcher Network training:29338
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:15:09.963413
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction.
-Current best test dice: 0.75
-Network has total 2,040,828 parameters.
-Infor: Response Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
-Loss Functions List: FocalCELoss with weight of 1; 
-
-Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
-
-Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-Program ID of SkyWatcher Network training:29948
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:19:33.936270
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction.
-Current best test dice: 0.75
-Network has total 2,040,828 parameters.
-Infor: Response Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
-Loss Functions List: FocalCELoss with weight of 1; 
-
-Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
-
-Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-Program ID of SkyWatcher Network training:30556
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:25:09.225005
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program ID of SkyWatcher Network training:31124
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:32:20.125454
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program ID of SkyWatcher Network training:31153
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:32:42.366711
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction.
-Current best test dice: 0.75
-Network has total 2,040,828 parameters.
-Infor: Response Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
-Loss Functions List: FocalCELoss with weight of 1; 
-
-Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
-
-Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-Program ID of SkyWatcher Network training:31628
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:36:58.191537
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction.
-Current best test dice: 0.75
-Network has total 2,040,828 parameters.
-Infor: Response Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
-Loss Functions List: FocalCELoss with weight of 1; 
-
-Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
-
-Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-0	0.1712	0.7054	1.0000	0.0000		0.1723	0.7083	1.0000	0.0000
-Program ID of SkyWatcher Network training:32346
-
-Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainSkyWatcherPurePrediction.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
-
-Major program changes: 
-                      merge train and test dataMgr into one.
-                      when epoch %5 ==0, do not use mixup.
-                      Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
-                      Only epoch %5 ==0, print log
-                       
-
-Experiment setting for Image3d ROI to response:
-Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
-
-Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
-                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
-                  4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
-
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
-
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
-
-
-Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
-                    No other data augmentation, and no dropout.  
-
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
-            
-
-Program starting Time: 2019-06-14 11:43:10.259197
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction
-
-Now program get 140 input files.
-Infor: In all data of 140 files, respone 0 has 41 files,
-	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
-==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
-Infor: Validation Set has 27 files,and Training Set has 113 files
-Infor: In Validataion set, positive response rate = 0.7037037037037037
-Infor: In trainning set, positive response rate = 0.7079646017699115
-Infor: program is in multi samples running model.
-TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
-
-Info: the size of bottle neck in the net = (1, 7, 7)
-
-Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction.
-Current best test dice: 0.7083333333333334
-Network has total 2,040,828 parameters.
-Infor: Response Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
-Loss Functions List: FocalCELoss with weight of 1; 
-
-Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
-
-Epoch	TrLoss	Accura	TPR_r	TNR_r		TsLoss	Accura	TPR_r	TNR_r
-0	0.1694	0.7143	1.0000	0.0000		0.1724	0.7083	1.0000	0.0000
+0	0.1734	0.2857	0.0000	1.0000		0.1733	0.2917	0.0000	1.0000
+5	0.1735	0.2857	0.0000	1.0000		0.1733	0.3333	0.0000	1.0000
+10	0.1733	0.7054	1.0000	0.0000		0.1735	0.6667	1.0000	0.0000
+15	0.1733	0.6786	0.9500	0.0000		0.1732	0.7083	1.0000	0.0000
+20	0.1735	0.3304	0.0759	0.9394		0.1732	0.2917	0.0000	1.0000
+25	0.1732	0.2946	0.0000	1.0000		0.1732	0.2917	0.0000	1.0000
+30	0.1734	0.7054	1.0000	0.0000		0.1731	0.7500	1.0000	0.0000
+35	0.1734	0.2946	0.0000	1.0000		0.1732	0.3333	0.0000	1.0000
+40	0.1734	0.5446	0.7089	0.1515		0.1734	0.6667	1.0000	0.0000
+45	0.1738	0.7054	1.0000	0.0000		0.1734	0.7083	1.0000	0.0000
+50	0.1736	0.7054	1.0000	0.0000		0.1733	0.7083	1.0000	0.0000

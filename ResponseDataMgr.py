@@ -33,7 +33,10 @@ class ResponseDataMgr(DataMgr):
         labelPortion = [0.3, 0.7]  # this is portion of 0,1 label, whose sum = 1
         ceWeight = [0.0, 0.0]
         for i in range(2):
-            ceWeight[i] = (1.0/labelPortion[i])**2
+            ceWeight[i] = 1.0/labelPortion[i]
+
+        ceWeight = [7.0, 2.0]  # super parameter
+
         self.m_logInfo(f"Infor: Response Cross Entropy Weight: {ceWeight} for label[0, 1]")
         return ceWeight
 
@@ -61,6 +64,6 @@ class ResponseDataMgr(DataMgr):
         self.m_trainingSetIndices  += self.m_res1FileIndices[nValidation1:]
         self.m_logInfo(f"==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== ")
         self.m_logInfo(f"Infor: Validation Set has {len(self.m_validationSetIndices)} files,and Training Set has {len(self.m_trainingSetIndices)} files")
-        self.m_logInfo(f"Infor: In Validataion set, positive response rate = {nValidation1/(nValidation0+ nValidation1)}")
-        self.m_logInfo(f"Infor: In trainning set, positive response rate = {(N1-nValidation1)/(N0-nValidation0+ N1-nValidation1)}")
+        self.m_logInfo(f"Infor: In Validataion set, {nValidation1} 1's, and positive response rate = {nValidation1/(nValidation0+ nValidation1)}")
+        self.m_logInfo(f"Infor: In trainning set, {N1-nValidation1} 1's,  positive response rate = {(N1-nValidation1)/(N0-nValidation0+ N1-nValidation1)}")
 

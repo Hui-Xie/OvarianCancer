@@ -25,6 +25,7 @@ Major program changes:
                       Directly use 3D data for treatment prediction without segmentation. 
                       Number of filters in encoder is 64.
                       Only epoch %5 ==0, print log
+                      CE weight of (0,1) change to (8, 2)
                        
 
 Experiment setting for Image3d ROI to response:
