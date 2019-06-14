@@ -23,7 +23,8 @@ Major program changes:
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       And Only when epoch %5 ==0, print log and save.
-                      Along the encoder, use more filters. And the first layer has 64 filters.
+                      Along the encoder, use more filters. And the first layer has 32 filters.
+                      Use BatchNorm1d in FC layer, instead of InstanceNorm1d.
                       
 
 Experiment setting for Image3d ROI to response:
