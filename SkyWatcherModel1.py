@@ -24,10 +24,10 @@ class SkyWatcherModel1 (SkyWatcherModel):
         lenBn = 49
         self.m_fc11 = nn.Sequential(
             nn.Linear(lenBn, lenBn // 2),
-            nn.InstanceNorm1d(lenBn // 2),
+            nn.BatchNorm1d(lenBn // 2),
             nn.ReLU(inplace=True),
             nn.Linear(lenBn // 2, lenBn // 4),
-            nn.InstanceNorm1d(lenBn // 4),
+            nn.BatchNorm1d(lenBn // 4),
             nn.ReLU(inplace=True),
             nn.Linear(lenBn // 4, Kr))
 

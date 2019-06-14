@@ -21,6 +21,14 @@ class SkyWatcherModel(BasicModel):
         xr = self.m_11Conv(xr)
         xr = torch.reshape(xr, (xr.shape[0], xr.numel()//xr.shape[0]))
         xr = self.m_fc11(xr)
+        # # ===debug===
+        # print("before Fully connect layers:")
+        # print(xr)
+        # for module in self.m_fc11._modules.values():
+        #     xr = module(xr)
+        #     print(module.__class__.__name__ )
+        #     print(xr)
+        # # ===debug===
         return xr
 
     def decoderForward(self, crossingx):
