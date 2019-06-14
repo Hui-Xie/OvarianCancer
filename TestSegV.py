@@ -88,7 +88,9 @@ def main():
     boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K)
     net.appendLossFunc(boundaryLoss, 0)
 
-    netMgr = NetMgr(net, netPath)
+    netMgr = NetMgr(net, netPath, device)
+    net.to(device)
+
     if 2 == len(testDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("test")  # False for test
         logging.info(f'Program loads net from {netPath}.')
@@ -111,7 +113,7 @@ def main():
         if nGPU >1:
             logging.info(f'Info: program will use {nGPU} GPUs.')
             net = nn.DataParallel(net)
-    net.to(device)
+
 
     logging.info("Hints: Test Dice_0 is the dice coeff for all non-zero labels")
     logging.info("Hints: Test Dice_1 is for primary cancer(green), \ntest Dice_2 is for metastasis(yellow), \nand test Dice_3 is for invaded lymph node(brown).")

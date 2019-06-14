@@ -119,7 +119,11 @@ def main():
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-9)
 
     # Load network
-    netMgr = NetMgr(net, netPath)
+    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
+    net.to(device)
+    # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
+
+    netMgr = NetMgr(net, netPath, device)
     bestTestPerf = 0
     if 2 == len(dataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
@@ -131,7 +135,7 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
+
 
     # lossFunc0 is for treatment response
     responseCEWeight = torch.FloatTensor(dataMgr.getResponseCEWeight()).to(device)
@@ -140,7 +144,7 @@ def main():
 
     # ========= end of loss function =================
 
-    net.to(device)
+
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:

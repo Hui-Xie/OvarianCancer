@@ -34,7 +34,7 @@ class ResponseDataMgr(DataMgr):
         ceWeight = [0.0, 0.0]
         for i in range(2):
             ceWeight[i] = 1.0/labelPortion[i]
-        self.m_logInfo(f"Infor: Cross Entropy Weight: {ceWeight} for label[0, 1]")
+        self.m_logInfo(f"Infor: Response Cross Entropy Weight: {ceWeight} for label[0, 1]")
         return ceWeight
 
     def statisticsReponse(self):

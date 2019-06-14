@@ -90,7 +90,10 @@ def main():
         net = SegV3DModel(K)
 
     # Load network
-    netMgr = NetMgr(net, netPath)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    net.to(device)
+    netMgr = NetMgr(net, netPath, device)
+
     bestTestPerf = [0] * K
     if 2 == len(dataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("test")  # True for train
@@ -104,9 +107,9 @@ def main():
 
     logging.info(f"total {len(dataMgr.m_inputFilesList)} input files to generate latent vector. ")
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    net.to(device)
+
+
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:

@@ -131,7 +131,11 @@ def main():
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=50, min_lr=1e-8)
 
     # Load network
-    netMgr = NetMgr(net, netPath)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    net.to(device)
+    netMgr = NetMgr(net, netPath, device)
+
+
     bestTestDiceList = [0] * K
     if 2 == len(trainDataMgr.getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
@@ -144,7 +148,7 @@ def main():
     logging.info(net.getParametersScale())
     logging.info(net.setDropoutProb(0.3))           # metastases is hard to learn, so it need a smaller dropout rate.
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
 
     ceWeight = torch.FloatTensor(trainDataMgr.getSegCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
@@ -167,7 +171,7 @@ def main():
     sys.stdout = stdoutBackup
     logging.info(f"===================End of Net Architecture =====================\n")
 
-    net.to(device)
+
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU >1:

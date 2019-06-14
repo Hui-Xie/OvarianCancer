@@ -4,9 +4,10 @@ import numpy as np
 
 
 class NetMgr:
-    def __init__(self, net, netPath):
+    def __init__(self, net, netPath, device):
         self.m_net = net
         self.m_netPath = netPath
+        self.m_device = device
         self.m_netBestPath = os.path.join(netPath, 'Best')
         if not os.path.exists(self.m_netBestPath):
             os.mkdir(self.m_netBestPath)
@@ -17,12 +18,10 @@ class NetMgr:
         torch.save(self.m_net.m_optimizer.state_dict(), os.path.join(netPath, "Optimizer.pt"))
 
     def loadNet(self, mode):
-        # Save on GPU, Load on CPU
-        device = torch.device('cpu')
-        self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=device))
+        # Save on GPU, Load on GPU
+        self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device))
         if mode == "train":
             # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
-            self.m_net.cuda()
             self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt")))
             self.m_net.train()
         elif mode == "test":   # eval
