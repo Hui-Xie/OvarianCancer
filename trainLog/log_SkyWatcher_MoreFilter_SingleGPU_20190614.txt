@@ -1,0 +1,75 @@
+Program ID of SkyWatcher Network training:17044
+
+Program command: 
+ ['TrainSkyWatcher.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Labels_ROI_23_127_127', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
+
+Major program changes: 
+                      merge train and test dataMgr into one.
+                      when epoch %5 ==0, do not use mixup.
+                      And Only when epoch %5 ==0, print log and save.
+                      Along the encoder, use more filters. And the first layer has 64 filters.
+                      
+
+Experiment setting for Image3d ROI to response:
+Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
+segmentation label: 23*127*127 with spacing size(5*2*2) segmentation label with value (0,1,2) which erases lymph node label
+
+This is a multi-task learning. 
+
+Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
+                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 8 million.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
+
+response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+
+Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
+        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
+        
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+
+                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
+
+            
+
+Program starting Time: 2019-06-14 10:09:15.259439
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher
+
+Now program get 140 input files.
+Infor: In all data of 140 files, respone 0 has 41 files,
+	  and response 1 has 99 files, where positive response rate = 0.7071428571428572 in full data
+==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== 
+Infor: Validation Set has 27 files,and Training Set has 113 files
+Infor: In Validataion set, positive response rate = 0.7037037037037037
+Infor: In trainning set, positive response rate = 0.7079646017699115
+Infor: program is in multi samples running model.
+TrainTestData Input:  batchSize=4, depth=29, height=140, width=140
+
+Info: the size of bottle neck in the net = (512, 1, 7, 7)
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Network trains from scratch.
+Network has total 21,463,612 parameters.
+Infor: Cross Entropy Weight: [3.3333333333333335, 1.4285714285714286] for label[0, 1]
+Infor: Segmentation Cross Entropy Weight: [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+Loss Functions List: FocalCELoss with weight of 1; 	FocalCELoss with weight of 1; 
+Hints: Test Dice_0 is the dice coeff for all non-zero labels
+Hints: Test Dice_1 is for primary cancer(green), 	
+ test Dice_2 is for metastasis(yellow), 	
+ and test Dice_3 is for invaded lymph node(brown).
+Hints: Test TPR_0 is the TPR for all non-zero labels
+Hints: Test TPR_1 is for primary cancer(green), 	
+ TPR_2 is for metastasis(yellow), 	
+ and TPR_3 is for invaded lymph node(brown).
+
+Dice is based on all 2D segmented slices in the volume from weak annotation, not real 3D dice.
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r		TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r
+0	0.6961	0.090	0.017	0.052	0.870	0.040	0.817	0.6696	0.9494	0.0000		1.1664	0.108	0.050	0.052	0.848	0.045	0.936	0.7083	1.0000	0.0000

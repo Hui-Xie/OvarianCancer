@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_MoreFilter_20190613.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_MoreFilter_SingleGPU_20190614.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
@@ -98,13 +98,13 @@ def main():
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
-    useDataParallel = True  # for debug
+    useDataParallel = False  # for debug
     GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
     batchSize = 4
-    C = 64   # number of channels after the first input layer
+    C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
@@ -136,7 +136,7 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
 
 
     # lossFunc0 is for treatment response
@@ -227,32 +227,30 @@ def main():
             response1 = torch.from_numpy(response1Cpu).to(device, dtype=torch.long)
             response2 = torch.from_numpy(response2Cpu).to(device, dtype=torch.long)
 
-            if useDataParallel:
-                optimizer.zero_grad()
-                xr, xup = net.forward(inputs)
-                loss = torch.tensor(0.0).to(device)
 
-                for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
-                                                           lossWeightList)):
-                    if i ==0:
-                        outputs = xr
-                        gt1, gt2 = (response1, response2)
-                    else:
-                        outputs = xup
-                        gt1, gt2 = (seg1, seg2)
+            optimizer.zero_grad()
+            xr, xup = net.forward(inputs)
+            loss = torch.tensor(0.0).to(device)
 
-                    if weight == 0:
-                        continue
-                    if lambdaInBeta != 0:
-                        loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
-                    if 1 - lambdaInBeta != 0:
-                        loss += lossFunc(outputs, gt2) * weight * (1 - lambdaInBeta)
-                loss.backward()
-                optimizer.step()
-                batchLoss = loss.item()
-            else:
-                logging.info(f"SkyWatcher Training must use Dataparallel. Program exit.")
-                sys.exit(-5)
+            for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                                       lossWeightList)):
+                if i ==0:
+                    outputs = xr
+                    gt1, gt2 = (response1, response2)
+                else:
+                    outputs = xup
+                    gt1, gt2 = (seg1, seg2)
+
+                if weight == 0:
+                    continue
+                if lambdaInBeta != 0:
+                    loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
+                if 1 - lambdaInBeta != 0:
+                    loss += lossFunc(outputs, gt2) * weight * (1 - lambdaInBeta)
+            loss.backward()
+            optimizer.step()
+            batchLoss = loss.item()
+
 
             # accumulate response and predict value
             if epoch % 5 == 0:
