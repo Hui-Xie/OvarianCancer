@@ -17,7 +17,7 @@ class SkyWatcherModel1 (SkyWatcherModel):
 
         self.m_downList.append(DownBB(C, C, filter1st=(2, 3, 3), stride=(2, 2, 2), nLayers=N))  # outpusSize =(1*7*7}
         outputSize = self.getConvOutputTensorSize(outputSize, (2, 3, 3), (2, 2, 2), (0, 0, 0))
-        self.m_bottleNeckSize = outputSize
+        self.m_bottleNeckSize = (C,) + outputSize
 
         # for response prediction
         self.m_11Conv = BN_ReLU_Conv(C, 1, (1, 1, 1), (1, 1, 1), (0, 0, 0), False)  # outpusSize =(1*7*7}
