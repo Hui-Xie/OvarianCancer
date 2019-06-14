@@ -33,7 +33,7 @@ class ResponseDataMgr(DataMgr):
         labelPortion = [0.3, 0.7]  # this is portion of 0,1 label, whose sum = 1
         ceWeight = [0.0, 0.0]
         for i in range(2):
-            ceWeight[i] = 1.0/labelPortion[i]
+            ceWeight[i] = (1.0/labelPortion[i])**2
         self.m_logInfo(f"Infor: Response Cross Entropy Weight: {ceWeight} for label[0, 1]")
         return ceWeight
 
