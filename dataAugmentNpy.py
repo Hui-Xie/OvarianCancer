@@ -7,9 +7,10 @@ from DataMgr import DataMgr
 
 suffix = "_CT.nrrd"
 inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images"
-outputImagesDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_augmt_29_140_140"
-outputLabelsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_augmt_23_127_127"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_augmt_29_140_140/readme.txt"
+# put output files in iibi server
+outputImagesDir = "/home/hxie1/iibiHxie1/data/OvarianCancer_ps2_2_5/images_augmt_29_140_140"
+outputLabelsDir = "/home/hxie1/iibiHxie1/data/OvarianCancer_ps2_2_5/labels_augmt_23_127_127"
+readmeFile = "/home/hxie1/iibiHxie1/data/OvarianCancer_ps2_2_5/images_augmt_29_140_140/readme.txt"
 
 imageGoalSize = (29, 140, 140)
 labelGoalSize = (23, 127, 127)
@@ -60,14 +61,18 @@ for file in filesList:
             for z in range(wRadius, shape[2]-wRadius):
                 fileSuffix = f"_sc{x:03d}_{y:03d}_{z:03d}.npy"  # sc means sliding center
                 # save image
-                roi = imageDataMgr.cropVolumeCopy(image3d, x,y,z, imageRadius)
-                np.save(os.path.join(outputImagesDir, patientID + fileSuffix), roi)
+                outFile = os.path.join(outputImagesDir, patientID + fileSuffix)
+                if not os.path.isfile(outFile):
+                    roi = imageDataMgr.cropVolumeCopy(image3d, x,y,z, imageRadius)
+                    np.save(outFile, roi)
 
                 # save label
-                roi = labelDataMgr.cropVolumeCopy(label3d,  x,y,z, labelRadius)
-                roi3 = roi >= 3
-                roi[np.nonzero(roi3)] = 0  # erase label 3(lymph node)
-                np.save(os.path.join(outputLabelsDir, patientID + fileSuffix), roi)
+                outFile = os.path.join(outputLabelsDir, patientID + fileSuffix)
+                if not os.path.isfile(outFile):
+                    roi = labelDataMgr.cropVolumeCopy(label3d,  x,y,z, labelRadius)
+                    roi3 = roi >= 3
+                    roi[np.nonzero(roi3)] = 0  # erase label 3(lymph node)
+                    np.save(outFile, roi)
 
                 counter +=1
 
