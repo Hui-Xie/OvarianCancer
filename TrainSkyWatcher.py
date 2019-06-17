@@ -20,7 +20,7 @@ trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_Fi
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
-                      merge train and test dataMgr into one.
+                      merge train and test imageDataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       And Only when epoch %5 ==0, print log and save.
                       Along the encoder, use fixed number of filter of 32

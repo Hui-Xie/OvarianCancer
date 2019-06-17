@@ -124,7 +124,7 @@ def main():
     logging.info(f"Epoch \t TrainingLoss \t TestLoss \t"+ f'\t'.join(diceHead) + f'\t'+  f'\t'.join(TPRHead))  # print output head
 
     net.eval()
-    n = 0 # n indicate the first slice index in the dataMgr.m_segSliceTupleList
+    n = 0 # n indicate the first slice index in the imageDataMgr.m_segSliceTupleList
     with torch.no_grad():
         diceSumList = [0 for _ in range(K)]
         diceCountList = [0 for _ in range(K)]
