@@ -83,7 +83,7 @@ def main():
     netPath = sys.argv[1]
     dataInputsPath = sys.argv[2]
     responsePath = sys.argv[3]
-    inputSuffix = "_roi.npy"
+    inputSuffix = ".npy"
 
     Kr = 2  # treatment response 1 or 0
     Kup = 3  # segmentation classification number

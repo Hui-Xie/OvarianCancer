@@ -86,7 +86,7 @@ def main():
     dataInputsPath = sys.argv[2]
     labelInputsPath = sys.argv[3]  # may not use.
     responsePath = sys.argv[4]
-    inputSuffix = "_roi.npy"
+    inputSuffix = ".npy"
 
     Kr = 2  # treatment response 1 or 0
     Kup = 3  # segmentation classification number
