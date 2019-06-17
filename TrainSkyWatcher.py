@@ -11,19 +11,19 @@ import os
 import numpy as np
 
 from Image3dResponseDataMgr import Image3dResponseDataMgr
-from SkyWatcherModel2 import SkyWatcherModel2
+from SkyWatcherModel1 import SkyWatcherModel1
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_MoreFilter_SingleGPU_20190615.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_FixedFilter_SingleGPU_20190617.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test dataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       And Only when epoch %5 ==0, print log and save.
-                      Along the encoder, use more filters. And the first layer has 32 filters.
+                      Along the encoder, use fixed number of filter of 32
                       Use BatchNorm1d in FC layer, instead of InstanceNorm1d.
                       
 
@@ -113,7 +113,7 @@ def main():
     dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
 
-    net = SkyWatcherModel2(C, Kr, Kup, (D, H, W))
+    net = SkyWatcherModel1(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 
