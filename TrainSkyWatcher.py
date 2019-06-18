@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_FixedFilter_SingleGPU_20190618.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190618.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
@@ -25,6 +25,8 @@ Major program changes:
                       And Only when epoch %5 ==0, print log and save.
                       Use BatchNorm1d in FC layer, instead of InstanceNorm1d.
                       use 95766 augmented data with response 0,1 distribution of (0.3, 0.7)
+                      use batchSize = 16, and 4GPU  training.
+                      along deeper layer, increase filter number.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -99,12 +101,12 @@ def main():
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
-    useDataParallel = False  # for debug
-    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
+    useDataParallel = True  # for debug
+    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
-    batchSize = 4
+    batchSize = 12
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
@@ -165,7 +167,7 @@ def main():
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
             logging.info(f'Info: program will use {nGPU} GPUs.')
-            net = nn.DataParallel(net, device_ids=list(range(nGPU)), output_device=device)
+            net = nn.DataParallel(net, device_ids=[0, 1, 2, 3], output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())
