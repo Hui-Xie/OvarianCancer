@@ -85,6 +85,7 @@ with open(readmeFile,"w") as f:
     f.write(f"inputDir = {inputsDir}\n")
     f.write(f"inputImagesDir = {outputImagesDir}\n")
     f.write(f"inputLabelsDir = {outputLabelsDir}\n")
+    f.write(f"step: 2cm*2cm*2cm\n")
     f.write(f"total output {counter} image files and its corresponding label files.\n")
     f.write(Notes)
 
