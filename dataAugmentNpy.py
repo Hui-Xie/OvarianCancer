@@ -56,9 +56,9 @@ for file in filesList:
 
     shape = image3d.shape
 
-    for x in range(imageRadius, shape[0]- imageRadius):
-        for y in range(hRadius, shape[1]-hRadius):
-            for z in range(wRadius, shape[2]-wRadius):
+    for x in range(imageRadius, shape[0]- imageRadius, 4):  # 4*5mm = 2cm step
+        for y in range(hRadius, shape[1]-hRadius, 10):      # 10*2mm = 2cm step
+            for z in range(wRadius, shape[2]-wRadius, 10):  # 10*2mm = 2cm step
                 fileSuffix = f"_sc{x:03d}_{y:03d}_{z:03d}.npy"  # sc means sliding center
                 # save image
                 outFile = os.path.join(outputImagesDir, patientID + fileSuffix)
