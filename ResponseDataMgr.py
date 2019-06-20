@@ -1,10 +1,11 @@
 from DataMgr import DataMgr
 import json
 import random
+import os
 
 class ResponseDataMgr(DataMgr):
-    def __init__(self, inputsDir, labelsPath, inputSuffix, logInfoFun=print):
-        super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
+    def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun=print):
+        super().__init__(inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun)
         self.m_responseList = []
         self.m_res0FileIndices = []
         self.m_res1FileIndices = []
@@ -12,7 +13,13 @@ class ResponseDataMgr(DataMgr):
 
 
     def initializeInputsResponseList(self):
-        self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputSuffix)
+        if os.path.isfile(self.m_inputFilesListFile):
+            self.loadInputFilesList()
+        else:
+            self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputSuffix)
+            self.m_logInfo(f"program re-initializes all input files list, which will lead all K_fold cross validation invalid.")
+            self.saveInputFilesList()
+
         self.m_logInfo(f"Now program get {len(self.m_inputFilesList)} input files.")
         self.m_responseList = []
         self.updateResponseList()
@@ -48,15 +55,16 @@ class ResponseDataMgr(DataMgr):
                        + f"where positive response rate = {len(self.m_res1FileIndices)/len(self.m_responseList)} in full data")
 
     def divideTrainingValidationSet(self):
-        validationRate = 0.2
+        validationRate = 1.0/self.m_K_fold
         N0 = len(self.m_res0FileIndices)
         N1 = len(self.m_res1FileIndices)
         nValidation0 = int( N0* validationRate)
         nValidation1 = int( N1* validationRate)
-        random.seed()
+        random.seed(201906)
         random.shuffle(self.m_res0FileIndices)
         random.shuffle(self.m_res1FileIndices)
-        self.m_validationSetIndices = self.m_res0FileIndices[0:nValidation0]
+
+        self.m_validationSetIndices = self.m_res0FileIndices[self.m_k*0:nValidation0]
         self.m_validationSetIndices += self.m_res1FileIndices[0:nValidation1]
         self.m_trainingSetIndices  = self.m_res0FileIndices[nValidation0:]
         self.m_trainingSetIndices  += self.m_res1FileIndices[nValidation1:]
