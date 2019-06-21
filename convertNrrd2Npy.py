@@ -1,6 +1,7 @@
 
 import os
 import SimpleITK as sitk
+from DataMgr import DataMgr
 
 suffix = "_CT.nrrd"
 inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images"
