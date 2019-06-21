@@ -91,6 +91,10 @@ def main():
     responsePath = sys.argv[4]
     inputSuffix = ".npy"
 
+    K_fold = 10
+    k = 0
+    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
+
     Kr = 2  # treatment response 1 or 0
     Kup = 3  # segmentation classification number
 
@@ -98,7 +102,7 @@ def main():
 
     mergeTrainTestData = False
 
-    dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, logInfoFun=logging.info)
+    dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug

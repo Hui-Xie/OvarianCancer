@@ -9,8 +9,8 @@ from ResponseDataMgr import ResponseDataMgr
 
 
 class Image3dResponseDataMgr(ResponseDataMgr):
-    def __init__(self, inputsDir, labelsPath, inputSuffix, logInfoFun=print):
-        super().__init__(inputsDir, labelsPath, inputSuffix, logInfoFun)
+    def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun=print):
+        super().__init__(inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun)
 
     def dataResponseGenerator(self, inputFileIndices, shuffle=True):
         """

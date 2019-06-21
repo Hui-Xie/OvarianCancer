@@ -7,12 +7,16 @@ import sys
 
 
 class DataMgr:
-    def __init__(self, inputsDir, labelsDir, inputSuffix, logInfoFun=print):
+    def __init__(self, inputsDir, labelsDir, inputSuffix, K_fold, k, logInfoFun=print):
         self.m_logInfo = logInfoFun
         self.m_oneSampleTraining = False
         self.m_inputsDir = inputsDir
+        self.m_inputFilesListFile = os.path.join(self.m_inputsDir, "inputFilesList.txt")
         self.m_labelsDir = labelsDir
         self.m_inputSuffix = inputSuffix  # "_CT.nrrd", or "_zoom.npy", or "_roi.npy", or "_Latent.npy"
+
+        self.m_K_fold = K_fold
+        self.m_k = k
 
         self.m_alpha    = 0.4
         self.m_mixupProb = 0
@@ -73,6 +77,18 @@ class DataMgr:
         filesList = [os.path.abspath(x) for x in os.listdir(filesDir) if suffix in x]
         os.chdir(originalCwd)
         return filesList
+
+    def saveInputFilesList(self):
+        with open( self.m_inputFilesListFile, "w") as f:
+            for file in self.m_inputFilesList:
+                f.write(file + "\n")
+
+    def loadInputFilesList(self):
+        self.m_inputFilesList = []
+        with open( self.m_inputFilesListFile, "r") as f:
+            for line in f:
+                self.m_inputFilesList.append(line.strip())
+
 
     def expandInputsDir(self, imagesDir, suffix):
         self.m_inputFilesList += self.getFilesList(imagesDir, suffix)
