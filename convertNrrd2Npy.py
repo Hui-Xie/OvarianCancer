@@ -36,4 +36,4 @@ with open(readmeFile,"w") as f:
     f.write(f"inputLabelsDir = {outputLabelsDir}\n")
     f.write(Notes)
 
-
+print("===End of convertNrrd to Npy=======")
