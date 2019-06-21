@@ -58,18 +58,22 @@ class ResponseDataMgr(DataMgr):
         validationRate = 1.0/self.m_K_fold
         N0 = len(self.m_res0FileIndices)
         N1 = len(self.m_res1FileIndices)
-        nValidation0 = int( N0* validationRate)
-        nValidation1 = int( N1* validationRate)
+        nV0 = int( N0* validationRate)
+        nV1 = int( N1* validationRate)
         random.seed(201906)
         random.shuffle(self.m_res0FileIndices)
         random.shuffle(self.m_res1FileIndices)
 
-        self.m_validationSetIndices = self.m_res0FileIndices[self.m_k*0:nValidation0]
-        self.m_validationSetIndices += self.m_res1FileIndices[0:nValidation1]
-        self.m_trainingSetIndices  = self.m_res0FileIndices[nValidation0:]
-        self.m_trainingSetIndices  += self.m_res1FileIndices[nValidation1:]
-        self.m_logInfo(f"==== Regenerate training set and validation set by random with same distribution of 0 and 1 ==== ")
+        self.m_validationSetIndices = self.m_res0FileIndices[self.m_k*nV0:(self.m_k+1)*nV0]
+        self.m_validationSetIndices += self.m_res1FileIndices[self.m_k*nV1:(self.m_k+1)*nV1]
+        if self.m_k == 0:
+            self.m_trainingSetIndices  = self.m_res0FileIndices[nV0:]
+            self.m_trainingSetIndices  += self.m_res1FileIndices[nV1:]
+        else:
+            self.m_trainingSetIndices = self.m_res0FileIndices[0:self.m_k*nV0] + self.m_res0FileIndices[(self.m_k+1)*nV0:]
+            self.m_trainingSetIndices += self.m_res1FileIndices[0:self.m_k*nV1] + self.m_res1FileIndices[(self.m_k+1)*nV1:]
+
         self.m_logInfo(f"Infor: Validation Set has {len(self.m_validationSetIndices)} files,and Training Set has {len(self.m_trainingSetIndices)} files")
-        self.m_logInfo(f"Infor: In Validataion set, {nValidation1} 1's, and positive response rate = {nValidation1/(nValidation0+ nValidation1)}")
-        self.m_logInfo(f"Infor: In trainning set, {N1-nValidation1} 1's,  positive response rate = {(N1-nValidation1)/(N0-nValidation0+ N1-nValidation1)}")
+        self.m_logInfo(f"Infor: In Validataion set, {nV1} 1's, and positive response rate = {nV1/(nV0+ nV1)}")
+        self.m_logInfo(f"Infor: In trainning set, {N1-nV1} 1's,  positive response rate = {(N1-nV1)/(N0-nV0+ N1-nV1)}")
 

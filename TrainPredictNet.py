@@ -119,22 +119,25 @@ def main():
         print(f"inputModel does not match the known:  <latent|image3dZoom|image3dROI> ")
         sys.exit(-1)
 
-    K = 2 # treatment response 1 or 0
+    Kr = 2 # treatment response 1 or 0
+    K_fold = 10
+    k = 0
+    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
 
     logging.info(f"Info: netPath = {netPath}\n")
 
     mergeTrainTestData = False
 
     if inputModel == 'latent':
-        trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
+        trainDataMgr = LatentResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, K_fold, k, logInfoFun=logging.info)
     else:
-        trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
+        trainDataMgr = Image3dResponseDataMgr(trainingInputsPath, labelsPath, inputSuffix,K_fold, k, logInfoFun=logging.info)
 
     if not mergeTrainTestData:
         if inputModel == 'latent':
-            testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, inputSuffix, logInfoFun=logging.info)
+            testDataMgr = LatentResponseDataMgr(testInputsPath, labelsPath, inputSuffix,  K_fold, k, logInfoFun=logging.info)
         else:
-            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath,  inputSuffix, logInfoFun=logging.info)
+            testDataMgr = Image3dResponseDataMgr(testInputsPath, labelsPath,  inputSuffix, K_fold, k, logInfoFun=logging.info)
     else:
         trainDataMgr.expandInputsDir(testInputsPath, suffix=inputSuffix)
         trainDataMgr.initializeInputsResponseList()
@@ -177,9 +180,9 @@ def main():
         testDataMgr.setDataSize(batchSize, D, H, W, "TestData")  # batchSize, depth, height, width
 
     if inputModel == 'latent':
-        net = LatentPredictModel(C, K)
+        net = LatentPredictModel(C, Kr)
     else:
-        net = Image3dPredictModel(C, K, (D, H, W), nDownSamples)
+        net = Image3dPredictModel(C, Kr, (D, H, W), nDownSamples)
         logging.info(f"Info: the size of bottle neck in the net = {C}* {net.m_bottleNeckSize}\n")
 
     trainDataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup
