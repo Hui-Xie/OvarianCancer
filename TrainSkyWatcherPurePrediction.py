@@ -153,8 +153,9 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            logging.info(f'Info: program will use {nGPU} GPUs.')
-            net = nn.DataParallel(net, device_ids=list(range(nGPU)), output_device=device)
+            device_ids = [1, 2, 3]
+            logging.info(f'Info: program will use {len(device_ids)} GPUs.')
+            net = nn.DataParallel(net, device_ids=[1, 2, 3], output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())

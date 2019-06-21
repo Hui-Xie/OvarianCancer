@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_20190619.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190620.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
@@ -28,6 +28,7 @@ Major program changes:
                       use batchSize = 12, and 4GPU  training.
                       along deeper layer, increase filter number.
                       put all data into local GPU sever.
+                      10 fold cross validation, 0 fold for test.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -105,13 +106,13 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(False)  # for debug
+    dataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
-    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
+    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
-    batchSize = 12
+    batchSize = 9
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
@@ -171,8 +172,9 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            logging.info(f'Info: program will use {nGPU} GPUs.')
-            net = nn.DataParallel(net, device_ids=[0, 1, 2, 3], output_device=device)
+            device_ids = [1, 2, 3]
+            logging.info(f'Info: program will use {len(device_ids)} GPUs.')
+            net = nn.DataParallel(net, device_ids=[1, 2, 3], output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())
