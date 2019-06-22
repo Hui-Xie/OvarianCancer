@@ -108,7 +108,7 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(False)  # for debug
+    dataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
     GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
