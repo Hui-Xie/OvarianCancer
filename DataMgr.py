@@ -187,6 +187,46 @@ class DataMgr:
         else:
             return array[d1:d2, h1:h2, w1:w2].copy().squeeze(axis=0)
 
+    @staticmethod
+    def cropVolumeCopyWithDstSize(array, dc, hc, wc, dRadius, dstHeight, dstWidth):  # d means depth
+        """
+        d means depth, we assume most axial images of patient are centered in its xy plane.
+        :param array:
+        :param dc: depth center
+        :param hc: height center
+        :param wc: width center
+        :param dRadius:  = dstDepth Radius
+        :return:
+        """
+        shape = array.shape
+
+        d1 = dc - dRadius
+        d1 = d1 if d1 >= 0 else 0
+        d2 = d1 + 2 * dRadius + 1
+        if d2 > shape[0]:
+            d2 = shape[0]
+            d1 = d2 - 2 * dRadius - 1
+
+        h1 = int(hc - dstHeight / 2)
+        h1 = h1 if h1 >= 0 else 0
+        h2 = h1 + dstHeight
+        if h2 > shape[1]:
+            h2 = shape[1]
+            h1 = h2 - dstHeight
+
+        w1 = int(wc - dstWidth / 2)
+        w1 = w1 if w1 >= 0 else 0
+        w2 = w1 + dstWidth
+        if w2 > shape[2]:
+            w2 = shape[2]
+            w1 = w2 - dstWidth
+
+        if 0 != dRadius:
+            return array[d1:d2, h1:h2, w1:w2].copy()
+        else:
+            return array[d1:d2, h1:h2, w1:w2].copy().squeeze(axis=0)
+
+
     def cropContinuousVolume(self, array, d1, d2, hc, wc):
         shape = array.shape
 

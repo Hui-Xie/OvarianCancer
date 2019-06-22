@@ -64,6 +64,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
         """
+        random.seed()
         shuffledList = inputFileIndices.copy()
         if shuffle:
             random.shuffle(shuffledList)
@@ -73,22 +74,42 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         segList = []
         responseList = []
 
+        # for crop ROIs
+        imageGoalSize = (self.m_depth, self.m_height, self.m_width)  #(29, 140, 140)
+        labelGoalSize = (23, 127, 127)
+        wRadius = self.m_width//2
+        hRadius = self.m_height//2
+        imageRadius = imageGoalSize[0] // 2
+        labelRadius = labelGoalSize[0] // 2
+
         for i in shuffledList:
             imageFile = self.m_inputFilesList[i]
 
             # for inputSize 147*281*281, and segmentation size of 127*255*255
             # labelFile = imageFile.replace("Images_ROI_29_140_140", "Labels_ROI_23_127_127")
-            labelFile = imageFile.replace("images_augmt_29_140_140", "labels_augmt_23_127_127")
+            # labelFile = imageFile.replace("images_augmt_29_140_140", "labels_augmt_23_127_127")
+            labelFile = imageFile.replace("/images_npy/", "/labels_npy/")  # the image and label are original various size
 
             image3d = np.load(imageFile)
-            image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
+            shape   = image3d.shape
             seg3d   = np.load(labelFile)
+
+            # randomize ROI to generate the center of ROI
+            x = random.randint(imageRadius, shape[0] - imageRadius-1)
+            y = random.randint(hRadius, shape[1] - hRadius-1)
+            z = random.randint(wRadius, shape[2] - wRadius-1)
+            roiImage3d = self.cropVolumeCopyWithDstSize(image3d, x, y, z, imageRadius, imageGoalSize[1], imageGoalSize[2])
+            roiSeg3d = self.cropVolumeCopyWithDstSize(seg3d, x, y, z, labelRadius, labelGoalSize[1], labelGoalSize[2])
+            roi3 = roiSeg3d >= 3
+            roiSeg3d[np.nonzero(roi3)] = 0  # erase label 3(lymph node)
+
             if convertAllZeroSlices:
-                self.convertAllZeroSliceToValue(seg3d, -100)  # -100 is default ignore_index in CrossEntropyLoss
+                self.convertAllZeroSliceToValue(roiSeg3d, -100)  # -100 is default ignore_index in CrossEntropyLoss
             response = self.m_responseList[i]
 
-            dataList.append(image3d)
-            segList.append(seg3d)
+            roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
+            dataList.append(roiImage3d)
+            segList.append(roiSeg3d)
             responseList.append(response)
             batch += 1
 

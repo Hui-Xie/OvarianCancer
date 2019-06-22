@@ -17,7 +17,7 @@ class ResponseDataMgr(DataMgr):
             self.loadInputFilesList()
         else:
             self.m_inputFilesList = self.getFilesList(self.m_inputsDir, self.m_inputSuffix)
-            self.m_logInfo(f"program re-initializes all input files list, which will lead all K_fold cross validation invalid.")
+            self.m_logInfo(f"program re-initializes all input files list, which will lead previous all K_fold cross validation invalid.")
             self.saveInputFilesList()
 
         self.m_logInfo(f"Now program get {len(self.m_inputFilesList)} input files.")
