@@ -76,4 +76,6 @@ class ResponseDataMgr(DataMgr):
         self.m_logInfo(f"Infor: Validation Set has {len(self.m_validationSetIndices)} files,and Training Set has {len(self.m_trainingSetIndices)} files")
         self.m_logInfo(f"Infor: Validataion set has {nV1} 1's, and positive response rate = {nV1/(nV0+ nV1)}")
         self.m_logInfo(f"Infor: trainning set has {N1-nV1} 1's, and positive response rate = {(N1-nV1)/(N0-nV0+ N1-nV1)}")
+        self.m_logInfo(f"Infor: the drop_last data in the dataMgr may lead the number of validation set and training set less than above number.")
+
 

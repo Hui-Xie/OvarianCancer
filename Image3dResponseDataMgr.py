@@ -129,8 +129,8 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
         #  a batch size of 1 and a single feature per channel will has problem in batchnorm.
         #  drop_last data.
-        # if 0 != len(dataList) and 0 != len(responseList): # PyTorch supports dynamic batchSize.
-        #    yield np.stack(dataList, axis=0), np.stack(responseList, axis=0)
+        if 0 != len(dataList) and 0 != len(responseList): # PyTorch supports dynamic batchSize.
+            yield np.stack(dataList, axis=0), np.stack(segList, axis=0), np.stack(responseList, axis=0)
 
         # clean field
         dataList.clear()
