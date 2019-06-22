@@ -23,14 +23,13 @@ Major program changes:
                       merge train and test imageDataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       And Only when epoch %5 ==0, print log and save.
-                      Use BatchNorm1d in FC layer, instead of InstanceNorm1d.
                       use batchSize = 9, and 3GPU  training.
                       along deeper layer, increase filter number.
                       put all data into local GPU sever.
                       10 fold cross validation, 0 fold for test.
-                      data partition with patient, instead of VOI.
+                      data partition with patient ID, instead of VOI.
                       in image3dResponseDataMgr, random Crop ROI in the fly.
-                      erase normalization layer  in the fully connected layers.
+                      erase normalization layers  in the fully connected layers.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -108,7 +107,7 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(True)  # for debug
+    dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
     GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
