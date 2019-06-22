@@ -59,7 +59,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList.clear()
         responseList.clear()
 
-    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True):
+    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True, randomROI=True):
         """
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
@@ -95,9 +95,13 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             seg3d   = np.load(labelFile)
 
             # randomize ROI to generate the center of ROI
-            x = random.randint(imageRadius, shape[0] - imageRadius-1)
-            y = random.randint(hRadius, shape[1] - hRadius-1)
-            z = random.randint(wRadius, shape[2] - wRadius-1)
+            if randomROI:
+                x = random.randint(imageRadius, shape[0] - imageRadius-1)
+                y = random.randint(hRadius, shape[1] - hRadius-1)
+                z = random.randint(wRadius, shape[2] - wRadius-1)
+            else:
+                x, y, z = shape[0]//2, shape[1]//2, shape[2]//2   # get center of image3d
+
             roiImage3d = self.cropVolumeCopyWithDstSize(image3d, x, y, z, imageRadius, imageGoalSize[1], imageGoalSize[2])
             roiSeg3d = self.cropVolumeCopyWithDstSize(seg3d, x, y, z, labelRadius, labelGoalSize[1], labelGoalSize[2])
             roi3 = roiSeg3d >= 3

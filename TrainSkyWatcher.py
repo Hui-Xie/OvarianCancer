@@ -24,13 +24,13 @@ Major program changes:
                       when epoch %5 ==0, do not use mixup.
                       And Only when epoch %5 ==0, print log and save.
                       Use BatchNorm1d in FC layer, instead of InstanceNorm1d.
-                      #  use 95766 augmented data with response 0,1 distribution of (0.3, 0.7)
-                      use batchSize = 12, and 4GPU  training.
+                      use batchSize = 9, and 3GPU  training.
                       along deeper layer, increase filter number.
                       put all data into local GPU sever.
                       10 fold cross validation, 0 fold for test.
                       data partition with patient, instead of VOI.
                       in image3dResponseDataMgr, random Crop ROI in the fly.
+                      erase normalization layer  in the fully connected layers.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -312,7 +312,7 @@ def main():
         if not mergeTrainTestData:
 
             with torch.no_grad():
-                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True):
+                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False):
                     inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                     inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
 
