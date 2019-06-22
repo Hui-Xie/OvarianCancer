@@ -96,9 +96,9 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
             # randomize ROI to generate the center of ROI
             if randomROI:
-                x = random.randint(imageRadius, shape[0] - imageRadius-1)
-                y = random.randint(hRadius, shape[1] - hRadius-1)
-                z = random.randint(wRadius, shape[2] - wRadius-1)
+                x = random.randrange(imageRadius, shape[0] - imageRadius, 4)    # 4*5mm = 2cm step
+                y = random.randrange(hRadius, shape[1] - hRadius, 10)           # 10*2mm = 2cm step
+                z = random.randrange(wRadius, shape[2] - wRadius, 10)           # 10*2mm = 2cm step
             else:
                 x, y, z = shape[0]//2, shape[1]//2, shape[2]//2   # get center of image3d
 
