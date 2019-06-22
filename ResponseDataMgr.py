@@ -74,6 +74,6 @@ class ResponseDataMgr(DataMgr):
             self.m_trainingSetIndices += self.m_res1FileIndices[0:self.m_k*nV1] + self.m_res1FileIndices[(self.m_k+1)*nV1:]
 
         self.m_logInfo(f"Infor: Validation Set has {len(self.m_validationSetIndices)} files,and Training Set has {len(self.m_trainingSetIndices)} files")
-        self.m_logInfo(f"Infor: In Validataion set, {nV1} 1's, and positive response rate = {nV1/(nV0+ nV1)}")
-        self.m_logInfo(f"Infor: In trainning set, {N1-nV1} 1's,  positive response rate = {(N1-nV1)/(N0-nV0+ N1-nV1)}")
+        self.m_logInfo(f"Infor: Validataion set has {nV1} 1's, and positive response rate = {nV1/(nV0+ nV1)}")
+        self.m_logInfo(f"Infor: trainning set has {N1-nV1} 1's, and positive response rate = {(N1-nV1)/(N0-nV0+ N1-nV1)}")
 
