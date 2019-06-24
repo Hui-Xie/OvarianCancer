@@ -16,8 +16,8 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190622.txt'''
-# trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
+#trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190622.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test imageDataMgr into one.
@@ -93,12 +93,11 @@ def main():
     responsePath = sys.argv[4]
     inputSuffix = ".npy"
 
+    Kr = 2  # treatment response 1 or 0
+    Kup = 3  # segmentation classification number
     K_fold = 10
     k = 0
     logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
-
-    Kr = 2  # treatment response 1 or 0
-    Kup = 3  # segmentation classification number
 
     logging.info(f"Info: netPath = {netPath}\n")
 

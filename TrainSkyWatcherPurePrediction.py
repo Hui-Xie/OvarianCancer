@@ -11,22 +11,22 @@ import os
 import numpy as np
 
 from Image3dResponseDataMgr import Image3dResponseDataMgr
-from SkyWatcherModel1 import SkyWatcherModel1
+from SkyWatcherModel2 import SkyWatcherModel2
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_F64_20190615.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_PurePrediction_20190624.txt'''
 # trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190610.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test imageDataMgr into one.
                       when epoch %5 ==0, do not use mixup.
                       Directly use 3D data for treatment prediction without segmentation. 
-                      Number of filters in encoder is 64.
+                      Number of filters in the first layer in encoder is 32.
                       Only epoch %5 ==0, print log
-                      Use BatchNorm1d in FC layer, instead of InstanceNorm1d.
-                      relaunch running at June 15th.  
+                      Do not use normalization in FC layers.
+                      Use cropping VOI on the fly.
                        
 
 Experiment setting for Image3d ROI to response:
@@ -99,12 +99,12 @@ def main():
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
-    useDataParallel = False  # for debug
-    GPU_ID = 2 # choices: 0,1,2,3 for lab server.
+    useDataParallel = True  # for debug
+    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
-    batchSize = 4
-    C = 64  # number of channels after the first input layer
+    batchSize = 9
+    C = 32  # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
     W = 140  # width of input
@@ -112,7 +112,7 @@ def main():
     dataMgr.setDataSize(batchSize, D, H, W, "TrainTestData")
     # batchSize, depth, height, width, and do not consider lymph node with label 3
 
-    net = SkyWatcherModel1(C, Kr, Kup, (D, H, W))
+    net = SkyWatcherModel2(C, Kr, Kup, (D, H, W))
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 
@@ -191,8 +191,8 @@ def main():
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
         for (inputs1, response1Cpu), (inputs2, response2Cpu) in zip(
-                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True),
-                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True)):
+                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True),
+                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True)):
             if epoch % 5 == 0:
                 lambdaInBeta = 1  # this will make the comparison in the segmention per 5 epochs meaningful.
             else:
@@ -258,7 +258,7 @@ def main():
         if not mergeTrainTestData:
 
             with torch.no_grad():
-                for inputs, responseCpu in dataMgr.dataResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True):
+                for inputs, responseCpu in dataMgr.dataResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False):
                     inputs, response = torch.from_numpy(inputs), torch.from_numpy(responseCpu)
                     inputs, response = inputs.to(device, dtype=torch.float), response.to(device, dtype=torch.long)  # return a copy
 

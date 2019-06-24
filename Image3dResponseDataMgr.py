@@ -12,11 +12,12 @@ class Image3dResponseDataMgr(ResponseDataMgr):
     def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun)
 
-    def dataResponseGenerator(self, inputFileIndices, shuffle=True):
+    def dataResponseGenerator(self, inputFileIndices, shuffle=True, randomROI=True):
         """
         yield (3DImage  - treatment Response) Tuple
 
         """
+        random.seed()
         shuffledList = inputFileIndices.copy()
         if shuffle:
             random.shuffle(shuffledList)
@@ -25,20 +26,30 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList=[]  # for yield
         responseList= []
 
+        # for crop ROIs
+        imageGoalSize = (self.m_depth, self.m_height, self.m_width)  # (29, 140, 140)
+        wRadius = self.m_width // 2
+        hRadius = self.m_height // 2
+        imageRadius = imageGoalSize[0] // 2
+
         for i in shuffledList:
             imageFile = self.m_inputFilesList[i]
-            if "_CT.nrrd" == self.m_inputSuffix:
-                image3d = self.readImageFile(imageFile)
-                shape = image3d.shape
-                zoomFactor = [self.m_depth / shape[0], self.m_height / shape[1], self.m_width / shape[2]]
-                image3d = ndimage.zoom(image3d, zoomFactor)
-            else:  # load zoomed and fixed-size numpy array
-                image3d = np.load(imageFile)
+            image3d = np.load(imageFile)
+            shape = image3d.shape
+            # randomize ROI to generate the center of ROI
+            if randomROI:
+                x = random.randrange(imageRadius, shape[0] - imageRadius + 1, 4)  # 4*5mm = 2cm step
+                y = random.randrange(hRadius, shape[1] - hRadius + 1, 10)  # 10*2mm = 2cm step
+                z = random.randrange(wRadius, shape[2] - wRadius + 1, 10)  # 10*2mm = 2cm step
+                # in above +1 is to avoid randrange(70, 70, 10) case.
+            else:
+                x, y, z = shape[0] // 2, shape[1] // 2, shape[2] // 2  # get center of image3d
+            roiImage3d = self.cropVolumeCopyWithDstSize(image3d, x, y, z, imageRadius, imageGoalSize[1], imageGoalSize[2])
 
-            image3d = np.expand_dims(image3d, 0)  # add channel dim as 1
             response = self.m_responseList[i]
 
-            dataList.append(image3d)
+            roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
+            dataList.append(roiImage3d)
             responseList.append(response)
             batch +=1
 
@@ -52,8 +63,8 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
         #  a batch size of 1 and a single feature per channel will has problem in batchnorm.
         #  drop_last data.
-        #if 0 != len(dataList) and 0 != len(responseList): # PyTorch supports dynamic batchSize.
-        #    yield np.stack(dataList, axis=0), np.stack(responseList, axis=0)
+        if 0 != len(dataList) and 0 != len(responseList): # PyTorch supports dynamic batchSize.
+            yield np.stack(dataList, axis=0), np.stack(responseList, axis=0)
 
         # clean field
         dataList.clear()
