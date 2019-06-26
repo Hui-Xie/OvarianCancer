@@ -16,8 +16,8 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-#trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190622.txt'''
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190626.txt'''
+#trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
                       merge train and test imageDataMgr into one.
@@ -106,13 +106,13 @@ def main():
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     # ===========debug==================
-    dataMgr.setOneSampleTraining(False)  # for debug
+    dataMgr.setOneSampleTraining(True)  # for debug
     useDataParallel = True  # for debug
-    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
+    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
-    batchSize = 9
+    batchSize = 6
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
@@ -174,7 +174,7 @@ def main():
         if nGPU > 1:
             device_ids = [1, 2, 3]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
-            net = nn.DataParallel(net, device_ids=[1, 2, 3], output_device=device)
+            net = nn.DataParallel(net, device_ids=[0,1], output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())
