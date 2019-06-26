@@ -27,7 +27,6 @@ for i in range(1, sheet.nrows):
 # output information
 print(f"Program discards {nDiscards} patients data as there are no optimialOutcome for them.")
 print(f"Program get {len(IDResponseDict)} patients data for optimalOutcome.")
-print(f"first 130 patient with smaller patientID as training data, and remaining patients with bigger patient ID as test data.")
 
 # statistics
 train1 = 0
