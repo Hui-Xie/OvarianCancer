@@ -55,7 +55,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             # randomize ROI to generate the center of ROI
             z, x, y = massCenter
             if randomROI:
-                z = random.randrange(x - 6, x + 7, 1)  # the depth of image ROI is 145mm, max offset 20% = 29mm
+                z = random.randrange(z - 6, z + 7, 1)  # the depth of image ROI is 145mm, max offset 20% = 29mm
                 x = random.randrange(x - 28, x + 29, 1)  # the height of image ROI is 280mm, max offset 20% = 56mm
                 y = random.randrange(y - 28, y + 29, 1)  # the width of image ROI is  280mm, max offset 20% = 56mm
 
@@ -124,7 +124,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             # randomize ROI to generate the center of ROI
             z, x, y = massCenter
             if randomROI:
-                z = random.randrange(x-6, x+7, 1)   # the depth of image ROI is 145mm, max offset 20% = 29mm
+                z = random.randrange(z-6, z+7, 1)   # the depth of image ROI is 145mm, max offset 20% = 29mm
                 x = random.randrange(x-28, x+29, 1)   # the height of image ROI is 280mm, max offset 20% = 56mm
                 y = random.randrange(y-28, y+29, 1)   # the width of image ROI is  280mm, max offset 20% = 56mm
 
