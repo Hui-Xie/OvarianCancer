@@ -1,7 +1,7 @@
 # list all mass center for each labeled slice, and save them into a dictionary
 
 import os
-import DataMgr
+from DataMgr import DataMgr
 import numpy as np
 from scipy import ndimage
 import json
@@ -27,10 +27,11 @@ for file in filesList:
     label3dB = ((label3d<3) & (label3d >0))  # label3D binary version without considering the nymph node
 
     nonzeroIndex = np.nonzero(label3dB)
-    nonzeroSlices = set(nonzeroIndex[0])
+    nonzeroSlices = map(int, set(nonzeroIndex[0]))  # make sure the slice index is int.
     massCenterList = []
     for s in nonzeroSlices:
         massCenter = ndimage.measurements.center_of_mass(label3dB[s])
+        massCenter = tuple(int(x) for x in massCenter)
         massCenterList.append((s,)+massCenter)
 
     massCenterDict[patientID] = massCenterList
