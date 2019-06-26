@@ -17,13 +17,13 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
     def loadMassCenterForEachLabeledSlice(self):
         massCenterFileName = "massCenterForEachLabeledSlice.json"
-        filePath = os.path.join(self.m_labelsDir, massCenterFileName)
+        filePath = os.path.join(self.m_inputsDir.replace("/images_npy", "/labels_npy"), massCenterFileName)
         if os.path.isfile(filePath):
             with open(filePath) as f:
                 self.m_massCenterDict = json.load(f)
         else:
            self.m_logInfo(f"Error: program can not load {filePath}")
-           os.exit(-5)
+           sys.exit(-5)
 
     def dataResponseGenerator(self, inputFileIndices, shuffle=True, randomROI=True):
         """
