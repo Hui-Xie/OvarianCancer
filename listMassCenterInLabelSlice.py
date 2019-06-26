@@ -3,10 +3,14 @@
 import os
 import DataMgr
 import numpy as np
+from scipy import ndimage
+import json
+
 
 suffix = ".npy"
 inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_npy"
 massCenterFileName = "massCenterForEachLabeledSlice.json"
+outputFilePath = os.path.join(inputsDir, massCenterFileName)
 
 massCenterDict = {}
 
@@ -24,12 +28,17 @@ for file in filesList:
 
     nonzeroIndex = np.nonzero(label3dB)
     nonzeroSlices = set(nonzeroIndex[0])
+    massCenterList = []
     for s in nonzeroSlices:
+        massCenter = ndimage.measurements.center_of_mass(label3dB[s])
+        massCenterList.append((s,)+massCenter)
 
-    if np.count_nonzero(label3d) == 0:
-        Notes += f"\t {file}\n"
-        continue
-    massCenterFloat = ndimage.measurements.center_of_mass(label3dB)
-    massCenter = []
-    for i in range(len(massCenterFloat)):
-        massCenter.append(int(massCenterFloat[i]))
+    massCenterDict[patientID] = massCenterList
+
+# output dictionary
+jsonData = json.dumps(massCenterDict)
+f = open(outputFilePath,"w")
+f.write(jsonData)
+f.close()
+
+print(f"==============Output: {outputFilePath}========")
