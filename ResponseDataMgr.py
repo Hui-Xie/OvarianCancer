@@ -98,6 +98,11 @@ class ResponseDataMgr(DataMgr):
             return dataSetIndices
 
         N = len(bigList) - len(smallList)
-        bootStrappingSamples = random.sample(smallList, N)
+        pN = len(smallList)  # population N
+        if N <= pN:
+            bootStrappingSamples = random.sample(smallList, N)
+        else:
+            bootStrappingSamples = smallList*(N//pN) + random.sample(smallList, N%pN)
+
         return dataSetIndices+bootStrappingSamples
 
