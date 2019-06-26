@@ -2,6 +2,7 @@
 import os
 import numpy as np
 import random
+import json
 import sys
 from scipy.misc import imsave
 from scipy import ndimage
@@ -11,6 +12,18 @@ from ResponseDataMgr import ResponseDataMgr
 class Image3dResponseDataMgr(ResponseDataMgr):
     def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun=print):
         super().__init__(inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun)
+        self.m_massCenterDict = {}
+        self.loadMassCenterForEachLabeledSlice()
+
+    def loadMassCenterForEachLabeledSlice(self):
+        massCenterFileName = "massCenterForEachLabeledSlice.json"
+        filePath = os.path.join(self.m_labelsDir, massCenterFileName)
+        if os.path.isfile(filePath):
+            with open(filePath) as f:
+                self.m_massCenterDict = json.load(f)
+        else:
+           self.m_logInfo(f"Error: program can not load {filePath}")
+           os.exit(-5)
 
     def dataResponseGenerator(self, inputFileIndices, shuffle=True, randomROI=True):
         """
@@ -28,23 +41,25 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
         # for crop ROIs
         imageGoalSize = (self.m_depth, self.m_height, self.m_width)  # (29, 140, 140)
-        wRadius = self.m_width // 2
-        hRadius = self.m_height // 2
         imageRadius = imageGoalSize[0] // 2
 
         for i in shuffledList:
             imageFile = self.m_inputFilesList[i]
+            imageFileStem = self.getStemName(imageFile, self.m_inputSuffix)
+            massCenterList = self.m_massCenterDict[imageFileStem]
+            massCenter = random.choice(massCenterList)
+
             image3d = np.load(imageFile)
             shape = image3d.shape
+
             # randomize ROI to generate the center of ROI
+            z, x, y = massCenter
             if randomROI:
-                x = random.randrange(imageRadius, shape[0] - imageRadius + 1, 4)  # 4*5mm = 2cm step
-                y = random.randrange(hRadius, shape[1] - hRadius + 1, 10)  # 10*2mm = 2cm step
-                z = random.randrange(wRadius, shape[2] - wRadius + 1, 10)  # 10*2mm = 2cm step
-                # in above +1 is to avoid randrange(70, 70, 10) case.
-            else:
-                x, y, z = shape[0] // 2, shape[1] // 2, shape[2] // 2  # get center of image3d
-            roiImage3d = self.cropVolumeCopyWithDstSize(image3d, x, y, z, imageRadius, imageGoalSize[1], imageGoalSize[2])
+                z = random.randrange(x - 6, x + 7, 1)  # the depth of image ROI is 145mm, max offset 20% = 29mm
+                x = random.randrange(x - 28, x + 29, 1)  # the height of image ROI is 280mm, max offset 20% = 56mm
+                y = random.randrange(y - 28, y + 29, 1)  # the width of image ROI is  280mm, max offset 20% = 56mm
+
+            roiImage3d = self.cropVolumeCopyWithDstSize(image3d, z, x, y, imageRadius, imageGoalSize[1],  imageGoalSize[2])
 
             response = self.m_responseList[i]
 
@@ -88,13 +103,14 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         # for crop ROIs
         imageGoalSize = (self.m_depth, self.m_height, self.m_width)  #(29, 140, 140)
         labelGoalSize = (23, 127, 127)
-        wRadius = self.m_width//2
-        hRadius = self.m_height//2
         imageRadius = imageGoalSize[0] // 2
         labelRadius = labelGoalSize[0] // 2
 
         for i in shuffledList:
             imageFile = self.m_inputFilesList[i]
+            imageFileStem = self.getStemName(imageFile, self.m_inputSuffix)
+            massCenterList = self.m_massCenterDict[imageFileStem]
+            massCenter = random.choice(massCenterList)
 
             # for inputSize 147*281*281, and segmentation size of 127*255*255
             # labelFile = imageFile.replace("Images_ROI_29_140_140", "Labels_ROI_23_127_127")
@@ -106,16 +122,14 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             seg3d   = np.load(labelFile)
 
             # randomize ROI to generate the center of ROI
+            z, x, y = massCenter
             if randomROI:
-                x = random.randrange(imageRadius, shape[0] - imageRadius +1, 4)    # 4*5mm = 2cm step
-                y = random.randrange(hRadius, shape[1] - hRadius + 1, 10)           # 10*2mm = 2cm step
-                z = random.randrange(wRadius, shape[2] - wRadius +1, 10)           # 10*2mm = 2cm step
-                # in above +1 is to avoid randrange(70, 70, 10) case.
-            else:
-                x, y, z = shape[0]//2, shape[1]//2, shape[2]//2   # get center of image3d
+                z = random.randrange(x-6, x+7, 1)   # the depth of image ROI is 145mm, max offset 20% = 29mm
+                x = random.randrange(x-28, x+29, 1)   # the height of image ROI is 280mm, max offset 20% = 56mm
+                y = random.randrange(y-28, y+29, 1)   # the width of image ROI is  280mm, max offset 20% = 56mm
 
-            roiImage3d = self.cropVolumeCopyWithDstSize(image3d, x, y, z, imageRadius, imageGoalSize[1], imageGoalSize[2])
-            roiSeg3d = self.cropVolumeCopyWithDstSize(seg3d, x, y, z, labelRadius, labelGoalSize[1], labelGoalSize[2])
+            roiImage3d = self.cropVolumeCopyWithDstSize(image3d, z, x, y,  imageRadius, imageGoalSize[1], imageGoalSize[2])
+            roiSeg3d = self.cropVolumeCopyWithDstSize(seg3d, z, x, y,  labelRadius, labelGoalSize[1], labelGoalSize[2])
             roi3 = roiSeg3d >= 3
             roiSeg3d[np.nonzero(roi3)] = 0  # erase label 3(lymph node)
 
