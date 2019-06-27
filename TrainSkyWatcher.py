@@ -26,7 +26,7 @@ Major program changes:
                       in image3dResponseDataMgr, random Crop ROI in the fly.
                       erase normalization layers  in the fully connected layers.
                       Crop ROI around the mass center in each labeled slice. 
-                      use bootStrapping in both trainSet and testSet
+                      use reSampleForSameDistribution in both trainSet and testSet
                       
 
 Experiment setting for Image3d ROI to response:
@@ -152,7 +152,7 @@ def main():
     # lossFunc0 is for treatment response
     # responseCEWeight = torch.FloatTensor(dataMgr.getResponseCEWeight()).to(device)
     # responseFocalLoss = FocalCELoss(weight=responseCEWeight)
-    responseFocalLoss = FocalCELoss() # use bootStrapping in the response data, so we do not need weight.
+    responseFocalLoss = FocalCELoss() # use reSampleForSameDistribution in the response data, so we do not need weight.
     net.appendLossFunc(responseFocalLoss, 1)
 
     # lossFunc1 and lossFunc2 are for segmentation.
@@ -224,8 +224,8 @@ def main():
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
-        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, useBootStrapping=True),
-                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, useBootStrapping=True)):
+        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True),
+                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True)):
             if epoch % 5 == 0:
                 lambdaInBeta = 1                          # this will make the comparison in the segmention per 5 epochs meaningful.
             else:
@@ -307,7 +307,7 @@ def main():
         if not mergeTrainTestData:
 
             with torch.no_grad():
-                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, useBootStrapping=True):
+                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=True):
                     inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                     inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
 

@@ -78,7 +78,7 @@ class ResponseDataMgr(DataMgr):
         self.m_logInfo(f"Infor: trainning set has {N1-nV1} 1's, and positive response rate = {(N1-nV1)/(N0-nV0+ N1-nV1)}")
         self.m_logInfo(f"Infor: the drop_last data in the dataMgr may lead the number of validation set and training set less than above number.")
 
-    def bootStrapping(self, dataSetIndices):
+    def reSampleForSameDistribution(self, dataSetIndices):
         res0List = []
         res1List = []
         for x in dataSetIndices:
@@ -100,9 +100,9 @@ class ResponseDataMgr(DataMgr):
         N = len(bigList) - len(smallList)
         pN = len(smallList)  # population N
         if N <= pN:
-            bootStrappingSamples = random.sample(smallList, N)
+            reSamples = random.sample(smallList, N)
         else:
-            bootStrappingSamples = smallList*(N//pN) + random.sample(smallList, N%pN)
+            reSamples = smallList*(N//pN) + random.sample(smallList, N%pN)
 
-        return dataSetIndices+bootStrappingSamples
+        return dataSetIndices+reSamples
 

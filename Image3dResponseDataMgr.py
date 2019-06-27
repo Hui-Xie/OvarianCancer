@@ -25,15 +25,15 @@ class Image3dResponseDataMgr(ResponseDataMgr):
            self.m_logInfo(f"Error: program can not load {filePath}")
            sys.exit(-5)
 
-    def dataResponseGenerator(self, inputFileIndices, shuffle=True, randomROI=True, useBootStrapping=True):
+    def dataResponseGenerator(self, inputFileIndices, shuffle=True, randomROI=True, reSample=True):
         """
         yield (3DImage  - treatment Response) Tuple
 
         """
         random.seed()
         shuffledList = inputFileIndices.copy()
-        if useBootStrapping:
-            shuffledList = self.bootStrapping(shuffledList)
+        if reSample:
+            shuffledList = self.reSampleForSameDistribution(shuffledList)
         if shuffle:
             random.shuffle(shuffledList)
 
@@ -87,15 +87,15 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList.clear()
         responseList.clear()
 
-    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True, randomROI=True, useBootStrapping=True):
+    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True, randomROI=True, reSample=True):
         """
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
         """
         random.seed()
         shuffledList = inputFileIndices.copy()
-        if useBootStrapping:
-            shuffledList = self.bootStrapping(shuffledList)
+        if reSample:
+            shuffledList = self.reSampleForSameDistribution(shuffledList)
         if shuffle:
             random.shuffle(shuffledList)
 
