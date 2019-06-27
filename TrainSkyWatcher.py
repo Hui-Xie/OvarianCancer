@@ -107,7 +107,7 @@ def main():
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
-    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
+    GPU_ID = 2  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
@@ -173,7 +173,7 @@ def main():
         if nGPU > 1:
             device_ids = [1, 2, 3]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
-            net = nn.DataParallel(net, device_ids=[0,1], output_device=device)
+            net = nn.DataParallel(net, device_ids=[2,3], output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())
