@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190626.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190627.txt'''
 #trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
@@ -27,6 +27,7 @@ Major program changes:
                       erase normalization layers  in the fully connected layers.
                       Crop ROI around the mass center in each labeled slice. 
                       use reSampleForSameDistribution in both trainSet and testSet
+                      training response branch per 5 epoch, while continuing train the segmenation branch.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -245,15 +246,19 @@ def main():
 
             for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
                                                        lossWeightList)):
+                if weight == 0:
+                    continue
+
                 if i ==0:
-                    outputs = xr
-                    gt1, gt2 = (response1, response2)
+                    if epoch % 5 == 0:   #only train treatment reponse branch per 5 epochs.
+                        outputs = xr
+                        gt1, gt2 = (response1, response2)
+                    else:
+                        continue
                 else:
                     outputs = xup
                     gt1, gt2 = (seg1, seg2)
 
-                if weight == 0:
-                    continue
                 if lambdaInBeta != 0:
                     loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
                 if 1 - lambdaInBeta != 0:
