@@ -27,7 +27,8 @@ Major program changes:
                       erase normalization layers  in the fully connected layers.
                       Crop ROI around the mass center in each labeled slice. 
                       use reSampleForSameDistribution in both trainSet and testSet
-                      training response branch per 5 epoch, while continuing train the segmenation branch.
+                      training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
+                      which means that before epoch 100, the accuray data is a mess.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -250,7 +251,7 @@ def main():
                     continue
 
                 if i ==0:
-                    if epoch % 5 == 0:   #only train treatment reponse branch per 5 epochs.
+                    if epoch >= 100 and epoch % 5 == 0:   #only train treatment reponse branch per 5 epochs, after epoch 100.
                         outputs = xr
                         gt1, gt2 = (response1, response2)
                     else:
@@ -312,7 +313,7 @@ def main():
         if not mergeTrainTestData:
 
             with torch.no_grad():
-                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=True):
+                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=False):
                     inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                     inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
 
