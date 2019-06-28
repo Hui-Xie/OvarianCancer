@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190627.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190628.txt'''
 #trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
@@ -26,7 +26,10 @@ Major program changes:
                       in image3dResponseDataMgr, random Crop ROI in the fly.
                       erase normalization layers  in the fully connected layers.
                       Crop ROI around the mass center in each labeled slice. 
-                      use reSampleForSameDistribution in both trainSet and testSet
+                      use reSampleForSameDistribution in training set, but keep original ditribution in the test set
+                      First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.                                           
+ 
+Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
                       which means that before epoch 100, the accuray data is a mess.
                       

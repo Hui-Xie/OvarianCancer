@@ -30,7 +30,6 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         yield (3DImage  - treatment Response) Tuple
 
         """
-        random.seed()
         shuffledList = inputFileIndices.copy()
         if reSample:
             shuffledList = self.reSampleForSameDistribution(shuffledList)
@@ -92,7 +91,6 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
         """
-        random.seed()
         shuffledList = inputFileIndices.copy()
         if reSample:
             shuffledList = self.reSampleForSameDistribution(shuffledList)
