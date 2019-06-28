@@ -27,7 +27,9 @@ Major program changes:
                       erase normalization layers  in the fully connected layers.
                       Crop ROI around the mass center in each labeled slice. 
                       use reSampleForSameDistribution in training set, but keep original ditribution in the test set
-                      First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.                                           
+                      First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
+                      epoch < 1000, the loss is pure segmentation loss;
+                      epoch >= 1000, the loss is pure response loss.                                         
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
@@ -174,9 +176,9 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            device_ids = [1, 2, 3]
+            device_ids = [2, 3]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
-            net = nn.DataParallel(net, device_ids=[2,3], output_device=device)
+            net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())
@@ -204,7 +206,19 @@ def main():
 
     oldTestLoss = 1000
 
+    net.freezeResponseBranch(requires_grad=False)
+    net.freezeSegmentationBranch(requires_grad=True)
+    pivotEpoch = 10
+    logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
+    logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should kepp unchange.")
+
+
     for epoch in range(epochs):
+
+        if epoch == pivotEpoch:
+            net.freezeResponseBranch(requires_grad=True)
+            net.freezeSegmentationBranch(requires_grad=False)
+
         # ================Training===============
         net.train()
         random.seed()
@@ -254,14 +268,17 @@ def main():
                     continue
 
                 if i ==0:
-                    if epoch >= 100 and epoch % 5 == 0:   #only train treatment reponse branch per 5 epochs, after epoch 100.
+                    if epoch >= pivotEpoch:   #only train treatment reponse branch after epoch 1000.
                         outputs = xr
                         gt1, gt2 = (response1, response2)
                     else:
                         continue
                 else:
-                    outputs = xup
-                    gt1, gt2 = (seg1, seg2)
+                    if epoch >=pivotEpoch:
+                        continue
+                    else:
+                        outputs = xup
+                        gt1, gt2 = (seg1, seg2)
 
                 if lambdaInBeta != 0:
                     loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
