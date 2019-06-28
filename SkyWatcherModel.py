@@ -49,3 +49,20 @@ class SkyWatcherModel(BasicModel):
             xup = self.decoderForward(x)
             return xr, xup
 
+    @staticmethod
+    def freezeModuleList(moduleList, requires_grad=False):
+        for module in moduleList:
+            for param in module.parameters():
+                param.requires_grad = requires_grad
+
+    def freezeResponseBranch(self, requires_grad=False):
+        moduleList = [self.m_11conv, self.m_fc11]
+        self.freezeModuleList(moduleList, requires_grad= requires_grad)
+
+    def freezeEncoder(self, requires_grad=False):
+        moduleList = [self.m_input, self.m_downList]
+        self.freezeModuleList(moduleList, requires_grad=requires_grad)
+
+    def freezeDecoder(self, requires_grad=False):
+        moduleList = [self.m_upList, self.m_upOutput]
+        self.freezeModuleList(moduleList, requires_grad=requires_grad)
