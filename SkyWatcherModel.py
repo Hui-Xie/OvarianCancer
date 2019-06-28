@@ -59,6 +59,10 @@ class SkyWatcherModel(BasicModel):
         moduleList = [self.m_11conv, self.m_fc11]
         self.freezeModuleList(moduleList, requires_grad= requires_grad)
 
+    def freezeSegmentationBranch(self, requires_grad=False):
+        self.freezeEncoder(requires_grad=requires_grad)
+        self.freezeDecoder(requires_grad=requires_grad)
+
     def freezeEncoder(self, requires_grad=False):
         moduleList = [self.m_input, self.m_downList]
         self.freezeModuleList(moduleList, requires_grad=requires_grad)
