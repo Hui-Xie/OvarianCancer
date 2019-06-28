@@ -56,7 +56,7 @@ class SkyWatcherModel(BasicModel):
                 param.requires_grad = requires_grad
 
     def freezeResponseBranch(self, requires_grad=False):
-        moduleList = [self.m_11conv, self.m_fc11]
+        moduleList = [self.m_11Conv, self.m_fc11]
         self.freezeModuleList(moduleList, requires_grad= requires_grad)
 
     def freezeSegmentationBranch(self, requires_grad=False):

@@ -1,0 +1,88 @@
+Program ID of SkyWatcher Network training:9060
+
+Program command: 
+ ['TrainSkyWatcher.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json']
+
+Major program changes: 
+                      along deeper layer, increase filter number.
+                      10 fold cross validation, 0 fold for test.
+                      data partition with patient ID, instead of VOI.
+                      in image3dResponseDataMgr, random Crop ROI in the fly.
+                      erase normalization layers  in the fully connected layers.
+                      Crop ROI around the mass center in each labeled slice. 
+                      use reSampleForSameDistribution in training set, but keep original ditribution in the test set
+                      First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
+                      epoch < 1000, the loss is pure segmentation loss;
+                      epoch >= 1000, the loss is pure response loss.                                         
+ 
+Discarded changes:                      
+                      training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
+                      which means that before epoch 100, the accuray data is a mess.
+                      
+
+Experiment setting for Image3d ROI to response:
+Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
+segmentation label: 23*127*127 with spacing size(5*2*2) segmentation label with value (0,1,2) which erases lymph node label
+
+This is a multi-task learning. 
+
+Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
+                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 8 million.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
+
+response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+
+Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
+        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
+        
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+
+                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
+
+            
+
+Program starting Time: 2019-06-28 11:52:17.784967
+Info: this is the 0th fold leave for test in the 10-fold cross-validation.
+
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher
+
+Now program get 169 input files.
+Infor: In all data of 169 files, respone 0 has 51 files,
+	  and response 1 has 118 files, where positive response rate = 0.6982248520710059 in full data
+Infor: Validation Set has 16 files,and Training Set has 153 files
+Infor: Validataion set has 11 1's, and positive response rate = 0.6875
+Infor: trainning set has 107 1's, and positive response rate = 0.6993464052287581
+Infor: the drop_last data in the dataMgr may lead the number of validation set and training set less than above number.
+Infor: program is in multi samples running model.
+TrainTestData Input:  batchSize=6, depth=29, height=140, width=140
+
+Info: the size of bottle neck in the net = (512, 1, 7, 7)
+
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Network trains from scratch.
+Network has total 21,463,612 parameters.
+Infor: Segmentation Cross Entropy Weight: [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+Info: program will use 2 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 	FocalCELoss with weight of 1; 
+when epoch < 1000, only train segmentation, which means response accuracy are meaningless at these epoch.
+when epoch >= 1000, only training response branch, which means segmentation accuracy should keep unchange.
+Hints: Test Dice_0 is the dice coeff for all non-zero labels
+Hints: Test Dice_1 is for primary cancer(green), 	
+ test Dice_2 is for metastasis(yellow), 	
+ and test Dice_3 is for invaded lymph node(brown).
+Hints: Test TPR_0 is the TPR for all non-zero labels
+Hints: Test TPR_1 is for primary cancer(green), 	
+ TPR_2 is for metastasis(yellow), 	
+ and TPR_3 is for invaded lymph node(brown).
+
+Dice is based on all 2D segmented slices in the volume from weak annotation, not real 3D dice.
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r		TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r

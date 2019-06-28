@@ -185,6 +185,17 @@ def main():
     else:
         logging.info(net.lossFunctionsInfo())
 
+
+    if useDataParallel:
+        net.module.freezeResponseBranch(requires_grad=False)
+        net.module.freezeSegmentationBranch(requires_grad=True)
+    else:
+        net.freezeResponseBranch(requires_grad=False)
+        net.freezeSegmentationBranch(requires_grad=True)
+    pivotEpoch = 1000
+    logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
+    logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should keep unchange.")
+
     epochs = 1500000
     logging.info(f"Hints: Test Dice_0 is the dice coeff for all non-zero labels")
     logging.info(
@@ -206,18 +217,15 @@ def main():
 
     oldTestLoss = 1000
 
-    net.freezeResponseBranch(requires_grad=False)
-    net.freezeSegmentationBranch(requires_grad=True)
-    pivotEpoch = 10
-    logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
-    logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should kepp unchange.")
-
-
     for epoch in range(epochs):
 
         if epoch == pivotEpoch:
-            net.freezeResponseBranch(requires_grad=True)
-            net.freezeSegmentationBranch(requires_grad=False)
+            if useDataParallel:
+                net.module.freezeResponseBranch(requires_grad=True)
+                net.module.freezeSegmentationBranch(requires_grad=False)
+            else:
+                net.freezeResponseBranch(requires_grad=True)
+                net.freezeSegmentationBranch(requires_grad=False)
 
         # ================Training===============
         net.train()
