@@ -221,9 +221,13 @@ def main():
             if useDataParallel:
                 net.module.freezeResponseBranch(requires_grad=True)
                 net.module.freezeSegmentationBranch(requires_grad=False)
+
             else:
                 net.freezeResponseBranch(requires_grad=True)
                 net.freezeSegmentationBranch(requires_grad=False)
+            # restore learning rate to initial value
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = 1e-3
 
         # ================Training===============
         net.train()
