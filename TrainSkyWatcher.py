@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190628.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190629.txt'''
 #trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
@@ -29,7 +29,8 @@ Major program changes:
                       use reSampleForSameDistribution in training set, but keep original ditribution in the test set
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
-                      epoch >= 1000, the loss is pure response loss.                                         
+                      epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
+                      add FC layer width = 490.                                       
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
@@ -190,7 +191,7 @@ def main():
     else:
         net.freezeResponseBranch(requires_grad=False)
         net.freezeSegmentationBranch(requires_grad=True)
-    pivotEpoch = 1000
+    pivotEpoch = 10
     logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
     logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should keep unchange.")
 
