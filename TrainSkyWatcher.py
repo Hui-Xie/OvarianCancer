@@ -214,7 +214,7 @@ def main():
     logging.info(f"Epoch\tTrLoss" + f"\t" + f"\t".join(diceHead1) + f"\t" + f"\t".join(TPRHead1) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r"\
                  + f"\t\tTsLoss"  + f"\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r")  # logging.info output head
 
-    oldTestLoss = 1000
+    oldTrainingLoss = 1000
 
     for epoch in range(epochs):
 
