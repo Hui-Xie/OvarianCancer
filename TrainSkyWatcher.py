@@ -105,8 +105,6 @@ def main():
 
     logging.info(f"Info: netPath = {netPath}\n")
 
-    mergeTrainTestData = False
-
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     # ===========debug==================
@@ -134,7 +132,7 @@ def main():
     optimizer = optim.Adam(net.parameters())
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=30, min_lr=1e-9)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=300, min_lr=1e-9)
 
     # Load network
     device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
@@ -311,6 +309,7 @@ def main():
 
         if 0 != trainBatches:
             trainingLoss /= trainBatches
+            lrScheduler.step(trainingLoss)
 
         if epoch % 5 == 0:
             responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
@@ -338,56 +337,49 @@ def main():
         testTPRSumList = [0 for _ in range(Kup)]
         testTPRCountList = [0 for _ in range(Kup)]
 
-        if not mergeTrainTestData:
+        with torch.no_grad():
+            for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=False):
+                inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
+                inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
 
-            with torch.no_grad():
-                for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=False):
-                    inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
-                    inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
+                xr, xup = net.forward(inputs)
+                loss = torch.tensor(0.0).to(device)
 
-                    xr, xup = net.forward(inputs)
-                    loss = torch.tensor(0.0).to(device)
+                for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                                           lossWeightList)):
+                    if i == 0:
+                        outputs = xr
+                        gt = response
+                    else:
+                        outputs = xup
+                        gt = seg
 
-                    for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
-                                                               lossWeightList)):
-                        if i == 0:
-                            outputs = xr
-                            gt = response
-                        else:
-                            outputs = xup
-                            gt = seg
+                    if weight != 0:
+                       loss += lossFunc(outputs, gt) * weight
 
-                        if weight != 0:
-                           loss += lossFunc(outputs, gt) * weight
-
-                    batchLoss = loss.item()
+                batchLoss = loss.item()
 
 
-                    # accumulate response and predict value
+                # accumulate response and predict value
 
-                    batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
-                    epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                    epochResponse = np.concatenate((epochResponse, responseCpu)) if epochResponse is not None else responseCpu
+                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                epochResponse = np.concatenate((epochResponse, responseCpu)) if epochResponse is not None else responseCpu
 
-                    testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
-                        = dataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
+                testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
+                    = dataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList)
 
-                    testLoss += batchLoss
-                    testBatches += 1
+                testLoss += batchLoss
+                testBatches += 1
 
-                # ===========print train and test progress===============
-                if 0 != testBatches:
-                    testLoss /= testBatches
-                    lrScheduler.step(testLoss)
+            # ===========print train and test progress===============
+            if 0 != testBatches:
+                testLoss /= testBatches
 
-                if epoch % 5 == 0:
-                    responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
-                    responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
-                    responseTestTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
-
-        else:
-            lrScheduler.step(trainingLoss)
-
+            if epoch % 5 == 0:
+                responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
+                responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
+                responseTestTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
 
         testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
         testTPRAvgList  = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
@@ -398,19 +390,11 @@ def main():
 
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
-            if mergeTrainTestData:
-                netMgr.saveNet()
-                if responseTrainAccuracy >= bestTestPerf and trainingLoss < oldTrainingLoss:
-                    oldTrainingLoss = trainingLoss
-                    bestTestPerf = responseTrainAccuracy
-                    netMgr.saveBest(bestTestPerf)
-
-            else:
-                netMgr.save(responseTestAccuracy)
-                if responseTestAccuracy >= bestTestPerf and testLoss < oldTestLoss:
-                    oldTestLoss = testLoss
-                    bestTestPerf = responseTestAccuracy
-                    netMgr.saveBest(bestTestPerf)
+            netMgr.saveNet()
+            if responseTrainAccuracy >= bestTestPerf and trainingLoss < oldTrainingLoss:
+                oldTrainingLoss = trainingLoss
+                bestTestPerf = responseTrainAccuracy
+                netMgr.saveBest(bestTestPerf)
         else:
             logging.info(f"Error: training loss is infinity. Program exit.")
             sys.exit()
