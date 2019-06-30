@@ -192,7 +192,7 @@ def main():
     else:
         net.freezeResponseBranch(requires_grad=False)
         net.freezeSegmentationBranch(requires_grad=True)
-    pivotEpoch = 1000
+    pivotEpoch = 10
     logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
     logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should keep unchange.")
 
