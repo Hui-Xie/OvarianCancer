@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190629.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190630.txt'''
 #trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
@@ -30,7 +30,8 @@ Major program changes:
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
-                      add FC layer width = 490.                                       
+                      add FC layer width = 490.
+                      Add dropout at Fully connected layer with dropout rate of 30%.                                       
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
@@ -111,11 +112,11 @@ def main():
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
-    GPU_ID = 2  # choices: 0,1,2,3 for lab server.
+    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
-    batchSize = 6
+    batchSize = 12  # for use 4 GPUs
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
@@ -175,7 +176,7 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            device_ids = [2, 3]
+            device_ids = [0, 1, 2, 3]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
             net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
 
