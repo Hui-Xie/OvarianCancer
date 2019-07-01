@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190630.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190701.txt'''
 #trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
@@ -31,7 +31,8 @@ Major program changes:
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
                       add FC layer width = 490.
-                      Add dropout at Fully connected layer with dropout rate of 50%.                                       
+                      Add dropout at Fully connected layer with dropout rate of 50%. 
+                      Add L2 norm regularization in Adam optimizer with weight 5e-4.                                     
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
@@ -112,11 +113,11 @@ def main():
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
     useDataParallel = True  # for debug
-    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
+    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
 
-    batchSize = 12  # for use 4 GPUs
+    batchSize = 9  # 12 for use 4 GPUs
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
@@ -131,7 +132,7 @@ def main():
 
     dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
-    optimizer = optim.Adam(net.parameters())
+    optimizer = optim.Adam(net.parameters(), weight_decay=5e-4)
     net.setOptimizer(optimizer)
 
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=300, min_lr=1e-9)
@@ -176,7 +177,7 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            device_ids = [0, 1, 2, 3]
+            device_ids = [1, 2, 3]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
             net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
 
