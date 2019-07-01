@@ -31,7 +31,7 @@ Major program changes:
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
                       add FC layer width = 490.
-                      Add dropout at Fully connected layer with dropout rate of 30%.                                       
+                      Add dropout at Fully connected layer with dropout rate of 50%.                                       
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
