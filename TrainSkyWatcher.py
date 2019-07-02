@@ -16,7 +16,7 @@ from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
 # you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190701.txt'''
+trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190702.txt'''
 #trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
@@ -30,13 +30,14 @@ Major program changes:
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
-                      add FC layer width = 490.
+                      add FC layer width = 980.
                       Add dropout at Fully connected layer with dropout rate of 50%. 
-                      Add L2 norm regularization in Adam optimizer with weight 5e-4.                                     
+                                                    
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
                       which means that before epoch 100, the accuray data is a mess.
+                      Add L2 norm regularization in Adam optimizer with weight 5e-4.      
                       
 
 Experiment setting for Image3d ROI to response:
