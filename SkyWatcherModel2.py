@@ -20,8 +20,9 @@ class SkyWatcherModel2 (SkyWatcherModel):
         self.m_bottleNeckSize = (Cnew,) + outputSize
 
         # for response prediction
-        self.m_11Conv = BN_ReLU_Conv(Cnew, 10, (1,1,1), (1,1,1), (0,0,0), False)           # outpusSize =(1*7*7}
-        lenBn = 490
+        nFilters  = 20;
+        self.m_11Conv = BN_ReLU_Conv(Cnew, nFilters, (1,1,1), (1,1,1), (0,0,0), False)           # outpusSize =(1*7*7}
+        lenBn = nFilters*49
         self.m_fc11   = nn.Sequential(
                        nn.Linear(lenBn , lenBn),
                        nn.Dropout(p = self.m_dropoutProb),

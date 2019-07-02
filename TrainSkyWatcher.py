@@ -132,7 +132,7 @@ def main():
 
     dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
-    optimizer = optim.Adam(net.parameters(), weight_decay=5e-4)
+    optimizer = optim.Adam(net.parameters(), weight_decay=0)
     net.setOptimizer(optimizer)
 
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=300, min_lr=1e-9)
@@ -196,6 +196,7 @@ def main():
     pivotEpoch = 1000
     logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
     logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should keep unchange.")
+
 
     epochs = 1500000
     logging.info(f"Hints: Test Dice_0 is the dice coeff for all non-zero labels")
