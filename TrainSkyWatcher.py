@@ -35,7 +35,8 @@ Discarded changes:
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
                       which means that before epoch 100, the accuray data is a mess.
                       Add L2 norm regularization in Adam optimizer with weight 5e-4. 
-                      Add dropout at Fully connected layer with dropout rate of 50%.     
+                      Add dropout at Fully connected layer with dropout rate of 50%.  
+                      focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.   
                       
 
 Experiment setting for Image3d ROI to response:
@@ -51,7 +52,7 @@ Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
                   Total network learning parameters are 8 million.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
 
-response Loss Function:   focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.
+response Loss Function:  focus loss with weight 1:1 
 segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
 
 Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
