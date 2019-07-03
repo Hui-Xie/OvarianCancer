@@ -200,6 +200,8 @@ def main():
     else:
         net.freezeResponseBranch(requires_grad=False)
         net.freezeSegmentationBranch(requires_grad=True)
+    lrScheduler.patience = 300  # change learning patience
+
     pivotEpoch = 1000
     logging.info(f"when epoch < {pivotEpoch}, only train segmentation, which means response accuracy are meaningless at these epoch.")
     logging.info(f"when epoch >= {pivotEpoch}, only training response branch, which means segmentation accuracy should keep unchange.")
@@ -240,6 +242,7 @@ def main():
             # restore learning rate to initial value
             for param_group in optimizer.param_groups:
                 param_group['lr'] = 1e-3
+            lrScheduler.patience = 30  # change learning patience
 
         # ================Training===============
         net.train()
