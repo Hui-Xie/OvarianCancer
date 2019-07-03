@@ -25,3 +25,5 @@ nohup python3.7 TrainSkyWatcher.py /home/hxie1/temp_netParameters/OvarianCancer/
 nohup python3.7 TrainSkyWatcher.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json &
 
 nohup python3.7 TrainSkyWatcherPurePrediction.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher/PurePrediction  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json &
+
+nohup python3.7 TrainSkyWatcher.py /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy  /home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0 &

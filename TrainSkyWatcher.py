@@ -15,9 +15,6 @@ from SkyWatcherModel2 import SkyWatcherModel2
 from NetMgr import NetMgr
 from CustomizedLoss import FocalCELoss, BoundaryLoss
 
-# you may need to change the file name and log Notes below for every training.
-trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV01_20190702.txt'''
-#trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/log_temp_20190624.txt'''
 logNotes = r'''
 Major program changes: 
                       along deeper layer, increase filter number.
@@ -31,13 +28,14 @@ Major program changes:
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
                       add FC layer width = 980.
-                      Add dropout at Fully connected layer with dropout rate of 50%. 
+                      without dropout.
                                                     
  
 Discarded changes:                      
                       training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
                       which means that before epoch 100, the accuray data is a mess.
-                      Add L2 norm regularization in Adam optimizer with weight 5e-4.      
+                      Add L2 norm regularization in Adam optimizer with weight 5e-4. 
+                      Add dropout at Fully connected layer with dropout rate of 50%.     
                       
 
 Experiment setting for Image3d ROI to response:
@@ -67,21 +65,29 @@ Training strategy:  50% probability of data are mixed up with beta distribution 
 
             '''
 
-logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
-
-
 def printUsage(argv):
     print("============Train SkyWatcher Model for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <fullPathOfData>  <fullPathOfLabels> <fullPathOfResponseFile> ")
-
+          "<netSavedPath> <fullPathOfData>  <fullPathOfLabels> <fullPathOfResponseFile> k ")
+    print("where: k=0-9, the k-th fold in the 10-fold cross validation."
 
 def main():
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
+
+    netPath = sys.argv[1]
+    dataInputsPath = sys.argv[2]
+    labelInputsPath = sys.argv[3]  # may not use.
+    responsePath = sys.argv[4]
+    k = int(sys.argv[5])
+    inputSuffix = ".npy"
+
+    curTime = datetime.datetime.now()
+    trainLogFile = f"/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV{k:d}_{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}.txt''
+    logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
@@ -92,19 +98,12 @@ def main():
     logging.info(f'Program command: \n {sys.argv}')
     logging.info(logNotes)
 
-    curTime = datetime.datetime.now()
-    logging.info(f'\nProgram starting Time: {str(curTime)}')
 
-    netPath = sys.argv[1]
-    dataInputsPath = sys.argv[2]
-    labelInputsPath = sys.argv[3]  # may not use.
-    responsePath = sys.argv[4]
-    inputSuffix = ".npy"
+    logging.info(f'\nProgram starting Time: {str(curTime)}')
 
     Kr = 2  # treatment response 1 or 0
     Kup = 3  # segmentation classification number
     K_fold = 10
-    k = 0
     logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
 
     logging.info(f"Info: netPath = {netPath}\n")
@@ -149,7 +148,7 @@ def main():
         netMgr.loadNet("train")  # True for train
         logging.info(f'Program loads net from {netPath}.')
         bestTestPerf = netMgr.loadBestTestPerf()
-        logging.info(f'Current best test dice: {bestTestPerf}')
+        logging.info(f'Current best test performance: {bestTestPerf}')
     else:
         logging.info(f"Network trains from scratch.")
 
@@ -219,6 +218,7 @@ def main():
                  + f"\t\tTsLoss"  + f"\t" + f"\t".join(diceHead2) + f"\t" + f"\t".join(TPRHead2) + f"\tAccura" + f"\tTPR_r" +  f"\tTNR_r")  # logging.info output head
 
     oldTrainingLoss = 1000
+    oldTestLoss = 1000
 
     for epoch in range(epochs):
 
@@ -400,17 +400,22 @@ def main():
         # =============save net parameters==============
         if trainingLoss != float('inf') and trainingLoss != float('nan'):
             netMgr.saveNet()
-            if responseTrainAccuracy >= bestTestPerf and trainingLoss < oldTrainingLoss:
-                oldTrainingLoss = trainingLoss
-                bestTestPerf = responseTrainAccuracy
+            if responseTestAccuracy > bestTestPerf or (responseTestAccuracy == bestTestPerf and testLoss < oldTestLoss):
+                oldTestLoss = testLoss
+                bestTestPerf = responseTestAccuracy
                 netMgr.saveBest(bestTestPerf)
+            if 1.0 == responseTrainAccuracy:
+                logging.info(f"\n\nresponse Train Accuracy == 1, Program exit.")
+                break
         else:
-            logging.info(f"Error: training loss is infinity. Program exit.")
-            sys.exit()
+            logging.info(f"\n\nError: training loss is infinity. Program exit.")
+            break
 
     torch.cuda.empty_cache()
-    logging.info(f"=============END of Training of SkyWatcher Predict Model =================")
+    logging.info(f"\n\n=============END of Training of SkyWatcher Predict Model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
+    curTime = datetime.datetime.now()
+    logging.info(f'\nProgram Ending Time: {str(curTime)}')
 
 
 if __name__ == "__main__":

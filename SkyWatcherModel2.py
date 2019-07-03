@@ -25,10 +25,10 @@ class SkyWatcherModel2 (SkyWatcherModel):
         lenBn = nFilters*49
         self.m_fc11   = nn.Sequential(
                        nn.Linear(lenBn , lenBn),
-                       nn.Dropout(p = self.m_dropoutProb),
+                       # nn.Dropout(p = self.m_dropoutProb),
                        nn.ReLU(inplace=True),
                        nn.Linear(lenBn, lenBn),
-                       nn.Dropout(p = self.m_dropoutProb),
+                       # nn.Dropout(p = self.m_dropoutProb),
                        nn.ReLU(inplace=True),
                        nn.Linear(lenBn, Kr))
 
