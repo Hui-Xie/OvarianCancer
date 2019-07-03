@@ -70,7 +70,7 @@ def printUsage(argv):
     print("Usage:")
     print(argv[0],
           "<netSavedPath> <fullPathOfData>  <fullPathOfLabels> <fullPathOfResponseFile> k ")
-    print("where: k=0-9, the k-th fold in the 10-fold cross validation."
+    print("where: k=0-9, the k-th fold in the 10-fold cross validation.")
 
 def main():
     if len(sys.argv) != 6:
@@ -86,7 +86,7 @@ def main():
     inputSuffix = ".npy"
 
     curTime = datetime.datetime.now()
-    trainLogFile = f"/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV{k:d}_{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}.txt''
+    trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_SkyWatcher_CV{k:d}_{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}.txt'
     logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
