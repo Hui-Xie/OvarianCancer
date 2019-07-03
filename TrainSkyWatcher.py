@@ -28,7 +28,7 @@ Major program changes:
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
                       add FC layer width = 256*49 at first FC layer, and halves along deeper FC layer.
-                      without dropout of 0.5
+                      add  dropout of 0.5 in FC layers.
                       add data window level adjust, slice Normalization, gausssian noise, random flip. 
                       reset learning rate patience after 1000 epochs.
                                                     
