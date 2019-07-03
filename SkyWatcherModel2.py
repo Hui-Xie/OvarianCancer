@@ -20,17 +20,17 @@ class SkyWatcherModel2 (SkyWatcherModel):
         self.m_bottleNeckSize = (Cnew,) + outputSize
 
         # for response prediction
-        nFilters  = 20;
+        nFilters  = 256;
         self.m_11Conv = BN_ReLU_Conv(Cnew, nFilters, (1,1,1), (1,1,1), (0,0,0), False)           # outpusSize =(1*7*7}
         lenBn = nFilters*49
         self.m_fc11   = nn.Sequential(
-                       nn.Linear(lenBn , lenBn),
+                       nn.Linear(lenBn , lenBn//2),
                        # nn.Dropout(p = self.m_dropoutProb),
                        nn.ReLU(inplace=True),
-                       nn.Linear(lenBn, lenBn),
+                       nn.Linear(lenBn//2, lenBn//4),
                        # nn.Dropout(p = self.m_dropoutProb),
                        nn.ReLU(inplace=True),
-                       nn.Linear(lenBn, Kr))
+                       nn.Linear(lenBn//4, Kr))
 
         # for segmentation reconstruction
         outputSize = self.getConvTransposeOutputTensorSize(outputSize, (2,3,3), (2,2,2), (0,0,0))

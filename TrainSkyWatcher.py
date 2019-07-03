@@ -27,7 +27,7 @@ Major program changes:
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
-                      add FC layer width = 980.
+                      add FC layer width = 256*49.
                       without dropout.
                                                     
  
@@ -52,18 +52,20 @@ Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
                   Total network learning parameters are 8 million.
                   Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
 
-response Loss Function:  focus loss with weight 1:1 
+response Loss Function:  focus loss with weight 1:1 as training data use balance distribution with resample with replacement. 
 segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
 
-Data:   training data has 113 patients, and valdiation data has 27 patients with training/test rate 80/20.
-        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training and test data set.
+Data:   training data has 153 patients, and valdiation data has 16 patients, for 10 fold partition.
+        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training set;
+        Validation data set keep original distribution
         
 
 Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
                     No other data augmentation, and no dropout.  
 
-                    Learning Scheduler:  Reduce learning rate on  plateau, and learning rate patience is 30 epochs.                                
-
+                    Learning Scheduler for segmentation:  Reduce learning rate on  plateau, and learning rate patience is 300 epochs.
+                                                    
+                    Learning Scheduler for response:      Reduce learning rate on  plateau, and learning rate patience is 30 epochs.
             '''
 
 def printUsage(argv):
