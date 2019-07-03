@@ -21,15 +21,16 @@ Major program changes:
                       10 fold cross validation, 0 fold for test.
                       data partition with patient ID, instead of VOI.
                       in image3dResponseDataMgr, random Crop ROI in the fly.
-                      erase normalization layers  in the fully connected layers.
+                      erase all normalization layers in the fully connected layers.
                       Crop ROI around the mass center in each labeled slice. 
                       use reSampleForSameDistribution in training set, but keep original ditribution in the test set
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
-                      add FC layer width = 256*49 at first FC layer, and halves along deeper layer.
-                      without dropout.
-                      add data window adjust, slice Normalization, gausssian noise, random flip. 
+                      add FC layer width = 256*49 at first FC layer, and halves along deeper FC layer.
+                      without dropout of 0.5
+                      add data window level adjust, slice Normalization, gausssian noise, random flip. 
+                      reset learning rate patience after 1000 epochs.
                                                     
  
 Discarded changes:                      
@@ -44,19 +45,18 @@ Experiment setting for Image3d ROI to response:
 Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
 segmentation label: 23*127*127 with spacing size(5*2*2) segmentation label with value (0,1,2) which erases lymph node label
 
-This is a multi-task learning. 
 
 Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
                   2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
-                  Total network learning parameters are 8 million.
-                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel.py
+                  Total network learning parameters are 119 million.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel2.py
 
-response Loss Function:  focus loss with weight 1:1 as training data use balance distribution with resample with replacement. 
+response Loss Function:  focus loss with weight 1:1 as training data use response balance distribution with resample with replacement. 
 segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
 
-Data:   training data has 153 patients, and valdiation data has 16 patients, for 10 fold partition.
+Data:   training data has 153 patients, and valdiation data has 16 patients, under 10 fold partition.
         We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training set;
         Validation data set keep original distribution
         
@@ -160,9 +160,6 @@ def main():
         logging.info(f"Network trains from scratch.")
 
     logging.info(net.getParametersScale())
-
-
-
 
     # lossFunc0 is for treatment response
     # responseCEWeight = torch.FloatTensor(dataMgr.getResponseCEWeight()).to(device)
