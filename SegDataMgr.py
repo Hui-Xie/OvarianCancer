@@ -226,12 +226,6 @@ class SegDataMgr(DataMgr):
         dataList.clear()
         labelList.clear()
 
-    def preprocessData(self, array)-> np.ndarray:
-        data = array.clip(-300,300)    # adjust window level, also erase abnormal value
-        data = self.sliceNormalize(data)
-        data = self.jitterNoise(data)
-        data = self.addGaussianNoise(data)
-        return data
 
     def flipDataLabel(self, data, label):
         if self.m_flipProb >0 and random.uniform(0,1) <= self.m_flipProb:
