@@ -324,6 +324,7 @@ class DataMgr:
         self.m_logInfo(f'Total {len(imagesList)} files, in which {inconsistenNum} files have inconsistent directions.')
 
 
+
     def sliceNormalize(self, array):
         if 3 == array.ndim:
             axesTuple = tuple([x for x in range(1, array.ndim)])
@@ -331,11 +332,10 @@ class DataMgr:
             result = np.zeros(array.shape)
             for i in range(len(minx)):
                 result[i,:] = array[i,:] - minx[i]
-            ptp = np.ptp(array, axesTuple) # peak to peak
-            with np.nditer(ptp, op_flags=['readwrite']) as it:
-                for x in it:
-                    if 0 == x:
-                        x[...] = 1e-6
+            ptp = list(np.ptp(array, axesTuple)) # peak to peak
+            for i,x in enumerate(ptp):
+                if x ==0:
+                    ptp[i] = 1e-6
             for i in range(len(ptp)):
                 result[i, :] /= ptp[i]
             return result
