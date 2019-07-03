@@ -28,6 +28,13 @@ class DataMgr:
         self.m_height = 0
         self.m_width = 0
 
+        self.m_noiseProb = 0  # noise probability
+        self.m_noiseMean = 0
+        self.m_noiseStd = 0
+
+        self.m_rot90sProb = 0  # support 90, 180, 270 degree rotation
+        self.m_flipProb = 0
+
         self.m_trainingSetIndices = []
         self.m_validationSetIndices = []
 
@@ -68,6 +75,17 @@ class DataMgr:
         else:
             lambdaInBeta = 1.0
         return  lambdaInBeta
+
+    def setAddedNoise(self, prob, mean, std):
+        self.m_noiseProb = prob
+        self.m_noiseMean = mean
+        self.m_noiseStd = std
+
+    def setRot90sProb(self, prob):
+        self.m_rot90sProb = prob
+
+    def setFlipProb(self, prob):
+        self.m_flipProb = prob
 
 
     @staticmethod
@@ -528,3 +546,29 @@ class DataMgr:
         # data = self.jitterNoise(data)
         data = self.addGaussianNoise(data)
         return data
+
+    def addGaussianNoise(self, data):
+        if self.m_noiseProb >0 and random.uniform(0,1) <= self.m_noiseProb:
+            noise = np.random.normal(self.m_noiseMean, self.m_noiseStd, data.shape)
+            data += noise
+        return data
+
+    def rotate90s(self, data, label):
+        if self.m_rot90sProb >0 and random.uniform(0,1) <= self.m_rot90sProb:
+            k = random.randrange(1, 4, 1)  # k*90 is the real rotation degree
+            data  = np.rot90(data, k, tuple(range(1,data.ndim)))
+            if data.ndim == label.ndim:
+                label = np.rot90(label, k, tuple(range(1,label.ndim)))
+            elif data.ndim == label.ndim+1:
+                label = np.rot90(label, k)
+            else:
+                self.m_logInfo("Error: in rotate90s, the ndim of data and label does not match.")
+                sys.exi(-1)
+
+        return data, label
+
+    def flipDataLabel(self, data, label):
+        if self.m_flipProb >0 and random.uniform(0,1) <= self.m_flipProb:
+            data  = np.flip(data, data.ndim-1)
+            label = np.flip(label, label.ndim-1)
+        return data, label

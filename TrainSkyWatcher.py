@@ -27,8 +27,9 @@ Major program changes:
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
-                      add FC layer width = 256*49.
+                      add FC layer width = 256*49 at first FC layer, and halves along deeper layer.
                       without dropout.
+                      add data window adjust, slice Normalization, gausssian noise, random flip. 
                                                     
  
 Discarded changes:                      
@@ -112,6 +113,9 @@ def main():
     logging.info(f"Info: netPath = {netPath}\n")
 
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
+    dataMgr.setFlipProb(0.3)
+    dataMgr.setAddedNoise(0.3, 0.0, 0.1)  # add gaussian noise augmentation after data normalization of [0,1]
+    dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
     # ===========debug==================
     dataMgr.setOneSampleTraining(False)  # for debug
@@ -133,7 +137,7 @@ def main():
     net.apply(net.initializeWeights)
     logging.info(f"Info: the size of bottle neck in the net = {net.m_bottleNeckSize}\n")
 
-    dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
+
 
     optimizer = optim.Adam(net.parameters(), weight_decay=0)
     net.setOptimizer(optimizer)

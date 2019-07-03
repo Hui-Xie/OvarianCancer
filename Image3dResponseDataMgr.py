@@ -64,6 +64,10 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
             response = self.m_responseList[i]
 
+            # data augmentation
+            roiImage3d = self.preprocessData(roiImage3d)
+            roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
+
             roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
             dataList.append(roiImage3d)
             responseList.append(response)
@@ -138,6 +142,10 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             if convertAllZeroSlices:
                 self.convertAllZeroSliceToValue(roiSeg3d, -100)  # -100 is default ignore_index in CrossEntropyLoss
             response = self.m_responseList[i]
+
+            # data augmentation
+            roiImage3d = self.preprocessData(roiImage3d)
+            roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
 
             roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
             dataList.append(roiImage3d)
