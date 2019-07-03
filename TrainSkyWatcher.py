@@ -9,6 +9,7 @@ import torch.optim as optim
 import logging
 import os
 import numpy as np
+import math
 
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from SkyWatcherModel2 import SkyWatcherModel2
@@ -29,7 +30,7 @@ Major program changes:
                       epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
                       add FC layer width = 256*49 at first FC layer, and halves along deeper FC layer.
                       add  dropout of 0.5 in FC layers.
-                      add data window level adjust, slice Normalization, gausssian noise, random flip. 
+                      add data window level adjust, slice Normalization, gausssian noise, random flip, 90/180/270 rotation. 
                       reset learning rate patience after 1000 epochs.
                                                     
  
@@ -114,6 +115,7 @@ def main():
 
     dataMgr = Image3dResponseDataMgr(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
     dataMgr.setFlipProb(0.3)
+    dataMgr.setRot90sProb(0.3)  # rotate along 90, 180, 270
     dataMgr.setAddedNoise(0.3, 0.0, 0.1)  # add gaussian noise augmentation after data normalization of [0,1]
     dataMgr.setMixup(alpha=0.4, prob=0.5)  # set Mixup parameters
 
@@ -405,7 +407,7 @@ def main():
         logging.info(outputString)
 
         # =============save net parameters==============
-        if trainingLoss != float('inf') and trainingLoss != float('nan'):
+        if trainingLoss < float('inf') and not math.isnan(trainingLoss):
             netMgr.saveNet()
             if responseTestAccuracy > bestTestPerf or (responseTestAccuracy == bestTestPerf and testLoss < oldTestLoss):
                 oldTestLoss = testLoss

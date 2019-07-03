@@ -67,6 +67,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             # data augmentation
             roiImage3d = self.preprocessData(roiImage3d)
             roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
+            roiImage3d, roiSeg3d = self.rotate90s(roiImage3d, roiSeg3d)  # around axis 0 rotation,and x=y so iamge size unchange.
 
             roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
             dataList.append(roiImage3d)
@@ -146,6 +147,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             # data augmentation
             roiImage3d = self.preprocessData(roiImage3d)
             roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
+            roiImage3d, roiSeg3d = self.rotate90s(roiImage3d, roiSeg3d)  # around axis 0 rotation,and x=y so iamge size unchange.
 
             roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
             dataList.append(roiImage3d)
