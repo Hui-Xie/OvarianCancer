@@ -267,8 +267,8 @@ def main():
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
-        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True),
-                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True)):
+        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True, reSample=True),
+                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True, reSample=True)):
             if epoch % 5 == 0:
                 lambdaInBeta = 1                          # this will make the comparison in the segmention per 5 epochs meaningful.
             else:
@@ -356,7 +356,7 @@ def main():
         testTPRCountList = [0 for _ in range(Kup)]
 
         with torch.no_grad():
-            for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=False):
+            for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, dataAugment=False, reSample=False):
                 inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                 inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
 

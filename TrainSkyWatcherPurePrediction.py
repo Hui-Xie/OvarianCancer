@@ -191,8 +191,8 @@ def main():
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
         for (inputs1, response1Cpu), (inputs2, response2Cpu) in zip(
-                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True),
-                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True)):
+                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True, reSample=True),
+                                            dataMgr.dataResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True, reSample=True)):
             if epoch % 5 == 0:
                 lambdaInBeta = 1  # this will make the comparison in the segmention per 5 epochs meaningful.
             else:
@@ -258,7 +258,7 @@ def main():
         if not mergeTrainTestData:
 
             with torch.no_grad():
-                for inputs, responseCpu in dataMgr.dataResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=True):
+                for inputs, responseCpu in dataMgr.dataResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, dataAugment=False, reSample=False):
                     inputs, response = torch.from_numpy(inputs), torch.from_numpy(responseCpu)
                     inputs, response = inputs.to(device, dtype=torch.float), response.to(device, dtype=torch.long)  # return a copy
 

@@ -25,7 +25,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
            self.m_logInfo(f"Error: program can not load {filePath}")
            sys.exit(-5)
 
-    def dataResponseGenerator(self, inputFileIndices, shuffle=True, randomROI=True, reSample=True):
+    def dataResponseGenerator(self, inputFileIndices, shuffle=True, dataAugment=True, reSample=True):
         """
         yield (3DImage  - treatment Response) Tuple
 
@@ -55,7 +55,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
             # randomize ROI to generate the center of ROI
             z, x, y = massCenter
-            if randomROI:
+            if dataAugment:
                 z = random.randrange(z - 6, z + 7, 1)  # the depth of image ROI is 145mm, max offset 20% = 29mm
                 x = random.randrange(x - 28, x + 29, 1)  # the height of image ROI is 280mm, max offset 20% = 56mm
                 y = random.randrange(y - 28, y + 29, 1)  # the width of image ROI is  280mm, max offset 20% = 56mm
@@ -64,10 +64,13 @@ class Image3dResponseDataMgr(ResponseDataMgr):
 
             response = self.m_responseList[i]
 
+            roiImage3d = self.preprocessData(roiImage3d)  # window level, and normalization.
             # data augmentation
-            roiImage3d = self.preprocessData(roiImage3d)
-            roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
-            roiImage3d, roiSeg3d = self.rotate90s(roiImage3d, roiSeg3d)  # around axis 0 rotation,and x=y so iamge size unchange.
+            if dataAugment:
+                roiImage3d = self.addGaussianNoise(roiImage3d)
+                roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
+                roiImage3d, roiSeg3d = self.rotate90s(roiImage3d,
+                                                      roiSeg3d)  # around axis 0 rotation,and x=y so iamge size unchange.
 
             roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
             dataList.append(roiImage3d)
@@ -91,7 +94,7 @@ class Image3dResponseDataMgr(ResponseDataMgr):
         dataList.clear()
         responseList.clear()
 
-    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True, randomROI=True, reSample=True):
+    def dataSegResponseGenerator(self, inputFileIndices, shuffle=True, convertAllZeroSlices=True, dataAugment=True, reSample=True):
         """
         yied (3DImage  -- Segmentation --  treatment Response) Tuple
 
@@ -125,12 +128,11 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             labelFile = imageFile.replace("/images_npy/", "/labels_npy/")  # the image and label are original various size
 
             image3d = np.load(imageFile)
-            shape   = image3d.shape
             seg3d   = np.load(labelFile)
 
             # randomize ROI to generate the center of ROI
             z, x, y = massCenter
-            if randomROI:
+            if dataAugment:
                 z = random.randrange(z-6, z+7, 1)   # the depth of image ROI is 145mm, max offset 20% = 29mm
                 x = random.randrange(x-28, x+29, 1)   # the height of image ROI is 280mm, max offset 20% = 56mm
                 y = random.randrange(y-28, y+29, 1)   # the width of image ROI is  280mm, max offset 20% = 56mm
@@ -144,10 +146,12 @@ class Image3dResponseDataMgr(ResponseDataMgr):
                 self.convertAllZeroSliceToValue(roiSeg3d, -100)  # -100 is default ignore_index in CrossEntropyLoss
             response = self.m_responseList[i]
 
+            roiImage3d = self.preprocessData(roiImage3d)  # window level, and normalization.
             # data augmentation
-            roiImage3d = self.preprocessData(roiImage3d)
-            roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
-            roiImage3d, roiSeg3d = self.rotate90s(roiImage3d, roiSeg3d)  # around axis 0 rotation,and x=y so iamge size unchange.
+            if dataAugment:
+                roiImage3d = self.addGaussianNoise(roiImage3d)
+                roiImage3d, roiSeg3d = self.flipDataLabel(roiImage3d, roiSeg3d)
+                roiImage3d, roiSeg3d = self.rotate90s(roiImage3d, roiSeg3d)  # around axis 0 rotation,and x=y so iamge size unchange.
 
             roiImage3d = np.expand_dims(roiImage3d, 0)  # add channel dim as 1
             dataList.append(roiImage3d)
