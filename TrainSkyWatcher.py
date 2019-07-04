@@ -32,6 +32,8 @@ Major program changes:
                       add  dropout of 0.5 in FC layers.
                       add data window level adjust, slice Normalization, gausssian noise, random flip, 90/180/270 rotation. 
                       reset learning rate patience after 1000 epochs.
+                      disable data augmentation in the validation data;
+                      in response prediction path, learning rate decacy patience set as 100 instead of 30.
                                                     
  
 Discarded changes:                      
@@ -241,7 +243,7 @@ def main():
             # restore learning rate to initial value
             for param_group in optimizer.param_groups:
                 param_group['lr'] = 1e-3
-            lrScheduler.patience = 30  # change learning patience
+            lrScheduler.patience = 100  # change learning patience
 
         # ================Training===============
         net.train()
@@ -267,8 +269,8 @@ def main():
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
-        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True),
-                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, randomROI=True, reSample=True)):
+        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True, reSample=True),
+                                                                                      dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True, reSample=True)):
             if epoch % 5 == 0:
                 lambdaInBeta = 1                          # this will make the comparison in the segmention per 5 epochs meaningful.
             else:
@@ -356,7 +358,7 @@ def main():
         testTPRCountList = [0 for _ in range(Kup)]
 
         with torch.no_grad():
-            for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=True, randomROI=False, reSample=False):
+            for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices, shuffle=False, dataAugment=False, reSample=False):
                 inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(responseCpu)
                 inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device, dtype=torch.long), response.to(device, dtype=torch.long)  # return a copy
 

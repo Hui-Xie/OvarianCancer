@@ -543,8 +543,6 @@ class DataMgr:
     def preprocessData(self, array):
         data = array.clip(-300,300)    # adjust window level, also erase abnormal value
         data = self.sliceNormalize(data)
-        # data = self.jitterNoise(data)
-        data = self.addGaussianNoise(data)
         return data
 
     def addGaussianNoise(self, data):
