@@ -132,7 +132,7 @@ def main():
     # ===========debug==================
 
 
-    batchSize = 9  # 12 for use 4 GPUs
+    batchSize = 6  # 12 for use 4 GPUs
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
