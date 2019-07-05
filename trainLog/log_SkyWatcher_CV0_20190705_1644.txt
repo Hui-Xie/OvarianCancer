@@ -102,3 +102,4 @@ Dice is based on all 2D segmented slices in the volume from weak annotation, not
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r		TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r
+1000	0.2135	0.178	0.184	0.151	0.556	0.378	0.504	0.5514	0.8318	0.2710		0.1667	0.185	0.021	0.116	0.691	0.020	0.600	0.6875	1.0000	0.0000
