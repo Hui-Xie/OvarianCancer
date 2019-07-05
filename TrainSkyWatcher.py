@@ -35,6 +35,8 @@ Major program changes:
                       in response prediction path, learning rate decacy patience set as 200 instead of 30.
                       when disable data augmentation, choose the fixed center labeled slice from a patient.
                       epoch >= 1000,  training Encoder and FC branch, and freeze decode. this training is base on  log_SkyWatcher_CV0_20190704_2129.txt
+                      
+                      train from 1000 epoch to continue.
                                                     
  
 Discarded changes:                      
