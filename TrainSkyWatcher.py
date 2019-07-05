@@ -27,14 +27,14 @@ Major program changes:
                       use reSampleForSameDistribution in training set, but keep original ditribution in the test set
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
-                      epoch >= 1000, the loss is pure response loss with reinitialized learning rate 1e-3.
                       add FC layer width = 256*49 at first FC layer, and halves along deeper FC layer.
                       add  dropout of 0.5 in FC layers.
                       add data window level adjust, slice Normalization, gausssian noise, random flip, 90/180/270 rotation. 
                       reset learning rate patience after 1000 epochs.
                       disable data augmentation in the validation data;
-                      in response prediction path, learning rate decacy patience set as 100 instead of 30.
-                      when disable data augmentation, choose the fixed center labeled slice from a patient. 
+                      in response prediction path, learning rate decacy patience set as 200 instead of 30.
+                      when disable data augmentation, choose the fixed center labeled slice from a patient.
+                      epoch >= 1000,  training Encoder and FC branch, and freeze decode. this training is base on  log_SkyWatcher_CV0_20190704_2129.txt
                                                     
  
 Discarded changes:                      
@@ -43,6 +43,7 @@ Discarded changes:
                       Add L2 norm regularization in Adam optimizer with weight 5e-4. 
                       Add dropout at Fully connected layer with dropout rate of 50%.  
                       focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.   
+                       the loss is pure response loss with reinitialized learning rate 1e-3.
                       
 
 Experiment setting for Image3d ROI to response:
@@ -231,20 +232,23 @@ def main():
     oldTrainingLoss = 1000
     oldTestLoss = 1000
 
-    for epoch in range(epochs):
+    for epoch in range(pivotEpoch, epochs):
 
         if epoch == pivotEpoch:
             if useDataParallel:
                 net.module.freezeResponseBranch(requires_grad=True)
-                net.module.freezeSegmentationBranch(requires_grad=False)
+                net.module.freezeEncoder(requires_grad=True)
+                net.module.freezeDecoder(requires_grad=False)
 
             else:
                 net.freezeResponseBranch(requires_grad=True)
-                net.freezeSegmentationBranch(requires_grad=False)
+                net.freezeEncoder(requires_grad=True)
+                net.freezeDecoder(requires_grad=False)
+
             # restore learning rate to initial value
             for param_group in optimizer.param_groups:
                 param_group['lr'] = 1e-3
-            lrScheduler.patience = 100  # change learning patience
+            lrScheduler.patience = 200  # change learning patience
 
         # ================Training===============
         net.train()
@@ -301,11 +305,12 @@ def main():
                     else:
                         continue
                 else:
+                    # only train seg path before pivotEpoch
                     if epoch >=pivotEpoch:
-                        continue
+                         continue
                     else:
-                        outputs = xup
-                        gt1, gt2 = (seg1, seg2)
+                         outputs = xup
+                         gt1, gt2 = (seg1, seg2)
 
                 if lambdaInBeta != 0:
                     loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
@@ -369,11 +374,18 @@ def main():
                 for i, (lossFunc, weight) in enumerate(zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
                                                            lossWeightList)):
                     if i == 0:
-                        outputs = xr
-                        gt = response
+                        if epoch >= pivotEpoch:  # only train treatment reponse branch after epoch 1000.
+                            outputs = xr
+                            gt = response
+                        else:
+                            continue
                     else:
-                        outputs = xup
-                        gt = seg
+                        # only train seg path before pivotEpoch
+                        if epoch >= pivotEpoch:
+                            continue
+                        else:
+                            outputs = xup
+                            gt = seg
 
                     if weight != 0:
                        loss += lossFunc(outputs, gt) * weight
