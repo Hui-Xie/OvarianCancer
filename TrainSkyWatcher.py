@@ -34,6 +34,7 @@ Major program changes:
                       reset learning rate patience after 1000 epochs.
                       disable data augmentation in the validation data;
                       in response prediction path, learning rate decacy patience set as 100 instead of 30.
+                      when disable data augmentation, choose the fixed center labeled slice from a patient. 
                                                     
  
 Discarded changes:                      

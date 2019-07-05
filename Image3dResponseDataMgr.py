@@ -48,10 +48,12 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             imageFile = self.m_inputFilesList[i]
             imageFileStem = self.getStemName(imageFile, self.m_inputSuffix)
             massCenterList = self.m_massCenterDict[imageFileStem]
-            massCenter = random.choice(massCenterList)
+            if dataAugment:
+                massCenter = random.choice(massCenterList)
+            else:
+                massCenter = massCenterList[len(massCenterList) // 2]  # non dataAugment, choose the center labeled slice
 
             image3d = np.load(imageFile)
-            shape = image3d.shape
 
             # randomize ROI to generate the center of ROI
             z, x, y = massCenter
@@ -120,7 +122,10 @@ class Image3dResponseDataMgr(ResponseDataMgr):
             imageFile = self.m_inputFilesList[i]
             imageFileStem = self.getStemName(imageFile, self.m_inputSuffix)
             massCenterList = self.m_massCenterDict[imageFileStem]
-            massCenter = random.choice(massCenterList)
+            if dataAugment:
+                massCenter = random.choice(massCenterList)
+            else:
+                massCenter = massCenterList[len(massCenterList)//2]  # non dataAugment, choose the center labeled slice
 
             # for inputSize 147*281*281, and segmentation size of 127*255*255
             # labelFile = imageFile.replace("Images_ROI_29_140_140", "Labels_ROI_23_127_127")
