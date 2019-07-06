@@ -28,13 +28,13 @@ Major program changes:
                       First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
                       epoch < 1000, the loss is pure segmentation loss;
                       add FC layer width = 256*49 at first FC layer, and halves along deeper FC layer.
-                      add  dropout of 0.5 in FC layers.
+                      Disable all  dropout in  FC layers.
                       add data window level adjust, slice Normalization, gausssian noise, random flip, 90/180/270 rotation. 
                       reset learning rate patience after 1000 epochs.
                       disable data augmentation in the validation data;
                       in response prediction path, learning rate decacy patience set as 200 instead of 30.
                       when disable data augmentation, choose the fixed center labeled slice from a patient.
-                      epoch >= 1000,  training Encoder and FC branch, and freeze decode. this training is base on  log_SkyWatcher_CV0_20190704_2129.txt
+                      epoch >= 1000,  only training FC branch, and freeze encocoder and decode. this training is base on  log_SkyWatcher_CV0_20190704_2129.txt
                       
                       train from 1000 epoch to continue.
                                                     
@@ -132,7 +132,7 @@ def main():
     # ===========debug==================
 
 
-    batchSize = 6  # 12 for use 4 GPUs
+    batchSize = 9  # 12 for use 4 GPUs
     C = 32   # number of channels after the first input layer
     D = 29  # depth of input
     H = 140  # height of input
@@ -239,12 +239,12 @@ def main():
         if epoch == pivotEpoch:
             if useDataParallel:
                 net.module.freezeResponseBranch(requires_grad=True)
-                net.module.freezeEncoder(requires_grad=True)
+                net.module.freezeEncoder(requires_grad=False)
                 net.module.freezeDecoder(requires_grad=False)
 
             else:
                 net.freezeResponseBranch(requires_grad=True)
-                net.freezeEncoder(requires_grad=True)
+                net.freezeEncoder(requires_grad=False)
                 net.freezeDecoder(requires_grad=False)
 
             # restore learning rate to initial value
