@@ -34,7 +34,7 @@ Major program changes:
                       in response prediction path, learning rate decacy patience set as 200 instead of 30.
                       when disable data augmentation, choose the fixed center labeled slice from a patient.
                       epoch >= 1000,  only training FC branch, and freeze encocoder and decode. 
-                      Disable all  dropout in  FC layers.
+                      use dropout with rate 0.2 in  FC layers.
                                                     
  
 Discarded changes:                      
