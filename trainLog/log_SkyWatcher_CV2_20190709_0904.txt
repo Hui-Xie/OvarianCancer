@@ -1,0 +1,105 @@
+Program ID of SkyWatcher Network training:6878
+
+Program command: 
+ ['TrainSkyWatcher.py', '/home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '2']
+
+Major program changes: 
+                      along deeper layer, increase filter number.
+                      10 fold cross validation, 0 fold for test.
+                      data partition with patient ID, instead of VOI.
+                      in image3dResponseDataMgr, random Crop ROI in the fly.
+                      erase all normalization layers in the fully connected layers.
+                      Crop ROI around the mass center in each labeled slice. 
+                      use reSampleForSameDistribution in training set, but keep original ditribution in the test set
+                      First implement 1000 epochs in the segmentation path, and then freeze the encoder and decoder, only train the ResponseBranch.  
+                      epoch < 1000, the loss is pure segmentation loss;
+                      add FC layer width = 256*49 at first FC layer, and halves along deeper FC layer.
+                      add data window level adjust, slice Normalization, gausssian noise, random flip, 90/180/270 rotation. 
+                      reset learning rate patience after 1000 epochs.
+                      disable data augmentation in the validation data;
+                      in response prediction path, learning rate decacy patience set as 200 instead of 30.
+                      when disable data augmentation, choose the fixed center labeled slice from a patient.
+                      epoch >= 1000,  only training FC branch, and freeze encocoder and decode. 
+                      use dropout with rate 0.2 in  FC layers.
+                                                    
+ 
+Discarded changes:                      
+                      training response branch per 5 epoch after epoch 100, while continuing train the segmenation branch.
+                      which means that before epoch 100, the accuray data is a mess.
+                      Add L2 norm regularization in Adam optimizer with weight 5e-4. 
+                      Add dropout at Fully connected layer with dropout rate of 50%.  
+                      focus loss  with weight [3.3, 1.4] for [0,1] class separately, as [0,1] uneven distribution.   
+                       the loss is pure response loss with reinitialized learning rate 1e-3.
+                      
+
+Experiment setting for Image3d ROI to response:
+Input CT data: 29*140*140  3D CT raw image ROI with spacing size(5*2*2)
+segmentation label: 23*127*127 with spacing size(5*2*2) segmentation label with value (0,1,2) which erases lymph node label
+
+
+Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
+                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+                  3,  and 3 fully connected layers  changes the tensor into size 2*1;
+                  4,  final a softmax for binary classification;
+                  Total network learning parameters are 119 million.
+                  Network architecture is referred at https://github.com/Hui-Xie/OvarianCancer/blob/master/SkyWatcherModel2.py
+
+response Loss Function:  focus loss with weight 1:1 as training data use response balance distribution with resample with replacement. 
+segmentation loss function: focus loss  with weight [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+
+Data:   training data has 153 patients, and valdiation data has 16 patients, under 10 fold partition.
+        We randomize all data, and then assign same distrubtion of treat reponse 0,1 into to training set;
+        Validation data set keep original distribution
+        
+
+Training strategy:  50% probability of data are mixed up with beta distribution with alpha =0.4, to feed into network for training. 
+                    No other data augmentation, and no dropout.  
+
+                    Learning Scheduler for segmentation:  Reduce learning rate on  plateau, and learning rate patience is 300 epochs.
+                                                    
+                    Learning Scheduler for response:      Reduce learning rate on  plateau, and learning rate patience is 30 epochs.
+            
+
+Program starting Time: 2019-07-09 09:04:58.916843
+Info: this is the 2th fold leave for test in the 10-fold cross-validation.
+
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SkyWatcher
+
+Now program get 169 input files.
+Infor: In all data of 169 files, respone 0 has 51 files,
+	  and response 1 has 118 files, where positive response rate = 0.6982248520710059 in full data
+Infor: Validation Set has 16 files,and Training Set has 153 files
+Infor: Validataion set has 11 1's, and positive response rate = 0.6875
+Infor: trainning set has 107 1's, and positive response rate = 0.6993464052287581
+Infor: the drop_last data in the dataMgr may lead the number of validation set and training set less than above number.
+Info: program uses Mixup with alpha=0.4, and mixupProb = 0.5.
+Infor: program is in multi samples running model.
+TrainTestData Input:  batchSize=9, depth=29, height=140, width=140
+
+Info: the size of bottle neck in the net = (512, 1, 7, 7)
+
+Network trains from scratch.
+Network has total 119,954,053 parameters.
+Infor: Segmentation Cross Entropy Weight: [1.0416883685076772, 39.37007874015748, 68.39945280437757] for label (0, 1, 2)
+Info: program will use 3 GPUs.
+Loss Functions List: FocalCELoss with weight of 1; 	FocalCELoss with weight of 1; 
+when epoch < 1000, only train segmentation, which means response accuracy are meaningless at these epoch.
+when epoch >= 1000, only training response branch, which means segmentation accuracy should keep unchange.
+Hints: Test Dice_0 is the dice coeff for all non-zero labels
+Hints: Test Dice_1 is for primary cancer(green), 	
+ test Dice_2 is for metastasis(yellow), 	
+ and test Dice_3 is for invaded lymph node(brown).
+Hints: Test TPR_0 is the TPR for all non-zero labels
+Hints: Test TPR_1 is for primary cancer(green), 	
+ TPR_2 is for metastasis(yellow), 	
+ and TPR_3 is for invaded lymph node(brown).
+
+Dice is based on all 2D segmented slices in the volume from weak annotation, not real 3D dice.
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	TrLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r		TsLoss	Dice0	Dice1	Dice2	TPR_0	TPR_1	TPR_2	Accura	TPR_r	TNR_r
+0	0.5566	0.090	0.082	0.046	0.972	0.243	0.705	0.4813	0.2897	0.6729		0.5179	0.084	0.103	0.043	1.000	0.593	0.339	0.6875	1.0000	0.0000
+5	0.3774	0.178	0.097	0.096	0.787	0.112	0.655	0.5421	0.3925	0.6916		0.3242	0.187	0.184	0.110	0.873	0.193	0.797	0.5625	0.3636	1.0000
+10	0.3372	0.184	0.328	0.088	0.854	0.518	0.587	0.5047	0.2991	0.7103		0.3159	0.160	0.245	0.073	0.966	0.646	0.685	0.4375	0.3636	0.6000
+15	0.3264	0.188	0.377	0.079	0.861	0.691	0.524	0.5234	0.3458	0.7009		0.2931	0.196	0.249	0.136	0.884	0.569	0.646	0.5625	0.5455	0.6000
