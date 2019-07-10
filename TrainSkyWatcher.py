@@ -19,7 +19,7 @@ from CustomizedLoss import FocalCELoss, BoundaryLoss
 logNotes = r'''
 Major program changes: 
                       along deeper layer, increase filter number.
-                      10 fold cross validation, 0 fold for test.
+                      10 fold cross validation
                       data partition with patient ID, instead of VOI.
                       in image3dResponseDataMgr, random Crop ROI in the fly.
                       erase all normalization layers in the fully connected layers.
