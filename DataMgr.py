@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import sys
+from FilesUtilities import *
 
 
 class DataMgr:
@@ -87,29 +88,8 @@ class DataMgr:
     def setFlipProb(self, prob):
         self.m_flipProb = prob
 
-
-    @staticmethod
-    def getFilesList(filesDir, suffix):
-        originalCwd = os.getcwd()
-        os.chdir(filesDir)
-        filesList = [os.path.abspath(x) for x in os.listdir(filesDir) if suffix in x]
-        os.chdir(originalCwd)
-        return filesList
-
-    def saveInputFilesList(self):
-        with open( self.m_inputFilesListFile, "w") as f:
-            for file in self.m_inputFilesList:
-                f.write(file + "\n")
-
-    def loadInputFilesList(self):
-        self.m_inputFilesList = []
-        with open( self.m_inputFilesListFile, "r") as f:
-            for line in f:
-                self.m_inputFilesList.append(line.strip())
-
-
     def expandInputsDir(self, imagesDir, suffix):
-        self.m_inputFilesList += self.getFilesList(imagesDir, suffix)
+        self.m_inputFilesList += getFilesList(imagesDir, suffix)
         self.m_logInfo(f'Expanding inputs dir: {imagesDir}')
         self.m_logInfo(f'Now dataMgr has {len(self.m_inputFilesList)} input files.')
 
@@ -357,11 +337,6 @@ class DataMgr:
         else:
             self.m_logInfo("Infor: program is in multi samples running model.")
 
-    @staticmethod
-    def getStemName(path, removedSuffix):
-        baseName = os.path.basename(path)
-        base = baseName[0: baseName.find(removedSuffix)]
-        return base
 
     @staticmethod
     def oneHotArray2Labels(oneHotArray) -> np.ndarray:
