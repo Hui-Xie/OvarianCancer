@@ -1,6 +1,7 @@
 
 #Ovarian Cancer DataSet
-import os
+import sys
+import random
 from FilesUtilities import *
 import numpy as np
 
@@ -83,8 +84,9 @@ class OVDataPartition(Object):
         return labels
 
 class OVDataSet(data.DataSet):
-    def __init__(self, dataPartitions, partitionName, k, logInfoFun=print):
+    def __init__(self, dataPartitions, partitionName, k, transform=None, logInfoFun=print):
         self.m_dataPartioins = dataPartitions
+        self.m_transform = transform
         self.m_logInfo = logInfoFun
         K = self.m_dataPartioins.m_KFold
         self.m_dataIDs = []
@@ -111,4 +113,6 @@ class OVDataSet(data.DataSet):
         data = np.load(filename)
         label = self.labels[ID]
 
+        if self.transform:
+            sample = self.m_transform(data)
         return data, label
