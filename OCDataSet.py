@@ -85,27 +85,30 @@ class OVDataPartition(Object):
 class OVDataSet(data.DataSet):
     def __init__(self, dataPartitions, partitionName, k, logInfoFun=print):
         self.m_dataPartioins = dataPartitions
+        self.m_logInfo = logInfoFun
+        K = self.m_dataPartioins.m_KFold
+        self.m_dataIDs = []
         if "test" == partitionName:
             self.m_dataIDs = self.m_dataPartioins.m_partition["test"]
-            self.m_labels  = self.m_dataPartioins.getLabels(self.m_dataIDs)
-        elif "train" == partitionName and k < self.m_dataPartioins.m_KFold:
-
+        elif "train" == partitionName and k < K:
+            for i in range(K):
+                if i != k:
+                    self.m_dataIDs += self.m_partition["train0s"][i] + self.m_partition["train1s"][i]
+        elif "validation" == partitionName and k < K:
+            self.m_dataIDs += self.m_partition["train0s"][k] + self.m_partition["train1s"][k]
         else:
-            self.m_logInfo("Error: partitionName in wrong")
+            self.m_logInfo("Error: partitionName or k in OvDataSet are incorrect")
             sys.exit(0)
 
-    def __len__(self):
-        'Denotes the total number of samples'
-        return len(self.list_IDs)
+        self.m_labels = self.m_dataPartioins.getLabels(self.m_dataIDs)
 
+    def __len__(self):
+        return len(self.m_labels)
 
     def __getitem__(self, index):
-        'Generates one sample of data'
-        # Select sample
-        ID = self.list_IDs[index]
+        ID = self.m_dataIDs[index]
+        filename = self.m_dataPartioins.m_inputFilesList[ID]
+        data = np.load(filename)
+        label = self.labels[ID]
 
-        # Load data and get label
-        X = torch.load('data/' + ID + '.pt')
-        y = self.labels[ID]
-
-        return X, y
+        return data, label
