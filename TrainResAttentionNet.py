@@ -146,10 +146,10 @@ def main():
     oldTestLoss = 1000
 
     for epoch in range(0, epochs):
-        # ================Training===============
-        net.train()
         random.seed()
 
+        # ================Training===============
+        net.train()
         trainingLoss = 0.0
         trainBatches = 0
 
