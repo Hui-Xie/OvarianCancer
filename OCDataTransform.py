@@ -6,7 +6,7 @@ import PIL
 import torch
 
 class OCDataTransform(object):
-    def __init__(self, depth, height, width, prob):
+    def __init__(self, depth, height, width, prob =0):
         self.m_depth = depth
         self.m_height = height
         self.m_width = width
