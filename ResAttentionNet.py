@@ -9,10 +9,15 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
-        self.m_stage1 = nn.Sequential(
+        self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(140, 128, nGroups=32, withMaxPooling=False),
                         ResNeXtBlock(128, 128, nGroups=32, withMaxPooling=False),
                         ResNeXtBlock(128, 256, nGroups=32, withMaxPooling=False)
+                        )  # ouput size: 256*251*251
+        self.m_stage1 = nn.Sequential(
+                        ResNeXtBlock(256, 256, nGroups=32, withMaxPooling=True),
+                        ResNeXtBlock(256, 256, nGroups=32, withMaxPooling=False),
+                        ResNeXtBlock(256, 256, nGroups=32, withMaxPooling=False)
                         ) # ouput size: 256*126*126
         self.m_stage2 = nn.Sequential(
                         ResNeXtBlock(256, 256, nGroups=32, withMaxPooling=True),
@@ -44,6 +49,7 @@ class ResAttentionNet(BasicModel):
 
 
     def forward(self, x):
+        x = self.m_stage0(x)
         x = self.m_stage1(x)
         x = self.m_stage2(x)
         x = self.m_stage3(x)
