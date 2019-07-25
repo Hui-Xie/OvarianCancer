@@ -20,3 +20,22 @@ for i in range(len(ptp)):
 
 
 print(result)
+
+
+class A():
+    def __init__(self):
+        pass
+
+    def __call__(self,x):
+        print(f"x= {x}")
+
+a = A();
+
+if a:
+   a(5)
+
+a = None
+if a:
+    a(10)
+
+

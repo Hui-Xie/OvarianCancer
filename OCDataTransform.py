@@ -22,7 +22,7 @@ class OCDataTransform(object):
             angle = random.randrange(-180, 180)
             translate = random.randrange(-25, 25), random.randrange(-25, 25)  # 10% of maxsize
             scale = random.uniform(1, self.m_height/h)
-            shear = random.randrange(-180, 180)
+            shear = random.randrange(-90, 90)
         else:
             angle = 0
             translate = 0,0

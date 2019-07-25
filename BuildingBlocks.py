@@ -237,7 +237,7 @@ class ConvOutput(nn.Module):
         if useBnReConvOrder:
             x = self.m_conv11(self.m_bn(x))
         else:
-            x = self.m_conv11(x)   # no need bn and relu
+            x = self.m_conv11(x)   # no need m_groupBN and relu
         return x
 
 class DownBB(nn.Module): 
