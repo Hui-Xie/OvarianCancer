@@ -117,5 +117,6 @@ class OVDataSet(data.DataSet):
         label = self.labels[ID]
 
         if self.transform:
-            sample = self.m_transform(data)
+            data = self.m_transform(data)
+
         return data, label
