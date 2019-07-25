@@ -4,11 +4,12 @@ import sys
 import random
 from FilesUtilities import *
 import numpy as np
+import math
 
 import torch
 from torch.utils import data
 
-class OVDataPartition(Object):
+class OVDataPartition():
     def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold, testProportion, logInfoFun=print):
         self.m_inputsDir = inputsDir
         self.m_inputFilesListFile = os.path.join(self.m_inputsDir, "inputFilesList.txt")
@@ -74,7 +75,8 @@ class OVDataPartition(Object):
         self.m_partition["train0s"] =  np.asarray(self.m_0FileIndices[nTest0:]).split(self.m_KFold).tolist()
         self.m_partition["train1s"] =  np.asarray(self.m_1FileIndices[nTest1:]).split(self.m_KFold).tolist()
 
-        self.m_logInfo(f"Infor: independent test Set has {N} files,and Training Set has {N-Ntest} files which will be divided into {self.m_KFold} folds.")
+        self.m_logInfo(f"Infor: independent test Set has {N} files,and Training including validation Set has {N-Ntest} files which will be divided into {self.m_KFold} folds.")
+        self.m_logInfo(f"In the independent test set, 0 has {nTest0}, 1 has {nTest1}, the rate of 1s is {nTest1/Ntest}")
 
     def getLabels(self, dataIDs):
         labels =[]
@@ -103,6 +105,7 @@ class OVDataSet(data.DataSet):
             sys.exit(0)
 
         self.m_labels = self.m_dataPartioins.getLabels(self.m_dataIDs)
+        self.m_logInfo(f"In this {partitionName}_{k} dataset, total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels)/len(self.m_labels)}")
 
     def __len__(self):
         return len(self.m_labels)
