@@ -10,7 +10,7 @@ class ResAttentionNet(BasicModel):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
         self.m_stage0 = nn.Sequential(
-                        ResNeXtBlock(140, 128, nGroups=32, withMaxPooling=False),
+                        ResNeXtBlock(140, 128, nGroups=20, withMaxPooling=False),
                         ResNeXtBlock(128, 128, nGroups=32, withMaxPooling=False),
                         ResNeXtBlock(128, 256, nGroups=32, withMaxPooling=False)
                         )  # ouput size: 256*251*251
