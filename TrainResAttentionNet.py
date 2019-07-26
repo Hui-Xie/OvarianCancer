@@ -104,7 +104,7 @@ def main():
     GPU_ID = 0  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
-    batchSize = 18  # 7 is for 1 GPU
+    batchSize = 14  # 7 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
@@ -134,7 +134,7 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            device_ids = [0,1, 2]
+            device_ids = [0,1]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
             net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
 

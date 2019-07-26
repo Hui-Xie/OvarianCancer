@@ -1,5 +1,5 @@
-Program ID of Predictive Network training:  787
+Program ID of Predictive Network training:  6445
 
 Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0']
-Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190726_1607.txt
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190726_1618.txt
 .........
