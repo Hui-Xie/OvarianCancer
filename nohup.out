@@ -1,0 +1,31 @@
+Program ID of Predictive Network training:  9391
+
+Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0']
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190726_1515.txt
+.........
+Traceback (most recent call last):
+  File "TrainResAttentionNet.py", line 332, in <module>
+    main()
+  File "TrainResAttentionNet.py", line 174, in main
+    for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 623, in __next__
+    return self._process_next_batch(batch)
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 658, in _process_next_batch
+    raise batch.exc_type(batch.exc_msg)
+ZeroDivisionError: Traceback (most recent call last):
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 138, in _worker_loop
+    samples = collate_fn([dataset[i] for i in batch_indices])
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 138, in <listcomp>
+    samples = collate_fn([dataset[i] for i in batch_indices])
+  File "/home/hxie1/Projects/OvarianCancer/OCDataSet.py", line 121, in __getitem__
+    data = self.m_transform(data)
+  File "/home/hxie1/Projects/OvarianCancer/OCDataTransform.py", line 45, in __call__
+    slice = TF.affine(slice, angle, translate, scale, shear, resample=PIL.Image.BILINEAR, fillcolor=0)
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torchvision/transforms/functional.py", line 725, in affine
+    matrix = _get_inverse_affine_matrix(center, angle, translate, scale, shear)
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torchvision/transforms/functional.py", line 688, in _get_inverse_affine_matrix
+    matrix = [scale / d * m for m in matrix]
+  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torchvision/transforms/functional.py", line 688, in <listcomp>
+    matrix = [scale / d * m for m in matrix]
+ZeroDivisionError: float division by zero
+

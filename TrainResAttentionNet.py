@@ -99,12 +99,12 @@ def main():
     validationData = OVDataSet(dataPartitions, 'validation', k, transform=validationTransform, logInfoFun=logging.info)
 
     # ===========debug==================
-    oneSampleTraining = True  # for debug
+    oneSampleTraining = False  # for debug
     useDataParallel = False  # for debug
     GPU_ID = 0  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
-    batchSize = 3  # 12 for use 4 GPUs
+    batchSize = 7  # 6 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()

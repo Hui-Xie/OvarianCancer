@@ -18,7 +18,9 @@ class OCDataTransform(object):
         zoffset = (self.m_depth -d)//2
 
         # specific parameters of affine transform
+        affine = False
         if random.uniform(0, 1) < self.m_prob:
+            affine = True
             angle = random.randrange(-180, 180)
             translate = random.randrange(-25, 25), random.randrange(-25, 25)  # 10% of maxsize
             scale = random.uniform(1, self.m_height/h)
@@ -42,7 +44,8 @@ class OCDataTransform(object):
             padding = (self.m_width- w)//2, (self.m_height - h)//2, self.m_width- (self.m_width- w)//2 -w, self.m_height - (self.m_height - h)//2 -h
             slice = TF.pad(slice, padding, fill=0, padding_mode='constant')
             # affine transform
-            slice = TF.affine(slice, angle, translate, scale, shear, resample=PIL.Image.BILINEAR, fillcolor=0)
+            if affine:
+                slice = TF.affine(slice, angle, translate, scale, shear, resample=PIL.Image.BILINEAR, fillcolor=0)
             # to tensor
             slice = TF.to_tensor(slice)
             outputTensor[z+zoffset,] = slice
