@@ -54,3 +54,6 @@ Loss Functions List: BCEWithLogitsLoss with weight of 1;
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
+0	3.1358	0.5700	0.7143	0.2333		2.2055	0.3143	0.0000	1.0000		2.2957	0.2941	0.0000	1.0000
+5	0.8634	0.6100	0.8429	0.0667		0.7578	0.6286	0.7500	0.3636		0.7386	0.6471	0.8750	0.1000
+10	0.6433	0.6900	0.9857	0.0000		0.6780	0.6286	0.9167	0.0000		0.5675	0.7059	0.9583	0.1000
