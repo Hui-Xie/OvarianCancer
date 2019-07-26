@@ -1,7 +1,7 @@
-Program ID: 19618
+Program ID: 787
 
 Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0']
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0']
 
 Major program changes: 
             ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
@@ -35,7 +35,7 @@ Training strategy:
 
           
 
-Program starting Time: 2019-07-26 15:30:42.952389
+Program starting Time: 2019-07-26 16:07:14.766801
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten
 
 Info: this is the 0th fold leave for test in the 4-fold cross-validation, with 20.0% of data for independent test.
@@ -49,11 +49,11 @@ In this train_0 dataset, total 100 files, where 1 has 70 with rate of 0.7
 In this validation_0 dataset, total 35 files, where 1 has 24 with rate of 0.6857142857142857
 === Network trains from scratch ====
 Network has total 71,720,500 parameters.
+Info: program will use 3 GPUs.
 Loss Functions List: BCEWithLogitsLoss with weight of 1; 
 
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
-0	3.1358	0.5700	0.7143	0.2333		2.2055	0.3143	0.0000	1.0000		2.2957	0.2941	0.0000	1.0000
-5	0.8634	0.6100	0.8429	0.0667		0.7578	0.6286	0.7500	0.3636		0.7386	0.6471	0.8750	0.1000
-10	0.6433	0.6900	0.9857	0.0000		0.6780	0.6286	0.9167	0.0000		0.5675	0.7059	0.9583	0.1000
+0	3.6466	0.6300	0.8143	0.2000		0.6286	0.6857	1.0000	0.0000		0.5958	0.7059	1.0000	0.0000
+5	0.6874	0.6800	0.9571	0.0333		0.6156	0.6857	1.0000	0.0000		0.5937	0.7059	1.0000	0.0000

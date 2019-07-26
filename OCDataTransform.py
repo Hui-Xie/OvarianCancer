@@ -4,6 +4,7 @@ import torchvision.transforms.functional as TF
 import random
 import PIL
 import torch
+import math
 
 class OCDataTransform(object):
     def __init__(self, depth, height, width, prob =0):
@@ -18,18 +19,26 @@ class OCDataTransform(object):
         zoffset = (self.m_depth -d)//2
 
         # specific parameters of affine transform
-        affine = False
-        if random.uniform(0, 1) < self.m_prob:
-            affine = True
-            angle = random.randrange(-180, 180)
-            translate = random.randrange(-25, 25), random.randrange(-25, 25)  # 10% of maxsize
-            scale = random.uniform(1, self.m_height/h)
-            shear = random.randrange(-90, 90)
-        else:
-            angle = 0
-            translate = 0,0
-            scale = 1
-            shear = 0
+        while True:
+            if random.uniform(0, 1) < self.m_prob:
+                affine = True
+                angle = random.randrange(-180, 180)
+                translate = random.randrange(-25, 25), random.randrange(-25, 25)  # 10% of maxsize
+                scale = random.uniform(1, self.m_height/h)
+                shear = random.randrange(-90, 90)
+            else:
+                affine = False
+                angle = 0
+                translate = 0,0
+                scale = 1
+                shear = 0
+
+            angle1 = math.radians(angle)
+            shear1 = math.radians(shear)
+            dInAffine = math.cos(angle1 + shear1) * math.cos(angle1) + math.sin(angle1 + shear1) * math.sin(angle1)
+            if  0 != dInAffine:
+                break
+
         # create output tensor
         outputTensor = torch.zeros((self.m_depth, self.m_height, self.m_width))
 
