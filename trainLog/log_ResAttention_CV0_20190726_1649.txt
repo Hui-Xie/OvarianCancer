@@ -1,4 +1,4 @@
-Program ID: 6445
+Program ID: 22623
 
 Program command: 
  ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0']
@@ -17,6 +17,7 @@ Major program changes:
                 (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
             4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
             5   20% data for independent test, remaining 80% data for 4-folc cross validation;
+            6   add lossweight for ajusting positive sample to 3/7.
 
 Discarded changes:                  
                   
@@ -35,7 +36,7 @@ Training strategy:
 
           
 
-Program starting Time: 2019-07-26 16:18:21.551702
+Program starting Time: 2019-07-26 16:49:26.013465
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten
 
 Info: this is the 0th fold leave for test in the 4-fold cross-validation, with 20.0% of data for independent test.
@@ -55,9 +56,3 @@ Loss Functions List: BCEWithLogitsLoss with weight of 1;
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
-0	2.7156	0.6100	0.7857	0.2000		0.6403	0.6857	1.0000	0.0000		0.6342	0.7059	1.0000	0.0000
-5	0.7082	0.7000	0.9857	0.0333		0.7781	0.3714	0.1667	0.8182		0.7585	0.4118	0.1667	1.0000
-10	0.6249	0.6400	0.9143	0.0000		0.5799	0.6857	1.0000	0.0000		0.5305	0.7059	1.0000	0.0000
-15	0.6250	0.6700	0.8429	0.2667		0.8589	0.6286	0.8750	0.0909		0.5145	0.7647	0.9583	0.3000
-20	0.6020	0.7200	0.8714	0.3667		0.6082	0.6571	0.9167	0.0909		0.6034	0.6765	0.7500	0.5000
-25	0.5168	0.8100	0.8857	0.6333		0.5937	0.6571	0.9167	0.0909		0.7804	0.5882	0.7917	0.1000

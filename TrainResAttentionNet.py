@@ -31,6 +31,7 @@ Major program changes:
                 (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
             4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
             5   20% data for independent test, remaining 80% data for 4-folc cross validation;
+            6   add lossweight for ajusting positive sample to 3/7.
 
 Discarded changes:                  
                   
@@ -129,7 +130,8 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    net.appendLossFunc(nn.BCEWithLogitsLoss(), 1)
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([3/7]))  # for imbalance training data
+    net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
         nGPU = torch.cuda.device_count()
