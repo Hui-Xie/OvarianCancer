@@ -15,3 +15,8 @@ Traceback (most recent call last):
   File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py", line 2077, in binary_cross_entropy_with_logits
     return torch.binary_cross_entropy_with_logits(input, target, weight, pos_weight, reduction_enum)
 RuntimeError: expected type torch.FloatTensor but got torch.cuda.FloatTensor
+Program ID of Predictive Network training:  24216
+
+Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0']
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190726_1655.txt
+.........

@@ -130,7 +130,7 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([3/7]))  # for imbalance training data
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([3/7]).to(device, dtype=torch.float))  # for imbalance training data
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
