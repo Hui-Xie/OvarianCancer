@@ -56,3 +56,4 @@ Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
 0	2.7156	0.6100	0.7857	0.2000		0.6403	0.6857	1.0000	0.0000		0.6342	0.7059	1.0000	0.0000
+5	0.7082	0.7000	0.9857	0.0333		0.7781	0.3714	0.1667	0.8182		0.7585	0.4118	0.1667	1.0000
