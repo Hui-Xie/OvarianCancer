@@ -76,8 +76,8 @@ class OVDataPartition():
         self.m_partition["train0s"] =  np.array_split(np.asarray(self.m_0FileIndices[nTest0:]), self.m_KFold)
         self.m_partition["train1s"] =  np.array_split(np.asarray(self.m_1FileIndices[nTest1:]), self.m_KFold)
 
-        self.m_logInfo(f"Infor: independent test Set has {N} files,and Training including validation Set has {N-Ntest} files which will be divided into {self.m_KFold} folds.")
-        self.m_logInfo(f"In the independent test set, 0 has {nTest0}, 1 has {nTest1}, the rate of 1s is {nTest1/Ntest}")
+        self.m_logInfo(f"Infor: the independent test set has {Ntest} files,and Training including validation Set has {N-Ntest} files which will be divided into {self.m_KFold} folds.")
+        self.m_logInfo(f"In the independent test set of {Ntest} files, 0 has {nTest0}, 1 has {nTest1}, the rate of 1s is {nTest1/Ntest}")
 
     def getLabels(self, dataIDs):
         labels =[]
@@ -114,7 +114,7 @@ class OVDataSet(data.Dataset):
     def __getitem__(self, index):
         ID = self.m_dataIDs[index]
         filename = self.m_dataPartioins.m_inputFilesList[ID]
-        data = np.load(filename)
+        data = np.load(filename).astype('float32')
         label = self.m_labels[index]
 
         if self.m_transform:

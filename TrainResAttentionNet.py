@@ -100,11 +100,12 @@ def main():
 
     # ===========debug==================
     oneSampleTraining = True  # for debug
-    useDataParallel = True  # for debug
-    GPU_ID = 1  # choices: 0,1,2,3 for lab server.
+    useDataParallel = False  # for debug
+    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
     # ===========debug==================
 
-    batchSize = 9  # 12 for use 4 GPUs
+    batchSize = 3  # 12 for use 4 GPUs
+    numWorkers = batchSize
 
     net = ResAttentionNet()
     optimizer = optim.Adam(net.parameters(), weight_decay=0)
@@ -170,9 +171,9 @@ def main():
         responseTrainTNR = 0.0
 
 
-        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=9):
+        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
-            gt = responseCpu.to(device, dtype=torch.long)
+            gt = responseCpu.to(device, dtype=torch.float)
 
             optimizer.zero_grad()
             xr = net.forward(inputs)
@@ -184,11 +185,13 @@ def main():
 
             # accumulate response and predict value
             if epoch % 5 == 0:
-                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                batchPredict = (xr>= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                batchGt = responseCpu.detach().numpy()
                 epochResponse = np.concatenate(
-                    (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
+                    (epochResponse, batchGt)) if epochResponse is not None else batchGt
+
 
             trainingLoss += batchLoss
             trainingBatches += 1
@@ -220,9 +223,9 @@ def main():
         responseValidationTNR = 0.0
 
         with torch.no_grad():
-            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=9):
-                inputs = inputs.to(device, dtype=torch.float),
-                gt     = responseCpu.to(device, dtype=torch.long)  # return a copy
+            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
+                inputs = inputs.to(device, dtype=torch.float)
+                gt     = responseCpu.to(device, dtype=torch.float)  # return a copy
 
                 xr = net.forward(inputs)
                 loss = lossFunc(xr, gt)
@@ -230,11 +233,12 @@ def main():
 
                 # accumulate response and predict value
 
-                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                batchPredict = (xr>= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                batchGt = responseCpu.detach().numpy()
                 epochResponse = np.concatenate(
-                    (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
+                    (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
                 validationLoss += batchLoss
                 validationBatches += 1
@@ -264,9 +268,9 @@ def main():
             responseTestTNR = 0.0
 
             with torch.no_grad():
-                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=9):
-                    inputs = inputs.to(device, dtype=torch.float),
-                    gt = responseCpu.to(device, dtype=torch.long)  # return a copy
+                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
+                    inputs = inputs.to(device, dtype=torch.float)
+                    gt = responseCpu.to(device, dtype=torch.float)  # return a copy
 
                     xr = net.forward(inputs)
                     loss = lossFunc(xr, gt)
@@ -275,11 +279,12 @@ def main():
 
                     # accumulate response and predict value
 
-                    batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                    batchPredict = (xr>= 0).cpu().detach().numpy().flatten()
                     epochPredict = np.concatenate(
                         (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                    batchGt = responseCpu.detach().numpy()
                     epochResponse = np.concatenate(
-                        (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
+                        (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
                     testLoss += batchLoss
                     testBatches += 1
@@ -297,9 +302,9 @@ def main():
 
 
         # ===========print train and test progress===============
-        outputString = f'{epoch}\t{trainingLoss:.4f}\t' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
-        outputString += f'\t\t{validationLoss:.4f}\t'   + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
-        outputString += f'\t\t{testLoss:.4f}\t' + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
+        outputString = f'{epoch}\t{trainingLoss:.4f}' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        outputString += f'\t\t{validationLoss:.4f}'   + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
+        outputString += f'\t\t{testLoss:.4f}'         + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============

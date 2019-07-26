@@ -45,7 +45,7 @@ class ResAttentionNet(BasicModel):
                         ResNeXtBlock(2048, 2048, nGroups=32, withMaxPooling=False)
                         )  # output size: 2048*8*8
         self.m_avgPool= nn.AvgPool2d(8)
-        self.m_fc1    = nn.Linear(2048, 2)
+        self.m_fc1    = nn.Linear(2048, 1)  # for sigmoid output, one number
 
 
     def forward(self, x):
@@ -59,4 +59,5 @@ class ResAttentionNet(BasicModel):
         x = self.m_avgPool(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)
+        x = x.squeeze()
         return x

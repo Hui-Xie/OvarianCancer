@@ -15,7 +15,7 @@ class ResNeXtBlock(nn.Module):
             self.m_maxPool =None
 
         self.m_reduceConv = nn.Conv2d(inChannels, inChannels, kernel_size=1, stride=1, padding=0, bias=False)
-        self.m_reduceBN = nn.BatchNorm2d(outChannels)
+        self.m_reduceBN = nn.BatchNorm2d(inChannels)
 
         self.m_groupConv = nn.Conv2d(inChannels, inChannels, kernel_size=3, stride=1, padding=1, groups=nGroups, bias=False)
         self.m_groupBN = nn.BatchNorm2d(inChannels)
