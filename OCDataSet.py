@@ -115,7 +115,7 @@ class OVDataSet(data.Dataset):
         ID = self.m_dataIDs[index]
         filename = self.m_dataPartioins.m_inputFilesList[ID]
         data = np.load(filename)
-        label = self.m_labels[ID]
+        label = self.m_labels[index]
 
         if self.m_transform:
             data = self.m_transform(data)
