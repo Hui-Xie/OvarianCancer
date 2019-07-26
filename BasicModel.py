@@ -26,6 +26,10 @@ class BasicModel(nn.Module):
         self.m_lossFuncList.append(lossFunc)
         self.m_lossWeightList.append(weight)
 
+    def getOnlyLossFunc(self):
+        assert (1 == len(self.m_lossFuncList))
+        return self.m_lossFuncList[0]
+
     def lossFunctionsInfo(self):
         return f'Loss Functions List: ' + f'\t'.join(f'{type(loss).__name__} with weight of {weight}; ' for loss, weight in zip(self.m_lossFuncList, self.m_lossWeightList))
 

@@ -9,7 +9,6 @@ import torch.optim as optim
 from torch.utils import data
 import logging
 
-
 from OCDataSet import *
 from FilesUtilities import *
 from MeasureUtilities import *
@@ -19,22 +18,32 @@ from NetMgr import NetMgr
 
 logNotes = r'''
 Major program changes: 
-                      ResNeXt-based Attention Net
+            ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
+            0   the input is a 3D full volume without any cropping; 
+            1   use slices as features channels in convolution, and use 1*1 convolution along slices to implement z direction convolution followed by 3*3 convolutino slice planes;
+                it just use three cascading 2D convolutions (frist z, then xy, and z directon again) to implement 3D convolution, like in the paper of ResNeXt below.
+                The benefits of this design:
+                A   reduce network parameters, hoping to reducing overfitting;
+                B   speed up training;
+                C   this implemented 3D convolutions are all in full slices space;
+            2   use group convolution to implement thick slice convolution to increase the network representation capability;
+            3   Use ResNeXt-based module like Paper "Aggregated Residual Transformations for Deep Neural Networks " 
+                (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
+            4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
+            5   20% data for independent test, remaining 80% data for 4-folc cross validation;
 
 Discarded changes:                  
                   
 
-Experiment setting for Image3d ROI to response:
-Input CT data: maximum size 140*251*251 (zyx) 3D numpy array with spacing size(5*2*2)
+Experiment setting:
+Input CT data: maximum size 140*251*251 (zyx) of 3D numpy array with spacing size(5*2*2)
 Ground truth: response binary label
-
 
 Predictive Model: 
 
 response Loss Function:  BCELogitLoss
 
 Data:   training data has 169 patients 
-
 
 Training strategy: 
 
@@ -57,7 +66,7 @@ def main():
     netPath = sys.argv[1]
     dataInputsPath = sys.argv[2]
     responsePath = sys.argv[3]
-    k = int(sys.argv[5])
+    k = int(sys.argv[4])
     inputSuffix = ".npy"
 
     curTime = datetime.datetime.now()
@@ -74,13 +83,12 @@ def main():
     logging.info(logNotes)
 
     logging.info(f'\nProgram starting Time: {str(curTime)}')
-
-    K_fold = 4
-    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
-
     logging.info(f"Info: netPath = {netPath}\n")
 
-    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, testProportion=0.2, logInfoFun=logging.info)
+    K_fold = 4
+    testRate = 0.2
+    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation, with {testRate:.1%} of data for independent test.\n")
+    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, testProportion=testRate, logInfoFun=logging.info)
 
     testTransform = OCDataTransform(140, 251, 251, 0)
     trainTransform = OCDataTransform(140, 251, 251, 0.9)
@@ -116,7 +124,7 @@ def main():
         bestTestPerf = netMgr.loadBestTestPerf()
         logging.info(f'Current best test performance: {bestTestPerf}')
     else:
-        logging.info(f"Network trains from scratch.")
+        logging.info(f"=== Network trains from scratch ====")
 
     logging.info(net.getParametersScale())
 
@@ -142,15 +150,18 @@ def main():
                  + f"\t\tVaLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                  + f"\t\tTeLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" )  # logging.info output head
 
-    oldTrainingLoss = 1000
     oldTestLoss = 1000
 
     for epoch in range(0, epochs):
         random.seed()
+        if useDataParallel:
+            lossFunc = net.module.getOnlyLossFunc()
+        else:
+            lossFunc = net.getOnlyLossFunc()
         # ================Training===============
         net.train()
         trainingLoss = 0.0
-        trainBatches = 0
+        trainingBatches = 0
 
         epochPredict = None
         epochResponse = None
@@ -158,10 +169,6 @@ def main():
         responseTrainTPR = 0.0
         responseTrainTNR = 0.0
 
-        if useDataParallel:
-            lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
-        else:
-            lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
         for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=9):
             inputs = inputs.to(device, dtype=torch.float)
@@ -169,14 +176,7 @@ def main():
 
             optimizer.zero_grad()
             xr = net.forward(inputs)
-            loss = torch.tensor(0.0).to(device)
-
-            for i, (lossFunc, weight) in enumerate(
-                    zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
-                        lossWeightList)):
-                if weight == 0:
-                    continue
-                loss += lossFunc(xr, gt) * weight
+            loss = lossFunc(xr, gt)
 
             loss.backward()
             optimizer.step()
@@ -190,12 +190,14 @@ def main():
                 epochResponse = np.concatenate(
                     (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
 
-
             trainingLoss += batchLoss
-            trainBatches += 1
+            trainingBatches += 1
 
-        if 0 != trainBatches:
-            trainingLoss /= trainBatches
+            if oneSampleTraining:
+                break
+
+        if 0 != trainingBatches:
+            trainingLoss /= trainingBatches
             lrScheduler.step()
 
         if epoch % 5 == 0:
@@ -219,18 +221,11 @@ def main():
 
         with torch.no_grad():
             for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=9):
-                inputs, gt = inputs.to(device, dtype=torch.float), responseCpu.to(device, dtype=torch.long)  # return a copy
+                inputs = inputs.to(device, dtype=torch.float),
+                gt     = responseCpu.to(device, dtype=torch.long)  # return a copy
 
                 xr = net.forward(inputs)
-                loss = torch.tensor(0.0).to(device)
-
-                for i, (lossFunc, weight) in enumerate(
-                        zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
-                            lossWeightList)):
-                    if weight == 0:
-                        continue
-                    loss += lossFunc(xr, gt) * weight
-
+                loss = lossFunc(xr, gt)
                 batchLoss = loss.item()
 
                 # accumulate response and predict value
@@ -243,6 +238,9 @@ def main():
 
                 validationLoss += batchLoss
                 validationBatches += 1
+
+                if oneSampleTraining:
+                    break
 
 
             if 0 != validationBatches:
@@ -267,17 +265,11 @@ def main():
 
             with torch.no_grad():
                 for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=9):
-                    inputs, gt = inputs.to(device, dtype=torch.float), responseCpu.to(device,  dtype=torch.long)  # return a copy
+                    inputs = inputs.to(device, dtype=torch.float),
+                    gt = responseCpu.to(device, dtype=torch.long)  # return a copy
 
                     xr = net.forward(inputs)
-                    loss = torch.tensor(0.0).to(device)
-
-                    for i, (lossFunc, weight) in enumerate(
-                            zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
-                                lossWeightList)):
-                        if weight == 0:
-                            continue
-                        loss += lossFunc(xr, gt) * weight
+                    loss = lossFunc(xr, gt)
 
                     batchLoss = loss.item()
 
@@ -291,6 +283,9 @@ def main():
 
                     testLoss += batchLoss
                     testBatches += 1
+
+                    if oneSampleTraining:
+                        break
 
                 if 0 != testBatches:
                     testLoss /= testBatches
