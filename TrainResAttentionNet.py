@@ -6,6 +6,7 @@ import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils import data
 import logging
 import os
 import numpy as np
@@ -13,6 +14,7 @@ import math
 
 from OCDataSet import *
 from FilesUtilities import *
+from MeasureUtilities import *
 from ResAttentionNet  import ResAttentionNet
 from OCDataTransform import *
 from NetMgr import NetMgr
@@ -87,7 +89,7 @@ def main():
     validationTransform = OCDataTransform(140, 251, 251, 0)
 
     testData = OVDataSet(dataPartitions, 'test', k, transform=testTransform, logInfoFun=logging.info)
-    trainData = OVDataSet(dataPartitions, 'train', k, transform=trainTransform, logInfoFun=logging.info)
+    trainingData = OVDataSet(dataPartitions, 'train', k, transform=trainTransform, logInfoFun=logging.info)
     validationData = OVDataSet(dataPartitions, 'validation', k, transform=validationTransform, logInfoFun=logging.info)
 
     # ===========debug==================
@@ -147,7 +149,6 @@ def main():
 
     for epoch in range(0, epochs):
         random.seed()
-
         # ================Training===============
         net.train()
         trainingLoss = 0.0
@@ -159,35 +160,17 @@ def main():
         responseTrainTPR = 0.0
         responseTrainTNR = 0.0
 
-        trainDiceSumList = [0 for _ in range(Kup)]
-        trainDiceCountList = [0 for _ in range(Kup)]
-        trainTPRSumList = [0 for _ in range(Kup)]
-        trainTPRCountList = [0 for _ in range(Kup)]
-
         if useDataParallel:
             lossWeightList = torch.Tensor(net.module.m_lossWeightList).to(device)
         else:
             lossWeightList = torch.Tensor(net.m_lossWeightList).to(device)
 
-        for (inputs1, seg1Cpu, response1Cpu), (inputs2, seg2Cpu, response2Cpu) in zip(
-                dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True,
-                                                 reSample=True),
-                dataMgr.dataSegResponseGenerator(dataMgr.m_trainingSetIndices, shuffle=True, dataAugment=True,
-                                                 reSample=True)):
-            if epoch % 5 == 0:
-                lambdaInBeta = 1  # this will make the comparison in the segmention per 5 epochs meaningful.
-            else:
-                lambdaInBeta = dataMgr.getLambdaInBeta()
-
-            inputs = inputs1 * lambdaInBeta + inputs2 * (1 - lambdaInBeta)
-            inputs = torch.from_numpy(inputs).to(device, dtype=torch.float)
-            seg1 = torch.from_numpy(seg1Cpu).to(device, dtype=torch.long)
-            seg2 = torch.from_numpy(seg2Cpu).to(device, dtype=torch.long)
-            response1 = torch.from_numpy(response1Cpu).to(device, dtype=torch.long)
-            response2 = torch.from_numpy(response2Cpu).to(device, dtype=torch.long)
+        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=9):
+            inputs = inputs.to(device, dtype=torch.float)
+            gt = responseCpu.to(device, dtype=torch.long)
 
             optimizer.zero_grad()
-            xr, xup = net.forward(inputs)
+            xr = net.forward(inputs)
             loss = torch.tensor(0.0).to(device)
 
             for i, (lossFunc, weight) in enumerate(
@@ -195,25 +178,8 @@ def main():
                         lossWeightList)):
                 if weight == 0:
                     continue
+                loss += lossFunc(xr, gt) * weight
 
-                if i == 0:
-                    if epoch >= pivotEpoch:  # only train treatment reponse branch after epoch 1000.
-                        outputs = xr
-                        gt1, gt2 = (response1, response2)
-                    else:
-                        continue
-                else:
-                    # only train seg path before pivotEpoch
-                    if epoch >= pivotEpoch:
-                        continue
-                    else:
-                        outputs = xup
-                        gt1, gt2 = (seg1, seg2)
-
-                if lambdaInBeta != 0:
-                    loss += lossFunc(outputs, gt1) * weight * lambdaInBeta
-                if 1 - lambdaInBeta != 0:
-                    loss += lossFunc(outputs, gt2) * weight * (1 - lambdaInBeta)
             loss.backward()
             optimizer.step()
             batchLoss = loss.item()
@@ -224,76 +190,48 @@ def main():
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 epochResponse = np.concatenate(
-                    (epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
-                trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
-                    = dataMgr.updateDiceTPRSumList(xup, seg1Cpu, Kup, trainDiceSumList, trainDiceCountList,
-                                                   trainTPRSumList, trainTPRCountList)
+                    (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
+
 
             trainingLoss += batchLoss
             trainBatches += 1
 
         if 0 != trainBatches:
             trainingLoss /= trainBatches
-            lrScheduler.step(trainingLoss)
+            lrScheduler.step()
 
         if epoch % 5 == 0:
-            responseTrainAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
-            responseTrainTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
-            responseTrainTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
-            trainDiceAvgList = [x / (y + 1e-8) for x, y in zip(trainDiceSumList, trainDiceCountList)]
-            trainTPRAvgList = [x / (y + 1e-8) for x, y in zip(trainTPRSumList, trainTPRCountList)]
+            responseTrainAccuracy = getAccuracy(epochPredict, epochResponse)
+            responseTrainTPR = getTPR(epochPredict, epochResponse)[0]
+            responseTrainTNR = getTNR(epochPredict, epochResponse)[0]
         else:
             continue  # only epoch %5 ==0, run validation set.
 
-        # ================Test===============
+        # ================Validation===============
         net.eval()
 
-        testLoss = 0.0
-        testBatches = 0
+        validationLoss = 0.0
+        validationBatches = 0
 
         epochPredict = None
         epochResponse = None
-        responseTestAccuracy = 0.0
-        responseTestTPR = 0.0
-        responseTestTNR = 0.0
-
-        testDiceSumList = [0 for _ in range(Kup)]
-        testDiceCountList = [0 for _ in range(Kup)]
-        testTPRSumList = [0 for _ in range(Kup)]
-        testTPRCountList = [0 for _ in range(Kup)]
+        responseValidationAccuracy = 0.0
+        responseValidationTPR = 0.0
+        responseValidationTNR = 0.0
 
         with torch.no_grad():
-            for inputs, segCpu, responseCpu in dataMgr.dataSegResponseGenerator(dataMgr.m_validationSetIndices,
-                                                                                shuffle=False, dataAugment=False,
-                                                                                reSample=False):
-                inputs, seg, response = torch.from_numpy(inputs), torch.from_numpy(segCpu), torch.from_numpy(
-                    responseCpu)
-                inputs, seg, response = inputs.to(device, dtype=torch.float), seg.to(device,
-                                                                                     dtype=torch.long), response.to(
-                    device, dtype=torch.long)  # return a copy
+            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=9):
+                inputs, gt = inputs.to(device, dtype=torch.float), responseCpu.to(device, dtype=torch.long)  # return a copy
 
-                xr, xup = net.forward(inputs)
+                xr = net.forward(inputs)
                 loss = torch.tensor(0.0).to(device)
 
                 for i, (lossFunc, weight) in enumerate(
                         zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
                             lossWeightList)):
-                    if i == 0:
-                        if epoch >= pivotEpoch:  # only train treatment reponse branch after epoch 1000.
-                            outputs = xr
-                            gt = response
-                        else:
-                            continue
-                    else:
-                        # only train seg path before pivotEpoch
-                        if epoch >= pivotEpoch:
-                            continue
-                        else:
-                            outputs = xup
-                            gt = seg
-
-                    if weight != 0:
-                        loss += lossFunc(outputs, gt) * weight
+                    if weight == 0:
+                        continue
+                    loss += lossFunc(xr, gt) * weight
 
                 batchLoss = loss.item()
 
@@ -305,39 +243,78 @@ def main():
                 epochResponse = np.concatenate(
                     (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
 
-                testDiceSumList, testDiceCountList, testTPRSumList, testTPRCountList \
-                    = dataMgr.updateDiceTPRSumList(xup, segCpu, Kup, testDiceSumList, testDiceCountList, testTPRSumList,
-                                                   testTPRCountList)
+                validationLoss += batchLoss
+                validationBatches += 1
 
-                testLoss += batchLoss
-                testBatches += 1
 
-            # ===========print train and test progress===============
-            if 0 != testBatches:
-                testLoss /= testBatches
+            if 0 != validationBatches:
+                validationLoss /= validationBatches
 
             if epoch % 5 == 0:
-                responseTestAccuracy = dataMgr.getAccuracy(epochPredict, epochResponse)
-                responseTestTPR = dataMgr.getTPR(epochPredict, epochResponse)[0]
-                responseTestTNR = dataMgr.getTNR(epochPredict, epochResponse)[0]
+                responseValidationAccuracy = getAccuracy(epochPredict, epochResponse)
+                responseValidationTPR = getTPR(epochPredict, epochResponse)[0]
+                responseValidationTNR = getTNR(epochPredict, epochResponse)[0]
 
-        testDiceAvgList = [x / (y + 1e-8) for x, y in zip(testDiceSumList, testDiceCountList)]
-        testTPRAvgList = [x / (y + 1e-8) for x, y in zip(testTPRSumList, testTPRCountList)]
+            # ================Independent Test===============
+            net.eval()
 
-        outputString = f'{epoch}\t{trainingLoss:.4f}\t' + f'\t'.join(
-            (f'{x:.3f}' for x in trainDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in
-                                                                          trainTPRAvgList)) + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
-        outputString += f'\t\t{testLoss:.4f}\t' + f'\t'.join(
-            (f'{x:.3f}' for x in testDiceAvgList)) + f'\t' + f'\t'.join((f'{x:.3f}' for x in
-                                                                         testTPRAvgList)) + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
+            testLoss = 0.0
+            testBatches = 0
+
+            epochPredict = None
+            epochResponse = None
+            responseTestAccuracy = 0.0
+            responseTestTPR = 0.0
+            responseTestTNR = 0.0
+
+            with torch.no_grad():
+                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=9):
+                    inputs, gt = inputs.to(device, dtype=torch.float), responseCpu.to(device,  dtype=torch.long)  # return a copy
+
+                    xr = net.forward(inputs)
+                    loss = torch.tensor(0.0).to(device)
+
+                    for i, (lossFunc, weight) in enumerate(
+                            zip(net.module.m_lossFuncList if useDataParallel else net.m_lossFuncList,
+                                lossWeightList)):
+                        if weight == 0:
+                            continue
+                        loss += lossFunc(xr, gt) * weight
+
+                    batchLoss = loss.item()
+
+                    # accumulate response and predict value
+
+                    batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                    epochPredict = np.concatenate(
+                        (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                    epochResponse = np.concatenate(
+                        (epochResponse, responseCpu)) if epochResponse is not None else responseCpu
+
+                    testLoss += batchLoss
+                    testBatches += 1
+
+                if 0 != testBatches:
+                    testLoss /= testBatches
+
+                if epoch % 5 == 0:
+                    responseTestAccuracy = getAccuracy(epochPredict, epochResponse)
+                    responseTestTPR = getTPR(epochPredict, epochResponse)[0]
+                    responseTestTNR = getTNR(epochPredict, epochResponse)[0]
+
+
+        # ===========print train and test progress===============
+        outputString = f'{epoch}\t{trainingLoss:.4f}\t' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        outputString += f'\t\t{validationLoss:.4f}\t'   + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
+        outputString += f'\t\t{testLoss:.4f}\t' + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============
         if trainingLoss < float('inf') and not math.isnan(trainingLoss):
             netMgr.saveNet()
-            if responseTestAccuracy > bestTestPerf or (responseTestAccuracy == bestTestPerf and testLoss < oldTestLoss):
-                oldTestLoss = testLoss
-                bestTestPerf = responseTestAccuracy
+            if responseValidationAccuracy > bestTestPerf or (responseValidationAccuracy == bestTestPerf and validationLoss < oldTestLoss):
+                oldTestLoss = validationLoss
+                bestTestPerf = responseValidationAccuracy
                 netMgr.saveBest(bestTestPerf)
             if 1.0 == responseTrainAccuracy:
                 logging.info(f"\n\nresponse Train Accuracy == 1, Program exit.")
@@ -347,7 +324,7 @@ def main():
             break
 
     torch.cuda.empty_cache()
-    logging.info(f"\n\n=============END of Training of SkyWatcher Predict Model =================")
+    logging.info(f"\n\n=============END of Training of RexAttentionNet Predict Model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
     curTime = datetime.datetime.now()
     logging.info(f'\nProgram Ending Time: {str(curTime)}')
