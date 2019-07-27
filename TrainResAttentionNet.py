@@ -34,7 +34,9 @@ Major program changes:
             6   add lossweight to adjust positive samples to 3/7 posweight in BCEWithLogitsLoss;
             
             Update:
-            1    reduced network parameters in July 27th, 2019
+            1    reduced network parameters to 3.14 million in July 27th, 2019, 0840am
+            2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters.
+            
 Discarded changes:                  
                   
 
