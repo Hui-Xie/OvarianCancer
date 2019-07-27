@@ -1,0 +1,61 @@
+Program ID: 25859
+
+Program command: 
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '2']
+
+Major program changes: 
+            ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
+            0   the input is a 3D full volume without any cropping; 
+            1   use slices as features channels in convolution, and use 1*1 convolution along slices to implement z direction convolution followed by 3*3 convolutino slice planes;
+                it just use three cascading 2D convolutions (frist z, then xy, and z directon again) to implement 3D convolution, like in the paper of ResNeXt below.
+                The benefits of this design:
+                A   reduce network parameters, hoping to reducing overfitting;
+                B   speed up training;
+                C   this implemented 3D convolutions are all in full slices space;
+            2   use group convolution to implement thick slice convolution to increase the network representation capability;
+            3   Use ResNeXt-based module like Paper "Aggregated Residual Transformations for Deep Neural Networks " 
+                (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
+            4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
+            5   20% data for independent test, remaining 80% data for 4-folc cross validation;
+            6   add lossweight for ajusting positive sample to 3/7.
+
+Discarded changes:                  
+                  
+
+Experiment setting:
+Input CT data: maximum size 140*251*251 (zyx) of 3D numpy array with spacing size(5*2*2)
+Ground truth: response binary label
+
+Predictive Model: 
+
+response Loss Function:  BCELogitLoss
+
+Data:   training data has 169 patients 
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-07-27 01:06:01.095509
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten
+
+Info: this is the 2th fold leave for test in the 4-fold cross-validation, with 20.0% of data for independent test.
+
+Infor: In all data of 169 files, label 0 has 51 files,
+	  and label 1 has 118 files, where positive response rate = 0.6982248520710059 in full data
+Infor: the independent test set has 34 files,and Training including validation Set has 135 files which will be divided into 4 folds.
+In the independent test set of 34 files, 0 has 10, 1 has 24, the rate of 1s is 0.7058823529411765
+In this test_2 dataset, total 34 files, where 1 has 24 with rate of 0.7058823529411765
+In this train_2 dataset, total 102 files, where 1 has 71 with rate of 0.696078431372549
+In this validation_2 dataset, total 33 files, where 1 has 23 with rate of 0.696969696969697
+=== Network trains from scratch ====
+Network has total 71,720,500 parameters.
+Info: program will use 2 GPUs.
+Loss Functions List: BCEWithLogitsLoss with weight of 1; 
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
+0	1.6042	0.5098	0.5070	0.5161		0.4071	0.3030	0.0000	1.0000		0.4071	0.2941	0.0000	1.0000
+5	0.5975	0.5000	0.5211	0.4516		0.3841	0.6970	1.0000	0.0000		0.3789	0.7059	1.0000	0.0000
+10	0.5415	0.6961	0.9859	0.0323		0.3931	0.6667	0.8696	0.2000		0.3833	0.6765	0.8750	0.2000
