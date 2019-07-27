@@ -32,7 +32,9 @@ Major program changes:
             4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
             5   20% data for independent test, remaining 80% data for 4-fold cross validation;
             6   add lossweight to adjust positive samples to 3/7 posweight in BCEWithLogitsLoss;
-
+            
+            Update:
+            1    reduced network parameters in July 27th, 2019
 Discarded changes:                  
                   
 
