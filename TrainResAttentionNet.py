@@ -35,7 +35,8 @@ Major program changes:
             
             Update:
             1    reduced network parameters to 3.14 million in July 27th, 2019, 0840am
-            2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters.
+            2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters, with 1.235 million parameters
+            
             
 Discarded changes:                  
                   
@@ -320,8 +321,8 @@ def main():
                 oldTestLoss = validationLoss
                 bestTestPerf = responseValidationAccuracy
                 netMgr.saveBest(bestTestPerf)
-            if 1.0 == responseTrainAccuracy:
-                logging.info(f"\n\nresponse Train Accuracy == 1, Program exit.")
+            if trainingLoss <= 0.02: # CrossEntropy use natural logarithm . -ln(0.98) = 0.0202. it means training accuracy  for each sample gets 98% above
+                logging.info(f"\n\n training loss less than 0.02, Program exit.")
                 break
         else:
             logging.info(f"\n\nError: training loss is infinity. Program exit.")
