@@ -21,7 +21,7 @@ Major program changes:
             ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
             0   the input is a 3D full volume without any cropping; 
             1   use slices as features channels in convolution, and use 1*1 convolution along slices to implement z direction convolution followed by 3*3 convolutino slice planes;
-                it just use three cascading 2D convolutions (frist z, then xy, and z directon again) to implement 3D convolution, like in the paper of ResNeXt below.
+                it just uses three cascading 2D convolutions (frist z, then xy, and z directon again) to implement 3D convolution, like in the paper of ResNeXt below.
                 The benefits of this design:
                 A   reduce network parameters, hoping to reducing overfitting;
                 B   speed up training;
