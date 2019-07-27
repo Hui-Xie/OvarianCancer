@@ -20,8 +20,8 @@ logNotes = r'''
 Major program changes: 
             ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
             0   the input is a 3D full volume without any cropping; 
-            1   use slices as features channels in convolution, and use 1*1 convolution along slices to implement z direction convolution followed by 3*3 convolutino slice planes;
-                it just uses three cascading 2D convolutions (frist z, then xy, and z directon again) to implement 3D convolution, like in the paper of ResNeXt below.
+            1   Use slices as features channels in convolutions,  and use 1*1 convolution along slices direction to implement z direction convolution followed by 3*3 convolutino inside slice planes;
+                It just uses three cascading 2D convolutions (frist z, then xy, and z directon again) to implement 3D convolution, like in the paper of ResNeXt below.
                 The benefits of this design:
                 A   reduce network parameters, hoping to reducing overfitting;
                 B   speed up training;
@@ -30,8 +30,8 @@ Major program changes:
             3   Use ResNeXt-based module like Paper "Aggregated Residual Transformations for Deep Neural Networks " 
                 (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
             4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
-            5   20% data for independent test, remaining 80% data for 4-folc cross validation;
-            6   add lossweight for ajusting positive sample to 3/7.
+            5   20% data for independent test, remaining 80% data for 4-fold cross validation;
+            6   add lossweight to adjust positive samples to 3/7 posweight in BCEWithLogitsLoss;
 
 Discarded changes:                  
                   
