@@ -36,7 +36,7 @@ Major program changes:
             Update:
             1    reduced network parameters to 3.14 million in July 27th, 2019, 0840am
             2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters, with 1.235 million parameters
-            
+            3    keep 2) parameter, change all maxpooling into average pooling.
             
 Discarded changes:                  
                   
