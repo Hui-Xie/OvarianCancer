@@ -324,7 +324,7 @@ def main():
             break
 
     torch.cuda.empty_cache()
-    logging.info(f"\n\n=============END of Training of RexAttentionNet Predict Model =================")
+    logging.info(f"\n\n=============END of Training of ResAttentionNet Predict Model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
     curTime = datetime.datetime.now()
     logging.info(f'\nProgram Ending Time: {str(curTime)}')
