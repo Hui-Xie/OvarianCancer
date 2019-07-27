@@ -1,4 +1,4 @@
-Program ID: 27064
+Program ID: 11706
 
 Program command: 
  ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '1']
@@ -36,7 +36,7 @@ Training strategy:
 
           
 
-Program starting Time: 2019-07-26 19:16:46.007292
+Program starting Time: 2019-07-26 19:53:07.681670
 Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten
 
 Info: this is the 1th fold leave for test in the 4-fold cross-validation, with 20.0% of data for independent test.
@@ -56,4 +56,4 @@ Loss Functions List: BCEWithLogitsLoss with weight of 1;
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
-0	1.3824	0.4653	0.4714	0.4516		0.4590	0.2941	0.0000	1.0000		0.4590	0.2941	0.0000	1.0000
+0	1.7416	0.4554	0.4286	0.5161		0.3889	0.7059	1.0000	0.0000		0.3889	0.7059	1.0000	0.0000
