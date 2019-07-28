@@ -1,5 +1,5 @@
-Program ID of Predictive Network training:  14444
+Program ID of Predictive Network training:  14600
 
-Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '2']
-Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV2_20190727_1958.txt
+Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '3']
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV3_20190728_0220.txt
 .........
