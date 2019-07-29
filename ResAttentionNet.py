@@ -11,44 +11,43 @@ class ResAttentionNet(BasicModel):
         # For input image size: 140*251*251 (zyx)
         # at July 29 09:25, 2019, continue to reduce network parameters again from  1.23 million parameters to ****
         # use average pooling. log_ResAttention_CV0_20190727_1708.txt
-        # todo 
         self.m_stage0 = nn.Sequential(
-                        ResNeXtBlock(140, 128, nGroups=20, poolingLayer=None),
-                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(128, 160, nGroups=32, poolingLayer=None)
-                        )  # ouput size: 160*251*251
+                        ResNeXtBlock(140, 96, nGroups=20, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        )  # ouput size: 96*251*251
         self.m_stage1 = nn.Sequential(
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=nn.AvgPool2d(2)),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None)
-                        ) # ouput size: 160*126*126
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.AvgPool2d(2)),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        ) # ouput size: 96*126*126
         self.m_stage2 = nn.Sequential(
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=nn.AvgPool2d(2)),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None)
-                        ) # output size: 160*128*128
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.AvgPool2d(2)),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        ) # output size: 96*128*128
         self.m_stage3 = nn.Sequential(
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=nn.AvgPool2d(2)),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None)
-                        )  # output size: 160*64*64
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.AvgPool2d(2)),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        )  # output size: 96*64*64
         self.m_stage4 = nn.Sequential(
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=nn.AvgPool2d(2)),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None)
-                        )  # output size: 160*32*32
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.AvgPool2d(2)),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        )  # output size: 96*24*24
         self.m_stage5 = nn.Sequential(
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=nn.AvgPool2d(2)),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None)
-                        )  # output size: 160*16*16
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.AvgPool2d(2)),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        )  # output size: 96*16*16
         self.m_stage6 = nn.Sequential(
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=nn.AvgPool2d(2)),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(160, 160, nGroups=32, poolingLayer=None)
-                        )  # output size: 160*8*8
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.AvgPool2d(2)),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None)
+                        )  # output size: 96*8*8
         self.m_avgPool= nn.AvgPool2d(8)
-        self.m_fc1    = nn.Linear(160, 1, bias=False)  # for sigmoid output, one number
+        self.m_fc1    = nn.Linear(96, 1, bias=False)  # for sigmoid output, one number
 
         """
         # For input image size: 140*251*251 (zyx)
