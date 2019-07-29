@@ -20,22 +20,22 @@ class ResAttentionNet(BasicModel):
                         ResNeXtBlock(48, 48, nGroups=12, poolingLayer=nn.MaxPool2d(3)),
                         ResNeXtBlock(48, 48, nGroups=12, poolingLayer=None),
                         ResNeXtBlock(48, 64, nGroups=12, poolingLayer=None)
-                        ) # ouput size: 64*84*84
+                        ) # ouput size: 64*83*83
         self.m_stage2 = nn.Sequential(
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=nn.MaxPool2d(3)),
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
                         ResNeXtBlock(64, 80, nGroups=16, poolingLayer=None)
-                        ) # output size: 80*28*28
+                        ) # output size: 80*27*27
         self.m_stage3 = nn.Sequential(
                         ResNeXtBlock(80, 80, nGroups=20, poolingLayer=nn.MaxPool2d(3)),
                         ResNeXtBlock(80, 80, nGroups=20, poolingLayer=None),
                         ResNeXtBlock(80, 96, nGroups=20, poolingLayer=None)
-                        )  # output size: 96*10*10
+                        )  # output size: 96*9*9
         self.m_stage4 = nn.Sequential(
                         ResNeXtBlock(96, 96, nGroups=24, poolingLayer=nn.MaxPool2d(2)),
                         ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
                         ResNeXtBlock(96, 112, nGroups=24, poolingLayer=None)
-                        )  # output size: 112*5*5
+                        )  # output size: 112*4*4
         self.m_avgPool= nn.AvgPool2d(5)
         self.m_fc1    = nn.Linear(112, 1, bias=False)  # for sigmoid output, one number
 
