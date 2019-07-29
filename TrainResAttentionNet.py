@@ -44,6 +44,11 @@ Major program changes:
                     use SGD optimizer, instead of Adam
                     add numbers of filters along deeper layer with step 12.
                     add saveDir's tims stamp;
+            7    at July 29th 15:18, 2019,
+                    change learning rate step_size = 5 from 10;
+                    before FC, we use conv2d
+                    learning rate start at 0.5.
+                            
                     
             
             
@@ -130,10 +135,10 @@ def main():
 
     net = ResAttentionNet()
     # optimizer = optim.Adam(net.parameters(), weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.5, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.95)
+    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.95)
 
     # Load network
     device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
