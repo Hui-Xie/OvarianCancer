@@ -135,7 +135,7 @@ def main():
 
     net = ResAttentionNet()
     # optimizer = optim.Adam(net.parameters(), weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.5, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.95)
