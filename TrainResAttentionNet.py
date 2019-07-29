@@ -39,6 +39,12 @@ Major program changes:
             3    keep 2) parameter, change all maxpooling into average pooling.
             4    At July 29th 09:37am, 2019, reduce filters to 96 to further reduce parameters, keep avgPool.
             5    at July 29th 11:25am, 2019,  reduce filter number to 48, and redue one stage
+            6    at July 29th 12:41, 2019:
+                    add GPUID in command line;
+                    use SGD optimizer, instead of Adam
+                    add numbers of filters along deeper layer with step 12.
+                    add saveDir's tims stamp;
+                    
             
             
 Discarded changes:                  
@@ -63,11 +69,12 @@ def printUsage(argv):
     print("============Train ResAttentionNet for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <fullPathOfData>  <fullPathOfResponseFile> k ")
-    print("where: k=0-3, the k-th fold in the 4-fold cross validation.")
+          "<netSavedPath> <fullPathOfData>  <fullPathOfResponseFile> k  GPUID")
+    print("where: k=0-3, the k-th fold in the 4-fold cross validation.\n"
+          "       GPUID=0-3, the specific GPU ID for single GPU running.\n")
 
 def main():
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
@@ -76,11 +83,17 @@ def main():
     dataInputsPath = sys.argv[2]
     responsePath = sys.argv[3]
     k = int(sys.argv[4])
+    GPU_ID = int(sys.argv[5])  # choices: 0,1,2,3 for lab server.
     inputSuffix = ".npy"
 
     curTime = datetime.datetime.now()
-    trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}.txt'
+    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+    trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
     logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
+
+    netPath = os.path.join(netPath, timeStr)
+    print(f"=============training from sratch============")
+    logging.info(f"=============training from sratch============")
 
     print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
@@ -109,15 +122,15 @@ def main():
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
-    useDataParallel = True  # for debug
-    GPU_ID = 0  # choices: 0,1,2,3 for lab server.
+    useDataParallel = False  # for debug
     # ===========debug==================
 
     batchSize = 14  # 7 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
-    optimizer = optim.Adam(net.parameters(), weight_decay=0)
+    # optimizer = optim.Adam(net.parameters(), weight_decay=0)
+    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.95)

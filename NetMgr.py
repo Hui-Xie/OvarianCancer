@@ -7,8 +7,10 @@ class NetMgr:
     def __init__(self, net, netPath, device):
         self.m_net = net
         self.m_netPath = netPath
+        if not os.path.exists(self.m_netPath):
+            os.mkdir(self.m_netPath)
         self.m_device = device
-        self.m_netBestPath = os.path.join(netPath, 'Best')
+        self.m_netBestPath = os.path.join(self.m_netPath, 'Best')
         if not os.path.exists(self.m_netBestPath):
             os.mkdir(self.m_netBestPath)
 
