@@ -9,8 +9,8 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
-        # at July 29 11:10, 2019, continue to reduce network parameters again from  505K parameters to ****
-        # use average pooling. log: **** 
+        # at July 29 11:10, 2019, continue to reduce network parameters again from  505K parameters to 155K
+        # use average pooling. log: log_ResAttention_CV0_20190729_1134.txt
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(140, 48, nGroups=20, poolingLayer=None),
                         ResNeXtBlock(48, 48, nGroups=12, poolingLayer=None),
