@@ -9,10 +9,10 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
-        # at July 30 15:20, 2019, continue the refine network,
+        # at July 30 15:20, 2019, continue the refine network: 90 million parameters
         # add maxPool at stage1, and 1024 is the final conv filter number.
-        # log:
-        #
+        # log:  log_ResAttention_CV1_20190730_152655.txt
+        #       log_ResAttention_CV0_20190730_152537.txt
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
                         ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
