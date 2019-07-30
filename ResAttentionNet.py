@@ -2,7 +2,6 @@ from BasicModel import BasicModel
 from ResNeXtBlock import ResNeXtBlock
 import torch.nn as nn
 import torch
-import sys
 
 # ResNeXt based Attention Net
 
@@ -392,8 +391,6 @@ class ResAttentionNet(BasicModel):
         x = self.m_stage3(x)
         x = self.m_stage4(x)
         x = self.m_stage5(x)
-        print ("x.shape after stage 5: ", x.shape)
-        sys.exit(0)
         x = self.m_layerBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)
