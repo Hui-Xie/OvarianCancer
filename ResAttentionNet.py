@@ -2,6 +2,7 @@ from BasicModel import BasicModel
 from ResNeXtBlock import ResNeXtBlock
 import torch.nn as nn
 import torch
+import sys
 
 # ResNeXt based Attention Net
 
@@ -9,8 +10,48 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
+        # at July 30 03:00, 2019, continue to reduce network parameters again,
+        # use stride 2, and cancel maxpool;
+        # log:
+        self.m_stage0 = nn.Sequential(
+                        ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
+                        ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
+                        ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None)
+                        )  # ouput size: 64*251*251
+        self.m_stage1 = nn.Sequential(
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None, stride=2),
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
+                        ResNeXtBlock(64, 128, nGroups=16, poolingLayer=None)
+                        ) # ouput size: 128*126*126
+        self.m_stage2 = nn.Sequential(
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None)
+                        ) # output size: 256*63*63
+        self.m_stage3 = nn.Sequential(
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None)
+                        )  # output size: 512*32*32
+        self.m_stage4 = nn.Sequential(
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None)
+                        )  # output size: 1024*16*16
+        self.m_stage5 = nn.Sequential(
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None)
+                        )  # output size: 1024*8*8
+        self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, stride=8, padding=0, bias=False)
+                            # nn.MaxPool2d(4)
+        self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+
+        """
+        # For input image size: 140*251*251 (zyx)
         # at July 29 14:39, 2019, continue to reduce network parameters again,
-        # use average pooling. log:
+        # use stride 3, and cancel maxpool;
+        # log:log_ResAttention_CV1_20190729_164118.txt, and  log_ResAttention_CV0_20190729_161232.txt
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
                         ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
@@ -39,6 +80,8 @@ class ResAttentionNet(BasicModel):
         self.m_layerBeforeFc=nn.Conv2d(112, 112, kernel_size=4, stride=4, padding=0, bias=False)
                             # nn.MaxPool2d(4)
         self.m_fc1    = nn.Linear(112, 1, bias=False)  # for sigmoid output, one number
+        
+        """
 
         """
         # For input image size: 140*251*251 (zyx)
@@ -348,6 +391,9 @@ class ResAttentionNet(BasicModel):
         x = self.m_stage2(x)
         x = self.m_stage3(x)
         x = self.m_stage4(x)
+        x = self.m_stage5(x)
+        print ("x.shape after stage 5: ", x.shape)
+        sys.exit(0)
         x = self.m_layerBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)

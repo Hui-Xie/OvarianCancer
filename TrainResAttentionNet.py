@@ -48,7 +48,11 @@ Major program changes:
                     change learning rate step_size = 5 from 10;
                     before FC, we use conv2d
                     learning rate start at 0.5.
-                            
+            8    at July 30th 03:00, 2019:
+                    add learning rate print;
+                    use stride =2;
+                    add filter number by 2 times along deeper layers.
+                                    
                     
             
             
@@ -175,7 +179,8 @@ def main():
 
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
-    logging.info(f"Epoch\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
+    logging.info(f"Epoch" + f"\tLearningRate"\
+                 + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                  + f"\t\tVaLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                  + f"\t\tTeLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" )  # logging.info output head
 
@@ -330,9 +335,11 @@ def main():
 
 
         # ===========print train and test progress===============
-        outputString = f'{epoch}\t{trainingLoss:.4f}' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        learningRate  = lrScheduler.get_lr()[0]
+        outputString  = f'{epoch}' +f'\t{learningRate:.9f}'
+        outputString += f'\t\t{trainingLoss:.4f}'       + f'\t{responseTrainAccuracy:.4f}'      + f'\t{responseTrainTPR:.4f}'      + f'\t{responseTrainTNR:.4f}'
         outputString += f'\t\t{validationLoss:.4f}'   + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
-        outputString += f'\t\t{testLoss:.4f}'         + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
+        outputString += f'\t\t{testLoss:.4f}'         + f'\t{responseTestAccuracy:.4f}'       + f'\t{responseTestTPR:.4f}'       + f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============
