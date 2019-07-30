@@ -1,24 +1,12 @@
 =============training from sratch============
-Program ID of Predictive Network training:  5029
+Program ID of Predictive Network training:  10668
 
 Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '0']
-Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190730_033913.txt
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190730_102840.txt
 .........
 =============training from sratch============
-Program ID of Predictive Network training:  24173
+Program ID of Predictive Network training:  14657
 
 Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '1', '1']
-Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV1_20190730_034528.txt
-.........
-=============training from sratch============
-Program ID of Predictive Network training:  25610
-
-Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '2', '2']
-Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV2_20190730_034553.txt
-.........
-=============training from sratch============
-Program ID of Predictive Network training:  28570
-
-Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '3', '3']
-Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV3_20190730_034647.txt
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV1_20190730_103008.txt
 .........

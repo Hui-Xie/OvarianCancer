@@ -9,7 +9,7 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
-        # at July 30 10:00, 2019, continue the refine network
+        # at July 30 10:00, 2019, continue the refine network, 294 million parameters
         # add maxPool at stage1
         # log:
         self.m_stage0 = nn.Sequential(
