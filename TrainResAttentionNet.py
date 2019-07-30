@@ -55,7 +55,9 @@ Major program changes:
             9    at July 30th, 10:13, 2019:
                     add MaxPool2d in stage1;
                     add final filters to 2048.
-                                            
+            10   at July 30th, 15:23, 2019
+                    final conv layer filter number: 1024
+                                                 
                     
             
             
