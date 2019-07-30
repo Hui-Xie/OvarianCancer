@@ -139,7 +139,7 @@ def main():
 
     net = ResAttentionNet()
     # optimizer = optim.Adam(net.parameters(), weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.95)
@@ -336,7 +336,7 @@ def main():
 
         # ===========print train and test progress===============
         learningRate  = lrScheduler.get_lr()[0]
-        outputString  = f'{epoch}' +f'\t{learningRate:.9f}'
+        outputString  = f'{epoch}' +f'\t{learningRate:1.4e}'
         outputString += f'\t\t{trainingLoss:.4f}'       + f'\t{responseTrainAccuracy:.4f}'      + f'\t{responseTrainTPR:.4f}'      + f'\t{responseTrainTNR:.4f}'
         outputString += f'\t\t{validationLoss:.4f}'   + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
         outputString += f'\t\t{testLoss:.4f}'         + f'\t{responseTestAccuracy:.4f}'       + f'\t{responseTestTPR:.4f}'       + f'\t{responseTestTNR:.4f}'
