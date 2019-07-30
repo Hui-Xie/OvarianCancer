@@ -9,8 +9,8 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 140*251*251 (zyx)
-        # at July 30 03:00, 2019, continue to reduce network parameters again,
-        # use stride 2, and cancel maxpool;
+        # at July 30 10:00, 2019, continue the refine network
+        # add maxPool at stage1
         # log:
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
@@ -18,38 +18,82 @@ class ResAttentionNet(BasicModel):
                         ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None)
                         )  # ouput size: 64*251*251
         self.m_stage1 = nn.Sequential(
-                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None, stride=2),
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
                         ResNeXtBlock(64, 128, nGroups=16, poolingLayer=None)
                         ) # ouput size: 128*126*126
         self.m_stage2 = nn.Sequential(
-                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, convStride=2),
                         ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
                         ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None)
                         ) # output size: 256*63*63
         self.m_stage3 = nn.Sequential(
-                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, convStride=2),
                         ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None),
                         ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None)
                         )  # output size: 512*32*32
         self.m_stage4 = nn.Sequential(
-                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, convStride=2),
                         ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None),
                         ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None)
                         )  # output size: 1024*16*16
         self.m_stage5 = nn.Sequential(
-                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, stride=2),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(1024, 2048, nGroups=32, poolingLayer=None)
+                        )  # output size: 1024*8*8
+        self.m_layerBeforeFc=nn.Conv2d(2048, 2048, kernel_size=8, stride=8, padding=0, bias=False)
+                            # nn.MaxPool2d(4)
+        self.m_fc1    = nn.Linear(2048, 1, bias=False)  # for sigmoid output, one number
+
+        """
+        # For input image size: 140*251*251 (zyx)
+        # at July 30 03:00, 2019, continue to reduce network parameters again, 90M parameters.
+        # use convStride 2, and cancel maxpool;
+        # log:log_ResAttention_CV0_20190730_033913.txt, log_ResAttention_CV1_20190730_034528.txt
+        #     log_ResAttention_CV2_20190730_034553.txt, log_ResAttention_CV3_20190730_034647.txt
+        self.m_stage0 = nn.Sequential(
+                        ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
+                        ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
+                        ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None)
+                        )  # ouput size: 64*251*251
+        self.m_stage1 = nn.Sequential(
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
+                        ResNeXtBlock(64, 128, nGroups=16, poolingLayer=None)
+                        ) # ouput size: 128*126*126
+        self.m_stage2 = nn.Sequential(
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None)
+                        ) # output size: 256*63*63
+        self.m_stage3 = nn.Sequential(
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None)
+                        )  # output size: 512*32*32
+        self.m_stage4 = nn.Sequential(
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None)
+                        )  # output size: 1024*16*16
+        self.m_stage5 = nn.Sequential(
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, convStride=2),
                         ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None),
                         ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None)
                         )  # output size: 1024*8*8
-        self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, stride=8, padding=0, bias=False)
+        self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, convStride=8, padding=0, bias=False)
                             # nn.MaxPool2d(4)
         self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+
+        
+        """
+
 
         """
         # For input image size: 140*251*251 (zyx)
         # at July 29 14:39, 2019, continue to reduce network parameters again,
-        # use stride 3, and cancel maxpool;
+        # use convStride 3, and cancel maxpool;
         # log:log_ResAttention_CV1_20190729_164118.txt, and  log_ResAttention_CV0_20190729_161232.txt
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
@@ -57,26 +101,26 @@ class ResAttentionNet(BasicModel):
                         ResNeXtBlock(32, 48, nGroups=8, poolingLayer=None)
                         )  # ouput size: 48*251*251
         self.m_stage1 = nn.Sequential(
-                        ResNeXtBlock(48, 48, nGroups=12, poolingLayer=None, stride=3),
+                        ResNeXtBlock(48, 48, nGroups=12, poolingLayer=None, convStride=3),
                         ResNeXtBlock(48, 48, nGroups=12, poolingLayer=None),
                         ResNeXtBlock(48, 64, nGroups=12, poolingLayer=None)
                         ) # ouput size: 64*84*84
         self.m_stage2 = nn.Sequential(
-                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None, stride=3),
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None, convStride=3),
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
                         ResNeXtBlock(64, 80, nGroups=16, poolingLayer=None)
                         ) # output size: 80*28*28
         self.m_stage3 = nn.Sequential(
-                        ResNeXtBlock(80, 80, nGroups=20, poolingLayer=None, stride=3),
+                        ResNeXtBlock(80, 80, nGroups=20, poolingLayer=None, convStride=3),
                         ResNeXtBlock(80, 80, nGroups=20, poolingLayer=None),
                         ResNeXtBlock(80, 96, nGroups=20, poolingLayer=None)
                         )  # output size: 96*10*10
         self.m_stage4 = nn.Sequential(
-                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None, stride=3),
+                        ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None, convStride=3),
                         ResNeXtBlock(96, 96, nGroups=24, poolingLayer=None),
                         ResNeXtBlock(96, 112, nGroups=24, poolingLayer=None)
                         )  # output size: 112*4*4
-        self.m_layerBeforeFc=nn.Conv2d(112, 112, kernel_size=4, stride=4, padding=0, bias=False)
+        self.m_layerBeforeFc=nn.Conv2d(112, 112, kernel_size=4, convStride=4, padding=0, bias=False)
                             # nn.MaxPool2d(4)
         self.m_fc1    = nn.Linear(112, 1, bias=False)  # for sigmoid output, one number
         

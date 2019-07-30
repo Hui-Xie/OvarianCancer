@@ -50,9 +50,12 @@ Major program changes:
                     learning rate start at 0.5.
             8    at July 30th 03:00, 2019:
                     add learning rate print;
-                    use stride =2;
+                    use convStride =2;
                     add filter number by 2 times along deeper layers.
-                                    
+            9    at July 30th, 10:13, 2019:
+                    add MaxPool2d in stage1;
+                    add final filters to 2048.
+                                            
                     
             
             
@@ -142,7 +145,7 @@ def main():
     optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.95)
+    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.95)
 
     # Load network
     device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")

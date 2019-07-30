@@ -52,7 +52,7 @@ segmentation label: 23*127*127 with spacing size(5*2*2) segmentation label with 
 
 
 Predictive Model: 1,  first 3-layer dense conv block with channel size 128.
-                  2,  and 3 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+                  2,  and 3 dense conv DownBB blocks,  each of which includes a convStride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
                   Total network learning parameters are 119 million.

@@ -33,7 +33,7 @@ class SegV2DModel_78(BasicModel):
 
         self.m_up6   = UpBB(16 * C, 16 * C, (3, 3), stride=(2, 2), nLayers=N)    # output: 16C*7*7
         self.m_up5   = UpBB(32 * C, 8 * C, (3, 3), stride=(2, 2), nLayers=N)     # output: 8C*15*15
-        # self.m_up5   = Up2dBB(16 * C, 8 * C, (3, 3), stride=(2, 2), nLayers=N)     # output: 8C*15*15
+        # self.m_up5   = Up2dBB(16 * C, 8 * C, (3, 3), convStride=(2, 2), nLayers=N)     # output: 8C*15*15
         self.m_up4   = UpBB(16 * C, 4 * C, (5, 5), stride=(2, 2), nLayers=N)     # output: 4C*33*33
         self.m_up3   = UpBB(8 * C, 2 * C, (5, 5), stride=(2, 2), nLayers=N)      # output: 2C*69*69
         self.m_up2   = UpBB(4 * C, C, (3, 3), stride=(2, 2), nLayers=N)          # output:C*139*139

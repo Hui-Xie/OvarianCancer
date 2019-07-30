@@ -34,7 +34,7 @@ Input: 1536*51*49 Tensor as latent vector,
              49 =7*7 is the flatted feature map for each filter.
 
 Predictive Model: 1,  first 4-layer dense conv block reducing feature space into 768 with tensor size 768*51*49 
-                  2,  and 4 dense conv blocks each of which includes a stride 2 conv and 4-layers dense conv block; now the the tensor is with size 48*2*2
+                  2,  and 4 dense conv blocks each of which includes a convStride 2 conv and 4-layers dense conv block; now the the tensor is with size 48*2*2
                   3,  and a simple conv-batchNorm-Relu layer with filter size(2,2) change the tensor with size of  48*1;
                   4,  and 2 fully connected layers  changes the tensor into size 2*1;
                   5  final a softmax for binary classification;
@@ -59,7 +59,7 @@ Experiment setting for Image3d ROI to response:
 Input: 147*281*281  3D CT raw image ROI as numpy array 
        
 Predictive Model: 1,  first 3-layer dense conv block with channel size 24.
-                  2,  and 6 dense conv DownBB blocks,  each of which includes a stride 2 conv and 3-layers dense conv block; 
+                  2,  and 6 dense conv DownBB blocks,  each of which includes a convStride 2 conv and 3-layers dense conv block; 
                   3,  and 3 fully connected layers  changes the tensor into size 2*1;
                   4,  final a softmax for binary classification;
                   Total network learning parameters are 236K.
