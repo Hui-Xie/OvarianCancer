@@ -1,0 +1,85 @@
+=============training from sratch============
+Program ID: 28570
+
+Program command: 
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten', '/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images_npy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '3', '3']
+
+Major program changes: 
+            ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
+            0   the input is a 3D full volume without any cropping; 
+            1   Use slices as features channels in convolutions,  and use 1*1 convolution along slices direction to implement z direction convolution followed by 3*3 convolutino inside slice planes;
+                It just uses three cascading 2D convolutions (first z, then xy, and z direction again) to implement 3D convolution, like in the paper of ResNeXt below.
+                The benefits of this design:
+                A   reduce network parameters, hoping to reducing overfitting;
+                B   speed up training;
+                C   this implemented 3D convolutions are all in full slices space;
+            2   use group convolution to implement thick slice convolution to increase the network representation capability;
+            3   Use ResNeXt-based module like Paper "Aggregated Residual Transformations for Deep Neural Networks " 
+                (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
+            4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
+            5   20% data for independent test, remaining 80% data for 4-fold cross validation;
+            6   add lossweight to adjust positive samples to 3/7 posweight in BCEWithLogitsLoss;
+            
+            Update:
+            1    reduced network parameters to 3.14 million in July 27th, 2019, 0840am
+            2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters, with 1.235 million parameters
+            3    keep 2) parameter, change all maxpooling into average pooling.
+            4    At July 29th 09:37am, 2019, reduce filters to 96 to further reduce parameters, keep avgPool.
+            5    at July 29th 11:25am, 2019,  reduce filter number to 48, and redue one stage
+            6    at July 29th 12:41, 2019:
+                    add GPUID in command line;
+                    use SGD optimizer, instead of Adam
+                    add numbers of filters along deeper layer with step 12.
+                    add saveDir's tims stamp;
+            7    at July 29th 15:18, 2019,
+                    change learning rate step_size = 5 from 10;
+                    before FC, we use conv2d
+                    learning rate start at 0.5.
+            8    at July 30th 03:00, 2019:
+                    add learning rate print;
+                    use stride =2;
+                    add filter number by 2 times along deeper layers.
+                                    
+                    
+            
+            
+Discarded changes:                  
+                  
+
+Experiment setting:
+Input CT data: maximum size 140*251*251 (zyx) of 3D numpy array with spacing size(5*2*2)
+Ground truth: response binary label
+
+Predictive Model: 
+
+response Loss Function:  BCELogitLoss
+
+Data:   training data has 169 patients 
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-07-30 03:46:47.231627
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtAtten/20190730_034647
+
+Info: this is the 3th fold leave for test in the 4-fold cross-validation, with 20.0% of data for independent test.
+
+Infor: In all data of 169 files, label 0 has 51 files,
+	  and label 1 has 118 files, where positive response rate = 0.6982248520710059 in full data
+Infor: the independent test set has 34 files,and Training including validation Set has 135 files which will be divided into 4 folds.
+In the independent test set of 34 files, 0 has 10, 1 has 24, the rate of 1s is 0.7058823529411765
+In this test_3 dataset, total 34 files, where 1 has 24 with rate of 0.7058823529411765
+In this train_3 dataset, total 102 files, where 1 has 71 with rate of 0.696078431372549
+In this validation_3 dataset, total 33 files, where 1 has 23 with rate of 0.696969696969697
+=== Network trains from scratch ====
+Network has total 90,380,916 parameters.
+Loss Functions List: BCEWithLogitsLoss with weight of 1; 
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
+0	1.0000e-02		1.2070	0.4608	0.4789	0.4194		0.3925	0.3030	0.0000	1.0000		0.3933	0.2941	0.0000	1.0000
+5	9.5000e-03		5.7408	0.3824	0.2817	0.6129		0.7450	0.3030	0.0000	1.0000		0.7248	0.2941	0.0000	1.0000
+10	9.0250e-03		1.5691	0.5294	0.5634	0.4516		63.9373	0.6970	0.9130	0.2000		55.0844	0.6471	0.9167	0.0000
+15	8.5737e-03		0.4870	0.4510	0.2676	0.8710		0.6125	0.4545	0.5217	0.3000		0.4552	0.5882	0.7083	0.3000
