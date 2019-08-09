@@ -23,6 +23,9 @@ for file in filesList:
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
 
+    # window level image into [0,300]
+
+
     label = file.replace("_CT.nrrd", "_Seg.nrrd").replace("images/", "labels/")
     label3d = sitk.GetArrayFromImage(sitk.ReadImage(label))
 
