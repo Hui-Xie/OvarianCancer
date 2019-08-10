@@ -32,6 +32,7 @@ class SpatialTransformer(nn.Module):
         xs = x
         for layer in self.m_localization:
             xs = layer(xs)
+        xs = torch.reshape(xs, (xs.shape[0], xs.numel() // xs.shape[0]))
         xs = self.m_regression(xs)
         theta = xs.view(-1, 2, 3)
 
