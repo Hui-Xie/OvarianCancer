@@ -124,15 +124,15 @@ def main():
     K_fold = 4
     testRate = 0.2
     logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation, with {testRate:.1%} of data for independent test.\n")
-    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, testProportion=testRate, logInfoFun=logging.info)
+    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, k, testProportion=testRate, logInfoFun=logging.info)
 
-    testTransform = OCDataTransform(140, 251, 251, 0)
-    trainTransform = OCDataTransform(140, 251, 251, 0.9)
-    validationTransform = OCDataTransform(140, 251, 251, 0)
+    testTransform = OCDataTransform(0)
+    trainTransform = OCDataTransform(0.9)
+    validationTransform = OCDataTransform(0)
 
-    testData = OVDataSet(dataPartitions, 'test', k, transform=testTransform, logInfoFun=logging.info)
-    trainingData = OVDataSet(dataPartitions, 'train', k, transform=trainTransform, logInfoFun=logging.info)
-    validationData = OVDataSet(dataPartitions, 'validation', k, transform=validationTransform, logInfoFun=logging.info)
+    testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info)
+    trainingData = OVDataSet('training', dataPartitions,  transform=trainTransform, logInfoFun=logging.info)
+    validationData = OVDataSet('validation', dataPartitions,  transform=validationTransform, logInfoFun=logging.info)
 
     # ===========debug==================
     oneSampleTraining = False  # for debug

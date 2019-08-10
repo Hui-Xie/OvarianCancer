@@ -8,6 +8,46 @@ import torch
 class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
+        # For input image size: 231*251*251 (zyx)
+        # at Aug 10 11:56, 2019, change network for new data
+        # add maxPool at stage1, and 1024 is the final conv filter number.
+        # log:
+        #
+        self.m_stage0 = nn.Sequential(
+                        ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
+                        ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
+                        ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None)
+                        )  # ouput size: 64*251*251
+        self.m_stage1 = nn.Sequential(
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
+                        ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
+                        ResNeXtBlock(64, 128, nGroups=16, poolingLayer=None)
+                        ) # ouput size: 128*126*126
+        self.m_stage2 = nn.Sequential(
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None)
+                        ) # output size: 256*63*63
+        self.m_stage3 = nn.Sequential(
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None)
+                        )  # output size: 512*32*32
+        self.m_stage4 = nn.Sequential(
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None)
+                        )  # output size: 1024*16*16
+        self.m_stage5 = nn.Sequential(
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, convStride=2),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None)
+                        )  # output size: 1024*8*8
+        self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, stride=8, padding=0, bias=False)
+                            # nn.MaxPool2d(4)
+        self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+
+        """
         # For input image size: 140*251*251 (zyx)
         # at July 30 15:20, 2019, continue the refine network: 90 million parameters
         # add maxPool at stage1, and 1024 is the final conv filter number.
@@ -46,6 +86,8 @@ class ResAttentionNet(BasicModel):
         self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, stride=8, padding=0, bias=False)
                             # nn.MaxPool2d(4)
         self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+        
+        """
 
 
         """

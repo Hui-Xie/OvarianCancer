@@ -70,27 +70,28 @@ class OVDataPartition():
         folds0 = np.array_split(np.asarray(self.m_0FileIndices), self.m_KFold)
         folds1 = np.array_split(np.asarray(self.m_1FileIndices), self.m_KFold)
 
-        self.m_partition = {}
+        self.m_partitions = {}
         k = self.m_k
         K = self.m_KFold
-        self.m_partition["test"] = folds0[k].tolist()+ folds1[k].tolist()
+        self.m_partitions["test"] = folds0[k].tolist() + folds1[k].tolist()
         k1 = (k+1)% K  # validation k
-        self.m_partition["validation"] =  folds0[k1].tolist()+ folds1[k1].tolist()
-        self.m_partition["training"] = []
+        self.m_partitions["validation"] = folds0[k1].tolist() + folds1[k1].tolist()
+        self.m_partitions["training"] = []
         for i in range(K):
             if i != k and i != k1:
-                self.m_partition["training"] += folds0[i].tolist()+ folds1[i].tolist()
-        self.m_logInfo(f"{K}-fold cross validation: the {k}th fold for test, the {k1}th fold for validation, remaining folds for training.")
+                self.m_partitions["training"] += folds0[i].tolist() + folds1[i].tolist()
+        self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
 
 
 
 class OVDataSet(data.Dataset):
-    def __init__(self, partitionName, partition, transform=None, logInfoFun=print):
-        self.m_dataIDs = partition
+    def __init__(self, name, dataPartitions, transform=None, logInfoFun=print):
+        self.m_dataPartitions = dataPartitions
+        self.m_dataIDs = self.m_dataPartitions.m_partitions[name]
         self.m_transform = transform
         self.m_logInfo = logInfoFun
         self.m_labels = self.getLabels(self.m_dataIDs)
-        self.m_logInfo(f"In {partitionName} dataset, total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels)/len(self.m_labels)}")
+        self.m_logInfo(f"In {name} dataset, total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels) / len(self.m_labels)}")
 
     def __len__(self):
         return len(self.m_labels)
@@ -109,6 +110,6 @@ class OVDataSet(data.Dataset):
     def getLabels(self, dataIDs):
         labels = []
         for id in dataIDs:
-            label = self.m_labelsList[id]
+            label = self.m_dataPartitions.m_labelsList[id]
             labels.append(label)
         return labels

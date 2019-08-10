@@ -6,26 +6,23 @@ import PIL
 import torch
 import math
 
-class OCDataTransform(object):
-    def __init__(self, depth, height, width, prob =0):
-        self.m_depth = depth
-        self.m_height = height
-        self.m_width = width
-        self.m_prob = prob
+# notes: from nrrd to numpy, the patient data have performed window level shreshold, [0,1] normalization, and 0-padding to [231,251,251]
 
+class OCDataTransform(object):
+    def __init__(self, prob =0):
+        self.m_prob = prob
 
     def __call__(self, data):
         d,h,w = data.shape
-        zoffset = (self.m_depth -d)//2
 
         # specific parameters of affine transform
         while True:
             if random.uniform(0, 1) < self.m_prob:
                 affine = True
-                angle = random.randrange(-180, 180)
-                translate = random.randrange(-25, 25), random.randrange(-25, 25)  # 10% of maxsize
-                scale = random.uniform(1, self.m_height/h)
-                shear = random.randrange(-90, 90)
+                angle = random.randrange(-180, 180, 10)
+                translate = random.randrange(-38, 38, 3), random.randrange(-38, 38, 3)  # 15% of maxsize of Y, X
+                scale = 1.0 # do not scale, random.uniform(1, self.m_height/h)
+                shear = random.randrange(-90, 90, 10)
             else:
                 affine = False
                 angle = 0
@@ -40,24 +37,18 @@ class OCDataTransform(object):
                 break
 
         # create output tensor
-        outputTensor = torch.zeros((self.m_depth, self.m_height, self.m_width))
+        outputTensor = torch.zeros((d,h,w))
 
         for z in range(d):
-            slice = data[z,]
-            # normalize
-            slice = slice - slice.mean()
-            slice = slice/slice.max()
-            # to PIL image
-            slice = TF.to_pil_image(slice)
-            # padding
-            padding = (self.m_width- w)//2, (self.m_height - h)//2, self.m_width- (self.m_width- w)//2 -w, self.m_height - (self.m_height - h)//2 -h
-            slice = TF.pad(slice, padding, fill=0, padding_mode='constant')
+            slice = data[z,]  # float[0,1] ndarray
             # affine transform
             if affine:
+                # to PIL image
+                slice = TF.to_pil_image(slice)
                 slice = TF.affine(slice, angle, translate, scale, shear, resample=PIL.Image.BILINEAR, fillcolor=0)
             # to tensor
             slice = TF.to_tensor(slice)
-            outputTensor[z+zoffset,] = slice
+            outputTensor[z,] = slice
         return outputTensor
 
     def __repr__(self):

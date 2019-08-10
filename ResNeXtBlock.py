@@ -9,6 +9,9 @@ class ResNeXtBlock(nn.Module):
     def __init__(self, inChannels, outChannels, nGroups, poolingLayer=None, convStride=1):
         super().__init__()
 
+        if inChannels % nGroups !=0:
+            print(f"Error: inChannels {inChannels} must be integer times of nGroups{nGroups}.")
+
         self.m_poolingLayer = poolingLayer
 
         self.m_reduceConv = nn.Conv2d(inChannels, inChannels, kernel_size=1, stride=1, padding=0, bias=False)
