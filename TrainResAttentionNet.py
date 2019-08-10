@@ -57,7 +57,14 @@ Major program changes:
                     add final filters to 2048.
             10   at July 30th, 15:23, 2019
                     final conv layer filter number: 1024
-                                                 
+            11   at Aug 10th, 2019:
+                    A. Add new patient data; and exclude non-standard patient data;
+                    B. test the k-th fold,  validation on the (k+1)th fold;
+                    C. new inputsize: 231*251*251 with pixels size 3*2*2 mm
+                    D. data normalize into [0,1] after window level shresthold [0,300]
+                    E. put data padding in to converting from nrrd to numpy;
+                    
+                                                        
                     
             
             
@@ -124,7 +131,7 @@ def main():
     K_fold = 4
     testRate = 0.2
     logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation, with {testRate:.1%} of data for independent test.\n")
-    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, k, testProportion=testRate, logInfoFun=logging.info)
+    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     testTransform = OCDataTransform(0)
     trainTransform = OCDataTransform(0.9)
@@ -139,7 +146,7 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 12  # 7 is for 1 GPU
+    batchSize = 5  # 7 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()

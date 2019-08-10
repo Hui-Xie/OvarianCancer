@@ -14,7 +14,7 @@ class ResAttentionNet(BasicModel):
         # log:
         #
         self.m_stage0 = nn.Sequential(
-                        ResNeXtBlock(140, 32, nGroups=20, poolingLayer=None),
+                        ResNeXtBlock(231, 32, nGroups=33, poolingLayer=None),
                         ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
                         ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None)
                         )  # ouput size: 64*251*251
