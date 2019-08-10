@@ -91,14 +91,14 @@ class OVDataSet(data.Dataset):
         self.m_transform = transform
         self.m_logInfo = logInfoFun
         self.m_labels = self.getLabels(self.m_dataIDs)
-        self.m_logInfo(f"In {name} dataset, total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels) / len(self.m_labels)}")
+        self.m_logInfo(f" {name} dataset:  total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels) / len(self.m_labels)}")
 
     def __len__(self):
         return len(self.m_labels)
 
     def __getitem__(self, index):
         ID = self.m_dataIDs[index]
-        filename = self.m_dataPartioins.m_inputFilesList[ID]
+        filename = self.m_dataPartitions.m_inputFilesList[ID]
         data = np.load(filename).astype('float32')
         label = self.m_labels[index]
 

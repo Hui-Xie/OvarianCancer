@@ -79,7 +79,7 @@ Predictive Model:
 
 response Loss Function:  BCELogitLoss
 
-Data:   training data has 169 patients 
+Data:   total 220 patients, test 56, validation 55, and training 109.  
 
 Training strategy: 
 
@@ -128,9 +128,8 @@ def main():
     logging.info(f'\nProgram starting Time: {str(curTime)}')
     logging.info(f"Info: netPath = {netPath}\n")
 
-    K_fold = 4
-    testRate = 0.2
-    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation, with {testRate:.1%} of data for independent test.\n")
+    K_fold = 5
+    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
     dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     testTransform = OCDataTransform(0)
@@ -146,7 +145,7 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 5  # 7 is for 1 GPU
+    batchSize = 10  # 9 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
@@ -172,7 +171,7 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([3/7]).to(device, dtype=torch.float))  # for imbalance training data
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([0.35/0.65]).to(device, dtype=torch.float))  # for imbalance training data
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
