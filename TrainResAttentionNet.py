@@ -79,7 +79,7 @@ Predictive Model:
 
 response Loss Function:  BCELogitLoss
 
-Data:   total 220 patients, test 56, validation 55, and training 109.  
+Data:   total 220 patients, 5-fold cross validation, test 45, validation 45, and training 130.  
 
 Training strategy: 
 
