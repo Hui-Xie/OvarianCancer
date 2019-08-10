@@ -63,6 +63,8 @@ Major program changes:
                     C. new inputsize: 231*251*251 with pixels size 3*2*2 mm
                     D. data normalize into [0,1] after window level shresthold [0,300]
                     E. put data padding in to converting from nrrd to numpy;
+                    F. Add STN network;
+                    
                     
                                                         
                     
@@ -145,7 +147,7 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 12  # 12 is for 1 GPU
+    batchSize = 8  # 12 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
