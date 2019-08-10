@@ -145,12 +145,12 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 10  # 9 is for 1 GPU
+    batchSize = 12  # 12 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
     # optimizer = optim.Adam(net.parameters(), weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.95)
