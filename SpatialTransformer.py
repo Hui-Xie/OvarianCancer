@@ -12,10 +12,10 @@ class SpatialTransformer(nn.Module):
         self.m_localization.append(nn.Conv2d(inChannels, midChannels, kernel_size=1, stride=1, padding=0, bias=False))
         self.m_localization.append(nn.BatchNorm2d(midChannels))
         self.m_localization.append(nn.ReLU(inplace=True))
-        while (x>50 and y >50):
-            self.m_localization.append(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=2, padding=0, dilation=3, bias=False))
-            x = math.floor((x-3*(3-1)-1)/2+1)
-            y = math.floor((y-3*(3-1)-1)/2+1)
+        while (x>25 and y >25):
+            self.m_localization.append(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=1, padding=0, dilation=1, bias=False))
+            x = math.floor((x-1*(3-1)-1)/1+1)
+            y = math.floor((y-1*(3-1)-1)/1+1)
             self.m_localization.append(nn.MaxPool2d(kernel_size=3, stride=2))
             x = math.floor((x - 1 * (3 - 1) - 1) / 2 + 1)
             y = math.floor((y - 1 * (3 - 1) - 1) / 2 + 1)
