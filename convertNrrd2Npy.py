@@ -35,7 +35,7 @@ for file in filesList:
 
     # normalize image with std  for each slice
     shape = image3d.shape
-    for i in shape[0]:
+    for i in range(shape[0]):
         slice = image3d[i,]
         mean = np.mean(slice)
         std  = np.std(slice)
