@@ -64,6 +64,7 @@ Major program changes:
                     D. data normalize into [0,1] after window level shresthold [0,300]
                     E. put data padding in to converting from nrrd to numpy;
                     F. Add STN network;
+                    G. change input data into gaussian normalization in slice by slice; (x-mean)/std;
                     
                     
                                                         

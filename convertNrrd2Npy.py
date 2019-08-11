@@ -33,14 +33,21 @@ for file in filesList:
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
 
-    # normalize image with std will make padding 0 more meaningful than negative value.
-    # mean = np.mean(image3d)
-    # std  = np.std(image3d)
-    # image3d = (image3d -mean)/std
+    # normalize image with std  for each slice
+    shape = image3d.shape
+    for i in shape[0]:
+        slice = image3d[i,]
+        mean = np.mean(slice)
+        std  = np.std(slice)
+        if 0 != std:
+            slice = (slice -mean)/std
+        else:
+            slice = slice -mean
+        image3d[i,] = slice
 
     # normalize into [0,1]
-    ptp = np.ptp(image3d)
-    image3d = image3d/ptp
+    # ptp = np.ptp(image3d)
+    # image3d = image3d/ptp
 
     #label = file.replace("_CT.nrrd", "_Seg.nrrd").replace("images/", "labels/")
     #label3d = sitk.GetArrayFromImage(sitk.ReadImage(label))
