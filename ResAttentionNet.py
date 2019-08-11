@@ -23,20 +23,20 @@ class ResAttentionNet(BasicModel):
         self.m_stage1 = nn.Sequential(
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=None),
-                        ResNeXtBlock(64, 128, nGroups=16, poolingLayer=None),
-                        SpatialTransformer(128, 32, 126, 126)
+                        ResNeXtBlock(64, 128, nGroups=16, poolingLayer=None)
+                        # SpatialTransformer(128, 32, 126, 126)
                         ) # ouput size: 128*126*126
         self.m_stage2 = nn.Sequential(
                         ResNeXtBlock(128, 128, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
                         ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None),
-                        SpatialTransformer(256, 64, 63, 63)
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None)
+                        # SpatialTransformer(256, 64, 63, 63)
                         ) # output size: 256*63*63
         self.m_stage3 = nn.Sequential(
                         ResNeXtBlock(256, 256, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
                         ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None),
-                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None),
-                        SpatialTransformer(512, 64, 32, 32)
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None)
+                        # SpatialTransformer(512, 64, 32, 32)
                         )  # output size: 512*32*32
         self.m_stage4 = nn.Sequential(
                         ResNeXtBlock(512, 512, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
