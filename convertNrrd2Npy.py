@@ -20,7 +20,7 @@ os.chdir(originalCwd)
 Notes = r"""
         Notes: 
         1  nrrd image is clipped into [0,300] in original intensity;
-        2  image normalzie into [0,1];
+        2  image normalize into gaussian distribution slice by slice with (x-mu)/std;
         3  image is assembled into fixed size[231,251,251] 
          """
 
