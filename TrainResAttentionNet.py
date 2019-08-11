@@ -61,10 +61,11 @@ Major program changes:
                     A. Add new patient data; and exclude non-standard patient data;
                     B. test the k-th fold,  validation on the (k+1)th fold;
                     C. new inputsize: 231*251*251 with pixels size 3*2*2 mm
-                    D. data normalize into [0,1] after window level shresthold [0,300]
+                    D. window level shresthold [0,300]
                     E. put data padding in to converting from nrrd to numpy;
-                    F. Add STN network;
+                    F. Add STN network as first laye of network
                     G. change input data into gaussian normalization in slice by slice; (x-mean)/std;
+                    
                     
                     
                                                         
