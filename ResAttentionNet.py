@@ -49,7 +49,7 @@ class ResAttentionNet(BasicModel):
                         ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None)
                         )  # output size: 1024*8*8
         self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, stride=8, padding=0, bias=False)
-                          
+
         self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
 
         """

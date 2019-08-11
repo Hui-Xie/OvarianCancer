@@ -147,7 +147,7 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 11  # 12 is for 1 GPU
+    batchSize = 8  # 12 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
