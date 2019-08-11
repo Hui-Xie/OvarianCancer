@@ -17,8 +17,8 @@ class ResAttentionNet(BasicModel):
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(231, 32, nGroups=33, poolingLayer=None),
                         ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
-                        ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None),
-                        SpatialTransformer(64,16, 251,251)
+                        ResNeXtBlock(32, 64, nGroups=8, poolingLayer=None)
+                        # SpatialTransformer(64,16, 251,251)
                         )  # ouput size: 64*251*251
         self.m_stage1 = nn.Sequential(
                         ResNeXtBlock(64, 64, nGroups=16, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
