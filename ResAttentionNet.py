@@ -12,7 +12,8 @@ class ResAttentionNet(BasicModel):
         # For input image size: 231*251*251 (zyx)
         # at Aug 11 08:30, 2019, input of gaussian normalization, put STN before the network
         # add maxPool at each stage, and 1024 is the final conv filter number.
-        # log:
+        # log:    log_ResAttention_CV0_20190811_083630.txt
+        #         log_ResAttention_CV2_20190811_083709.txt
         #
         #
         self.m_stage0 = nn.Sequential(
