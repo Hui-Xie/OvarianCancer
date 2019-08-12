@@ -45,7 +45,7 @@ class OVDataPartition():
             patientID = getStemName(file, self.m_inputSuffix)
             if len(patientID) > 8:
                 patientID = patientID[0:8]
-            self.m_labelsList.append(allPatientRespsDict[patientID])
+            self.m_labelsList.append(float(allPatientRespsDict[patientID]))
 
     def statisticsLabels(self):
         self.m_0FileIndices = []
@@ -99,7 +99,7 @@ class OVDataSet(data.Dataset):
     def __getitem__(self, index):
         ID = self.m_dataIDs[index]
         filename = self.m_dataPartitions.m_inputFilesList[ID]
-        data = np.load(filename).astype('float32')
+        data = np.load(filename).astype(np.float32)
         label = self.m_labels[index]
 
         if self.m_transform:

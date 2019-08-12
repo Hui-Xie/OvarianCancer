@@ -37,10 +37,10 @@ class OCDataTransform(object):
                 break
 
         # create output tensor
-        outputTensor = torch.zeros((d,h,w))
+        outputTensor = torch.zeros((d,h,w), dtype=torch.float32)
 
         for z in range(d):
-            slice = data[z,]  # float[0,1] ndarray
+            slice = data[z,]  # normalized array
             # affine transform
             if affine:
                 # to PIL image
