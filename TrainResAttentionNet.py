@@ -140,9 +140,9 @@ def main():
     trainTransform = OCDataTransform(0.9)
     validationTransform = OCDataTransform(0)
 
-    testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info)
     trainingData = OVDataSet('training', dataPartitions,  transform=trainTransform, logInfoFun=logging.info)
     validationData = OVDataSet('validation', dataPartitions,  transform=validationTransform, logInfoFun=logging.info)
+    testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info)
 
     # ===========debug==================
     oneSampleTraining = False  # for debug

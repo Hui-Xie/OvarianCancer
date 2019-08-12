@@ -32,6 +32,7 @@ for file in filesList:
 
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
+    image3d = image3d.astype(float)   # this is very important, otherwise, normalization will be meaningless.
 
     # normalize image with std  for each slice
     shape = image3d.shape
