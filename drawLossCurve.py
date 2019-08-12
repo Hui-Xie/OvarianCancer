@@ -49,6 +49,8 @@ def main():
     plt.plot(array[:,0], array[:,colsLoss])
     plt.legend(('Training','Validation', 'Test'))
     plt.title(f"Loss in {experiment}")
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
 
 
     # draw Accuracy
@@ -56,6 +58,8 @@ def main():
     plt.plot(array[:, 0], array[:, colsAccuracy])
     plt.legend(('Training', 'Validation', 'Test'))
     plt.title(f"Accuracy in {experiment}")
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
 
     plt.show()
     return
