@@ -65,7 +65,9 @@ Major program changes:
                     E. put data padding in to converting from nrrd to numpy;
                     F. Add STN network as first laye of network
                     G. change input data into gaussian normalization in slice by slice; (x-mean)/std;
-                    
+            12   Aug 12th, 2019
+                    A. fix the bug that SITk reads int imape, and normalization into interger error;
+                    B  test without SPN.           
                     
                     
                                                         

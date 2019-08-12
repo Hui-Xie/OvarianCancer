@@ -8,8 +8,7 @@ import torch
 
 class ResAttentionNet(BasicModel):
     def forward(self, x):
-
-        x = self.stn(x)
+        # x = self.stn(x)
         x = self.m_stage0(x)
         x = self.m_stage1(x)
         x = self.m_stage2(x)
@@ -31,7 +30,7 @@ class ResAttentionNet(BasicModel):
         #
         # result:
         #
-        self.m_stn    = SpatialTransformer(231,32, 251,251)
+        #self.m_stn    = SpatialTransformer(231,32, 251,251)
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(231, 32, nGroups=33, poolingLayer=None),
                         ResNeXtBlock(32, 32, nGroups=8, poolingLayer=None),
