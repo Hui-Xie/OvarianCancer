@@ -24,9 +24,56 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 231*251*251 (zyx)
-        # at Aug 12 09am , 2019, input of gaussian normalization, put STN before the network
+        # at Aug 13 10:47 , 2019, input of gaussian normalization with non-zero mean, without STN
         # add maxPool at each stage, and 1024 is the final conv filter number.
+        #  add filter number in the model.
         # log:
+        #
+        # result:
+        #
+        #self.m_stn    = SpatialTransformer(231,32, 251,251)
+        self.m_stage0 = nn.Sequential(
+                        ResNeXtBlock(231, 128, nGroups=33, poolingLayer=None),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None)
+                        )  # ouput size: 256*251*251
+        self.m_stage1 = nn.Sequential(
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None)
+                        # SpatialTransformer(128, 32, 126, 126)
+                        ) # ouput size: 512*126*126
+        self.m_stage2 = nn.Sequential(
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None)
+                        # SpatialTransformer(256, 64, 63, 63)
+                        ) # output size: 1024*63*63
+        self.m_stage3 = nn.Sequential(
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(1024, 2048, nGroups=32, poolingLayer=None)
+                        # SpatialTransformer(512, 64, 32, 32)
+                        )  # output size: 2048*32*32
+        self.m_stage4 = nn.Sequential(
+                        ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
+                        ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(2048, 4096, nGroups=32, poolingLayer=None)
+                        )  # output size: 4096*16*16
+        self.m_stage5 = nn.Sequential(
+                        ResNeXtBlock(4096, 4096, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1)),
+                        ResNeXtBlock(4096, 4096, nGroups=32, poolingLayer=None),
+                        ResNeXtBlock(4096, 4096, nGroups=32, poolingLayer=None)
+                        )  # output size: 4096*8*8
+        self.m_layerBeforeFc=nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=False)
+
+        self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+
+        """
+        # For input image size: 231*251*251 (zyx)
+        # at Aug 12 09am , 2019, input of gaussian normalization, without STN
+        # add maxPool at each stage, and 1024 is the final conv filter number.
+        # log: log_ResAttention_CV0_20190813_102504.txt
         #
         # result:
         #
@@ -67,6 +114,10 @@ class ResAttentionNet(BasicModel):
         self.m_layerBeforeFc=nn.Conv2d(1024, 1024, kernel_size=8, stride=8, padding=0, bias=False)
 
         self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+
+        
+        """
+
 
         """
         super().__init__()

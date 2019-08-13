@@ -71,7 +71,7 @@ Major program changes:
             13   Aug 13th, 2010
                     A change input data into Gausssian distribution with non-zero mean,
                       it will make the padding zero do not occupy meaning of gaussian distribution.        
-                    
+                    B add filters in the ResNeXt network to 128 at first stage, and reduce batchSize to 5. 
                                                         
                     
             
@@ -153,7 +153,7 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 11 # 12 is for 1 GPU
+    batchSize = 5 # 12 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
