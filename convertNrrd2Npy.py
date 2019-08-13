@@ -20,7 +20,7 @@ os.chdir(originalCwd)
 Notes = r"""
         Notes: 
         1  nrrd image is clipped into [0,300] in original intensity;
-        2  image normalize into gaussian distribution slice by slice with (x-mu)/std;
+        2  image normalize into gaussian distribution slice by slice with x/std, a gausssian distributrion with non-zero mean
         3  image is assembled into fixed size[231,251,251] 
          """
 
@@ -41,9 +41,10 @@ for file in filesList:
         mean = np.mean(slice)
         std  = np.std(slice)
         if 0 != std:
-            slice = (slice -mean)/std
+            # slice = (slice -mean)/std  # gaussian distribution with zero mean
+            slice = slice / std  # gaussian distribution with non-zero mean, which will make following padding zero not conflict with the meaning of zero.
         else:
-            slice = slice -mean
+            slice = slice -mean  # if all pixels in a slice equal, they are no discriminating meaning.
         image3d[i,] = slice
 
     # normalize into [0,1]

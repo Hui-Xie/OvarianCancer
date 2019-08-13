@@ -96,7 +96,7 @@ class DataMgr:
     @staticmethod
     def readImageFile(filename):
         image = sitk.ReadImage(filename)
-        dataArray = sitk.GetArrayFromImage(image)   # numpy axis order is a reverse of ITK axis order
+        dataArray = sitk.GetArrayFromImage(image).astype(np.float32)   # numpy axis order is a reverse of ITK axis order
         return dataArray
 
     @staticmethod

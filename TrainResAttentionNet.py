@@ -68,7 +68,9 @@ Major program changes:
             12   Aug 12th, 2019
                     A. fix the bug that SITk reads int imape, and normalization into interger error;
                     B  test without SPN.           
-                    
+            13   Aug 13th, 2010
+                    A change input data into Gausssian distribution with non-zero mean,
+                      it will make the padding zero do not occupy meaning of gaussian distribution.        
                     
                                                         
                     
