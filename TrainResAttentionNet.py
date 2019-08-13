@@ -71,7 +71,7 @@ Major program changes:
             13   Aug 13th, 2010
                     A change input data into Gausssian distribution with non-zero mean,
                       it will make the padding zero do not occupy meaning of gaussian distribution.        
-                    B add filters in the ResNeXt network to 128 at first stage, and reduce batchSize to 5. 
+                    B add filters in the ResNeXt network to 128 at first stage, and reduce batchSize to 3. 
                                                         
                     
             
