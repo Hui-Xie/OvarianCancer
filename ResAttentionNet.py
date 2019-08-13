@@ -27,7 +27,7 @@ class ResAttentionNet(BasicModel):
         # at Aug 13 10:47 , 2019, input of gaussian normalization with non-zero mean, without STN
         # add maxPool at each stage, and 1024 is the final conv filter number.
         #  add filter number in the model.
-        # log:
+        # log:  log_ResAttention_CV0_20190813_111441.txt
         #
         # result:
         #
