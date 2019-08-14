@@ -77,7 +77,7 @@ Major program changes:
                     A. Fix the Bug the STN convert all image into 0 problem;
                     B. change DataTransform: change shear into [-30, 30], and add scale[0.6,1.2]
                     C  put STN at teh begginning of the network;
-                                                                 
+                    D  change optimizer from SGD to Adam; and change learning rate decay with gamma=0.5 per 20 steps.                                             
                     
             
             
@@ -169,11 +169,11 @@ def main():
     numWorkers = batchSize
 
     net = ResAttentionNet()
-    # optimizer = optim.Adam(net.parameters(), weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
+    optimizer = optim.Adam(net.parameters(), lr=0.001, weight_decay=0)
+    # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.95)
+    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 
     # Load network
     device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
