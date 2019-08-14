@@ -24,6 +24,7 @@ class SpatialTransformer(nn.Module):
 
         self.m_regression = nn.Linear(midChannels*w*h, 6)
 
+
         # Initialize the weights/bias with identity transformation
         self.m_regression.weight.data.zero_()
         self.m_regression.bias.data.copy_(torch.tensor([1, 0, 0, 0, 1, 0], dtype=torch.float))
@@ -36,6 +37,18 @@ class SpatialTransformer(nn.Module):
         xs = self.m_regression(xs)
         theta = xs.view(-1, 2, 3)
 
+        # add translation to center
+        # shapeTheta = theta.shape
+        # shapeX  = x.shape
+        # translationCenter= torch.Tensor([[0,0,shapeX[3]//2], [0,0,shapeX[2]//2]]).cuda()
+        # for i in range(shapeTheta[0]):
+        #      theta[i,] = theta[i,] + translationCenter
+        #      rotationSubM = theta[i,:, 0:2]
+        #      maxAbs = torch.abs(rotationSubM).max()
+        #      rotationSubM /=maxAbs
+        #      theta[i,:, 0:2] = rotationSubM
+
+
         grid = F.affine_grid(theta, x.size())
-        x = F.grid_sample(x, grid)
-        return x
+        xout = F.grid_sample(x, grid, padding_mode="reflection")
+        return xout

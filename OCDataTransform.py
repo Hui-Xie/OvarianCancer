@@ -22,7 +22,7 @@ class OCDataTransform(object):
                 angle = random.randrange(-180, 180, 10)
                 translate = random.randrange(-38, 38, 3), random.randrange(-38, 38, 3)  # 15% of maxsize of Y, X
                 scale = 1.0 # do not scale, random.uniform(1, self.m_height/h)
-                shear = random.randrange(-90, 90, 10)
+                shear = random.randrange(-30, 30, 10)  #90 degree is too big, which almost compres image into a line.
             else:
                 affine = False
                 angle = 0
