@@ -1,0 +1,110 @@
+=============training from sratch============
+Program ID: 19532
+
+Program command: 
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '0']
+
+Major program changes: 
+            ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
+            0   the input is a 3D full volume without any cropping; 
+            1   Use slices as features channels in convolutions,  and use 1*1 convolution along slices direction to implement z direction convolution followed by 3*3 convolutino inside slice planes;
+                It just uses three cascading 2D convolutions (first z, then xy, and z direction again) to implement 3D convolution, like in the paper of ResNeXt below.
+                The benefits of this design:
+                A   reduce network parameters, hoping to reducing overfitting;
+                B   speed up training;
+                C   this implemented 3D convolutions are all in full slices space;
+            2   use group convolution to implement thick slice convolution to increase the network representation capability;
+            3   Use ResNeXt-based module like Paper "Aggregated Residual Transformations for Deep Neural Networks " 
+                (Link: http://openaccess.thecvf.com/content_cvpr_2017/html/Xie_Aggregated_Residual_Transformations_CVPR_2017_paper.html);
+            4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
+            5   20% data for independent test, remaining 80% data for 4-fold cross validation;
+            6   add lossweight to adjust positive samples to 3/7 posweight in BCEWithLogitsLoss;
+            
+            Update:
+            1    reduced network parameters to 3.14 million in July 27th, 2019, 0840am
+            2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters, with 1.235 million parameters
+            3    keep 2) parameter, change all maxpooling into average pooling.
+            4    At July 29th 09:37am, 2019, reduce filters to 96 to further reduce parameters, keep avgPool.
+            5    at July 29th 11:25am, 2019,  reduce filter number to 48, and redue one stage
+            6    at July 29th 12:41, 2019:
+                    add GPUID in command line;
+                    use SGD optimizer, instead of Adam
+                    add numbers of filters along deeper layer with step 12.
+                    add saveDir's tims stamp;
+            7    at July 29th 15:18, 2019,
+                    change learning rate step_size = 5 from 10;
+                    before FC, we use conv2d
+                    learning rate start at 0.5.
+            8    at July 30th 03:00, 2019:
+                    add learning rate print;
+                    use convStride =2;
+                    add filter number by 2 times along deeper layers.
+            9    at July 30th, 10:13, 2019:
+                    add MaxPool2d in stage1;
+                    add final filters to 2048.
+            10   at July 30th, 15:23, 2019
+                    final conv layer filter number: 1024
+            11   at Aug 10th, 2019:
+                    A. Add new patient data; and exclude non-standard patient data;
+                    B. test the k-th fold,  validation on the (k+1)th fold;
+                    C. new inputsize: 231*251*251 with pixels size 3*2*2 mm
+                    D. window level shresthold [0,300]
+                    E. put data padding in to converting from nrrd to numpy;
+                    F. Add STN network as first laye of network
+                    G. change input data into gaussian normalization in slice by slice; (x-mean)/std;
+            12   Aug 12th, 2019
+                    A. fix the bug that SITk reads int imape, and normalization into interger error;
+                    B  test without SPN.           
+            13   Aug 13th, 2019
+                    A change input data into Gausssian distribution with non-zero mean,
+                      it will make the padding zero do not occupy meaning of gaussian distribution.        
+                    B add filters in the ResNeXt network to 128 at first stage, and reduce batchSize to 3. 
+                    C Add STN at the beginning of the ResNeXt network
+            14   Aug 14th, 2019
+                    A. Fix the Bug the STN convert all image into 0 problem;
+                    B. change DataTransform: change shear into [-30, 30], and add scale[0.6,1.2]
+                    C  put STN at teh begginning of the network;
+                                                                 
+                    
+            
+            
+Discarded changes:                  
+                  
+
+Experiment setting:
+Input CT data: maximum size 140*251*251 (zyx) of 3D numpy array with spacing size(5*2*2)
+Ground truth: response binary label
+
+Predictive Model: 
+
+response Loss Function:  BCELogitLoss
+
+Data:   total 220 patients, 5-fold cross validation, test 45, validation 45, and training 130.  
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-08-14 12:27:58.897270
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190814_122758
+
+Info: this is the 0th fold leave for test in the 5-fold cross-validation.
+
+Infor: In all data of 220 files, label 0 has 77 files,
+	  and label 1 has 143 files, where positive response rate = 0.65 in full data
+5-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+training dataset:	 total 130 files, where 1 has 85.0 with rate of 0.6538461538461539
+validation dataset:	 total 45 files, where 1 has 29.0 with rate of 0.6444444444444445
+test dataset:	 total 45 files, where 1 has 29.0 with rate of 0.6444444444444445
+=== Network trains from scratch ====
+Network has total 323,951,148 parameters.
+Loss Functions List: BCEWithLogitsLoss with weight of 1; 
+
+Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
+
+Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
+0	1.0000e-05		0.4849	0.6154	0.7294	0.4000		0.4862	0.3556	0.0000	1.0000		0.4853	0.3556	0.0000	1.0000
+5	1.0000e-05		0.5183	0.4846	0.5882	0.2889		0.4797	0.6667	0.9310	0.1875		0.5039	0.5556	0.8276	0.0625
+10	9.5000e-06		0.4827	0.5538	0.5412	0.5778		0.4999	0.5333	0.8276	0.0000		0.4791	0.7111	1.0000	0.1875
+15	9.5000e-06		0.5127	0.5154	0.6000	0.3556		0.4881	0.5111	0.5517	0.4375		0.5075	0.4667	0.5172	0.3750
+20	9.0250e-06		0.4754	0.6154	0.7529	0.3556		0.5033	0.3778	0.0345	1.0000		0.5438	0.3556	0.0000	1.0000

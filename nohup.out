@@ -10,3 +10,9 @@ Program ID of Predictive Network training:  12990
 Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '0']
 Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190813_125349.txt
 .........
+=============training from sratch============
+Program ID of Predictive Network training:  19532
+
+Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '0']
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190814_122758.txt
+.........
