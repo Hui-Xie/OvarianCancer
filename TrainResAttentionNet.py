@@ -68,12 +68,16 @@ Major program changes:
             12   Aug 12th, 2019
                     A. fix the bug that SITk reads int imape, and normalization into interger error;
                     B  test without SPN.           
-            13   Aug 13th, 2010
+            13   Aug 13th, 2019
                     A change input data into Gausssian distribution with non-zero mean,
                       it will make the padding zero do not occupy meaning of gaussian distribution.        
                     B add filters in the ResNeXt network to 128 at first stage, and reduce batchSize to 3. 
                     C Add STN at the beginning of the ResNeXt network
-                                                        
+            14   Aug 14th, 2019
+                    A. Fix the Bug the STN convert all image into 0 problem;
+                    B. change DataTransform: change shear into [-30, 30], and add scale[0.6,1.2]
+                    C  put STN at teh begginning of the network;
+                                                                 
                     
             
             
