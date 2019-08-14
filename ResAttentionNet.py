@@ -3,12 +3,17 @@ from ResNeXtBlock import ResNeXtBlock
 from SpatialTransformer import SpatialTransformer
 import torch.nn as nn
 import torch
+from draw2DArray import *
 
 # ResNeXt based Attention Net
 
 class ResAttentionNet(BasicModel):
     def forward(self, x):
+        midSlice1 = x[0, 115,].clone()
+        display2DImage(midSlice1.cpu().detach().numpy(), "before STN")
         x = self.m_stn(x)
+        midSlice2 = x[0, 115,].clone()
+        display2DImage(midSlice2.cpu().detach().numpy(), "after STN")
         x = self.m_stage0(x)
         x = self.m_stage1(x)
         x = self.m_stage2(x)

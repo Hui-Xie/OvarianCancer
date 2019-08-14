@@ -11,7 +11,7 @@ def display2DImage(array2d, title):
     plt.title(title)
     plt.show()
 
-
+"""
 npyFile = '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy/06167597.npy'
 image3d = np.load(npyFile)
 centerSliceIndex = image3d.shape[0]//2
@@ -20,6 +20,8 @@ print(f'mid slice after load: mean = {np.mean(midSlice):.8f}, std = {np.std(midS
 display2DImage(midSlice, 'midSlice')
 
 print('=====end of draw====')
+
+"""
 
 
 

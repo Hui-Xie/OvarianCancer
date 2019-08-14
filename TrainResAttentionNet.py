@@ -99,21 +99,24 @@ def printUsage(argv):
     print("============Train ResAttentionNet for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <fullPathOfData>  <fullPathOfResponseFile> k  GPUID")
-    print("where: k=0-3, the k-th fold in the 4-fold cross validation.\n"
+          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfResponseFile> k  GPUID")
+    print("where: \n"
+          "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
+          "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
           "       GPUID=0-3, the specific GPU ID for single GPU running.\n")
 
 def main():
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 7:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
 
     netPath = sys.argv[1]
-    dataInputsPath = sys.argv[2]
-    responsePath = sys.argv[3]
-    k = int(sys.argv[4])
-    GPU_ID = int(sys.argv[5])  # choices: 0,1,2,3 for lab server.
+    scratch = int(sys.argv[2])
+    dataInputsPath = sys.argv[3]
+    responsePath = sys.argv[4]
+    k = int(sys.argv[5])
+    GPU_ID = int(sys.argv[6])  # choices: 0,1,2,3 for lab server.
     inputSuffix = ".npy"
 
     curTime = datetime.datetime.now()
@@ -121,9 +124,13 @@ def main():
     trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
     logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
-    netPath = os.path.join(netPath, timeStr)
-    print(f"=============training from sratch============")
-    logging.info(f"=============training from sratch============")
+    if scratch>0:
+        netPath = os.path.join(netPath, timeStr)
+        print(f"=============training from sratch============")
+        logging.info(f"=============training from sratch============")
+    else:
+        print(f"=============training inheritates previous training of {netPath} ============")
+        logging.info(f"=============training inheritates previous training of {netPath} ============")
 
     print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
