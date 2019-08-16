@@ -29,6 +29,11 @@ class SpatialTransformer(nn.Module):
         self.m_regression.weight.data.zero_()
         self.m_regression.bias.data.copy_(torch.tensor([1, 0, 0, 0, 1, 0], dtype=torch.float))
 
+        # for theta with size(2,3)
+        self.m_eps = 1e-12
+        self.m_u = F.normalize(torch.empty(2, dtype=torch.float, requires_grad=False).normal_(0, 1), dim=0, eps=self.m_eps)
+        self.m_v = F.normalize(torch.empty(3, dtype=torch.float, requires_grad=False).normal_(0, 1), dim=0, eps=self.m_eps)
+
     def forward(self, x):
         xs = x
         for layer in self.m_localization:
@@ -37,6 +42,21 @@ class SpatialTransformer(nn.Module):
         xs = self.m_regression(xs)
         theta = xs.view(-1, 2, 3)
 
+        theta = self.spectralNormalize(theta)  # Spectral Normalize to reduce image repeating.
+
         grid = F.affine_grid(theta, x.size())
         xout = F.grid_sample(x, grid, padding_mode="reflection")
         return xout
+
+    def spectralNormalize(self, theta):
+        batch = theta.shape[0]
+        u = self.m_u.clone().to(theta.device)
+        v = self.m_v.clone().to(theta.device)
+        for i in range(batch):
+            W = theta[i,]
+            for _ in range(3): #power_iteration
+                v = F.normalize(torch.mv(W.t(), u), dim=0, eps=self.m_eps)
+                u = F.normalize(torch.mv(W, v), dim=0, eps=self.m_eps)
+            maxSingleValue =  torch.dot(u, torch.mv(W, v))
+            theta[i,] = W/maxSingleValue
+        return theta
