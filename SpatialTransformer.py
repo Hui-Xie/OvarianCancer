@@ -54,7 +54,7 @@ class SpatialTransformer(nn.Module):
         v = self.m_v.clone().to(theta.device)
         for i in range(batch):
             W = theta[i,]
-            for _ in range(3): #power_iteration
+            for _ in range(4): #power_iteration
                 v = F.normalize(torch.mv(W.t(), u), dim=0, eps=self.m_eps)
                 u = F.normalize(torch.mv(W, v), dim=0, eps=self.m_eps)
             maxSingleValue =  torch.dot(u, torch.mv(W, v))
