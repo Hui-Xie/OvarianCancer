@@ -78,7 +78,10 @@ Major program changes:
                     B. change DataTransform: change shear into [-30, 30], and add scale[0.6,1.2]
                     C  put STN at teh begginning of the network;
                     D  change optimizer from SGD to Adam; and change learning rate decay with gamma=0.5 per 20 steps.                                             
-                    
+            15   Aug 16th, 2019
+                    A The affine matrix in the STN is divided by its spectral norm;
+                    B All conv layer add spectralNorm, while all FC layer do not add spectral Norm;
+                    C reduce initial LR at 0.0001, and decay step to 30.       
             
             
 Discarded changes:                  
@@ -162,10 +165,10 @@ def main():
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
-    useDataParallel = False  # for debug
+    useDataParallel = True  # for debug
     # ===========debug==================
 
-    batchSize = 3 # 12 is for 1 GPU
+    batchSize = 6 # 3 is for 1 GPU, 6 for 2 GPU.
     numWorkers = batchSize
 
     net = ResAttentionNet()
@@ -173,7 +176,7 @@ def main():
     #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
+    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.5)
 
     # Load network
     device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
@@ -217,8 +220,6 @@ def main():
 
     oldTestLoss = 1000
 
-    # debug for
-    #torch.autograd.set_detect_anomaly(True)
 
     for epoch in range(0, epochs):
         random.seed()

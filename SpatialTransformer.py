@@ -56,7 +56,7 @@ class SpatialTransformer(nn.Module):
         u = self.m_u.clone().to(theta.device)
         v = self.m_v.clone().to(theta.device)
         for i in range(batch):
-            W = theta[i,].clone()
+            W = theta[i,].clone()  #Gradients propagating to the cloned tensor will propagate to the original tensor.
             for _ in range(4): #power_iteration
                 v = F.normalize(torch.mv(W.t(), u), dim=0, eps=self.m_eps)
                 u = F.normalize(torch.mv(W, v), dim=0, eps=self.m_eps)
