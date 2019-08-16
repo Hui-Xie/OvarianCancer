@@ -9,7 +9,7 @@ from draw2DArray import *
 
 class ResAttentionNet(BasicModel):
     def forward(self, x):
-        # midSlice1 = x[0, 115,].clone()
+        #  midSlice1 = x[0, 115,].clone()
         # display2DImage(midSlice1.cpu().detach().numpy(), "before STN")
         x = self.m_stn(x)
         # midSlice2 = x[0, 115,].clone()
