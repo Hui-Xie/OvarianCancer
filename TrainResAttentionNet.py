@@ -165,11 +165,11 @@ def main():
     useDataParallel = False  # for debug
     # ===========debug==================
 
-    batchSize = 4 # 12 is for 1 GPU
+    batchSize = 3 # 12 is for 1 GPU
     numWorkers = batchSize
 
     net = ResAttentionNet()
-    optimizer = optim.Adam(net.parameters(), lr=0.001, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
     #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
@@ -216,6 +216,9 @@ def main():
                  + f"\t\tTeLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" )  # logging.info output head
 
     oldTestLoss = 1000
+
+    # debug for
+    #torch.autograd.set_detect_anomaly(True)
 
     for epoch in range(0, epochs):
         random.seed()
@@ -374,7 +377,7 @@ def main():
         logging.info(outputString)
 
         # =============save net parameters==============
-        if trainingLoss < float('inf') and not math.isnan(trainingLoss):
+        if trainingLoss < float('inf') and not math.isnan(trainingLoss) :
             netMgr.saveNet()
             if responseValidationAccuracy > bestTestPerf or (responseValidationAccuracy == bestTestPerf and validationLoss < oldTestLoss):
                 oldTestLoss = validationLoss

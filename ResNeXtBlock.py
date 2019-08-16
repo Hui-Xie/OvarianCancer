@@ -6,7 +6,7 @@ class ResNeXtBlock(nn.Module):
     """
     RexNeXt bottleneck type C (https://github.com/facebookresearch/ResNeXt/blob/master/models/resnext.lua)
     """
-    def __init__(self, inChannels, outChannels, nGroups, poolingLayer=None, convStride=1):
+    def __init__(self, inChannels, outChannels, nGroups, poolingLayer=None, convStride=1, useSpectralNorm=False):
         super().__init__()
 
         if inChannels % nGroups !=0:
@@ -15,16 +15,24 @@ class ResNeXtBlock(nn.Module):
         self.m_poolingLayer = poolingLayer
 
         self.m_reduceConv = nn.Conv2d(inChannels, inChannels, kernel_size=1, stride=1, padding=0, bias=False)
+        if useSpectralNorm:
+            self.m_reduceConv = nn.utils.spectral_norm(self.m_reduceConv)
         self.m_reduceBN = nn.BatchNorm2d(inChannels)
 
         self.m_groupConv = nn.Conv2d(inChannels, inChannels, kernel_size=3, stride=convStride, padding=1, groups=nGroups, bias=False)
+        if useSpectralNorm:
+            self.m_groupConv = nn.utils.spectral_norm(self.m_groupConv)
         self.m_groupBN = nn.BatchNorm2d(inChannels)
 
         self.m_expandConv = nn.Conv2d(inChannels, outChannels, kernel_size=1, stride=1, padding=0, bias=False)
+        if useSpectralNorm:
+            self.m_expandConv = nn.utils.spectral_norm(self.m_expandConv)
         self.m_expandBN = nn.BatchNorm2d(outChannels)
 
         if inChannels != outChannels or convStride != 1:
             self.m_identityConv = nn.Conv2d(inChannels, outChannels, kernel_size=1 if convStride == 1 else 3, stride=convStride, padding=0 if convStride == 1 else 1, bias=False)
+            if useSpectralNorm:
+                self.m_identityConv = nn.utils.spectral_norm(self.m_identityConv)
             self.m_identityBN = nn.BatchNorm2d(outChannels)
         else:
             self.m_identityConv = None

@@ -5,15 +5,17 @@ import torch.nn.functional as F
 import math
 
 class SpatialTransformer(nn.Module):
-    def __init__(self, inChannels, midChannels, inputW, inputH):
+    def __init__(self, inChannels, midChannels, inputW, inputH, useSpectralNorm=False ):
         super().__init__()
         w,h = inputW, inputH
         self.m_localization = nn.ModuleList()
-        self.m_localization.append(nn.Conv2d(inChannels, midChannels, kernel_size=1, stride=1, padding=0, bias=False))
+        self.m_localization.append(nn.Conv2d(inChannels, midChannels, kernel_size=1, stride=1, padding=0, bias=False) if not useSpectralNorm
+                                   else nn.utils.spectral_norm(nn.Conv2d(inChannels, midChannels, kernel_size=1, stride=1, padding=0, bias=False)))
         self.m_localization.append(nn.BatchNorm2d(midChannels))
         self.m_localization.append(nn.ReLU(inplace=True))
         while (w>25 and h >25):
-            self.m_localization.append(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=1, padding=0, dilation=1, bias=False))
+            self.m_localization.append(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=1, padding=0, dilation=1, bias=False) if not useSpectralNorm
+                                       else nn.utils.spectral_norm(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=1, padding=0, dilation=1, bias=False)))
             w = math.floor((w-1*(3-1)-1)/1+1)
             h = math.floor((h-1*(3-1)-1)/1+1)
             self.m_localization.append(nn.MaxPool2d(kernel_size=3, stride=2))
@@ -23,7 +25,8 @@ class SpatialTransformer(nn.Module):
             self.m_localization.append(nn.ReLU(inplace=True))
 
         self.m_regression = nn.Linear(midChannels*w*h, 6)
-
+        #if useSpectralNorm:
+        #     self.m_regression = nn.utils.spectral_norm(self.m_regression)
 
         # Initialize the weights/bias with identity transformation
         self.m_regression.weight.data.zero_()
@@ -53,7 +56,7 @@ class SpatialTransformer(nn.Module):
         u = self.m_u.clone().to(theta.device)
         v = self.m_v.clone().to(theta.device)
         for i in range(batch):
-            W = theta[i,]
+            W = theta[i,].clone()
             for _ in range(4): #power_iteration
                 v = F.normalize(torch.mv(W.t(), u), dim=0, eps=self.m_eps)
                 u = F.normalize(torch.mv(W, v), dim=0, eps=self.m_eps)
