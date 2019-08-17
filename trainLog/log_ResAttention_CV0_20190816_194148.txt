@@ -1,8 +1,8 @@
-=============training inheritates previous training of /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_144630 ============
-Program ID: 4437
+=============training from sratch============
+Program ID: 19937
 
 Program command: 
- ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_144630', '0', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2']
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2']
 
 Major program changes: 
             ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
@@ -88,8 +88,8 @@ Training strategy:
 
           
 
-Program starting Time: 2019-08-16 16:21:48.163094
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_144630
+Program starting Time: 2019-08-16 19:41:48.824643
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_194148
 
 Info: this is the 0th fold leave for test in the 5-fold cross-validation.
 
@@ -99,15 +99,12 @@ Infor: In all data of 220 files, label 0 has 77 files,
 training dataset:	 total 130 files, where 1 has 85.0 with rate of 0.6538461538461539
 validation dataset:	 total 45 files, where 1 has 29.0 with rate of 0.6444444444444445
 test dataset:	 total 45 files, where 1 has 29.0 with rate of 0.6444444444444445
-Program loads net from /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_144630.
-Current best test performance: 0
+=== Network trains from scratch ====
 Network has total 323,951,148 parameters.
-Info: program will use 2 GPUs.
+Info: program will use 2 GPUs from all 4 GPUs.
 Loss Functions List: BCEWithLogitsLoss with weight of 1; 
 
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
-0	1.2500e-05		0.4794	0.5385	0.4706	0.6667		0.4900	0.2889	0.1034	0.6250		0.4985	0.4444	0.1724	0.9375
-5	1.2500e-05		0.4858	0.4846	0.4353	0.5778		0.4829	0.3556	0.0345	0.9375		0.4840	0.4222	0.1034	1.0000
-10	1.2500e-05		0.4821	0.5462	0.4353	0.7556		0.4849	0.2889	0.1034	0.6250		0.4927	0.4667	0.2069	0.9375
+0	1.0000e-04		8.6984	0.4923	0.4706	0.5333		3.3840	0.3556	0.0000	1.0000		3.3826	0.3556	0.0000	1.0000
