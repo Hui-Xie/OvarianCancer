@@ -85,7 +85,11 @@ Major program changes:
             16   Aug 17th, 2019
                     A  Cancel STN;
                     B  Add LeakyReLU;
-                    C  before final FC layer, add ReLU and LocalResponseNorm               
+                    C  before final FC layer, add ReLU and LocalResponseNorm   
+            17   Aug 17th, 2019:10:44am
+                    A enable STN;
+                    B STN support LeakyReLU and localResponseNorm        
+                                
             
             
 Discarded changes:                  

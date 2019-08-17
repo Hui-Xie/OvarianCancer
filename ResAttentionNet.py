@@ -12,7 +12,7 @@ class ResAttentionNet(BasicModel):
         # filename = "/home/hxie1/Projects/OvarianCancer/trainLog/20190816_194148"
         # midSlice1 = x[0, 115,].clone()
         # display2DImage(midSlice1.cpu().detach().numpy(), "before STN", filename+"_BeforeSTN.png")
-        # x = self.m_stn(x)
+        x = self.m_stn(x)
         # midSlice2 = x[0, 115,].clone()
         # display2DImage(midSlice2.cpu().detach().numpy(), "after STN", filename+"_AfterSTN.png" )
         x = self.m_stage0(x)
@@ -39,7 +39,7 @@ class ResAttentionNet(BasicModel):
         #
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
-        # self.m_stn    = SpatialTransformer(231,64, 251,251,useSpectralNorm=self.m_useSpectralNorm)
+        self.m_stn    = SpatialTransformer(231,64, 251,251,useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(231, 128, nGroups=33, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
                         ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
