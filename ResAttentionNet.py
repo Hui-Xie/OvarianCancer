@@ -12,7 +12,7 @@ class ResAttentionNet(BasicModel):
         # filename = "/home/hxie1/Projects/OvarianCancer/trainLog/20190816_194148"
         # midSlice1 = x[0, 115,].clone()
         # display2DImage(midSlice1.cpu().detach().numpy(), "before STN", filename+"_BeforeSTN.png")
-        x = self.m_stn(x)
+        # x = self.m_stn0(x)
         # midSlice2 = x[0, 115,].clone()
         # display2DImage(midSlice2.cpu().detach().numpy(), "after STN", filename+"_AfterSTN.png" )
         x = self.m_stage0(x)
@@ -20,7 +20,9 @@ class ResAttentionNet(BasicModel):
         x = self.m_stage2(x)
         x = self.m_stage3(x)
         x = self.m_stage4(x)
+        x = x+ self.m_stn4(x)
         x = self.m_stage5(x)
+        x = x+ self.m_stn5(x)
         x = self.m_layersBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)
@@ -39,7 +41,7 @@ class ResAttentionNet(BasicModel):
         #
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
-        self.m_stn    = SpatialTransformer(231,64, 251,251,useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        # self.m_stn0    = SpatialTransformer(231, 64, 251, 251, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_stage0 = nn.Sequential(
                         ResNeXtBlock(231, 128, nGroups=33, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
                         ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -68,11 +70,13 @@ class ResAttentionNet(BasicModel):
                         ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
                         ResNeXtBlock(1024, 2048, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         )  # output size: 2048*16*16
+        self.m_stn4   = SpatialTransformer(2048, 512, 16, 16, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_stage5 = nn.Sequential(
                         ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
                         ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
                         ResNeXtBlock(2048, 4096, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         )  # output size: 4096*8*8
+        self.m_stn5   = SpatialTransformer(4096, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_layersBeforeFc=nn.Sequential(
                              nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=False),
                              nn.ReLU() if not self.m_useLeakyReLU else nn.LeakyReLU(),

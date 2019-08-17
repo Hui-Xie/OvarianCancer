@@ -13,7 +13,7 @@ class SpatialTransformer(nn.Module):
                                    else nn.utils.spectral_norm(nn.Conv2d(inChannels, midChannels, kernel_size=1, stride=1, padding=0, bias=False)))
         self.m_localization.append(nn.BatchNorm2d(midChannels))
         self.m_localization.append(nn.ReLU(inplace=True) if not useLeakyReLU else nn.LeakyReLU())
-        while (w>25 and h >25):
+        while (w>=7 and h >=7):
             self.m_localization.append(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=1, padding=0, dilation=1, bias=False) if not useSpectralNorm
                                        else nn.utils.spectral_norm(nn.Conv2d(midChannels, midChannels, kernel_size=3, stride=1, padding=0, dilation=1, bias=False)))
             w = math.floor((w-1*(3-1)-1)/1+1)
