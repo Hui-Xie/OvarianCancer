@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from FilesUtilities import *
+import os
 
 def printUsage(argv):
     print("============Draw Loss or accuracy Curve =============")
@@ -18,6 +19,8 @@ def main():
 
     logFile = sys.argv[1]
     experiment = getStemName(logFile, ".txt")
+    fullPathLogFile = os.path.abspath(logFile)
+    dirName = os.path.dirname(fullPathLogFile)
 
     tableHead = "Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r\n"
 
@@ -51,7 +54,7 @@ def main():
     plt.title(f"Loss in {experiment}")
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-
+    plt.save(os.path.join(dirName, f"Loss_{experiment}.png"))
 
     # draw Accuracy
     f2 = plt.figure(2)
@@ -60,6 +63,7 @@ def main():
     plt.title(f"Accuracy in {experiment}")
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
+    plt.save(os.path.join(dirName,f"Accuracy_{experiment}.png"))
 
     # draw learning Rate
     f3 = plt.figure(3)
@@ -68,6 +72,7 @@ def main():
     plt.title(f"LearningRate in {experiment}")
     plt.xlabel('Epoch')
     plt.ylabel('LearningRate')
+    plt.save(os.path.join(dirName, f"LearningRate_{experiment}.png"))
 
     plt.show()
     return
