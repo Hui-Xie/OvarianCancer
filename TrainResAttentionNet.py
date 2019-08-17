@@ -218,7 +218,7 @@ def main():
         posWeightRate = 0.35/0.65
         logging.info("This predict optimal response.")
     elif "patientSurgicalResults" in groundTruthPath:
-        posWeightRate = 0.2/0.8
+        posWeightRate = 0.23/0.77
         logging.info("This predict surgical results.")
     else:
         posWeightRate = 1.0
