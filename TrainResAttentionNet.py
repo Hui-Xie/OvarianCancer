@@ -228,9 +228,6 @@ def main():
 
     oldTestLoss = 1000
 
-    print("test pass!!!!")
-    return
-
     for epoch in range(0, epochs):
         random.seed()
         if useDataParallel:
