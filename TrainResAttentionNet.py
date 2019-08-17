@@ -110,11 +110,11 @@ def printUsage(argv):
     print("============Train ResAttentionNet for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfResponseFile> k  GPUID")
+          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfResponseFile> k  GPUID_List")
     print("where: \n"
           "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
-          "       GPUID=0-3, the specific GPU ID for single GPU running or first GPU for multiple GPU running.\n")
+          "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n")
 
 def main():
     if len(sys.argv) != 7:
@@ -127,7 +127,8 @@ def main():
     dataInputsPath = sys.argv[3]
     responsePath = sys.argv[4]
     k = int(sys.argv[5])
-    GPU_ID = int(sys.argv[6])  # choices: 0,1,2,3 for lab server.
+    GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
+    GPUIDList = [int(x) for x in GPUIDList]
     inputSuffix = ".npy"
 
     curTime = datetime.datetime.now()
@@ -169,7 +170,7 @@ def main():
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
-    useDataParallel = True  # for debug
+    useDataParallel = True  if len(GPUIDList)>1 else False # for debug
     # ===========debug==================
 
     batchSize = 6 # 3 is for 1 GPU, 6 for 2 GPU.
@@ -179,7 +180,7 @@ def main():
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
     net.to(device)
 
     optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
@@ -208,9 +209,8 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            device_ids = [2,3]
-            logging.info(f'Info: program will use {len(device_ids)} GPUs from all {nGPU} GPUs.')
-            net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
+            logging.info(f'Info: program will use GPU {GPUIDList} from all {nGPU} GPUs.')
+            net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
 
     if useDataParallel:
         logging.info(net.module.lossFunctionsInfo())
@@ -228,6 +228,8 @@ def main():
 
     oldTestLoss = 1000
 
+    print("test pass!!!!")
+    return
 
     for epoch in range(0, epochs):
         random.seed()
