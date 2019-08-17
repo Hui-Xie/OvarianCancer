@@ -5,10 +5,11 @@ import numpy as np
 import SimpleITK as sitk
 
 
-def display2DImage(array2d, title):
+def display2DImage(array2d, title, fileName):
     plt.imshow(array2d)
     plt.colorbar()
     plt.title(title)
+    plt.savefig(fileName)
     plt.show()
 
 """

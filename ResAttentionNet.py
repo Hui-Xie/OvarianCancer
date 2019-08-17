@@ -9,11 +9,12 @@ from draw2DArray import *
 
 class ResAttentionNet(BasicModel):
     def forward(self, x):
-        #  midSlice1 = x[0, 115,].clone()
-        # display2DImage(midSlice1.cpu().detach().numpy(), "before STN")
+        filename = "/home/hxie1/Projects/OvarianCancer/trainLog/20190816_194148"
+        midSlice1 = x[0, 115,].clone()
+        display2DImage(midSlice1.cpu().detach().numpy(), "before STN", filename+"_BeforeSTN.png")
         x = self.m_stn(x)
-        # midSlice2 = x[0, 115,].clone()
-        # display2DImage(midSlice2.cpu().detach().numpy(), "after STN")
+        midSlice2 = x[0, 115,].clone()
+        display2DImage(midSlice2.cpu().detach().numpy(), "after STN", filename+"_AfterSTN.png" )
         x = self.m_stage0(x)
         x = self.m_stage1(x)
         x = self.m_stage2(x)
