@@ -91,7 +91,9 @@ Major program changes:
                     B STN support LeakyReLU and localResponseNorm  
             18   Aug 17th, 2019 14:38 pm
                     A  del STN at beginining;
-                    B  put STN at final 2 layer before FC.              
+                    B  put STN at final 2 layer before FC. 
+             19  Aug 17th 18:09 2019
+                    A add surgical result file support;                    
                                 
             
             
