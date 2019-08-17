@@ -42,7 +42,7 @@ class BasicModel(nn.Module):
     def batchTrain(self, inputs, labels):
         self.m_optimizer.zero_grad()
         outputs = self.forward(inputs)
-        loss = torch.tensor(0.0).cuda()
+        loss = torch.tensor(0.0).to(inputs.device)
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             if weight == 0:
                 continue
@@ -54,7 +54,7 @@ class BasicModel(nn.Module):
     def batchTrainMixup(self, inputs, labels1, labels2, lambdaInBeta):
         self.m_optimizer.zero_grad()
         outputs = self.forward(inputs)
-        loss = torch.tensor(0.0).cuda()
+        loss = torch.tensor(0.0).to(inputs.device)
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             if weight == 0:
                 continue
@@ -68,7 +68,7 @@ class BasicModel(nn.Module):
 
     def batchTest(self, inputs, labels):
         outputs = self.forward(inputs)
-        loss = torch.tensor(0.0).cuda()
+        loss = torch.tensor(0.0).to(inputs.device)
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             if weight == 0:
                 continue
