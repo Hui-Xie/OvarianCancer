@@ -1,8 +1,8 @@
 =============training from sratch============
-Program ID: 11053
+Program ID: 14792
 
 Program command: 
- ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2']
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '0,1,2,3']
 
 Major program changes: 
             ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
@@ -92,8 +92,8 @@ Training strategy:
 
           
 
-Program starting Time: 2019-08-17 08:54:59.262552
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190817_085459
+Program starting Time: 2019-08-17 09:16:00.634732
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190817_091600
 
 Info: this is the 0th fold leave for test in the 5-fold cross-validation.
 
@@ -105,18 +105,9 @@ validation dataset:	 total 45 files, where 1 has 29.0 with rate of 0.64444444444
 test dataset:	 total 45 files, where 1 has 29.0 with rate of 0.6444444444444445
 === Network trains from scratch ====
 Network has total 323,732,966 parameters.
-Info: program will use 2 GPUs from all 4 GPUs.
+Info: program will use GPU [0, 1, 2, 3] from all 4 GPUs.
 Loss Functions List: BCEWithLogitsLoss with weight of 1; 
 
 Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 
 
 Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
-0	1.0000e-04		2.1040	0.4538	0.3176	0.7111		0.4806	0.3556	0.0000	1.0000		0.4806	0.3556	0.0000	1.0000
-5	1.0000e-04		0.4847	0.6462	0.8941	0.1778		0.6206	0.5778	0.8621	0.0625		0.4802	0.6444	1.0000	0.0000
-10	1.0000e-04		0.5070	0.6538	0.9765	0.0444		0.4809	0.6444	0.9655	0.0625		0.4919	0.6667	1.0000	0.0625
-15	1.0000e-04		0.4844	0.5231	0.5294	0.5111		0.4956	0.4000	0.3793	0.4375		0.4883	0.6444	0.6897	0.5625
-20	1.0000e-04		0.4873	0.6462	0.8588	0.2444		0.4917	0.5111	0.6897	0.1875		0.4903	0.5778	0.8276	0.1250
-25	1.0000e-04		0.4665	0.6077	0.6000	0.6222		1.4056	0.4444	0.2414	0.8125		1.0983	0.3556	0.1034	0.8125
-30	1.0000e-04		0.5095	0.5615	0.6353	0.4222		0.5005	0.6444	1.0000	0.0000		0.5161	0.6444	1.0000	0.0000
-35	1.0000e-04		0.4838	0.5615	0.5647	0.5556		0.5123	0.4667	0.3793	0.6250		0.5598	0.4444	0.4138	0.5000
-40	5.0000e-05		0.4915	0.6000	0.7412	0.3333		0.6010	0.5556	0.5172	0.6250		0.5447	0.5111	0.4138	0.6875
