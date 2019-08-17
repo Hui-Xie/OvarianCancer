@@ -182,6 +182,7 @@ def main():
 
     batchSize = 6 # 3 is for 1 GPU, 6 for 2 GPU.
     numWorkers = batchSize
+    logging.info(f"Info: batchSize = {batchSize}\n")
 
     net = ResAttentionNet()
     # Important:
@@ -213,10 +214,14 @@ def main():
     # for imbalance training data for BCEWithLogitsLoss
     if "patientResponseDict" in  groundTruthPath:
         posWeightRate = 0.35/0.65
+        logging.info("This predict optimal response.")
     elif "patientSurgicalResults" in groundTruthPath:
         posWeightRate = 0.2/0.8
+        logging.info("This predict surgical results.")
     else:
         posWeightRate = 1.0
+        logging.info("!!!!!!! Some thing wrong !!!!!")
+        return
 
     bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([posWeightRate]).to(device, dtype=torch.float))
     net.appendLossFunc(bceWithLogitsLoss, 1)
