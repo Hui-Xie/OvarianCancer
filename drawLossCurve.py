@@ -61,6 +61,14 @@ def main():
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
 
+    # draw learning Rate
+    f3 = plt.figure(3)
+    plt.plot(array[:, 0], array[:, 1])
+    plt.legend(('LearningRate'))
+    plt.title(f"LearningRate in {experiment}")
+    plt.xlabel('Epoch')
+    plt.ylabel('LearningRate')
+
     plt.show()
     return
 
