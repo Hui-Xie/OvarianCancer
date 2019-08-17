@@ -172,6 +172,12 @@ def main():
     numWorkers = batchSize
 
     net = ResAttentionNet()
+    # Important:
+    # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
+    # Parameters of a model after .cuda() will be different objects with those before the call.
+    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
+    net.to(device)
+
     optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
     #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
@@ -179,8 +185,6 @@ def main():
     lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.5)
 
     # Load network
-    device = torch.device(f"cuda:{GPU_ID}" if torch.cuda.is_available() else "cpu")
-    net.to(device)
     netMgr = NetMgr(net, netPath, device)
 
     bestTestPerf = 0
@@ -201,7 +205,7 @@ def main():
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
             device_ids = [2,3]
-            logging.info(f'Info: program will use {len(device_ids)} GPUs.')
+            logging.info(f'Info: program will use {len(device_ids)} GPUs from all {nGPU} GPUs.')
             net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
 
     if useDataParallel:
