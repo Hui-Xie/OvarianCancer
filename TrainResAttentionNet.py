@@ -117,7 +117,7 @@ def printUsage(argv):
     print("============Train ResAttentionNet for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfResponseFile> k  GPUID_List")
+          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfGroundTruthFile> k  GPUID_List")
     print("where: \n"
           "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
@@ -132,7 +132,7 @@ def main():
     netPath = sys.argv[1]
     scratch = int(sys.argv[2])
     dataInputsPath = sys.argv[3]
-    responsePath = sys.argv[4]
+    groundTruthPath = sys.argv[4]
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
@@ -165,7 +165,7 @@ def main():
 
     K_fold = 5
     logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
-    dataPartitions = OVDataPartition(dataInputsPath, responsePath, inputSuffix, K_fold, k, logInfoFun=logging.info)
+    dataPartitions = OVDataPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k, logInfoFun=logging.info)
 
     testTransform = OCDataTransform(0)
     trainTransform = OCDataTransform(0.9)
@@ -210,7 +210,15 @@ def main():
 
     logging.info(net.getParametersScale())
 
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([0.35/0.65]).to(device, dtype=torch.float))  # for imbalance training data
+    # for imbalance training data for BCEWithLogitsLoss
+    if "patientResponseDict" in  groundTruthPath:
+        posWeightRate = 0.35/0.65
+    elif "patientSurgicalResults" in groundTruthPath:
+        posWeightRate = 0.2/0.8
+    else:
+        posWeightRate = 1.0
+
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([posWeightRate]).to(device, dtype=torch.float))
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
