@@ -81,7 +81,11 @@ Major program changes:
             15   Aug 16th, 2019
                     A The affine matrix in the STN is divided by its spectral norm;
                     B All conv layer add spectralNorm, while all FC layer do not add spectral Norm;
-                    C reduce initial LR at 0.0001, and decay step to 30.       
+                    C reduce initial LR at 0.0001, and decay step to 30.
+            16   Aug 17th, 2019
+                    A  Cancel STN;
+                    B  Add LeakyReLU;
+                    C  before final FC layer, add ReLU and LocalResponseNorm               
             
             
 Discarded changes:                  

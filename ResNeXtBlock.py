@@ -6,13 +6,14 @@ class ResNeXtBlock(nn.Module):
     """
     RexNeXt bottleneck type C (https://github.com/facebookresearch/ResNeXt/blob/master/models/resnext.lua)
     """
-    def __init__(self, inChannels, outChannels, nGroups, poolingLayer=None, convStride=1, useSpectralNorm=False):
+    def __init__(self, inChannels, outChannels, nGroups, poolingLayer=None, convStride=1, useSpectralNorm=False, useLeakyReLU=False):
         super().__init__()
 
         if inChannels % nGroups !=0:
             print(f"Error: inChannels {inChannels} must be integer times of nGroups{nGroups}.")
 
         self.m_poolingLayer = poolingLayer
+        self.m_useLeakyReLU = useLeakyReLU
 
         self.m_reduceConv = nn.Conv2d(inChannels, inChannels, kernel_size=1, stride=1, padding=0, bias=False)
         if useSpectralNorm:
@@ -43,10 +44,12 @@ class ResNeXtBlock(nn.Module):
             x = self.m_poolingLayer(x)
 
         y = self.m_reduceConv(x)
-        y = F.relu(self.m_reduceBN(y), inplace=True)
+        y = F.relu(self.m_reduceBN(y), inplace=True) if not self.m_useLeakyReLU \
+            else F.leaky_relu(self.m_reduceBN(y), inplace=True)
 
         y = self.m_groupConv(y)
-        y = F.relu(self.m_groupBN(y), inplace=True)
+        y = F.relu(self.m_groupBN(y), inplace=True)  if not self.m_useLeakyReLU \
+            else F.leaky_relu(self.m_groupBN(y), inplace=True)
 
         y = self.m_expandConv(y)
         y = self.m_expandBN(y)
@@ -55,4 +58,5 @@ class ResNeXtBlock(nn.Module):
             x = self.m_identityConv(x)
             x = self.m_identityBN(x)
 
-        return F.relu(x + y, inplace=True)
+        return F.relu(x + y, inplace=True)  if not self.m_useLeakyReLU \
+               else F.leaky_relu(x + y, inplace=True)

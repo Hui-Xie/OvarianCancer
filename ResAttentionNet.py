@@ -9,19 +9,19 @@ from draw2DArray import *
 
 class ResAttentionNet(BasicModel):
     def forward(self, x):
-        filename = "/home/hxie1/Projects/OvarianCancer/trainLog/20190816_194148"
-        midSlice1 = x[0, 115,].clone()
-        display2DImage(midSlice1.cpu().detach().numpy(), "before STN", filename+"_BeforeSTN.png")
-        x = self.m_stn(x)
-        midSlice2 = x[0, 115,].clone()
-        display2DImage(midSlice2.cpu().detach().numpy(), "after STN", filename+"_AfterSTN.png" )
+        # filename = "/home/hxie1/Projects/OvarianCancer/trainLog/20190816_194148"
+        # midSlice1 = x[0, 115,].clone()
+        # display2DImage(midSlice1.cpu().detach().numpy(), "before STN", filename+"_BeforeSTN.png")
+        # x = self.m_stn(x)
+        # midSlice2 = x[0, 115,].clone()
+        # display2DImage(midSlice2.cpu().detach().numpy(), "after STN", filename+"_AfterSTN.png" )
         x = self.m_stage0(x)
         x = self.m_stage1(x)
         x = self.m_stage2(x)
         x = self.m_stage3(x)
         x = self.m_stage4(x)
         x = self.m_stage5(x)
-        x = self.m_layerBeforeFc(x)
+        x = self.m_layersBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)
         x = x.squeeze(dim=1)
@@ -38,41 +38,46 @@ class ResAttentionNet(BasicModel):
         # result:
         #
         self.m_useSpectralNorm = True
-        self.m_stn    = SpatialTransformer(231,64, 251,251,useSpectralNorm=self.m_useSpectralNorm)
+        self.m_useLeakyReLU = True
+        # self.m_stn    = SpatialTransformer(231,64, 251,251,useSpectralNorm=self.m_useSpectralNorm)
         self.m_stage0 = nn.Sequential(
-                        ResNeXtBlock(231, 128, nGroups=33, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm)
+                        ResNeXtBlock(231, 128, nGroups=33, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         )  # ouput size: 128*251*251
         self.m_stage1 = nn.Sequential(
-                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm)
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         # SpatialTransformer(128, 32, 126, 126)
                         ) # ouput size: 256*126*126
         self.m_stage2 = nn.Sequential(
-                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm)
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         # SpatialTransformer(256, 64, 63, 63)
                         ) # output size: 512*63*63
         self.m_stage3 = nn.Sequential(
-                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm)
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(512, 512, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(512, 1024, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         # SpatialTransformer(512, 64, 32, 32)
                         )  # output size: 1024*32*32
         self.m_stage4 = nn.Sequential(
-                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(1024, 2048, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm)
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(1024, 1024, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(1024, 2048, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         )  # output size: 2048*16*16
         self.m_stage5 = nn.Sequential(
-                        ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm),
-                        ResNeXtBlock(2048, 4096, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm)
+                        ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(2048, 2048, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(2048, 4096, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
                         )  # output size: 4096*8*8
-        self.m_layerBeforeFc=nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=False)
+        self.m_layersBeforeFc=nn.Sequential(
+                             nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=False),
+                             nn.ReLU() if not self.m_useLeakyReLU else nn.LeakyReLU(),
+                             nn.LocalResponseNorm(1024)   # normalization on 1024 channels.
+                             ) # output size: 1024*1*1
         #if self.m_useSpectralNorm:
         #     self.m_layerBeforeFc = nn.utils.spectral_norm(self.m_layerBeforeFc)  # this costs a lot of memory.
 
