@@ -110,7 +110,7 @@ def printUsage(argv):
     print("where: \n"
           "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
-          "       GPUID=0-3, the specific GPU ID for single GPU running.\n")
+          "       GPUID=0-3, the specific GPU ID for single GPU running or first GPU for multiple GPU running.\n")
 
 def main():
     if len(sys.argv) != 7:
@@ -200,7 +200,7 @@ def main():
     if useDataParallel:
         nGPU = torch.cuda.device_count()
         if nGPU > 1:
-            device_ids = [0,1]
+            device_ids = [2,3]
             logging.info(f'Info: program will use {len(device_ids)} GPUs.')
             net = nn.DataParallel(net, device_ids=device_ids, output_device=device)
 

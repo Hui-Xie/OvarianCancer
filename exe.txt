@@ -37,3 +37,7 @@ python3.7 drawLossCurve.py /home/hxie1/Projects/OvarianCancer/trainLog/ &
 nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt  1  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0 &
 
 nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/***  0  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0 &
+
+CUDA_VISIBLE_DEVICE=2,3 nohup  python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt  1  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0 &
+
+nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_144630  0  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  2 &
