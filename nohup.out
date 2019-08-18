@@ -4,3 +4,5 @@ Program ID of Predictive Network training:  19702
 Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/SurgicalResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientSurgicalResults.json', '0', '2,3']
 Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190817_181650.txt
 .........
+Program ID 19702  exits.
+
