@@ -78,14 +78,14 @@ class ResAttentionNet(BasicModel):
                         )  # output size: 4096*8*8
         self.m_stn5   = SpatialTransformer(4096, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_layersBeforeFc=nn.Sequential(
-                             nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=False),
+                             nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=True),
                              nn.ReLU() if not self.m_useLeakyReLU else nn.LeakyReLU(),
                              nn.LocalResponseNorm(1024)   # normalization on 1024 channels.
                              ) # output size: 1024*1*1
         #if self.m_useSpectralNorm:
         #     self.m_layerBeforeFc = nn.utils.spectral_norm(self.m_layerBeforeFc)  # this costs a lot of memory.
 
-        self.m_fc1    = nn.Linear(1024, 1, bias=False)  # for sigmoid output, one number
+        self.m_fc1    = nn.Linear(1024, 1, bias=True)  # for sigmoid output, one number
         #if self.m_useSpectralNorm:
         #     self.m_fc1 = nn.utils.spectral_norm(self.m_fc1)
 

@@ -92,9 +92,10 @@ Major program changes:
             18   Aug 17th, 2019 14:38 pm
                     A  del STN at beginining;
                     B  put STN at final 2 layer before FC. 
-             19  Aug 17th 18:09 2019
+            19  Aug 17th 18:09 2019
                     A add surgical result file support;                    
-                                
+            20  Aug 18th 08:00 am 2019
+                    A  change all bias in Conv2d, and Linear into True.                     
             
             
 Discarded changes:                  
