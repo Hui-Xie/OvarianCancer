@@ -198,7 +198,7 @@ def main():
     #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.5)
+    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
