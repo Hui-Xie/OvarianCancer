@@ -11,3 +11,10 @@ STN4 bias =  tensor([ 0.1951, -0.8389,  0.1112,  0.0119,  1.1012, -0.8642], devi
 gradient at FC.bias= tensor([-0.0046], device='cuda:2')
 
 
+Epoch: 5   =================
+FC.bias =  tensor([0.2276], device='cuda:2')
+STN5 bias =  tensor([ 1.7160,  0.5724,  0.4432, -0.1483,  0.4938,  0.2361], device='cuda:2')
+STN4 bias =  tensor([ 0.1922, -0.8625,  0.1115,  0.1002,  1.0032, -0.8869], device='cuda:2')
+gradient at FC.bias= tensor([-0.5367], device='cuda:2')
+
+

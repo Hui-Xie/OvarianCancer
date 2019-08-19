@@ -129,3 +129,4 @@ Hints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0
 
 Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r
 0	1.0000e-01		14.7015	0.4769	0.4588	0.5111		3.6986	0.6444	1.0000	0.0000		3.6989	0.6444	1.0000	0.0000
+5	1.0000e-01		0.8072	0.5231	0.5412	0.4889		1.6285	0.3556	0.0000	1.0000		1.6418	0.3556	0.0000	1.0000
