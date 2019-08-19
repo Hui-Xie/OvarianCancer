@@ -97,7 +97,9 @@ Major program changes:
             20  Aug 18th 08:00 am 2019
                     A  change all bias in Conv2d, and Linear into True.   
             21  Aug 19th 10:33am 2019
-                    A initalize the bias in the final Linear layer as 0.3; (1-2*0.65 = -0.3)                          
+                    A initalize the bias in the final Linear layer as 0.3; (1-2*0.65 = -0.3)
+                    16:17 pm:
+                    B  add inductive bias 0.3 in the network forward function.                           
             
             
 Discarded changes:                  
@@ -127,6 +129,15 @@ def printUsage(argv):
           "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
           "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n")
+
+def printPartNetworkPara(epoch, net):
+    print(f"Epoch: {epoch}   =================")
+    print("FC.bias = ", net.m_fc1.bias.data)
+    print("STN5 bias = ", net.m_stn5.m_regression.bias.data)
+    print("STN4 bias = ", net.m_stn5.m_regression.bias.data)
+    print("gradient at FC.bias=", net.m_fc1.bias._grad)
+    print("\n")
+
 
 def main():
     if len(sys.argv) != 7:
@@ -185,7 +196,7 @@ def main():
     useDataParallel = True  if len(GPUIDList)>1 else False # for debug
     # ===========debug==================
 
-    batchSize = 6 # 3 is for 1 GPU, 6 for 2 GPU.
+    batchSize = 3 # 3 is for 1 GPU, 6 for 2 GPU.
     numWorkers = batchSize
     logging.info(f"Info: batchSize = {batchSize}\n")
 
@@ -196,11 +207,11 @@ def main():
     device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
     net.to(device)
 
-    optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=0.1, weight_decay=0)
     #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.5)
+    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
@@ -307,9 +318,11 @@ def main():
             responseTrainAccuracy = getAccuracy(epochPredict, epochResponse)
             responseTrainTPR = getTPR(epochPredict, epochResponse)[0]
             responseTrainTNR = getTNR(epochPredict, epochResponse)[0]
+
         else:
             continue  # only epoch %5 ==0, run validation set.
 
+        printPartNetworkPara(epoch, net)
         # ================Validation===============
         net.eval()
 

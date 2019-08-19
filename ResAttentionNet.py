@@ -27,6 +27,7 @@ class ResAttentionNet(BasicModel):
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)
         x = x.squeeze(dim=1)
+        x = x+0.3   # for inductive bias, as context of majority 1 is 65%.
         return x
 
     def __init__(self):
@@ -89,7 +90,7 @@ class ResAttentionNet(BasicModel):
         #if self.m_useSpectralNorm:
         #     self.m_fc1 = nn.utils.spectral_norm(self.m_fc1)
         # initial the bias of final Linear regression layer to 0.65, which is consistent with majority prediction.
-        self.m_fc1.bias.data.copy_(torch.tensor([0.3], dtype=torch.float))
+        # self.m_fc1.bias.data.copy_(torch.tensor([0.3], dtype=torch.float))
 
         """
         super().__init__()
