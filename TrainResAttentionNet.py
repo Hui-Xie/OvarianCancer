@@ -95,7 +95,9 @@ Major program changes:
             19  Aug 17th 18:09 2019
                     A add surgical result file support;                    
             20  Aug 18th 08:00 am 2019
-                    A  change all bias in Conv2d, and Linear into True.                     
+                    A  change all bias in Conv2d, and Linear into True.   
+            21  Aug 19th 10:33am 2019
+                    A initalize the bias in the final Linear layer as 0.3; (1-2*0.65 = -0.3)                          
             
             
 Discarded changes:                  
@@ -183,7 +185,7 @@ def main():
     useDataParallel = True  if len(GPUIDList)>1 else False # for debug
     # ===========debug==================
 
-    batchSize = 12 # 3 is for 1 GPU, 6 for 2 GPU.
+    batchSize = 6 # 3 is for 1 GPU, 6 for 2 GPU.
     numWorkers = batchSize
     logging.info(f"Info: batchSize = {batchSize}\n")
 

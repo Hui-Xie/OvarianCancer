@@ -88,6 +88,8 @@ class ResAttentionNet(BasicModel):
         self.m_fc1    = nn.Linear(1024, 1, bias=True)  # for sigmoid output, one number
         #if self.m_useSpectralNorm:
         #     self.m_fc1 = nn.utils.spectral_norm(self.m_fc1)
+        # initial the bias of final Linear regression layer to 0.65, which is consistent with majority prediction.
+        self.m_fc1.bias.data.copy_(torch.tensor([0.3], dtype=torch.float))
 
         """
         super().__init__()
