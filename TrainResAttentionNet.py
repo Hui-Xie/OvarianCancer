@@ -99,7 +99,8 @@ Major program changes:
             21  Aug 19th 10:33am 2019
                     A initalize the bias in the final Linear layer as 0.3; (1-2*0.65 = -0.3)
                     16:17 pm:
-                    B  add inductive bias 0.3 in the network forward function.                           
+                    B  add inductive bias 0.3 in the network forward function. 
+                    C  initial LR =0.1, with decay steps =30                          
             
             
 Discarded changes:                  
