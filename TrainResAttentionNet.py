@@ -135,7 +135,7 @@ def printPartNetworkPara(epoch, net):
     print(f"Epoch: {epoch}   =================")
     print("FC.bias = ", net.m_fc1.bias.data)
     print("STN5 bias = ", net.m_stn5.m_regression.bias.data)
-    print("STN4 bias = ", net.m_stn5.m_regression.bias.data)
+    print("STN4 bias = ", net.m_stn4.m_regression.bias.data)
     print("gradient at FC.bias=", net.m_fc1.bias._grad)
     print("\n")
 
