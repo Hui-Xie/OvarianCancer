@@ -197,7 +197,7 @@ def main():
     useDataParallel = True  if len(GPUIDList)>1 else False # for debug
     # ===========debug==================
 
-    batchSize = 3 # 3 is for 1 GPU, 6 for 2 GPU.
+    batchSize = 3*len(GPUIDList)  # 3 is for 1 GPU, 6 for 2 GPU.
     numWorkers = batchSize
     logging.info(f"Info: batchSize = {batchSize}\n")
 
