@@ -25,13 +25,13 @@ class SpatialTransformer(nn.Module):
             self.m_localization.append(nn.ReLU(inplace=True) if not useLeakyReLU else nn.LeakyReLU())
         self.m_localization.append(nn.LocalResponseNorm(midChannels))  # normalization along channels
 
-        self.m_regression = nn.Linear(midChannels*w*h, 6)
+        self.m_regression = nn.Linear(midChannels*w*h, 7)  # affine 6 elements + modulation factor
         #if useSpectralNorm:
         #     self.m_regression = nn.utils.spectral_norm(self.m_regression)
 
         # Initialize the weights/bias with identity transformation
         self.m_regression.weight.data.zero_()
-        self.m_regression.bias.data.copy_(torch.tensor([1, 0, 0, 0, 1, 0], dtype=torch.float))
+        self.m_regression.bias.data[0:6].copy_(torch.tensor([1, 0, 0, 0, 1, 0], dtype=torch.float))
 
         # for theta with size(2,3)
         self.m_eps = 1e-12
@@ -44,13 +44,17 @@ class SpatialTransformer(nn.Module):
             xs = layer(xs)
         xs = torch.reshape(xs, (xs.shape[0], xs.numel() // xs.shape[0]))
         xs = self.m_regression(xs)
-        theta = xs.view(-1, 2, 3)
+        theta = xs[:,0:6].clone()
+        m = xs[:,6].clone()  # modulation factor
+        m = torch.sigmoid(m)     # convert into range [0,1]
+
+        theta = theta.view(-1, 2, 3)
 
         theta = self.spectralNormalize(theta)  # Spectral Normalize to reduce image repeating.
 
         grid = F.affine_grid(theta, x.size())
         xout = F.grid_sample(x, grid, padding_mode="reflection")
-        return xout
+        return xout, m
 
     def spectralNormalize(self, theta):
         batch = theta.shape[0]
