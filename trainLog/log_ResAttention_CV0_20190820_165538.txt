@@ -1,8 +1,8 @@
 =============training from sratch============
-Program ID: 18457
+Program ID: 28989
 
 Program command: 
- ['/home/hxie1/Projects/OvarianCancer/TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2']
+ ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2']
 
 Major program changes: 
             ResNeXt-based Attention Net: use 2D network to implement 3D convolution without losing 3D context information. 
@@ -110,8 +110,8 @@ Training strategy:
 
           
 
-Program starting Time: 2019-08-20 16:30:35.283805
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190820_163035
+Program starting Time: 2019-08-20 16:55:38.569493
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190820_165538
 
 Info: this is the 0th fold leave for test in the 5-fold cross-validation.
 
