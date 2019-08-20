@@ -101,7 +101,9 @@ Major program changes:
                     16:17 pm:
                     B  add inductive bias 0.3 in the network forward function. 
                     C  initial LR =0.1, with decay steps =30                          
-            
+            22  Aug 20th 10:24am 2019
+                    A change inductive bias = 0.2;
+                    
             
 Discarded changes:                  
                   

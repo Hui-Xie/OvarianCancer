@@ -1,0 +1,13 @@
+=============training from sratch============
+Program ID of Predictive Network training:  20937
+
+Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2']
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190820_102331.txt
+.........
+Epoch: 0   =================
+FC.bias =  tensor([-0.2770], device='cuda:2')
+STN5 bias =  tensor([ 0.6087,  0.0466, -0.2543, -0.8630,  0.3693, -0.0090], device='cuda:2')
+STN4 bias =  tensor([ 0.2662,  0.4044, -0.5634, -0.1689,  1.5251, -0.7005], device='cuda:2')
+gradient at FC.bias= tensor([1.], device='cuda:2')
+
+
