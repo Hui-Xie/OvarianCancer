@@ -45,11 +45,11 @@ class ResNeXtBlock(nn.Module):
 
         y = self.m_reduceConv(x)
         y = F.relu(self.m_reduceBN(y), inplace=True) if not self.m_useLeakyReLU \
-            else F.leaky_relu(self.m_reduceBN(y), inplace=True)
+            else F.leaky_relu(self.m_reduceBN(y))
 
         y = self.m_groupConv(y)
         y = F.relu(self.m_groupBN(y), inplace=True)  if not self.m_useLeakyReLU \
-            else F.leaky_relu(self.m_groupBN(y), inplace=True)
+            else F.leaky_relu(self.m_groupBN(y))
 
         y = self.m_expandConv(y)
         y = self.m_expandBN(y)
@@ -58,5 +58,5 @@ class ResNeXtBlock(nn.Module):
             x = self.m_identityConv(x)
             x = self.m_identityBN(x)
 
-        return F.relu(x + y, inplace=True)  if not self.m_useLeakyReLU \
-               else F.leaky_relu(x + y, inplace=True)
+        return F.relu(x + y)  if not self.m_useLeakyReLU \
+               else F.leaky_relu(x + y)
