@@ -60,8 +60,7 @@ class SpatialTransformer(nn.Module):
         batch = x.shape[0]
         for i in range(batch):
             s = xout[i,].clone()
-            mi = m[i,].clone()
-            xout[i,] = s*mi
+            xout[i,] = s*m[i]
         return xout
 
     def spectralNormalize(self, theta):
