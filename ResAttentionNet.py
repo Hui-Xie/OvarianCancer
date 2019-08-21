@@ -28,18 +28,18 @@ class ResAttentionNet(BasicModel):
             x[b,] = xb + m4[b]*stn4[b,]     # x = x+ m*stn
 
         x = self.m_stage5(x)
-        with torch.autograd.set_detect_anomaly(True):
-            stn5, m5 = self.m_stn5(x)  # m is modulation factor
-            B = x.shape[0]
-            for b in range(B):
-                xb = x[b,].clone()
-                x[b,] = xb + m5[b] * stn5[b,]   # x = x+ m*stn
+        # with torch.autograd.set_detect_anomaly(True):
+        stn5, m5 = self.m_stn5(x)  # m is modulation factor
+        B = x.shape[0]
+        # for b in range(B):
+            # xb = x[b,].clone()
+            # x[b,] = xb + m5[b] * stn5[b,]   # x = x+ m*stn
 
-            x = self.m_layersBeforeFc(x)
-            x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
-            x = self.m_fc1(x)
-            x = x.squeeze(dim=1)
-            x = x+0.2   # for inductive bias, as context of majority 1 is 65%.
+        x = self.m_layersBeforeFc(x)
+        x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
+        x = self.m_fc1(x)
+        x = x.squeeze(dim=1)
+        x = x+0.2   # for inductive bias, as context of majority 1 is 65%.
         return x
 
     def __init__(self):
