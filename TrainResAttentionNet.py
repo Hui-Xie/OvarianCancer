@@ -106,7 +106,9 @@ Major program changes:
                     16:29pm:
                     B add modulation factor in the STN
             23  Aug 21th, 10:16, 2019
-                    A delete the inductive bias in the final FC.        
+                    A delete the inductive bias in the final FC.  
+                    15:47 pm
+                    B change LRscheduler into MultiStepLR;      
             
 Discarded changes:                  
                   
@@ -217,7 +219,8 @@ def main():
     #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
+    # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[150, 300, 500, 800], gamma=0.5)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
