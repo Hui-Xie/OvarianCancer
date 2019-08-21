@@ -24,13 +24,15 @@ class ResAttentionNet(BasicModel):
         stn4,m4 = self.m_stn4(x) # m is modulation factor
         B = x.shape[0]
         for b in range(B):
-            x[b,] = x[b,] + m4[b]*stn4[b,]     # x = x+ m*stn
+            xb = x[b,].clone()
+            x[b,] = xb + m4[b]*stn4[b,]     # x = x+ m*stn
 
         x = self.m_stage5(x)
         stn5, m5 = self.m_stn5(x)  # m is modulation factor
         B = x.shape[0]
         for b in range(B):
-            x[b,] = x[b,] + m5[b] * stn5[b,]   # x = x+ m*stn
+            xb = x[b,].clone()
+            x[b,] = xb + m5[b] * stn5[b,]   # x = x+ m*stn
 
         x = self.m_layersBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))

@@ -45,17 +45,17 @@ class SpatialTransformer(nn.Module):
         xs = torch.reshape(xs, (xs.shape[0], xs.numel() // xs.shape[0]))
         xs = self.m_regression(xs)
 
-        with torch.autograd.set_detect_anomaly(True):
-            theta = xs[:,0:6].clone()
-            m = xs[:,6].clone()  # modulation factor
-            m = torch.sigmoid(m)     # convert into range [0,1]
+        #with torch.autograd.set_detect_anomaly(True):
+        theta = xs[:,0:6].clone()
+        m = xs[:,6].clone()  # modulation factor
+        m = torch.sigmoid(m)     # convert into range [0,1]
 
-            theta = theta.view(-1, 2, 3)
+        theta = theta.view(-1, 2, 3)
 
-            theta = self.spectralNormalize(theta)  # Spectral Normalize to reduce image repeating.
+        theta = self.spectralNormalize(theta)  # Spectral Normalize to reduce image repeating.
 
-            grid = F.affine_grid(theta, x.size())
-            xout = F.grid_sample(x, grid, padding_mode="reflection")
+        grid = F.affine_grid(theta, x.size())
+        xout = F.grid_sample(x, grid, padding_mode="reflection")
         return xout, m
 
     def spectralNormalize(self, theta):
