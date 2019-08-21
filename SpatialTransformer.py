@@ -45,7 +45,6 @@ class SpatialTransformer(nn.Module):
         xs = torch.reshape(xs, (xs.shape[0], xs.numel() // xs.shape[0]))
         xs = self.m_regression(xs)
 
-        #with torch.autograd.set_detect_anomaly(True):
         theta = xs[:,0:6].clone()
         m = xs[:,6].clone()  # modulation factor
         m = torch.sigmoid(m)     # convert into range [0,1]
@@ -56,7 +55,14 @@ class SpatialTransformer(nn.Module):
 
         grid = F.affine_grid(theta, x.size())
         xout = F.grid_sample(x, grid, padding_mode="reflection")
-        return xout, m
+
+        # modulate with m factor
+        batch = x.shape[0]
+        for i in range(batch):
+            s = xout[i,].clone()
+            mi = m[i,].clone()
+            xout[i,] = s*mi
+        return xout
 
     def spectralNormalize(self, theta):
         batch = theta.shape[0]
