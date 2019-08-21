@@ -46,7 +46,7 @@ class SpatialTransformer(nn.Module):
         xs = self.m_regression(xs)
 
         theta = xs[:,0:6].clone()
-        m = xs[:,6].clone()  # modulation factor
+        m = xs[:,6].clone()      # modulation factor
         m = torch.sigmoid(m)     # convert into range [0,1]
 
         theta = theta.view(-1, 2, 3)
@@ -56,7 +56,7 @@ class SpatialTransformer(nn.Module):
         grid = F.affine_grid(theta, x.size())
         xout = F.grid_sample(x, grid, padding_mode="reflection")
 
-        # modulate with m factor
+        # modulate the output of STN
         batch = x.shape[0]
         for i in range(batch):
             s = xout[i,].clone()
