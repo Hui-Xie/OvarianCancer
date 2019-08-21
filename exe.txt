@@ -38,11 +38,13 @@ nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCa
 
 nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/***  0  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0 &
 
-# set cuda environment viarible.
-CUDA_VISIBLE_DEVICE=2,3 nohup  python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt  1  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0 &
+nohup  python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt  1  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0 &
 
 nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt/20190816_144630  0  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  2 &
 
 nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt  1  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientResponseDict.json  0  0,1,2,3 &
 
 nohup python3.7 TrainResAttentionNet.py /home/hxie1/temp_netParameters/OvarianCancer/SurgicalResNeXt  1  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/patientSurgicalResults.json  0  0,1,2,3 &
+
+
+
