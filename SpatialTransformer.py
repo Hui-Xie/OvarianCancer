@@ -44,9 +44,8 @@ class SpatialTransformer(nn.Module):
             xs = layer(xs)
         xs = torch.reshape(xs, (xs.shape[0], xs.numel() // xs.shape[0]))
         xs = self.m_regression(xs)
-        xs2 = xs.clone()
-        theta = xs2[:,0:6].clone()
-        m = xs2[:,6].clone()  # modulation factor
+        theta = xs[:,0:6].clone()
+        m = xs[:,6].clone()  # modulation factor
         m = torch.sigmoid(m)     # convert into range [0,1]
 
         theta = theta.view(-1, 2, 3)
