@@ -27,7 +27,7 @@ class ResAttentionNet(BasicModel):
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = self.m_fc1(x)
         x = x.squeeze(dim=1)
-        x = x+0.2   # for inductive bias, as context of majority 1 is 65%.
+        # x = x+0.2   # for inductive bias, as context of majority 1 is 65%.
         return x
 
     def __init__(self):

@@ -105,6 +105,8 @@ Major program changes:
                     A change inductive bias = 0.2;
                     16:29pm:
                     B add modulation factor in the STN
+            23  Aug 21th, 10:16, 2019
+                    A delete the inductive bias in the final FC.        
             
 Discarded changes:                  
                   
