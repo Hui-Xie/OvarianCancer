@@ -136,7 +136,7 @@ def printUsage(argv):
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
           "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n")
 
-def printPartNetworkPara(epoch, net):
+def printPartNetworkPara(epoch, net): # only support non-parallel
     print(f"Epoch: {epoch}   =================")
     print("FC.bias = ", net.m_fc1.bias.data)
     print("STN5 bias = ", net.m_stn5.m_regression.bias.data)
@@ -328,7 +328,7 @@ def main():
         else:
             continue  # only epoch %5 ==0, run validation set.
 
-        printPartNetworkPara(epoch, net)
+        # printPartNetworkPara(epoch, net)
         # ================Validation===============
         net.eval()
 
