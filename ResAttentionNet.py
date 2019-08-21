@@ -80,7 +80,7 @@ class ResAttentionNet(BasicModel):
         self.m_stn5   = SpatialTransformer(4096, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_layersBeforeFc=nn.Sequential(
                              nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=True),
-                             nn.ReLU() if not self.m_useLeakyReLU else nn.LeakyReLU(),
+                             nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True),
                              nn.LocalResponseNorm(1024)   # normalization on 1024 channels.
                              ) # output size: 1024*1*1
         #if self.m_useSpectralNorm:
