@@ -19,7 +19,7 @@ class DeformConvBlock(nn.Module):
         self.m_deformConv2 = DeformConv2d(inChannels, inChannels, kernel_size=3, padding=1, stride=convStride, bias=True, modulation=True)
         self.m_BN2 = nn.BatchNorm2d(inChannels)
 
-        self.m_deformConv3 = DeformConv2d(inChannels, inChannels, kernel_size=3, padding=1, stride=1, bias=True, modulation=True)
+        self.m_deformConv3 = DeformConv2d(inChannels, outChannels, kernel_size=3, padding=1, stride=1, bias=True, modulation=True)
         self.m_BN3 = nn.BatchNorm2d(inChannels)
 
         if inChannels != outChannels or convStride != 1:
