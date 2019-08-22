@@ -112,6 +112,7 @@ Major program changes:
             24  Aug 22nd, 11:14, 2019
                     A replace ResNeXtBlock with DeformConvBlock in the stage3,4,5.
                     
+                    
                           
             
 Discarded changes:                  
@@ -168,7 +169,15 @@ def main():
 
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-    trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
+
+    if '/home/hxie1/' in netPath:
+        trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
+    elif '/Users/hxie1/' in netPath:
+        trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
+    else:
+        print("output net path should be full path.")
+        return
+
     logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     if scratch>0:
