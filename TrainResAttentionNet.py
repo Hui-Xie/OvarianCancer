@@ -172,8 +172,10 @@ def main():
 
     if '/home/hxie1/' in netPath:
         trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
+        isArgon = False
     elif '/Users/hxie1/' in netPath:
         trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
+        isArgon = True
     else:
         print("output net path should be full path.")
         return
@@ -217,7 +219,7 @@ def main():
     useDataParallel = True  if len(GPUIDList)>1 else False # for debug
     # ===========debug==================
 
-    batchSize = 3*len(GPUIDList)  # 3 is for 1 GPU, 6 for 2 GPU.
+    batchSize = 2*len(GPUIDList)  # 3 is for 1 GPU, 6 for 2 GPU.
     numWorkers = batchSize
     logging.info(f"Info: batchSize = {batchSize}\n")
 
