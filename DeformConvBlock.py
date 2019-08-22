@@ -20,7 +20,7 @@ class DeformConvBlock(nn.Module):
         self.m_BN2 = nn.BatchNorm2d(inChannels)
 
         self.m_deformConv3 = DeformConv2d(inChannels, outChannels, kernel_size=3, padding=1, stride=1, bias=True, modulation=True)
-        self.m_BN3 = nn.BatchNorm2d(inChannels)
+        self.m_BN3 = nn.BatchNorm2d(outChannels)
 
         if inChannels != outChannels or convStride != 1:
             self.m_identityConv = DeformConv2d(inChannels, outChannels, kernel_size=1 if convStride == 1 else 3,
