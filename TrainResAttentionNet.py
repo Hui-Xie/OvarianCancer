@@ -108,7 +108,11 @@ Major program changes:
             23  Aug 21th, 10:16, 2019
                     A delete the inductive bias in the final FC.  
                     15:47 pm
-                    B change LRscheduler into MultiStepLR;      
+                    B change LRscheduler into MultiStepLR;
+            24  Aug 22nd, 11:14, 2019
+                    A replace ResNeXtBlock with DeformConvBlock in the stage3,4,5.
+                    
+                          
             
 Discarded changes:                  
                   

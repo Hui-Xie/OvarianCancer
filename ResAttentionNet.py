@@ -1,6 +1,7 @@
 from BasicModel import BasicModel
 from ResNeXtBlock import ResNeXtBlock
 from SpatialTransformer import SpatialTransformer
+from DeformConvBlock import DeformConvBlock
 import torch.nn as nn
 import torch
 from draw2DArray import *
@@ -32,6 +33,61 @@ class ResAttentionNet(BasicModel):
 
     def __init__(self):
         super().__init__()
+        # For input image size: 231*251*251 (zyx)
+        # at Aug 23 11:02 , 2019, Use deform ConvNet block
+        # add maxPool at each stage, and 1024 is the final conv filter number.
+        #  add filter number in the model.
+        # log:
+        #
+        # result:
+        #
+        self.m_useSpectralNorm = True
+        self.m_useLeakyReLU = True
+        # self.m_stn0    = SpatialTransformer(231, 64, 251, 251, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        self.m_stage0 = nn.Sequential(
+                        ResNeXtBlock(231, 128, nGroups=33, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # ouput size: 128*251*251
+        self.m_stage1 = nn.Sequential(
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 128, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(128, 256, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+                        # SpatialTransformer(128, 32, 126, 126)
+                        ) # ouput size: 256*126*126
+        self.m_stage2 = nn.Sequential(
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(256, 256, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                        ResNeXtBlock(256, 512, nGroups=32, poolingLayer=None, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+                        # SpatialTransformer(256, 64, 63, 63)
+                        ) # output size: 512*63*63
+        self.m_stage3 = nn.Sequential(
+                        DeformConvBlock(512, 512, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        DeformConvBlock(512, 512, poolingLayer=None,convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        DeformConvBlock(512, 1024,poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # output size: 1024*32*32
+        self.m_stage4 = nn.Sequential(
+                        DeformConvBlock(1024, 1024, poolingLayer=nn.MaxPool2d(3, stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        DeformConvBlock(1024, 1024, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        DeformConvBlock(1024, 2048, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # output size: 2048*16*16
+        self.m_stn4   = SpatialTransformer(2048, 512, 16, 16, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        self.m_stage5 = nn.Sequential(
+                        DeformConvBlock(2048, 2048, poolingLayer=nn.MaxPool2d(3, stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        DeformConvBlock(2048, 2048, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        DeformConvBlock(2048, 4096, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # output size: 4096*8*8
+        self.m_stn5   = SpatialTransformer(4096, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        self.m_layersBeforeFc=nn.Sequential(
+                             nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=True),
+                             nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True),
+                             nn.LocalResponseNorm(1024)   # normalization on 1024 channels.
+                             ) # output size: 1024*1*1
+        self.m_fc1    = nn.Linear(1024, 1, bias=True)  # for sigmoid output, one number
+
+        
+        """
+         super().__init__()
         # For input image size: 231*251*251 (zyx)
         # at Aug 16 12:09 , 2019, input of gaussian normalization with non-zero mean, with STN
         # add maxPool at each stage, and 1024 is the final conv filter number.
@@ -91,7 +147,10 @@ class ResAttentionNet(BasicModel):
         #     self.m_fc1 = nn.utils.spectral_norm(self.m_fc1)
         # initial the bias of final Linear regression layer to 0.65, which is consistent with majority prediction.
         # self.m_fc1.bias.data.copy_(torch.tensor([0.3], dtype=torch.float))
-
+        
+        """
+        
+        
         """
         super().__init__()
         # For input image size: 231*251*251 (zyx)
