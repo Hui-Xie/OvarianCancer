@@ -220,7 +220,7 @@ def main():
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[150, 300, 500, 800], gamma=0.5)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300], gamma=0.1)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
