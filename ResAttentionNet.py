@@ -80,7 +80,7 @@ class ResAttentionNet(BasicModel):
                         )  # output size: 512*8*8
         self.m_stn5   = SpatialTransformer(512, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_layersBeforeFc=nn.Sequential(
-                             nn.Conv2d(512, 512, kernel_size=8, stride=8, padding=0, bias=True),
+                             nn.Conv2d(512, 512, kernel_size=8, stride=8, padding=0, bias=True),  # Weighted Global pooling
                              nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True)
                              ) # output size: 512*1*1
         # As linear layer without bias, the input feature before Linear layer must be normalize.
