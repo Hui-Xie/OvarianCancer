@@ -5,6 +5,9 @@ version: April 19th 2019
 
 Original Paper: https://arxiv.org/abs/1811.11168
 
+Notes:
+1 Hui revise one line in August 23th, 2019
+
 """
 
 
@@ -97,23 +100,25 @@ class DeformConv2d(nn.Module):
 
         return out
 
-    def _get_p_n(self, N, dtype):
+    # Hui modified function interface to support device on Aug 23th,2019
+    def _get_p_n(self, N, device, dataType):
         p_n_x, p_n_y = torch.meshgrid(
             torch.arange(-(self.kernel_size-1)//2, (self.kernel_size-1)//2+1),
             torch.arange(-(self.kernel_size-1)//2, (self.kernel_size-1)//2+1))
         # (2N, 1)
         p_n = torch.cat([torch.flatten(p_n_x), torch.flatten(p_n_y)], 0)
-        p_n = p_n.view(1, 2*N, 1, 1).type(dtype)
+        p_n = p_n.view(1, 2*N, 1, 1).to(device, dtype=dataType)
 
         return p_n
 
-    def _get_p_0(self, h, w, N, dtype):
+    # Hui modified function interface to support device on Aug 23th,2019
+    def _get_p_0(self, h, w, N, device, dataType):
         p_0_x, p_0_y = torch.meshgrid(
             torch.arange(1, h*self.stride+1, self.stride),
             torch.arange(1, w*self.stride+1, self.stride))
         p_0_x = torch.flatten(p_0_x).view(1, 1, h, w).repeat(1, N, 1, 1)
         p_0_y = torch.flatten(p_0_y).view(1, 1, h, w).repeat(1, N, 1, 1)
-        p_0 = torch.cat([p_0_x, p_0_y], 1).type(dtype)
+        p_0 = torch.cat([p_0_x, p_0_y], 1).to(device, dtype=dataType)
 
         return p_0
 
@@ -121,9 +126,9 @@ class DeformConv2d(nn.Module):
         N, h, w = offset.size(1)//2, offset.size(2), offset.size(3)
 
         # (1, 2N, 1, 1)
-        p_n = self._get_p_n(N, dtype)
+        p_n = self._get_p_n(N, offset.device, offset.dtype)
         # (1, 2N, h, w)
-        p_0 = self._get_p_0(h, w, N, dtype)
+        p_0 = self._get_p_0(h, w, N, offset.device, offset.dtype)
         p = p_0 + p_n + offset
         return p
 

@@ -62,28 +62,28 @@ class ResAttentionNet(BasicModel):
                         # SpatialTransformer(256, 64, 63, 63)
                         ) # output size: 512*63*63
         self.m_stage3 = nn.Sequential(
-                        DeformConvBlock(512, 512, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU),
-                        DeformConvBlock(512, 512, poolingLayer=None,convStride=1, useLeakyReLU=self.m_useLeakyReLU),
-                        DeformConvBlock(512, 1024,poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
-                        )  # output size: 1024*32*32
+                        DeformConvBlock(512, 512, poolingLayer=nn.MaxPool2d(3,stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        # DeformConvBlock(512, 512, poolingLayer=None,convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        # DeformConvBlock(512, 1024,poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # output size: 512*32*32
         self.m_stage4 = nn.Sequential(
-                        DeformConvBlock(1024, 1024, poolingLayer=nn.MaxPool2d(3, stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU),
-                        DeformConvBlock(1024, 1024, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU),
-                        DeformConvBlock(1024, 2048, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
-                        )  # output size: 2048*16*16
-        self.m_stn4   = SpatialTransformer(2048, 512, 16, 16, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+                        DeformConvBlock(512, 512, poolingLayer=nn.MaxPool2d(3, stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        # DeformConvBlock(1024, 1024, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        # DeformConvBlock(1024, 2048, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # output size: 512*16*16
+        self.m_stn4   = SpatialTransformer(512, 512, 16, 16, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_stage5 = nn.Sequential(
-                        DeformConvBlock(2048, 2048, poolingLayer=nn.MaxPool2d(3, stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU),
-                        DeformConvBlock(2048, 2048, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU),
-                        DeformConvBlock(2048, 4096, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
-                        )  # output size: 4096*8*8
-        self.m_stn5   = SpatialTransformer(4096, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+                        DeformConvBlock(512, 512, poolingLayer=nn.MaxPool2d(3, stride=2, padding=1), convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        # DeformConvBlock(2048, 2048, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU),
+                        # DeformConvBlock(2048, 4096, poolingLayer=None, convStride=1, useLeakyReLU=self.m_useLeakyReLU)
+                        )  # output size: 512*8*8
+        self.m_stn5   = SpatialTransformer(512, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_layersBeforeFc=nn.Sequential(
-                             nn.Conv2d(4096, 1024, kernel_size=8, stride=8, padding=0, bias=True),
+                             nn.Conv2d(512, 512, kernel_size=8, stride=8, padding=0, bias=True),
                              nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True),
-                             nn.LocalResponseNorm(1024)   # normalization on 1024 channels.
+                             nn.LocalResponseNorm(512)   # normalization on 1024 channels.
                              ) # output size: 1024*1*1
-        self.m_fc1    = nn.Linear(1024, 1, bias=True)  # for sigmoid output, one number
+        self.m_fc1    = nn.Linear(512, 1, bias=True)  # for sigmoid output, one number
 
         
         """
