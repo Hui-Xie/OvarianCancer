@@ -223,7 +223,7 @@ def main():
     # for Regulare Conv:  3 is for 1 GPU, 6 for 2 GPU
     # For Deformable Conv: 4 is for 1 GPU, 8 for 2 GPUs.
 
-    numWorkers = batchSize
+    numWorkers = 0
     logging.info(f"Info: batchSize = {batchSize}\n")
 
     net = ResAttentionNet()
