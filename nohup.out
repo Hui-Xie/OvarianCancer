@@ -4,3 +4,5 @@ Program ID of Predictive Network training:  20596
 Program commands: ['TrainResAttentionNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/STNResNeXt', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/patientResponseDict.json', '0', '2,0']
 Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV0_20190822_094306.txt
 .........
+Program ID 20596  exits.
+
