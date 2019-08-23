@@ -114,6 +114,8 @@ Major program changes:
             25  Agu 23th 10:31, 2019
                     A in stage 3,4,4, reduce DeformConnBlock into 1 block;
                     B reduce the final FC layer width into 512.
+                    15:10pm
+                    C before regression with bias = 0, nomalize x. 
                             
                     
                           

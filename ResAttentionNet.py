@@ -4,6 +4,7 @@ from SpatialTransformer import SpatialTransformer
 from DeformConvBlock import DeformConvBlock
 import torch.nn as nn
 import torch
+import torch.nn.functional as F
 from draw2DArray import *
 
 # ResNeXt based Attention Net
@@ -26,7 +27,8 @@ class ResAttentionNet(BasicModel):
         x = x+ self.m_stn5(x)
         x = self.m_layersBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
-        x = self.m_fc1(x)
+        x = F.normalize(x,dim=1)  # after normalize x, regression layer will have no bias.
+        x = self.m_regression(x)
         x = x.squeeze(dim=1)
         # x = x+0.2   # for inductive bias, as context of majority 1 is 65%.
         return x
@@ -79,10 +81,10 @@ class ResAttentionNet(BasicModel):
         self.m_stn5   = SpatialTransformer(512, 512, 8, 8, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         self.m_layersBeforeFc=nn.Sequential(
                              nn.Conv2d(512, 512, kernel_size=8, stride=8, padding=0, bias=True),
-                             nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True),
-                             nn.LocalResponseNorm(512)   # normalization on 1024 channels.
-                             ) # output size: 1024*1*1
-        self.m_fc1    = nn.Linear(512, 1, bias=True)  # for sigmoid output, one number
+                             nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True)
+                             ) # output size: 512*1*1
+        # As linear layer without bias, the input feature before Linear layer must be normalize.
+        self.m_regression    = nn.Linear(512, 1, bias=False)  # for sigmoid output, one number
 
         
         """
