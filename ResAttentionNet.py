@@ -34,10 +34,9 @@ class ResAttentionNet(BasicModel):
     def __init__(self):
         super().__init__()
         # For input image size: 231*251*251 (zyx)
-        # at Aug 23 11:02 , 2019, Use deform ConvNet block
-        # add maxPool at each stage, and 1024 is the final conv filter number.
-        #  add filter number in the model.
-        # log:
+        # at Aug 23 10:33 , 2019, Use deform ConvNet block
+        # add maxPool at each stage, and 512 is the final conv filter number.
+        #  log:  final FC layer has a 512 width.
         #
         # result:
         #
@@ -93,6 +92,7 @@ class ResAttentionNet(BasicModel):
         # add maxPool at each stage, and 1024 is the final conv filter number.
         #  add filter number in the model.
         # log:log_ResAttention_CV0_20190821_164106.txt
+              log_ResAttention_CV0_20190822_094306.txt
         #
         # result:
         #

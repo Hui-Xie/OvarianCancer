@@ -111,7 +111,10 @@ Major program changes:
                     B change LRscheduler into MultiStepLR;
             24  Aug 22nd, 11:14, 2019
                     A replace ResNeXtBlock with DeformConvBlock in the stage3,4,5.
-                    
+            25  Agu 23th 10:31, 2019
+                    A in stage 3,4,4, reduce DeformConnBlock into 1 block;
+                    B reduce the final FC layer width into 512.
+                            
                     
                           
             
