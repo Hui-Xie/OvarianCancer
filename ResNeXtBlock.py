@@ -58,5 +58,5 @@ class ResNeXtBlock(nn.Module):
             x = self.m_identityConv(x)
             x = self.m_identityBN(x)
 
-        return F.relu(x + y, inplace=True)  if not self.m_useLeakyReLU \
-               else F.leaky_relu(x + y, inplace=True)
+        return F.relu(y-x, inplace=True)  if not self.m_useLeakyReLU \
+               else F.leaky_relu(y-x, inplace=True)

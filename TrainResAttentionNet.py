@@ -116,7 +116,9 @@ Major program changes:
                     B reduce the final FC layer width into 512.
                     15:10pm
                     C before regression with bias = 0, nomalize x. 
-                            
+            26   Aug 24th, 2019, 13:42
+                     A change + into - in all ResNeXtBlock, DeformConv2D, and STN;
+                       Rational: deduct irrelevant features.                 
                     
                           
             

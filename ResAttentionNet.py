@@ -22,9 +22,9 @@ class ResAttentionNet(BasicModel):
         x = self.m_stage2(x)
         x = self.m_stage3(x)
         x = self.m_stage4(x)
-        x = x+ self.m_stn4(x)
+        x = x - self.m_stn4(x)
         x = self.m_stage5(x)
-        x = x+ self.m_stn5(x)
+        x = x - self.m_stn5(x)
         x = self.m_layersBeforeFc(x)
         x = torch.reshape(x, (x.shape[0], x.numel() // x.shape[0]))
         x = F.normalize(x,dim=1)  # after normalize x, regression layer will have no bias.
