@@ -222,7 +222,7 @@ def main():
         for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True,
                                                    num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
-            gt = responseCpu.to(device, dtype=torch.float)
+            gt = torch.stack(responseCpu).to(device)
 
             optimizer.zero_grad()
             xr = net.forward(inputs)
