@@ -273,7 +273,7 @@ def main():
         logging.info("!!!!!!! Some thing wrong !!!!!")
         return
 
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([posWeightRate]).to(device, dtype=torch.float))
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([posWeightRate], reduction="sum").to(device, dtype=torch.float))
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
