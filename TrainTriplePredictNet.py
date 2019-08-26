@@ -269,7 +269,7 @@ def main():
         posWeight = torch.tensor([0.23 / 0.77]).to(device, dtype=torch.float)
         logging.info("This predicts surgical results.")
     elif "patientTripleResults" in groundTruthPath:
-        posWeight = torch.tensor([0.23 / 0.77, 0.26/0.74, 0.08/0.92]).to(device, dtype=torch.float)
+        posWeight = torch.tensor([67/ 213, 75/205, 23/257]).to(device, dtype=torch.float)
         logging.info("This predicts surgical results, chemo result, survival at same time.")
     else:
         posWeight = 1.0

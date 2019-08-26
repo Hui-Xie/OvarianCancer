@@ -39,24 +39,29 @@ class OVDataPartition():
     def updateLabelsList(self):
         self.m_labelsList = []
         with open(self.m_labelsPath) as f:
-            allPatientRespsDict = json.load(f)
+            resultsDict = json.load(f)
 
         for file in self.m_inputFilesList:
             patientID = getStemName(file, self.m_inputSuffix)
             if len(patientID) > 8:
                 patientID = patientID[0:8]
-            self.m_labelsList.append(float(allPatientRespsDict[patientID]))
+            self.m_labelsList.append(resultsDict[patientID])
 
     def statisticsLabels(self):
         self.m_0FileIndices = []
         self.m_1FileIndices = []
         for i, label in enumerate(self.m_labelsList):
+            if isinstance(label, list):
+                label = label[0]
             if label ==0:
                 self.m_0FileIndices.append(i)
             else:
                 self.m_1FileIndices.append(i)
-        self.m_logInfo(f"Infor: In all data of {len(self.m_labelsList)} files, label 0 has {len(self.m_0FileIndices)} files,\n\t  and label 1 has {len(self.m_1FileIndices)} files, "\
-                       + f"where positive response rate = {len(self.m_1FileIndices)/len(self.m_labelsList)} in full data")
+
+        if isinstance(self.m_labelsList[0], list):
+            self.m_logInfo("Program statistics label according to label[0] for each sample.")
+        self.m_logInfo(f"Infor: In all data of {len(self.m_labelsList)} files, label 0 has {len(self.m_0FileIndices)} files,\n\t  and label 1 has {len(self.m_1FileIndices)} files, " \
+                + f"where positive response rate = {len(self.m_1FileIndices) / len(self.m_labelsList)} in full data")
 
     def partition(self):
         N = len(self.m_labelsList)
@@ -91,7 +96,16 @@ class OVDataSet(data.Dataset):
         self.m_transform = transform
         self.m_logInfo = logInfoFun
         self.m_labels = self.getLabels(self.m_dataIDs)
-        self.m_logInfo(f"{name} dataset:\t total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels) / len(self.m_labels)}")
+        if isinstance(self.m_labels[0], float):
+            self.m_logInfo(f"{name} dataset:\t total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels) / len(self.m_labels)}")
+        elif isinstance(self.m_labels[0], list):
+            labelsArray = np.array(self.m_labels)
+            shape = labelsArray.shape
+            self.m_logInfo(f"{name} dataset:\t total {shape} ground truth\n")
+            for i in range(shape[1]):
+                self.m_logInfo(f" \t\t, in the {i}-th coloumn, 1 has {np.sum(labelsArray[:,i])} with rate of {np.sum(labelsArray[:,i]) / shape[0]}")
+        else:
+            self.m_logInfo(f"some thing wrong in OVDataSet init function")
 
     def __len__(self):
         return len(self.m_labels)
