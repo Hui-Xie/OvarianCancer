@@ -101,9 +101,9 @@ class OVDataSet(data.Dataset):
         elif isinstance(self.m_labels[0], list):
             labelsArray = np.array(self.m_labels)
             shape = labelsArray.shape
-            self.m_logInfo(f"{name} dataset:\t total {shape} ground truth\n")
+            self.m_logInfo(f"\n\n{name} dataset:\t total {shape} ground truth\n")
             for i in range(shape[1]):
-                self.m_logInfo(f" \t\t, in the {i}-th coloumn, 1 has {np.sum(labelsArray[:,i])} with rate of {np.sum(labelsArray[:,i]) / shape[0]}")
+                self.m_logInfo(f" \t\t in the {i}-th coloumn, 1 has {np.sum(labelsArray[:,i])} with rate of {np.sum(labelsArray[:,i]) / shape[0]}")
         else:
             self.m_logInfo(f"some thing wrong in OVDataSet init function")
 
