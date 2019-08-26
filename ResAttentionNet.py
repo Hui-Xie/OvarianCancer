@@ -84,8 +84,7 @@ class ResAttentionNet(BasicModel):
                              nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True)
                              ) # output size: 512*1*1
         # As linear layer without bias, the input feature before Linear layer must be normalize.
-        self.m_regression    = nn.Linear(512, 1, bias=False)  # for sigmoid output, one number
-
+        self.m_regression    = nn.Linear(512, 3, bias=False)  # for triple predition: 3
         
         """
          super().__init__()

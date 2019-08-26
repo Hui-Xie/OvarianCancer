@@ -1,5 +1,4 @@
-# train ResNeXt-based Attention Net
-
+# train optimal surgical result, survival, and chemo result at same time.
 import sys
 import datetime
 import random
@@ -12,7 +11,7 @@ import logging
 from OCDataSet import *
 from FilesUtilities import *
 from MeasureUtilities import *
-from ResAttentionNet  import ResAttentionNet
+from ResAttentionNet import ResAttentionNet
 from OCDataTransform import *
 from NetMgr import NetMgr
 
@@ -32,7 +31,7 @@ Major program changes:
             4   use rich 2D affine transforms slice by slice and concatenate them to implement 3D data augmentation;
             5   20% data for independent test, remaining 80% data for 4-fold cross validation;
             6   add lossweight to adjust positive samples to 3/7 posweight in BCEWithLogitsLoss;
-            
+
             Update:
             1    reduced network parameters to 3.14 million in July 27th, 2019, 0840am
             2    at 15:00 of July 27th, 2019, reduce network parameter again. Now each stage has 160 filters, with 1.235 million parameters
@@ -119,11 +118,11 @@ Major program changes:
             26   Aug 24th, 2019, 13:42
                      A change + into - in all ResNeXtBlock, DeformConv2D, and STN;
                        Rational: deduct irrelevant features.                 
-                    
-                          
-            
+
+
+
 Discarded changes:                  
-                  
+
 
 Experiment setting:
 Input CT data: maximum size 140*251*251 (zyx) of 3D numpy array with spacing size(5*2*2)
@@ -150,7 +149,8 @@ def printUsage(argv):
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
           "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n")
 
-def printPartNetworkPara(epoch, net): # only support non-parallel
+
+def printPartNetworkPara(epoch, net):  # only support non-parallel
     print(f"Epoch: {epoch}   =================")
     print("FC.bias = ", net.m_fc1.bias.data)
     print("STN5 bias = ", net.m_stn5.m_regression.bias.data)
@@ -189,7 +189,7 @@ def main():
 
     logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
-    if scratch>0:
+    if scratch > 0:
         netPath = os.path.join(netPath, timeStr)
         print(f"=============training from sratch============")
         logging.info(f"=============training from sratch============")
@@ -217,16 +217,16 @@ def main():
     trainTransform = OCDataTransform(0.9)
     validationTransform = OCDataTransform(0)
 
-    trainingData = OVDataSet('training', dataPartitions,  transform=trainTransform, logInfoFun=logging.info)
-    validationData = OVDataSet('validation', dataPartitions,  transform=validationTransform, logInfoFun=logging.info)
+    trainingData = OVDataSet('training', dataPartitions, transform=trainTransform, logInfoFun=logging.info)
+    validationData = OVDataSet('validation', dataPartitions, transform=validationTransform, logInfoFun=logging.info)
     testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info)
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
-    useDataParallel = True  if len(GPUIDList)>1 else False # for debug
+    useDataParallel = True if len(GPUIDList) > 1 else False  # for debug
     # ===========debug==================
 
-    batchSize = 4*len(GPUIDList)
+    batchSize = 4 * len(GPUIDList)
     # for Regulare Conv:  3 is for 1 GPU, 6 for 2 GPU
     # For Deformable Conv: 4 is for 1 GPU, 8 for 2 GPUs.
 
@@ -241,7 +241,7 @@ def main():
     net.to(device)
 
     optimizer = optim.Adam(net.parameters(), lr=0.1, weight_decay=0)
-    #optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
+    # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
@@ -262,18 +262,21 @@ def main():
     logging.info(net.getParametersScale())
 
     # for imbalance training data for BCEWithLogitsLoss
-    if "patientResponseDict" in  groundTruthPath:
-        posWeightRate = 0.35/0.65
-        logging.info("This predict optimal response.")
+    if "patientResponseDict" in groundTruthPath:
+        posWeight = torch.tensor([0.35 / 0.65]).to(device, dtype=torch.float)
+        logging.info("This predicts optimal response.")
     elif "patientSurgicalResults" in groundTruthPath:
-        posWeightRate = 0.23/0.77
-        logging.info("This predict surgical results.")
+        posWeight = torch.tensor([0.23 / 0.77]).to(device, dtype=torch.float)
+        logging.info("This predicts surgical results.")
+    elif "patientTripleResults" in groundTruthPath:
+        posWeight = torch.tensor([0.23 / 0.77, 0.26/0.74, 0.08/0.92]).to(device, dtype=torch.float)
+        logging.info("This predicts surgical results, chemo result, survival at same time.")
     else:
-        posWeightRate = 1.0
+        posWeight = 1.0
         logging.info("!!!!!!! Some thing wrong !!!!!")
         return
 
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([posWeightRate]).to(device, dtype=torch.float), reduction="sum")
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=posWeight, reduction="sum")
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
@@ -291,10 +294,10 @@ def main():
 
     logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
 
-    logging.info(f"Epoch" + f"\tLearningRate"\
+    logging.info(f"Epoch" + f"\tLearningRate" \
                  + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
-                 + f"\t\tVaLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
-                 + f"\t\tTeLoss" +  f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" )  # logging.info output head
+                 + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
+                 + f"\t\tTeLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
 
     oldTestLoss = 1000
 
@@ -315,8 +318,8 @@ def main():
         responseTrainTPR = 0.0
         responseTrainTNR = 0.0
 
-
-        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
+        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True,
+                                                   num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
             gt = responseCpu.to(device, dtype=torch.float)
 
@@ -330,13 +333,12 @@ def main():
 
             # accumulate response and predict value
             if epoch % 5 == 0:
-                batchPredict = (xr>= 0).cpu().detach().numpy().flatten()
+                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
-
 
             trainingLoss += batchLoss
             trainingBatches += 1
@@ -370,9 +372,10 @@ def main():
         responseValidationTNR = 0.0
 
         with torch.no_grad():
-            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
+            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
+                                                       num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
-                gt     = responseCpu.to(device, dtype=torch.float)  # return a copy
+                gt = responseCpu.to(device, dtype=torch.float)  # return a copy
 
                 xr = net.forward(inputs)
                 loss = lossFunc(xr, gt)
@@ -380,7 +383,7 @@ def main():
 
                 # accumulate response and predict value
 
-                batchPredict = (xr>= 0).cpu().detach().numpy().flatten()
+                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
@@ -392,7 +395,6 @@ def main():
 
                 if oneSampleTraining:
                     break
-
 
             if 0 != validationBatches:
                 validationLoss /= validationBatches
@@ -415,7 +417,8 @@ def main():
             responseTestTNR = 0.0
 
             with torch.no_grad():
-                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
+                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
+                                                           num_workers=numWorkers):
                     inputs = inputs.to(device, dtype=torch.float)
                     gt = responseCpu.to(device, dtype=torch.float)  # return a copy
 
@@ -426,7 +429,7 @@ def main():
 
                     # accumulate response and predict value
 
-                    batchPredict = (xr>= 0).cpu().detach().numpy().flatten()
+                    batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
                     epochPredict = np.concatenate(
                         (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                     batchGt = responseCpu.detach().numpy()
@@ -447,23 +450,23 @@ def main():
                     responseTestTPR = getTPR(epochPredict, epochResponse)[0]
                     responseTestTNR = getTNR(epochPredict, epochResponse)[0]
 
-
         # ===========print train and test progress===============
-        learningRate  = lrScheduler.get_lr()[0]
-        outputString  = f'{epoch}' +f'\t{learningRate:1.4e}'
-        outputString += f'\t\t{trainingLoss:.4f}'       + f'\t{responseTrainAccuracy:.4f}'      + f'\t{responseTrainTPR:.4f}'      + f'\t{responseTrainTNR:.4f}'
-        outputString += f'\t\t{validationLoss:.4f}'   + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
-        outputString += f'\t\t{testLoss:.4f}'         + f'\t{responseTestAccuracy:.4f}'       + f'\t{responseTestTPR:.4f}'       + f'\t{responseTestTNR:.4f}'
+        learningRate = lrScheduler.get_lr()[0]
+        outputString = f'{epoch}' + f'\t{learningRate:1.4e}'
+        outputString += f'\t\t{trainingLoss:.4f}' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
+        outputString += f'\t\t{validationLoss:.4f}' + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
+        outputString += f'\t\t{testLoss:.4f}' + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
         logging.info(outputString)
 
         # =============save net parameters==============
-        if trainingLoss < float('inf') and not math.isnan(trainingLoss) :
+        if trainingLoss < float('inf') and not math.isnan(trainingLoss):
             netMgr.saveNet()
-            if responseValidationAccuracy > bestTestPerf or (responseValidationAccuracy == bestTestPerf and validationLoss < oldTestLoss):
+            if responseValidationAccuracy > bestTestPerf or (
+                    responseValidationAccuracy == bestTestPerf and validationLoss < oldTestLoss):
                 oldTestLoss = validationLoss
                 bestTestPerf = responseValidationAccuracy
                 netMgr.saveBest(bestTestPerf)
-            if trainingLoss <= 0.02: # CrossEntropy use natural logarithm . -ln(0.98) = 0.0202. it means training accuracy  for each sample gets 98% above
+            if trainingLoss <= 0.02:  # CrossEntropy use natural logarithm . -ln(0.98) = 0.0202. it means training accuracy  for each sample gets 98% above
                 logging.info(f"\n\n training loss less than 0.02, Program exit.")
                 break
         else:
