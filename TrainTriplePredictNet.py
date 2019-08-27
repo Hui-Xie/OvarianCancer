@@ -18,7 +18,8 @@ from NetMgr import NetMgr
 logNotes = r'''
 Major program changes: 
            1   Triple label: sugrical result, chemo result, survival
-           2           
+           2   Print result only for optimal response, which is and operation of above 3 results;
+                  
 
 
 
@@ -146,7 +147,7 @@ def main():
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300], gamma=0.1)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300, 1200], gamma=0.1)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
@@ -222,7 +223,7 @@ def main():
         for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True,
                                                    num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
-            gt = torch.stack(responseCpu).to(device)
+            gt = responseCpu.to(device, dtype=torch.float)
 
             optimizer.zero_grad()
             xr = net.forward(inputs)
@@ -234,10 +235,12 @@ def main():
 
             # accumulate response and predict value
             if epoch % 5 == 0:
+                xr = torch.prod(xr, dim=1)
                 batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
+                batchGt = np.prod(batchGt, dim=1)
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
@@ -283,11 +286,12 @@ def main():
                 batchLoss = loss.item()
 
                 # accumulate response and predict value
-
+                xr = torch.prod(xr, dim=1)
                 batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
+                batchGt = np.prod(batchGt, dim=1)
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
@@ -329,11 +333,12 @@ def main():
                     batchLoss = loss.item()
 
                     # accumulate response and predict value
-
+                    xr = torch.prod(xr, dim=1)
                     batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
                     epochPredict = np.concatenate(
                         (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                     batchGt = responseCpu.detach().numpy()
+                    batchGt = np.prod(batchGt, dim=1)
                     epochResponse = np.concatenate(
                         (epochResponse, batchGt)) if epochResponse is not None else batchGt
 

@@ -115,6 +115,8 @@ class OVDataSet(data.Dataset):
         filename = self.m_dataPartitions.m_inputFilesList[ID]
         data = np.load(filename).astype(np.float32)
         label = self.m_labels[index]
+        if isinstance(label, list):
+            label = torch.tensor(label).t()
 
         if self.m_transform:
             data = self.m_transform(data)
