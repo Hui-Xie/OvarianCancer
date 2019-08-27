@@ -240,7 +240,7 @@ def main():
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
-                batchGt = np.prod(batchGt, dim=1)
+                batchGt = np.prod(batchGt, axis=1)
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
@@ -291,7 +291,7 @@ def main():
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
-                batchGt = np.prod(batchGt, dim=1)
+                batchGt = np.prod(batchGt, axis=1)
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
@@ -338,7 +338,7 @@ def main():
                     epochPredict = np.concatenate(
                         (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                     batchGt = responseCpu.detach().numpy()
-                    batchGt = np.prod(batchGt, dim=1)
+                    batchGt = np.prod(batchGt, axis=1)
                     epochResponse = np.concatenate(
                         (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
