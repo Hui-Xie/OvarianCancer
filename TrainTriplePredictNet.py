@@ -74,72 +74,105 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-    inputSuffix = ".npy"
-
-    curTime = datetime.datetime.now()
-    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-
-    if '/home/hxie1/' in netPath:
-        trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
-        isArgon = False
-    elif '/Users/hxie1/' in netPath:
-        trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_ResAttention_CV{k:d}_{timeStr}.txt'
-        isArgon = True
-    else:
-        print("output net path should be full path.")
-        return
-
-    logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
-
-    if scratch > 0:
-        netPath = os.path.join(netPath, timeStr)
-        print(f"=============training from sratch============")
-        logging.info(f"=============training from sratch============")
-    else:
-        print(f"=============training inheritates previous training of {netPath} ============")
-        logging.info(f"=============training inheritates previous training of {netPath} ============")
 
     print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
-    print(f'Training log is in {trainLogFile}')
     print(f'.........')
 
-    logging.info(f'Program ID: {os.getpid()}\n')
-    logging.info(f'Program command: \n {sys.argv}')
-    logging.info(logNotes)
-
-    logging.info(f'\nProgram starting Time: {str(curTime)}')
-    logging.info(f"Info: netPath = {netPath}\n")
-
+    inputSuffix = ".npy"
     K_fold = 5
-    logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
-    dataPartitions = OVDataPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k, logInfoFun=logging.info)
+    batchSize = 4 * len(GPUIDList)
+    # for Regulare Conv:  3 is for 1 GPU, 6 for 2 GPU
+    # For Deformable Conv: 4 is for 1 GPU, 8 for 2 GPUs.
+    numWorkers = 0
 
-    testTransform = OCDataTransform(0)
-    trainTransform = OCDataTransform(0.9)
-    validationTransform = OCDataTransform(0)
-
-    trainingData = OVDataSet('training', dataPartitions, transform=trainTransform, logInfoFun=logging.info)
-    validationData = OVDataSet('validation', dataPartitions, transform=validationTransform, logInfoFun=logging.info)
-    testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info)
+    device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
     useDataParallel = True if len(GPUIDList) > 1 else False  # for debug
     # ===========debug==================
 
-    batchSize = 4 * len(GPUIDList)
-    # for Regulare Conv:  3 is for 1 GPU, 6 for 2 GPU
-    # For Deformable Conv: 4 is for 1 GPU, 8 for 2 GPUs.
+    if scratch >0:
+        curTime = datetime.datetime.now()
+        timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+    else:
+        timeStr = getStemName(netPath)
 
-    numWorkers = 0
-    logging.info(f"Info: batchSize = {batchSize}\n")
+    if '/home/hxie1/' in netPath:
+        trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
+        isArgon = False
+    elif '/Users/hxie1/' in netPath:
+        trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
+        isArgon = True
+    else:
+        print("output net path should be full path.")
+        return
+    print(f'Training log is in {trainLogFile}')
+
+    if scratch>0:
+        lastEpoch = 0
+        logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
+        netPath = os.path.join(netPath, timeStr)
+        print(f"=============training from sratch============")
+        logging.info(f"=============training from sratch============")
+
+        logging.info(f'Program ID: {os.getpid()}\n')
+        logging.info(f'Program command: \n {sys.argv}')
+        logging.info(logNotes)
+
+        logging.info(f'\nProgram starting Time: {str(curTime)}')
+        logging.info(f"Info: netPath = {netPath}\n")
+
+        logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
+        logging.info(f"Info: batchSize = {batchSize}\n")
+        logging.info(f'Program loads net from {netPath}.')
+
+        # for imbalance training data for BCEWithLogitsLoss
+        if "patientResponseDict" in groundTruthPath:
+            posWeight = torch.tensor([0.35 / 0.65]).to(device, dtype=torch.float)
+            logging.info("This predicts optimal response.")
+        elif "patientSurgicalResults" in groundTruthPath:
+            posWeight = torch.tensor([0.23 / 0.77]).to(device, dtype=torch.float)
+            logging.info("This predicts surgical results.")
+        elif "patientTripleResults" in groundTruthPath:
+            posWeight = torch.tensor([0.23 / 0.77, 0.235 / 0.765, 0.061 / 0.939]).to(device, dtype=torch.float)
+            logging.info("This predicts surgical results, chemo result, survival at same time.")
+        else:
+            posWeight = 1.0
+            logging.info("!!!!!!! Some thing wrong !!!!!")
+            return
+
+        nGPU = torch.cuda.device_count()
+        if nGPU > 1:
+            logging.info(f'Info: program will use GPU {GPUIDList} from all {nGPU} GPUs.')
+
+
+
+    else:
+        lastLine = getFinalLine(trainLogFile)
+        lastRow = getListFromLine(lastLine)
+        lastEpoch =int(lastRow[0])
+        print(f"=============training inheritates previous training of {netPath} ============")
+
+
+
+
+    dataPartitions = OVDataPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k, logInfoFun=logging.info if scratch >0 else print)
+
+    testTransform = OCDataTransform(0)
+    trainTransform = OCDataTransform(0.9)
+    validationTransform = OCDataTransform(0)
+
+    trainingData = OVDataSet('training', dataPartitions, transform=trainTransform, logInfoFun=logging.info if scratch >0 else print)
+    validationData = OVDataSet('validation', dataPartitions, transform=validationTransform, logInfoFun=logging.info if scratch >0 else print)
+    testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info if scratch >0 else print)
+
 
     net = ResAttentionNet()
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
     net.to(device)
 
     optimizer = optim.Adam(net.parameters(), lr=0.1, weight_decay=0)
@@ -155,55 +188,30 @@ def main():
     bestTestPerf = 0
     if 2 == len(getFilesList(netPath, ".pt")):
         netMgr.loadNet("train")  # True for train
-        logging.info(f'Program loads net from {netPath}.')
         bestTestPerf = netMgr.loadBestTestPerf()
-        logging.info(f'Current best test performance: {bestTestPerf}')
     else:
         logging.info(f"=== Network trains from scratch ====")
-
-    logging.info(net.getParametersScale())
-
-    # for imbalance training data for BCEWithLogitsLoss
-    if "patientResponseDict" in groundTruthPath:
-        posWeight = torch.tensor([0.35 / 0.65]).to(device, dtype=torch.float)
-        logging.info("This predicts optimal response.")
-    elif "patientSurgicalResults" in groundTruthPath:
-        posWeight = torch.tensor([0.23 / 0.77]).to(device, dtype=torch.float)
-        logging.info("This predicts surgical results.")
-    elif "patientTripleResults" in groundTruthPath:
-        posWeight = torch.tensor([0.23/ 0.77, 0.235/0.765, 0.061/0.939]).to(device, dtype=torch.float)
-        logging.info("This predicts surgical results, chemo result, survival at same time.")
-    else:
-        posWeight = 1.0
-        logging.info("!!!!!!! Some thing wrong !!!!!")
-        return
+        logging.info(net.getParametersScale())
 
     bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=posWeight, reduction="sum")
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     if useDataParallel:
-        nGPU = torch.cuda.device_count()
-        if nGPU > 1:
-            logging.info(f'Info: program will use GPU {GPUIDList} from all {nGPU} GPUs.')
-            net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
+       net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
 
-    if useDataParallel:
-        logging.info(net.module.lossFunctionsInfo())
-    else:
-        logging.info(net.lossFunctionsInfo())
-
-    epochs = 1500000
-
-    logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
-
-    logging.info(f"Epoch" + f"\tLearningRate" \
-                 + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
-                 + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
-                 + f"\t\tTeLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
-
+    epochs = 15000000
     oldTestLoss = 1000
 
-    for epoch in range(0, epochs):
+    if scratch >0:
+        logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
+
+        logging.info(f"Epoch" + f"\tLearningRate" \
+                     + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
+                     + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
+                     + f"\t\tTeLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
+        
+
+    for epoch in range(lastEpoch, epochs):
         random.seed()
         if useDataParallel:
             lossFunc = net.module.getOnlyLossFunc()

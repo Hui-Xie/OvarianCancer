@@ -25,3 +25,14 @@ def getStemName(path, removedSuffix):
     baseName = os.path.basename(path)
     base = baseName[0: baseName.find(removedSuffix)]
     return base
+
+def getFinalLine(filename):
+    with open(filename, 'rb') as f:
+        for line in f:
+            pass
+    return line
+
+def getListFromLine(line):
+    line = line.replace('\t\t', '\t')
+    row = line.split('\t')
+    return row
