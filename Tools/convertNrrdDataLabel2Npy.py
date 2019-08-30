@@ -1,38 +1,51 @@
 
-import os
-import SimpleITK as sitk
-from FilesUtilities import *
-import numpy as np
+# At same time, convert Nrrd data and label to numpy
 
-suffix = "_CT.nrrd"
-inputsDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223/nrrd"
-outputImagesDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy"
-# outputLabelsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/labels_npy"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy/readme.txt"
+inputDataDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223/nrrd"
+inputLabelDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223/nrrdLabel"
+
+outputDataDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpy"
+outputLabelDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpyLabel"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/readme.txt"
+
+fileIDListFile = "/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/stdLabelFileList.json"
+import json
+with open(fileIDListFile) as f:
+    fileIDList = json.load(f)
+
 # the final assemble size of numpy array
 Z,Y,X = 231,251,251
 
-originalCwd = os.getcwd()
-os.chdir(inputsDir)
-filesList = [os.path.abspath(x) for x in os.listdir(inputsDir) if suffix in x]
-os.chdir(originalCwd)
+import sys
+import SimpleITK as sitk
+sys.path.append("..")
+from FilesUtilities import *
+import numpy as np
 
 Notes = r"""
         Notes: 
         1  nrrd image is clipped into [0,300] in original intensity;
         2  image normalize into gaussian distribution slice by slice with x/std, a gausssian distributrion with non-zero mean
         3  image is assembled into fixed size[231,251,251] 
+        4  sychronize image and label's assemble together
          """
 
-for file in filesList:
-    patientID = getStemName(file, suffix)
+for patientID in fileIDList:
+    imageFile = os.path.join(inputDataDir, patientID+"_CT.nrrd")
+    labelFile = os.path.join(inputLabelDir, patientID+"_Seg.nrrd")
 
-    image = sitk.ReadImage(file)
+    image = sitk.ReadImage(imageFile)
     image3d = sitk.GetArrayFromImage(image)
-
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
     image3d = image3d.astype(np.float32)   # this is very important, otherwise, normalization will be meaningless.
+
+    label = sitk.ReadImage(labelFile)
+    label3d = sitk.GetArrayFromImage(label)
+
+    if image3d.shap != label3d.shape:
+        print(f"imageFile: {imageFile} \n labelFile: {labelFile}\n \t have different shape.")
+        exit(1)
 
     # normalize image with std  for each slice
     shape = image3d.shape
@@ -90,7 +103,7 @@ for file in filesList:
         x1 = (x - X) // 2
         x2 = x1 + X
 
-    wall[Z1:Z2, Y1:Y2,X1:X2] = image3d[z1:z2, y1:y2, x1:x2] 
+    wall[Z1:Z2, Y1:Y2,X1:X2] = image3d[z1:z2, y1:y2, x1:x2]
 
 
     np.save(os.path.join(outputImagesDir, patientID + ".npy"), wall)
