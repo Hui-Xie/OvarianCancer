@@ -111,7 +111,7 @@ def main():
     print(f'Training log is in {trainLogFile}')
 
     if scratch>0:
-        lastEpoch = 0
+        lastEpoch = -1
         logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
         netPath = os.path.join(netPath, timeStr)
         print(f"=============training from sratch============")
@@ -130,17 +130,13 @@ def main():
 
         # for imbalance training data for BCEWithLogitsLoss
         if "patientResponseDict" in groundTruthPath:
-            posWeight = torch.tensor([0.35 / 0.65]).to(device, dtype=torch.float)
             logging.info("This predicts optimal response.")
         elif "patientSurgicalResults" in groundTruthPath:
-            posWeight = torch.tensor([0.23 / 0.77]).to(device, dtype=torch.float)
             logging.info("This predicts surgical results.")
         elif "patientTripleResults" in groundTruthPath:
-            posWeight = torch.tensor([0.23 / 0.77, 0.235 / 0.765, 0.061 / 0.939]).to(device, dtype=torch.float)
             logging.info("This predicts surgical results, chemo result, survival at same time.")
         else:
-            posWeight = 1.0
-            logging.info("!!!!!!! Some thing wrong !!!!!")
+            logging.info("!!!!!!! Some thing wrong  in ground truth path!!!!!")
             return
 
         nGPU = torch.cuda.device_count()
@@ -155,9 +151,6 @@ def main():
         lastEpoch =int(lastRow[0])
         print(f"=============training inheritates previous training of {netPath} ============")
 
-
-
-
     dataPartitions = OVDataPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k, logInfoFun=logging.info if scratch >0 else print)
 
     testTransform = OCDataTransform(0)
@@ -167,7 +160,6 @@ def main():
     trainingData = OVDataSet('training', dataPartitions, transform=trainTransform, logInfoFun=logging.info if scratch >0 else print)
     validationData = OVDataSet('validation', dataPartitions, transform=validationTransform, logInfoFun=logging.info if scratch >0 else print)
     testData = OVDataSet('test', dataPartitions, transform=testTransform, logInfoFun=logging.info if scratch >0 else print)
-
 
     net = ResAttentionNet()
     # Important:
@@ -179,8 +171,19 @@ def main():
     # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300, 1200], gamma=0.1)
+    # for imbalance training data for BCEWithLogitsLoss
+    if "patientResponseDict" in groundTruthPath:
+        posWeight = torch.tensor([0.35 / 0.65]).to(device, dtype=torch.float)
+    elif "patientSurgicalResults" in groundTruthPath:
+        posWeight = torch.tensor([0.23 / 0.77]).to(device, dtype=torch.float)
+    elif "patientTripleResults" in groundTruthPath:
+        posWeight = torch.tensor([0.23 / 0.77, 0.235 / 0.765, 0.061 / 0.939]).to(device, dtype=torch.float)
+    else:
+        posWeight = 1.0
+        print("!!!!!!! Some thing wrong  in ground truth path!!!!!")
+        return
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=posWeight, reduction="sum")
+    net.appendLossFunc(bceWithLogitsLoss, 1)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
@@ -193,8 +196,8 @@ def main():
         logging.info(f"=== Network trains from scratch ====")
         logging.info(net.getParametersScale())
 
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=posWeight, reduction="sum")
-    net.appendLossFunc(bceWithLogitsLoss, 1)
+    # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300, 1200], gamma=0.1, last_epoch=lastEpoch)
 
     if useDataParallel:
        net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
@@ -204,14 +207,13 @@ def main():
 
     if scratch >0:
         logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
-
         logging.info(f"Epoch" + f"\tLearningRate" \
                      + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                      + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                      + f"\t\tTeLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
-        
 
-    for epoch in range(lastEpoch, epochs):
+
+    for epoch in range(lastEpoch+1, epochs):
         random.seed()
         if useDataParallel:
             lossFunc = net.module.getOnlyLossFunc()

@@ -21,16 +21,19 @@ def loadInputFilesList(filename):
             filesList.append(line.strip())
     return filesList
 
-def getStemName(path, removedSuffix):
+def getStemName(path, removedSuffix=None):
     baseName = os.path.basename(path)
-    base = baseName[0: baseName.find(removedSuffix)]
+    if removedSuffix is None:
+        base = baseName
+    else:
+        base = baseName[0: baseName.find(removedSuffix)]
     return base
 
 def getFinalLine(filename):
     with open(filename, 'rb') as f:
         for line in f:
             pass
-    return line
+    return line.decode("utf-8")
 
 def getListFromLine(line):
     line = line.replace('\t\t', '\t')
