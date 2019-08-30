@@ -82,6 +82,7 @@ def main():
     inputSuffix = ".npy"
     K_fold = 5
     batchSize = 4 * len(GPUIDList)
+    print(f"batchSize = {batchSize}")
     # for Regulare Conv:  3 is for 1 GPU, 6 for 2 GPU
     # For Deformable Conv: 4 is for 1 GPU, 8 for 2 GPUs.
     numWorkers = 0
@@ -109,10 +110,10 @@ def main():
         print("output net path should be full path.")
         return
     print(f'Training log is in {trainLogFile}')
+    logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     if scratch>0:
         lastEpoch = -1
-        logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
         netPath = os.path.join(netPath, timeStr)
         print(f"=============training from sratch============")
         logging.info(f"=============training from sratch============")
