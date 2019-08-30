@@ -81,7 +81,7 @@ class ResNeXtVNet(BasicModel):
            )  # output size: 512*1, it needs normalization.
 
         self.m_up5 = nn.Sequential(
-            nn.ConvTranspose2d(512, 512, kernel_size=6, stide=6, padding=0, bias=True),
+            nn.ConvTranspose2d(512, 512, kernel_size=6, stride=6, padding=0, bias=True),
             nn.ReLU(inplace=True) if not self.m_useLeakyReLU else nn.LeakyReLU(inplace=True)
             ) # output size: 512*6*6, it needs normalization
 
