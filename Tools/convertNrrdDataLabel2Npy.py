@@ -45,7 +45,7 @@ for patientID in fileIDList:
     label3d = sitk.GetArrayFromImage(label)
     label3d = label3d.astype(np.float32)  # this is very important
 
-    if image3d.shap != label3d.shape:
+    if image3d.shape != label3d.shape:
         print(f"imageFile: {imageFile} \n labelFile: {labelFile}\n \t have different shapes.")
         sys.exit()
 
