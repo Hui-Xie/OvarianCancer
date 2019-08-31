@@ -1,0 +1,45 @@
+=============training from sratch============
+Program ID: 32480
+
+Program command: 
+ ['TrainResNeXtVNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpy', '/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpyLabel', '0', '0,1,2,3']
+
+Major program changes: 
+          
+
+Discarded changes:                  
+
+
+Experiment setting:
+Input CT data: maximum size 231*251*251 (zyx) of 3D numpy array with spacing size(3*2*2)
+Ground truth: response binary label
+
+
+response Loss Function:  BCELogitLoss
+
+Data:   total 220 patients, 5-fold cross validation, test 45, validation 45, and training 130.  
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-08-31 16:19:24.235319
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190831_161924
+
+Info: this is the 0th fold leave for test in the 5-fold cross-validation.
+
+Info: batchSize = 20
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190831_161924.
+5-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 85 image files.
+
+validation dataset: total 29 image files.
+
+test dataset: total 29 image files.
+Network has total 26,372,379 parameters.
+
+
+************** Table of Train Log **************
+Epoch	LearningRate		TrainingLoss		Dice		ValidationLoss		Dice		TestLoss		Dice

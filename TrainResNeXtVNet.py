@@ -71,7 +71,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 5
-    batchSize = 4 * len(GPUIDList)
+    batchSize = 5 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -169,10 +169,11 @@ def main():
     oldTestLoss = 100000
 
     if scratch > 0:
+       logging.info(f"\n\n************** Table of Train Log **************")
        logging.info(f"Epoch" + f"\tLearningRate" \
-                     + f"\t\tTrLoss" + f"\tDice" \
-                     + f"\t\tVaLoss" + f"\tDice" \
-                     + f"\t\tTeLoss" + f"\tDice" )  # logging.info output head
+                     + f"\t\tTrainingLoss" +   f"\t\tDice" \
+                     + f"\t\tValidationLoss" + f"\t\tDice" \
+                     + f"\t\tTestLoss" +       f"\t\tDice" )  # logging.info output head
 
     for epoch in range(lastEpoch + 1, epochs):
         random.seed()
