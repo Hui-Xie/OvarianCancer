@@ -122,9 +122,9 @@ def main():
     dataPartitions = OVDataPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k,
                                      logInfoFun=logging.info if scratch > 0 else print)
 
-    testTransform = OCDataTransform(0)
     trainTransform = OCDataTransform(0.9)
     validationTransform = OCDataTransform(0)
+    testTransform = OCDataTransform(0)
 
     trainingData = OVDataSet('training', dataPartitions, transform=trainTransform,
                              logInfoFun=logging.info if scratch > 0 else print)

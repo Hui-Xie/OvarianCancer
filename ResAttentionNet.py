@@ -5,7 +5,7 @@ from DeformConvBlock import DeformConvBlock
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
-from draw2DArray import *
+
 
 # ResNeXt based Attention Net
 
