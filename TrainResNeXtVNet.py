@@ -17,19 +17,21 @@ from NetMgr import NetMgr
 
 logNotes = r'''
 Major program changes: 
-          
+     1  a V model with ResNeXt block: use z convolution, and then xy convolution, to implement 3D convolution.
+     2  at ground truth, only check the segmented slices, about 3 slices per patient;
+     3  the input is whole 3D volume, intead of ROI;
+     4  support input data augmentation: affine in xy plane, and translation in z direction;
+     5  input Size: 231*251*251 with label;
+    
 
 Discarded changes:                  
 
-
 Experiment setting:
 Input CT data: maximum size 231*251*251 (zyx) of 3D numpy array with spacing size(3*2*2)
-Ground truth: response binary label
 
+Loss Function:  BCELogitLoss
 
-response Loss Function:  BCELogitLoss
-
-Data:   total 220 patients, 5-fold cross validation, test 45, validation 45, and training 130.  
+Data:   total 143 patients with weak annotaton label, 5-fold cross validation, test 29, validation 29, and training 85.  
 
 Training strategy: 
 
@@ -71,7 +73,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 5
-    batchSize = 5 * len(GPUIDList)
+    batchSize = 4 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -171,9 +173,9 @@ def main():
     if scratch > 0:
        logging.info(f"\n\n************** Table of Train Log **************")
        logging.info(f"Epoch" + f"\tLearningRate" \
-                     + f"\t\tTrainingLoss" +   f"\t\tDice" \
-                     + f"\t\tValidationLoss" + f"\t\tDice" \
-                     + f"\t\tTestLoss" +       f"\t\tDice" )  # logging.info output head
+                     + f"\t\tTrainingLoss" +   f"\tDice" \
+                     + f"\t\tValidationLoss" + f"\tDice" \
+                     + f"\t\tTestLoss" +       f"\tDice" )  # logging.info output head
 
     for epoch in range(lastEpoch + 1, epochs):
         random.seed()
@@ -234,7 +236,6 @@ def main():
         validationBatches = 0
         validationDice = 0.0
 
-
         with torch.no_grad():
             for inputs, labels in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
@@ -269,46 +270,46 @@ def main():
             validationDice = validationDice / nSlice
 
 
-            # ================Independent Test===============
-            net.eval()
-            nSlice =0
+        # ================Independent Test===============
+        net.eval()
+        nSlice =0
 
-            testLoss = 0.0
-            testBatches = 0
-            testDice = 0.0
+        testLoss = 0.0
+        testBatches = 0
+        testDice = 0.0
 
-            with torch.no_grad():
-                for inputs, labels in data.DataLoader(testData, batch_size=batchSize, shuffle=False,num_workers=numWorkers):
-                    inputs = inputs.to(device, dtype=torch.float)
-                    gts = labels.to(device, dtype=torch.float)  # return a copy
-                    gts = (gts > 0).float()  # not discriminate all non-zero labels.
+        with torch.no_grad():
+            for inputs, labels in data.DataLoader(testData, batch_size=batchSize, shuffle=False,num_workers=numWorkers):
+                inputs = inputs.to(device, dtype=torch.float)
+                gts = labels.to(device, dtype=torch.float)  # return a copy
+                gts = (gts > 0).float()  # not discriminate all non-zero labels.
 
-                    outputs = net.forward(inputs)
+                outputs = net.forward(inputs)
 
-                    loss = torch.tensor(0.0).to(device, dtype=torch.float)
-                    gtsShape = gts.shape
-                    for i in range(gtsShape[0]):
-                        output = outputs[i,]
-                        gt = gts[i,]
-                        nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
-                        nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
-                        slices = nonzeroSlices.shape[0]
-                        nSlice += slices
-                        for sPos in range(slices):
-                            s = nonzeroSlices[sPos]
-                            loss += lossFunc(output[s,], gt[s,])
-                            testDice += tensorDice(output[s,], gt[s,])
+                loss = torch.tensor(0.0).to(device, dtype=torch.float)
+                gtsShape = gts.shape
+                for i in range(gtsShape[0]):
+                    output = outputs[i,]
+                    gt = gts[i,]
+                    nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
+                    nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
+                    slices = nonzeroSlices.shape[0]
+                    nSlice += slices
+                    for sPos in range(slices):
+                        s = nonzeroSlices[sPos]
+                        loss += lossFunc(output[s,], gt[s,])
+                        testDice += tensorDice(output[s,], gt[s,])
 
-                    batchLoss = loss.item()
-                    testLoss += batchLoss
-                    testBatches += 1
+                batchLoss = loss.item()
+                testLoss += batchLoss
+                testBatches += 1
 
-                    if oneSampleTraining:
-                        break
+                if oneSampleTraining:
+                    break
 
-                if 0 != testBatches:
-                    testLoss /= testBatches
-                testDice = testDice / nSlice
+            if 0 != testBatches:
+                testLoss /= testBatches
+            testDice = testDice / nSlice
 
         # ===========print train and test progress===============
         learningRate = lrScheduler.get_lr()[0]
