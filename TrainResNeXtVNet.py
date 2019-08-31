@@ -8,7 +8,7 @@ import torch.optim as optim
 from torch.utils import data
 import logging
 
-from OCDataSet import *
+from OCDataSegSet import *
 from FilesUtilities import *
 from MeasureUtilities import *
 from ResNeXtVNet import ResNeXtVNet
@@ -118,19 +118,18 @@ def main():
         lastEpoch = int(lastRow[0])
         print(f"=============Training inheritates previous training at {netPath} ============")
 
-    # todo : segmentation data partition is different
-    dataPartitions = OVDataPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k,
+    dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k,
                                      logInfoFun=logging.info if scratch > 0 else print)
 
-    trainTransform = OCDataTransform(0.9)
-    validationTransform = OCDataTransform(0)
-    testTransform = OCDataTransform(0)
+    trainTransform = OCDataLabelTransform(0.6)
+    validationTransform = OCDataLabelTransform(0)
+    testTransform = OCDataLabelTransform(0)
 
-    trainingData = OVDataSet('training', dataPartitions, transform=trainTransform,
+    trainingData = OVDataSegSet('training', dataPartitions, transform=trainTransform,
                              logInfoFun=logging.info if scratch > 0 else print)
-    validationData = OVDataSet('validation', dataPartitions, transform=validationTransform,
+    validationData = OVDataSegSet('validation', dataPartitions, transform=validationTransform,
                                logInfoFun=logging.info if scratch > 0 else print)
-    testData = OVDataSet('test', dataPartitions, transform=testTransform,
+    testData = OVDataSegSet('test', dataPartitions, transform=testTransform,
                          logInfoFun=logging.info if scratch > 0 else print)
 
     net = ResNeXtVNet()
@@ -167,8 +166,7 @@ def main():
     oldTestLoss = 1000
 
     if scratch > 0:
-        logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
-        logging.info(f"Epoch" + f"\tLearningRate" \
+       logging.info(f"Epoch" + f"\tLearningRate" \
                      + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                      + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                      + f"\t\tTeLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head

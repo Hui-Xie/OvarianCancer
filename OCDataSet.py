@@ -105,7 +105,7 @@ class OVDataSet(data.Dataset):
             for i in range(shape[1]):
                 self.m_logInfo(f" \t\t in the {i}-th coloumn, 1 has {np.sum(labelsArray[:,i])} with rate of {np.sum(labelsArray[:,i]) / shape[0]}")
         else:
-            self.m_logInfo(f"some thing wrong in OVDataSet init function")
+            self.m_logInfo(f"something wrong in OVDataSet init function")
 
     def __len__(self):
         return len(self.m_labels)

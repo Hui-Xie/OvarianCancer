@@ -47,8 +47,7 @@ class OCDataTransform(object):
                 slice = TF.to_pil_image(slice)
                 slice = TF.affine(slice, angle, translate, scale, shear, resample=PIL.Image.BILINEAR, fillcolor=0)
             # to tensor
-            slice = TF.to_tensor(slice)
-            outputTensor[z,] = slice
+            outputTensor[z,] = TF.to_tensor(slice)
         return outputTensor
 
     def __repr__(self):
@@ -70,12 +69,14 @@ class OCDataLabelTransform(object):
                 translate = random.randrange(-38, 39, 3), random.randrange(-38, 39, 3)  # 15% of maxsize of Y, X
                 scale = random.uniform(0.6, 1.25)
                 shear = random.randrange(-30, 31, 10)  #90 degree is too big, which almost compresses image into a line.
+                zShift = random.randrange(-34, 35, 3)  # 15% of maxSize of Z
             else:
                 affine = False
                 angle = 0
                 translate = 0,0
                 scale = 1
                 shear = 0
+                zShift = 0
 
             angle1 = math.radians(angle)
             shear1 = math.radians(shear)
@@ -102,7 +103,12 @@ class OCDataLabelTransform(object):
             # to tensor
             outputData[z,] = TF.to_tensor(dataSlice)
             outputLabel[z,] = TF.to_tensor(labelSlice)
-            
+
+        # roll along z direction
+        if affine and zShift != 0:
+            outputData = torch.roll(outputData, zShift, dims=0)
+            outputLabel = torch.roll(outputLabel, zShift, dims=0)
+
         return outputData, outputLabel
 
     def __repr__(self):

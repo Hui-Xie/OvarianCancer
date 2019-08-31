@@ -54,6 +54,9 @@ nohup python3.7 TrainResAttentionNet.py /Users/hxie1/temp_netParameters/OvarianC
 
 nohup python3.7 TrainResAttentionNet.py /Users/hxie1/temp_netParameters/OvarianCancer/SurgicalResNeXt  1  /Users/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /Users/hxie1/data/OvarianCancerCT/patientSurgicalResults.json  0  0,1,2,3 &
 
+For ResNeXt V model:
+
+nohup python3.7 TrainResNeXtVNet.py /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet  1  /home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpy  /home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpyLabel  0  0,1,2,3 &
 
 
 
