@@ -208,6 +208,7 @@ def main():
 
     if scratch >0:
         logging.info(f"\nHints: Optimal_Result = Yes = 1,  Optimal_Result = No = 0 \n")
+        logging.info(f"\n\n************** Table of Train Log **************")
         logging.info(f"Epoch" + f"\tLearningRate" \
                      + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
                      + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \

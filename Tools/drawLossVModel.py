@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+sys.path.append("..")
 from FilesUtilities import *
 import os
 
@@ -22,21 +23,22 @@ def main():
     fullPathLogFile = os.path.abspath(logFile)
     dirName = os.path.dirname(fullPathLogFile)
 
-    tableHead = "Epoch	LearningRate		TrLoss	Accura	TPR_r	TNR_r		VaLoss	Accura	TPR_r	TNR_r		TeLoss	Accura	TPR_r	TNR_r\n"
+    tableTitle = "************** Table of Train Log **************\n"
 
     # read data
     with open(logFile) as file:
         data = file.read()
-        pos = data.find(tableHead)
-        data = data[pos+len(tableHead):]
+        pos = data.find(tableTitle)
+        data = data[pos+len(tableTitle):]
         lines = data.splitlines()
-        array = np.zeros((len(lines),14),dtype=np.float32)
+        lines.pop(0)   #erase tabel head.
+        array = np.zeros((len(lines),8),dtype=np.float32)
 
         countRow = 0
         for line in lines:
             line = line.replace('\t\t','\t')
             row = line.split('\t')
-            if len(row) != 14:
+            if len(row) != 8:
                 break
             else:
                 array[countRow,] = np.asarray(row)
@@ -44,8 +46,8 @@ def main():
         array = array[:countRow,]
 
     # draw curve
-    colsLoss = [2,6,10]
-    colsAccuracy = [3,7,11]
+    colsLoss = [2,4,6]
+    colsDice = [3,5,7]
 
     # draw Loss
     f1 = plt.figure(1)
@@ -58,12 +60,12 @@ def main():
 
     # draw Accuracy
     f2 = plt.figure(2)
-    plt.plot(array[:, 0], array[:, colsAccuracy])
+    plt.plot(array[:, 0], array[:, colsDice])
     plt.legend(('Training', 'Validation', 'Test'))
     plt.title(f"Accuracy in {experiment}")
     plt.xlabel('Epoch')
-    plt.ylabel('Accuracy')
-    plt.savefig(os.path.join(dirName,f"Accuracy_{experiment}.png"))
+    plt.ylabel('Dice')
+    plt.savefig(os.path.join(dirName,f"Dice_{experiment}.png"))
 
     # draw learning Rate
     f3 = plt.figure(3)

@@ -1,0 +1,54 @@
+=============training from sratch============
+Program ID: 4410
+
+Program command: 
+ ['TrainResNeXtVNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpy', '/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpyLabel', '0', '3,2,1']
+
+Major program changes: 
+     1  a V model with ResNeXt block: use z convolution, and then xy convolution, to implement 3D convolution.
+     2  at ground truth, only check the segmented slices, about 3 slices per patient;
+     3  the input is whole 3D volume, intead of ROI;
+     4  support input data augmentation: affine in xy plane, and translation in z direction;
+     5  input Size: 231*251*251 with label;
+    
+
+Discarded changes:                  
+
+Experiment setting:
+Input CT data: maximum size 231*251*251 (zyx) of 3D numpy array with spacing size(3*2*2)
+
+Loss Function:  BCELogitLoss
+
+Data:   total 143 patients with weak annotaton label, 5-fold cross validation, test 29, validation 29, and training 85.  
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-08-31 16:53:39.752543
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190831_165339
+
+Info: this is the 0th fold leave for test in the 5-fold cross-validation.
+
+Info: batchSize = 12
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190831_165339.
+5-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 85 image files.
+
+validation dataset: total 29 image files.
+
+test dataset: total 29 image files.
+Network has total 26,372,379 parameters.
+
+
+************** Table of Train Log **************
+Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
+0	1.0000e-01		2000625.0112	0.00799		1316223.3750	0.00105		1874104.9896	0.00021
+5	1.0000e-01		344974.6025	0.00000		541830.9167	0.00000		786690.9375	0.00000
+10	1.0000e-01		345814.3184	0.00055		405924.4948	0.00000		569409.1927	0.00000
+15	1.0000e-01		315017.5762	0.00402		967553.3750	0.00149		1400170.9688	0.00213
+20	1.0000e-01		303260.1152	0.00164		521921.9531	0.00034		747186.0365	0.00106
+25	1.0000e-01		290687.9922	0.00176		3148268.6667	0.00191		3756207.8333	0.00363
+30	1.0000e-01		309708.8511	0.02520		1186156.4792	0.00318		1256315.5365	0.00815
