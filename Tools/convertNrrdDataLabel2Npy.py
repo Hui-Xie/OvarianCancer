@@ -28,6 +28,7 @@ Notes = r"""
         2  image normalize into gaussian distribution slice by slice with x/std, a gausssian distributrion with non-zero mean
         3  image is assembled into fixed size[231,251,251] 
         4  sychronize image and label's assemble together
+        5  all image and label has same pixelsize 2*2*3 in xyz direction.
          """
 
 for patientID in fileIDList:
@@ -42,10 +43,11 @@ for patientID in fileIDList:
 
     label = sitk.ReadImage(labelFile)
     label3d = sitk.GetArrayFromImage(label)
+    label3d = label3d.astype(np.float32)  # this is very important
 
     if image3d.shap != label3d.shape:
-        print(f"imageFile: {imageFile} \n labelFile: {labelFile}\n \t have different shape.")
-        exit(1)
+        print(f"imageFile: {imageFile} \n labelFile: {labelFile}\n \t have different shapes.")
+        sys.exit()
 
     # normalize image with std  for each slice
     shape = image3d.shape
@@ -60,16 +62,8 @@ for patientID in fileIDList:
             slice = slice -mean  # if all pixels in a slice equal, they are no discriminating meaning.
         image3d[i,] = slice
 
-    # normalize into [0,1]
-    # ptp = np.ptp(image3d)
-    # image3d = image3d/ptp
-
-    #label = file.replace("_CT.nrrd", "_Seg.nrrd").replace("images/", "labels/")
-    #label3d = sitk.GetArrayFromImage(sitk.ReadImage(label))
-
     # assemble in fixed size[231,251,251] in Z,Y, X direction
     z,y,x = image3d.shape
-    wall = np.zeros((Z,Y,X), dtype=np.float32)
     if z<Z:
         Z1 = (Z-z)//2
         Z2 = Z1+z
@@ -103,19 +97,23 @@ for patientID in fileIDList:
         x1 = (x - X) // 2
         x2 = x1 + X
 
-    wall[Z1:Z2, Y1:Y2,X1:X2] = image3d[z1:z2, y1:y2, x1:x2]
+    imageWall = np.zeros((Z, Y, X), dtype=np.float32)
+    imageWall[Z1:Z2, Y1:Y2,X1:X2] = image3d[z1:z2, y1:y2, x1:x2]
+    labelWall = np.zeros((Z, Y, X), dtype=np.float32)
+    labelWall[Z1:Z2, Y1:Y2, X1:X2] = label3d[z1:z2, y1:y2, x1:x2]
 
 
-    np.save(os.path.join(outputImagesDir, patientID + ".npy"), wall)
-    #np.save(os.path.join(outputLabelsDir, patientID + ".npy"), label3d)
+    np.save(os.path.join(outputDataDir, patientID + ".npy"), imageWall)
+    np.save(os.path.join(outputLabelDir, patientID + ".npy"), labelWall)
 
-N = len(filesList)
+N = len(fileIDList)
 
 with open(readmeFile,"w") as f:
     f.write(f"total {N} files in this directory\n")
-    f.write(f"inputDir = {inputsDir}\n")
-    f.write(f"inputImagesDir = {outputImagesDir}\n")
-    # f.write(f"inputLabelsDir = {outputLabelsDir}\n")
+    f.write(f"inputDataDir = {inputDataDir}\n")
+    f.write(f"inputLabelDir = {inputLabelDir}\n")
+    f.write(f"outputDataDir = {outputDataDir}\n")
+    f.write(f"outputLabelDir = {outputLabelDir}\n")
     f.write(Notes)
 
-print("===End of convertNrrd to Npy=======")
+print("===End of convertNrrd all standard images and labels into to numpy=======")
