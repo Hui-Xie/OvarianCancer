@@ -19,7 +19,7 @@ logNotes = r'''
 Major program changes: 
      1  a V model with ResNeXt block: use z convolution, and then xy convolution, to implement 3D convolution.
      2  at ground truth, only check the segmented slices, about 3 slices per patient;
-     3  the input is whole 3D volume, intead of ROI around a segmented slice;
+     3  the input is whole 3D volume, instead of ROI around a segmented slice;
      4  support input data augmentation: affine in xy plane, and translation in z direction;
      5  input Size: 231*251*251 with label, instead of previous SkyWatch Model of 29*140*140;
      6  treat all 1,2,3 labels as 1, in other words, do not differentiate primary, metastase, and nymph node;  
