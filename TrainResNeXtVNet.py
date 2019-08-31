@@ -142,8 +142,8 @@ def main():
     # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    # todo primary and metastase nymph node has different weight.
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=None, reduction="sum")
+    # In all pixels of 441 labeled slices, 96% were labeled as 0, other were labeled as 1,2,3.
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96/0.4), reduction="sum")
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     # Load network
@@ -161,9 +161,12 @@ def main():
 
     if useDataParallel:
         net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
+        lossFunc = net.module.getOnlyLossFunc()
+    else:
+        lossFunc = net.getOnlyLossFunc()
 
     epochs = 15000000
-    oldTestLoss = 1000
+    oldTestLoss = 100000
 
     if scratch > 0:
        logging.info(f"Epoch" + f"\tLearningRate" \
@@ -173,10 +176,7 @@ def main():
 
     for epoch in range(lastEpoch + 1, epochs):
         random.seed()
-        if useDataParallel:
-            lossFunc = net.module.getOnlyLossFunc()
-        else:
-            lossFunc = net.getOnlyLossFunc()
+
         # ================Training===============
         net.train()
         trainingLoss = 0.0
@@ -188,14 +188,13 @@ def main():
         responseTrainTPR = 0.0
         responseTrainTNR = 0.0
 
-        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True,
-                                                   num_workers=numWorkers):
+        for inputs, labels in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
-            gt = responseCpu.to(device, dtype=torch.float)
+            gt = labels.to(device, dtype=torch.float)
 
             optimizer.zero_grad()
-            xr = net.forward(inputs)
-            loss = lossFunc(xr, gt)
+            outputs = net.forward(inputs)
+            loss = lossFunc(outputs, gt)
 
             loss.backward()
             optimizer.step()
@@ -203,11 +202,11 @@ def main():
 
             # accumulate response and predict value
             if epoch % 5 == 0:
-                xr = torch.prod(xr, dim=1)
-                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                outputs = torch.prod(outputs, dim=1)
+                batchPredict = (outputs >= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                batchGt = responseCpu.detach().numpy()
+                batchGt = labels.detach().numpy()
                 batchGt = np.prod(batchGt, axis=1)
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
@@ -244,21 +243,21 @@ def main():
         responseValidationTNR = 0.0
 
         with torch.no_grad():
-            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
+            for inputs, labels in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
                                                        num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
-                gt = responseCpu.to(device, dtype=torch.float)  # return a copy
+                gt = labels.to(device, dtype=torch.float)  # return a copy
 
-                xr = net.forward(inputs)
-                loss = lossFunc(xr, gt)
+                outputs = net.forward(inputs)
+                loss = lossFunc(outputs, gt)
                 batchLoss = loss.item()
 
                 # accumulate response and predict value
-                xr = torch.prod(xr, dim=1)
-                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                outputs = torch.prod(outputs, dim=1)
+                batchPredict = (outputs >= 0).cpu().detach().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                batchGt = responseCpu.detach().numpy()
+                batchGt = labels.detach().numpy()
                 batchGt = np.prod(batchGt, axis=1)
                 epochResponse = np.concatenate(
                     (epochResponse, batchGt)) if epochResponse is not None else batchGt
@@ -290,22 +289,22 @@ def main():
             responseTestTNR = 0.0
 
             with torch.no_grad():
-                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
+                for inputs, labels in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
                                                            num_workers=numWorkers):
                     inputs = inputs.to(device, dtype=torch.float)
-                    gt = responseCpu.to(device, dtype=torch.float)  # return a copy
+                    gt = labels.to(device, dtype=torch.float)  # return a copy
 
-                    xr = net.forward(inputs)
-                    loss = lossFunc(xr, gt)
+                    outputs = net.forward(inputs)
+                    loss = lossFunc(outputs, gt)
 
                     batchLoss = loss.item()
 
                     # accumulate response and predict value
-                    xr = torch.prod(xr, dim=1)
-                    batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                    outputs = torch.prod(outputs, dim=1)
+                    batchPredict = (outputs >= 0).cpu().detach().numpy().flatten()
                     epochPredict = np.concatenate(
                         (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                    batchGt = responseCpu.detach().numpy()
+                    batchGt = labels.detach().numpy()
                     batchGt = np.prod(batchGt, axis=1)
                     epochResponse = np.concatenate(
                         (epochResponse, batchGt)) if epochResponse is not None else batchGt

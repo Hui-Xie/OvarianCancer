@@ -62,6 +62,7 @@ class OCDataLabelTransform(object):
         d,h,w = data.shape
 
         # specific parameters of affine transform for each slice.
+        # todo: think to use gaussion to replace randrange int the future
         while True:
             if random.uniform(0, 1) < self.m_prob:
                 affine = True
