@@ -1,6 +1,7 @@
 # Measurement Utilities
 
 import numpy as np
+import torch
 
 def getAccuracy(predicts, labels):
     """
@@ -60,6 +61,23 @@ def getDice(segmentation, label):
         return 0, 0
     else:
         return nC*2.0/(nA+nB), 1
+
+def tensorDice(segmentation, label): # label has nonzero elements.
+    """
+    :param segmentation:  0-1 elements tensor
+    :param label:  0-1 elements tensor
+    :return: dice
+    :Notes: support 2D and 3D array,
+            value <0 will be ignored.
+    """
+    assert segmentation.shape == label.shape
+    seg1 = segmentation >0
+    label1 = label >0
+    nA = torch.sum(seg1).item()
+    nB = torch.sum(label1).item()
+    C = torch.mul(seg1,label1)
+    nC = torch.sum(C).item()
+    return nC*2.0/(nA+nB)
 
 
 def getTPR(predict, label):  # sensitivity, recall, hit rate, or true positive rate (TPR)

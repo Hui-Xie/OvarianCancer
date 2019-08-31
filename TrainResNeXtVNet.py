@@ -170,98 +170,93 @@ def main():
 
     if scratch > 0:
        logging.info(f"Epoch" + f"\tLearningRate" \
-                     + f"\t\tTrLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
-                     + f"\t\tVaLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r" \
-                     + f"\t\tTeLoss" + f"\tAccura" + f"\tTPR_r" + f"\tTNR_r")  # logging.info output head
+                     + f"\t\tTrLoss" + f"\tDice" \
+                     + f"\t\tVaLoss" + f"\tDice" \
+                     + f"\t\tTeLoss" + f"\tDice" )  # logging.info output head
 
     for epoch in range(lastEpoch + 1, epochs):
         random.seed()
 
         # ================Training===============
         net.train()
+        nSlice = 0
+
         trainingLoss = 0.0
         trainingBatches = 0
-
-        epochPredict = None
-        epochResponse = None
-        responseTrainAccuracy = 0.0
-        responseTrainTPR = 0.0
-        responseTrainTNR = 0.0
+        trainingDice = 0.0
 
         for inputs, labels in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
-            gt = labels.to(device, dtype=torch.float)
+            gts = labels.to(device, dtype=torch.float)
+            gts = (gts > 0).float() # not discriminate all non-zero labels.
 
             optimizer.zero_grad()
             outputs = net.forward(inputs)
-            loss = lossFunc(outputs, gt)
+
+            loss = torch.tensor(0.0).to(device, dtype=torch.float)
+            gtsShape = gts.shape
+            for i in range(gtsShape[0]):
+                output = outputs[i,]
+                gt = gts[i,]
+                nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
+                nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
+                slices = nonzeroSlices.shape[0]
+                nSlice += slices
+                for sPos in range(slices):
+                    s = nonzeroSlices[sPos]
+                    loss += lossFunc(output[s,], gt[s,])
+                    trainingDice += tensorDice(output[s,], gt[s,])
 
             loss.backward()
             optimizer.step()
             batchLoss = loss.item()
-
-            # accumulate response and predict value
-            if epoch % 5 == 0:
-                outputs = torch.prod(outputs, dim=1)
-                batchPredict = (outputs >= 0).cpu().detach().numpy().flatten()
-                epochPredict = np.concatenate(
-                    (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                batchGt = labels.detach().numpy()
-                batchGt = np.prod(batchGt, axis=1)
-                epochResponse = np.concatenate(
-                    (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
             trainingLoss += batchLoss
             trainingBatches += 1
 
             if oneSampleTraining:
                 break
+        trainingDice = trainingDice/nSlice
+
 
         if 0 != trainingBatches:
             trainingLoss /= trainingBatches
             lrScheduler.step()
 
-        if epoch % 5 == 0:
-            responseTrainAccuracy = getAccuracy(epochPredict, epochResponse)
-            responseTrainTPR = getTPR(epochPredict, epochResponse)[0]
-            responseTrainTNR = getTNR(epochPredict, epochResponse)[0]
-
-        else:
+        if epoch % 5 != 0:
             continue  # only epoch %5 ==0, run validation set.
 
-        # printPartNetworkPara(epoch, net)
         # ================Validation===============
         net.eval()
-
+        nSlice = 0
         validationLoss = 0.0
         validationBatches = 0
+        validationDice = 0.0
 
-        epochPredict = None
-        epochResponse = None
-        responseValidationAccuracy = 0.0
-        responseValidationTPR = 0.0
-        responseValidationTNR = 0.0
 
         with torch.no_grad():
-            for inputs, labels in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
-                                                       num_workers=numWorkers):
+            for inputs, labels in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
-                gt = labels.to(device, dtype=torch.float)  # return a copy
+                gts = labels.to(device, dtype=torch.float)  # return a copy
+                gts = (gts > 0).float()  # not discriminate all non-zero labels.
 
                 outputs = net.forward(inputs)
-                loss = lossFunc(outputs, gt)
+
+                loss = torch.tensor(0.0).to(device, dtype=torch.float)
+                gtsShape = gts.shape
+                for i in range(gtsShape[0]):
+                    output = outputs[i,]
+                    gt = gts[i,]
+                    nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
+                    nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
+                    slices = nonzeroSlices.shape[0]
+                    nSlice += slices
+                    for sPos in range(slices):
+                        s = nonzeroSlices[sPos]
+                        loss += lossFunc(output[s,], gt[s,])
+                        validationDice += tensorDice(output[s,], gt[s,])
+
                 batchLoss = loss.item()
-
-                # accumulate response and predict value
-                outputs = torch.prod(outputs, dim=1)
-                batchPredict = (outputs >= 0).cpu().detach().numpy().flatten()
-                epochPredict = np.concatenate(
-                    (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                batchGt = labels.detach().numpy()
-                batchGt = np.prod(batchGt, axis=1)
-                epochResponse = np.concatenate(
-                    (epochResponse, batchGt)) if epochResponse is not None else batchGt
-
                 validationLoss += batchLoss
                 validationBatches += 1
 
@@ -270,45 +265,40 @@ def main():
 
             if 0 != validationBatches:
                 validationLoss /= validationBatches
+            validationDice = validationDice / nSlice
 
-            if epoch % 5 == 0:
-                responseValidationAccuracy = getAccuracy(epochPredict, epochResponse)
-                responseValidationTPR = getTPR(epochPredict, epochResponse)[0]
-                responseValidationTNR = getTNR(epochPredict, epochResponse)[0]
 
             # ================Independent Test===============
             net.eval()
+            nSlice =0
 
             testLoss = 0.0
             testBatches = 0
-
-            epochPredict = None
-            epochResponse = None
-            responseTestAccuracy = 0.0
-            responseTestTPR = 0.0
-            responseTestTNR = 0.0
+            testDice = 0.0
 
             with torch.no_grad():
-                for inputs, labels in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
-                                                           num_workers=numWorkers):
+                for inputs, labels in data.DataLoader(testData, batch_size=batchSize, shuffle=False,num_workers=numWorkers):
                     inputs = inputs.to(device, dtype=torch.float)
-                    gt = labels.to(device, dtype=torch.float)  # return a copy
+                    gts = labels.to(device, dtype=torch.float)  # return a copy
+                    gts = (gts > 0).float()  # not discriminate all non-zero labels.
 
                     outputs = net.forward(inputs)
-                    loss = lossFunc(outputs, gt)
+
+                    loss = torch.tensor(0.0).to(device, dtype=torch.float)
+                    gtsShape = gts.shape
+                    for i in range(gtsShape[0]):
+                        output = outputs[i,]
+                        gt = gts[i,]
+                        nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
+                        nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
+                        slices = nonzeroSlices.shape[0]
+                        nSlice += slices
+                        for sPos in range(slices):
+                            s = nonzeroSlices[sPos]
+                            loss += lossFunc(output[s,], gt[s,])
+                            testDice += tensorDice(output[s,], gt[s,])
 
                     batchLoss = loss.item()
-
-                    # accumulate response and predict value
-                    outputs = torch.prod(outputs, dim=1)
-                    batchPredict = (outputs >= 0).cpu().detach().numpy().flatten()
-                    epochPredict = np.concatenate(
-                        (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                    batchGt = labels.detach().numpy()
-                    batchGt = np.prod(batchGt, axis=1)
-                    epochResponse = np.concatenate(
-                        (epochResponse, batchGt)) if epochResponse is not None else batchGt
-
                     testLoss += batchLoss
                     testBatches += 1
 
@@ -317,41 +307,35 @@ def main():
 
                 if 0 != testBatches:
                     testLoss /= testBatches
-
-                if epoch % 5 == 0:
-                    responseTestAccuracy = getAccuracy(epochPredict, epochResponse)
-                    responseTestTPR = getTPR(epochPredict, epochResponse)[0]
-                    responseTestTNR = getTNR(epochPredict, epochResponse)[0]
+                testDice = testDice / nSlice
 
         # ===========print train and test progress===============
         learningRate = lrScheduler.get_lr()[0]
         outputString = f'{epoch}' + f'\t{learningRate:1.4e}'
-        outputString += f'\t\t{trainingLoss:.4f}' + f'\t{responseTrainAccuracy:.4f}' + f'\t{responseTrainTPR:.4f}' + f'\t{responseTrainTNR:.4f}'
-        outputString += f'\t\t{validationLoss:.4f}' + f'\t{responseValidationAccuracy:.4f}' + f'\t{responseValidationTPR:.4f}' + f'\t{responseValidationTNR:.4f}'
-        outputString += f'\t\t{testLoss:.4f}' + f'\t{responseTestAccuracy:.4f}' + f'\t{responseTestTPR:.4f}' + f'\t{responseTestTNR:.4f}'
+        outputString += f'\t\t{trainingLoss:.4f}' + f'\t{trainingDice:.5f}'
+        outputString += f'\t\t{validationLoss:.4f}' + f'\t{validationDice:.5f}'
+        outputString += f'\t\t{testLoss:.4f}' + f'\t{testDice:.5f}'
         logging.info(outputString)
 
         # =============save net parameters==============
         if trainingLoss < float('inf') and not math.isnan(trainingLoss):
             netMgr.saveNet()
-            if responseValidationAccuracy > bestTestPerf or (
-                    responseValidationAccuracy == bestTestPerf and validationLoss < oldTestLoss):
+            if validationDice  > bestTestPerf or (validationDice == bestTestPerf and validationLoss < oldTestLoss):
                 oldTestLoss = validationLoss
-                bestTestPerf = responseValidationAccuracy
+                bestTestPerf = validationDice
                 netMgr.saveBest(bestTestPerf)
-            if trainingLoss <= 0.02:  # CrossEntropy use natural logarithm . -ln(0.98) = 0.0202. it means training accuracy  for each sample gets 98% above
-                logging.info(f"\n\n training loss less than 0.02, Program exit.")
+            if trainingLoss <= 10:
+                logging.info(f"\n\n training loss less than 10, Program exit.")
                 break
         else:
             logging.info(f"\n\nError: training loss is infinity. Program exit.")
             break
 
     torch.cuda.empty_cache()
-    logging.info(f"\n\n=============END of Training of ResAttentionNet Predict Model =================")
+    logging.info(f"\n\n=============END of Training of ResNeXt V Model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
     curTime = datetime.datetime.now()
     logging.info(f'\nProgram Ending Time: {str(curTime)}')
-
 
 if __name__ == "__main__":
     main()
