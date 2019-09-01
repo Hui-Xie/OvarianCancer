@@ -176,7 +176,7 @@ def main():
     oldTestLoss = 100000
 
     if scratch > 0:
-       logging.info(f"\n\n************** Table of Train Log **************")
+       logging.info(f"\n\n************** Table of Training Log **************")
        logging.info(f"Epoch" + f"\tLearningRate" \
                      + f"\t\tTrainingLoss" +   f"\tDice" \
                      + f"\t\tValidationLoss" + f"\tDice" \

@@ -23,7 +23,7 @@ def main():
     fullPathLogFile = os.path.abspath(logFile)
     dirName = os.path.dirname(fullPathLogFile)
 
-    tableTitle = "************** Table of Train Log **************\n"
+    tableTitle = "************** Table of Training Log **************\n"
 
     # read data
     with open(logFile) as file:
