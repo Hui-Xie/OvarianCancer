@@ -1,0 +1,50 @@
+=============training from sratch============
+Program ID: 19501
+
+Program command: 
+ ['TrainResNeXtVNet.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet', '1', '/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpy', '/home/hxie1/data/OvarianCancerCT/pixelSize223withLabel/numpyLabel', '0', '3,2,1']
+
+Major program changes: 
+     1  a V model with ResNeXt block: use z convolution, and then xy convolution, to implement 3D convolution.
+     2  at ground truth, only check the segmented slices, about 3 slices per patient;
+     3  the input is whole 3D volume, instead of ROI around a segmented slice;
+     4  support input data augmentation: affine in xy plane, and translation in z direction;
+     5  input Size: 231*251*251 with label, instead of previous SkyWatch Model of 29*140*140;
+     6  treat all 1,2,3 labels as 1, in other words, do not differentiate primary, metastase, and nymph node;
+     7  initializaiton LR is 1; considering zero padding, adjust los postive weight;  
+    
+
+Discarded changes:                  
+
+Experiment setting:
+Input CT data: maximum size 231*251*251 (zyx) of 3D numpy array with spacing size(3*2*2)
+
+Loss Function:  BCELogitLoss
+
+Data:   total 143 patients with weak annotaton label, 5-fold cross validation, test 29, validation 29, and training 85.  
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-09-01 04:05:42.170899
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190901_040542
+
+Info: this is the 0th fold leave for test in the 5-fold cross-validation.
+
+Info: batchSize = 12
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190901_040542.
+5-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 85 image files.
+
+validation dataset: total 29 image files.
+
+test dataset: total 29 image files.
+Network has total 26,372,379 parameters.
+
+
+************** Table of Train Log **************
+Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
+0	1.0000e+00		151806528.4375	0.03581		1017142870016.0000	0.00680		1225199594154.6667	0.01017
