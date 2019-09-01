@@ -22,7 +22,8 @@ Major program changes:
      3  the input is whole 3D volume, instead of ROI around a segmented slice;
      4  support input data augmentation: affine in xy plane, and translation in z direction;
      5  input Size: 231*251*251 with label, instead of previous SkyWatch Model of 29*140*140;
-     6  treat all 1,2,3 labels as 1, in other words, do not differentiate primary, metastase, and nymph node;  
+     6  treat all 1,2,3 labels as 1, in other words, do not differentiate primary, metastase, and nymph node;
+     7  initializaiton LR is 1; considering zero padding, adjust los postive weight;  
     
 
 Discarded changes:                  
@@ -141,12 +142,15 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    optimizer = optim.Adam(net.parameters(), lr=0.1, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=1, weight_decay=0)
     # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
     # In all pixels of 441 labeled slices, 96% were labeled as 0, other were labeled as 1,2,3.
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96/0.04), reduction="sum")
+    # image input size: 231*251*251, while its original avg size: 149*191*191 for weaked labeled nrrd; therefore, avg slice area increases 73%
+    # so 0.96*1.73/0.04 is better pos_weight. 
+
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96*1.73/0.04), reduction="sum")
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     # Load network
@@ -160,7 +164,7 @@ def main():
         logging.info(net.getParametersScale())
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300, 1200], gamma=0.1, last_epoch=lastEpoch)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300, 1200, 2400], gamma=0.1, last_epoch=lastEpoch)
 
     if useDataParallel:
         net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
