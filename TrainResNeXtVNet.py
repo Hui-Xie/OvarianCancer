@@ -146,7 +146,7 @@ def main():
     net.setOptimizer(optimizer)
 
     # In all pixels of 441 labeled slices, 96% were labeled as 0, other were labeled as 1,2,3.
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96/0.4), reduction="sum")
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96/0.04), reduction="sum")
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     # Load network
