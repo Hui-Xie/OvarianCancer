@@ -148,9 +148,9 @@ def main():
 
     # In all pixels of 441 labeled slices, 96% were labeled as 0, other were labeled as 1,2,3.
     # image input size: 231*251*251, while its original avg size: 149*191*191 for weaked labeled nrrd; therefore, avg slice area increases 73%
-    # so 0.96*1.73/0.04 is better pos_weight. 
-
-    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96*1.73/0.04), reduction="sum")
+    # so 0.96*1.73/0.04 is better pos_weight.
+    # considering to that missing cancer has bigger risk cost, use 2 instead of 1.73 as factor. 
+    bceWithLogitsLoss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor(0.96*2.0/0.04), reduction="sum")
     net.appendLossFunc(bceWithLogitsLoss, 1)
 
     # Load network
