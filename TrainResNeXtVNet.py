@@ -164,7 +164,7 @@ def main():
         logging.info(net.getParametersScale())
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 300, 1200, 2400], gamma=0.1, last_epoch=lastEpoch)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 250, 400, 600], gamma=0.1, last_epoch=lastEpoch)
 
     if useDataParallel:
         net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
