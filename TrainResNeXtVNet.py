@@ -23,7 +23,8 @@ Major program changes:
      4  support input data augmentation: affine in xy plane, and translation in z direction;
      5  input Size: 231*251*251 with label, instead of previous SkyWatch Model of 29*140*140;
      6  treat all 1,2,3 labels as 1, in other words, do not differentiate primary, metastase, and nymph node;
-     7  initializaiton LR is 0.1; considering zero padding and the bigger risk cost of missing cancer, adjust loss positive weight;  
+     7  initializaiton LR is 0.1; considering zero padding and the bigger risk cost of missing cancer, adjust loss positive weight;
+     4  add to 3 ResReXt Blocks in each layer in V model. 
     
 
 Discarded changes:                  
