@@ -55,7 +55,8 @@ class OVDataSegPartition():
         for i in range(K):
             if i != k and i != k1:
                 self.m_partitions["training"] += folds[i].tolist()
-        self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
+        if self.m_inputLabelDir is  not None:
+            self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
 
 
 
@@ -83,8 +84,8 @@ class OVDataSegSet(data.Dataset):
             if self.m_transform:
                 data, label = self.m_transform(data, label)
             else:
-                data, label = TF.to_tensor(data), TF.to_tensor(label)
+                data, label = torch.from_numpy(data), torch.from_numpy(label)
 
             return data, label
         else:
-            return TF.to_tensor(data), patientID
+            return torch.from_numpy(data), patientID

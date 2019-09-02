@@ -62,7 +62,7 @@ def main():
     print(f'.........')
 
     inputSuffix = ".npy"
-    batchSize = 8 * len(GPUIDList)
+    batchSize = 22 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
