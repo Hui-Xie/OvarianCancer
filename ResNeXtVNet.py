@@ -9,7 +9,7 @@ import torch.nn.functional as F
 # ResNeXt V Net
 
 class ResNeXtVNet(BasicModel):
-    def forward(self, x):
+    def forward(self, x, halfForward=False):
         x0 = self.m_down0(x)
         x1 = self.m_down1(x0)
         x2 = self.m_down2(x1)
@@ -20,7 +20,11 @@ class ResNeXtVNet(BasicModel):
         x5 = F.normalize(x5,dim=1)
         x6 = self.m_bottomFC(x5)
         x6 = F.normalize(x6, dim=1)  # this is for output of latent vector
+
         latentV= x6
+        if halfForward:
+            return latentV
+
         x5 = x5.view(-1,512,1,1)+ x6.view(-1,512,1,1)
         x4 = x4 + self.m_up5(x5)
         x3 = x3 + self.m_up4(x4)

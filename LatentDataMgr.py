@@ -4,7 +4,7 @@ from scipy import ndimage
 import os
 import numpy as np
 
-class LatentGenerator(DataMgr):
+class LatentDataMgr(DataMgr):
     def __init__(self, inputsDir, labelsDir, inputSuffix, logInfoFun=print):
         super().__init__(inputsDir, labelsDir, inputSuffix, logInfoFun)
         self.createLatentDir()

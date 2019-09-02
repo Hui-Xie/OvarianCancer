@@ -44,7 +44,7 @@ def printUsage(argv):
     print("============Train ResNeXt VNet for Ovarian Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfLabel> k  GPUID_List")
+          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfLabel> <k>  <GPUID_List>")
     print("where: \n"
           "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
@@ -69,7 +69,7 @@ def main():
     useDataParallel = True if len(GPUIDList) > 1 else False  # for debug
     # ===========debug==================
 
-    print(f'Program ID of Predictive Network training:  {os.getpid()}\n')
+    print(f'Program ID:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
     print(f'.........')
 
@@ -94,7 +94,7 @@ def main():
         trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
         isArgon = True
     else:
-        print("output net path should be full path.")
+        print("the net path should be full path.")
         return
     print(f'Training log is in {trainLogFile}')
     logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
@@ -158,13 +158,13 @@ def main():
 
     bestTestPerf = 0
     if 2 == len(getFilesList(netPath, ".pt")):
-        netMgr.loadNet("train")  # True for train
+        netMgr.loadNet("train")
         bestTestPerf = netMgr.loadBestTestPerf()
     else:
         logging.info(net.getParametersScale())
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 250, 400, 600], gamma=0.1, last_epoch=lastEpoch)
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 150, 250, 400, 600, 1000], gamma=0.1, last_epoch=lastEpoch)
 
     if useDataParallel:
         net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)

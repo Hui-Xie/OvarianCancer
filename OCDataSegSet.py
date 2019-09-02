@@ -13,7 +13,7 @@ import torch
 from torch.utils import data
 
 class OVDataSegPartition():
-    def __init__(self, inputDataDir, inputLabelDir, inputSuffix, K_fold, k, logInfoFun=print):
+    def __init__(self, inputDataDir, inputLabelDir=None, inputSuffix="", K_fold=5, k=0, logInfoFun=print):
         self.m_inputDataDir = inputDataDir
         self.m_inputDataListFile = os.path.join(self.m_inputDataDir, "inputFilesList.txt")
         self.m_inputLabelDir = inputLabelDir
@@ -47,6 +47,7 @@ class OVDataSegPartition():
         self.m_partitions = {}
         k = self.m_k
         K = self.m_KFold
+        self.m_partitions["fulldata"] = self.m_filesIndex
         self.m_partitions["test"] = folds[k].tolist()
         k1 = (k+1)% K  # validation k
         self.m_partitions["validation"] = folds[k1].tolist()
@@ -75,12 +76,15 @@ class OVDataSegSet(data.Dataset):
         data = np.load(filename).astype(np.float32)
 
         patientID = getStemName(filename, self.m_dataPartitions.m_inputSuffix)
-        labelFile = os.path.join(self.m_dataPartitions.m_inputLabelDir, patientID+self.m_dataPartitions.m_inputSuffix)
-        label = np.load(labelFile).astype(np.float32)
+        if self.m_dataPartitions.m_inputLabelDir is not None:
+            labelFile = os.path.join(self.m_dataPartitions.m_inputLabelDir, patientID+self.m_dataPartitions.m_inputSuffix)
+            label = np.load(labelFile).astype(np.float32)
 
-        if self.m_transform:
-            data, label = self.m_transform(data, label)
+            if self.m_transform:
+                data, label = self.m_transform(data, label)
+            else:
+                data, label = TF.to_tensor(data), TF.to_tensor(label)
+
+            return data, label
         else:
-            data, label = TF.to_tensor(data), TF.to_tensor(label)
-
-        return data, label
+            return TF.to_tensor(data), patientID
