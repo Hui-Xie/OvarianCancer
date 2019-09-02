@@ -88,16 +88,16 @@ def main():
         timeStr = getStemName(netPath)
 
     if '/home/hxie1/' in netPath:
-        trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
+        logFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
         isArgon = False
     elif '/Users/hxie1/' in netPath:
-        trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
+        logFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
         isArgon = True
     else:
         print("the net path should be full path.")
         return
-    print(f'Training log is in {trainLogFile}')
-    logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
+    print(f'Training log is in {logFile}')
+    logging.basicConfig(filename=logFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     if scratch > 0:
         lastEpoch = -1
@@ -117,7 +117,7 @@ def main():
         logging.info(f'Net parameters is saved in  {netPath}.')
 
     else:
-        lastLine = getFinalLine(trainLogFile)
+        lastLine = getFinalLine(logFile)
         lastRow = getListFromLine(lastLine)
         lastEpoch = int(lastRow[0])
         print(f"=============Training inheritates previous training at {netPath} ============")

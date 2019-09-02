@@ -3,10 +3,7 @@
 
 import sys
 import datetime
-import random
-import torch
 import torch.nn as nn
-import torch.optim as optim
 from torch.utils import data
 import logging
 
@@ -23,7 +20,7 @@ Major program changes:
 Discarded changes:                  
 
 Input data: maximum size 231*251*251 (zyx) of 3D numpy array with spacing size(3*2*2), without data augmentation
-            total 220 patients which includes segmented and unsegmented data. 
+            total 220 patients data which includes segmented and unsegmented data. 
           '''
 
 def printUsage(argv):
@@ -48,7 +45,7 @@ def main():
     GPUIDList = sys.argv[4].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
 
-    # avoid latent vector dir overwriting.
+    # avoid overwriting latent vector dir
     if not os.path.exists(outputPath):
         os.mkdir(outputPath)
     else:
@@ -74,20 +71,20 @@ def main():
     timeStr = getStemName(netPath)
 
     if '/home/hxie1/' in netPath:
-        trainLogFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/latentLog_{timeStr}.txt'
+        logFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/latentLog_{timeStr}.txt'
         isArgon = False
     elif '/Users/hxie1/' in netPath:
-        trainLogFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/latentLog__{timeStr}.txt'
+        logFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/latentLog__{timeStr}.txt'
         isArgon = True
     else:
         print("the net path should be full path.")
         return
-    print(f'log is in {trainLogFile}')
-    logging.basicConfig(filename=trainLogFile, filemode='a+', level=logging.INFO, format='%(message)s')
+    print(f'log is in {logFile}')
+    logging.basicConfig(filename=logFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     logging.info(f'Program command: \n {sys.argv}')
 
-    dataPartitions = OVDataSegPartition(dataInputsPath, inputSuffix=".npy")
+    dataPartitions = OVDataSegPartition(dataInputsPath, inputSuffix=inputSuffix)
     fullData = OVDataSegSet('fulldata', dataPartitions)
 
     net = ResNeXtVNet()
@@ -107,8 +104,7 @@ def main():
     if useDataParallel:
         net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
 
-
-    # ================Validation===============
+    # ================ Generate all latent vectors ===============
     net.eval()
     with torch.no_grad():
         for inputs,patientIDs in data.DataLoader(fullData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
@@ -116,11 +112,11 @@ def main():
 
             outputs = net.forward(inputs, halfForward=True)
             for i in range(outputs.shape[0]):
-                output = output[i].cpu().detach().numpy()
+                output = outputs[i].cpu().detach().numpy()
                 np.save(os.path.join(outputPath, patientIDs[i] + ".npy"), output)
 
     torch.cuda.empty_cache()
-    logging.info(f"\n\n=============END of Generating latent Vectoors =================")
+    logging.info(f"\n\n============= END of Generating latent Vectoors =================")
     print(f'Program ID {os.getpid()}  exits.\n')
     curTime = datetime.datetime.now()
     logging.info(f'\nProgram Ending Time: {str(curTime)}')
