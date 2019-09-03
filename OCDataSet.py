@@ -113,6 +113,8 @@ class OVDataSet(data.Dataset):
     def __getitem__(self, index):
         ID = self.m_dataIDs[index]
         filename = self.m_dataPartitions.m_inputFilesList[ID]
+        patientID = getStemName(filename, self.m_dataPartitions.m_inputSuffix)
+
         data = np.load(filename).astype(np.float32)
         label = self.m_labels[index]
         if isinstance(label, list):
@@ -121,7 +123,7 @@ class OVDataSet(data.Dataset):
         if self.m_transform:
             data = self.m_transform(data)
 
-        return data, label
+        return data, label, patientID
 
     def getLabels(self, dataIDs):
         labels = []

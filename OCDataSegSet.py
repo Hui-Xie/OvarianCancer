@@ -86,6 +86,6 @@ class OVDataSegSet(data.Dataset):
             else:
                 data, label = torch.from_numpy(data), torch.from_numpy(label)
 
-            return data, label
+            return data, label, patientID
         else:
             return torch.from_numpy(data), patientID

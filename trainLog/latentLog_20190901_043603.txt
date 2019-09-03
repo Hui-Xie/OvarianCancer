@@ -1,7 +1,0 @@
-Program command: 
- ['generateLatentVector.py', '/home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190901_043603', '/home/hxie1/data/OvarianCancerCT/pixelSize223/numpy', '/home/hxie1/data/OvarianCancerCT/pixelSize223/latent', '3']
-
-
-============= END of Generating latent Vectoors =================
-
-Program Ending Time: 2019-09-02 13:17:26.861255

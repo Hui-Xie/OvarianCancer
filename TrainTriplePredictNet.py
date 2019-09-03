@@ -232,7 +232,7 @@ def main():
         responseTrainTPR = 0.0
         responseTrainTNR = 0.0
 
-        for inputs, responseCpu in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True,
+        for inputs, responseCpu, patientIDs in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True,
                                                    num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
             gt = responseCpu.to(device, dtype=torch.float)
@@ -288,7 +288,7 @@ def main():
         responseValidationTNR = 0.0
 
         with torch.no_grad():
-            for inputs, responseCpu in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
+            for inputs, responseCpu, patientIDs in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
                                                        num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
                 gt = responseCpu.to(device, dtype=torch.float)  # return a copy
@@ -321,52 +321,52 @@ def main():
                 responseValidationTPR = getTPR(epochPredict, epochResponse)[0]
                 responseValidationTNR = getTNR(epochPredict, epochResponse)[0]
 
-            # ================Independent Test===============
-            net.eval()
+        # ================Independent Test===============
+        net.eval()
 
-            testLoss = 0.0
-            testBatches = 0
+        testLoss = 0.0
+        testBatches = 0
 
-            epochPredict = None
-            epochResponse = None
-            responseTestAccuracy = 0.0
-            responseTestTPR = 0.0
-            responseTestTNR = 0.0
+        epochPredict = None
+        epochResponse = None
+        responseTestAccuracy = 0.0
+        responseTestTPR = 0.0
+        responseTestTNR = 0.0
 
-            with torch.no_grad():
-                for inputs, responseCpu in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
-                                                           num_workers=numWorkers):
-                    inputs = inputs.to(device, dtype=torch.float)
-                    gt = responseCpu.to(device, dtype=torch.float)  # return a copy
+        with torch.no_grad():
+            for inputs, responseCpu,patientIDs in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
+                                                       num_workers=numWorkers):
+                inputs = inputs.to(device, dtype=torch.float)
+                gt = responseCpu.to(device, dtype=torch.float)  # return a copy
 
-                    xr = net.forward(inputs)
-                    loss = lossFunc(xr, gt)
+                xr = net.forward(inputs)
+                loss = lossFunc(xr, gt)
 
-                    batchLoss = loss.item()
+                batchLoss = loss.item()
 
-                    # accumulate response and predict value
-                    xr = torch.prod(xr, dim=1)
-                    batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
-                    epochPredict = np.concatenate(
-                        (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
-                    batchGt = responseCpu.detach().numpy()
-                    batchGt = np.prod(batchGt, axis=1)
-                    epochResponse = np.concatenate(
-                        (epochResponse, batchGt)) if epochResponse is not None else batchGt
+                # accumulate response and predict value
+                xr = torch.prod(xr, dim=1)
+                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                epochPredict = np.concatenate(
+                    (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
+                batchGt = responseCpu.detach().numpy()
+                batchGt = np.prod(batchGt, axis=1)
+                epochResponse = np.concatenate(
+                    (epochResponse, batchGt)) if epochResponse is not None else batchGt
 
-                    testLoss += batchLoss
-                    testBatches += 1
+                testLoss += batchLoss
+                testBatches += 1
 
-                    if oneSampleTraining:
-                        break
+                if oneSampleTraining:
+                    break
 
-                if 0 != testBatches:
-                    testLoss /= testBatches
+            if 0 != testBatches:
+                testLoss /= testBatches
 
-                if epoch % 5 == 0:
-                    responseTestAccuracy = getAccuracy(epochPredict, epochResponse)
-                    responseTestTPR = getTPR(epochPredict, epochResponse)[0]
-                    responseTestTNR = getTNR(epochPredict, epochResponse)[0]
+            if epoch % 5 == 0:
+                responseTestAccuracy = getAccuracy(epochPredict, epochResponse)
+                responseTestTPR = getTPR(epochPredict, epochResponse)[0]
+                responseTestTNR = getTNR(epochPredict, epochResponse)[0]
 
         # ===========print train and test progress===============
         learningRate = lrScheduler.get_lr()[0]

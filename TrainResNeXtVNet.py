@@ -194,7 +194,7 @@ def main():
         trainingBatches = 0
         trainingDice = 0.0
 
-        for inputs, labels in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
+        for inputs, labels, patientIDs in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
             gts = labels.to(device, dtype=torch.float)
             gts = (gts > 0).float() # not discriminate all non-zero labels.
@@ -243,7 +243,7 @@ def main():
         validationDice = 0.0
 
         with torch.no_grad():
-            for inputs, labels in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
+            for inputs, labels, patientIDs in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
                 gts = labels.to(device, dtype=torch.float)  # return a copy
                 gts = (gts > 0).float()  # not discriminate all non-zero labels.
@@ -285,7 +285,7 @@ def main():
         testDice = 0.0
 
         with torch.no_grad():
-            for inputs, labels in data.DataLoader(testData, batch_size=batchSize, shuffle=False,num_workers=numWorkers):
+            for inputs, labels, patientIDs in data.DataLoader(testData, batch_size=batchSize, shuffle=False,num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
                 gts = labels.to(device, dtype=torch.float)  # return a copy
                 gts = (gts > 0).float()  # not discriminate all non-zero labels.

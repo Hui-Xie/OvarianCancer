@@ -70,15 +70,7 @@ def main():
 
     timeStr = getStemName(netPath)
 
-    if '/home/hxie1/' in netPath:
-        logFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/latentLog_{timeStr}.txt'
-        isArgon = False
-    elif '/Users/hxie1/' in netPath:
-        logFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/latentLog__{timeStr}.txt'
-        isArgon = True
-    else:
-        print("the net path should be full path.")
-        return
+    logFile = os.path.join(outputPath, f'latentLog_{timeStr}.txt')
     print(f'log is in {logFile}')
     logging.basicConfig(filename=logFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
@@ -113,6 +105,8 @@ def main():
             outputs = net.forward(inputs, halfForward=True)
             for i in range(outputs.shape[0]):
                 output = outputs[i].cpu().detach().numpy()
+                if 0 == np.std(output):
+                    logging.info(f"patientID {patientIDs[i]} has latent vector of full zero.")
                 np.save(os.path.join(outputPath, patientIDs[i] + ".npy"), output)
 
     torch.cuda.empty_cache()
