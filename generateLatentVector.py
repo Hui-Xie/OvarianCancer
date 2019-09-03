@@ -40,8 +40,10 @@ def main():
         return -1
 
     netPath = sys.argv[1]
+    timeStr = getStemName(netPath)
+
     dataInputsPath = sys.argv[2]
-    outputPath = sys.argv[3]
+    outputPath = os.path.join(sys.argv[3], f"latent_{timeStr}")
     GPUIDList = sys.argv[4].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
 
@@ -68,7 +70,7 @@ def main():
 
     device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
 
-    timeStr = getStemName(netPath)
+
 
     logFile = os.path.join(outputPath, f'latentLog_{timeStr}.txt')
     print(f'log is in {logFile}')
