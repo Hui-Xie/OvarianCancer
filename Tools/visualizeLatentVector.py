@@ -50,15 +50,15 @@ for i in range(N):
 
 # print out latent vectors
 
-for i in range(0, nCount0): # print part
-    print (f"\ni={i}  patientID: {patientID0List[i]}")
-    print(Fore.RED + str(array0[:, i].tolist()))
-for i in range(0, nCount1):  # print part
-    print(f"\ni={i}   patientID: {patientID1List[i]}")
-    print(Fore.BLUE + str(array1[:, i].tolist()))
+#for i in range(0, nCount0): # print part
+#    print (f"\ni={i}  patientID: {patientID0List[i]}")
+#    print(Fore.RED + str(array0[:, i].tolist()))
+#for i in range(0, nCount1):  # print part
+#    print(f"\ni={i}   patientID: {patientID1List[i]}")
+#    print(Fore.BLUE + str(array1[:, i].tolist()))
 
-print(Style.RESET_ALL)
-print(f"For all latent vectors, response 1 has {nCount1}, and response 0 has {nCount0}.\n")
+# print(Style.RESET_ALL)
+#print(f"For all latent vectors, response 1 has {nCount1}, and response 0 has {nCount0}.\n")
 
 # draw latent vectors
 import matplotlib.pyplot as plt
@@ -83,13 +83,15 @@ xAxis = np.array(range(0,lenLV), dtype=int)
 
 
 subplot0 = plt.subplot(2,1,1)
-subplot0.plot(xAxis, array0[:,tuple(range(0, nCount0))])
+for i in range(nCount0):
+    subplot0.scatter(xAxis, array0[:,i],s=1)
 subplot0.set_xlabel('Element Position')
 subplot0.set_ylabel('Element Value')
 subplot0.set_title('Response 0')
 
 subplot1 =  plt.subplot(2,1,2)
-subplot1.plot(xAxis, array1[:,tuple(range(0, nCount1))])
+for i in range(nCount1):
+    subplot1.scatter(xAxis, array1[:,i],s=1)
 subplot1.set_xlabel('Element Position')
 subplot1.set_ylabel('Element Value')
 subplot1.set_title('Response 1')
@@ -103,11 +105,13 @@ f2 = plt.figure(2)
 theta = np.array(range(0,lenLV), dtype=int)* 2*np.pi/lenLV
 
 subplot0 = plt.subplot(2,1,1, projection="polar")
-subplot0.plot(theta, array0[:,tuple(range(0, nCount0))])
+for i in range(nCount0):
+    subplot0.scatter(theta, array0[:,i],s=1)
 subplot0.set_title('Response 0', pad=20)
 
 subplot1 =  plt.subplot(2,1,2, projection="polar")
-subplot1.plot(theta, array1[:,tuple(range(0, nCount1))])
+for i in range(nCount1):
+    subplot1.scatter(theta, array1[:,i],s=1)
 subplot1.set_title('Response 1', pad=20)
 
 plt.tight_layout()
@@ -123,16 +127,16 @@ array1mean = np.mean(array1, axis=1)
 array1std  = np.std(array1, axis=1)
 
 subplot0 = plt.subplot(2,1,1)
-subplot0.scatter(xAxis, array0mean)
-subplot0.scatter(xAxis, array1mean)
+subplot0.scatter(xAxis, array0mean, s=1)
+subplot0.scatter(xAxis, array1mean, s=1 )
 subplot0.set_xlabel('Element Position')
 subplot0.set_ylabel('Element Value')
 subplot0.legend(('mu0', 'mu1'))
 subplot0.set_title('Mean between Response 0 and 1')
 
 subplot1 = plt.subplot(2,1,2)
-subplot1.scatter(xAxis, array0std)
-subplot1.scatter(xAxis, array1std)
+subplot1.scatter(xAxis, array0std,s=1)
+subplot1.scatter(xAxis, array1std,s=1)
 subplot1.set_xlabel('Element Position')
 subplot1.set_ylabel('Element Value')
 subplot1.legend(('std0', 'std1'))
@@ -141,6 +145,8 @@ subplot1.set_title('Std Deviation bewtwen Response 0 and 1')
 plt.tight_layout()
 
 plt.savefig(os.path.join(latentDir, f"latentV_mu_std.png"))
+
+print(f"Output figures dir: {latentDir}")
 
 # final show
 plt.show()
