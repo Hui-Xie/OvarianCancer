@@ -3,116 +3,111 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from BasicModel import BasicModel
-
+from ConvBlocks import *
 #  3D model
 
 class SegV3DModel (BasicModel):
-    def __init__(self, K):   # K is the final output classification number.
+    def __init__(self):   # K is the final output classification number.
         super().__init__()
+        # For input image size: 51*171*171 (zyx in nrrd format)
+        # at Sep 14, 2019,
+        # log:
+        #
+        # result:
+        #
+        self.m_useSpectralNorm = True
+        self.m_useLeakyReLU = True
+        self.m_down0 = nn.Sequential(
+            Conv3dBlock(32, 32, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(32, 32, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(32, 32, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 32*51*171*171
+        self.m_down1 = nn.Sequential(
+            Conv3dBlock(32, 64, poolingLayer=nn.AvgPool3d(3, stride=2, padding=0), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(64, 64, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(64, 64, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 64*25*85*85
+        self.m_down2 = nn.Sequential(
+            Conv3dBlock(64, 128, poolingLayer=nn.AvgPool3d(3, stride=2, padding=0), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(128, 128, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(128, 128, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 128*12*42*42
 
-        self.m_conv1 = nn.Conv3d(1, 32, (5, 5, 5), stride=(2, 2, 2))  # inputSize: 21*281*281; output:32*9*139*139
-        self.m_bn1 = nn.BatchNorm3d(32)
-        self.m_conv2 = nn.Conv3d(32, 64, (5, 3, 3), stride=(2, 2, 2))  # output: 64*3*69*69
-        self.m_bn2 = nn.BatchNorm3d(64)
-        self.m_conv3 = nn.Conv3d(64, 128, (3, 5, 5), stride=(2, 2, 2))  # output: 128*1*33*33
-        self.m_bn3 = nn.BatchNorm3d(128)
-        self.m_conv4 = nn.Conv2d(128, 256, (5, 5), stride=(2, 2))  # output: 256*15*15
-        self.m_bn4 = nn.BatchNorm2d(256)
-        self.m_conv5 = nn.Conv2d(256, 512, (3, 3), stride=(2, 2))  # output: 512*7*7
-        self.m_bn5 = nn.BatchNorm2d(512)
-        self.m_conv6 = nn.Conv2d(512, 512, (3, 3), stride=(2, 2))  # output: 512*3*3
-        self.m_bn6 = nn.BatchNorm2d(512)
+        self.m_down3 = nn.Sequential(
+            Conv3dBlock(128, 256, poolingLayer=nn.AvgPool3d(3, stride=2, padding=0), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(256, 256, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(256, 256, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 256*5*20*20
+        self.m_down4 = nn.Sequential(
+            Conv3dBlock(256, 512, poolingLayer=nn.AvgPool3d(3, stride=2, padding=0), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(512, 512, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(512, 512, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 512*2*9*9
 
-        self.m_convT6 = nn.ConvTranspose2d(512, 512, (3, 3), stride=(2, 2))  # output: 512*7*7
-        self.m_bnT6 = nn.BatchNorm2d(512)
-        self.m_convT5 = nn.ConvTranspose2d(1024, 256, (3, 3), stride=(2, 2))  # output: 256*15*15
-        self.m_bnT5 = nn.BatchNorm2d(256)
-        self.m_convT4 = nn.ConvTranspose2d(512, 128, (5, 5), stride=(2, 2))  # output: 128*33*33
-        self.m_bnT4 = nn.BatchNorm2d(128)
-        self.m_convT3 = nn.ConvTranspose3d(256, 64, (3, 5, 5), stride=(2, 2, 2))  # output: 64*3*69*69
-        self.m_bnT3 = nn.BatchNorm3d(64)
-        self.m_convT2 = nn.ConvTranspose3d(128, 32, (5, 3, 3), stride=(2, 2, 2))  # output:32*9*139*139
-        self.m_bnT2 = nn.BatchNorm3d(32)
-        self.m_convT1 = nn.ConvTranspose3d(64, 1, (5, 5, 5), stride=(2, 2, 2))  # output:21*281*281
-        self.m_bnT1 = nn.BatchNorm3d(1)
-        self.m_conv0 = nn.Conv2d(42, K, (1, 1), stride=1)  # output:K*281*281
+        self.m_up4 = nn.Sequential(
+            Conv3dBlock(512, 256, poolingLayer=nn.Upsample(size=(5, 20, 20), mode='bilinear'), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(256, 256, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(256, 256, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 256*5*20*20
 
-    def forward(self, x):
-
-        # without residual link within layer
-
-        x1 = self.m_dropout3d( F.relu(self.m_bn1(self.m_conv1(x ))))     #Conv->BatchNorm->ReLU will keep half postive input.
-        x2 = self.m_dropout3d( F.relu(self.m_bn2(self.m_conv2(x1))))
-        x3 = self.m_dropout3d( F.relu(self.m_bn3(self.m_conv3(x2))))
-        x3 = x3.squeeze(dim=2)                         # from 3D to 2D, there is squeeze
-        x4 = self.m_dropout2d( F.relu(self.m_bn4(self.m_conv4(x3))))
-        x5 = self.m_dropout2d( F.relu(self.m_bn5(self.m_conv5(x4))))
-        xc = self.m_dropout2d( F.relu(self.m_bn6(self.m_conv6(x5))))  # xc means x computing
-            
-        xc = self.m_dropout2d( F.relu(self.m_bnT6(self.m_convT6(xc))))
-        xc = torch.cat((xc,x5),1)                 # batchsize is in dim 0, so concatenate at dim 1.
-        xc = self.m_dropout2d( F.relu(self.m_bnT5(self.m_convT5(xc))))
-        xc = torch.cat((xc, x4), 1)
-        xc = self.m_dropout2d( F.relu(self.m_bnT4(self.m_convT4(xc))))
-        xc = torch.cat((xc, x3), 1)               # first concatenate with squeezed x3, then unsqueeze
-        xc = xc.unsqueeze(2)
-        xc = self.m_dropout3d( F.relu(self.m_bnT3(self.m_convT3(xc))))
-        xc = torch.cat((xc, x2), 1)
-        xc = self.m_dropout3d( F.relu(self.m_bnT2(self.m_convT2(xc))))
-        xc = torch.cat((xc, x1), 1)
-        xc = self.m_dropout3d( F.relu(self.m_bnT1(self.m_convT1(xc))))
-        xc = torch.cat((xc, x), 2) # here concatenate at dim=2 is for further reducing dimension.
-        xc = xc.squeeze(dim=1)
-
-        xc = self.m_conv0(xc)
+        self.m_up3 = nn.Sequential(
+            Conv3dBlock(256, 128, poolingLayer=nn.Upsample(size=(12, 42, 42), mode='bilinear'), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(128, 128, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(128, 128, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 128*12*42*42
+        self.m_up2 = nn.Sequential(
+            Conv3dBlock(128, 64, poolingLayer=nn.Upsample(size=(25, 85, 85), mode='bilinear'), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(64, 64, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(64, 64, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 64*25*85*85
+        self.m_up1 = nn.Sequential(
+            Conv3dBlock(64, 32, poolingLayer=nn.Upsample(size=(51, 171, 171), mode='bilinear'), convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(32, 32, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(32, 32, poolingLayer=None, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )  # ouput size: 32*51*171*171
+        self.m_up0 = nn.Sequential(
+            nn.Conv3d(32, 2, kernel_size=3,stride=1, padding=1)
+           )  # output size:2*51*171*171
 
 
-        #with residual link within layer: the expeiriment result is not good.
-        '''
-        x1 = self.m_conv1(x)
-        x1 = self.m_dropout3d(F.relu(x1 + self.m_bn1(x1)))  # Conv->BatchNorm->ReLU will keep half postive input.
-        x2 = self.m_conv2(x1)
-        x2 = self.m_dropout3d(F.relu(x2 + self.m_bn2(x2)))
-        x3 = self.m_conv3(x2)
-        x3 = self.m_dropout3d(F.relu(x3 + self.m_bn3(x3)))
-        x3 = x3.squeeze(dim=2)  # from 3D to 2D, there is squeeze
+def forward(self, x):
+        x0 = self.m_down0(x)
+        x1 = self.m_down1(x0)
+        x2 = self.m_down2(x1)
+        x3 = self.m_down3(x2)
+        x4 = self.m_down4(x3)
 
-        x4 = self.m_conv4(x3)
-        x4 = self.m_dropout2d(F.relu(x4 + self.m_bn4(x4)))
-        x5 = self.m_conv5(x4)
-        x5 = self.m_dropout2d(F.relu(x5 + self.m_bn5(x5)))
-        xc = self.m_conv6(x5)
-        xc = self.m_dropout2d(F.relu(xc + self.m_bn6(xc)))  # xc means x computing
+        x  = self.m_up4(x4) +x3
+        x  = self.m_up3(x) + x2
+        x  = self.m_up2(x) + x1
+        x  = self.m_up1(x) + x0
+        x  = self.m_up0(x)
 
-        xc = self.m_convT6(xc)
-        xc = self.m_dropout2d(F.relu(xc + self.m_bnT6(xc)))
-        xc = torch.cat((xc, x5), 1)  # channel is in dim 0, so concatenate at dim 1.
-
-        xc = self.m_convT5(xc)
-        xc = self.m_dropout2d(F.relu(xc + self.m_bnT5(xc)))
-        xc = torch.cat((xc, x4), 1)
-
-        xc = self.m_convT4(xc)
-        xc = self.m_dropout2d(F.relu(xc + self.m_bnT4(xc)))
-        xc = torch.cat((xc, x3), 1)  # first concatenate with squeezed x3, then unsqueeze
-        xc = xc.unsqueeze(2)
-
-        xc = self.m_convT3(xc)
-        xc = self.m_dropout3d(F.relu(xc + self.m_bnT3(xc)))
-        xc = torch.cat((xc, x2), 1)
-
-        xc = self.m_convT2(xc)
-        xc = self.m_dropout3d(F.relu(xc + self.m_bnT2(xc)))
-        xc = torch.cat((xc, x1), 1)
-
-        xc = self.m_convT1(xc)
-        xc = self.m_dropout3d(F.relu(xc + self.m_bnT1(xc)))
-        xc = torch.cat((xc, x), 2)
-        xc = xc.squeeze(dim=1)
-
-        xc = self.m_conv0(xc)
-        
-        '''
-
-        # return output
-        return xc
+        return x
