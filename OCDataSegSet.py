@@ -86,6 +86,6 @@ class OVDataSegSet(data.Dataset):
             else:
                 data, label = torch.from_numpy(data), torch.from_numpy(label)
 
-            return data, label, patientID
+            return data.unsqueeze(dim=0), label, patientID  # 3D data filter needs unsueeze feature dim
         else:
             return torch.from_numpy(data), patientID

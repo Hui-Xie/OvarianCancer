@@ -68,7 +68,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 4 * len(GPUIDList)
+    batchSize = 2 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -180,7 +180,7 @@ def main():
 
         # ================Training===============
         net.train()
-        nSlice = 0
+        nSample = 0
 
         trainingLoss = 0.0
         trainingBatches = 0
@@ -189,35 +189,30 @@ def main():
         for inputs, labels, patientIDs in data.DataLoader(trainingData, batch_size=batchSize, shuffle=True, num_workers=numWorkers):
             inputs = inputs.to(device, dtype=torch.float)
             gts = labels.to(device, dtype=torch.float)
-            gts = (gts > 0).float() # not discriminate all non-zero labels.
+            gts = (gts > 0).long() # not discriminate all non-zero labels.
 
             optimizer.zero_grad()
             outputs = net.forward(inputs)
-
-            loss = torch.tensor(0.0).to(device, dtype=torch.float)
-            gtsShape = gts.shape
-            for i in range(gtsShape[0]):
-                output = outputs[i,]
-                gt = gts[i,]
-                nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
-                nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
-                slices = nonzeroSlices.shape[0]
-                nSlice += slices
-                for sPos in range(slices):
-                    s = nonzeroSlices[sPos]
-                    loss += lossFunc(output[s,], gt[s,])
-                    trainingDice += tensorDice(output[s,], gt[s,])
-
+            loss = lossFunc(outputs, gts)
             loss.backward()
             optimizer.step()
             batchLoss = loss.item()
+
+            # compute dice
+            with torch.no_grad():
+                gtsShape = gts.shape
+                for i in range(gtsShape[0]):
+                    output = outputs[i,]
+                    gt = gts[i,]
+                    trainingDice += tensorDice(torch.argmax(output, dim=0), gt)
+                nSample += gtsShape[0]
 
             trainingLoss += batchLoss
             trainingBatches += 1
 
             if oneSampleTraining:
                 break
-        trainingDice = trainingDice/nSlice
+        trainingDice = trainingDice / nSample
 
 
         if 0 != trainingBatches:
@@ -229,7 +224,7 @@ def main():
 
         # ================Validation===============
         net.eval()
-        nSlice = 0
+        nSample = 0
         validationLoss = 0.0
         validationBatches = 0
         validationDice = 0.0
@@ -238,25 +233,20 @@ def main():
             for inputs, labels, patientIDs in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
                 gts = labels.to(device, dtype=torch.float)  # return a copy
-                gts = (gts > 0).float()  # not discriminate all non-zero labels.
+                gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
                 outputs = net.forward(inputs)
+                loss = lossFunc(outputs, gts)
+                batchLoss = loss.item()
 
-                loss = torch.tensor(0.0).to(device, dtype=torch.float)
+                # compute dice
                 gtsShape = gts.shape
                 for i in range(gtsShape[0]):
                     output = outputs[i,]
                     gt = gts[i,]
-                    nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
-                    nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
-                    slices = nonzeroSlices.shape[0]
-                    nSlice += slices
-                    for sPos in range(slices):
-                        s = nonzeroSlices[sPos]
-                        loss += lossFunc(output[s,], gt[s,])
-                        validationDice += tensorDice(output[s,], gt[s,])
+                    validationDice += tensorDice(torch.argmax(output, dim=0), gt)
+                nSample += gtsShape[0]
 
-                batchLoss = loss.item()
                 validationLoss += batchLoss
                 validationBatches += 1
 
@@ -265,12 +255,12 @@ def main():
 
             if 0 != validationBatches:
                 validationLoss /= validationBatches
-            validationDice = validationDice / nSlice
+            validationDice = validationDice / nSample
 
 
         # ================Independent Test===============
         net.eval()
-        nSlice =0
+        nSample =0
 
         testLoss = 0.0
         testBatches = 0
@@ -280,25 +270,20 @@ def main():
             for inputs, labels, patientIDs in data.DataLoader(testData, batch_size=batchSize, shuffle=False,num_workers=numWorkers):
                 inputs = inputs.to(device, dtype=torch.float)
                 gts = labels.to(device, dtype=torch.float)  # return a copy
-                gts = (gts > 0).float()  # not discriminate all non-zero labels.
+                gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
                 outputs = net.forward(inputs)
+                loss = lossFunc(outputs, gts)
+                batchLoss = loss.item()
 
-                loss = torch.tensor(0.0).to(device, dtype=torch.float)
+                # compute dice
                 gtsShape = gts.shape
                 for i in range(gtsShape[0]):
                     output = outputs[i,]
                     gt = gts[i,]
-                    nonzeroSlices = torch.nonzero(gt, as_tuple=True)[0]
-                    nonzeroSlices = torch.unique(nonzeroSlices, sorted=True)
-                    slices = nonzeroSlices.shape[0]
-                    nSlice += slices
-                    for sPos in range(slices):
-                        s = nonzeroSlices[sPos]
-                        loss += lossFunc(output[s,], gt[s,])
-                        testDice += tensorDice(output[s,], gt[s,])
+                    testDice += tensorDice(torch.argmax(output, dim=0), gt)
+                nSample += gtsShape[0]
 
-                batchLoss = loss.item()
                 testLoss += batchLoss
                 testBatches += 1
 
@@ -307,14 +292,14 @@ def main():
 
             if 0 != testBatches:
                 testLoss /= testBatches
-            testDice = testDice / nSlice
+            testDice = testDice / nSample
 
         # ===========print train and test progress===============
         learningRate = lrScheduler.get_lr()[0]
         outputString = f'{epoch}' + f'\t{learningRate:1.4e}'
-        outputString += f'\t\t{trainingLoss:.4f}' + f'\t{trainingDice:.5f}'
-        outputString += f'\t\t{validationLoss:.4f}' + f'\t{validationDice:.5f}'
-        outputString += f'\t\t{testLoss:.4f}' + f'\t{testDice:.5f}'
+        outputString += f'\t\t{trainingLoss:.4f}' + f'\t\t{trainingDice:.5f}'
+        outputString += f'\t\t{validationLoss:.4f}' + f'\t\t{validationDice:.5f}'
+        outputString += f'\t\t{testLoss:.4f}' + f'\t\t{testDice:.5f}'
         logging.info(outputString)
 
         # =============save net parameters==============
@@ -324,7 +309,7 @@ def main():
                 oldTestLoss = validationLoss
                 bestTestPerf = validationDice
                 netMgr.saveBest(bestTestPerf)
-            if trainingLoss <= 10:
+            if trainingLoss <= 1e-6:
                 logging.info(f"\n\n training loss less than 10, Program exit.")
                 break
         else:
