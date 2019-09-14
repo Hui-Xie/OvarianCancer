@@ -1,5 +1,6 @@
 
 # At same time, convert Nrrd data and label to numpy
+# Assembly image into center and pad zero around.
 
 inputDataDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223/nrrd"
 inputLabelDir = "/home/hxie1/data/OvarianCancerCT/pixelSize223/nrrdLabel"

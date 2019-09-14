@@ -1,40 +1,71 @@
 
-import os
+# convert Nrrd images and labels to numpy array with zoom.
+
+import sys
 import SimpleITK as sitk
 from scipy import ndimage
 import numpy as np
-from DataMgr import DataMgr
+sys.path.append("..")
+from FilesUtilities import *
 
-suffix = "_CT.nrrd"
-#inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages"
-#outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom_147_281_281"
-#readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/testImages_zoom_147_281_281/readme.txt"
 
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom_147_281_281"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_uniform/trainImages_zoom_147_281_281/readme.txt"
+suffix = "_pri.nrrd"
+inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd"
+inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels"
+outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy"
+outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy/readme.txt"
 
-goalSize = (147,281,281)
+goalSize = (51,171,171) # Z,Y,X in nrrd axis order
 
 originalCwd = os.getcwd()
-os.chdir(inputsDir)
-filesList = [os.path.abspath(x) for x in os.listdir(inputsDir) if suffix in x]
+os.chdir(inputImageDir)
+filesList = [os.path.abspath(x) for x in os.listdir(inputImageDir) if suffix in x]
 os.chdir(originalCwd)
 
 for file in filesList:
+    patientID = getStemName(file, "_pri.nrrd")
+
+    # for image data
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
-    shape = image3d.shape
-    zoomFactor = [goalSize[0] / shape[0], goalSize[1] / shape[1], goalSize[2] / shape[2]]
+    image3d = np.clip(image3d, -100, 250)  # window level
+    image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
+    imageShape = image3d.shape
+    zoomFactor = [goalSize[0] / imageShape[0], goalSize[1] / imageShape[1], goalSize[2] / imageShape[2]]
     image3d = ndimage.zoom(image3d, zoomFactor)
-    patientID = DataMgr.getStemName(file, suffix)
-    np.save(os.path.join(outputsDir, patientID + "_zoom.npy"), image3d)
+
+    # normalize image for whole volume
+    mean = np.mean(image3d)
+    std  = np.std(image3d)
+    image3d = (image3d-mean)/std
+
+    np.save(os.path.join(outputImageDir, patientID + ".npy"), image3d)
+
+    # for label
+    labelFile = os.path.join(inputLabelDir, patientID + "_pri_seg.nrrd")
+    label = sitk.ReadImage(labelFile)
+    label3d = sitk.GetArrayFromImage(label)
+    label3d = label3d.astype(np.float32)  # this is very important
+    labelShape = label3d.shape
+    if labelShape != imageShape:
+        print(f"Error: images shape != label shape for {file} and {labelFile} ")
+        exit(1)
+
+    label3d = ndimage.zoom(label3d, zoomFactor)
+    label3d = (label3d > 0.5).astype(np.float32)
+    np.save(os.path.join(outputLabelDir, patientID + ".npy"), label3d)
 
 N = len(filesList)
 
 with open(readmeFile,"w") as f:
     f.write(f"total {N} files in this directory\n")
     f.write(f"goalSize: {goalSize}\n")
-    f.write(f"inputsDir = {inputsDir}\n")
+    f.write(f"inputsDir = {inputImageDir}\n")
+    f.write("all images are zoom into a same size.\n")
+    f.write("label image first zoom by spline and then judge whether value >0.5 to get new label.\n")
+
+print(f"totally convert {N} files")
+
 
 
