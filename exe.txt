@@ -63,3 +63,5 @@ nohup python3.7 generateLatentVector.py /home/hxie1/temp_netParameters/OvarianCa
 
 For SegV3D ROI model
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  0,1,2,3 &
+
+

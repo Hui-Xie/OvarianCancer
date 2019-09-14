@@ -1,0 +1,43 @@
+=============training from sratch============
+Program ID: 8385
+
+Program command: 
+ ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3,2,1']
+
+Major program changes: 
+         
+
+Discarded changes:                  
+
+Experiment setting:
+Input CT data: 51*171*171 ROI around primary cancer
+
+Loss Function:  SoftMax
+
+Data:   total 36 patients with 50-80% label, 6-fold cross validation, test 6, validation 6, and training 24.  
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-09-14 17:53:35.156237
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190914_175335
+
+Info: this is the 0th fold leave for test in the 6-fold cross-validation.
+
+Info: batchSize = 6
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190914_175335.
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 24 image files.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Network has total 32,972,258 parameters.
+
+
+************** Table of Training Log **************
+Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
+0	1.0000e-01		3.3578		0.05117		2149395.0000		0.00000		1447245.8750		0.00000
