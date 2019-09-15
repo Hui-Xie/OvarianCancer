@@ -21,7 +21,7 @@ Major program changes:
       2  Uniform ROI size: 51*171*171 in z,y,x directon;
       3  Total 36 patient data, in which training data 24 patients, validation 6 patients, and test 6 patients;
       4  all 36 patients data have 50-80% 3D label;
-      5  Dice coeffcient is 3D dice coefficient against corresponding 3D ground truth;
+      5  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
       6  training data augmentation in the fly: affine in XY plane, translation in Z direction;
       7  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
          
