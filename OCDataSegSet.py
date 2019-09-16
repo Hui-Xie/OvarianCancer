@@ -63,17 +63,17 @@ class OVDataSegPartition():
         countAll = 0
         countFiles = len(self.m_partitions["training"])
         for index in self.m_partitions["training"]:
-            filename = self.m_dataPartitions.m_inputFilesList[index]
+            filename = self.m_inputFilesList[index]
             patientID = getStemName(filename, self.m_inputSuffix)
             labelFile = os.path.join(self.m_inputLabelDir,patientID + self.m_inputSuffix)
             label = np.load(labelFile)
             count1 += np.sum((label > 0).astype(int))
             countAll += label.size
         count0 = countAll - count1
-        print(f"Total {countFiles} files  in {self.m_inputLabelDir}")
+        print(f"Total {countFiles} training files  extracted from {self.m_inputLabelDir}")
         print(f"0 has {count0} elements, with a rate of  {count0 / countAll} ")
         print(f"1 has {count1} elements, with a rate of  {count1 / countAll} ")
-        lossWeight = torch.tensor([1.0, count0 / count1], type=torch.float)
+        lossWeight = torch.tensor([1.0, count0 / count1], dtype=torch.float)
         print(f"loss weight = {lossWeight}")
         return lossWeight
 

@@ -1,0 +1,60 @@
+=============training from sratch============
+Program ID: 3370
+
+Program command: 
+ ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3,2,1']
+
+Major program changes: 
+      1  3D V model for primary cancer ROI;
+      2  Uniform ROI size: 51*171*171 in z,y,x directon;
+      3  Total 36 patient data, in which training data 24 patients, validation 6 patients, and test 6 patients;
+      4  all 36 patients data have 50-80% 3D label;
+      5  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
+      6  training data augmentation in the fly: affine in XY plane, translation in Z direction;
+      7  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
+      Sep 16th, 2019:
+      1   add dynamic loss weight according trainin  data;
+      2   refine learning rate decay.
+         
+
+Discarded changes:                  
+
+Experiment setting:
+Input CT data: 51*171*171 ROI around primary cancer
+
+Loss Function:  SoftMax
+
+Data:   total 36 patients with 50-80% label, 6-fold cross validation, test 6, validation 6, and training 24.  
+    script: python3.7 statisticsLabelFiles.py 
+    Total 36 in /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
+    0 has 48159408 elements, with a rate of  0.8970491562903105 
+    1 has 5527068 elements, with a rate of  0.10295084370968957
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-09-16 11:50:03.325315
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190916_115003
+
+Info: this is the 0th fold leave for test in the 6-fold cross-validation.
+
+Info: batchSize = 6
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190916_115003.
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 24 image files.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Network has total 32,972,258 parameters.
+
+
+************** Table of Training Log **************
+Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
+0	1.0000e-01		12.9320		0.07237		3265098.5000		0.00000		2083480.5000		0.00000
+5	1.0000e-01		0.6754		0.21460		0.6025		0.32998		0.6169		0.23564
+10	1.0000e-01		0.6133		0.19076		0.5647		0.35526		0.6173		0.17248
+15	1.0000e-01		0.6087		0.23312		0.8484		0.36563		1.7194		0.17079

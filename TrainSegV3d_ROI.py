@@ -24,6 +24,9 @@ Major program changes:
       5  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
       6  training data augmentation in the fly: affine in XY plane, translation in Z direction;
       7  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
+      Sep 16th, 2019:
+      1   add dynamic loss weight according trainin  data;
+      2   refine learning rate decay.
          
 
 Discarded changes:                  
@@ -151,7 +154,7 @@ def main():
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
-    ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
+    ceLoss = nn.CrossEntropyLoss(weight=lossWeight.to(device, dtype=torch.float)) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     net.appendLossFunc(ceLoss, 1)
 
     # Load network
