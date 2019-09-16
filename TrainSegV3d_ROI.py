@@ -34,6 +34,10 @@ Input CT data: 51*171*171 ROI around primary cancer
 Loss Function:  SoftMax
 
 Data:   total 36 patients with 50-80% label, 6-fold cross validation, test 6, validation 6, and training 24.  
+    script: python3.7 statisticsLabelFiles.py 
+    Total 36 in /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
+    0 has 48159408 elements, with a rate of  0.8970491562903105 
+    1 has 5527068 elements, with a rate of  0.10295084370968957
 
 Training strategy: 
 
@@ -146,11 +150,8 @@ def main():
     # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    # In all pixels of 441 labeled slices, 96% were labeled as 0, other were labeled as 1,2,3.
-    # image input size: 231*251*251, while its original avg size: 149*191*191 for weaked labeled nrrd; therefore, avg slice area increases 73%
-    # so 0.96*1.73/0.04 is better pos_weight.
-    # considering to that missing cancer has bigger risk cost, use 1.82 instead of 1.73 as factor. 
-    ceLoss = nn.CrossEntropyLoss()
+    lossWeight = dataPartitions.getLossWeight()
+    ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     net.appendLossFunc(ceLoss, 1)
 
     # Load network
