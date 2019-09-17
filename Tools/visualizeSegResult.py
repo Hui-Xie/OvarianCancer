@@ -65,16 +65,16 @@ def main():
             subplot1.set_title("rawImage")
 
             subplot2 = plt.subplot(2,2,2)
-            subplot2.imshow(gtImage[s,]+rawImage[s,], cmap='gray')
+            subplot2.imshow(gtImage[s,]+rawImage[s,] )  # need to set 0 for label pixels in raw image.
             subplot2.set_title("GT")
 
             subplot3 = plt.subplot(2,2,3)
-            subplot3.imshow(predictImage[s,]+rawImage[s,], cmap='gray')
+            subplot3.imshow(predictImage[s,]+rawImage[s,] )
             dice = float(ID_Dice[patientID])
             subplot3.set_title(f"predict_Dice({dice: .2%})")
 
             subplot4 = plt.subplot(2,2,4)
-            subplot4.imshow(gtImage[s,]-  predictImage[s,]+ rawImage[s,], cmap='gray')
+            subplot4.imshow(gtImage[s,]-  predictImage[s,]+ rawImage[s,])
             subplot4.set_title("GT-predict")
 
             # f.suptitle(patientID + "_dice_0.98")
