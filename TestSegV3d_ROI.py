@@ -80,7 +80,8 @@ def main():
     device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
 
     timeStr = getStemName(netPath)
-
+    if timeStr == "Best":
+        timeStr = getStemName(netPath.replace("/Best", ""))
     logFile = os.path.join(predictOutputDir, f"predict_CV{k:d}_{timeStr}.txt")
     print(f'Test log is in {logFile}')
 
@@ -136,7 +137,7 @@ def main():
                 dice = tensorDice(output, gt)
                 filename = os.path.join(predictOutputDir, patientIDs[i]+".npy")
                 np.save(filename, output.cpu().numpy())
-                logging.info(patientIDs[i] +f"\t{dice: :.5f}")
+                logging.info(patientIDs[i] +f"\t{dice:.5f}")
 
     # ================Independent Test===============
     net.eval()
@@ -157,13 +158,13 @@ def main():
                 dice = tensorDice(output, gt)
                 filename = os.path.join(predictOutputDir, patientIDs[i] + ".npy")
                 np.save(filename, output.cpu().numpy())
-                logging.info(patientIDs[i] + f"\t{dice: :.5f}")
+                logging.info(patientIDs[i] + f"\t{dice:.5f}")
 
     torch.cuda.empty_cache()
-    logging.info(f"\n\n=============END of Test of SegV3d ROI Model =================")
+    print(f"\n\n=============END of Test of SegV3d ROI Model =================")
     print(f'Program ID {os.getpid()}  exits.\n')
     curTime = datetime.datetime.now()
-    logging.info(f'\nProgram Ending Time: {str(curTime)}')
+    print(f'\nProgram Ending Time: {str(curTime)}')
 
 
 if __name__ == "__main__":
