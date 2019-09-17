@@ -1,0 +1,58 @@
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2479: UserWarning: Default upsampling behavior when mode=trilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  "See the documentation of nn.Upsample for details.".format(mode))
+Program ID:  23563
+
+Program commands: ['TestSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190916_163347', '/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3']
+.........
+batchSize = 2
+Test log is in /home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/predict_CV0_20190916_163347.txt
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Best validation dice: 0
+Program ID 23563  exits.
+
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2479: UserWarning: Default upsampling behavior when mode=trilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  "See the documentation of nn.Upsample for details.".format(mode))
+Program ID:  23866
+
+Program commands: ['TestSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190916_163347/Best', '/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3']
+.........
+batchSize = 2
+Test log is in /home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/predict_CV0_Best.txt
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Best validation dice: 0.7086403508350618
+
+
+=============END of Test of SegV3d ROI Model =================
+Program ID 23866  exits.
+
+
+Program Ending Time: 2019-09-17 14:39:26.585551
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2479: UserWarning: Default upsampling behavior when mode=trilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  "See the documentation of nn.Upsample for details.".format(mode))
+Program ID:  24172
+
+Program commands: ['TestSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190916_163347/Best', '/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3']
+.........
+batchSize = 2
+Test log is in /home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/predict_CV0_20190916_163347.txt
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Best validation dice: 0.7086403508350618
+
+
+=============END of Test of SegV3d ROI Model =================
+Program ID 24172  exits.
+
+
+Program Ending Time: 2019-09-17 14:48:07.633242
