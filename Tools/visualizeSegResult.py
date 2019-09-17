@@ -32,7 +32,6 @@ def main():
         lines = data.splitlines()
         lines.pop(0)   #erase tabel head.
 
-        countRow = 0
         for line in lines:
             line = line.replace('\t\t','\t')
             row = line.split('\t')
