@@ -61,7 +61,8 @@ nohup python3.7 TrainResNeXtVNet.py /home/hxie1/temp_netParameters/OvarianCancer
 Generate Latent Vectors:
 nohup python3.7 generateLatentVector.py /home/hxie1/temp_netParameters/OvarianCancer/ResNeXtVNet/20190901_043603  /home/hxie1/data/OvarianCancerCT/pixelSize223/numpy  /home/hxie1/data/OvarianCancerCT/pixelSize223/latent  3 &
 
-For SegV3D ROI model
-nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  0,1,2,3 &
+Train SegV3D ROI model
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3,2,1 &
 
-
+Test SegV3d ROI Model:
+nohup python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI   /home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3 &

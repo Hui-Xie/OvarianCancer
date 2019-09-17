@@ -70,11 +70,11 @@ class OVDataSegPartition():
             count1 += np.sum((label > 0).astype(int))
             countAll += label.size
         count0 = countAll - count1
-        print(f"Total {countFiles} training files  extracted from {self.m_inputLabelDir}")
-        print(f"0 has {count0} elements, with a rate of  {count0 / countAll} ")
-        print(f"1 has {count1} elements, with a rate of  {count1 / countAll} ")
+        self.m_logInfo(f"Total {countFiles} training files  extracted from {self.m_inputLabelDir}")
+        self.m_logInfo(f"0 has {count0} elements, with a rate of  {count0 / countAll} ")
+        self.m_logInfo(f"1 has {count1} elements, with a rate of  {count1 / countAll} ")
         lossWeight = torch.tensor([1.0, count0 / count1], dtype=torch.float)
-        print(f"loss weight = {lossWeight}")
+        self.m_logInfo(f"loss weight = {lossWeight}")
         return lossWeight
 
 class OVDataSegSet(data.Dataset):
