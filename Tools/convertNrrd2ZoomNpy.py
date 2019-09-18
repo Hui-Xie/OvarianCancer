@@ -8,6 +8,8 @@ import numpy as np
 sys.path.append("..")
 from FilesUtilities import *
 
+import matplotlib.pyplot as plt
+
 
 suffix = "_pri.nrrd"
 inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd"
@@ -23,9 +25,10 @@ os.chdir(inputImageDir)
 filesList = [os.path.abspath(x) for x in os.listdir(inputImageDir) if suffix in x]
 os.chdir(originalCwd)
 
+flipAxis = (1,2)
+
 for file in filesList:
     patientID = getStemName(file, "_pri.nrrd")
-
     # for image data
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
@@ -40,6 +43,8 @@ for file in filesList:
     std  = np.std(image3d)
     image3d = (image3d-mean)/std
 
+    image3d = np.flip(image3d,flipAxis)  # keep numpy image has same RAS direction with Nrrd image.
+
     np.save(os.path.join(outputImageDir, patientID + ".npy"), image3d)
 
     # for label
@@ -53,17 +58,19 @@ for file in filesList:
         exit(1)
 
     label3d = ndimage.zoom(label3d, zoomFactor)
-    label3d = (label3d > 0.5).astype(np.float32)
+    label3d = (label3d > 0.1).astype(np.float32)
+    label3d = np.flip(label3d, flipAxis)
+
     np.save(os.path.join(outputLabelDir, patientID + ".npy"), label3d)
 
 N = len(filesList)
 
 with open(readmeFile,"w") as f:
     f.write(f"total {N} files in this directory\n")
-    f.write(f"goalSize: {goalSize}\n")
     f.write(f"inputsDir = {inputImageDir}\n")
-    f.write("all images are zoom into a same size.\n")
-    f.write("label image first zoom by spline and then judge whether value >0.5 to get new label.\n")
+    f.write(f"all images are zoom into a same size: {goalSize}\n")
+    f.write("label image first zoom by spline and then judge whether value >0.1 to get new label.\n")
+    f.write("All numpy image filp along (1,2) axis to keep RAS orientation consistent with Nrrd.\n")
 
 print(f"totally convert {N} files")
 

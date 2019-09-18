@@ -55,25 +55,52 @@ def main():
         gtImage = np.flip(np.load(gtFilename).astype(np.float32),flipAxis)
         predictImage = np.flip(np.load(predictFilename).astype(np.float32),flipAxis)
 
+        if patientID == "04029173":
+            slice = gtImage[25,]
+            f = plt.figure(1)
+            subplot1 = plt.subplot(1, 2, 1)
+            I = rawImage[5,]
+            subplot1.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
+            subplot1.set_title("Slice5")
+
+            subplot2 = plt.subplot(1, 2, 2)
+            I = rawImage[50,]
+            subplot2.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
+            subplot2.set_title("Slice50")
+
+            plt.show()
+            print("slice 50: ", slice[50,])
+            print("slice 100: ", slice[100,])
+            break;
+        else:
+            continue
 
         for s in sliceIndices:
             nFigs +=1
             f = plt.figure(nFigs)
             subplot1 = plt.subplot(2,2,1)
-            subplot1.imshow(rawImage[s,], cmap='gray')
+            I = rawImage[s,]
+            subplot1.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
             subplot1.set_title("rawImage")
 
+            rawMinAbs = np.abs(np.amin(I))
+            rawMaxAbs = np.abs(np.amax(I))
+            c = rawMinAbs+ rawMaxAbs  #label scale factor.
+
             subplot2 = plt.subplot(2,2,2)
-            subplot2.imshow(gtImage[s,]+rawImage[s,] )  # need to set 0 for label pixels in raw image.
+            I = (1-gtImage[s,])*rawImage[s,] + gtImage[s,]*c
+            subplot2.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
             subplot2.set_title("GT")
 
             subplot3 = plt.subplot(2,2,3)
-            subplot3.imshow(predictImage[s,]+rawImage[s,] )
+            I = (1- predictImage[s,])*rawImage[s,] + predictImage[s,]*c
+            subplot3.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
             dice = float(ID_Dice[patientID])
             subplot3.set_title(f"predict_Dice({dice: .2%})")
 
             subplot4 = plt.subplot(2,2,4)
-            subplot4.imshow(gtImage[s,]-  predictImage[s,]+ rawImage[s,])
+            I = (1-gtImage[s,])*rawImage[s,]*(1- predictImage[s,])+ (gtImage[s,]-predictImage[s,])*c
+            subplot4.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
             subplot4.set_title("GT-predict")
 
             # f.suptitle(patientID + "_dice_0.98")
