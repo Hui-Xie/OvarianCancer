@@ -56,7 +56,7 @@ def main():
             subplot2 = plt.subplot(2,2,2)
             I = rawImage[s,] + gtImage[s,]
             subplot2.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
-            subplot2.set_title("GT")
+            subplot2.set_title("GroundTruth")
 
             subplot3 = plt.subplot(2,2,3)
             I = rawImage[s,] + predictImage[s,]
@@ -67,7 +67,7 @@ def main():
             subplot4 = plt.subplot(2,2,4)
             I = rawImage[s,]+ (gtImage[s,]-predictImage[s,])
             subplot4.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
-            subplot4.set_title("GT-predict")
+            subplot4.set_title("GT-Predict")
 
             plt.tight_layout()
 

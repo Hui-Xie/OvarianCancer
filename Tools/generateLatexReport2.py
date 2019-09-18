@@ -1,5 +1,8 @@
 
 import os
+import sys
+sys.path.append("..")
+from FilesUtilities import *
 
 latexHead = r'''
 
@@ -24,8 +27,24 @@ latextIntro = r'''
 \section{Introduction}
 
 \begin{verbatim}
-A 3D V model to segment primary cancer ROI.
-  
+Network Description:
+1  A 3D V model to segment ROI of size 51*171*171 pixels around primary cancer.
+2  Total 36 patient data, in which training data 24 patients, validation 6 patients, 
+   and test 6 patients; All 36 patients data have 50-80% 3D label.
+3  For each ROI, about 10% pixels are primary cancer, other 90% pixels are background;
+3  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
+4  Training data augmentation in the fly: affine in XY plane, translation in Z direction;
+5  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
+6  Dynamic loss weight according trainin  data;
+
+Test Result Description:
+1  First 6 patients are validation data; Second 6 patients are test data;
+2  Each patient extracts its 5 slices at positions of 25%, 38%, 50%, 62%, 
+   75% of volume height for visual check. 
+3  The topleft subimage is original input image, title is formated Raw:ID_s{slice};  
+
+List Dice for all patients:
+*********
 
 \end{verbatim}
 
@@ -43,25 +62,9 @@ latexTail = r'''
 latexItem = r'''
 
 \begin{figure}
-	\begin{subfigure}{\linewidth}
-		\centering
-		\includegraphics[scale=0.7]{LabelFile}
-		\caption{Ground Truth+CT}
-	\end{subfigure}
-
-	\begin{subfigure}{\linewidth}
-		\centering
-		\includegraphics[scale=0.7]{CTFile}
-		\caption{CT}
-	\end{subfigure}
-
-	\begin{subfigure}{\linewidth}
-		\centering
-		\includegraphics[scale=0.7]{SegFile}
-    	\caption{Segmentation+CT}
-	\end{subfigure}
-
-\caption{\detokenize{PatientID_Slice}}
+	\centering
+	\includegraphics[scale=1.2]{FigName}
+	\caption{Caption}
 \end{figure}
 
 \clearpage  % support huge number of figures
@@ -69,10 +72,9 @@ latexItem = r'''
 '''
 
 # you may need to modify the output file directory and name
-outputLatex = r'''/home/hxie1/data/OvarianCancerCT/OCTestFor01_20190503.tex'''
+outputLatex = r'''/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/OCTestReport_20190919.tex'''
 
-#imagesPath = r'''/home/hxie1/c-xwu000/data/OvarianCancerCT/Extract_uniform/segmented'''
-imagesPath = r'''/home/hxie1/data/OvarianCancerCT/Extract_uniform/segmented'''
+imagesPath = "/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult"
 
 with open(outputLatex, "w") as f:
     f.write(latexHead)
@@ -80,18 +82,14 @@ with open(outputLatex, "w") as f:
 
     originalCwd = os.getcwd()
     os.chdir(imagesPath)
-    labelMergeList = [os.path.abspath(x) for x in os.listdir(imagesPath) if '_LabelMerge.png' in x]
+    imageList = [os.path.abspath(x) for x in os.listdir(imagesPath) if '.png' in x]
     os.chdir(originalCwd)
+    imageList.sort()
 
-    for labelFile in labelMergeList:
-        ctFile = labelFile.replace('_LabelMerge.png', '.png')
-        segFile = labelFile.replace('_LabelMerge.png', '_SegMerge.png')
-
-        basename = os.path.basename(ctFile)
-        patientID_Slice = basename[0: basename.find('.png')]
-        patientID_Slice = 'PatitenID_Slice: ' + patientID_Slice
-
-        item = latexItem.replace('LabelFile', labelFile).replace('CTFile', ctFile).replace('SegFile', segFile).replace('PatientID_Slice', patientID_Slice)
+    for fig in imageList:
+        name = getStemName(fig, ".png")
+        name = "Patient "+ name.replace("_s", " in slice")
+        item = latexItem.replace('FigName', fig).replace('Caption', name)
         f.write(item)
 
     f.write(latexTail)
