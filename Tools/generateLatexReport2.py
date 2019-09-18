@@ -44,7 +44,27 @@ Test Result Description:
 3  The topleft subimage is original input image, title is formated Raw:ID_s{slice};  
 
 List Dice for all patients:
-*********
+PatiantID	Dice
+05431967	0.70550
+05722020	0.73781
+05096005	0.69400
+03864522	0.61908
+05088264	0.56666
+05430021	0.87353
+04641905	0.60258
+04477716	0.33847
+05056196	0.69583
+05498934	0.87504
+05311044	0.54239
+04029173	0.15008
+
+The Total average Dice is 61.26%, in which there is patient has extreme low dice. 
+
+Simple Analysis:
+1  Dice results in different patients has big difference: 87% vs 15%;
+2  Big cancer gets better result;
+3  Various Cancer texture give challenge, maybe more training sample will help.   
+
 
 \end{verbatim}
 
