@@ -51,9 +51,9 @@ def main():
         gtFilename  = os.path.join(groundTruthDir, patientID+suffix)
         predictFilename = file
 
-        rawImage = np.flip(np.load(rawFilename).astype(np.float32),flipAxis)
-        gtImage = np.flip(np.load(gtFilename).astype(np.float32),flipAxis)
-        predictImage = np.flip(np.load(predictFilename).astype(np.float32),flipAxis)
+        rawImage = np.load(rawFilename).astype(np.float32)
+        gtImage = np.load(gtFilename).astype(np.float32)
+        predictImage = np.load(predictFilename).astype(np.float32)
 
         if patientID == "04029173":
             slice = gtImage[25,]

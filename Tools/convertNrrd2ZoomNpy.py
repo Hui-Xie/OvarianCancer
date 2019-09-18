@@ -36,7 +36,7 @@ for file in filesList:
     image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
     imageShape = image3d.shape
     zoomFactor = [goalSize[0] / imageShape[0], goalSize[1] / imageShape[1], goalSize[2] / imageShape[2]]
-    image3d = ndimage.zoom(image3d, zoomFactor)
+    image3d = ndimage.zoom(image3d, zoomFactor, order=3)
 
     # normalize image for whole volume
     mean = np.mean(image3d)
@@ -57,8 +57,7 @@ for file in filesList:
         print(f"Error: images shape != label shape for {file} and {labelFile} ")
         exit(1)
 
-    label3d = ndimage.zoom(label3d, zoomFactor)
-    label3d = (label3d > 0.1).astype(np.float32)
+    label3d = ndimage.zoom(label3d, zoomFactor, order=0)  # nearest neighbor interpolation
     label3d = np.flip(label3d, flipAxis)
 
     np.save(os.path.join(outputLabelDir, patientID + ".npy"), label3d)
@@ -68,8 +67,7 @@ N = len(filesList)
 with open(readmeFile,"w") as f:
     f.write(f"total {N} files in this directory\n")
     f.write(f"inputsDir = {inputImageDir}\n")
-    f.write(f"all images are zoom into a same size: {goalSize}\n")
-    f.write("label image first zoom by spline and then judge whether value >0.1 to get new label.\n")
+    f.write(f"all images are resize into a same size: {goalSize}\n")
     f.write("All numpy image filp along (1,2) axis to keep RAS orientation consistent with Nrrd.\n")
 
 print(f"totally convert {N} files")
