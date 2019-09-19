@@ -44,19 +44,26 @@ Test Result Description:
 3  The topleft subimage is original input image, title is formated Raw:ID_s{slice};  
 
 List Dice for all patients:
-PatiantID	Dice
-05431967	0.70550
-05722020	0.73781
-05096005	0.69400
-03864522	0.61908
-05088264	0.56666
-05430021	0.87353
-04641905	0.60258
-04477716	0.33847
-05056196	0.69583
-05498934	0.87504
-05311044	0.54239
-04029173	0.15008
+PatiantID	Dice1       Dice2
+05431967	0.70550     0.47109
+05722020	0.73781     0.81053
+05096005	0.69400     0.80039
+03864522	0.61908     0.56768
+05088264	0.56666     0.51056
+05430021	0.87353     0.75309
+04641905	0.60258     0.70651
+04477716	0.33847     0.30695
+05056196	0.69583     0.46297
+05498934	0.87504     0.79554
+05311044	0.54239     0.51857
+04029173	0.15008     0.57999
+
+Average     0.6167      0.6070
+stdev       0.2169      0.1635   
+
+Dice1 use the network parameters with best validation dice
+Dice2 use the realtime network after training 7305 epochs. 
+This report shows the dice2 result. 
 
 The Total average Dice is 61.26%, in which there is patient has extreme low dice. 
 
@@ -92,9 +99,9 @@ latexItem = r'''
 '''
 
 # you may need to modify the output file directory and name
-outputLatex = r'''/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/OCTestReport_20190919.tex'''
+outputLatex = r'''/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/realtime/OCTestReport_20190919_realtime.tex'''
 
-imagesPath = "/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult"
+imagesPath = "/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/realtime"
 
 with open(outputLatex, "w") as f:
     f.write(latexHead)

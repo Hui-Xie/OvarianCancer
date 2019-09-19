@@ -10,7 +10,7 @@ from FilesUtilities import *
 def main():
     imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy"
     groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy"
-    predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult"
+    predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/realtime"
     diceFile = os.path.join(predictDir, "predict_CV0_20190918_143834.txt")   # need to modify
 
     suffix = ".npy"
