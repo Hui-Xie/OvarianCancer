@@ -33,16 +33,16 @@ class FocalCELoss(_WeightedLoss):
 class BoundaryLoss(_Loss):
     """
     Boundary Loss, please refer paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
-    outside boundary, it is positive distance, a penalty to increase loss;
-    inside  boundary, it is negative distance, a reward to reduce loss;
+    outside boundary of ground truth, it is positive distance, a penalty to increase loss;
+    inside  boundary of ground truth, it is negative distance, a reward to reduce loss;
     Support K classes classification.
-    Now only support 2D boundary.
+    support 2D and 3D images.
     """
     __constants__ = ['reduction']
 
     def __init__(self, lambdaCoeff=0.001, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
         super().__init__(size_average, reduce, reduction)
-        self.m_lambda=lambdaCoeff # weight coefficient
+        self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
         self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
         self.m_weight = torch.ones(self.m_k) if weight is None else weight
         if len(self.m_weight) != self.m_k:
@@ -57,10 +57,10 @@ class BoundaryLoss(_Loss):
         shape = targetNumpy.shape
         ndim = targetNumpy.ndim
         N = shape[0]     # batch Size
-        dilateFilter = np.ones((3, 3), dtype=int)  # dilation filter for for 4-connected boundary
+        dilateFilter = np.ones((3,)*(ndim-1), dtype=int)  # dilation filter for for 4-connected boundary
         ret = torch.zeros(N).cuda()
 
-        for k in range(1,self.m_k):
+        for k in range(1,self.m_k):  # ignore background with k starting with 1
             segProb = torch.narrow(softmaxInput,1, k,1)
             segProb = torch.squeeze(segProb, 1)
 
