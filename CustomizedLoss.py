@@ -90,7 +90,9 @@ class BoundaryLoss2(_Loss):
     """
     this is an improved version of Boundary Loss.
     It idea is improving from the paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
-    This improved version has no negative distance in the level set.
+    This improved version has no negative distance in the level set, and it uses the initial prediction and ground truth together to decide levelset,
+         comparing with original paper.
+
 
     Loss function only cares about the error segmentation, and ignore correct both forground  and background segmentations.
 

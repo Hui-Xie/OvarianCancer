@@ -15,6 +15,8 @@ targets = torch.tensor([
                    [[0,1,1,1,0], [0,1,1,1,0], [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
                    [[0,0,0,1,1], [0,0,0,1,1], [0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]] ])
 
+
+
 boundaryLoss = BoundaryLoss2()
 
 inputs= inputs.cuda()
@@ -24,4 +26,7 @@ loss = boundaryLoss(inputs, targets)
 
 print (f"Loss = {loss.item()}")
 
+inputs.retain_grad() # Enables .grad attribute for non-leaf Tensors.
 loss.backward()
+
+print (f"inputs gradient = {inputs.grad}")
