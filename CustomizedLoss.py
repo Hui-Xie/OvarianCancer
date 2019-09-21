@@ -57,7 +57,7 @@ class BoundaryLoss1(_Loss):
         ndim = targetNumpy.ndim
         N = shape[0]     # batch Size
         dilateFilter = np.ones((3,)*(ndim-1), dtype=int)  # dilation filter for for 4-connected boundary
-        ret = torch.zeros(N).cuda()
+        ret = torch.zeros(N).to(inputx.device)
 
         for k in range(1,self.m_k):  # ignore background with k starting with 1
             segProb = torch.narrow(softmaxInput,1, k,1)
@@ -76,7 +76,7 @@ class BoundaryLoss1(_Loss):
                 levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
 
             levelSetTensor = torch.from_numpy(levelSet).float().to(inputx.device)
-            x = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.sum(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
 
@@ -140,7 +140,7 @@ class BoundaryLoss2(_Loss):
         shape = targetNumpy.shape
         ndim = targetNumpy.ndim
         N = shape[0]     # batch Size
-        ret = torch.zeros(N).cuda()
+        ret = torch.zeros(N).to(inputx.device)
 
         for k in range(1,self.m_k):  # ignore background with k starting with 1
             segProb = torch.narrow(softmaxInput,1, k,1)

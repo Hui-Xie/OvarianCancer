@@ -1,0 +1,62 @@
+=============training from sratch============
+Program ID: 12569
+
+Program command: 
+ ['/home/hxie1/Projects/OvarianCancer/TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3']
+
+Major program changes: 
+      1  3D V model for primary cancer ROI;
+      2  Uniform ROI size: 51*171*171 in z,y,x directon;
+      3  Total 36 patient data, in which training data 24 patients, validation 6 patients, and test 6 patients;
+      4  all 36 patients data have 50-80% 3D label;
+      5  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
+      6  training data augmentation in the fly: affine in XY plane, translation in Z direction;
+      7  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
+      Sep 16th, 2019:
+      1   add dynamic loss weight according trainin  data;
+      2   refine learning rate decay.
+      Sep 21st, 2019
+      1   add improved Boundary Loss2.
+         
+
+Discarded changes:                  
+
+Experiment setting:
+Input CT data: 51*171*171 ROI around primary cancer
+
+Loss Function:  SoftMax
+
+Data:   total 36 patients with 50-80% label, 6-fold cross validation, test 6, validation 6, and training 24.  
+    script: python3.7 statisticsLabelFiles.py 
+    Total 36 in /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
+    0 has 48159408 elements, with a rate of  0.8970491562903105 
+    1 has 5527068 elements, with a rate of  0.10295084370968957
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-09-21 15:50:26.448608
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190921_155026
+
+Info: this is the 0th fold leave for test in the 6-fold cross-validation.
+
+Info: batchSize = 2
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190921_155026.
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 24 image files.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Total 24 training files  extracted from /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
+0 has 32252453 elements, with a rate of  0.9011334530506342 
+1 has 3538531 elements, with a rate of  0.0988665469493658 
+loss weight = tensor([1.0000, 9.1146])
+Network has total 32,972,258 parameters.
+
+
+************** Table of Training Log **************
+Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
