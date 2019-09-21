@@ -65,6 +65,10 @@ Train SegV3D ROI model
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3,2,1 &
 
 Test SegV3d ROI Model:
-nohup python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190918_143834/Best   /home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3 &
+nohup python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190918_143834   /home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3 &
+
+Add Boundary Loss, and inherit training:
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190918_143834  0  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3,2,1 &
+
 
 
