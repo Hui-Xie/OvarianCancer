@@ -13,7 +13,7 @@ from SegDataMgr import SegDataMgr
 from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from NetMgr  import NetMgr
-from CustomizedLoss import FocalCELoss, BoundaryLoss
+from CustomizedLoss import FocalCELoss, BoundaryLoss1
 
 
 # you may need to change the file name and log Notes below for every training.
@@ -85,7 +85,7 @@ def main():
     ceWeight = torch.FloatTensor(testDataMgr.getSegCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
     net.appendLossFunc(focalLoss, 1)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K)
+    boundaryLoss = BoundaryLoss1(lambdaCoeff=0.001, k=K)
     net.appendLossFunc(boundaryLoss, 0)
 
     netMgr = NetMgr(net, netPath, device)

@@ -18,7 +18,7 @@ from SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
 from SegV2DModel_78 import SegV2DModel_78
 from NetMgr  import NetMgr
-from CustomizedLoss import FocalCELoss,BoundaryLoss
+from CustomizedLoss import FocalCELoss,BoundaryLoss1
 
 import numpy as np
 
@@ -152,7 +152,7 @@ def main():
 
     ceWeight = torch.FloatTensor(trainDataMgr.getSegCEWeight()).to(device)
     focalLoss = FocalCELoss(weight=ceWeight)
-    boundaryLoss = BoundaryLoss(lambdaCoeff=0.001, k=K, weight=ceWeight)
+    boundaryLoss = BoundaryLoss1(lambdaCoeff=0.001, k=K, weight=ceWeight)
     if not restartTrainAfter100Epochs:
         net.appendLossFunc(focalLoss, 1)
         net.appendLossFunc(boundaryLoss, 0)

@@ -14,7 +14,7 @@ import math
 from Image3dResponseDataMgr import Image3dResponseDataMgr
 from SkyWatcherModel2 import SkyWatcherModel2
 from NetMgr import NetMgr
-from CustomizedLoss import FocalCELoss, BoundaryLoss
+from CustomizedLoss import FocalCELoss, BoundaryLoss1
 
 logNotes = r'''
 Major program changes: 
