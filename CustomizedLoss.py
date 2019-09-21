@@ -1,6 +1,5 @@
 import torch.nn.functional as F
 from torch.nn.modules.loss import _WeightedLoss, _Loss
-from torch._jit_internal import weak_module, weak_script_method
 import torch
 from scipy import ndimage
 from scipy.ndimage.morphology import binary_dilation
@@ -8,7 +7,7 @@ import numpy as np
 import sys
 
 
-@weak_module
+
 class FocalCELoss(_WeightedLoss):
     """
     Focal Loss, please refer paper: "Focal Loss for Dense Object Detection" in link: https://arxiv.org/abs/1708.02002
@@ -20,7 +19,7 @@ class FocalCELoss(_WeightedLoss):
         self.gamma = gamma
         self.ignore_index = ignore_index
 
-    @weak_script_method
+
     def forward(self, inputx, target):
         focalFactor = (1 - F.softmax(inputx, 1)) ** self.gamma
         return F.nll_loss(focalFactor * F.log_softmax(inputx, 1), target, self.weight, None, self.ignore_index, None, self.reduction)
@@ -29,7 +28,7 @@ class FocalCELoss(_WeightedLoss):
         self.gamma = gamma
 
 
-@weak_module
+
 class BoundaryLoss1(_Loss):
     """
     Boundary Loss, please refer paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
@@ -50,7 +49,7 @@ class BoundaryLoss1(_Loss):
             sys.exit(-5)
 
 
-    @weak_script_method
+
     def forward(self, inputx, target):
         softmaxInput = F.softmax(inputx, 1)
         targetNumpy = target.cpu().numpy().astype(int)
@@ -76,7 +75,7 @@ class BoundaryLoss1(_Loss):
                 signMatrix = inside*(-1)+ targetkNot[i]
                 levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
 
-            levelSetTensor = torch.from_numpy(levelSet).float().cuda()
+            levelSetTensor = torch.from_numpy(levelSet).float().to(inputx.device)
             x = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
@@ -86,7 +85,7 @@ class BoundaryLoss1(_Loss):
         return ret*self.m_lambda
 
 
-@weak_module
+
 class BoundaryLoss2(_Loss):
     """
     this is an improved version of Boundary Loss.
@@ -124,7 +123,7 @@ class BoundaryLoss2(_Loss):
             sys.exit(-5)
 
 
-    @weak_script_method
+
     def forward(self, inputx, target):
         # case1: ACB (this is the frequent case; and in some case, A \subset C,  or B \subset C, and C is not Null.
         # case2: AB (there is no overlap between ground truth 1 and prediction 1; in other words, C=Null.)
@@ -132,7 +131,7 @@ class BoundaryLoss2(_Loss):
         # case4: B (there is only prediction 1, but no groundtruth 1, and C=Null)
         # case5: Null (there is no prediction 1 and groundtruth 1, so no loss at all)
 
-        prediction = torch.argmax(inputx, dim=1)
+        prediction = torch.argmax(inputx, dim=1).cpu().numpy()
 
         softmaxInput = F.softmax(inputx, 1)
         targetNumpy = target.cpu().numpy().astype(int)
@@ -168,7 +167,7 @@ class BoundaryLoss2(_Loss):
 
                 # case2: AB (there is no overlap between ground truth 1 and prediction 1; in other words, C=Null.)
                 elif np.count_nonzero(A) >0 and np.count_nonzero(B) >0:
-                    # when A is farther to B, we hope to get bigger gradient on pixels of A.
+                    # when no-overlapping A is farther from B, we hope to get bigger gradient on pixels of A.
                     levelSetA[i,] = A * ndimage.distance_transform_edt(np.invert(B))
                     levelSetB[i,] = B * ndimage.distance_transform_edt(np.invert(A))
 
@@ -185,8 +184,8 @@ class BoundaryLoss2(_Loss):
                     continue
 
 
-            levelSetATensor = torch.from_numpy(levelSetA).float().cuda()
-            levelSetBTensor = torch.from_numpy(levelSetB).float().cuda()
+            levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
+            levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
             x = torch.mean(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
