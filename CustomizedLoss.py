@@ -69,7 +69,7 @@ class BoundaryLoss1(_Loss):
             levelSet = np.zeros(shape)
 
             for i in range(N):
-                if np.count_nonzero(targetk) == 0:
+                if np.count_nonzero(targetk[i]) == 0:
                     continue
                 boundary = binary_dilation(targetkNot[i],dilateFilter) & targetk[i]
                 inside = targetk[i] ^ boundary  # xor operator
@@ -98,16 +98,23 @@ class BoundaryLoss2(_Loss):
     Here, A indicates ground truth "1" excluding the intersection C with prediction "1". A is the wanting part.
           B indicates predicted segmentation "1" excluding the intersection C. B is the leaky part.
           C indicate the overlapped  intersection of ground truth 1  and prediction 1. C is the correctly segmented part.
-          A +C = ground truth 1; B+C = prediction 1.
+          A+C = ground truth 1; B+C = prediction 1.
 
     In other words, we only care about loss on both A and B, the wanting and leaky part,  and  ignoring all others.
+
+    loss = SegProb * levelSetB + (1-SegProb)*levelSetA,
+         where levelSetB means the distance map from only B to C;
+               levelSetA means the distance map from only A to C;
+               when C=NUll, there are speicial case detailed in code blow.
+
+    The perfect goal of this loss optimization is to make A=null and B =Null, at same time C !=Null.
 
     Support K classes classification.
     support 2D and 3D images.
     """
     __constants__ = ['reduction']
 
-    def __init__(self, lambdaCoeff=0.001, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
+    def __init__(self, lambdaCoeff=1, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
         super().__init__(size_average, reduce, reduction)
         self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
         self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
@@ -119,21 +126,19 @@ class BoundaryLoss2(_Loss):
 
     @weak_script_method
     def forward(self, inputx, target):
+        # case1: ACB (this is the frequent case; and in some case, A \subset C,  or B \subset C, and C is not Null.
+        # case2: AB (there is no overlap between ground truth 1 and prediction 1; in other words, C=Null.)
+        # Case3: A (there is only ground truth 1, but no prediciton 1, and C=Null)
+        # case4: B (there is only prediction 1, but no groundtruth 1, and C=Null)
+        # case5: Null (there is no prediction 1 and groundtruth 1, so no loss at all)
 
-
-        # case1: ACB (this is often case, )
-        # case2:AB (there is no overlap between ground truth 1 and prediction 1)
-        # Case3: A (there is only ground truth 1, but no prediciton 1)
-        # case4: B (there is only prediction 1, but no groundtruth 1)
-        # case5: Null (there is no prediction 1 and groundtruth 1, no loss at all)
-
+        prediction = torch.argmax(inputx, dim=1)
 
         softmaxInput = F.softmax(inputx, 1)
         targetNumpy = target.cpu().numpy().astype(int)
         shape = targetNumpy.shape
         ndim = targetNumpy.ndim
         N = shape[0]     # batch Size
-        dilateFilter = np.ones((3,)*(ndim-1), dtype=int)  # dilation filter for for 4-connected boundary
         ret = torch.zeros(N).cuda()
 
         for k in range(1,self.m_k):  # ignore background with k starting with 1
@@ -141,19 +146,49 @@ class BoundaryLoss2(_Loss):
             segProb = torch.squeeze(segProb, 1)
 
             targetk = (targetNumpy == k)
-            targetkNot = (targetNumpy != k)
-            levelSet = np.zeros(shape)
+            predictionk = (prediction == k)
 
+            levelSetA = np.zeros(shape)  # default Loss = 0 for A and B
+            levelSetB = np.zeros(shape)
+
+            # for the A,B,C, they are needed in the context of each sample
             for i in range(N):
-                if np.count_nonzero(targetk) == 0:
-                    continue
-                boundary = binary_dilation(targetkNot[i],dilateFilter) & targetk[i]
-                inside = targetk[i] ^ boundary  # xor operator
-                signMatrix = inside*(-1)+ targetkNot[i]
-                levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
+                # if np.count_nonzero(targetk[i,]) == 0:
+                #     continue
+                C = targetk[i,] * predictionk[i,]
+                A = targetk[i,] ^ C
+                B = predictionk[i,] ^ C
 
-            levelSetTensor = torch.from_numpy(levelSet).float().cuda()
-            x = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
+                # case1: ACB (this is the frequent case; and in some case, A \subset C,  or B \subset C, and C is not Null.
+                if np.count_nonzero(C) != 0:
+                    CNot = np.invert(C)
+                    levelSetC = ndimage.distance_transform_edt(CNot)
+                    levelSetA[i,] = A*levelSetC
+                    levelSetB[i,] = B*levelSetC
+
+                # case2: AB (there is no overlap between ground truth 1 and prediction 1; in other words, C=Null.)
+                elif np.count_nonzero(A) >0 and np.count_nonzero(B) >0:
+                    CNot = np.invert(A)
+                    levelSetC = ndimage.distance_transform_edt(CNot)
+                    levelSetA[i,] = A
+                    levelSetB[i,] = B * levelSetC
+
+                 # Case3: A (there is only ground truth 1, but no prediciton 1, and C=Null)
+                elif np.count_nonzero(A) >0:
+                    levelSetA[i,] = A
+
+                # case4: B (there is only prediction 1, but no groundtruth 1, and C=Null)
+                elif np.count_nonzero(B) >0:
+                    levelSetB[i,] = B
+
+                # case5: Null (there is no prediction 1 and groundtruth 1, so no loss at all)
+                else:
+                    continue
+
+
+            levelSetATensor = torch.from_numpy(levelSetA).float().cuda()
+            levelSetBTensor = torch.from_numpy(levelSetB).float().cuda()
+            x = torch.mean(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
 
