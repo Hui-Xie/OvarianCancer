@@ -76,7 +76,7 @@ class BoundaryLoss1(_Loss):
                 levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
 
             levelSetTensor = torch.from_numpy(levelSet).float().to(inputx.device)
-            x = torch.sum(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
 
@@ -188,7 +188,7 @@ class BoundaryLoss2(_Loss):
 
             levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
             levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
-            x = torch.sum(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.mean(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
 

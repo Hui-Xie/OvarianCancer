@@ -74,7 +74,7 @@ def main():
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
 
-    addBoundaryLoss = True
+    # addBoundaryLoss = True
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
@@ -176,6 +176,7 @@ def main():
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
     mileStones = [200, 400, 600, 800, 1000, 1200, 1400]
+    '''
     if addBoundaryLoss:
         for param_group in optimizer.param_groups:
             param_group['lr'] = 0.1
@@ -183,7 +184,8 @@ def main():
         lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=newMileStones, gamma=0.1, last_epoch=lastEpoch)
     else:
         lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
-
+    '''
+    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
 
 
     if useDataParallel:
