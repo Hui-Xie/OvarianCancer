@@ -94,7 +94,7 @@ class BoundaryLoss2(_Loss):
          comparing with original paper.
 
 
-    Loss function only cares about the error segmentation, and ignore correct both forground  and background segmentations.
+    Loss function only cares about the error segmentation, and ignore correct both foreground  and background segmentations.
 
     Here, A indicates ground truth "1" excluding the intersection C with prediction "1". A is the wanting part.
           B indicates predicted segmentation "1" excluding the intersection C. B is the leaky part.
@@ -106,7 +106,7 @@ class BoundaryLoss2(_Loss):
     loss = SegProb * levelSetB + (1-SegProb)*levelSetA,
          where levelSetB means the distance map from only B to C;
                levelSetA means the distance map from only A to C;
-               when C=NUll, there are speicial case detailed in code blow.
+               when C=NUll, there are special cases detailed in code blow.
 
     The perfect goal of this loss optimization is to make A=null and B =Null, at same time C !=Null.
 
