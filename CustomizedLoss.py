@@ -182,11 +182,11 @@ class BoundaryLoss2(_Loss):
                 # case5: Null (there is no prediction 1 and groundtruth 1, so no loss at all)
                 else:
                     continue
-               
+
 
             levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
             levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
-            x = torch.mean(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.sum(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             ret += x*self.m_weight[k]
 
