@@ -29,7 +29,7 @@ Major program changes:
       1   add dynamic loss weight according trainin  data;
       2   refine learning rate decay.
       Sep 21st, 2019
-      1   add improved Boundary Loss2.
+      1   add improved Boundary Loss2, and inherit the previous learningrate of network of pure CELoss;
          
 
 Discarded changes:                  
