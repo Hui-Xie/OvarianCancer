@@ -49,7 +49,7 @@ class BasicModel(nn.Module):
             loss += lossFunc(outputs,labels)*weight
         loss.backward()
         self.m_optimizer.step()
-        return loss.item()
+        return outputs, loss.item()
 
     def batchTrainMixup(self, inputs, labels1, labels2, lambdaInBeta):
         self.m_optimizer.zero_grad()
@@ -64,7 +64,7 @@ class BasicModel(nn.Module):
                 loss += lossFunc(outputs,labels2)*weight*(1-lambdaInBeta)
         loss.backward()
         self.m_optimizer.step()
-        return loss.item()
+        return outputs, loss.item()
 
     def batchTest(self, inputs, labels):
         outputs = self.forward(inputs)
@@ -73,7 +73,7 @@ class BasicModel(nn.Module):
             if weight == 0:
                 continue
             loss += lossFunc(outputs, labels) * weight
-        return loss.item(), outputs
+        return outputs, loss.item()
 
     def getParametersScale(self):
         sumPara = 0

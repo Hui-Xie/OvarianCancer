@@ -14,6 +14,7 @@ from MeasureUtilities import *
 from SegV3DModel import SegV3DModel
 from OCDataTransform import *
 from NetMgr import NetMgr
+from CustomizedLoss import BoundaryLoss2
 
 logNotes = r'''
 Major program changes: 
@@ -27,6 +28,8 @@ Major program changes:
       Sep 16th, 2019:
       1   add dynamic loss weight according trainin  data;
       2   refine learning rate decay.
+      Sep 21st, 2019
+      1   add improved Boundary Loss2.
          
 
 Discarded changes:                  
@@ -156,6 +159,8 @@ def main():
     lossWeight = dataPartitions.getLossWeight()
     ceLoss = nn.CrossEntropyLoss(weight=lossWeight.to(device, dtype=torch.float)) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     net.appendLossFunc(ceLoss, 1)
+    boundaryLoss = BoundaryLoss2()
+    net.appendLossFunc(boundaryLoss, 1)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
@@ -172,9 +177,6 @@ def main():
 
     if useDataParallel:
         net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
-        lossFunc = net.module.getOnlyLossFunc()
-    else:
-        lossFunc = net.getOnlyLossFunc()
 
     epochs = 15000000
     oldTestLoss = 100000
@@ -202,13 +204,8 @@ def main():
             gts = labels.to(device, dtype=torch.float)
             gts = (gts > 0).long() # not discriminate all non-zero labels.
 
-            optimizer.zero_grad()
-            outputs = net.forward(inputs)
-            loss = lossFunc(outputs, gts)
-            loss.backward()
-            optimizer.step()
-            batchLoss = loss.item()
-
+            outputs, batchLoss = net.module.batchTrain(inputs, gts) if useDataParallel \
+                                 else net.batchTrain(inputs, gts)
             # compute dice
             with torch.no_grad():
                 gtsShape = gts.shape
@@ -246,9 +243,8 @@ def main():
                 gts = labels.to(device, dtype=torch.float)  # return a copy
                 gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-                outputs = net.forward(inputs)
-                loss = lossFunc(outputs, gts)
-                batchLoss = loss.item()
+                outputs, batchLoss = net.module.batchTest(inputs, gts) if useDataParallel \
+                                     else net.batchTest(inputs, gts)
 
                 # compute dice
                 gtsShape = gts.shape
@@ -283,9 +279,8 @@ def main():
                 gts = labels.to(device, dtype=torch.float)  # return a copy
                 gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-                outputs = net.forward(inputs)
-                loss = lossFunc(outputs, gts)
-                batchLoss = loss.item()
+                outputs, batchLoss = net.module.batchTest(inputs, gts) if useDataParallel \
+                                     else net.batchTest(inputs, gts)
 
                 # compute dice
                 gtsShape = gts.shape
