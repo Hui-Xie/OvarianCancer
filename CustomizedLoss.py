@@ -163,15 +163,14 @@ class BoundaryLoss2(_Loss):
                 if np.count_nonzero(C) != 0:
                     CNot = np.invert(C)
                     levelSetC = ndimage.distance_transform_edt(CNot)
-                    levelSetA[i,] = A*levelSetC
+                    levelSetA[i,] = A*levelSetC  # distance AC is bigger than distance AB, as C \subset B.
                     levelSetB[i,] = B*levelSetC
 
                 # case2: AB (there is no overlap between ground truth 1 and prediction 1; in other words, C=Null.)
                 elif np.count_nonzero(A) >0 and np.count_nonzero(B) >0:
-                    CNot = np.invert(A)
-                    levelSetC = ndimage.distance_transform_edt(CNot)
-                    levelSetA[i,] = A
-                    levelSetB[i,] = B * levelSetC
+                    # when A is farther to B, we hope to get bigger gradient on pixels of A.
+                    levelSetA[i,] = A * ndimage.distance_transform_edt(np.invert(B))
+                    levelSetB[i,] = B * ndimage.distance_transform_edt(np.invert(A))
 
                  # Case3: A (there is only ground truth 1, but no prediciton 1, and C=Null)
                 elif np.count_nonzero(A) >0:
