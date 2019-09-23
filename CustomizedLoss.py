@@ -142,6 +142,7 @@ class BoundaryLoss2(_Loss):
         N = shape[0]     # batch Size
         ret = torch.zeros(N).to(inputx.device)
 
+
         for k in range(1,self.m_k):  # ignore background with k starting with 1
             segProb = torch.narrow(softmaxInput,1, k,1)
             segProb = torch.squeeze(segProb, 1)
@@ -152,13 +153,16 @@ class BoundaryLoss2(_Loss):
             levelSetA = np.zeros(shape)  # default Loss = 0 for A and B
             levelSetB = np.zeros(shape)
 
+            ABSize = torch.zeros(N, requires_grad=False,device=inputx.device)
+
             # for the A,B,C, they are needed in the context of each sample
             for i in range(N):
                 # if np.count_nonzero(targetk[i,]) == 0:
-                #     continue
+                #     continueA
                 C = targetk[i,] * predictionk[i,]
                 A = targetk[i,] ^ C
                 B = predictionk[i,] ^ C
+                ABSize[i] = np.count_nonzero(A) + np.count_nonzero(B)
 
                 # case1: ACB (this is the frequent case; and in some case, A \subset C,  or B \subset C, and C is not Null.
                 if np.count_nonzero(C) != 0:
@@ -188,8 +192,9 @@ class BoundaryLoss2(_Loss):
 
             levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
             levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
-            x = torch.mean(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.sum(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
+            x /= ABSize +1e-8    #default 1e-8 is to avoid divided by 0.
             ret += x*self.m_weight[k]
 
         if self.reduction != 'none':
