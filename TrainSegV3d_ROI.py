@@ -33,7 +33,7 @@ Major program changes:
       Sep 23rd, 2019:
       1   improve mean of boundary loss limited on the A,B regions;
       2   use log(segProb) instead of segProb in the boudary loss;
-      3   CrossEntropy weight reduces 0.01 per 5 epochs from 1 to 0.01, while boundary Loss weight increase 0.01 per 5 epochs from 0.01 to 1. 
+      3   cancel this change:  CrossEntropy weight reduces 0.01 per 5 epochs from 1 to 0.01, while boundary Loss weight increase 0.01 per 5 epochs from 0.01 to 1. 
       
          
 
@@ -167,7 +167,7 @@ def main():
     ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     net.appendLossFunc(ceLoss, 1)
     boundaryLoss = BoundaryLoss2()
-    net.appendLossFunc(boundaryLoss, 0)
+    net.appendLossFunc(boundaryLoss, 1)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
@@ -210,6 +210,7 @@ def main():
         random.seed()
 
         # update loss weight list
+        '''
         lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
         if len(lossWeightList) > 1 and 100 <= epoch <= 600 and (epoch - 100) % 5 == 0:
             lossWeightList[0] -= 0.01
@@ -223,7 +224,7 @@ def main():
                 net.module.updateLossWeightList(lossWeightList)
             else:
                 net.updateLossWeightList(lossWeightList)
-
+        '''
         # ================Training===============
         net.train()
         nSample = 0

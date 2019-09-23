@@ -137,7 +137,12 @@ class BoundaryLoss2(_Loss):
 
         prediction = torch.argmax(inputx, dim=1).cpu().numpy()
 
-        softmaxInput = F.softmax(inputx, 1)
+        # softmax(x) = softmax(x+c) where c is scalar. subtracting max(x) avoids overflow of exponential explosion.
+        # softmaxInput = F.softmax(inputx-inputx.max(), 1)
+        assert self.m_k == 2
+        logsoftmax = F.log_softmax(inputx, dim=1)  # use logsoftmax to avoid overflow and underflow.
+
+
         targetNumpy = target.cpu().numpy().astype(int)
         shape = targetNumpy.shape
         ndim = targetNumpy.ndim
@@ -146,8 +151,11 @@ class BoundaryLoss2(_Loss):
 
 
         for k in range(1,self.m_k):  # ignore background with k starting with 1
-            segProb = torch.narrow(softmaxInput,1, k,1)
-            segProb = torch.squeeze(segProb, 1)
+            logP = torch.narrow(logsoftmax,1, k,1)
+            log1_P = torch.narrow(logsoftmax,1, 0,1)
+
+            logP = torch.squeeze(logP, 1)
+            log1_P = torch.squeeze(log1_P,1)
 
             targetk = (targetNumpy == k)
             predictionk = (prediction == k)
@@ -195,7 +203,7 @@ class BoundaryLoss2(_Loss):
 
             levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
             levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
-            x = torch.sum(-torch.log(1.0-segProb) * levelSetBTensor - torch.log(segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.sum(-log1_P * levelSetBTensor - logP*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             x /= ABSize +1e-8    #default 1e-8 is to avoid divided by 0.
             ret += x*self.weight[k]
