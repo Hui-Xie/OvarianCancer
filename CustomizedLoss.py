@@ -96,17 +96,19 @@ class BoundaryLoss2(_Loss):
 
     Loss function only cares about the error segmentation, and ignore correct both foreground  and background segmentations.
 
-    Here, A indicates ground truth "1" excluding the intersection C with prediction "1". A is the wanting part.
+    Here, A indicates ground truth "1" excluding the intersection C with prediction "1". A is the wanting part or undersegmented part.
           B indicates predicted segmentation "1" excluding the intersection C. B is the leaky part.
           C indicate the overlapped  intersection of ground truth 1  and prediction 1. C is the correctly segmented part.
           A+C = ground truth 1; B+C = prediction 1.
 
     In other words, we only care about loss on both A and B, the wanting and leaky part,  and  ignoring all others.
 
-    loss = SegProb * levelSetB + (1-SegProb)*levelSetA,
+    loss = -log(1-SegProb) * levelSetB - log(SegProb)*levelSetA,
          where levelSetB means the distance map from only B to C;
                levelSetA means the distance map from only A to C;
                when C=NUll, there are special cases detailed in code blow.
+         using log is to make loss at same quantity level comparing with cross entropy.
+
 
     The perfect goal of this loss optimization is to make A=null and B =Null, at same time C !=Null.
 
@@ -178,6 +180,7 @@ class BoundaryLoss2(_Loss):
                     levelSetB[i,] = B * ndimage.distance_transform_edt(np.invert(A))
 
                  # Case3: A (there is only ground truth 1, but no prediciton 1, and C=Null)
+                 #        in this case, boundary loss degrades into general cross entropy loss .
                 elif np.count_nonzero(A) >0:
                     levelSetA[i,] = A
 
@@ -192,7 +195,7 @@ class BoundaryLoss2(_Loss):
 
             levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
             levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
-            x = torch.sum(segProb * levelSetBTensor+ (1-segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.sum(-torch.log(1.0-segProb) * levelSetBTensor - torch.log(segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             x /= ABSize +1e-8    #default 1e-8 is to avoid divided by 0.
             ret += x*self.m_weight[k]

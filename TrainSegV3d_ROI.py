@@ -30,6 +30,10 @@ Major program changes:
       2   refine learning rate decay.
       Sep 21st, 2019
       1   add improved Boundary Loss2, and inherit the previous learningrate of network of pure CELoss;
+      Sep 23rd, 2019:
+      1   improve mean of boundary loss limited on the A,B regions;
+      2   use log(segProb) instead of segProb in the boudary loss;
+      
          
 
 Discarded changes:                  
@@ -87,7 +91,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 2 * len(GPUIDList)
+    batchSize = 2 * len(GPUIDList)-1
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
