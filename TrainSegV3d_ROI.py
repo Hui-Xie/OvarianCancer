@@ -163,7 +163,7 @@ def main():
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
-    ceLoss = nn.CrossEntropyLoss(weight=lossWeight.to(device, dtype=torch.float)) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
+    ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     net.appendLossFunc(ceLoss, 1)
     boundaryLoss = BoundaryLoss2()
     net.appendLossFunc(boundaryLoss, 1)
@@ -222,9 +222,10 @@ def main():
             gts = (gts > 0).long() # not discriminate all non-zero labels.
 
             outputs, loss = net.forward(inputs, gts)
-            net.m_optimizer.zero_grad()
+            loss = loss.sum()  # gather loss on different GPUs.
+            optimizer.zero_grad()
             loss.backward()
-            net.m_optimizer.step()
+            optimizer.step()
             batchLoss = loss.item()
 
             # compute dice
@@ -265,6 +266,7 @@ def main():
                 gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
                 outputs, loss = net.forward(inputs,gts)
+                loss = loss.sum()  # gather loss on different GPUs.
                 batchLoss = loss.item()
 
                 # compute dice
@@ -301,6 +303,7 @@ def main():
                 gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
                 outputs, loss = net.forward(inputs, gts)
+                loss = loss.sum()  # gather loss on different GPUs.
                 batchLoss = loss.item()
 
                 # compute dice
@@ -339,9 +342,7 @@ def main():
             if trainingLoss <= 1e-6:
                 logging.info(f"\n\n training loss less than 10, Program exit.")
                 break
-        else:
-            logging.info(f"\n\nError: training loss is infinity. Program exit.")
-            break
+
 
     torch.cuda.empty_cache()
     logging.info(f"\n\n=============END of Training of ResNeXt V Model =================")

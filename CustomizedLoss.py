@@ -121,8 +121,8 @@ class BoundaryLoss2(_Loss):
         super().__init__(size_average, reduce, reduction)
         self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
         self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
-        self.m_weight = torch.ones(self.m_k) if weight is None else weight
-        if len(self.m_weight) != self.m_k:
+        self.weight = torch.ones(self.m_k) if weight is None else weight  # keep name consistent with CrossEntropy
+        if len(self.weight) != self.m_k:
             print(f"Error: the number of classes does not match weight in the Boundary Loss init method")
             sys.exit(-5)
 
@@ -198,7 +198,7 @@ class BoundaryLoss2(_Loss):
             x = torch.sum(-torch.log(1.0-segProb) * levelSetBTensor - torch.log(segProb)*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             x /= ABSize +1e-8    #default 1e-8 is to avoid divided by 0.
-            ret += x*self.m_weight[k]
+            ret += x*self.weight[k]
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)

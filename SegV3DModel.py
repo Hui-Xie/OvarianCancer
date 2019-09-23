@@ -116,6 +116,7 @@ class SegV3DModel (BasicModel):
             for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
                 if weight == 0:
                     continue
+                lossFunc.to(x.device)
                 loss += lossFunc(outputs, gts) * weight
 
             return outputs, loss
