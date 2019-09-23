@@ -91,7 +91,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 2 * len(GPUIDList)-1
+    batchSize = 2 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -221,8 +221,12 @@ def main():
             gts = labels.to(device, dtype=torch.float)
             gts = (gts > 0).long() # not discriminate all non-zero labels.
 
-            outputs, batchLoss = net.module.batchTrain(inputs, gts) if useDataParallel \
-                                 else net.batchTrain(inputs, gts)
+            outputs, loss = net.forward(inputs, gts)
+            net.m_optimizer.zero_grad()
+            loss.backward()
+            net.m_optimizer.step()
+            batchLoss = loss.item()
+
             # compute dice
             with torch.no_grad():
                 gtsShape = gts.shape
@@ -260,8 +264,8 @@ def main():
                 gts = labels.to(device, dtype=torch.float)  # return a copy
                 gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-                outputs, batchLoss = net.module.batchTest(inputs, gts) if useDataParallel \
-                                     else net.batchTest(inputs, gts)
+                outputs, loss = net.forward(inputs,gts)
+                batchLoss = loss.item()
 
                 # compute dice
                 gtsShape = gts.shape
@@ -296,8 +300,8 @@ def main():
                 gts = labels.to(device, dtype=torch.float)  # return a copy
                 gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-                outputs, batchLoss = net.module.batchTest(inputs, gts) if useDataParallel \
-                                     else net.batchTest(inputs, gts)
+                outputs, loss = net.forward(inputs, gts)
+                batchLoss = loss.item()
 
                 # compute dice
                 gtsShape = gts.shape

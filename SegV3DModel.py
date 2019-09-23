@@ -97,7 +97,8 @@ class SegV3DModel (BasicModel):
            )  # output size:2*51*171*171
 
 
-    def forward(self, x):
+    def forward(self, x, gts):
+            # compute outputs
             x0 = self.m_down0(x)
             x1 = self.m_down1(x0)
             x2 = self.m_down2(x1)
@@ -108,6 +109,14 @@ class SegV3DModel (BasicModel):
             x  = self.m_up3(x) + x2
             x  = self.m_up2(x) + x1
             x  = self.m_up1(x) + x0
-            x  = self.m_up0(x)
+            outputs  = self.m_up0(x)
 
-            return x
+            # compute loss (put loss here is to save main GPU memory)
+            loss = torch.tensor(0.0).to(x.device)
+            for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
+                if weight == 0:
+                    continue
+                loss += lossFunc(outputs, gts) * weight
+
+            return outputs, loss
+

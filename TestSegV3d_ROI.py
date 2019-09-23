@@ -73,7 +73,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 2 * len(GPUIDList)
+    batchSize = 2 * len(GPUIDList)-1
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -127,7 +127,7 @@ def main():
             gts = labels.to(device, dtype=torch.float)  # return a copy
             gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-            outputs = net.forward(inputs)
+            outputs, _ = net.forward(inputs, gts)
 
             # compute dice
             gtsShape = gts.shape
@@ -148,7 +148,7 @@ def main():
             gts = labels.to(device, dtype=torch.float)  # return a copy
             gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-            outputs = net.forward(inputs)
+            outputs, _ = net.forward(inputs, gts)
 
             # compute dice
             gtsShape = gts.shape
