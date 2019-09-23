@@ -167,7 +167,7 @@ def main():
     ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     net.appendLossFunc(ceLoss, 1)
     boundaryLoss = BoundaryLoss2()
-    net.appendLossFunc(boundaryLoss, 0.01)
+    net.appendLossFunc(boundaryLoss, 0)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
