@@ -1,0 +1,13 @@
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2479: UserWarning: Default upsampling behavior when mode=trilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  "See the documentation of nn.Upsample for details.".format(mode))
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/parallel/_functions.py:61: UserWarning: Was asked to gather along dimension 0, but all input tensors were scalars; will instead unsqueeze and return a vector.
+  warnings.warn('Was asked to gather along dimension 0, but all '
+Program ID:  9633
+
+Program commands: ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3,2,1']
+.........
+batchSize = 6
+Training log is in /home/hxie1/Projects/OvarianCancer/trainLog/log_CV0_20190924_125121.txt
+=============training from sratch============
+Program ID 9633  exits.
+

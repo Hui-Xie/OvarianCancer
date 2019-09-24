@@ -161,7 +161,7 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    optimizer = optim.Adam(net.parameters(), lr=0.1, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
     net.setOptimizer(optimizer)
 
@@ -182,7 +182,7 @@ def main():
         logging.info(net.getParametersScale())
 
     # lrScheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
-    mileStones = [200, 400, 600, 800, 1000, 1200, 1400]
+    mileStones = [50, 100, 200, 350, 500]
     '''
     if addBoundaryLoss:
         for param_group in optimizer.param_groups:
@@ -358,10 +358,6 @@ def main():
                 oldTestLoss = validationLoss
                 bestTestPerf = validationDice
                 netMgr.saveBest(bestTestPerf)
-            if trainingLoss <= 1e-6:
-                logging.info(f"\n\n training loss less than 10, Program exit.")
-                break
-
 
     torch.cuda.empty_cache()
     logging.info(f"\n\n=============END of Training of ResNeXt V Model =================")
