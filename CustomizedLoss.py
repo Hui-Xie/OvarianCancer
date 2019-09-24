@@ -39,7 +39,7 @@ class BoundaryLoss1(_Loss):
     """
     __constants__ = ['reduction']
 
-    def __init__(self, lambdaCoeff=0.001, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
+    def __init__(self, lambdaCoeff=1, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
         super().__init__(size_average, reduce, reduction)
         self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
         self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
@@ -48,15 +48,16 @@ class BoundaryLoss1(_Loss):
             print(f"Error: the number of classes does not match weight in the Boundary Loss init method")
             sys.exit(-5)
 
-
-
     def forward(self, inputx, target):
-        softmaxInput = F.softmax(inputx, 1)
+        inputxMaxDim1, _= torch.max(inputx, dim=1, keepdim=True)
+        inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
+        softmaxInput = F.softmax(inputx-inputxMaxDim1, 1)  #use inputMaxDim1 is to avoid overflow.
+
         targetNumpy = target.cpu().numpy().astype(int)
         shape = targetNumpy.shape
         ndim = targetNumpy.ndim
         N = shape[0]     # batch Size
-        dilateFilter = np.ones((3,)*(ndim-1), dtype=int)  # dilation filter for for 4-connected boundary
+        dilateFilter = np.ones((3,)*(ndim-1), dtype=int)  # dilation filter for for 4-connected boundary in 2D, 8 connected boundary in 3D
         ret = torch.zeros(N).to(inputx.device)
 
         for k in range(1,self.m_k):  # ignore background with k starting with 1
@@ -69,11 +70,12 @@ class BoundaryLoss1(_Loss):
 
             for i in range(N):
                 if np.count_nonzero(targetk[i]) == 0:
-                    continue
-                boundary = binary_dilation(targetkNot[i],dilateFilter) & targetk[i]
-                inside = targetk[i] ^ boundary  # xor operator
-                signMatrix = inside*(-1)+ targetkNot[i]
-                levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
+                    levelSet[i].fill(1)
+                else:
+                    boundary = binary_dilation(targetkNot[i],dilateFilter) & targetk[i]
+                    inside = targetk[i] ^ boundary  # xor operator
+                    signMatrix = inside*(-1)+ targetkNot[i]
+                    levelSet[i] = ndimage.distance_transform_edt(boundary==0)*signMatrix
 
             levelSetTensor = torch.from_numpy(levelSet).float().to(inputx.device)
             x = torch.mean(segProb * levelSetTensor, dim=tuple([i for i in range(1,ndim)]))
@@ -83,8 +85,6 @@ class BoundaryLoss1(_Loss):
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
         return ret*self.m_lambda
-
-
 
 class BoundaryLoss2(_Loss):
     """
