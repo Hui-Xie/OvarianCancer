@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 sys.path.append("..")
-from CustomizedLoss import BoundaryLoss2
+from CustomizedLoss import BoundaryLoss3
 
 import torch
 
@@ -17,7 +17,7 @@ targets = torch.tensor([
 
 
 
-boundaryLoss = BoundaryLoss2()
+boundaryLoss = BoundaryLoss3()
 
 inputs= inputs.cuda()
 targets = targets.cuda()

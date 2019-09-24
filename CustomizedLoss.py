@@ -211,3 +211,80 @@ class BoundaryLoss2(_Loss):
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
         return ret*self.m_lambda
+
+
+
+class BoundaryLoss3(_Loss):
+    """
+    this is an improved version of Boundary Loss.
+    It idea is improving from the paper: Boundary Loss for highly Unbalanced Segmentation, in link: https://arxiv.org/abs/1812.07032
+    This improved version has no negative distance in the level set, and it uses ground truth only to decide levelset.
+
+    CrossEntropy is indiscriminately to treat all pixels, whatever it  is far away from groundtruth or in the middle of groundtruth.
+
+    The easier judging pixels get higher distance weight, which means they get higher gradient, and quickly converge to expected goal.
+
+    loss = -log(SegProb) * levelSetFg - log(1-SegProb)*levelSetBg,
+         where levelSetFg means the distance map from foreground  to background;
+               levelSetBg means the distance map from background  to foreground;
+               SegProb is the predicting probability of foreground.
+
+
+    The perfect goal of this loss optimization is to make loss= 0
+
+    Support K classes classification.
+    support 2D and 3D images.
+    """
+    __constants__ = ['reduction']
+
+    def __init__(self, lambdaCoeff=1, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
+        super().__init__(size_average, reduce, reduction)
+        self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
+        self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
+        self.weight = torch.ones(self.m_k) if weight is None else weight  # keep name consistent with CrossEntropy
+        if len(self.weight) != self.m_k:
+            print(f"Error: the number of classes does not match weight in the Boundary Loss init method")
+            sys.exit(-5)
+
+
+
+    def forward(self, inputx, target):
+        assert self.m_k == 2
+        logsoftmax = F.log_softmax(inputx, dim=1)  # use logsoftmax to avoid overflow and underflow.
+
+        targetNumpy = target.cpu().numpy().astype(int)
+        shape = targetNumpy.shape
+        ndim = targetNumpy.ndim
+        N = shape[0]     # batch Size
+        ret = torch.zeros(N).to(inputx.device)
+
+        for k in range(1,self.m_k):  # ignore background with k starting with 1
+            logP = torch.narrow(logsoftmax,1, k,1)
+            log1_P = torch.narrow(logsoftmax,1, 0,1)
+
+            logP = torch.squeeze(logP, 1)
+            log1_P = torch.squeeze(log1_P,1)
+
+            targetk = (targetNumpy == k)
+
+            levelSetFg = np.zeros(shape)
+            levelSetBg = np.zeros(shape)
+
+            for i in range(N):
+                if np.count_nonzero(targetk[i,]) == 0:
+                    levelSetBg[i,].fill_(1)
+                else:
+                    Fg = targetk[i,]
+                    Bg = ~Fg
+                    levelSetFg[i,] = ndimage.distance_transform_edt(Fg)
+                    levelSetBg[i,] = ndimage.distance_transform_edt(Bg)
+
+            levelSetFgTensor = torch.from_numpy(levelSetFg).float().to(inputx.device)
+            levelSetBgTensor = torch.from_numpy(levelSetBg).float().to(inputx.device)
+            x = torch.mean(-logP * levelSetFgTensor - log1_P*levelSetBgTensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.squeeze(x)
+            ret += x*self.weight[k]
+
+        if self.reduction != 'none':
+            ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
+        return ret*self.m_lambda
