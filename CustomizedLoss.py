@@ -203,10 +203,10 @@ class BoundaryLoss2(_Loss):
 
             levelSetATensor = torch.from_numpy(levelSetA).float().to(inputx.device)
             levelSetBTensor = torch.from_numpy(levelSetB).float().to(inputx.device)
-            x = torch.sum(-log1_P * levelSetBTensor - logP*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.sum(-log1_P * levelSetBTensor - logP*self.weight[k]*levelSetATensor, dim=tuple([i for i in range(1,ndim)]))
             x = torch.squeeze(x)
             x /= ABSize +1e-8    #default 1e-8 is to avoid divided by 0.
-            ret += x*self.weight[k]
+            ret += x
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
@@ -281,10 +281,10 @@ class BoundaryLoss3(_Loss):
 
             levelSetFgTensor = torch.from_numpy(levelSetFg).float().to(inputx.device)
             levelSetBgTensor = torch.from_numpy(levelSetBg).float().to(inputx.device)
-            # x = torch.mean(-logP * levelSetFgTensor - log1_P*levelSetBgTensor, dim=tuple([i for i in range(1,ndim)]))
-            x = torch.mean(-(logP-log1_P) * (levelSetFgTensor - levelSetBgTensor), dim=tuple([i for i in range(1, ndim)]))
+            # x = torch.mean(-logP *self.weight[k]* levelSetFgTensor - log1_P*levelSetBgTensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.mean(-(logP*self.weight[k]-log1_P) * (levelSetFgTensor - levelSetBgTensor), dim=tuple([i for i in range(1, ndim)]))
             x = torch.squeeze(x)
-            ret += x*self.weight[k]
+            ret += x
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)

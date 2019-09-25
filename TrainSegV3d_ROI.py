@@ -38,6 +38,7 @@ Major program changes:
       1   Use boundaryLoss1, which is considering the whole volume. 
       Sep 25th, 2019
       1   use boundaryLoss3, which is a stronger gradient signal to improve loss.
+      2   unbalanced weight for class is applied on logP,and just use boundaryLoss3 with CELoss.
       
          
 
@@ -168,10 +169,10 @@ def main():
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
-    ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
-    net.appendLossFunc(ceLoss, 1)
-    boundaryLoss = BoundaryLoss3()
-    net.appendLossFunc(boundaryLoss, 0)
+    # ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
+    # net.appendLossFunc(ceLoss, 1)
+    boundaryLoss = BoundaryLoss3(weight=lossWeight)
+    net.appendLossFunc(boundaryLoss, 1)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
