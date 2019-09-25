@@ -10,15 +10,17 @@ import os
 def printUsage(argv):
     print("============Draw Loss or accuracy Curve =============")
     print("Usage:")
-    print(argv[0], "logfile")
+    print(argv[0], " <logfile>  <deleteTopNRows> ")
+    print("where, if delteTopNRows is 2 as example, array will first delete the top 0, 1 rows before drawing.")
 
 def main():
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
 
     logFile = sys.argv[1]
+    deleteTopN = int(sys.argv[2])
     experiment = getStemName(logFile, ".txt")
     fullPathLogFile = os.path.abspath(logFile)
     dirName = os.path.dirname(fullPathLogFile)
@@ -45,7 +47,8 @@ def main():
                 countRow +=1
         array = array[:countRow,]
 
-    array = np.delete(array, 0, 0)
+    delRowList = [x for x in range(deleteTopN)]
+    array = np.delete(array, delRowList, 0)
 
     # draw curve
     colsLoss = [2,4,6]

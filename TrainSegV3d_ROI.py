@@ -167,8 +167,8 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    # optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
+    optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
+    # optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
