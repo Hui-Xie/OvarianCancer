@@ -281,7 +281,8 @@ class BoundaryLoss3(_Loss):
 
             levelSetFgTensor = torch.from_numpy(levelSetFg).float().to(inputx.device)
             levelSetBgTensor = torch.from_numpy(levelSetBg).float().to(inputx.device)
-            x = torch.mean(-logP * levelSetFgTensor - log1_P*levelSetBgTensor, dim=tuple([i for i in range(1,ndim)]))
+            # x = torch.mean(-logP * levelSetFgTensor - log1_P*levelSetBgTensor, dim=tuple([i for i in range(1,ndim)]))
+            x = torch.mean(-(logP-log1_P) * (levelSetFgTensor - levelSetBgTensor), dim=tuple([i for i in range(1, ndim)]))
             x = torch.squeeze(x)
             ret += x*self.weight[k]
 
