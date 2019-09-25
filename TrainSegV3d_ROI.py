@@ -14,7 +14,7 @@ from MeasureUtilities import *
 from SegV3DModel import SegV3DModel
 from OCDataTransform import *
 from NetMgr import NetMgr
-from CustomizedLoss import BoundaryLoss3
+from CustomizedLoss import *
 
 logNotes = r'''
 Major program changes: 
@@ -39,6 +39,8 @@ Major program changes:
       Sep 25th, 2019
       1   use boundaryLoss3, which is a stronger gradient signal to improve loss.
       2   unbalanced weight for class is applied on logP,and just use boundaryLoss3 with CELoss.
+      3   use CELoss and boundaryLoss together.
+      4   Use truncated DistanceCrossEntropy Loss alone;
       
          
 
@@ -169,10 +171,10 @@ def main():
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
-    # ceLoss = nn.CrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
-    # net.appendLossFunc(ceLoss, 1)
-    boundaryLoss = BoundaryLoss3(weight=lossWeight)
-    net.appendLossFunc(boundaryLoss, 1)
+    ceLoss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
+    net.appendLossFunc(ceLoss, 1)
+    # boundaryLoss = BoundaryLoss1(weight=lossWeight)
+    # net.appendLossFunc(boundaryLoss, 0)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)

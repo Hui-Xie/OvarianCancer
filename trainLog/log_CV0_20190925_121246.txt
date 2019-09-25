@@ -1,0 +1,110 @@
+=============training from sratch============
+Program ID: 8333
+
+Program command: 
+ ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy', '0', '3,2,1']
+
+Major program changes: 
+      1  3D V model for primary cancer ROI;
+      2  Uniform ROI size: 51*171*171 in z,y,x directon;
+      3  Total 36 patient data, in which training data 24 patients, validation 6 patients, and test 6 patients;
+      4  all 36 patients data have 50-80% 3D label;
+      5  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
+      6  training data augmentation in the fly: affine in XY plane, translation in Z direction;
+      7  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
+      Sep 16th, 2019:
+      1   add dynamic loss weight according trainin  data;
+      2   refine learning rate decay.
+      Sep 21st, 2019
+      1   add improved Boundary Loss2, and inherit the previous learningrate of network of pure CELoss;
+      Sep 23rd, 2019:
+      1   improve mean of boundary loss limited on the A,B regions;
+      2   use log(segProb) instead of segProb in the boudary loss;
+      3   CrossEntropy weight reduces 0.01 per 5 epochs from 1 to 0.01, while boundary Loss weight increase 0.01 per 5 epochs from 0.01 to 1. 
+      Sep 24th, 2019
+      1   Use boundaryLoss1, which is considering the whole volume. 
+      Sep 25th, 2019
+      1   use boundaryLoss3, which is a stronger gradient signal to improve loss.
+      2   unbalanced weight for class is applied on logP,and just use boundaryLoss3 with CELoss.
+      3   use CELoss and boundaryLoss together.
+      
+         
+
+Discarded changes:                  
+
+Experiment setting:
+Input CT data: 51*171*171 ROI around primary cancer
+
+Loss Function:  SoftMax
+
+Data:   total 36 patients with 50-80% label, 6-fold cross validation, test 6, validation 6, and training 24.  
+    script: python3.7 statisticsLabelFiles.py 
+    Total 36 in /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
+    0 has 48159408 elements, with a rate of  0.8970491562903105 
+    1 has 5527068 elements, with a rate of  0.10295084370968957
+
+Training strategy: 
+
+          
+
+Program starting Time: 2019-09-25 12:12:46.992089
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190925_121246
+
+Info: this is the 0th fold leave for test in the 6-fold cross-validation.
+
+Info: batchSize = 6
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190925_121246.
+6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+
+training dataset: total 24 image files.
+
+validation dataset: total 6 image files.
+
+test dataset: total 6 image files.
+Total 24 training files  extracted from /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
+0 has 32252453 elements, with a rate of  0.9011334530506342 
+1 has 3538531 elements, with a rate of  0.0988665469493658 
+loss weight = tensor([1.0000, 9.1146])
+Network has total 32,972,258 parameters.
+
+
+************** Table of Training Log **************
+Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
+0	1.0000e-02		4.4922		0.08061		41003.9336		0.00000		37873.9062		0.00000
+5	1.0000e-02		1.1532		0.51501		1.2961		0.48800		2.4200		0.35516
+10	1.0000e-02		1.1950		0.42578		0.9845		0.48465		1.3273		0.38082
+15	1.0000e-02		1.0469		0.52856		0.9136		0.59803		1.0526		0.47355
+20	1.0000e-02		1.0111		0.52152		1.1882		0.45629		1.4622		0.37098
+25	1.0000e-02		1.0193		0.51338		1.0855		0.50636		1.4103		0.40325
+30	1.0000e-02		1.0046		0.48989		0.8945		0.53882		1.1975		0.41667
+35	1.0000e-02		0.8564		0.56434		0.9640		0.58328		1.0539		0.45703
+40	1.0000e-02		0.8620		0.53397		0.8114		0.55272		1.1000		0.42892
+45	1.0000e-02		0.8673		0.53087		0.7399		0.62876		0.9052		0.49353
+50	1.0000e-03		0.8056		0.54313		0.8585		0.63847		1.0421		0.49469
+55	1.0000e-03		0.8858		0.52964		0.7722		0.63531		1.0078		0.48939
+60	1.0000e-03		0.7961		0.53890		0.8322		0.65553		1.1809		0.49382
+65	1.0000e-03		0.7898		0.52477		0.7472		0.60902		0.8580		0.49524
+70	1.0000e-03		0.7889		0.55266		0.7684		0.63699		0.8726		0.52834
+75	1.0000e-03		0.7012		0.57241		0.7639		0.65823		0.9788		0.52560
+80	1.0000e-03		0.8366		0.55119		0.7752		0.64029		0.8553		0.54290
+85	1.0000e-03		0.8424		0.55109		0.7633		0.63753		0.8730		0.52490
+90	1.0000e-03		0.7627		0.52945		0.8094		0.64375		0.8299		0.54342
+95	1.0000e-03		0.8381		0.53643		0.7545		0.63906		0.8606		0.51871
+100	1.0000e-04		-34.9604		0.55549		-35.4855		0.65195		-41.0940		0.55146
+105	1.0000e-04		-154.8629		0.52532		-167.0870		0.59708		-223.6726		0.54035
+110	1.0000e-04		-394.9359		0.46209		-411.9124		0.41675		-548.2450		0.47161
+115	1.0000e-04		-798.2101		0.00017		-849.6152		0.00000		-1074.4879		0.00000
+120	1.0000e-04		-1449.0573		0.00000		-1328.7219		0.00000		-1625.1920		0.00000
+125	1.0000e-04		-2453.3006		0.00000		-2339.2153		0.00000		-2714.8704		0.00000
+130	1.0000e-04		-3718.3463		0.00000		-2462.1421		0.00000		-2905.0596		0.00000
+135	1.0000e-04		-5200.4283		0.00000		-3824.2324		0.00000		-4658.2520		0.00000
+140	1.0000e-04		-6868.4751		0.00000		-4990.5527		0.00000		-5939.1782		0.00000
+145	1.0000e-04		-8131.5166		0.00000		-6691.5977		0.00000		-8391.9102		0.00000
+150	1.0000e-04		-10552.5715		0.00000		-7425.0186		0.00000		-9208.6152		0.00000
+155	1.0000e-04		-13056.1382		0.00000		-8406.3203		0.00000		-11104.4678		0.00000
+160	1.0000e-04		-14635.3799		0.00000		-10392.4355		0.00000		-13573.0605		0.00000
+165	1.0000e-04		-17669.2173		0.00000		-11016.4902		0.00000		-13499.6006		0.00000
+170	1.0000e-04		-19505.4639		0.00000		-14153.6299		0.00000		-17540.3711		0.00000
+175	1.0000e-04		-22163.8813		0.00000		-14841.8369		0.00000		-19434.3418		0.00000
+180	1.0000e-04		-25833.0488		0.00000		-17703.4570		0.00000		-21964.0508		0.00000

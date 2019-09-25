@@ -289,3 +289,105 @@ class BoundaryLoss3(_Loss):
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
         return ret*self.m_lambda
+
+
+class FullCrossEntropyLoss(_Loss):
+    """
+
+    """
+    __constants__ = ['reduction']
+
+    def __init__(self, lambdaCoeff=1, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
+        super().__init__(size_average, reduce, reduction)
+        self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
+        self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
+        self.weight = torch.ones(self.m_k) if weight is None else weight  # keep name consistent with CrossEntropy
+        if len(self.weight) != self.m_k:
+            print(f"Error: the number of classes does not match weight in the Loss init method")
+            sys.exit(-5)
+
+
+
+    def forward(self, inputx, target):
+        assert self.m_k == 2
+        logsoftmax = F.log_softmax(inputx, dim=1)  # use logsoftmax to avoid overflow and underflow.
+
+        ndim = target.ndim
+
+        logP = torch.narrow(logsoftmax,1, 1,1)
+        log1_P = torch.narrow(logsoftmax,1, 0,1)
+
+        logP = torch.squeeze(logP, 1)
+        log1_P = torch.squeeze(log1_P,1)
+
+        targetFloat = target.type(torch.float)
+
+        x = torch.mean(-(logP*self.weight[1]-log1_P) * (targetFloat*2.0-1.0), dim=tuple([i for i in range(1, ndim)]))
+        x = torch.squeeze(x)
+        ret = x
+
+        if self.reduction != 'none':
+            ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
+        return ret*self.m_lambda
+
+class DistanceCrossEntropyLoss(_Loss):
+    """
+    in loss functino design, putting  penalty and reward together will confuse newtwork, as for same neuro position,
+    different input samples may get penalty or reward at this neuro position. Pure penalty will make one nero get singel
+    gradient change diretion.
+
+    """
+    __constants__ = ['reduction']
+
+    def __init__(self, lambdaCoeff=1, k=2, weight=None, size_average=None, reduce=None, reduction='mean'):
+        super().__init__(size_average, reduce, reduction)
+        self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
+        self.m_k = k              # k classes classification, m_k=2 is for binary classification, etc
+        self.weight = torch.ones(self.m_k) if weight is None else weight  # keep name consistent with CrossEntropy
+        if len(self.weight) != self.m_k:
+            print(f"Error: the number of classes does not match weight in the Loss init method")
+            sys.exit(-5)
+        self.m_trancatedValue = 5
+
+    def forward(self, inputx, target):
+        assert self.m_k == 2
+        logsoftmax = F.log_softmax(inputx, dim=1)  # use logsoftmax to avoid overflow and underflow.
+
+        targetNumpy = target.cpu().numpy().astype(int)
+        shape = targetNumpy.shape
+        ndim = targetNumpy.ndim
+        N = shape[0]  # batch Size
+        ret = torch.zeros(N).to(inputx.device)
+
+        for k in range(1, self.m_k):  # ignore background with k starting with 1
+            logP = torch.narrow(logsoftmax, 1, k, 1)
+            log1_P = torch.narrow(logsoftmax, 1, 0, 1)
+
+            logP = torch.squeeze(logP, 1)
+            log1_P = torch.squeeze(log1_P, 1)
+
+            targetk = (targetNumpy == k)
+
+            levelSetFg = np.zeros(shape)
+            levelSetBg = np.zeros(shape)
+
+            for i in range(N):
+                if np.count_nonzero(targetk[i,]) == 0:
+                    levelSetBg[i,].fill_(1)
+                else:
+                    Fg = targetk[i,]
+                    Bg = ~Fg
+                    levelSetFg[i,] = ndimage.distance_transform_edt(Fg)
+                    levelSetBg[i,] = ndimage.distance_transform_edt(Bg)
+                    levelSetFg[i,] = np.clip(levelSetFg[i,], 0, self.m_trancatedValue)
+                    levelSetBg[i,] = np.clip(levelSetBg[i,], 0, self.m_trancatedValue)
+
+            levelSetFgTensor = torch.from_numpy(levelSetFg).float().to(inputx.device)
+            levelSetBgTensor = torch.from_numpy(levelSetBg).float().to(inputx.device)
+            x = torch.mean(-logP * self.weight[k] *levelSetFgTensor - log1_P *levelSetBgTensor,  dim=tuple([i for i in range(1, ndim)]))
+            x = torch.squeeze(x)
+            ret += x
+
+        if self.reduction != 'none':
+            ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
+        return ret * self.m_lambda
