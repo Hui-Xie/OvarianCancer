@@ -41,6 +41,7 @@ Major program changes:
       2   unbalanced weight for class is applied on logP,and just use boundaryLoss3 with CELoss.
       3   use CELoss and boundaryLoss together.
       4   Use truncated DistanceCrossEntropy Loss alone;
+      5   change LRScheduler into reduce into Plateau with initial LR=0.1
       
          
 
@@ -166,8 +167,8 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
-    # optimizer = optim.SGD(net.parameters(), lr=0.00001, momentum=0.9)
+    # optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
+    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
@@ -197,7 +198,8 @@ def main():
     else:
         lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
     '''
-    lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
+    # lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.1, patience=10)
 
 
     if useDataParallel:
@@ -271,7 +273,6 @@ def main():
 
         if 0 != trainingBatches:
             trainingLoss /= trainingBatches
-            lrScheduler.step()
 
         if epoch % 5 != 0:
             continue  # only epoch %5 ==0, run validation set.
@@ -309,6 +310,7 @@ def main():
 
             if 0 != validationBatches:
                 validationLoss /= validationBatches
+            lrScheduler.step(validationLoss)
             validationDice = validationDice / nSample
 
 
