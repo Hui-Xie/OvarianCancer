@@ -45,6 +45,8 @@ def main():
                 countRow +=1
         array = array[:countRow,]
 
+    array = np.delete(array, 0, 0)
+
     # draw curve
     colsLoss = [2,4,6]
     colsDice = [3,5,7]
