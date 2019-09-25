@@ -88,6 +88,9 @@ class BasicModel(nn.Module):
         self.m_dropout3d.p = prob
         return f"Info: network dropout rate = {self.m_dropoutProb}"
 
+    def getLR(self):
+        return float(self.m_optimizer.param_groups[0]['lr'])
+
     @staticmethod
     def getConvOutputTensorSize(inputSize, filter, stride, padding):
         dim = len(inputSize)

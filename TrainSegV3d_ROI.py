@@ -168,7 +168,7 @@ def main():
     net.to(device)
 
     # optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=0.1, momentum=0.9)
+    optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
@@ -351,7 +351,7 @@ def main():
             testDice = testDice / nSample
 
         # ===========print train and test progress===============
-        learningRate = lrScheduler.get_lr()[0]
+        learningRate = net.module.getLR() if useDataParallel else net.getLR()
         outputString = f'{epoch}' + f'\t{learningRate:1.4e}'
         outputString += f'\t\t{trainingLoss:.4f}' + f'\t\t{trainingDice:.5f}'
         outputString += f'\t\t{validationLoss:.4f}' + f'\t\t{validationDice:.5f}'
