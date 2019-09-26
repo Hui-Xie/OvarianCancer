@@ -178,10 +178,10 @@ class SegV3DModel(BasicModel):
         x4 = self.m_down4(x4) + x4
 
         x5 = self.m_down5Pooling(x4)
-        x5 = torch.squeeze(dim=2)
+        x5 = torch.squeeze(x5, dim=2)
         x5 = self.m_down5(x5) + x5  # bottom neck output
 
-        x = torch.unsqueeze(dim=2)
+        x = torch.unsqueeze(x5, dim=2)
         x = self.m_up5Pooling(x) + x4
         x = self.m_up5(x) + x
 
