@@ -42,6 +42,10 @@ Major program changes:
       3   use CELoss and boundaryLoss together.
       4   Use truncated DistanceCrossEntropy Loss alone;
       5   change LRScheduler into reduce into Plateau with initial LR=0.1
+      Sep 26th, 2019
+      1   Add one layer in the bottom of V model;
+      2   Add residual connnection in each layer;
+      
       
          
 

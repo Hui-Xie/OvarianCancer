@@ -6,10 +6,9 @@ class Conv3dBlock(nn.Module):
     """
     Convolution 3d Block
     """
-    def __init__(self, inChannels, outChannels, poolingLayer=None, convStride=1, useSpectralNorm=False, useLeakyReLU=False):
+    def __init__(self, inChannels, outChannels, convStride=1, useSpectralNorm=False, useLeakyReLU=False):
         super().__init__()
 
-        self.m_poolingLayer = poolingLayer
         self.m_useLeakyReLU = useLeakyReLU
 
         self.m_conv = nn.Conv3d(inChannels, outChannels, kernel_size=3, stride=convStride, padding=1, bias=True)
@@ -18,9 +17,6 @@ class Conv3dBlock(nn.Module):
         self.m_bn = nn.BatchNorm3d(outChannels)
 
     def forward(self, x):
-        if self.m_poolingLayer:
-            x = self.m_poolingLayer(x)
-
         y = self.m_conv(x)
         y = F.relu(self.m_bn(y), inplace=True) if not self.m_useLeakyReLU \
             else F.leaky_relu(self.m_bn(y), inplace=True)
@@ -33,11 +29,10 @@ class Conv2dBlock(nn.Module):
     Convolution 2d Block
     """
 
-    def __init__(self, inChannels, outChannels, poolingLayer=None, convStride=1, useSpectralNorm=False,
+    def __init__(self, inChannels, outChannels, convStride=1, useSpectralNorm=False,
                  useLeakyReLU=False):
         super().__init__()
 
-        self.m_poolingLayer = poolingLayer
         self.m_useLeakyReLU = useLeakyReLU
 
         self.m_conv = nn.Conv2d(inChannels, outChannels, kernel_size=3, stride=convStride, padding=1, bias=True)
@@ -46,9 +41,6 @@ class Conv2dBlock(nn.Module):
         self.m_bn = nn.BatchNorm2d(outChannels)
 
     def forward(self, x):
-        if self.m_poolingLayer:
-            x = self.m_poolingLayer(x)
-
         y = self.m_conv(x)
         y = F.relu(self.m_bn(y), inplace=True) if not self.m_useLeakyReLU \
             else F.leaky_relu(self.m_bn(y), inplace=True)
