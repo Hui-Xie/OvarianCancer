@@ -184,7 +184,7 @@ class SegV3DModel(BasicModel):
         x = torch.unsqueeze(x5, dim=2)
         x = self.m_up5Pooling(x) + x4
         x = self.m_up5(x) + x
-ge
+
         x = self.m_up4Pooling(x) + x3
         x = self.m_up4(x) + x
 
