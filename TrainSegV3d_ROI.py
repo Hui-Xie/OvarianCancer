@@ -45,7 +45,10 @@ Major program changes:
       Sep 26th, 2019
       1   Add one layer in the bottom of V model;
       2   Add residual connnection in each layer;
-      
+      Sep 30th, 2019
+      1   With size-reduced ROI of size 51*149*149;
+      2   reduce the translation of data augmentation;
+      3   reduce all data into 35 patients, excluding a very blur patient.
       
          
 
