@@ -20,7 +20,7 @@ class OCDataTransform(object):
             if random.uniform(0, 1) < self.m_prob:
                 affine = True
                 angle = random.randrange(-180, 180, 10)
-                translate = random.randrange(-38, 39, 3), random.randrange(-38, 39, 3)  # 15% of maxsize of Y, X
+                translate = random.randrange(-16, 17, 3), random.randrange(-16, 17, 3)  # 11% of maxsize of Y, X: 149*11%=16.39
                 scale = random.uniform(0.6, 1.25)
                 shear = random.randrange(-30, 31, 10)  #90 degree is too big, which almost compresses image into a line.
             else:
@@ -67,10 +67,10 @@ class OCDataLabelTransform(object):
             if random.uniform(0, 1) < self.m_prob:
                 affine = True
                 angle = random.randrange(-180, 180, 10)
-                translate = random.randrange(-25, 26, 3), random.randrange(-25, 26, 3)  # 15% of maxsize of Y, X
+                translate = random.randrange(-16, 17, 2), random.randrange(-16, 17, 2)  #11% of maxsize of Y, X: 149*11%=16.39
                 scale = random.uniform(0.6, 1.25)
                 shear = random.randrange(-20, 21, 5)  #90 degree is too big, which almost compresses image into a line.
-                zShift = random.randrange(-7, 8, 3)  # 15% of maxSize of Z
+                zShift = random.randrange(-5, 6, 2)  # 10% of maxSize of Z: 51*10%= 5.1
             else:
                 affine = False
                 angle = 0

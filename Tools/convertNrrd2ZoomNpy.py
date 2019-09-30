@@ -12,13 +12,15 @@ import matplotlib.pyplot as plt
 
 
 suffix = "_pri.nrrd"
-inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd"
-inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels"
-outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy"
-outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy/readme.txt"
+inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd"
+inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels"
+outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy"
+outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy/readme.txt"
 
-goalSize = (51,171,171) # Z,Y,X in nrrd axis order
+# goalSize = (51,171,171) # Z,Y,X in nrrd axis order for primaryROI dir
+goalSize = (51,149,149) # Z,Y,X in nrrd axis order at Sep 30th, 2019, for primaryROISmall dir.
+
 
 originalCwd = os.getcwd()
 os.chdir(inputImageDir)

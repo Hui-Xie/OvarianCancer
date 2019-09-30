@@ -6,8 +6,8 @@ sys.path.append("..")
 from FilesUtilities import *
 import matplotlib.pyplot as plt
 
-imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy"
-labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy"
+imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy"
+labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy"
 
 suffix = ".npy"
 originalCwd = os.getcwd()
@@ -32,7 +32,7 @@ for file in filesList:
         subplot1 = plt.subplot(1, 2, 1)
         I = rawImage[s,]
         subplot1.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
-        subplot1.set_title("rawImage")
+        subplot1.set_title("Raw: " + patientID + f"_s{s}")
 
         subplot2 = plt.subplot(1, 2, 2)
         I = gtImage[s,] + rawImage[s,]
