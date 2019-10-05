@@ -71,7 +71,14 @@ Add Boundary Loss, and inherit training:
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20190918_143834  0  /home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy  0  3,2,1 &
 
 Sep 30th, 2019:
-Train SegV3D ROI model
+Train SegV3D ROI model with reduced size ROI with zoom:
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy  0  3,2,1 &
+
+
+Oct 5th, 2019:
+Train SegV3D ROI model with fixed physical size 147*147*147mm:
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  0  3,2,1 &
+
+
 
 

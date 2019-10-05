@@ -49,6 +49,9 @@ Major program changes:
       1   With size-reduced ROI of size 51*149*149;
       2   reduce the translation of data augmentation;
       3   reduce all data into 35 patients, excluding a very blur patient.
+      Oct 5th, 2019
+      1   use uniform physical size 147mm*147mm*147mm, input pixel size: 49*147*147 with spacing size 3mm*1mm*1mm;
+      2   change V model with inputsize 49*147*147
       
          
 
