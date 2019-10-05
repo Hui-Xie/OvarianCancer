@@ -1,56 +1,72 @@
 
-import os
+
+# convert Nrrd images and labels to numpy array without zoom.
+# keep same physical size
+
+import sys
 import SimpleITK as sitk
 from scipy import ndimage
 import numpy as np
-from DataMgr import DataMgr
-import math
+sys.path.append("..")
+from FilesUtilities import *
 
-suffix = "_CT.nrrd"
-inputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/images"
-outputsDir = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/Extract_ps2_2_5/Images_ROI_29_140_140/readme.txt"
+import matplotlib.pyplot as plt
 
-goalSize = (29,140,140)
+
+suffix = ".nrrd"
+inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd"
+inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels"
+outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
+outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy/readme.txt"
 
 originalCwd = os.getcwd()
-os.chdir(inputsDir)
-filesList = [os.path.abspath(x) for x in os.listdir(inputsDir) if suffix in x]
+os.chdir(inputImageDir)
+filesList = [os.path.abspath(x) for x in os.listdir(inputImageDir) if suffix in x]
 os.chdir(originalCwd)
 
-dataMgr = DataMgr("", "", suffix)
-dataMgr.setDataSize(0, goalSize[0], goalSize[1],goalSize[2], "ConvertNrrd2ROI")
-radius = goalSize[0]//2
-
-Notes = "Exception files without available labels: \n"
+flipAxis = (1,2)
 
 for file in filesList:
+    patientID = getStemName(file, ".nrrd")
+    # for image data
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
+    image3d = np.clip(image3d, -100, 250)  # window level
+    image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
+    imageShape = image3d.shape
 
-    label = file.replace("_CT.nrrd", "_Seg.nrrd").replace("images/", "labels/")
-    label3d = sitk.GetArrayFromImage(sitk.ReadImage(label))
+    # normalize image for whole volume
+    mean = np.mean(image3d)
+    std  = np.std(image3d)
+    image3d = (image3d-mean)/std
 
-    label3d = (label3d > 0)
-    if np.count_nonzero(label3d) ==0:
-        Notes += f"\t {file}\n"
-        continue
+    image3d = np.flip(image3d,flipAxis)  # keep numpy image has same RAS direction with Nrrd image.
 
-    massCenterFloat = ndimage.measurements.center_of_mass(label3d)
-    massCenter = []
-    for i in range(len(massCenterFloat)):
-        massCenter.append(int(massCenterFloat[i]))
+    np.save(os.path.join(outputImageDir, patientID + ".npy"), image3d)
 
-    roi = dataMgr.cropVolumeCopy(image3d, massCenter[0], massCenter[1],  massCenter[2], radius)
-    patientID = DataMgr.getStemName(file, suffix)
-    np.save(os.path.join(outputsDir, patientID + "_roi.npy"), roi)
+    # for label
+    labelFile = os.path.join(inputLabelDir, patientID + "-label.nrrd")
+    label = sitk.ReadImage(labelFile)
+    label3d = sitk.GetArrayFromImage(label)
+    label3d = label3d.astype(np.float32)  # this is very important
+    labelShape = label3d.shape
+    if labelShape != imageShape:
+        print(f"Error: images shape != label shape for {file} and {labelFile} ")
+        exit(1)
+    label3d = np.flip(label3d, flipAxis)
+
+    np.save(os.path.join(outputLabelDir, patientID + ".npy"), label3d)
 
 N = len(filesList)
 
 with open(readmeFile,"w") as f:
     f.write(f"total {N} files in this directory\n")
-    f.write(f"goalSize: {goalSize}\n")
-    f.write(f"inputsDir = {inputsDir}\n")
-    f.write(Notes)
+    f.write(f"inputsDir = {inputImageDir}\n")
+    f.write(f"all images keeps its original size \n")
+    f.write("All numpy image filp along (1,2) axis to keep RAS orientation consistent with Nrrd.\n")
+
+print(f"totally convert {N} files")
+
 
 

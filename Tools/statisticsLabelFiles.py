@@ -5,7 +5,7 @@ import os
 import numpy as np
 
 
-labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy"
+labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
 suffix = ".npy"
 
 # read all files.
