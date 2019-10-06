@@ -52,7 +52,8 @@ Major program changes:
       Oct 5th, 2019
       1   use uniform physical size 147mm*147mm*147mm, input pixel size: 49*147*147 with spacing size 3mm*1mm*1mm;
       2   change V model with inputsize 49*147*147
-      
+      Oct 6th, 2019
+      1   add filter number to 48 at the first layer. 
          
 
 Discarded changes:                  

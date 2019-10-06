@@ -18,14 +18,14 @@ class SegV3DModel(BasicModel):
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
         self.m_down0 = nn.Sequential(
-            Conv3dBlock(1, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 32*49*147*147
+            Conv3dBlock(1, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )  # ouput size: 48*49*147*147
 
         self.m_down1Pooling = nn.Sequential(
             nn.AvgPool3d(3, stride=2, padding=0),
-            Conv3dBlock(32, 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+            Conv3dBlock(48, 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         )  # ouput size: 64*24*73*73
         self.m_down1 = nn.Sequential(
             Conv3dBlock(64, 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -144,19 +144,19 @@ class SegV3DModel(BasicModel):
 
         self.m_up1Pooling = nn.Sequential(
             nn.Upsample(size=(49, 147, 147), mode='trilinear'),
-            Conv3dBlock(64, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 32*49*147*147
+            Conv3dBlock(64, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )  # ouput size: 48*49*147*147
         self.m_up1 = nn.Sequential(
-            Conv3dBlock(32, 32, convStride=1,
+            Conv3dBlock(48, 48, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up0 = nn.Sequential(
-            nn.Conv3d(32, 2, kernel_size=3, stride=1, padding=1)
+            nn.Conv3d(48, 2, kernel_size=3, stride=1, padding=1)
         )  # output size:2*49*147*147
 
         '''
