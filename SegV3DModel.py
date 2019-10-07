@@ -17,15 +17,19 @@ class SegV3DModel(BasicModel):
         #
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
+        # downxPooling layer is responsible change shape of feature map and number of filters.
+        self.m_down0Pooling = nn.Sequential(
+            Conv3dBlock(1, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )  # ouput size: 32*49*147*147
         self.m_down0 = nn.Sequential(
-            Conv3dBlock(1, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 48*49*147*147
+            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )  # ouput size: 32*49*147*147
 
         self.m_down1Pooling = nn.Sequential(
             nn.AvgPool3d(3, stride=2, padding=0),
-            Conv3dBlock(48, 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+            Conv3dBlock(32, 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         )  # ouput size: 64*24*73*73
         self.m_down1 = nn.Sequential(
             Conv3dBlock(64, 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -74,23 +78,29 @@ class SegV3DModel(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
-        self.m_down5Pooling = nn.Sequential(
+        self.m_down5Pooling1 = nn.Sequential(
             nn.AvgPool3d((2, 3, 3), stride=2, padding=0)
         )  # outputSize:512*1*3*3, followed squeeze
+        self.m_down5Pooling2 = nn.Sequential(
+            Conv2dBlock(512, 1024, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        ) # outputSize:1024*3*3
         self.m_down5 = nn.Sequential(
-            Conv2dBlock(512, 512, convStride=1,
+            Conv2dBlock(1024, 1024, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(512, 512, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(1024, 1024, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(512, 512, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(1024, 1024, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         # here needs unsqueeze at dim 1
 
         self.m_up5Pooling = nn.Sequential(
-            nn.Upsample(size=(2, 8, 8), mode='trilinear')  # ouput size: 512*2*8*8
-        )
+            nn.Upsample(size=(2, 8, 8), mode='trilinear'),  # ouput size: 1024*2*8*8
+            Conv3dBlock(1024, 512, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                           useLeakyReLU=self.m_useLeakyReLU)
+        )# ouput size: 512*2*8*8
         self.m_up5 = nn.Sequential(
             Conv3dBlock(512, 512, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -144,19 +154,19 @@ class SegV3DModel(BasicModel):
 
         self.m_up1Pooling = nn.Sequential(
             nn.Upsample(size=(49, 147, 147), mode='trilinear'),
-            Conv3dBlock(64, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 48*49*147*147
+            Conv3dBlock(64, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )  # ouput size: 32*49*147*147
         self.m_up1 = nn.Sequential(
-            Conv3dBlock(48, 48, convStride=1,
+            Conv3dBlock(32, 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv3dBlock(48, 48, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv3dBlock(32, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up0 = nn.Sequential(
-            nn.Conv3d(48, 2, kernel_size=3, stride=1, padding=1)
+            nn.Conv3d(32, 2, kernel_size=3, stride=1, padding=1)
         )  # output size:2*49*147*147
 
         '''
@@ -465,7 +475,8 @@ class SegV3DModel(BasicModel):
 
     def forward(self, x, gts):
         # compute outputs
-        x0 = self.m_down0(x)
+        x0 = self.m_down0Pooling(x)
+        x0 = self.m_down0(x0) + x0
 
         x1 = self.m_down1Pooling(x0)
         x1 = self.m_down1(x1) + x1
@@ -479,8 +490,9 @@ class SegV3DModel(BasicModel):
         x4 = self.m_down4Pooling(x3)
         x4 = self.m_down4(x4) + x4
 
-        x5 = self.m_down5Pooling(x4)
+        x5 = self.m_down5Pooling1(x4)
         x5 = torch.squeeze(x5, dim=2)
+        x5 = self.m_down5Pooling2(x5)
         x5 = self.m_down5(x5) + x5  # bottom neck output
 
         x = torch.unsqueeze(x5, dim=2)
