@@ -56,7 +56,9 @@ Major program changes:
       1   add filter number to 48 at the first layer. 
       Oct 7th, 2019
       1   restore to 32 of number of filters in the first layer;
-      2   add bottom number of filters to 1024, and keep down sample and add filter number together.  
+      2   add bottom number of filters to 1024, and keep down sample and add filter number together. 
+      Oct 8th, 2019
+      1   discard the cancer with size exceeding 147mm*147mm*147mm; Now remains 29 patients data; 
          
 
 Discarded changes:                  
