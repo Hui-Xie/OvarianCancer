@@ -62,20 +62,6 @@ Major program changes:
          
 
 Discarded changes:                  
-
-Experiment setting:
-Input CT data: 51*171*171 ROI around primary cancer
-
-Loss Function:  SoftMax
-
-Data:   total 36 patients with 50-80% label, 6-fold cross validation, test 6, validation 6, and training 24.  
-    script: python3.7 statisticsLabelFiles.py 
-    Total 36 in /home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy
-    0 has 48159408 elements, with a rate of  0.8970491562903105 
-    1 has 5527068 elements, with a rate of  0.10295084370968957
-
-Training strategy: 
-
           '''
 
 
