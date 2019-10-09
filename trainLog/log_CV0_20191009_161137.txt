@@ -1,5 +1,5 @@
 =============training from sratch============
-Program ID: 26916
+Program ID: 28514
 
 Program command: 
  ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy', '0', '0']
@@ -57,14 +57,14 @@ Major program changes:
 Discarded changes:                  
           
 
-Program starting Time: 2019-10-09 15:47:39.595526
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191009_154739
+Program starting Time: 2019-10-09 16:11:37.663803
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191009_161137
 
 Info: this is the 0th fold leave for test in the 6-fold cross-validation.
 
-Info: batchSize = 2
+Info: batchSize = 1
 
-Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191009_154739.
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191009_161137.
 6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
 
 training dataset: total 19 image files.

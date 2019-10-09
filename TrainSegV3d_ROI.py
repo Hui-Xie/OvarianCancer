@@ -109,7 +109,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 2 * len(GPUIDList)
+    batchSize = 1 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
