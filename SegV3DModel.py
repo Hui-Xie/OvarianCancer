@@ -166,7 +166,7 @@ class SegV3DModel(BasicModel):
         )
 
         self.m_up0 = nn.Sequential(
-            nn.Conv3d(32, 2, kernel_size=3, stride=1, padding=1)
+            nn.Conv3d(32, 2, kernel_size=1, stride=1, padding=0)   # conv 1*1*1
         )  # output size:2*49*147*147
 
         '''
@@ -476,7 +476,8 @@ class SegV3DModel(BasicModel):
     def forward(self, x, gts):
         # compute outputs
         x0 = self.m_down0Pooling(x)
-        x0 = self.m_down0(x0) + x0
+        # x0 = self.m_down0(x0) + x0    # this residual link hurts dice performance.
+        x0 = self.m_down0(x0)
 
         x1 = self.m_down1Pooling(x0)
         x1 = self.m_down1(x1) + x1

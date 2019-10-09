@@ -59,6 +59,11 @@ Major program changes:
       2   add bottom number of filters to 1024, and keep down sample and add filter number together. 
       Oct 8th, 2019
       1   discard the cancer with size exceeding 147mm*147mm*147mm; Now remains 29 patients data; 
+      Oct 9th, 209
+      1   In the first layer of V model, remove the residual link; 
+           with the residula link at first layer: Tr dice:54%, Validation Dice 27%, Test Dice 56%;  Not good.
+      2   the final output layer, change into 1*1*1 convolution, instead of 3*3*3 convolution;
+          
          
 
 Discarded changes:                  
