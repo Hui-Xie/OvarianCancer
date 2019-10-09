@@ -15,6 +15,7 @@ from SegV3DModel import SegV3DModel
 from OCDataTransform import *
 from NetMgr import NetMgr
 from CustomizedLoss import *
+from LabelConsistencyLoss import *
 
 logNotes = r'''
 Major program changes: 
@@ -63,6 +64,7 @@ Major program changes:
       1   In the first layer of V model, remove the residual link; 
            with the residula link at first layer: Tr dice:54%, Validation Dice 27%, Test Dice 56%;  Not good.
       2   the final output layer, change into 1*1*1 convolution, instead of 3*3*3 convolution;
+      3   add labelConsistencyLoss;
           
          
 
@@ -183,6 +185,8 @@ def main():
     net.appendLossFunc(ceLoss, 1)
     # boundaryLoss = BoundaryLoss1(weight=lossWeight)
     # net.appendLossFunc(boundaryLoss, 0)
+
+    net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=5)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)

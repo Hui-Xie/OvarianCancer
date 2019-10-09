@@ -17,6 +17,7 @@ class SegV3DModel(BasicModel):
         #
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
+        self.m_useLabelConsistencyLoss = True
         # downxPooling layer is responsible change shape of feature map and number of filters.
         self.m_down0Pooling = nn.Sequential(
             Conv3dBlock(1, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
@@ -512,7 +513,15 @@ class SegV3DModel(BasicModel):
         x = self.m_up1Pooling(x) + x0
         x = self.m_up1(x) + x
 
+        if self.m_useLabelConsistencyLoss:
+            featureTensor = torch.cat((x0, x), dim=1)
+
         outputs = self.m_up0(x)
+
+        if self.m_useLabelConsistencyLoss:
+            xMaxDim1, _ = torch.max(outputs, dim=1, keepdim=True)
+            xMaxDim1 = xMaxDim1.expand_as(outputs)
+            predictProb = F.softmax(outputs - xMaxDim1, 1)  # use xMaxDim1 is to avoid overflow.
 
         # compute loss (put loss here is to save main GPU memory)
         loss = torch.tensor(0.0).to(x.device)
@@ -521,5 +530,8 @@ class SegV3DModel(BasicModel):
                 continue
             lossFunc.to(x.device)
             loss += lossFunc(outputs, gts) * weight
+
+        if self.m_useLabelConsistencyLoss:
+            loss += self.m_labelConsistencyLoss(featureTensor, predictProb)
 
         return outputs, loss

@@ -12,14 +12,15 @@ class LabelConsistencyLoss(_Loss):
     "Current only support 3D volume"
     __constants__ = ['reduction']
 
-    def __init__(self, windowSize=5, size_average=None, reduce=None, reduction='mean'):
+    def __init__(self, lambdaCoeff=1, windowSize=5, size_average=None, reduce=None, reduction='mean'):
         super().__init__(size_average, reduce, reduction)
+        self.m_lambda = lambdaCoeff
         self.m_windowSize= windowSize
 
     def forward(self, featureTensor, predictProb):
-        assert featureTensor.dim == predictProb.dim
+        assert featureTensor.ndim == predictProb.ndim
         N,_,X,Y,Z = featureTensor.size()
-        ret = torch.zeros(1).to(featureTensor.device)
+        ret = torch.tensor(0.0).to(featureTensor.device)
         m = self.m_windowSize//2  # margin
 
         visitedVoxels = collections.deque([() for _ in range((m+1)*Y*Z)])
@@ -43,17 +44,17 @@ class LabelConsistencyLoss(_Loss):
                                         continue
                                     v2 = featureTensor[n,:,xx,yy,zz]
                                     p2 = predictProb[n,1, xx,yy,zz]
-                                    cosineSm = F.cosine_similarity(v1,v2)
-                                    y = (1 -cosineSm)/2  # feature difference between v1 and v2 feature vectors
+                                    cosineSm = F.cosine_similarity(v1,v2, dim=0)
+                                    ftrDiff = (1 -cosineSm)/2  # feature difference between v1 and v2 feature vectors
                                     p12= p1-p2 if p1>=p2 else p2-p1  # predicted prob difference
                                     if p12==0:
                                         p12 = p12+ epsilon
                                     if p12 ==1:
                                         p12 = p12- epsilon
-                                    ret += -y*torch.log(p12)-(1-y)*torch.log(1-p12)
+                                    ret += -ftrDiff*torch.log(p12)-(1-ftrDiff)*torch.log(1-p12)
                                     nCount +=1
 
-        ret = ret/nCount
+        ret = ret/nCount*self.m_lambda
         return ret
 
 
