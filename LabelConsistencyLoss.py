@@ -8,7 +8,8 @@ import sys
 import collections
 
 
-class LabelConsistenceLoss(_Loss):
+class LabelConsistencyLoss(_Loss):
+    "Current only support 3D volume"
     __constants__ = ['reduction']
 
     def __init__(self, windowSize=5, size_average=None, reduce=None, reduction='mean'):
@@ -17,8 +18,8 @@ class LabelConsistenceLoss(_Loss):
 
     def forward(self, featureTensor, predictProb):
         assert featureTensor.dim == predictProb.dim
-        N,C,X,Y,Z = featureTensor.size()
-        ret = torch.zeros(N).to(featureTensor.device)
+        N,_,X,Y,Z = featureTensor.size()
+        ret = torch.zeros(1).to(featureTensor.device)
         m = self.m_windowSize//2  # margin
 
         visitedVoxels = collections.deque([() for _ in range((m+1)*Y*Z)])
@@ -47,7 +48,13 @@ class LabelConsistenceLoss(_Loss):
                                     p12= p1-p2 if p1>=p2 else p2-p1  # predicted prob difference
                                     if p12==0:
                                         p12 = p12+ epsilon
-                                    ret += -y*torch.log(p12)
+                                    if p12 ==1:
+                                        p12 = p12- epsilon
+                                    ret += -y*torch.log(p12)-(1-y)*torch.log(1-p12)
+                                    nCount +=1
+
+        ret = ret/nCount
+        return ret
 
 
 
