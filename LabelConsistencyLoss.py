@@ -23,7 +23,8 @@ class LabelConsistencyLoss(_Loss):
         ret = torch.tensor(0.0).to(featureTensor.device)
         m = self.m_windowSize//2  # margin
 
-        # raw single thread  implement.
+        # raw single thread  implement. It is very slow.
+        """
         visitedVoxels = collections.deque([() for _ in range((m+1)*Y*Z)])
         nCount = 0
         epsilon = 1e-8
@@ -56,6 +57,7 @@ class LabelConsistencyLoss(_Loss):
                                     nCount +=1
 
         ret = ret/nCount*self.m_lambda
+         """
 
         # parallel GPU implement
         # roll both featureTensor and predictProb, crop center, clip value, consine computation, sum, divided by 2.
@@ -69,6 +71,9 @@ class LabelConsistencyLoss(_Loss):
                         continue
                     T2 = torch.roll(featureTensor, (a,b,c), dim=(2,3,4))
                     P2 = torch.roll(P1Full, (a,b,c), dim=(2,3,4))
+                    T2 = T2[:,:, m:X-m, m:Y-m, m:Z-m]
+                    P2 = P2[:,:, m:X-m, m:Y-m, m:Z-m]
+                    
 
 
         return ret
