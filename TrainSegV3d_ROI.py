@@ -95,7 +95,7 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-    useLabelConsistencyLoss = False
+    useLabelConsistencyLoss = True
 
     # addBoundaryLoss = True
 
@@ -110,7 +110,10 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 2 * len(GPUIDList)
+    if useLabelConsistencyLoss:
+        batchSize = 1 * len(GPUIDList)
+    else:
+        batchSize = 2 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -189,7 +192,7 @@ def main():
     # net.appendLossFunc(boundaryLoss, 0)
 
     if useLabelConsistencyLoss:
-        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=5)
+        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=3)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)

@@ -1,12 +1,17 @@
 
-import SimpleITK as sitk
+m = 2
 
-# file = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd/04052781_pri.nrrd"  # error axis file.
-file = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd/05055556_pri.nrrd"
+nCount = 0
+for a in range(-m, m+1):
+    for b in range(-m, a+1):
+        for c in range(-m, m+1):
+            if (a==b and a>0) or (a==b and a==0 and c>=0):
+                continue
 
-image = sitk.ReadImage(file)
-image3d = sitk.GetArrayFromImage(image)
+            nCount +=1
+            print(f"(a,b, c)={a,b,c}")
 
-print(f"Shape: {image3d.shape}")
+print(f"nCount = {nCount}")
+
 
 
