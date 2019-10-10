@@ -9,7 +9,7 @@ from ConvBlocks import *
 #  3D model
 
 class SegV3DModel(BasicModel):
-    def __init__(self):  # K is the final output classification number.
+    def __init__(self, useLabelConsistencyLoss=False):  # K is the final output classification number.
         super().__init__()
 
         # For input image size: 49*147*147 (zyx in nrrd format)
@@ -17,7 +17,7 @@ class SegV3DModel(BasicModel):
         #
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
-        self.m_useLabelConsistencyLoss = True
+        self.m_useLabelConsistencyLoss = useLabelConsistencyLoss
         # downxPooling layer is responsible change shape of feature map and number of filters.
         self.m_down0Pooling = nn.Sequential(
             Conv3dBlock(1, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)

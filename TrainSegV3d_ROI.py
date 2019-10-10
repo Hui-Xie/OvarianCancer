@@ -95,6 +95,7 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
+    useLabelConsistencyLoss = False
 
     # addBoundaryLoss = True
 
@@ -109,7 +110,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 1 * len(GPUIDList)
+    batchSize = 2 * len(GPUIDList)
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -148,6 +149,7 @@ def main():
 
         logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
         logging.info(f"Info: batchSize = {batchSize}\n")
+        logging.info(f"Info: useLabelConsistencyLoss = {useLabelConsistencyLoss}\n")
         logging.info(f'Net parameters is saved in  {netPath}.')
 
     else:
@@ -170,7 +172,7 @@ def main():
     testData = OVDataSegSet('test', dataPartitions, transform=testTransform,
                          logInfoFun=logging.info if scratch > 0 else print)
 
-    net = SegV3DModel()
+    net = SegV3DModel(useLabelConsistencyLoss=useLabelConsistencyLoss)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -186,7 +188,8 @@ def main():
     # boundaryLoss = BoundaryLoss1(weight=lossWeight)
     # net.appendLossFunc(boundaryLoss, 0)
 
-    net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=5)
+    if useLabelConsistencyLoss:
+        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=5)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)

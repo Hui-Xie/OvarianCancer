@@ -1,8 +1,8 @@
 =============training from sratch============
-Program ID: 28514
+Program ID: 28988
 
 Program command: 
- ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy', '0', '0']
+ ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy', '2', '3,2,1']
 
 Major program changes: 
       1  3D V model for primary cancer ROI;
@@ -57,15 +57,17 @@ Major program changes:
 Discarded changes:                  
           
 
-Program starting Time: 2019-10-09 16:11:37.663803
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191009_161137
+Program starting Time: 2019-10-10 09:22:23.730227
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191010_092223
 
-Info: this is the 0th fold leave for test in the 6-fold cross-validation.
+Info: this is the 2th fold leave for test in the 6-fold cross-validation.
 
-Info: batchSize = 1
+Info: batchSize = 6
 
-Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191009_161137.
-6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+Info: useLabelConsistencyLoss = False
+
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191010_092223.
+6-fold cross validation: the 2th fold is for test, the 3th fold is for validation, remaining folds are for training.
 
 training dataset: total 19 image files.
 
@@ -73,11 +75,12 @@ validation dataset: total 5 image files.
 
 test dataset: total 5 image files.
 Total 19 training files  extracted from /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy
-0 has 18433812 elements, with a rate of  0.9162854777808447 
-1 has 1684167 elements, with a rate of  0.08371452221915532 
-loss weight = tensor([ 1.0000, 10.9454])
+0 has 18801751 elements, with a rate of  0.9345745415083692 
+1 has 1316228 elements, with a rate of  0.0654254584916308 
+loss weight = tensor([ 1.0000, 14.2846])
 Network has total 113,191,074 parameters.
 
 
 ************** Table of Training Log **************
 Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
+0	1.0000e-02		15.4288		0.09045		21.7611		0.00725		25.2064		0.03034
