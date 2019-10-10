@@ -95,7 +95,7 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-    useLabelConsistencyLoss = True
+    useLabelConsistencyLoss = False
 
     # addBoundaryLoss = True
 

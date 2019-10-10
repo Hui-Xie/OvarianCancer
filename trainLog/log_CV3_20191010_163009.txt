@@ -1,8 +1,8 @@
 =============training from sratch============
-Program ID: 18119
+Program ID: 24207
 
 Program command: 
- ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy', '0', '0']
+ ['TrainSegV3d_ROI.py', '/home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI', '1', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy', '/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy', '3', '3,2,1']
 
 Major program changes: 
       1  3D V model for primary cancer ROI;
@@ -57,17 +57,17 @@ Major program changes:
 Discarded changes:                  
           
 
-Program starting Time: 2019-10-10 14:49:20.425062
-Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191010_144920
+Program starting Time: 2019-10-10 16:30:09.886516
+Info: netPath = /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191010_163009
 
-Info: this is the 0th fold leave for test in the 6-fold cross-validation.
+Info: this is the 3th fold leave for test in the 6-fold cross-validation.
 
-Info: batchSize = 1
+Info: batchSize = 6
 
-Info: useLabelConsistencyLoss = True
+Info: useLabelConsistencyLoss = False
 
-Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191010_144920.
-6-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+Net parameters is saved in  /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191010_163009.
+6-fold cross validation: the 3th fold is for test, the 4th fold is for validation, remaining folds are for training.
 
 training dataset: total 19 image files.
 
@@ -75,44 +75,32 @@ validation dataset: total 5 image files.
 
 test dataset: total 5 image files.
 Total 19 training files  extracted from /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy
-0 has 18433812 elements, with a rate of  0.9162854777808447 
-1 has 1684167 elements, with a rate of  0.08371452221915532 
-loss weight = tensor([ 1.0000, 10.9454])
+0 has 18805544 elements, with a rate of  0.9347630793331676 
+1 has 1312435 elements, with a rate of  0.06523692066683238 
+loss weight = tensor([ 1.0000, 14.3287])
 Network has total 113,191,074 parameters.
 
 
 ************** Table of Training Log **************
 Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
-0	1.0000e-02		4.2528		0.13855		1.7815		0.11823		2.7909		0.38801
-5	1.0000e-02		2.6947		0.30845		2.0064		0.17431		1.9745		0.35111
-10	1.0000e-02		2.6203		0.38356		1.4141		0.21050		1.5474		0.37545
-15	1.0000e-02		2.2414		0.41807		1.1116		0.26557		1.2626		0.50722
-20	1.0000e-02		2.3756		0.39207		1.8182		0.21928		1.3018		0.44382
-25	1.0000e-02		2.1295		0.37017		1.2484		0.24087		1.3159		0.43990
-30	1.0000e-02		2.6972		0.39657		2.8342		0.15943		1.7195		0.41443
-35	1.0000e-02		2.0572		0.34913		0.9695		0.25268		1.3380		0.45112
-40	1.0000e-02		2.1104		0.41586		0.9677		0.26005		1.1634		0.44930
-45	1.0000e-02		2.1460		0.44579		1.0565		0.29507		1.1385		0.46728
-50	1.0000e-02		2.5186		0.38628		1.5197		0.22172		1.4811		0.42440
-55	1.0000e-02		2.0735		0.40928		1.2642		0.24444		1.4400		0.44129
-60	1.0000e-02		2.3667		0.41786		0.9817		0.29379		1.2324		0.45721
-65	1.0000e-02		1.3702		0.48692		1.0211		0.30703		0.9680		0.50418
-70	1.0000e-02		1.3168		0.44816		1.1468		0.25724		1.2931		0.44064
-75	1.0000e-02		1.5053		0.51253		1.3170		0.25365		1.3985		0.45983
-80	1.0000e-02		1.3716		0.48385		1.0810		0.27038		1.4237		0.41923
-85	1.0000e-02		1.8144		0.42591		1.0517		0.26662		1.2347		0.45623
-90	1.0000e-02		1.8304		0.45813		1.1521		0.22794		1.2047		0.51415
-95	1.0000e-03		1.2454		0.46352		1.2462		0.22995		1.3905		0.39036
-100	1.0000e-03		1.0846		0.53859		1.0693		0.31849		0.9276		0.54267
-105	1.0000e-03		1.2390		0.54369		1.1402		0.26898		0.9456		0.51278
-110	1.0000e-03		0.9608		0.57419		1.0711		0.23848		0.9555		0.53100
-115	1.0000e-03		0.9716		0.58400		1.2819		0.24781		0.9607		0.51013
-120	1.0000e-03		0.8412		0.61322		1.2226		0.27601		1.0039		0.48834
-125	1.0000e-03		1.1601		0.56163		1.3513		0.23326		0.9845		0.47899
-130	1.0000e-03		0.9687		0.58176		1.4417		0.25250		0.9776		0.50893
-135	1.0000e-03		0.9164		0.63627		1.8183		0.24731		0.9621		0.53082
-140	1.0000e-03		1.0267		0.58293		1.7226		0.23970		0.9842		0.49520
-145	1.0000e-03		0.8546		0.58484		1.7551		0.25920		1.1735		0.44976
-150	1.0000e-04		0.9579		0.54911		1.3379		0.26029		1.2788		0.42819
-155	1.0000e-04		0.8763		0.56691		1.5386		0.22932		2.0814		0.36510
-160	1.0000e-04		0.7798		0.63837		1.4358		0.30839		0.9362		0.53176
+0	1.0000e-02		16.1365		0.05343		3091.0396		0.00000		3898.9785		0.00000
+5	1.0000e-02		9.3840		0.15505		19.2414		0.30553		9.8729		0.17147
+10	1.0000e-02		6.9431		0.27723		10.4075		0.43878		7.1759		0.28760
+15	1.0000e-02		6.6542		0.29360		29.3282		0.42500		15.9988		0.26189
+20	1.0000e-02		6.7652		0.32562		38.0293		0.29525		10.7057		0.22099
+25	1.0000e-02		5.9515		0.26177		20.0517		0.31059		10.1625		0.23631
+30	1.0000e-02		7.7630		0.29343		24.1435		0.39437		7.9337		0.26233
+35	1.0000e-02		5.0956		0.35997		8.1795		0.41646		8.0361		0.26322
+40	1.0000e-02		3.9771		0.39429		7.2636		0.45097		6.0279		0.36983
+45	1.0000e-02		4.9198		0.32348		12.7660		0.38428		18.3789		0.22250
+50	1.0000e-02		3.8861		0.37787		7.3236		0.46304		24.9878		0.23408
+55	1.0000e-02		5.3981		0.27562		7.4695		0.49780		5.5372		0.37343
+60	1.0000e-02		5.0814		0.36501		6.6565		0.45726		6.0895		0.31474
+65	1.0000e-02		6.2250		0.39471		10.7976		0.46946		17.6387		0.25943
+70	1.0000e-02		4.7656		0.24993		6.8206		0.45957		5.2421		0.37443
+75	1.0000e-02		4.8319		0.33858		8.1640		0.42647		5.8112		0.34507
+80	1.0000e-02		4.0845		0.35361		6.9757		0.46032		12.0697		0.32043
+85	1.0000e-02		4.8567		0.34445		7.4778		0.43582		7.7944		0.29434
+90	1.0000e-02		3.8373		0.43341		9.8809		0.46581		5.6736		0.41436
+95	1.0000e-02		3.5033		0.39409		9.1542		0.50662		7.9511		0.35764
+100	1.0000e-02		3.5912		0.38830		4.7471		0.53036		5.8191		0.46515
