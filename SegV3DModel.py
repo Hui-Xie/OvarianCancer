@@ -9,7 +9,7 @@ from ConvBlocks import *
 #  3D model
 
 class SegV3DModel(BasicModel):
-    def __init__(self, useLabelConsistencyLoss=False):  # K is the final output classification number.
+    def __init__(self, useConsistencyLoss=False):  # K is the final output classification number.
         super().__init__()
 
         # For input image size: 49*147*147 (zyx in nrrd format)
@@ -17,7 +17,7 @@ class SegV3DModel(BasicModel):
         #
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
-        self.m_useLabelConsistencyLoss = useLabelConsistencyLoss
+        self.m_useConsistencyLoss = useConsistencyLoss
         # downxPooling layer is responsible change shape of feature map and number of filters.
         self.m_down0Pooling = nn.Sequential(
             Conv3dBlock(1, 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
@@ -474,9 +474,9 @@ class SegV3DModel(BasicModel):
 
 
 
-    def forward(self, x, gts):
+    def forward(self, inputs, gts):
         # compute outputs
-        x0 = self.m_down0Pooling(x)
+        x0 = self.m_down0Pooling(inputs)
         # x0 = self.m_down0(x0) + x0    # this residual link hurts dice performance.
         x0 = self.m_down0(x0)
 
@@ -513,13 +513,13 @@ class SegV3DModel(BasicModel):
         x = self.m_up1Pooling(x) + x0
         x = self.m_up1(x) + x
 
-        if self.m_useLabelConsistencyLoss:
-            featureTensor = x    #just use final feature before softmax
-            # featureTensor = torch.cat((x0, x), dim=1)   # use feature from the 2 ends of V model
+        if self.m_useConsistencyLoss:
+            # featureTensor = x    #just use final feature before softmax
+            featureTensor = torch.cat((inputs, x0, x), dim=1)   # use feature from the 2 ends of V model, plus input
 
         outputs = self.m_up0(x)
 
-        if self.m_useLabelConsistencyLoss:
+        if self.m_useConsistencyLoss:
             xMaxDim1, _ = torch.max(outputs, dim=1, keepdim=True)
             xMaxDim1 = xMaxDim1.expand_as(outputs)
             predictProb = F.softmax(outputs - xMaxDim1, 1)  # use xMaxDim1 is to avoid overflow.
@@ -532,7 +532,7 @@ class SegV3DModel(BasicModel):
             lossFunc.to(x.device)
             loss += lossFunc(outputs, gts) * weight
 
-        if self.m_useLabelConsistencyLoss:
+        if self.m_useConsistencyLoss:
             loss += self.m_labelConsistencyLoss(featureTensor, predictProb)
 
         return outputs, loss

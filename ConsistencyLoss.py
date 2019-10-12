@@ -8,7 +8,7 @@ import sys
 import collections
 
 
-class LabelConsistencyLoss(_Loss):
+class ConsistencyLoss(_Loss):
     "Current only support 3D volume"
     __constants__ = ['reduction']
 

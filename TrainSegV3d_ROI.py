@@ -15,7 +15,7 @@ from SegV3DModel import SegV3DModel
 from OCDataTransform import *
 from NetMgr import NetMgr
 from CustomizedLoss import *
-from LabelConsistencyLoss import *
+from ConsistencyLoss import *
 
 logNotes = r'''
 Major program changes: 
@@ -85,14 +85,15 @@ def printUsage(argv):
     print("============Train Seg 3D  VNet for ROI around primary Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfLabel> <k>  <GPUID_List>")
+          "<netSavedPath> <scratch> <fullPathOfData>  <fullPathOfLabel> <k>  <GPUID_List> <ConsistencyLoss>")
     print("where: \n"
           "       scratch =0: continue to train basing on previous training parameters; scratch=1, training from scratch.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
-          "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n")
+          "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n"
+          "       ConsistencyLoss: 0 or 1")
 
 def main():
-    if len(sys.argv) != 7:
+    if len(sys.argv) != 8:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
@@ -104,8 +105,11 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-    useLabelConsistencyLoss = False
-    searchWindow = 3
+    useConsistencyLoss = bool(int(sys.argv[7]))
+    if useConsistencyLoss:
+        searchWindow = 3
+    else:
+        searchWindow = 0
 
     # addBoundaryLoss = True
 
@@ -120,7 +124,7 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    if useLabelConsistencyLoss:
+    if useConsistencyLoss:
         batchSize = 1 * len(GPUIDList)
     else:
         batchSize = 2 * len(GPUIDList)
@@ -136,10 +140,10 @@ def main():
         timeStr = getStemName(netPath)
 
     if '/home/hxie1/' in netPath:
-        logFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
+        logFile = f'/home/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_Consis{useConsistencyLoss:d}_{timeStr}.txt'
         isArgon = False
     elif '/Users/hxie1/' in netPath:
-        logFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_{timeStr}.txt'
+        logFile = f'/Users/hxie1/Projects/OvarianCancer/trainLog/log_CV{k:d}_Consis{useConsistencyLoss:d}_{timeStr}.txt'
         isArgon = True
     else:
         print("the net path should be full path.")
@@ -162,7 +166,7 @@ def main():
 
         logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
         logging.info(f"Info: batchSize = {batchSize}\n")
-        logging.info(f"Info: useLabelConsistencyLoss = {useLabelConsistencyLoss} and searchWindowSize= {searchWindow}\n")
+        logging.info(f"Info: useConsistencyLoss = {useConsistencyLoss} and searchWindowSize= {searchWindow}\n")
         logging.info(f'Net parameters is saved in  {netPath}.')
 
     else:
@@ -185,7 +189,7 @@ def main():
     testData = OVDataSegSet('test', dataPartitions, transform=testTransform,
                          logInfoFun=logging.info if scratch > 0 else print)
 
-    net = SegV3DModel(useLabelConsistencyLoss=useLabelConsistencyLoss)
+    net = SegV3DModel(useConsistencyLoss=useConsistencyLoss)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -201,8 +205,8 @@ def main():
     # boundaryLoss = BoundaryLoss1(weight=lossWeight)
     # net.appendLossFunc(boundaryLoss, 0)
 
-    if useLabelConsistencyLoss:
-        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=searchWindow)
+    if useConsistencyLoss:
+        net.m_labelConsistencyLoss = ConsistencyLoss(lambdaCoeff=1, windowSize=searchWindow)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
