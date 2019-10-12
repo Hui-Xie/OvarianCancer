@@ -71,7 +71,7 @@ Major program changes:
           It gets stable Training Dice 61%, validation Dice 23%, and test dice 49%, for fold 0 in the fixed physical size:147mm*147mm*147mm; 
       2   windows size for consistency loss changes to 3;
       Oct 12th, 2019
-      1   change image window level to 100/50; relauch training;
+      1   change image window level to 100/50; relaunch training;
       
 
           
