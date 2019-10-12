@@ -72,6 +72,8 @@ Major program changes:
       2   windows size for consistency loss changes to 3;
       Oct 12th, 2019
       1   change image window level to 100/50; relaunch training;
+      2   change consistencyLoss to use ground truth for comparing diff of feature vector;
+       
       
 
           
@@ -206,7 +208,7 @@ def main():
     # net.appendLossFunc(boundaryLoss, 0)
 
     if useConsistencyLoss:
-        net.m_labelConsistencyLoss = ConsistencyLoss(lambdaCoeff=1, windowSize=searchWindow)
+        net.m_labelConsistencyLoss = ConsistencyLoss2(lambdaCoeff=1, windowSize=searchWindow)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)

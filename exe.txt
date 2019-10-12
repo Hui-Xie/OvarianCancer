@@ -77,7 +77,11 @@ nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/
 
 Oct 5th, 2019:
 Train SegV3D ROI model with fixed physical size 147*147*147mm:
-nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  0  3,2,1  0 &
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  0  2,1,0  0 &
+
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  0  3  1 &
+
+
 
 Oct 11th, 2019:
 Test SegV3d ROI Model:

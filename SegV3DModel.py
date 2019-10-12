@@ -519,10 +519,14 @@ class SegV3DModel(BasicModel):
 
         outputs = self.m_up0(x)
 
+        '''
+        # use groundtruth for consistency loss, ignore this
         if self.m_useConsistencyLoss:
-            xMaxDim1, _ = torch.max(outputs, dim=1, keepdim=True)
-            xMaxDim1 = xMaxDim1.expand_as(outputs)
-            predictProb = F.softmax(outputs - xMaxDim1, 1)  # use xMaxDim1 is to avoid overflow.
+           xMaxDim1, _ = torch.max(outputs, dim=1, keepdim=True)
+           xMaxDim1 = xMaxDim1.expand_as(outputs)
+           predictProb = F.softmax(outputs - xMaxDim1, 1)  # use xMaxDim1 is to avoid overflow.
+        '''
+
 
         # compute loss (put loss here is to save main GPU memory)
         loss = torch.tensor(0.0).to(x.device)
@@ -533,6 +537,6 @@ class SegV3DModel(BasicModel):
             loss += lossFunc(outputs, gts) * weight
 
         if self.m_useConsistencyLoss:
-            loss += self.m_labelConsistencyLoss(featureTensor, predictProb)
+            loss += self.m_labelConsistencyLoss(featureTensor, gts)
 
         return outputs, loss
