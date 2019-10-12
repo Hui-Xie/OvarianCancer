@@ -60,11 +60,15 @@ Major program changes:
       2   add bottom number of filters to 1024, and keep down sample and add filter number together. 
       Oct 8th, 2019
       1   discard the cancer with size exceeding 147mm*147mm*147mm; Now remains 29 patients data; 
-      Oct 9th, 209
+      Oct 9th, 2019
       1   In the first layer of V model, remove the residual link; 
            with the residula link at first layer: Tr dice:54%, Validation Dice 27%, Test Dice 56%;  Not good.
       2   the final output layer, change into 1*1*1 convolution, instead of 3*3*3 convolution;
       3   add labelConsistencyLoss;
+      Oct 11th, 2019
+      1   use feature tensor just from the output end of V model. It is 32 dimensions.
+      2   windows size for consistency loss changes to 5;
+
           
          
 
@@ -95,7 +99,7 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-    useLabelConsistencyLoss = False
+    useLabelConsistencyLoss = True
 
     # addBoundaryLoss = True
 
@@ -192,7 +196,7 @@ def main():
     # net.appendLossFunc(boundaryLoss, 0)
 
     if useLabelConsistencyLoss:
-        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=3)
+        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=5)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
