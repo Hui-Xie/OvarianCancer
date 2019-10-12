@@ -388,7 +388,8 @@ def main():
         # =============save net parameters==============
         if trainingLoss < float('inf') and not math.isnan(trainingLoss):
             netMgr.saveNet()
-            if validationDice  > bestTestPerf or (validationDice == bestTestPerf and validationLoss < oldTestLoss):
+            if epoch >=1000 and \
+                (validationDice  > bestTestPerf or (validationDice == bestTestPerf and validationLoss < oldTestLoss) ):
                 oldTestLoss = validationLoss
                 bestTestPerf = validationDice
                 netMgr.saveBest(bestTestPerf)
