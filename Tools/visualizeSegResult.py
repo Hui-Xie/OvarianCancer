@@ -11,7 +11,7 @@ def main():
     imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
     groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
     predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult"
-    diceFile = os.path.join(predictDir, "predict_CV0_20191009_093034.txt")   # need to modify
+    diceFile = os.path.join(predictDir, "predict_CV5_20191011_170356.txt")   # need to modify
 
     suffix = ".npy"
     originalCwd = os.getcwd()
@@ -33,7 +33,6 @@ def main():
                 ID_Dice[row[0]] = float(row[1])
 
 
-    sliceIndices = [12,18, 25, 31, 37]
     nFigs = 0
     for file in filesList:
         patientID = getStemName(file, suffix)
@@ -44,6 +43,18 @@ def main():
         rawImage = np.load(rawFilename).astype(np.float32)
         gtImage = np.load(gtFilename).astype(np.float32)
         predictImage = np.load(predictFilename).astype(np.float32)
+
+        # get sliceIndices for gtImage.
+        nonzeroIndex = np.nonzero(gtImage)
+        nonzeroSlices = list(map(int, set(nonzeroIndex[0])))  # make sure the slice index is int.
+        numNonzeroSlices = len(nonzeroSlices)
+        sliceIndices = []
+        if numNonzeroSlices <= 5:
+            sliceIndices = nonzeroSlices
+        else:
+            step = numNonzeroSlices//6
+            for i in range(step, numNonzeroSlices, step):
+                sliceIndices.append(nonzeroSlices[i])
 
         for s in sliceIndices:
             nFigs +=1

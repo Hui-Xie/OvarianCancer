@@ -28,47 +28,38 @@ latextIntro = r'''
 
 \begin{verbatim}
 Network Description:
-1  A 3D V model to segment ROI of size 51*171*171 pixels around primary cancer.
-2  Total 36 patient data, in which training data 24 patients, validation 6 patients, 
-   and test 6 patients; All 36 patients data have 50-80% 3D label.
-3  For each ROI, about 10% pixels are primary cancer, other 90% pixels are background;
+1  A 3D V model to segment ROI of uniform physical size 147mm*147mm*147mm around primary cancer.
+2  Total 29 patient data which exludes the patient with primary cancer size exceeding 147mm*147mm*147mm.  
+   In  29 patients, training data 20 patients, validation 5 patients, and test 6 patients;
+   The primary cancer occupies the whole volume at average 7.4%.
+3  For each ROI, about 7.4% pixels are primary cancer, other 92.6% pixels are background;
 3  Dice coefficient is 3D dice coefficient against corresponding 3D ground truth;
 4  Training data augmentation in the fly: affine in XY plane, translation in Z direction;
-5  In the bottle neck of V model, the latent vector has size of 512*2*9*9;
+5  In the bottle neck of V model, the latent vector has size of 1024*3*3;
 6  Dynamic loss weight according trainin  data;
 
 Test Result Description:
-1  First 6 patients are validation data; Second 6 patients are test data;
-2  Each patient extracts its 5 slices at positions of 25%, 38%, 50%, 62%, 
-   75% of volume height for visual check. 
+1  First 5 patients are validation data; Second 4 patients are test data;
+2  Each patient extracts its 5-6 slices at the position having ground truth. 
 3  The topleft subimage is original input image, title is formated Raw:ID_s{slice};  
 
 List Dice for all patients:
-PatiantID	Dice1       Dice2
-05431967	0.70550     0.47109
-05722020	0.73781     0.81053
-05096005	0.69400     0.80039
-03864522	0.61908     0.56768
-05088264	0.56666     0.51056
-05430021	0.87353     0.75309
-04641905	0.60258     0.70651
-04477716	0.33847     0.30695
-05056196	0.69583     0.46297
-05498934	0.87504     0.79554
-05311044	0.54239     0.51857
-04029173	0.15008     0.57999
+ID	    	Dice
+04459696	0.56622
+03389601	0.86175
+05422073	0.55629
+03920513	0.69620
+04796135	0.28082
+05739718	0.73707
+04119332	0.66345
+02190163	0.13406
+03903461	0.49957
 
-Average     0.6167      0.6070
-stdev       0.2169      0.1635   
-
-Dice1 use the network parameters with best validation dice
-Dice2 use the realtime network after training 7305 epochs. 
-This report shows the dice2 result. 
-
-The Total average Dice is 61.26%, in which there is patient has extreme low dice. 
+Average     0.555    
+stdev       0.228       
 
 Simple Analysis:
-1  Dice results in different patients has big difference: 87% vs 15%;
+1  Dice results in different patients has big difference: 86% vs 13%;
 2  Big cancer gets better result;
 3  Various Cancer texture give challenge, maybe more training sample will help.   
 
@@ -99,9 +90,9 @@ latexItem = r'''
 '''
 
 # you may need to modify the output file directory and name
-outputLatex = r'''/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/realtime/OCTestReport_20190919_realtime.tex'''
+outputLatex = r'''/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/OCTestReport_20191012.tex'''
 
-imagesPath = "/home/hxie1/data/OvarianCancerCT/primaryROI/predictionResult/realtime"
+imagesPath = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult"
 
 with open(outputLatex, "w") as f:
     f.write(latexHead)

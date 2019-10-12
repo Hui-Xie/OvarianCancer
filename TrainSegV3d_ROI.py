@@ -64,9 +64,11 @@ Major program changes:
       1   In the first layer of V model, remove the residual link; 
            with the residula link at first layer: Tr dice:54%, Validation Dice 27%, Test Dice 56%;  Not good.
       2   the final output layer, change into 1*1*1 convolution, instead of 3*3*3 convolution;
-      3   add labelConsistencyLoss;
+      3   add labelConsistencyLoss, it use 64 dimension feature extracted from 2 ends of V model:
+           It gets stable Training Dice 61%, validation Dice 27%, and test dice 49%, for fold 0 in the fixed physical size:147mm*147mm*147mm; 
       Oct 11th, 2019
       1   use feature tensor just from the output end of V model. It is 32 dimensions.
+          It gets stable Training Dice 61%, validation Dice 23%, and test dice 49%, for fold 0 in the fixed physical size:147mm*147mm*147mm; 
       2   windows size for consistency loss changes to 3;
 
           
