@@ -34,7 +34,7 @@ for file in filesList:
     image3d = sitk.GetArrayFromImage(image)
 
     # window level: window width 100, and level 50,
-    # which is consistent with CTBrain in Slicer, and which is better visualizaiton with cancers.
+    # which is consistent with CTBrain in Slicer, and which is a better visualization with cancers.
     image3d = np.clip(image3d, 0, 100)
 
     image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
