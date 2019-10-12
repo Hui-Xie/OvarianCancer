@@ -62,7 +62,7 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-
+    useLabelConsistencyLoss = False
     # ===========debug==================
     useDataParallel = True if len(GPUIDList) > 1 else False  # for debug
     # ===========debug==================
@@ -94,7 +94,7 @@ def main():
     validationData = OVDataSegSet('validation', dataPartitions, transform=validationTransform)
     testData = OVDataSegSet('test', dataPartitions, transform=testTransform)
 
-    net = SegV3DModel()
+    net = SegV3DModel(useLabelConsistencyLoss=useLabelConsistencyLoss)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
