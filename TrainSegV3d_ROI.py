@@ -70,6 +70,9 @@ Major program changes:
       1   use feature tensor just from the output end of V model. It is 32 dimensions.
           It gets stable Training Dice 61%, validation Dice 23%, and test dice 49%, for fold 0 in the fixed physical size:147mm*147mm*147mm; 
       2   windows size for consistency loss changes to 3;
+      Oct 12th, 2019
+      1   change image window level to 100/50; relauch training;
+      
 
           
          
@@ -101,7 +104,7 @@ def main():
     k = int(sys.argv[5])
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
-    useLabelConsistencyLoss = True
+    useLabelConsistencyLoss = False
     searchWindow = 3
 
     # addBoundaryLoss = True
