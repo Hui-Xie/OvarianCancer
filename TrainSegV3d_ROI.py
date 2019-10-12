@@ -67,7 +67,7 @@ Major program changes:
       3   add labelConsistencyLoss;
       Oct 11th, 2019
       1   use feature tensor just from the output end of V model. It is 32 dimensions.
-      2   windows size for consistency loss changes to 5;
+      2   windows size for consistency loss changes to 3;
 
           
          
@@ -100,7 +100,7 @@ def main():
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
     useLabelConsistencyLoss = True
-    searchWindow = 5
+    searchWindow = 3
 
     # addBoundaryLoss = True
 
