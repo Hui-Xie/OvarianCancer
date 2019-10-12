@@ -514,12 +514,9 @@ class SegV3DModel(BasicModel):
         x = self.m_up1(x) + x
 
         if self.m_useLabelConsistencyLoss:
-		featureTensor = x    #just use final feature before softmax
-		# featureTensor = torch.cat((x0, x), dim=1)   # use feature from the 2 ends of V model
-            
-	    
+            featureTensor = x    #just use final feature before softmax
+            # featureTensor = torch.cat((x0, x), dim=1)   # use feature from the 2 ends of V model
 
-	
         outputs = self.m_up0(x)
 
         if self.m_useLabelConsistencyLoss:

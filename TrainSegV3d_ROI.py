@@ -100,6 +100,7 @@ def main():
     GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
     GPUIDList = [int(x) for x in GPUIDList]
     useLabelConsistencyLoss = True
+    searchWindow = 5
 
     # addBoundaryLoss = True
 
@@ -156,7 +157,7 @@ def main():
 
         logging.info(f"Info: this is the {k}th fold leave for test in the {K_fold}-fold cross-validation.\n")
         logging.info(f"Info: batchSize = {batchSize}\n")
-        logging.info(f"Info: useLabelConsistencyLoss = {useLabelConsistencyLoss}\n")
+        logging.info(f"Info: useLabelConsistencyLoss = {useLabelConsistencyLoss} and searchWindowSize= {searchWindow}\n")
         logging.info(f'Net parameters is saved in  {netPath}.')
 
     else:
@@ -196,7 +197,7 @@ def main():
     # net.appendLossFunc(boundaryLoss, 0)
 
     if useLabelConsistencyLoss:
-        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=5)
+        net.m_labelConsistencyLoss = LabelConsistencyLoss(lambdaCoeff=1, windowSize=searchWindow)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
