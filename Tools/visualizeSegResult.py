@@ -6,11 +6,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 sys.path.append("..")
 from FilesUtilities import *
+from scipy.ndimage.morphology import binary_dilation
 
 def main():
     imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
     groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
     predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult"
+    outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/color"
     diceFile = os.path.join(predictDir, "predict_CV5_20191011_170356.txt")   # need to modify
 
     suffix = ".npy"
@@ -32,7 +34,7 @@ def main():
             if len(row) ==2:
                 ID_Dice[row[0]] = float(row[1])
 
-
+    dilateFilter = np.ones((3,3), dtype=int)  # dilation filter for for 4-connected boundary in 2D
     nFigs = 0
     for file in filesList:
         patientID = getStemName(file, suffix)
@@ -59,31 +61,39 @@ def main():
         for s in sliceIndices:
             nFigs +=1
             f = plt.figure(nFigs)
+
+            R = rawImage[s,]  # raw image
+            G = gtImage[s,].astype(int)   # groundtruth image
+            P = predictImage[s,].astype(int)  # predicted image
+            GC =  binary_dilation(G!=1, dilateFilter) & G  # groundtruth contour
+            PC =  binary_dilation(P!=1, dilateFilter) & P  # predicted contour
+
             subplot1 = plt.subplot(2,2,1)
-            I = rawImage[s,]
-            subplot1.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
+            subplot1.imshow(R, cmap='gray', vmin=np.amin(R), vmax=np.amax(R))
             subplot1.set_title("Raw: "+ patientID+f"_s{s}")
 
             subplot2 = plt.subplot(2,2,2)
-            I = rawImage[s,] + gtImage[s,]
-            subplot2.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
-            subplot2.set_title("GroundTruth")
+            subplot2.imshow(R, vmin=np.amin(R), vmax=np.amax(R))
+            subplot2.imshow(GC,cmap='YlGn', alpha= 0.3, vmin=np.amin(GC), vmax=np.amax(GC))
+            subplot2.set_title("GroundTruth Contour")
 
             subplot3 = plt.subplot(2,2,3)
-            I = rawImage[s,] + predictImage[s,]
-            subplot3.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
+            subplot3.imshow(R, cmap='gray', vmin=np.amin(R), vmax=np.amax(R))
+            subplot3.imshow(PC, cmap='YlOrRd', alpha=0.3, vmin=np.amin(PC), vmax=np.amax(PC))
             dice = float(ID_Dice[patientID])
             subplot3.set_title(f"Predict_Dice({dice: .2%})")
 
             subplot4 = plt.subplot(2,2,4)
-            I = rawImage[s,]+ (gtImage[s,]-predictImage[s,])
-            subplot4.imshow(I, cmap='gray', vmin=np.amin(I), vmax=np.amax(I))
-            subplot4.set_title("GT-Predict")
+            subplot4.imshow(R, cmap='gray', vmin=np.amin(R), vmax=np.amax(R))
+            subplot4.imshow(GC, cmap='YlGn', alpha=0.3, vmin=np.amin(GC), vmax=np.amax(GC) )
+            subplot4.imshow(PC, cmap='YlOrRd', alpha=0.3, vmin=np.amin(PC), vmax=np.amax(PC))
+            subplot4.set_title("GT and Predict")
 
             plt.tight_layout()
 
-            plt.savefig(os.path.join(predictDir, patientID+f"_s{s}.png"))
+            plt.savefig(os.path.join(outputDir, patientID+f"_s{s}.png"))
             plt.close()
+
 
 
 
