@@ -98,3 +98,4 @@ Network has total 113,191,074 parameters.
 Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
 0	1.0000e-02		6.6642		0.05211		55.4855		0.00000		15.4809		0.00000
 5	1.0000e-02		3.3106		0.26795		4.9524		0.31777		9.1003		0.11075
+10	1.0000e-02		2.9654		0.27181		5.0504		0.33693		5.6540		0.18286
