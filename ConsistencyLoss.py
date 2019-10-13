@@ -131,6 +131,47 @@ class ConsistencyLoss2(_Loss):
         return ret
 
 
+# directly compare predicts and its gts.
+class ConsistencyLoss3(_Loss):
+    "Current only support 3D volume"
+    __constants__ = ['reduction']
+
+    def __init__(self, lambdaCoeff=1, windowSize=5, size_average=None, reduce=None, reduction='mean'):
+        super().__init__(size_average, reduce, reduction)
+        self.m_lambda = lambdaCoeff
+        assert 1 == windowSize%2
+        self.m_windowSize= windowSize
+
+    def forward(self, predicts, gts):
+        N,_,X,Y,Z = predicts.size()
+        ret = torch.tensor(0.0).to(predicts.device)
+        m = self.m_windowSize//2  # margin
+        epsilon = 1e-8
+
+        # parallel GPU implement
+        # roll both featureTensor and predictProb, crop center, clip value, consine computation, sum, divided by 2.
+        nCount = 0
+        P1Full = predicts[:, 1, :, :, :]  # Now P1Full becomes 4D tensor (N, X, Y, Z).
+        P1 = P1Full[:,m:X-m, m:Y-m, m:Z-m]
+        G1 = gts[:,m:X-m, m:Y-m, m:Z-m]   #4D tensor (N, X, Y, Z).
+        for a in range(-m, m + 1):   # only shift half nodes around center node
+            for b in range(-m, a + 1):
+                for c in range(-m, m + 1):
+                    if (a == b and a > 0) or (a == b == 0 and c >= 0):
+                        continue
+                    P2 = torch.roll(P1Full, (a,b,c), dims=(1,2,3))
+                    G2 = torch.roll(gts, (a,b,c), dims=(1,2,3))
+                    P2 = P2[:,m:X-m, m:Y-m, m:Z-m]
+                    G2 = G2[:,m:X-m, m:Y-m, m:Z-m]
+                    P12 = P1-P2
+                    G12 = (G1-G2).float()           # groundtruth prob difference
+                    D = G12-P12
+                    ret += torch.sum(D*D)
+                    nCount +=1
+
+        ret = ret/(nCount*G1.numel())
+
+        return ret
 
 
 

@@ -73,6 +73,8 @@ Major program changes:
       Oct 12th, 2019
       1   change image window level to 100/50; relaunch training;
       2   change consistencyLoss to use ground truth for comparing diff of feature vector;
+      Oct 13th, 2019
+      1    use conistencyLoss3: ((G1-G2)-(P1-P2))**2 as loss.
        
       
 
@@ -109,7 +111,7 @@ def main():
     GPUIDList = [int(x) for x in GPUIDList]
     useConsistencyLoss = bool(int(sys.argv[7]))
     if useConsistencyLoss:
-        searchWindow = 3
+        searchWindow = 7
     else:
         searchWindow = 0
 
@@ -208,7 +210,7 @@ def main():
     # net.appendLossFunc(boundaryLoss, 0)
 
     if useConsistencyLoss:
-        net.m_labelConsistencyLoss = ConsistencyLoss2(lambdaCoeff=1, windowSize=searchWindow)
+        net.m_consistencyLoss = ConsistencyLoss3(lambdaCoeff=1, windowSize=searchWindow)
 
     # Load network
     netMgr = NetMgr(net, netPath, device)

@@ -15,7 +15,7 @@ class BasicModel(nn.Module):
         self.m_optimizer = None
         self.m_lossFuncList = []
         self.m_lossWeightList = []
-        self.m_labelConsistencyLoss = None
+        self.m_consistencyLoss = None
 
     def forward(self, x):
         pass

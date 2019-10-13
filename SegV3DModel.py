@@ -513,19 +513,20 @@ class SegV3DModel(BasicModel):
         x = self.m_up1Pooling(x) + x0
         x = self.m_up1(x) + x
 
+
+        '''
         if self.m_useConsistencyLoss:
             # featureTensor = x    #just use final feature before softmax
             featureTensor = torch.cat((inputs, x0, x), dim=1)   # use feature from the 2 ends of V model, plus input
-
+        '''
         outputs = self.m_up0(x)
 
-        '''
-        # use groundtruth for consistency loss, ignore this
+
         if self.m_useConsistencyLoss:
            xMaxDim1, _ = torch.max(outputs, dim=1, keepdim=True)
            xMaxDim1 = xMaxDim1.expand_as(outputs)
            predictProb = F.softmax(outputs - xMaxDim1, 1)  # use xMaxDim1 is to avoid overflow.
-        '''
+
 
 
         # compute loss (put loss here is to save main GPU memory)
@@ -537,6 +538,6 @@ class SegV3DModel(BasicModel):
             loss += lossFunc(outputs, gts) * weight
 
         if self.m_useConsistencyLoss:
-            loss += self.m_labelConsistencyLoss(featureTensor, gts)
+            loss += self.m_consistencyLoss(predictProb, gts)
 
         return outputs, loss
