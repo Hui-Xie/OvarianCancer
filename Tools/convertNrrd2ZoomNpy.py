@@ -12,15 +12,15 @@ import matplotlib.pyplot as plt
 
 
 suffix = "_pri.nrrd"
-inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd"
-inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels"
-outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy"
-outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI/labels_npy"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROI/nrrd_npy/readme.txt"
+inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd"
+inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels"
+outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy"
+outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy/readme.txt"
 
-goalSize = (51,171,171) # Z,Y,X in nrrd axis order for primaryROI dir
+# goalSize = (51,171,171) # Z,Y,X in nrrd axis order for primaryROI dir
 # goalSize = (51,149,149) # Z,Y,X in nrrd axis order at Sep 30th, 2019, for primaryROISmall dir.
-
+goalSize = (49,147,147) # Z,Y,X in nrrd axis order for primaryROI dir
 
 originalCwd = os.getcwd()
 os.chdir(inputImageDir)
@@ -34,7 +34,7 @@ for file in filesList:
     # for image data
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
-    image3d = np.clip(image3d, -100, 250)  # window level
+    image3d = np.clip(image3d, -135, 215)  # standard window level 350/40 in 3D slicer.
     image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
     imageShape = image3d.shape
     zoomFactor = [goalSize[0] / imageShape[0], goalSize[1] / imageShape[1], goalSize[2] / imageShape[2]]
