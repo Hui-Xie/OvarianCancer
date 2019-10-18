@@ -75,6 +75,9 @@ Major program changes:
       2   change consistencyLoss to use ground truth for comparing diff of feature vector;
       Oct 13th, 2019
       1    use conistencyLoss3: ((G1-G2)-(P1-P2))**2 as loss.
+      
+      Oct 18th, 2019
+      1   use 64 filters at the first layer;
        
       
 
@@ -128,10 +131,8 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    if useConsistencyLoss:
-        batchSize = 1 * len(GPUIDList)
-    else:
-        batchSize = 2 * len(GPUIDList)
+    batchSize = 1 * len(GPUIDList)
+
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
