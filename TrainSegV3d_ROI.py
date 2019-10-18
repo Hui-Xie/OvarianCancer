@@ -77,7 +77,9 @@ Major program changes:
       1    use conistencyLoss3: ((G1-G2)-(P1-P2))**2 as loss.
       
       Oct 18th, 2019
-      1   use 64 filters at the first layer;
+      1   use 48 filters at the first layer with inputsize 49*147*147 with scaled ROI.
+       
+      
        
       
 

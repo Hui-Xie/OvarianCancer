@@ -18,7 +18,7 @@ class SegV3DModel(BasicModel):
         self.m_useSpectralNorm = True
         self.m_useLeakyReLU = True
         self.m_useConsistencyLoss = useConsistencyLoss
-        N = 64  # the filter number of the 1st layer
+        N = 48  # the filter number of the 1st layer
         # downxPooling layer is responsible change shape of feature map and number of filters.
         self.m_down0Pooling = nn.Sequential(
             Conv3dBlock(1, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
