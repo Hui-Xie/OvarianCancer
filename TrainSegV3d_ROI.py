@@ -78,6 +78,10 @@ Major program changes:
       
       Oct 18th, 2019
       1   use 48 filters at the first layer with inputsize 49*147*147 with scaled ROI.
+      
+      Oct 20th, 2019
+      1   at final output layer of V model, change 1*1*1 conv to 5*5*5 conv, in order to consider context for final output
+      
        
       
        
