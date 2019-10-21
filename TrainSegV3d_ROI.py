@@ -392,6 +392,16 @@ def main():
                 testLoss /= testBatches
             testDice = testDice / nSample
 
+        # =============save net parameters before output txt==============
+        if trainingLoss < float('inf') and not math.isnan(trainingLoss):
+            netMgr.saveNet()
+            if epoch >= 1000 and \
+                    (validationDice > bestTestPerf or (
+                            validationDice == bestTestPerf and validationLoss < oldTestLoss)):
+                oldTestLoss = validationLoss
+                bestTestPerf = validationDice
+                netMgr.saveBest(bestTestPerf)
+
         # ===========print train and test progress===============
         learningRate = net.module.getLR() if useDataParallel else net.getLR()
         outputString = f'{epoch}' + f'\t{learningRate:1.4e}'
@@ -400,14 +410,7 @@ def main():
         outputString += f'\t\t{testLoss:.4f}' + f'\t\t{testDice:.5f}'
         logging.info(outputString)
 
-        # =============save net parameters==============
-        if trainingLoss < float('inf') and not math.isnan(trainingLoss):
-            netMgr.saveNet()
-            if epoch >=1000 and \
-                (validationDice  > bestTestPerf or (validationDice == bestTestPerf and validationLoss < oldTestLoss) ):
-                oldTestLoss = validationLoss
-                bestTestPerf = validationDice
-                netMgr.saveBest(bestTestPerf)
+
 
     torch.cuda.empty_cache()
     logging.info(f"\n\n=============END of Training of ResNeXt V Model =================")
