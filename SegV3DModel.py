@@ -168,8 +168,8 @@ class SegV3DModel(BasicModel):
         )
 
         self.m_up0 = nn.Sequential(
-            # nn.Conv3d(N, 2, kernel_size=1, stride=1, padding=0)   # conv 1*1*1
-            nn.Conv3d(N, 2, kernel_size=5, stride=1, padding=2)  # conv 5*5*5
+            nn.Conv3d(N, 2, kernel_size=1, stride=1, padding=0)   # conv 1*1*1
+            # nn.Conv3d(N, 2, kernel_size=5, stride=1, padding=2)  # conv 5*5*5
         )  # output size:2*49*147*147
 
         '''
