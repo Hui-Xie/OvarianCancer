@@ -391,3 +391,46 @@ class DistanceCrossEntropyLoss(_Loss):
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
         return ret * self.m_lambda
+
+
+class GeneralizedDiceLoss(_Loss):
+    """
+     please refer paper "Generalised Dice overlap as a deep learning loss function for highly unbalanced segmentations"
+     at link: https://arxiv.org/pdf/1707.03237.pdf
+
+     Current only support binary segmentation.
+
+    """
+    __constants__ = ['reduction']
+
+    def __init__(self, lambdaCoeff=1, size_average=None, reduce=None, reduction='mean'):
+        super().__init__(size_average, reduce, reduction)
+        self.m_lambda=lambdaCoeff # weight coefficient of whole loss function
+
+    def forward(self, inputx, target):
+        inputxMaxDim1, _= torch.max(inputx, dim=1, keepdim=True)
+        inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
+        softmaxInput = F.softmax(inputx-inputxMaxDim1, 1)  #use inputMaxDim1 is to avoid overflow.
+
+        batchSize = target.shape[0]
+        N = target.numel()/batchSize
+        sampleDims = tuple(range(1, target.dim()))
+
+        # all variables below include batch dimension
+        P = torch.narrow(softmaxInput, dim=1,start=1,length=1)
+        T = target
+        N = torch.ones((batchSize,1))*N
+        N1 = torch.sum(T, dim=sampleDims)
+        N2 = N-N1
+        w1 =  1/(N1*N1)
+        w2 =  1/(N2*N2)
+
+        PPlusT = torch.sum(P+T, dim=sampleDims)
+        PTimesT = torch.sum(P*T, dim=sampleDims)
+        numerator = (w1+w2)*PTimesT-w2*PPlusT+N*w2
+        denominator = (w1-w2)*PPlusT + 2*N*w2
+        ret = 1.0-2.0*numerator/denominator  # GDL in batch 
+
+        if self.reduction != 'none':
+            ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
+        return ret*self.m_lambda

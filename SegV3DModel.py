@@ -15,7 +15,8 @@ class SegV3DModel(BasicModel):
         # For input image size: 49*147*147 (zyx in nrrd format)
         # at Oct 5th, 2019, Saturday
         #
-        self.m_useSpectralNorm = True
+        # todo change pooling 3*3*3 into 2*2*2 with stride 2.
+        self.m_useSpectralNorm = False
         self.m_useLeakyReLU = True
         self.m_useConsistencyLoss = useConsistencyLoss
         N = 48  # the filter number of the 1st layer
