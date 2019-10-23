@@ -82,7 +82,9 @@ Major program changes:
       Oct 20th, 2019
       1   at final output layer of V model, change 1*1*1 conv to 5*5*5 conv, in order to consider context for final output
       
-       
+      Oct 23th, 2019
+      1   change to MaxPool with 2*2*2 with stride 2;
+        
       
        
       

@@ -429,7 +429,7 @@ class GeneralizedDiceLoss(_Loss):
         PTimesT = torch.sum(P*T, dim=sampleDims)
         numerator = (w1+w2)*PTimesT-w2*PPlusT+N*w2
         denominator = (w1-w2)*PPlusT + 2*N*w2
-        ret = 1.0-2.0*numerator/denominator  # GDL in batch 
+        ret = 1.0-2.0*numerator/denominator  # GDL in batch
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
