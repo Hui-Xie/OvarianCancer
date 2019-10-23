@@ -84,6 +84,7 @@ Major program changes:
       
       Oct 23th, 2019
       1   change to MaxPool with 2*2*2 with stride 2;
+      2   Loss use GeneralizedDiceLoss function;
         
       
        
@@ -213,8 +214,9 @@ def main():
     net.setOptimizer(optimizer)
 
     lossWeight = dataPartitions.getLossWeight()
-    ceLoss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
-    net.appendLossFunc(ceLoss, 1)
+    # loss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
+    loss = GeneralizedDiceLoss()
+    net.appendLossFunc(loss, 1)
     # boundaryLoss = BoundaryLoss1(weight=lossWeight)
     # net.appendLossFunc(boundaryLoss, 0)
 
