@@ -7,8 +7,8 @@ from FilesUtilities import *
 import matplotlib.pyplot as plt
 from scipy.ndimage.morphology import binary_dilation
 
-imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy"
-labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy"
+imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
+labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
 
 suffix = ".npy"
 originalCwd = os.getcwd()

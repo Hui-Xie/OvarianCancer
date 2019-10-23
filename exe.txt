@@ -91,3 +91,14 @@ Oct 18th, 2019:
 retrain with 64 filters at the 1st layer and inputsize 49*147*147
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROISmall/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROISmall/labels_npy  0  1  0 &
 
+
+Oct 23th, 2019:
+retrain with 48 filters at the 1st layer and inputsize 49*147*147 with fixed physical size.
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  0  1  0 &
+
+
+
+
+
+
+
