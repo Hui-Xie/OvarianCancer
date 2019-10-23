@@ -418,17 +418,18 @@ class GeneralizedDiceLoss(_Loss):
 
         # all variables below include batch dimension
         P = torch.narrow(softmaxInput, dim=1,start=1,length=1)
-        T = target
-        N = torch.ones((batchSize,1))*N
-        N1 = torch.sum(T, dim=sampleDims)
+        P = torch.squeeze(P, dim=1)
+        T = target.type(torch.float32)
+        N = torch.ones((batchSize,1), device=inputx.device, dtype=torch.float32)*N
+        N1 = torch.sum(T, dim=sampleDims).type(torch.float32)
         N2 = N-N1
-        w1 =  1/(N1*N1)
-        w2 =  1/(N2*N2)
+        w1 =  1.0/(N1*N1)
+        w2 =  1.0/(N2*N2)
 
         PPlusT = torch.sum(P+T, dim=sampleDims)
         PTimesT = torch.sum(P*T, dim=sampleDims)
         numerator = (w1+w2)*PTimesT-w2*PPlusT+N*w2
-        denominator = (w1-w2)*PPlusT + 2*N*w2
+        denominator = (w1-w2)*PPlusT + 2.0*N*w2
         ret = 1.0-2.0*numerator/denominator  # GDL in batch
 
         if self.reduction != 'none':
