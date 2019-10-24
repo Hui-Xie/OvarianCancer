@@ -27,6 +27,8 @@ def main():
 
     netPath = sys.argv[1]
     timeStr = getStemName(netPath)
+    if timeStr == "Best":
+        timeStr = getStemName(netPath.replace("/Best", ""))
 
     dataInputsPath = sys.argv[2]
     responseFile = sys.argv[3]

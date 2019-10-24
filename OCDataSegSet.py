@@ -13,7 +13,7 @@ import torch
 from torch.utils import data
 
 class OVDataSegPartition():
-    def __init__(self, inputDataDir, inputLabelDir=None, inputSuffix="", K_fold=5, k=0, logInfoFun=print):
+    def __init__(self, inputDataDir, inputLabelDir=None, inputSuffix="", K_fold=0, k=0, logInfoFun=print):
         self.m_inputDataDir = inputDataDir
         self.m_inputDataListFile = os.path.join(self.m_inputDataDir, "inputFilesList.txt")
         self.m_inputLabelDir = inputLabelDir
@@ -38,25 +38,29 @@ class OVDataSegPartition():
     def partition(self):
         N = len(self.m_inputFilesList)
         self.m_filesIndex = list(range(N))
-
-        random.seed(201908)
-        random.shuffle(self.m_filesIndex)
-
-        folds = np.array_split(np.asarray(self.m_filesIndex), self.m_KFold)
-
         self.m_partitions = {}
-        k = self.m_k
-        K = self.m_KFold
-        self.m_partitions["fulldata"] = self.m_filesIndex
-        self.m_partitions["test"] = folds[k].tolist()
-        k1 = (k+1)% K  # validation k
-        self.m_partitions["validation"] = folds[k1].tolist()
-        self.m_partitions["training"] = []
-        for i in range(K):
-            if i != k and i != k1:
-                self.m_partitions["training"] += folds[i].tolist()
-        if self.m_inputLabelDir is  not None:
-            self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
+
+        if 0 == self.m_KFold or 1 == self.m_KFold:
+            self.m_partitions["all"] = self.m_filesIndex
+            self.m_logInfo(f"All files are in one partition.")
+        else:
+            random.seed(201908)
+            random.shuffle(self.m_filesIndex)
+
+            folds = np.array_split(np.asarray(self.m_filesIndex), self.m_KFold)
+
+            k = self.m_k
+            K = self.m_KFold
+            self.m_partitions["fulldata"] = self.m_filesIndex
+            self.m_partitions["test"] = folds[k].tolist()
+            k1 = (k+1)% K  # validation k
+            self.m_partitions["validation"] = folds[k1].tolist()
+            self.m_partitions["training"] = []
+            for i in range(K):
+                if i != k and i != k1:
+                    self.m_partitions["training"] += folds[i].tolist()
+            if self.m_inputLabelDir is  not None:
+                self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
 
     def getLossWeight(self):
         count1 = 0
