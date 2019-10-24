@@ -476,7 +476,7 @@ class SegV3DModel(BasicModel):
 
 
 
-    def forward(self, inputs, gts):
+    def forward(self, inputs, gts=None, halfForward=False):
         # compute outputs
         x0 = self.m_down0Pooling(inputs)
         # x0 = self.m_down0(x0) + x0    # this residual link hurts dice performance.
@@ -498,6 +498,9 @@ class SegV3DModel(BasicModel):
         x5 = torch.squeeze(x5, dim=2)
         x5 = self.m_down5Pooling2(x5)
         x5 = self.m_down5(x5) + x5  # bottom neck output
+
+        if halfForward:
+            return x5
 
         x = torch.unsqueeze(x5, dim=2)
         x = self.m_up5Pooling(x) + x4

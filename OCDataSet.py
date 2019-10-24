@@ -11,7 +11,10 @@ import torch
 from torch.utils import data
 
 class OVDataPartition():
-    def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold, k, logInfoFun=print):
+    """
+    here: labelsPath is the response file path
+    """
+    def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold=0, k=0, logInfoFun=print):
         self.m_inputsDir = inputsDir
         self.m_inputFilesListFile = os.path.join(self.m_inputsDir, "inputFilesList.txt")
         self.m_labelsPath = labelsPath
@@ -64,28 +67,29 @@ class OVDataPartition():
                 + f"where positive response rate = {len(self.m_1FileIndices) / len(self.m_labelsList)} in full data")
 
     def partition(self):
-        N = len(self.m_labelsList)
-        N0 = len(self.m_0FileIndices)
-        N1 = len(self.m_1FileIndices)
-
-        random.seed(201908)
-        random.shuffle(self.m_0FileIndices)
-        random.shuffle(self.m_1FileIndices)
-
-        folds0 = np.array_split(np.asarray(self.m_0FileIndices), self.m_KFold)
-        folds1 = np.array_split(np.asarray(self.m_1FileIndices), self.m_KFold)
-
         self.m_partitions = {}
-        k = self.m_k
-        K = self.m_KFold
-        self.m_partitions["test"] = folds0[k].tolist() + folds1[k].tolist()
-        k1 = (k+1)% K  # validation k
-        self.m_partitions["validation"] = folds0[k1].tolist() + folds1[k1].tolist()
-        self.m_partitions["training"] = []
-        for i in range(K):
-            if i != k and i != k1:
-                self.m_partitions["training"] += folds0[i].tolist() + folds1[i].tolist()
-        self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
+
+        if 0==self.m_KFold or 1==self.m_KFold:
+            self.m_partitions["all"] = self.m_0FileIndices + self.m_1FileIndices
+            self.m_logInfo(f"All files are in one partition.")
+        else:
+            random.seed(201908)
+            random.shuffle(self.m_0FileIndices)
+            random.shuffle(self.m_1FileIndices)
+
+            folds0 = np.array_split(np.asarray(self.m_0FileIndices), self.m_KFold)
+            folds1 = np.array_split(np.asarray(self.m_1FileIndices), self.m_KFold)
+
+            k = self.m_k
+            K = self.m_KFold
+            self.m_partitions["test"] = folds0[k].tolist() + folds1[k].tolist()
+            k1 = (k+1)% K  # validation k
+            self.m_partitions["validation"] = folds0[k1].tolist() + folds1[k1].tolist()
+            self.m_partitions["training"] = []
+            for i in range(K):
+                if i != k and i != k1:
+                    self.m_partitions["training"] += folds0[i].tolist() + folds1[i].tolist()
+            self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
 
 
 
@@ -122,8 +126,9 @@ class OVDataSet(data.Dataset):
 
         if self.m_transform:
             data = self.m_transform(data)
-
-        return data, label, patientID
+        else:
+            data = torch.from_numpy(data)
+        return data.unsqueeze(dim=0), label, patientID
 
     def getLabels(self, dataIDs):
         labels = []
