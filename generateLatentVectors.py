@@ -70,7 +70,7 @@ def main():
                 output = outputs[i].cpu().detach().numpy()
                 if 0 == np.std(output):
                     logging.info(f"patientID {patientIDs[i]} has latent vector of full zero.")
-                np.save(os.path.join(outputPath, patientIDs[i] + f"_R{labels[i]:1d}.npy"), output)
+                np.save(os.path.join(outputPath, patientIDs[i] + ".npy"), output)
 
     torch.cuda.empty_cache()
     print(f'Program ID {os.getpid()}  exits.\n')
