@@ -15,26 +15,15 @@ from SegV3DModel import SegV3DModel
 from OCDataTransform import *
 from NetMgr import NetMgr
 
-logNotes = r'''
-Major program changes: 
-      1  test SegV3d model for all validation and test files;
-      2  output the dice coefficient for each file;
-
-Discarded changes:                  
-
-
-          '''
-
-
 def printUsage(argv):
     print("============Test Seg 3D VNet for ROI around primary Cancer =============")
     print("Usage:")
     print(argv[0],
-          "<netSavedPath> <predictOutputDir> <fullPathOfData>  <fullPathOfLabel> <k>  <GPUID_List>")
+          "<netSavedPath> <predictOutputDir> <fullPathOfData>  <fullPathOfLabel> <k>  <GPUID>")
     print("where: \n"
           "       netSavedPath must be specific network directory.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
-          "       GPUIDList: 0,1,2,3, the specific GPU ID List, separated by comma\n")
+          "       GPUID:    on of 0,1,2,3, the specific GPU ID List, separated by comma\n")
 
 
 def main():
@@ -48,12 +37,8 @@ def main():
     dataInputsPath = sys.argv[3]
     groundTruthPath = sys.argv[4]
     k = int(sys.argv[5])
-    GPUIDList = sys.argv[6].split(',')  # choices: 0,1,2,3 for lab server.
-    GPUIDList = [int(x) for x in GPUIDList]
+    GPUID = int(sys.argv[6])  # choices: 0,1,2,3 for lab server.
     useConsistencyLoss = False
-    # ===========debug==================
-    useDataParallel = True if len(GPUIDList) > 1 else False  # for debug
-    # ===========debug==================
 
     print(f'Program ID:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
@@ -61,19 +46,15 @@ def main():
 
     inputSuffix = ".npy"
     K_fold = 6
-    batchSize = 2 * len(GPUIDList)-1
+    batchSize = 3
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
-    device = torch.device(f"cuda:{GPUIDList[0]}" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{GPUID[0]}" if torch.cuda.is_available() else "cpu")
 
     timeStr = getStemName(netPath)
     if timeStr == "Best":
         timeStr = getStemName(netPath.replace("/Best", ""))
-    logFile = os.path.join(predictOutputDir, f"predict_CV{k:d}_{timeStr}.txt")
-    print(f'Test log is in {logFile}')
-
-    logging.basicConfig(filename=logFile, filemode='a+', level=logging.INFO, format='%(message)s')
 
     dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k)
     validationTransform = OCDataLabelTransform(0)
@@ -90,21 +71,9 @@ def main():
 
     # Load network
     netMgr = NetMgr(net, netPath, device)
+    netMgr.loadNet("test")
 
-    if 2 == len(getFilesList(netPath, ".pt")):
-        netMgr.loadNet("test")
-        bestTestPerf = netMgr.loadBestTestPerf()
-        print(f"Best validation dice: {bestTestPerf}")
-    else:
-        print (f"Error net path, program can not load")
-        return -2
-
-    if useDataParallel:
-        net = nn.DataParallel(net, device_ids=GPUIDList, output_device=device)
-
-    logging.info(f"ID" + f"\t\tDice")  # logging.info output head
-
-
+    patientDiceMap = {}
     # ================Validation===============
     net.eval()
 
@@ -125,9 +94,10 @@ def main():
                 dice = tensorDice(output, gt)
                 filename = os.path.join(predictOutputDir, patientIDs[i]+".npy")
                 np.save(filename, output.cpu().numpy())
-                logging.info(patientIDs[i] +f"\t{dice:.5f}")
+                patientDiceMap[patientIDs[i]]= dice
 
     # ================Independent Test===============
+
     net.eval()
     with torch.no_grad():
         for inputs, labels, patientIDs in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
@@ -146,7 +116,14 @@ def main():
                 dice = tensorDice(output, gt)
                 filename = os.path.join(predictOutputDir, patientIDs[i] + ".npy")
                 np.save(filename, output.cpu().numpy())
-                logging.info(patientIDs[i] + f"\t{dice:.5f}")
+                patientDiceMap[patientIDs[i]]= dice
+
+    # output Surgical dictionary
+    jsonData = json.dumps(patientDiceMap)
+    outfile = os.path.join(predictOutputDir, "patientDice.json")
+    f = open(outfile, "w")
+    f.write(jsonData)
+    f.close()
 
     torch.cuda.empty_cache()
     print(f"\n\n=============END of Test of SegV3d ROI Model =================")

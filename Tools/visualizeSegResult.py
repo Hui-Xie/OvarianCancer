@@ -7,13 +7,14 @@ import matplotlib.pyplot as plt
 sys.path.append("..")
 from FilesUtilities import *
 from scipy.ndimage.morphology import binary_dilation
+import  json
 
 def main():
     imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
     groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
     predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult"
     outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/color"
-    diceFile = os.path.join(predictDir, "predict_CV5_20191011_170356.txt")   # need to modify
+    diceFile = os.path.join(predictDir, "patientDice.json")   # need to modify
 
     suffix = ".npy"
     originalCwd = os.getcwd()
@@ -22,18 +23,10 @@ def main():
     os.chdir(originalCwd)
 
     # read dice data
-    ID_Dice={}
-    with open(diceFile) as file:
-        data = file.read()
-        lines = data.splitlines()
-        lines.pop(0)   #erase tabel head.
-
-        for line in lines:
-            line = line.replace('\t\t','\t')
-            row = line.split('\t')
-            if len(row) ==2:
-                ID_Dice[row[0]] = float(row[1])
-
+    ID_Dice = {}
+    with open(diceFile) as f:
+        ID_Dice = json.load(f)
+        
     dilateFilter = np.ones((3,3), dtype=int)  # dilation filter for for 4-connected boundary in 2D
     nFigs = 0
     for file in filesList:

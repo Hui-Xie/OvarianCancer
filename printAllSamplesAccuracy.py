@@ -38,7 +38,7 @@ def main():
     print(f'.........')
 
     inputSuffix = ".npy"
-    batchSize = 10
+    batchSize = 3
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
