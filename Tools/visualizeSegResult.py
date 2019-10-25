@@ -26,7 +26,7 @@ def main():
     ID_Dice = {}
     with open(diceFile) as f:
         ID_Dice = json.load(f)
-        
+
     dilateFilter = np.ones((3,3), dtype=int)  # dilation filter for for 4-connected boundary in 2D
     nFigs = 0
     for file in filesList:

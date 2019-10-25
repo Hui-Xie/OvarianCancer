@@ -85,6 +85,9 @@ Major program changes:
       Oct 23th, 2019
       1   change to MaxPool with 2*2*2 with stride 2;
       2   Loss use GeneralizedDiceLoss function;
+      
+      Oct 25th, 2019
+      1   add trainAllData switch
         
       
        
@@ -126,6 +129,7 @@ def main():
         searchWindow = 7
     else:
         searchWindow = 0
+    trainAllData = True
 
     # addBoundaryLoss = True
 
@@ -189,19 +193,26 @@ def main():
         lastEpoch = int(lastRow[0])
         print(f"=============Training inheritates previous training at {netPath} ============")
 
-    dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k,
+    trainTransform = OCDataLabelTransform(0.6)
+
+    if trainAllData:
+        dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold=0, k=0,
+                                            logInfoFun=logging.info if scratch > 0 else print)
+        trainingData = OVDataSegSet('all', dataPartitions, transform=trainTransform,
+                                    logInfoFun=logging.info if scratch > 0 else print)
+    else:
+        dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k,
                                      logInfoFun=logging.info if scratch > 0 else print)
 
-    trainTransform = OCDataLabelTransform(0.6)
-    validationTransform = OCDataLabelTransform(0)
-    testTransform = OCDataLabelTransform(0)
+        validationTransform = OCDataLabelTransform(0)
+        testTransform = OCDataLabelTransform(0)
 
-    trainingData = OVDataSegSet('training', dataPartitions, transform=trainTransform,
+        trainingData = OVDataSegSet('training', dataPartitions, transform=trainTransform,
+                                 logInfoFun=logging.info if scratch > 0 else print)
+        validationData = OVDataSegSet('validation', dataPartitions, transform=validationTransform,
+                                   logInfoFun=logging.info if scratch > 0 else print)
+        testData = OVDataSegSet('test', dataPartitions, transform=testTransform,
                              logInfoFun=logging.info if scratch > 0 else print)
-    validationData = OVDataSegSet('validation', dataPartitions, transform=validationTransform,
-                               logInfoFun=logging.info if scratch > 0 else print)
-    testData = OVDataSegSet('test', dataPartitions, transform=testTransform,
-                         logInfoFun=logging.info if scratch > 0 else print)
 
     net = SegV3DModel(useConsistencyLoss=useConsistencyLoss)
     # Important:
@@ -213,7 +224,7 @@ def main():
     # optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lossWeight = dataPartitions.getLossWeight()
+    # lossWeight = dataPartitions.getLossWeight()
     # loss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     loss = GeneralizedDiceLoss()
     net.appendLossFunc(loss, 1)
@@ -322,6 +333,25 @@ def main():
 
         if epoch % 5 != 0:
             continue  # only epoch %5 ==0, run validation set.
+
+        if trainAllData:
+            lrScheduler.step(trainingLoss)
+            # =============save net parameters before output txt==============
+            if trainingLoss < float('inf') and not math.isnan(trainingLoss):
+                netMgr.saveNet()
+                if epoch >= 1000 and \
+                        (trainingDice > bestTestPerf or (
+                                trainingDice == bestTestPerf and trainingLoss < oldTestLoss)):
+                    oldTestLoss = trainingLoss
+                    bestTestPerf = trainingDice
+                    netMgr.saveBest(bestTestPerf)
+
+            # ===========print train and test progress===============
+            learningRate = net.module.getLR() if useDataParallel else net.getLR()
+            outputString = f'{epoch}' + f'\t{learningRate:1.4e}'
+            outputString += f'\t\t{trainingLoss:.4f}' + f'\t\t{trainingDice:.5f}'
+            logging.info(outputString)
+            continue
 
         # ================Validation===============
         net.eval()
