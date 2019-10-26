@@ -31,6 +31,7 @@ def main():
     response1Rate= []
     minAccuracy  = []
     meanAccuracy = []
+    medianAccuracy = []
     maxAccuracy  = []
     numBestFeatures = []  # num of features whose predicted accuracy is greater than specific threshold
 
@@ -82,6 +83,7 @@ def main():
 
         minAccuracy.append(accuracyX.min())
         meanAccuracy.append(accuracyX.mean())
+        medianAccuracy.append(np.median(accuracyX))
         maxAccuracy.append(accuracyX.max())
 
         accuracyBig = accuracyX >=accuracyThreshold
@@ -94,6 +96,7 @@ def main():
     print(f"Rate of Response 1:     {response1Rate}")
     print(f"minAccuracy:            {minAccuracy}")
     print(f"meanAccuracy:           {meanAccuracy}")
+    print(f"medianAccuracy:         {medianAccuracy}")
     print(f"maxAccuracy:            {maxAccuracy}")
     print(f"num of Best Features:   {numBestFeatures}")
     nFeatures = F*H*W
@@ -105,9 +108,10 @@ def main():
     f = plt.figure(1)
     plt.plot(diceThresholdList, minAccuracy)
     plt.plot(diceThresholdList, meanAccuracy)
+    plt.plot(diceThresholdList, medianAccuracy)
     plt.plot(diceThresholdList, maxAccuracy)
     plt.plot(diceThresholdList, response1Rate)
-    plt.legend(('Min', 'Mean', 'Max', 'resp1Rate'))
+    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate'))
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')
