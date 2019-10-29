@@ -88,6 +88,10 @@ Major program changes:
       
       Oct 25th, 2019
       1   add trainAllData switch
+      
+      Oct 29th, 2019
+      1   revise reduce learnging rate at training loss;
+      2   reduce min_lr = 1e-9
         
       
        
@@ -256,7 +260,7 @@ def main():
         lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
     '''
     # lrScheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=mileStones, gamma=0.1, last_epoch=lastEpoch)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.1, patience=10)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.1, patience=10, min_lr=1e-9)
 
 
     if useDataParallel:
@@ -333,9 +337,10 @@ def main():
 
         if epoch % 5 != 0:
             continue  # only epoch %5 ==0, run validation set.
+        else:
+            lrScheduler.step(trainingLoss)
 
         if trainAllData:
-            lrScheduler.step(trainingLoss)
             # =============save net parameters before output txt==============
             if trainingLoss < float('inf') and not math.isnan(trainingLoss):
                 netMgr.saveNet()
@@ -386,7 +391,7 @@ def main():
 
             if 0 != validationBatches:
                 validationLoss /= validationBatches
-            lrScheduler.step(validationLoss)
+
             validationDice = validationDice / nSample
 
 
