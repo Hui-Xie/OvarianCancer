@@ -100,6 +100,8 @@ Oct 30th, 2019
 generate all latent vector from a 94% full data trainning network:
 nohup python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191025_102445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent  3 &
 
+print all sample accuracy:
+nohup python3.7 printAllSamplesAccuracy.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191025_102445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  3 &
 
 
 

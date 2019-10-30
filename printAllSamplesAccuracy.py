@@ -48,6 +48,15 @@ def main():
     if timeStr == "Best":
         timeStr = getStemName(netPath.replace("/Best", ""))
 
+    # avoid overwriting predictResult vector dir
+    predictOutputDir = os.path.join(predictOutputDir, timeStr)
+    if not os.path.exists(predictOutputDir):
+        os.mkdir(predictOutputDir)
+    else:
+        if len(os.listdir(predictOutputDir)) != 0:
+            print(f"{predictOutputDir} contains files. You need to delete or move them out first.\n")
+            return -1
+
     dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold=0, k=0,logInfoFun=print)
     allData = OVDataSegSet('all', dataPartitions, transform=None)
 
