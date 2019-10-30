@@ -119,7 +119,7 @@ def main():
     plt.plot(diceThresholdList, maxAccuracy)
     plt.plot(diceThresholdList, response1Rate)
     plt.plot(diceThresholdList, averageDiceSamples)
-    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate', 'avgDice'))
+    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate', 'avgDice'), loc='upper left')
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')
