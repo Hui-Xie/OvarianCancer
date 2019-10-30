@@ -4,7 +4,7 @@ dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult
 latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191025_102445"
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 
-aList = range(0,85,2)  #dice range 0% to 80%, step 2%
+aList = range(0,85,2)  #dice range 0% to 85%, step 2%
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.71  # for each feature
 F,H,W = 1536,3,3  #Features, Height, Width of latent vector
@@ -29,6 +29,7 @@ def main():
 
     validationSamples = []
     response1Rate= []
+    averageDiceSamples = []
     minAccuracy  = []
     meanAccuracy = []
     medianAccuracy = []
@@ -36,12 +37,17 @@ def main():
     numBestFeatures = []  # num of features whose predicted accuracy is greater than specific threshold
 
     for diceThreshold in diceThresholdList:
-        patientDice = rawPatientDice
+        patientDice = rawPatientDice.copy()
         for key in list(patientDice):
             if patientDice[key] < diceThreshold:
                 del patientDice[key]
         N = len(patientDice)
         validationSamples.append(N)
+
+        dices = 0.0
+        for dice in patientDice.values():
+            dices += dice
+        averageDiceSamples.append(dices/N)
 
         # get response vector and assemble latent Vectors
         X = np.empty((F, H, W, N), dtype=np.float)  # latent vectors
@@ -93,6 +99,7 @@ def main():
     # print table:
     print(f"dice threshold list:    {diceThresholdList}")
     print(f"validation patients:    {validationSamples}")
+    print(f"avgDice of validaiton:  {averageDiceSamples}")
     print(f"Rate of Response 1:     {response1Rate}")
     print(f"minAccuracy:            {minAccuracy}")
     print(f"meanAccuracy:           {meanAccuracy}")
@@ -111,7 +118,8 @@ def main():
     plt.plot(diceThresholdList, medianAccuracy)
     plt.plot(diceThresholdList, maxAccuracy)
     plt.plot(diceThresholdList, response1Rate)
-    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate'))
+    plt.plot(diceThresholdList, averageDiceSamples)
+    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate', 'avgDice'))
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')
