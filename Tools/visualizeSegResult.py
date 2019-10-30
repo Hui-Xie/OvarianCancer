@@ -12,8 +12,8 @@ import  json
 def main():
     imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
     groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
-    predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult"
-    outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/color"
+    predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191025_102445"
+    outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191025_102445/color"
     diceFile = os.path.join(predictDir, "patientDice.json")   # need to modify
 
     suffix = ".npy"

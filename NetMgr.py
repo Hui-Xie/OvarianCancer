@@ -10,9 +10,13 @@ class NetMgr:
         if not os.path.exists(self.m_netPath):
             os.mkdir(self.m_netPath)
         self.m_device = device
-        self.m_netBestPath = os.path.join(self.m_netPath, 'Best')
-        if not os.path.exists(self.m_netBestPath):
-            os.mkdir(self.m_netBestPath)
+
+        if 'Best' == os.path.basename(netPath):
+            self.m_netBestPath = netPath
+        else:
+            self.m_netBestPath = os.path.join(self.m_netPath, 'Best')
+            if not os.path.exists(self.m_netBestPath):
+                os.mkdir(self.m_netBestPath)
 
     def saveNet(self, netPath=None):
         netPath = self.m_netPath if netPath is None else netPath
