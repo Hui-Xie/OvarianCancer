@@ -22,6 +22,9 @@ def main():
     filesList = [os.path.abspath(x) for x in os.listdir(predictDir) if suffix in x]
     os.chdir(originalCwd)
 
+    if not os.path.exists(outputDir):
+        os.mkdir(outputDir)
+
     # read dice data
     ID_Dice = {}
     with open(diceFile) as f:
