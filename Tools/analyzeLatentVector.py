@@ -22,6 +22,7 @@ def main():
     # filter Dice
     with open(dicesFilePath) as f:
         rawPatientDice = json.load(f)
+    print(f"latent dir: {latentVectorDir}")
     print(f"There are total {len(rawPatientDice)} patients.")
     print(f"Each patient has a latent vector of size {(F,H,W)}")
     print(f"Each feature alone predicts its response through a least square regression along patients dimension.")
@@ -119,6 +120,7 @@ def main():
     plt.plot(diceThresholdList, maxAccuracy)
     plt.plot(diceThresholdList, response1Rate)
     plt.plot(diceThresholdList, averageDiceSamples)
+    plt.set_ylim([0, 1.0])
     plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate', 'avgDice'), loc='upper left')
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
@@ -127,6 +129,7 @@ def main():
 
     f = plt.figure(2)
     plt.plot(diceThresholdList, rateBestFeatures)
+    plt.set_ylim([0, 1.0])
     plt.title(f"Rate of Best Features on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Rate of Best Features')
