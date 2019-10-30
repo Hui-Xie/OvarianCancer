@@ -96,6 +96,9 @@ Oct 23th, 2019:
 retrain with 48 filters at the 1st layer and inputsize 49*147*147 with fixed physical size.
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  0  1  0 &
 
+Oct 30th, 2019
+generate all latent vector from a 94% full data trainning network:
+nohup python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191025_102445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent  3 &
 
 
 
