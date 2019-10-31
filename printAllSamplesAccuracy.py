@@ -57,8 +57,9 @@ def main():
             print(f"{predictOutputDir} contains files. You need to delete or move them out first.\n")
             return -1
 
+    allTransform = OCDataLabelTransform(0)
     dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold=0, k=0,logInfoFun=print)
-    allData = OVDataSegSet('all', dataPartitions, transform=None)
+    allData = OVDataSegSet('all', dataPartitions, transform=allTransform)
 
     net = SegV3DModel(useConsistencyLoss=useConsistencyLoss)
     # Important:
