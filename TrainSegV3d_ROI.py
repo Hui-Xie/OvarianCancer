@@ -92,6 +92,9 @@ Major program changes:
       Oct 29th, 2019
       1   revise reduce learnging rate at training loss;
       2   reduce min_lr = 1e-9
+      
+      Nov 1th, 2019
+      1   erase batchNorm, for training.
         
       
        
