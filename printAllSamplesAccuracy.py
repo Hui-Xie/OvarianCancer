@@ -38,7 +38,7 @@ def main():
     print(f'.........')
 
     inputSuffix = ".npy"
-    batchSize = 3
+    batchSize = 1   # make it same with training process.
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -73,7 +73,7 @@ def main():
 
     patientDiceMap= {}
     # ================Validation===============
-    net.eval()
+    net.train()  # even in reference stage.
 
     with torch.no_grad():
         for inputs, labels, patientIDs in data.DataLoader(allData, batch_size=batchSize, shuffle=False, num_workers=numWorkers):
