@@ -6,7 +6,8 @@ dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult
 latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191025_102445"
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 
-aList = range(0,85,2)  #dice range 0% to 85%, step 2%
+# aList = range(0,85,2)  #dice range 0% to 85%, step 2%
+aList = range(92,97,1)  #dice range 92% to 97%, step 1%
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.71  # for each feature
 F,H,W = 1536,3,3  #Features, Height, Width of latent vector
@@ -144,7 +145,7 @@ def main():
     plt.plot(diceThresholdList, response1Rate)
     plt.plot(diceThresholdList, averageDiceSamples)
     plt.gca().set_ylim([0, 1.0])
-    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate', 'avgDice'), loc='upper left')
+    plt.legend(('Min', 'Mean', 'median', 'Max', 'resp1Rate', 'avgDice'), loc='lower right')
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')

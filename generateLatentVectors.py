@@ -44,7 +44,7 @@ def main():
             return -1
 
     inputSuffix = ".npy"
-    batchSize = 10
+    batchSize = 1
     print(f"batchSize = {batchSize}")
 
     device = torch.device(f"cuda:{GPUID}" if torch.cuda.is_available() else "cpu")
@@ -60,7 +60,7 @@ def main():
     netMgr.loadNet("test")
 
     # ================Validation===============
-    net.eval()
+    net.train()
     with torch.no_grad():
         for inputs, labels, patientIDs in data.DataLoader(allData, batch_size=batchSize, shuffle=False, num_workers=0):
             inputs = inputs.to(device, dtype=torch.float)
