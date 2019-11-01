@@ -55,7 +55,7 @@ def main():
         # get response vector and assemble latent Vectors
         X = np.empty((F, H, W, N), dtype=np.float)  # latent vectors
         Y01 = np.empty((1,N),dtype=np.int) # response in 0, 1 range
-        Yn1 = np.empty((1,N), dtype=np.float) # response in -1, 1 range
+        Yn1 = np.empty((1,N),dtype=np.float) # response in -1, 1 range
         for i, key in enumerate(list(patientDice)):
             Y01[0,i] = patientResponse[key]
             Yn1[0,i] = patientResponse[key]
@@ -75,7 +75,7 @@ def main():
         std  = np.reshape(np.repeat(std, N, axis=2),X.shape)
         X = (X - mean) / std
 
-        # Analysis  loss = (Yn1 - (W0+W1X))^2
+        # Analysis  least square loss = (Yn1 - (W0+W1X))^2
         # Y is the expand of Yn1, use -1 and 1 to less square regression
         Y = np.reshape(np.repeat(Yn1, F*H*W,axis=0), X.shape)
         # herer W0 and W1 has shape(F,H, W)

@@ -29,4 +29,21 @@ for D in range(8,25):
     print(f"{D}, {Dout}, {Dout2}")
 
 
+import torch
+
+X = torch.ones((3,4), requires_grad=True)
+Z = torch.zeros((3,4))
+
+for _ in range(0, 10):
+    Y = X +2
+    Z += Y*2
+
+Z.backward(gradient=torch.ones(Z.shape))
+
+
+
+print (X.grad)
+
+
+
 print("==================")

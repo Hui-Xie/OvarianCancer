@@ -54,71 +54,71 @@ def main():
         averageDiceSamples.append(dices/N)
 
         # get response vector and assemble latent Vectors
-        # batch dimension at dim 0.
-        X = np.empty((N, F, H, W), dtype=np.float)  # latent vectors with batch size at dim 0.
-        Y01 = np.empty((N,1),dtype=np.int) # response in 0, 1 range with (batch, *) dimension
-
+        X = np.empty((F, H, W, N), dtype=np.float)  # latent vectors
+        Y01 = np.empty((1, N), dtype=np.int)  # response in 0, 1 range
         for i, key in enumerate(list(patientDice)):
-            Y01[i,0] = patientResponse[key]
-            filePath = os.path.join(latentVectorDir,key+".npy")
+            Y01[0, i] = patientResponse[key]
+            filePath = os.path.join(latentVectorDir, key + ".npy")
             V = np.load(filePath)
-            assert (F,H,W) == V.shape
-            X[i,:,:,:] = V
-        response1Rate.append(Y01.sum()/N)
+            assert (F, H, W) == V.shape
+            X[:, :, :, i] = V
+        response1Rate.append(Y01.sum() / N)
 
         # normalize latentV along patient dimension
-        mean = np.mean(X, axis=0)
-        std = np.std(X, axis=0)
-        mean = np.reshape(np.repeat(mean, N, axis=0), X.shape)
-        std  = np.reshape(np.repeat(std, N, axis=0),X.shape)
+        mean = np.mean(X, axis=3)
+        std = np.std(X, axis=3)
+        mean = np.reshape(np.repeat(mean, N, axis=2), X.shape)
+        std = np.reshape(np.repeat(std, N, axis=2), X.shape)
         X = (X - mean) / std
 
-        # Analysis: logistic loss =-y*log(sigmoid(x))-(1-y)*log(1-sigmoid(x))
-        # herer W0 and W1 has shape(F,H, W)
+        # Analysis: logistic loss =\sum (-y*log(sigmoid(x))-(1-y)*log(1-sigmoid(x)))
+        # here W0 and W1 has a shape of (F,H, W)
         device = 3
-        lr = 0.1
+        lr = 0.01
         nIteration = 100
         W0 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
-        W1 = torch.ones((F, H, W), dtype=torch.float, requires_grad=True, device=device)*0.01
+        W1 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
+        W1.data.fill_(0.01)
         for _ in range(0, nIteration):
-            loss = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
+            loss = torch.zeros((F, H, W), dtype=torch.float, device=device)
+            if W0.grad is not None:
+                W0.grad.data.zero_()
+            if W1.grad is not None:
+                W1.grad.data.zero_()
             for i in range(0,N):
-                y = Y01[i,0]
-                x = X[i,:,:,:]
-                sigmoidx = torch.nn.Sigmoid(W0+W1*x)
+                y = Y01[0,i]
+                x = torch.from_numpy(X[:,:,:,i]).type(torch.float32).to(device)
+                sigmoidx = torch.sigmoid(W0+W1*x)
                 loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
             loss = loss/N
 
             # backward
-            for h in range(0, F):
-                for h in range(0,H):
-                    for w in range(0, W):
-                        loss.backward()
+            loss.backward(gradient=torch.ones(loss.shape).to(device))
             # update W0 and W1
-            W0 = W0 - lr*W0.grad
-            W1 = W1 - lr*W1.grad
-            
+            W0.data -= lr*W0.grad.data  # we must use data, otherwise, it changes leaf property.
+            W1.data -= lr*W1.grad.data
 
+        W0 = W0.cpu().detach().numpy()
+        W1 = W1.cpu().detach().numpy()
 
+        W1Ex = np.reshape(np.repeat(W1, N, axis=2), X.shape)
+        W0Ex = np.reshape(np.repeat(W0, N, axis=2), X.shape)
 
-
-
-        W1Ex = np.reshape(np.repeat(W1, N, axis=0), X.shape)
-        W0Ex = np.reshape(np.repeat(W0, N, axis=0), X.shape)
-
-        sigmoidX = 1.0/(1.0 + np.exp(-(W0Ex+W1Ex*X)))
+        sigmoidX = 1.0 / (1.0 + np.exp(-(W0Ex + W1Ex * X)))
         predictX = (sigmoidX >= 0.5).astype(np.int)
-        Y = np.reshape(np.repeat(Y01, F*H*W,axis=0), X.shape)  # there maybe error in least square regression
-        accuracyX = ((predictX - Y)==0).sum(axis=0)/N
+        Y = np.reshape(np.repeat(Y01, F * H * W, axis=0), X.shape)
+        accuracyX = ((predictX - Y) == 0).sum(axis=3) / N
 
         minAccuracy.append(accuracyX.min())
         meanAccuracy.append(accuracyX.mean())
         medianAccuracy.append(np.median(accuracyX))
         maxAccuracy.append(accuracyX.max())
 
-        accuracyBig = accuracyX >=accuracyThreshold
-        numBestFeaturesTemp  = accuracyBig.sum()
+        accuracyBig = accuracyX >= accuracyThreshold
+        numBestFeaturesTemp = accuracyBig.sum()
         numBestFeatures.append(numBestFeaturesTemp)
+
+        print(f"fiinished dice {diceThreshold}...")
 
     # print table:
     print(f"dice threshold list:    {diceThresholdList}")
