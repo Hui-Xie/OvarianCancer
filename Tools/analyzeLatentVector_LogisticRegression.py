@@ -15,6 +15,7 @@ import json
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+import torch
 
 def main():
     # patient response
@@ -53,7 +54,8 @@ def main():
         averageDiceSamples.append(dices/N)
 
         # get response vector and assemble latent Vectors
-        X = np.empty((F, H, W, N), dtype=np.float)  # latent vectors
+        # batch dimension at dim 0.
+        X = np.empty((N, F, H, W), dtype=np.float)  # latent vectors with batch size at dim 0.
         Y01 = np.empty((N,1),dtype=np.int) # response in 0, 1 range with (batch, *) dimension
 
         for i, key in enumerate(list(patientDice)):
@@ -61,30 +63,53 @@ def main():
             filePath = os.path.join(latentVectorDir,key+".npy")
             V = np.load(filePath)
             assert (F,H,W) == V.shape
-            X[:,:,:,i] = V
+            X[i,:,:,:] = V
         response1Rate.append(Y01.sum()/N)
 
         # normalize latentV along patient dimension
-        mean = np.mean(X, axis=3)
-        std = np.std(X, axis=3)
-        mean = np.reshape(np.repeat(mean, N, axis=2), X.shape)
-        std  = np.reshape(np.repeat(std, N, axis=2),X.shape)
+        mean = np.mean(X, axis=0)
+        std = np.std(X, axis=0)
+        mean = np.reshape(np.repeat(mean, N, axis=0), X.shape)
+        std  = np.reshape(np.repeat(std, N, axis=0),X.shape)
         X = (X - mean) / std
 
-        # Analysis  loss = (Yn1 - (W0+W1X))^2
-        # Y is the expand of Yn1, use -1 and 1 to less square regression
-        Y = np.reshape(np.repeat(Yn1, F*H*W,axis=0), X.shape)
+        # Analysis: logistic loss =-y*log(sigmoid(x))-(1-y)*log(1-sigmoid(x))
         # herer W0 and W1 has shape(F,H, W)
-        W1= ((X*Y).sum(axis=3) - X.sum(axis=3)*Y.sum(axis=3)/N)/((X*X).sum(axis=3) - X.sum(axis=3)*X.sum(axis=3)/N)
-        W0= (Y.sum(axis=3)-W1*X.sum(axis=3))/N
+        device = 3
+        lr = 0.1
+        nIteration = 100
+        W0 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
+        W1 = torch.ones((F, H, W), dtype=torch.float, requires_grad=True, device=device)*0.01
+        for _ in range(0, nIteration):
+            loss = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
+            for i in range(0,N):
+                y = Y01[i,0]
+                x = X[i,:,:,:]
+                sigmoidx = torch.nn.Sigmoid(W0+W1*x)
+                loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
+            loss = loss/N
 
-        W1Ex = np.reshape(np.repeat(W1, N, axis=2), X.shape)
-        W0Ex = np.reshape(np.repeat(W0, N, axis=2), X.shape)
+            # backward
+            for h in range(0, F):
+                for h in range(0,H):
+                    for w in range(0, W):
+                        loss.backward()
+            # update W0 and W1
+            W0 = W0 - lr*W0.grad
+            W1 = W1 - lr*W1.grad
+            
+
+
+
+
+
+        W1Ex = np.reshape(np.repeat(W1, N, axis=0), X.shape)
+        W0Ex = np.reshape(np.repeat(W0, N, axis=0), X.shape)
 
         sigmoidX = 1.0/(1.0 + np.exp(-(W0Ex+W1Ex*X)))
         predictX = (sigmoidX >= 0.5).astype(np.int)
-        Y = np.reshape(np.repeat(Y01, F*H*W,axis=0), X.shape)
-        accuracyX = ((predictX - Y)==0).sum(axis=3)/N
+        Y = np.reshape(np.repeat(Y01, F*H*W,axis=0), X.shape)  # there maybe error in least square regression
+        accuracyX = ((predictX - Y)==0).sum(axis=0)/N
 
         minAccuracy.append(accuracyX.min())
         meanAccuracy.append(accuracyX.mean())
