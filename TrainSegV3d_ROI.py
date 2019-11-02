@@ -93,8 +93,11 @@ Major program changes:
       1   revise reduce learnging rate at training loss;
       2   reduce min_lr = 1e-9
       
-      Nov 1th, 2019
+      Nov 1st, 2019
       1   erase batchNorm, for training.
+      
+      Nov 2nd, 2019
+      1   Use InstanceNormalization, instead of BatchNorm 
         
       
        
