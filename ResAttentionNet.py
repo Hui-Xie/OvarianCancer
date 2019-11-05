@@ -13,10 +13,10 @@ class ResAttentionNet(BasicModel):
     def forward(self, x):
         # filename = "/home/hxie1/Projects/OvarianCancer/trainLog/20190816_194148"
         # midSlice1 = x[0, 115,].clone()
-        # display2DImage(midSlice1.cpu().detach().numpy(), "before STN", filename+"_BeforeSTN.png")
+        # display2DImage(midSlice1.detach().cpu().numpy(), "before STN", filename+"_BeforeSTN.png")
         # x = self.m_stn0(x)
         # midSlice2 = x[0, 115,].clone()
-        # display2DImage(midSlice2.cpu().detach().numpy(), "after STN", filename+"_AfterSTN.png" )
+        # display2DImage(midSlice2.detach().cpu().numpy(), "after STN", filename+"_AfterSTN.png" )
         x = self.m_stage0(x)
         x = self.m_stage1(x)
         x = self.m_stage2(x)

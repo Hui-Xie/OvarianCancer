@@ -248,7 +248,7 @@ def main():
             # accumulate response and predict value
             if epoch % 5 == 0:
                 xr = torch.prod(xr, dim=1)
-                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                batchPredict = (xr >= 0).detach().cpu().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
@@ -299,7 +299,7 @@ def main():
 
                 # accumulate response and predict value
                 xr = torch.prod(xr, dim=1)
-                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                batchPredict = (xr >= 0).detach().cpu().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()
@@ -346,7 +346,7 @@ def main():
 
                 # accumulate response and predict value
                 xr = torch.prod(xr, dim=1)
-                batchPredict = (xr >= 0).cpu().detach().numpy().flatten()
+                batchPredict = (xr >= 0).detach().cpu().numpy().flatten()
                 epochPredict = np.concatenate(
                     (epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 batchGt = responseCpu.detach().numpy()

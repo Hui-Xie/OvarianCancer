@@ -99,8 +99,8 @@ def main():
             W0.data -= lr*W0.grad.data  # we must use data, otherwise, it changes leaf property.
             W1.data -= lr*W1.grad.data
 
-        W0 = W0.cpu().detach().numpy()
-        W1 = W1.cpu().detach().numpy()
+        W0 = W0.detach().cpu().numpy()
+        W1 = W1.detach().cpu().numpy()
 
         W1Ex = np.reshape(np.repeat(W1, N, axis=2), X.shape)
         W0Ex = np.reshape(np.repeat(W0, N, axis=2), X.shape)

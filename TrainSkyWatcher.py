@@ -323,7 +323,7 @@ def main():
 
             # accumulate response and predict value
             if epoch % 5 == 0:
-                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                batchPredict = torch.argmax(xr, dim=1).detach().cpu().numpy().flatten()
                 epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 epochResponse = np.concatenate((epochResponse, response1Cpu)) if epochResponse is not None else response1Cpu
                 trainDiceSumList, trainDiceCountList, trainTPRSumList, trainTPRCountList \
@@ -395,7 +395,7 @@ def main():
 
                 # accumulate response and predict value
 
-                batchPredict = torch.argmax(xr, dim=1).cpu().detach().numpy().flatten()
+                batchPredict = torch.argmax(xr, dim=1).detach().cpu().numpy().flatten()
                 epochPredict = np.concatenate((epochPredict, batchPredict)) if epochPredict is not None else batchPredict
                 epochResponse = np.concatenate((epochResponse, responseCpu)) if epochResponse is not None else responseCpu
 

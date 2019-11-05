@@ -371,7 +371,7 @@ class DataMgr:
         return result
 
     def updateDiceTPRSumList(self, outputsGPU, labelsCpu, K, diceSumList, diceCountList, TPRSumList, TPRCountList):
-        outputs = outputsGPU.cpu().detach().numpy()
+        outputs = outputsGPU.detach().cpu().numpy()
         predictLabels= self.oneHotArray2Labels(outputs)
 
         predictLabels = DataMgr.ignoreNegativeLabels(predictLabels,labelsCpu)

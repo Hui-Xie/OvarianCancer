@@ -67,7 +67,7 @@ def main():
             labels = labels.int()
             outputs = net.forward(inputs, gts=None, halfForward=True)
             for i in range(outputs.shape[0]):
-                output = outputs[i].cpu().detach().numpy()
+                output = outputs[i].detach().cpu().numpy()
                 if 0 == np.std(output):
                     logging.info(f"patientID {patientIDs[i]} has latent vector of full zero.")
                 np.save(os.path.join(outputPath, patientIDs[i] + ".npy"), output)
