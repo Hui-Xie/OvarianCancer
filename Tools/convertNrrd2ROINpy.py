@@ -2,7 +2,10 @@
 
 # convert Nrrd images and labels to numpy array
 # keep same physical size for file of size (49,147,147) without zoom
-# if file size is bigger than (49,147,147), scale down to (49,147,147)
+# if file size is different with (49,147,147), scale it to (49,147,147)
+# if ROI includes label2, repress it into 0.
+
+
 
 import sys
 import SimpleITK as sitk
@@ -12,11 +15,11 @@ sys.path.append("..")
 from FilesUtilities import *
 
 suffix = ".nrrd"
-inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd"
-inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels"
-outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
-outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
-readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy/readme.txt"
+inputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd"
+inputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels"
+outputImageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy"
+outputLabelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy"
+readmeFile = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy/readme.txt"
 
 goalSize = (49,147,147) # Z,Y,X in nrrd axis order for primaryROI dir
 
@@ -31,7 +34,7 @@ zoomedFileList = []
 
 for file in filesList:
     patientID = getStemName(file, ".nrrd")
-    # for image data
+    # read image data
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
 
@@ -39,6 +42,7 @@ for file in filesList:
 
     image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
     imageShape = image3d.shape
+
     if imageShape != goalSize:
         zoomFactor = [goalSize[0] / imageShape[0], goalSize[1] / imageShape[1], goalSize[2] / imageShape[2]]
         image3d = ndimage.zoom(image3d, zoomFactor, order=3)
@@ -58,7 +62,8 @@ for file in filesList:
     labelFile = os.path.join(inputLabelDir, patientID + "-label.nrrd")
     label = sitk.ReadImage(labelFile)
     label3d = sitk.GetArrayFromImage(label)
-    label3d = label3d.astype(np.float32)  # this is very important
+    # repress label 2, only keep label 1. As some primary cancer is neighboring with label 2 metastases which is also in ROI.
+    label3d = (label3d ==1).astype(np.float32) # this is very important
     labelShape = label3d.shape
     if labelShape != imageShape:
         print(f"Error: images shape != label shape for {file} and {labelFile} ")
@@ -67,6 +72,8 @@ for file in filesList:
         label3d = ndimage.zoom(label3d, zoomFactor, order=0)  # nearest neighbor interpolation
 
     label3d = np.flip(label3d, flipAxis)
+
+
 
     np.save(os.path.join(outputLabelDir, patientID + ".npy"), label3d)
 
