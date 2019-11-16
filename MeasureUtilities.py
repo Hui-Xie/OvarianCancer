@@ -41,6 +41,14 @@ def getDiceSumList(segmentations, labels, K):
 
     return diceSumList, diceCountList
 
+def dice(segmentation, label):
+    seg1 = segmentation > 0
+    label1 = label > 0
+    nA = np.count_nonzero(seg1)
+    nB = np.count_nonzero(label1)
+    C = seg1 * label1
+    nC = np.count_nonzero(C)
+    return nC * 2.0 / (nA + nB)
 
 def getDice(segmentation, label):
     """
@@ -79,6 +87,25 @@ def tensorDice(segmentation, label): # label has nonzero elements.
     nC = torch.sum(C).item()
     return nC*2.0/(nA+nB)
 
+def weakTensorDice(segmentation, label):
+    """
+    weak means weak annotation label, so dice only compute the weakly annotated slice.
+    :param segmentation:
+    :param label:
+    :return:
+    """
+    segmentation = segmentation.cpu().numpy()
+    label = label.cpu().numpy()
+
+    # get nonzeroSlices from ground truth
+    nonzeroIndex = np.nonzero(label)
+    nonzeroSlices = list(map(int, set(nonzeroIndex[0])))  # make sure the slice index is int.
+    numNonzeroSlices = len(nonzeroSlices)
+
+    diceSum = 0.0
+    for s in nonzeroSlices:
+        diceSum += dice(segmentation[s,], label[s,])
+    return diceSum/numNonzeroSlices
 
 def getTPR(predict, label):  # sensitivity, recall, hit rate, or true positive rate (TPR)
     """

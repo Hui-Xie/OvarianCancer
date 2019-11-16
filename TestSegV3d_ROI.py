@@ -45,8 +45,8 @@ def main():
     print(f'.........')
 
     inputSuffix = ".npy"
-    K_fold = 6
-    batchSize = 3
+    K_fold = 1 #
+    batchSize = 1
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
@@ -60,8 +60,14 @@ def main():
     validationTransform = OCDataLabelTransform(0)
     testTransform = OCDataLabelTransform(0)
 
-    validationData = OVDataSegSet('validation', dataPartitions, transform=validationTransform)
-    testData = OVDataSegSet('test', dataPartitions, transform=testTransform)
+    if 0 == K_fold or 1 == K_fold:
+        allTransform = OCDataLabelTransform(0)
+        allData = OVDataSegSet('all', dataPartitions, transform=allTransform)
+    else:
+        validationTransform = OCDataLabelTransform(0)
+        testTransform = OCDataLabelTransform(0)
+        validationData = OVDataSegSet('validation', dataPartitions, transform=validationTransform)
+        testData = OVDataSegSet('test', dataPartitions, transform=testTransform)
 
     net = SegV3DModel(useConsistencyLoss=useConsistencyLoss)
     # Important:
@@ -74,49 +80,71 @@ def main():
     netMgr.loadNet("test")
 
     patientDiceMap = {}
-    # ================Validation===============
     net.eval()
 
-    with torch.no_grad():
-        for inputs, labels, patientIDs in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
-                                                          num_workers=numWorkers):
-            inputs = inputs.to(device, dtype=torch.float)
-            gts = labels.to(device, dtype=torch.float)  # return a copy
-            gts = (gts > 0).long()  # not discriminate all non-zero labels.
+    if 0 == K_fold or 1 == K_fold:
+        # ===============All data test =======================
+        # with weak annotation ground truth.
+        with torch.no_grad():
+            for inputs, labels, patientIDs in data.DataLoader(allData, batch_size=batchSize, shuffle=False,
+                                                              num_workers=numWorkers):
+                inputs = inputs.to(device, dtype=torch.float)
+                gts = labels.to(device, dtype=torch.float)  # return a copy
+                gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-            outputs, _ = net.forward(inputs, gts)
+                outputs, _ = net.forward(inputs, gts)
 
-            # compute dice
-            gtsShape = gts.shape
-            for i in range(gtsShape[0]):
-                output = torch.argmax(outputs[i,], dim=0)
-                gt = gts[i,]
-                dice = tensorDice(output, gt)
-                filename = os.path.join(predictOutputDir, patientIDs[i]+".npy")
-                np.save(filename, output.cpu().numpy())
-                patientDiceMap[patientIDs[i]]= dice
+                # compute dice
+                gtsShape = gts.shape
+                for i in range(gtsShape[0]):
+                    output = torch.argmax(outputs[i,], dim=0)
+                    gt = gts[i,]
+                    dice = weakTensorDice(output, gt)
+                    filename = os.path.join(predictOutputDir, patientIDs[i] + ".npy")
+                    np.save(filename, output.cpu().numpy())
+                    patientDiceMap[patientIDs[i]] = dice
 
-    # ================Independent Test===============
 
-    net.eval()
-    with torch.no_grad():
-        for inputs, labels, patientIDs in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
-                                                          num_workers=numWorkers):
-            inputs = inputs.to(device, dtype=torch.float)
-            gts = labels.to(device, dtype=torch.float)  # return a copy
-            gts = (gts > 0).long()  # not discriminate all non-zero labels.
+    else:
+        # ================Validation===============
+        with torch.no_grad():
+            for inputs, labels, patientIDs in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
+                                                              num_workers=numWorkers):
+                inputs = inputs.to(device, dtype=torch.float)
+                gts = labels.to(device, dtype=torch.float)  # return a copy
+                gts = (gts > 0).long()  # not discriminate all non-zero labels.
 
-            outputs, _ = net.forward(inputs, gts)
+                outputs, _ = net.forward(inputs, gts)
 
-            # compute dice
-            gtsShape = gts.shape
-            for i in range(gtsShape[0]):
-                output = torch.argmax(outputs[i,], dim=0)
-                gt = gts[i,]
-                dice = tensorDice(output, gt)
-                filename = os.path.join(predictOutputDir, patientIDs[i] + ".npy")
-                np.save(filename, output.cpu().numpy())
-                patientDiceMap[patientIDs[i]]= dice
+                # compute dice
+                gtsShape = gts.shape
+                for i in range(gtsShape[0]):
+                    output = torch.argmax(outputs[i,], dim=0)
+                    gt = gts[i,]
+                    dice = tensorDice(output, gt)
+                    filename = os.path.join(predictOutputDir, patientIDs[i]+".npy")
+                    np.save(filename, output.cpu().numpy())
+                    patientDiceMap[patientIDs[i]]= dice
+
+        # ================Independent Test===============
+        with torch.no_grad():
+            for inputs, labels, patientIDs in data.DataLoader(testData, batch_size=batchSize, shuffle=False,
+                                                              num_workers=numWorkers):
+                inputs = inputs.to(device, dtype=torch.float)
+                gts = labels.to(device, dtype=torch.float)  # return a copy
+                gts = (gts > 0).long()  # not discriminate all non-zero labels.
+
+                outputs, _ = net.forward(inputs, gts)
+
+                # compute dice
+                gtsShape = gts.shape
+                for i in range(gtsShape[0]):
+                    output = torch.argmax(outputs[i,], dim=0)
+                    gt = gts[i,]
+                    dice = tensorDice(output, gt)
+                    filename = os.path.join(predictOutputDir, patientIDs[i] + ".npy")
+                    np.save(filename, output.cpu().numpy())
+                    patientDiceMap[patientIDs[i]]= dice
 
     # output Surgical dictionary
     jsonData = json.dumps(patientDiceMap)
