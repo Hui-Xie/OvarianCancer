@@ -102,9 +102,6 @@ def weakTensorDice(segmentation, label):
     nonzeroSlices = list(map(int, set(nonzeroIndex[0])))  # make sure the slice index is int.
     numNonzeroSlices = len(nonzeroSlices)
 
-    if 0 == numNonzeroSlices:
-        print ("0 == numNonzeroSlices:")
-
     diceSum = 0.0
     for s in nonzeroSlices:
         diceSum += dice(segmentation[s,], label[s,])

@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils import data
 import logging
+import numpy as np
 
 from OCDataSegSet import *
 from FilesUtilities import *
@@ -144,7 +145,16 @@ def main():
                     np.save(filename, output.cpu().numpy())
                     patientDiceMap[patientIDs[i]]= dice
 
-    # output Surgical dictionary
+    # statistic dic
+    numPatients = len(patientDiceMap)
+    diceValues = np.asarray(list(patientDiceMap.values()), dtype=np.float32)
+    print(f"total {numPatients} patients for test")
+    print(f"min dice = {diceValues.min()}")
+    print(f"max dice = {diceValues.max()}")
+    print(f"mean dice = {diceValues.mean()}")
+    print(f"dice std  = {diceValues.std()}")
+
+    # output dice dictionary
     jsonData = json.dumps(patientDiceMap)
     outfile = os.path.join(predictOutputDir, "patientDice.json")
     f = open(outfile, "w")
