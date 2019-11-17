@@ -39,6 +39,10 @@ for file in filesList:
         for i in range(step, numNonzeroSlices, step):
             sliceIndices.append(nonzeroSlices[i])
 
+    if 0 == numNonzeroSlices:
+        print(f"Warn: {patientID} has full zero labels")
+        continue
+
     for s in sliceIndices:
         nFigs += 1
         f = plt.figure(nFigs)

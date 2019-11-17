@@ -23,7 +23,7 @@ def printUsage(argv):
     print("where: \n"
           "       netSavedPath must be specific network directory.\n"
           "       k=[0, K), the k-th fold in the K-fold cross validation.\n"
-          "       GPUID:    on of 0,1,2,3, the specific GPU ID List, separated by comma\n")
+          "       GPUID:    one of 0,1,2,3, the specific GPU ID List, separated by comma\n")
 
 
 def main():
@@ -50,15 +50,13 @@ def main():
     print(f"batchSize = {batchSize}")
     numWorkers = 0
 
-    device = torch.device(f"cuda:{GPUID[0]}" if torch.cuda.is_available() else "cpu")
+    device = torch.device(f"cuda:{GPUID}" if torch.cuda.is_available() else "cpu")
 
     timeStr = getStemName(netPath)
     if timeStr == "Best":
         timeStr = getStemName(netPath.replace("/Best", ""))
 
     dataPartitions = OVDataSegPartition(dataInputsPath, groundTruthPath, inputSuffix, K_fold, k)
-    validationTransform = OCDataLabelTransform(0)
-    testTransform = OCDataLabelTransform(0)
 
     if 0 == K_fold or 1 == K_fold:
         allTransform = OCDataLabelTransform(0)

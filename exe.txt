@@ -101,11 +101,11 @@ generate all latent vector from a 94% full data trainning network:
 python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191025_102445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent  3 &
 
 print all sample accuracy:
-python3.7 printAllSamplesAccuracy.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191025_102445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  3 &
+python3.7 printAllSamplesAccuracy.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191025_102445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy  3
 
 Nov 16th, 2019
 Test all weak annotion files with 56 weak annotation files:
-python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191102_094814/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 0 &
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191102_094814/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 0
 
 
 
