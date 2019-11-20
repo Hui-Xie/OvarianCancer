@@ -9,14 +9,15 @@ from FilesUtilities import *
 from scipy.ndimage.morphology import binary_dilation
 import  json
 
+imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy"
+groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy"
+predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict"
+outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/visualResult"
+suffix = ".npy"
+
 def main():
-    imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/nrrd_npy"
-    groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/labels_npy"
-    predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191025_102445"
-    outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191025_102445/color"
     diceFile = os.path.join(predictDir, "patientDice.json")   # need to modify
 
-    suffix = ".npy"
     originalCwd = os.getcwd()
     os.chdir(predictDir)
     filesList = [os.path.abspath(x) for x in os.listdir(predictDir) if suffix in x]
