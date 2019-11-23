@@ -56,7 +56,7 @@ for file in filesList:
         subplot1.set_title("Raw: " + patientID + f"_s{s}")
 
         subplot2 = plt.subplot(1, 2, 2)
-        subplot2.imshow(R, vmin=np.amin(R), vmax=np.amax(R))
+        subplot2.imshow(R, cmap='gray', vmin=np.amin(R), vmax=np.amax(R))
         subplot2.imshow(GC, cmap='YlGn', alpha=0.3, vmin=np.amin(GC), vmax=np.amax(GC))
         subplot2.set_title("GroundTruth Contour")
 
