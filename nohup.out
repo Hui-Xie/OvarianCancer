@@ -1,8 +1,0 @@
-batchSize = 1
-Infor: In all data of 35 files, label 0 has 15 files,
-	  and label 1 has 20 files, where positive response rate = 0.5714285714285714 in full data
-All files are in one partition.
-Program ID 23892  exits.
-
-
-Program Ending Time: 2019-11-01 15:53:44.599950
