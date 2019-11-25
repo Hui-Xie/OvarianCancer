@@ -97,7 +97,10 @@ Major program changes:
       1   erase batchNorm, for training.
       
       Nov 2nd, 2019
-      1   Use InstanceNormalization, instead of BatchNorm 
+      1   Use InstanceNormalization, instead of BatchNorm
+      
+      Nov 25th, 2019
+      1   Add boundary loss into training.  
         
       
        
@@ -141,7 +144,7 @@ def main():
         searchWindow = 0
     trainAllData = True
 
-    # addBoundaryLoss = True
+    addBoundaryLoss = True
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
@@ -234,12 +237,12 @@ def main():
     # optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    # lossWeight = dataPartitions.getLossWeight()
+    lossWeight = dataPartitions.getLossWeight()
     # loss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     loss = GeneralizedDiceLoss()
     net.appendLossFunc(loss, 1)
-    # boundaryLoss = BoundaryLoss1(weight=lossWeight)
-    # net.appendLossFunc(boundaryLoss, 0)
+    boundaryLoss = BoundaryLoss1(weight=lossWeight)
+    net.appendLossFunc(boundaryLoss, 0)
 
     if useConsistencyLoss:
         net.m_consistencyLoss = ConsistencyLoss3(lambdaCoeff=1, windowSize=searchWindow)
@@ -288,7 +291,7 @@ def main():
         # update loss weight list
 
         lossWeightList = net.module.getLossWeightList() if useDataParallel else net.getLossWeightList()
-        if len(lossWeightList) > 1 and 100 <= epoch <= 600 and (epoch - 100) % 5 == 0:
+        if len(lossWeightList) > 1 and 100 <= epoch-lastEpoch <= 600 and (epoch-lastEpoch - 100) % 5 == 0:
             lossWeightList[0] -= 0.01
             lossWeightList[1] += 0.01
             if lossWeightList[0] < 0.01:

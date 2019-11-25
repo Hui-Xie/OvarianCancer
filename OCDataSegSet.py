@@ -65,8 +65,17 @@ class OVDataSegPartition():
     def getLossWeight(self):
         count1 = 0
         countAll = 0
-        countFiles = len(self.m_partitions["training"])
-        for index in self.m_partitions["training"]:
+
+        if "all" in self.m_partitions.keys():
+            trainingPartition = self.m_partitions["all"]
+        elif "training" in  self.m_partitions.keys():
+            trainingPartition = self.m_partitions["training"]
+        else:
+            print("Error: program can not find all or training partition in OVDataSegPartition")
+            exit(-1)
+
+        countFiles = len(trainingPartition)
+        for index in trainingPartition:
             filename = self.m_inputFilesList[index]
             patientID = getStemName(filename, self.m_inputSuffix)
             labelFile = os.path.join(self.m_inputLabelDir,patientID + self.m_inputSuffix)
