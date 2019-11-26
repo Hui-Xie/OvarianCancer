@@ -112,6 +112,9 @@ train 94%-dice network with adding boundary loss:
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191102_094814  0  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/labels_npy  0  1  0 &
 
 
+Nov 26th, 2019
+Test all weak annotion files with 56 weak annotation files with adding Boundary Loss inheriting from 94%-GDL loss trained network:
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191102_094814/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_GDL_AddingBoundaryLoss /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 0
 
 
 

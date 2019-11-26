@@ -859,3 +859,4 @@ Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
 3715	1.0000e-08		-2.9793		0.94109
 3720	1.0000e-08		-3.2663		0.94312
 3725	1.0000e-08		-3.3633		0.94292
+3730	1.0000e-08		-3.3172		0.94211
