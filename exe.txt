@@ -117,4 +117,7 @@ Test all weak annotion files with 56 weak annotation files with adding Boundary 
 python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191102_094814/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_GDL_AddingBoundaryLoss /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 0
 
 
+Dec 3rd, 2019
+train 3D ground truth 35 files + precdict accuracy bigger than 88% 13 files:
+nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus90%/training/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus90%/training/labels_npy  0  1  0 &
 

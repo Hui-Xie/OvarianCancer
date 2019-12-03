@@ -104,6 +104,8 @@ Major program changes:
       
       Dec 3rd, 2019
       1  cancel Boundary Loss;
+      2  add 13 network generated files with accuracy >88% into 3D ground truth, then train;
+      
       
         
       
@@ -148,7 +150,7 @@ def main():
         searchWindow = 0
     trainAllData = True
 
-    addBoundaryLoss = True
+    addBoundaryLoss = False
 
     # ===========debug==================
     oneSampleTraining = False  # for debug
