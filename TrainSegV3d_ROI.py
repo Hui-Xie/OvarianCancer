@@ -101,6 +101,10 @@ Major program changes:
       
       Nov 25th, 2019
       1   Add boundary loss into training.  
+      
+      Dec 3rd, 2019
+      1  cancel Boundary Loss;
+      
         
       
        
@@ -237,12 +241,12 @@ def main():
     # optimizer = optim.SGD(net.parameters(), lr=0.01, momentum=0.9)
     net.setOptimizer(optimizer)
 
-    lossWeight = dataPartitions.getLossWeight()
+    # lossWeight = dataPartitions.getLossWeight()
     # loss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
     loss = GeneralizedDiceLoss()
     net.appendLossFunc(loss, 1)
-    boundaryLoss = BoundaryLoss1(weight=lossWeight)
-    net.appendLossFunc(boundaryLoss, 0)
+    # boundaryLoss = BoundaryLoss1(weight=lossWeight)
+    # net.appendLossFunc(boundaryLoss, 0)
 
     if useConsistencyLoss:
         net.m_consistencyLoss = ConsistencyLoss3(lambdaCoeff=1, windowSize=searchWindow)
