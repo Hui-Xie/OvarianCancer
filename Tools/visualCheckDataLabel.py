@@ -7,8 +7,9 @@ from FilesUtilities import *
 import matplotlib.pyplot as plt
 from scipy.ndimage.morphology import binary_dilation
 
-imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy"
-labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy"
+imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus90%/test/nrrd_npy"
+labelDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus90%/test/labels_npy"
+outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus90%/test/checkImageLabel"
 
 suffix = ".npy"
 originalCwd = os.getcwd()
@@ -62,7 +63,7 @@ for file in filesList:
 
         plt.tight_layout()
 
-        plt.savefig(os.path.join(imageDir, patientID + f"_s{s}.png"))
+        plt.savefig(os.path.join(outputDir, patientID + f"_s{s}.png"))
         plt.close()
 
 print(f"totally generated {nFigs} png file. ")
