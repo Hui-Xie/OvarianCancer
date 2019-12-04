@@ -2,16 +2,17 @@
 
 # dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191023_153046/patientDice.json"
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191025_102445/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191025_102445"
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predictResult/20191025_102445/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191025_102445"
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
 aList = range(92,97,1)  #dice range 92% to 97%, step 1%
 diceThresholdList=[x/100 for x in aList]
-accuracyThreshold = 0.71  # for each feature
+accuracyThreshold = 0.8  # for each feature
 F,H,W = 1536,3,3  #Features, Height, Width of latent vector
-gpuDevice = 3   #GPU ID
+gpuDevice = 0   #GPU ID
+K = 10 # the top K maximum accuracy positions
 
 import json
 import numpy as np
@@ -120,9 +121,17 @@ def main():
         numBestFeaturesTemp = accuracyBig.sum()
         numBestFeatures.append(numBestFeaturesTemp)
 
-        print(f"fiinished dice {diceThreshold}...")
+        print(f"\nfinished dice {diceThreshold}...")
+        k=K if numBestFeaturesTemp >= K else numBestFeaturesTemp
+        print(f"Its top {k} accuracies location:")
+        accuracyXFlat = accuracyX.flatten()
+        topKIndicesFlat = np.argpartition(accuracyXFlat, kth=-k)[-k:]
+        topKIndices = np.unravel_index(topKIndicesFlat, accuracyX.shape)
+        print(f"indices:    {topKIndices}")
+        print(f"accuracies: {accuracyX[topKIndices]}")
 
     # print table:
+    print("\n")
     print(f"dice threshold list:    {diceThresholdList}")
     print(f"validation patients:    {validationSamples}")
     print(f"avgDice of validaiton:  {averageDiceSamples}")
