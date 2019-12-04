@@ -11,6 +11,7 @@ aList = range(92,97,1)  #dice range 92% to 97%, step 1%
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.71  # for each feature
 F,H,W = 1536,3,3  #Features, Height, Width of latent vector
+gpuDevice = 3   #GPU ID
 
 import json
 import numpy as np
@@ -66,35 +67,35 @@ def main():
         response1Rate.append(Y01.sum() / N)
 
         # normalize latentV along patient dimension
-        mean = np.mean(X, axis=3)
-        std = np.std(X, axis=3)
-        mean = np.reshape(np.repeat(mean, N, axis=2), X.shape)
-        std = np.reshape(np.repeat(std, N, axis=2), X.shape)
+        mean = np.mean(X, axis=3, keepdims=True)
+        std = np.std(X, axis=3,keepdims=True)
+        mean = np.repeat(mean, N, axis=3)
+        std = np.repeat(std, N, axis=3)
         X = (X - mean) / std
 
         # Analysis: logistic loss =\sum (-y*log(sigmoid(x))-(1-y)*log(1-sigmoid(x)))
         # here W0 and W1 has a shape of (F,H, W)
-        device = 3
+        # sigmoid(x) = sigmoid(W0+W1*x)
         lr = 0.01
         nIteration = 100
-        W0 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
-        W1 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=device)
+        W0 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=gpuDevice)
+        W1 = torch.zeros((F, H, W), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1.data.fill_(0.01)
         for _ in range(0, nIteration):
-            loss = torch.zeros((F, H, W), dtype=torch.float, device=device)
+            loss = torch.zeros((F, H, W), dtype=torch.float, device=gpuDevice)
             if W0.grad is not None:
                 W0.grad.data.zero_()
             if W1.grad is not None:
                 W1.grad.data.zero_()
             for i in range(0,N):
                 y = Y01[0,i]
-                x = torch.from_numpy(X[:,:,:,i]).type(torch.float32).to(device)
+                x = torch.from_numpy(X[:,:,:,i]).type(torch.float32).to(gpuDevice)
                 sigmoidx = torch.sigmoid(W0+W1*x)
                 loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
             loss = loss/N
 
             # backward
-            loss.backward(gradient=torch.ones(loss.shape).to(device))
+            loss.backward(gradient=torch.ones(loss.shape).to(gpuDevice))
             # update W0 and W1
             W0.data -= lr*W0.grad.data  # we must use data, otherwise, it changes leaf property.
             W1.data -= lr*W1.grad.data
