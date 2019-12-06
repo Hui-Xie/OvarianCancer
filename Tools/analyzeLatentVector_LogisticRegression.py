@@ -20,6 +20,22 @@ import os
 import matplotlib.pyplot as plt
 import torch
 
+
+def printRed(text): print("\033[91m {}\033[00m" .format(text),end='\t')
+
+def printFeatureMap(map, specialIndex):
+    '''
+    print featureMap with specialIndex in red
+    '''
+    height, width = map.shape
+    for i in range(0, height):
+        for j in range(0, width):
+            if (i,j) == specialIndex:
+                printRed(map[i,j])
+            else:
+                print(map[i,j], end='\t')
+        print("\n",end='')
+
 def main():
     # patient response
     with open(patientResponsePath) as f:
@@ -66,6 +82,7 @@ def main():
             assert (F, H, W) == V.shape
             X[:, :, :, i] = V
         response1Rate.append(Y01.sum() / N)
+        rawX = X.copy()
 
         # normalize latentV along patient dimension
         mean = np.mean(X, axis=3, keepdims=True)
@@ -121,6 +138,7 @@ def main():
         numBestFeaturesTemp = accuracyBig.sum()
         numBestFeatures.append(numBestFeaturesTemp)
 
+        # Analyze the locations of top accuracies.
         print(f"\nfinished dice {diceThreshold}...")
         k=K if numBestFeaturesTemp >= K else numBestFeaturesTemp
         print(f"Its top {k} accuracies location:")
@@ -129,6 +147,26 @@ def main():
         topKIndices = np.unravel_index(topKIndicesFlat, accuracyX.shape)
         print(f"indices:    {topKIndices}")
         print(f"accuracies: {accuracyX[topKIndices]}")
+
+        #Analyze the feature value inside its feature map
+        rawXMean = np.mean(rawX, axis=3, keepdims=False)
+        rawXMax  = np.max(rawX, axis=3, keepdims=False)
+        rawXMin  = np.min(rawX, axis=3, keepdims=False)
+        for i in range(0,k):
+            f = topKIndices[0][i]
+            y = topKIndices[1][i]
+            x = topKIndices[2][i]
+            print("====== Red value in below matrix is the highly positively relative with response ======.")
+            print(f"min map including index(f,y,x):({f},{y},{x}): ")
+            printFeatureMap(rawXMin[f,], (y, x))
+            print(f"mean map including index(f,y,x):({f},{y},{x}): ")
+            printFeatureMap(rawXMean[f,], (y,x))
+            print(f"max map including index(f,y,x):({f},{y},{x}): ")
+            printFeatureMap(rawXMax[f,], (y, x))
+
+
+
+
 
     # print table:
     print("\n")
