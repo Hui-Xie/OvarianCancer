@@ -125,7 +125,7 @@ Dec 4th,2019
 Test remaining weak data after some of which bigger than 88% have been moved into training data:
 python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191203_145842/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus88%/test/predict /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus88%/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/full3DGTPlus88%/test/labels_npy 0 0
 
-Dec 7th, 2019
+Dec 7th, 2019 with logfile: log_CV0_Consis0_20191207_135106.txt
 # change latent vector to 1*1 feature map, then re train V model with 35 3D ground truth
 nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI  1  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/labels_npy  0  1  0 &
 
