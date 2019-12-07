@@ -106,6 +106,9 @@ Major program changes:
       1  cancel Boundary Loss;
       2  add 13 network generated files with accuracy >88% into 3D ground truth, then train;
       
+      Dec 7th, 2019
+      1  Change latent vector in the V model into 1*1 in feature map size.
+      
       
         
       

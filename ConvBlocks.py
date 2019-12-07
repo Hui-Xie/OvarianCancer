@@ -71,14 +71,13 @@ class LinearBlock(nn.Module):
         self.m_useLeakyReLU = useLeakyReLU
 
         self.m_linear = nn.Linear(inFeatures, outFeatures, bias=bias)
-        self.m_norm = nn.InstanceNorm2d(outFeatures)
+
 
     def forward(self, x):
         y = self.m_linear(x)
 
-        # with Normalization
-        y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
-            else F.leaky_relu(self.m_norm(y), inplace=True)
-
+        # without Normalization
+        y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
+            else F.leaky_relu(y, inplace=True)
         return y
 

@@ -102,7 +102,7 @@ class SegV3DModel(BasicModel):
 
         self.m_up5Pooling = nn.Sequential(
             nn.Upsample(size=(7, 7), mode='bilinear'),  # ouput size: 32N*7*7
-            Conv3dBlock(N*32, N*16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(N*32, N*16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                            useLeakyReLU=self.m_useLeakyReLU)
         )# ouput size: 16N*7*7
         self.m_up5 = nn.Sequential(
@@ -663,15 +663,15 @@ class SegV3DModel(BasicModel):
         x4 = self.m_down4(x4) + x4
 
         x5 = self.m_down5Pooling(x4)  #outputsize: b*32N*1*1
+        x5 = torch.squeeze(x5, dim=3)
         x5 = torch.squeeze(x5, dim=2)
-        x5 = torch.suqeeze(x5, dim=2)
         x5 = self.m_down5(x5) + x5    #outputsize: b*32N
 
         if halfForward:
             return x5            # bottom neck output
 
         x = torch.unsqueeze(x5, dim=2)
-        x = torch.unsqueeze(x5, dim=3)  #outputsize: b*32N*1*1
+        x = torch.unsqueeze(x, dim=3)  #outputsize: b*32N*1*1
         x = self.m_up5Pooling(x) + x4   #outputsize: b*16N*7*7
         x = self.m_up5(x) + x
 
