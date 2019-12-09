@@ -17,8 +17,10 @@ print(f"nCount = {nCount}")
 
 '''
 
-numpyFile1 = ""
-numpyFile2 = ""
+import numpy as np
+
+numpyFile1 = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191207_135106/04154514.npy"
+numpyFile2 = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191207_135106/02491151.npy"
 V1 = np.load(numpyFile1)
 V2 = np.load(numpyFile2)
 
