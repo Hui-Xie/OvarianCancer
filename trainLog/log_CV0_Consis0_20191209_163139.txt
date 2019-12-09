@@ -129,3 +129,6 @@ Network has total 155,528,690 parameters.
 ************** Table of Training Log **************
 Epoch	LearningRate		TrainingLoss	Dice		ValidationLoss	Dice		TestLoss	Dice
 0	1.0000e-02		0.7070		0.27541
+5	1.0000e-02		0.5301		0.41125
+10	1.0000e-02		0.5057		0.46162
+15	1.0000e-02		0.5030		0.45339
