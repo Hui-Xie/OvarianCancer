@@ -17,32 +17,16 @@ print(f"nCount = {nCount}")
 
 '''
 
+numpyFile1 = ""
+numpyFile2 = ""
+V1 = np.load(numpyFile1)
+V2 = np.load(numpyFile2)
 
-p=1
-k=3
-s=2
+VDiff = V1-V2
 
-print(f" Din ,  Dout ,  Dout2 ")
-for D in range(8,25):
-    Dout = (D+2*p-k)//s + 1
-    Dout2 = Dout*2
-    print(f"{D}, {Dout}, {Dout2}")
+Vstd = np.std(VDiff)
 
-
-import torch
-
-X = torch.ones((3,4), requires_grad=True)
-Z = torch.zeros((3,4))
-
-for _ in range(0, 10):
-    Y = X +2
-    Z += Y*2
-
-Z.backward(gradient=torch.ones(Z.shape))
-
-
-
-print (X.grad)
+print(f"Vstd = {Vstd}")
 
 
 

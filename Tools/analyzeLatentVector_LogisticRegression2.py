@@ -9,7 +9,7 @@ latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/la
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
-aList = range(82,95,1)  #dice range 82% to 95%, step 1%
+aList = range(80,95,1)  #dice range 82% to 95%, step 1%
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.8  # for each feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
@@ -22,26 +22,10 @@ import os
 import matplotlib.pyplot as plt
 import torch
 
-
-def printRed(text): print("\033[91m {}\033[00m" .format(text),end='\t')
-
-def printFeatureMap(map, specialIndex):
-    '''
-    print featureMap with specialIndex in red
-    '''
-    height, width = map.shape
-    for i in range(0, height):
-        for j in range(0, width):
-            if (i,j) == specialIndex:
-                printRed(map[i,j])
-            else:
-                print(map[i,j], end='\t')
-        print("\n",end='')
-
 def main():
 
     if K%2 != 0:
-        print(f"program demand K is an even number")
+        print(f"program demands K is an even number")
         return
 
     # patient response
@@ -87,8 +71,10 @@ def main():
         for i, key in enumerate(list(patientDice)):
             Y01[0, i] = patientResponse[key]
             filePath = os.path.join(latentVectorDir, key + ".npy")
+            print(f"{i} = {filePath}")
             V = np.load(filePath)
-            assert (F, 1) == V.shape
+            print(f"V[0] = {V[0]}, V[1] = {V[1]}, V[2] = {V[2]}, ")
+            assert (F,) == V.shape
             X[:,i] = V
         response1Rate.append(Y01.sum() / N)
         rawX = X.copy()
