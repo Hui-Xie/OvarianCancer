@@ -11,8 +11,8 @@ import  json
 
 imageDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy"
 groundTruthDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy"
-predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict"
-outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/visualResult"
+predictDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_20191207_135106"
+outputDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_20191207_135106/visualResult"
 suffix = ".npy"
 
 def main():
