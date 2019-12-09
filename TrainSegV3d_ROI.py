@@ -109,6 +109,9 @@ Major program changes:
       Dec 7th, 2019
       1  Change latent vector in the V model into 1*1 in feature map size.
       
+      Dce 9th, 2019
+      1  Instance Norm can not apply for one value per channel, which will make the value =0
+      
       
         
       

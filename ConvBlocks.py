@@ -24,7 +24,7 @@ class Conv3dBlock(nn.Module):
         y = self.m_conv(x)
 
         featureMapSize = np.prod(y.shape[-3:])
-        if featureMapSize > 27:
+        if featureMapSize > 8:
             # with Normalization
             y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
                 else F.leaky_relu(self.m_norm(y), inplace=True)
@@ -56,7 +56,7 @@ class Conv2dBlock(nn.Module):
         y = self.m_conv(x)
 
         featureMapSize = np.prod(y.shape[-2:])
-        if featureMapSize > 9:
+        if featureMapSize > 4:
             # with Normalization
             y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
                 else F.leaky_relu(self.m_norm(y), inplace=True)
@@ -85,7 +85,7 @@ class LinearBlock(nn.Module):
 
         # without Normalization
         featureMapSize = y.shape[-1]
-        if featureMapSize > 10:
+        if featureMapSize > 8:
             y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
                 else F.leaky_relu(self.m_norm(y), inplace=True)
         else:

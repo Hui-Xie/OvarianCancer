@@ -66,17 +66,7 @@ def main():
         for inputs, labels, patientIDs in data.DataLoader(allData, batch_size=batchSize, shuffle=False, num_workers=0):
             inputs = inputs.to(device, dtype=torch.float)
             labels = labels.int()
-
-            print(f"paitent ID: {patientIDs[0]}")
-            print(f"inputs: {inputs[0, 0, 23, 73, 30:60]}")
-
             outputs = net.forward(inputs, gts=None, halfForward=True)
-            #debug:
-
-
-            print(f"outputs: {outputs[0,100:150]}")
-            print(f"\n")
-
             for i in range(outputs.shape[0]):
                 output = outputs[i].detach().cpu().numpy()
                 if 0 == np.std(output):
