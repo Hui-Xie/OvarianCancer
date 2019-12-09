@@ -152,10 +152,7 @@ def main():
         print(f"accuracies: {accuracyXFlat[topKIndices]}")
 
         #draw logistic regression curves
-        fig = plt.figure(int(diceThreshold*100+100))
-        colorList = ['b',  'g', 'r', 'c', 'm', 'y','k']
-            
-
+        fig, subplots = plt.subplots(k, 1)
         for i in range(0,k):
             f = topKIndices[i] # feature index
             #drawM: draw Matrix row 0 to 2: x, sigmoid(w0+w1*), y
@@ -165,15 +162,17 @@ def main():
             drawM[2,] = Y01
             drawM = drawM[:, drawM[0,:].argsort()]
 
-            plt.plot(drawM[0,], drawM[2,], color=colorList[i], marker='x')
-            plt.plot(drawM[0,], drawM[1,], color=colorList[i])
-            plt.gca().set_ylim([0, 1.0])
-            plt.title(f"Top {k} accuracy logistic regression")
-            plt.xlabel('normalized latent value')
-            plt.ylabel('Response')
-            plt.savefig(os.path.join(latentVectorDir, f"logisticRegress_diceThreshold{int(diceThreshold*100)}.png"))
+            subplots[i,0].plot(drawM[0,], drawM[2,], 'gx')
+            subplots[i,0].plot(drawM[0,], drawM[1,], 'r-')
+            subplots[i,0].gca().set_ylim([0, 1.0])
 
+            subplots[i,0].xlabel('normalized latent value')
+            subplots[i,0].ylabel('Response')
+            subplots[i,0].legend(f"feature{f}")
 
+        plt.title(f"Top {k} accuracy logistic regression")
+        plt.show()
+        plt.savefig(os.path.join(latentVectorDir, f"logisticRegress_diceThreshold{int(diceThreshold * 100)}.png"))
 
     # print table:
     print("\n")
