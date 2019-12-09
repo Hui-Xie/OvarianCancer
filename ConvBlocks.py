@@ -1,6 +1,9 @@
 # Conv Block
+
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
+
 
 class Conv3dBlock(nn.Module):
     """
@@ -20,13 +23,15 @@ class Conv3dBlock(nn.Module):
     def forward(self, x):
         y = self.m_conv(x)
 
-        # with Normalization
-        y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
-            else F.leaky_relu(self.m_norm(y), inplace=True)
-
-        # without Normalization
-        # y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
-        #     else F.leaky_relu(y, inplace=True)
+        featureMapSize = np.prod(y.shape[-3:])
+        if featureMapSize > 27:
+            # with Normalization
+            y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
+                else F.leaky_relu(self.m_norm(y), inplace=True)
+        else:
+            # without Normalization
+            y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
+                else F.leaky_relu(y, inplace=True)
         return y
 
 
@@ -45,18 +50,20 @@ class Conv2dBlock(nn.Module):
         if useSpectralNorm:
             self.m_conv = nn.utils.spectral_norm(self.m_conv)
         # self.m_norm = nn.BatchNorm2d(outChannels)
-        self.m_norm = nn.InstanceNorm2d(outChannels)
+        self.m_norm = nn.InstanceNorm2d(outChannels)  # Instance Norm applies on per channel.
 
     def forward(self, x):
         y = self.m_conv(x)
 
-        # with Normalization
-        y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
-            else F.leaky_relu(self.m_norm(y), inplace=True)
-
-        # without Normalization
-        # y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
-        #     else F.leaky_relu(y, inplace=True)
+        featureMapSize = np.prod(y.shape[-2:])
+        if featureMapSize > 9:
+            # with Normalization
+            y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
+                else F.leaky_relu(self.m_norm(y), inplace=True)
+        else:
+            # without Normalization
+            y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
+                else F.leaky_relu(y, inplace=True)
 
         return y
 
@@ -71,13 +78,18 @@ class LinearBlock(nn.Module):
         self.m_useLeakyReLU = useLeakyReLU
 
         self.m_linear = nn.Linear(inFeatures, outFeatures, bias=bias)
-
+        self.m_norm = nn.LayerNorm(outFeatures, elementwise_affine=False)
 
     def forward(self, x):
         y = self.m_linear(x)
 
         # without Normalization
-        y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
-            else F.leaky_relu(y, inplace=True)
+        featureMapSize = y.shape[-1]
+        if featureMapSize > 10:
+            y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
+                else F.leaky_relu(self.m_norm(y), inplace=True)
+        else:
+            y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
+                else F.leaky_relu(y, inplace=True)
         return y
 

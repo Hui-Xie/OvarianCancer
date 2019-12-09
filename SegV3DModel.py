@@ -648,25 +648,32 @@ class SegV3DModel(BasicModel):
         x0 = self.m_down0Pooling(inputs)
         # x0 = self.m_down0(x0) + x0    # this residual link hurts dice performance.
         x0 = self.m_down0(x0)
+        print(f"x0 = {x0[0,12,12,60, 30:60]}")
 
         x1 = self.m_down1Pooling(x0)
         x1 = self.m_down1(x1) + x1
+        print(f"x1 = {x1[0,12,12,60, 30:60]}")
 
         x2 = self.m_down2Pooling(x1)
         x2 = self.m_down2(x2) + x2
+        print(f"x2 = {x2[0,12,5,30, 10:20]}")
 
         x3 = self.m_down3Pooling(x2)
         x3 = self.m_down3(x3) + x3
+        print(f"x3 = {x3[0,12,3,9, :]}")
 
         x4 = self.m_down4Pooling(x3)
         x4 = torch.squeeze(x4,dim=2)  # outputsize: b*16N*7*7
         x4 = self.m_down4(x4) + x4
+        print(f"x4 = {x4[0,12,:]}")
 
         x5 = self.m_down5Pooling(x4)  #outputsize: b*32N*1*1
+        print(f"aferdown5Pooling \n x5 = {x5[0, 30:60]}")
         x5 = torch.squeeze(x5, dim=3)
         x5 = torch.squeeze(x5, dim=2)
-        x5 = self.m_down5(x5) + x5    #outputsize: b*32N
 
+        x5 = self.m_down5(x5) + x5    #outputsize: b*32N
+        print(f"x5 = {x5[0,30:60]}")
         if halfForward:
             return x5            # bottom neck output
 

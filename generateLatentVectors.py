@@ -62,15 +62,30 @@ def main():
     # ================Validation===============
     net.train()
     with torch.no_grad():
+        nPatient = 0
         for inputs, labels, patientIDs in data.DataLoader(allData, batch_size=batchSize, shuffle=False, num_workers=0):
             inputs = inputs.to(device, dtype=torch.float)
             labels = labels.int()
+
+            print(f"paitent ID: {patientIDs[0]}")
+            print(f"inputs: {inputs[0, 0, 23, 73, 30:60]}")
+
             outputs = net.forward(inputs, gts=None, halfForward=True)
+            #debug:
+
+
+            print(f"outputs: {outputs[0,100:150]}")
+            print(f"\n")
+
             for i in range(outputs.shape[0]):
                 output = outputs[i].detach().cpu().numpy()
                 if 0 == np.std(output):
                     logging.info(f"patientID {patientIDs[i]} has latent vector of full zero.")
                 np.save(os.path.join(outputPath, patientIDs[i] + ".npy"), output)
+
+            nPatient +=1
+            if nPatient>2:
+                break
 
     torch.cuda.empty_cache()
     print(f'Program ID {os.getpid()}  exits.\n')
