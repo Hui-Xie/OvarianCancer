@@ -132,6 +132,7 @@ nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/
 
 Dec 9th, 2019: Test with log_CV0_Consis0_20191207_135106 network:
 python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191207_135106/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_20191207_135106 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 0
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191207_135106/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict_20191207_135106 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/labels_npy 0 3
 
 Dec 9th, 2019: Generate latent vector of size 1536*1 for training set:
 python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191207_135106/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent  3

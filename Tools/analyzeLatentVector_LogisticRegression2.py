@@ -4,17 +4,17 @@
 
 # dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191023_153046/patientDice.json"
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predictResult/20191025_102445/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191025_102445"
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict_20191207_135106/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191207_135106"
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
-aList = range(92,97,1)  #dice range 92% to 97%, step 1%
+aList = range(82,95,1)  #dice range 82% to 95%, step 1%
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.8  # for each feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
-gpuDevice = 0   #GPU ID
-K = 10 # the top K maximum accuracy positions
+gpuDevice = 3   #GPU ID
+K = 10 # the top K maximum accuracy positions, it requres an even number.
 
 import json
 import numpy as np
@@ -39,6 +39,11 @@ def printFeatureMap(map, specialIndex):
         print("\n",end='')
 
 def main():
+
+    if K%2 != 0:
+        print(f"program demand K is an even number")
+        return
+
     # patient response
     with open(patientResponsePath) as f:
         patientResponse = json.load(f)
@@ -152,7 +157,6 @@ def main():
         print(f"accuracies: {accuracyXFlat[topKIndices]}")
 
         #draw logistic regression curves
-        fig, subplots = plt.subplots(k, 1)
         for i in range(0,k):
             f = topKIndices[i] # feature index
             #drawM: draw Matrix row 0 to 2: x, sigmoid(w0+w1*), y
@@ -162,13 +166,15 @@ def main():
             drawM[2,] = Y01
             drawM = drawM[:, drawM[0,:].argsort()]
 
-            subplots[i,0].plot(drawM[0,], drawM[2,], 'gx')
-            subplots[i,0].plot(drawM[0,], drawM[1,], 'r-')
-            subplots[i,0].gca().set_ylim([0, 1.0])
+            subplot = plt.subplot(k//2, 2, i+1)
 
-            subplots[i,0].xlabel('normalized latent value')
-            subplots[i,0].ylabel('Response')
-            subplots[i,0].legend(f"feature{f}")
+            subplot.plot(drawM[0,], drawM[2,], 'gx')
+            subplot.plot(drawM[0,], drawM[1,], 'r-')
+            subplot.gca().set_ylim([0, 1.0])
+
+            subplot.xlabel('normalized latent value')
+            subplot.ylabel('Response')
+            subplot.legend(f"feature_{f}")
 
         plt.title(f"Top {k} accuracy logistic regression")
         plt.show()
