@@ -115,7 +115,7 @@ Major program changes:
       Dec 10th, 2019
       1   In the uppooling4 and 5, where inputsize=1, use Deconv instead upsample,
           in order to avoid repeat of interpolation.
-        
+      2   In the DownPoooling5, the final 3*3 conv becomes 3*3 maxpool, which stresses translation invariance.   
       
        
       
