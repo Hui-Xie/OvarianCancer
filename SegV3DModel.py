@@ -100,11 +100,18 @@ class SegV3DModel(BasicModel):
 
         # here needs unsqueeze twice at dim 2 and 3 (you need consider batch dimension)
 
-        self.m_up5Pooling = nn.Sequential(
+        '''  use Upsample
+         self.m_up5Pooling = nn.Sequential(
             nn.Upsample(size=(7, 7), mode='bilinear'),  # ouput size: 32N*7*7
             Conv2dBlock(N*32, N*16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                            useLeakyReLU=self.m_useLeakyReLU)
         )# ouput size: 16N*7*7
+        '''
+        self.m_up5Pooling = nn.Sequential(
+            Deconv2dBlock(N*32, N*16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                           useLeakyReLU=self.m_useLeakyReLU, kernelSize=7, padding=0)
+        )# ouput size: 16N*7*7
+
         self.m_up5 = nn.Sequential(
             Conv2dBlock(N*16, N*16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -114,11 +121,20 @@ class SegV3DModel(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU)
         )#ouput size: 16N*7*7, which needs unsqueeze at dim2
 
+        ''''
         self.m_up4Pooling = nn.Sequential(
             nn.Upsample(size=(6, 18, 18), mode='trilinear'),
             Conv3dBlock(N*16, N*8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
         )  # ouput size: 8N*6*18*18
+        '''
+        # use deconv instead of upsample to avoid linear interpolation of repeat when input size =1
+        self.m_up4Pooling = nn.Sequential(
+            Deconv3dBlock(N * 16, N * 8, convStride=(1,2,2), useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU, kernelSize=6, padding=0),
+        )  # ouput size: 8N*6*18*18
+
+
         self.m_up4 = nn.Sequential(
             Conv3dBlock(N*8, N*8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),

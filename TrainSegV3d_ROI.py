@@ -112,7 +112,9 @@ Major program changes:
       Dce 9th, 2019
       1  Instance Norm can not apply for one value per channel, which will make the value =0
       
-      
+      Dec 10th, 2019
+      1   In the uppooling4 and 5, where inputsize=1, use Deconv instead upsample,
+          in order to avoid repeat of interpolation.
         
       
        
