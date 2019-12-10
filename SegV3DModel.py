@@ -87,7 +87,7 @@ class SegV3DModel(BasicModel):
             Conv2dBlock(N*32, N*32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=0), # output size: 32N*3*3
             Conv2dBlock(N*32, N*32, convStride=1,
-                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=0), # output size: 32N*1*1
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=0), # output size: 32N*1*1  # use maxpool 3*3 also makes sense.
         )# outputSize:32N*1*1, which needs squeeze
 
         self.m_down5 = nn.Sequential(
