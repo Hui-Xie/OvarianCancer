@@ -62,7 +62,6 @@ def main():
     # ================Validation===============
     net.train()
     with torch.no_grad():
-        nPatient = 0
         for inputs, labels, patientIDs in data.DataLoader(allData, batch_size=batchSize, shuffle=False, num_workers=0):
             inputs = inputs.to(device, dtype=torch.float)
             labels = labels.int()
@@ -73,9 +72,6 @@ def main():
                     logging.info(f"patientID {patientIDs[i]} has latent vector of full zero.")
                 np.save(os.path.join(outputPath, patientIDs[i] + ".npy"), output)
 
-            nPatient +=1
-            if nPatient>2:
-                break
 
     torch.cuda.empty_cache()
     print(f'Program ID {os.getpid()}  exits.\n')
