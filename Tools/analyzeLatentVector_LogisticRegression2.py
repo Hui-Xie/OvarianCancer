@@ -10,7 +10,7 @@ patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json
 outputImageDir = latentVectorDir +"/analyzeImage"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
-aList = range(82,89,2)  #min dice range 82% to 90%, step 1%
+aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.7  # for each feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
@@ -93,6 +93,7 @@ def main():
         W0 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1.data.fill_(0.01)
+        print(f"program is working on {nIteration} epochs logistic regression, please wait......")
         for nIter in range(0, nIteration):
             loss = torch.zeros((F, 1), dtype=torch.float, device=gpuDevice)
             if W0.grad is not None:
@@ -105,10 +106,10 @@ def main():
                 sigmoidx = torch.sigmoid(W0+W1*x)
                 loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
             loss = loss/N
-            if nIter%200 ==0:
-                print(f"at feature1 ,iter= {nIter}, loss25={loss[25].item()}, loss901={loss[901].item()}, loss1484={loss[1484].item()}")
+            #if nIter%200 ==0:
+            #    print(f"at feature1 ,iter= {nIter}, loss25={loss[25].item()}, loss901={loss[901].item()}, loss1484={loss[1484].item()}")
             if nIter == 4000:
-                lr = 0.001
+                lr = 0.005
 
             # backward
             loss.backward(gradient=torch.ones(loss.shape).to(gpuDevice))
@@ -137,13 +138,22 @@ def main():
         numBestFeatures.append(numBestFeaturesTemp)
 
         #  Analyze the locations of top accuracies.
-        print(f"\nfinished dice {diceThreshold}...")
+        print(f"\n\nFor  dice threshold: {diceThreshold}...")
         k=K if numBestFeaturesTemp >= K else numBestFeaturesTemp
         print(f"Its top {k} accuracies location:")
         accuracyXFlat = np.squeeze(accuracyX)
         topKIndices = np.argpartition(accuracyXFlat, kth=-k)[-k:]
         print(f"indices:    {topKIndices}")
         print(f"accuracies: {accuracyXFlat[topKIndices]}")
+
+        # print all better feature index in order
+        print(f"There are {numBestFeaturesTemp} whose response prediction accuracy >{accuracyThreshold}")
+        bestFeatureIndices = []
+        for i in range(0, accuracyX.shape[0]):
+            if accuracyX[i] >= accuracyThreshold:
+                bestFeatureIndices.append(i)
+        print(f"there are {len(bestFeatureIndices)} best featuress")
+        print(f"best Feature Indices: \n {bestFeatureIndices}")
 
         #draw logistic regression curves
         fig = plt.figure()
