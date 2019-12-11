@@ -4,15 +4,29 @@
 
 # dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191023_153046/patientDice.json"
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
+
+# for train data:
 dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict_20191210_024607/patientDice.json"
 latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
+
+# for test data:
+#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_20191210_024607/patientDice.json"
+#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
+
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 outputImageDir = latentVectorDir +"/analyzeImage"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
-aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
+
+# for training data
+# aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
+
+# for test data
+aList = range(0,89,24)
+
 diceThresholdList=[x/100 for x in aList]
-accuracyThreshold = 0.7  # for each feature
+accuracyThreshold = 0.7  # for each training feature
+#accuracyThreshold = 0.75  # for each test feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
 gpuDevice = 1   #GPU ID
 K = 16 # the top K maximum accuracy positions
@@ -56,7 +70,7 @@ def main():
     for diceThreshold in diceThresholdList:
         patientDice = rawPatientDice.copy()
         for key in list(patientDice):
-            if patientDice[key] < diceThreshold:
+             if patientDice[key] < diceThreshold:
                 del patientDice[key]
         N = len(patientDice)
         validationSamples.append(N)
@@ -70,7 +84,11 @@ def main():
         X = np.empty((F, N), dtype=np.float)  # latent vectors
         Y01 = np.empty((1, N), dtype=np.int)  # response in 0, 1 range
         for i, key in enumerate(list(patientDice)):
-            Y01[0, i] = patientResponse[key]
+            if len(key) > 8:
+                key1 = key[0:8]   #erase A or B tag in key
+            else:
+                key1 = key
+            Y01[0, i] = patientResponse[key1]
             filePath = os.path.join(latentVectorDir, key + ".npy")
             V = np.load(filePath)
             assert (F,) == V.shape
@@ -127,6 +145,24 @@ def main():
         predictX = (sigmoidX >= 0.5).astype(np.int)
         Y = np.repeat(Y01, F, axis=0)
         accuracyX = ((predictX - Y) == 0).sum(axis=1) / N
+
+        # draw accuracyX curve
+        fig = plt.figure()
+        subplot1 = fig.add_subplot(1, 2, 1)
+        subplot1.set_xlabel('feature in ascending index')
+        subplot1.set_ylabel('response accuracy')
+        subplot1.set_ylim([0, 1.0])
+        subplot1.plot(list(range(0, F)), accuracyX[:,0])
+
+        sortedAccuracyX = accuracyX[accuracyX[:,0].argsort(),:]
+        subplot2 = fig.add_subplot(1, 2, 2)
+        subplot2.set_xlabel(' feature with descending accuracy')
+        subplot2.set_ylabel('response accuracy')
+        subplot2.set_ylim([0, 1.0])
+        subplot2.plot(list(range(0, F)), sortedAccuracyX[:, 0])
+        plt.savefig(os.path.join(outputImageDir, f"LR_diceT{diceThreshold:.0%}_accurayCurve.png"))
+
+        plt.close()
 
         minAccuracy.append(accuracyX.min())
         meanAccuracy.append(accuracyX.mean())
