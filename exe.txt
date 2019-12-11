@@ -156,7 +156,8 @@ nohup python3.7 TrainSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/
 # Dec 11th, 2019: Generate latent vector with 20191210_024607 network:
 # for training set
 python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent  1
-
+# test training set
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict_20191210_024607 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/labels_npy 0 1
 
 
 

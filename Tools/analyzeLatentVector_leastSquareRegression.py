@@ -128,6 +128,7 @@ def main():
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')
     plt.savefig(os.path.join(latentVectorDir, f"SingleFeaturePrediction.png"))
+    plt.close()
 
     f = plt.figure(2)
     plt.plot(diceThresholdList, rateBestFeatures)
@@ -136,6 +137,7 @@ def main():
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Rate of Best Features')
     plt.savefig(os.path.join(latentVectorDir, f"rateBestFeatures.png"))
+    plt.close()
 
 if __name__ == "__main__":
     main()

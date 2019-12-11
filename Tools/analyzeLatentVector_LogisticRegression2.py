@@ -4,17 +4,18 @@
 
 # dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/predictResult/20191023_153046/patientDice.json"
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict_20191207_135106/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191207_135106"
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict_20191210_024607/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
+outputImageDir = latentVectorDir +"/analyzeImage"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
-aList = range(80,95,1)  #dice range 82% to 95%, step 1%
+aList = range(82,89,2)  #min dice range 82% to 90%, step 1%
 diceThresholdList=[x/100 for x in aList]
-accuracyThreshold = 0.8  # for each feature
+accuracyThreshold = 0.7  # for each feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
-gpuDevice = 3   #GPU ID
-K = 10 # the top K maximum accuracy positions, it requres an even number.
+gpuDevice = 1   #GPU ID
+K = 16 # the top K maximum accuracy positions
 
 import json
 import numpy as np
@@ -24,9 +25,8 @@ import torch
 
 def main():
 
-    if K%2 != 0:
-        print(f"program demands K is an even number")
-        return
+    if not os.path.exists(outputImageDir):
+        os.mkdir(outputImageDir)
 
     # patient response
     with open(patientResponsePath) as f:
@@ -71,9 +71,7 @@ def main():
         for i, key in enumerate(list(patientDice)):
             Y01[0, i] = patientResponse[key]
             filePath = os.path.join(latentVectorDir, key + ".npy")
-            print(f"{i} = {filePath}")
             V = np.load(filePath)
-            print(f"V[0] = {V[0]}, V[1] = {V[1]}, V[2] = {V[2]}, ")
             assert (F,) == V.shape
             X[:,i] = V
         response1Rate.append(Y01.sum() / N)
@@ -90,11 +88,11 @@ def main():
         # here W0 and W1 each have a shape of (F,1)
         # sigmoid(x) = sigmoid(W0+W1*x)
         lr = 0.01
-        nIteration = 200
+        nIteration = 2000
         W0 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1.data.fill_(0.01)
-        for _ in range(0, nIteration):
+        for nIter in range(0, nIteration):
             loss = torch.zeros((F, 1), dtype=torch.float, device=gpuDevice)
             if W0.grad is not None:
                 W0.grad.data.zero_()
@@ -102,10 +100,12 @@ def main():
                 W1.grad.data.zero_()
             for i in range(0,N):
                 y = Y01[0,i]
-                x = torch.from_numpy(X[:,i]).type(torch.float32).to(gpuDevice)
+                x = torch.from_numpy(X[:,i]).type(torch.float32).to(gpuDevice).view_as(W0)
                 sigmoidx = torch.sigmoid(W0+W1*x)
                 loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
             loss = loss/N
+            if nIter%100 ==0:
+                print(f"at feature1 ,iter= {nIter}, loss25={loss[25].item()}, loss901={loss[901].item()}, loss1484={loss[1484].item()}")
 
             # backward
             loss.backward(gradient=torch.ones(loss.shape).to(gpuDevice))
@@ -143,6 +143,7 @@ def main():
         print(f"accuracies: {accuracyXFlat[topKIndices]}")
 
         #draw logistic regression curves
+        fig = plt.figure()
         for i in range(0,k):
             f = topKIndices[i] # feature index
             #drawM: draw Matrix row 0 to 2: x, sigmoid(w0+w1*), y
@@ -152,20 +153,24 @@ def main():
             drawM[2,] = Y01
             drawM = drawM[:, drawM[0,:].argsort()]
 
-            subplot = plt.subplot(k//2, 2, i+1)
+            subplot = fig.add_subplot(k//4, 4, i+1)
 
             subplot.plot(drawM[0,], drawM[2,], 'gx')
             subplot.plot(drawM[0,], drawM[1,], 'r-')
-            subplot.gca().set_ylim([0, 1.0])
+            subplot.set_ylim([-0.1, 1.1])
 
-            subplot.xlabel('normalized latent value')
-            subplot.ylabel('Response')
-            subplot.legend(f"feature_{f}")
+            #subplot.set_xlabel('normalized latent value')
+            #subplot.set_ylabel('Response')
+            subplot.text(0, 0.5,f"f{f}, A{accuracyX[f]:.0%}", fontsize=6)
 
-        plt.title(f"Top {k} accuracy logistic regression")
-        plt.show()
-        plt.savefig(os.path.join(latentVectorDir, f"logisticRegress_diceThreshold{int(diceThreshold * 100)}.png"))
+        fig.suptitle(f"Top {k} Feature for dice>{diceThreshold:.0%}\n  ")
+        fig.tight_layout()
+        # fig.subplots_adjust(top=0.7)
+        # plt.show()
+        plt.savefig(os.path.join(outputImageDir, f"LR_diceT{diceThreshold:.0%}.png"))
+        plt.close()
 
+    print("Logistic Figure: x axis is normalized latent value, y is response\n green x is GroudTruth, red line is prediciton")
     # print table:
     print("\n")
     print(f"dice threshold list:    {diceThresholdList}")
@@ -177,13 +182,13 @@ def main():
     print(f"medianAccuracy:         {medianAccuracy}")
     print(f"maxAccuracy:            {maxAccuracy}")
     print(f"num of Best Features:   {numBestFeatures}")
-    nFeatures = F*H*W
+    nFeatures = F*W
     rateBestFeatures = [x/(nFeatures) for x in numBestFeatures ]
     print(f"rate of Best Features:  {rateBestFeatures}")
 
 
     #draw table:
-    fig = plt.figure(2)
+    fig = plt.figure()
     plt.plot(diceThresholdList, minAccuracy)
     plt.plot(diceThresholdList, meanAccuracy)
     plt.plot(diceThresholdList, medianAccuracy)
@@ -195,15 +200,17 @@ def main():
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')
-    plt.savefig(os.path.join(latentVectorDir, f"SingleFeaturePrediction.png"))
+    plt.savefig(os.path.join(outputImageDir, f"SingleFeaturePrediction.png"))
+    plt.close()
 
-    fig = plt.figure(3)
+    fig = plt.figure()
     plt.plot(diceThresholdList, rateBestFeatures)
     plt.gca().set_ylim([0, 1.0])
     plt.title(f"Rate of Best Features on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Rate of Best Features')
-    plt.savefig(os.path.join(latentVectorDir, f"rateBestFeatures.png"))
+    plt.savefig(os.path.join(outputImageDir, f"rateBestFeatures.png"))
+    plt.close()
 
 if __name__ == "__main__":
     main()
