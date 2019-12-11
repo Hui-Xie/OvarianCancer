@@ -22,6 +22,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import torch
+import math
 
 def main():
 
@@ -88,7 +89,7 @@ def main():
         # here W0 and W1 each have a shape of (F,1)
         # sigmoid(x) = sigmoid(W0+W1*x)
         lr = 0.01
-        nIteration = 2000
+        nIteration = 6000
         W0 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
         W1.data.fill_(0.01)
@@ -104,8 +105,10 @@ def main():
                 sigmoidx = torch.sigmoid(W0+W1*x)
                 loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
             loss = loss/N
-            if nIter%100 ==0:
+            if nIter%200 ==0:
                 print(f"at feature1 ,iter= {nIter}, loss25={loss[25].item()}, loss901={loss[901].item()}, loss1484={loss[1484].item()}")
+            if nIter == 4000:
+                lr = 0.001
 
             # backward
             loss.backward(gradient=torch.ones(loss.shape).to(gpuDevice))
@@ -153,7 +156,7 @@ def main():
             drawM[2,] = Y01
             drawM = drawM[:, drawM[0,:].argsort()]
 
-            subplot = fig.add_subplot(k//4, 4, i+1)
+            subplot = fig.add_subplot(int(math.ceil(k/4)), 4, i+1)
 
             subplot.plot(drawM[0,], drawM[2,], 'gx')
             subplot.plot(drawM[0,], drawM[1,], 'r-')
