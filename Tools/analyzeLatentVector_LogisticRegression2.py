@@ -6,12 +6,14 @@
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
 
 # for train data:
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
+#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
+#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
 
 # for test data:
-#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
-#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
+
+checkIndiceList = [203, 213, 415, 448, 450, 462, 465, 482, 552, 563, 617, 636, 662, 688, 901, 902, 914, 1026, 1029, 1044, 1169, 1191, 1198, 1226, 1247, 1267, 1342, 1409, 1417, 1443, 1484, 1499, 1503, 1518]
 
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 outputImageDir = latentVectorDir +"/analyzeImage"
@@ -19,10 +21,10 @@ outputImageDir = latentVectorDir +"/analyzeImage"
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
 
 # for training data
-aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
+#aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
 
 # for test data
-# aList = range(0,89,100)
+aList = range(0,89,100)
 
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.7  # for each training feature
@@ -30,6 +32,8 @@ accuracyThreshold = 0.7  # for each training feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
 gpuDevice = 1   #GPU ID
 K = 16 # the top K maximum accuracy positions
+
+useSavedW = True
 
 import json
 import numpy as np
@@ -103,40 +107,49 @@ def main():
         std = np.repeat(std, N, axis=1)
         X = (X - mean) / std
 
-        # Logistic Regression Analysis: logistic loss =\sum (-y*log(sigmoid(x))-(1-y)*log(1-sigmoid(x)))
-        # here W0 and W1 each have a shape of (F,1)
-        # sigmoid(x) = sigmoid(W0+W1*x)
-        lr = 0.01
-        nIteration = 6000
-        W0 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
-        W1 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
-        W1.data.fill_(0.01)
-        print(f"program is working on {nIteration} epochs logistic regression, please wait......")
-        for nIter in range(0, nIteration):
-            loss = torch.zeros((F, 1), dtype=torch.float, device=gpuDevice)
-            if W0.grad is not None:
-                W0.grad.data.zero_()
-            if W1.grad is not None:
-                W1.grad.data.zero_()
-            for i in range(0,N):
-                y = Y01[0,i]
-                x = torch.from_numpy(X[:,i]).type(torch.float32).to(gpuDevice).view_as(W0)
-                sigmoidx = torch.sigmoid(W0+W1*x)
-                loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
-            loss = loss/N
-            #if nIter%200 ==0:
-            #    print(f"at feature1 ,iter= {nIter}, loss25={loss[25].item()}, loss901={loss[901].item()}, loss1484={loss[1484].item()}")
-            if nIter == 4000:
-                lr = 0.005
+        W0File = os.path.join(latentVectorDir, "analyzeImage", f"LR_W0_dice{diceThreshold:.0%}.npy")
+        W1File = os.path.join(latentVectorDir, "analyzeImage", f"LR_W1_dice{diceThreshold:.0%}.npy")
+        if useSavedW and os.path.exists(W0File) and os.path.exists(W1File):
+            print("use loaded W0 and W1 for logistic regression")
+            W0 = np.load(W0File)
+            W1 = np.load(W1File)
+        else:
+            # Logistic Regression Analysis: logistic loss =\sum (-y*log(sigmoid(x))-(1-y)*log(1-sigmoid(x)))
+            # here W0 and W1 each have a shape of (F,1)
+            # sigmoid(x) = sigmoid(W0+W1*x)
+            lr = 0.01
+            nIteration = 6000
+            W0 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
+            W1 = torch.zeros((F, 1), dtype=torch.float, requires_grad=True, device=gpuDevice)
+            W1.data.fill_(0.01)
+            print(f"program is working on {nIteration} epochs logistic regression, please wait......")
+            for nIter in range(0, nIteration):
+                loss = torch.zeros((F, 1), dtype=torch.float, device=gpuDevice)
+                if W0.grad is not None:
+                    W0.grad.data.zero_()
+                if W1.grad is not None:
+                    W1.grad.data.zero_()
+                for i in range(0,N):
+                    y = Y01[0,i]
+                    x = torch.from_numpy(X[:,i]).type(torch.float32).to(gpuDevice).view_as(W0)
+                    sigmoidx = torch.sigmoid(W0+W1*x)
+                    loss += -y*torch.log(sigmoidx)-(1-y)*torch.log(1-sigmoidx)
+                loss = loss/N
+                #if nIter%200 ==0:
+                #    print(f"at feature1 ,iter= {nIter}, loss25={loss[25].item()}, loss901={loss[901].item()}, loss1484={loss[1484].item()}")
+                if nIter == 4000:
+                    lr = 0.005
 
-            # backward
-            loss.backward(gradient=torch.ones(loss.shape).to(gpuDevice))
-            # update W0 and W1
-            W0.data -= lr*W0.grad.data  # we must use data, otherwise, it changes leaf property.
-            W1.data -= lr*W1.grad.data
+                # backward
+                loss.backward(gradient=torch.ones(loss.shape).to(gpuDevice))
+                # update W0 and W1
+                W0.data -= lr*W0.grad.data  # we must use data, otherwise, it changes leaf property.
+                W1.data -= lr*W1.grad.data
 
-        W0 = W0.detach().cpu().numpy()
-        W1 = W1.detach().cpu().numpy()
+            W0 = W0.detach().cpu().numpy()
+            W1 = W1.detach().cpu().numpy()
+            np.save(W0File, W0)
+            np.save(W1File, W1)
 
         W0Ex = np.repeat(W0, N, axis=1)
         W1Ex = np.repeat(W1, N, axis=1)
@@ -146,24 +159,34 @@ def main():
         Y = np.repeat(Y01, F, axis=0)
         accuracyX = ((predictX - Y) == 0).sum(axis=1) / N
 
+        # check prediction accuracy for training best indices
+        print(f"best feature indices in training set:")
+        print(checkIndiceList)
+        print("Its corresponding prediction accuracy:")
+        sumAccuracy = 0.0
+        for i in checkIndiceList:
+            sumAccuracy += accuracyX[i]
+            print(accuracyX[i], end='\t')
+        print(f"\nAverage prediction accuracy for checked indices: {sumAccuracy/len(checkIndiceList)}")
+
         # draw accuracyX curve
-        indexArray = np.empty(F,1).astype(int)
+        indexArray = np.zeros((F,),dtype=np.int)
         for i in range(0, F):
-            indexArray[i,0] = i
+            indexArray[i] = i
 
         fig = plt.figure()
         subplot1 = fig.add_subplot(1, 2, 1)
         subplot1.set_xlabel('feature in ascending index')
-        subplot1.set_ylabel('response accuracy')
-        subplot1.set_ylim([0, 1.0])
-        subplot1.plot(indexArray, accuracyX[:,0])
+        subplot1.set_ylabel('response prediction accuracy')
+        subplot1.set_ylim([0.4, 0.85])
+        subplot1.plot(indexArray, accuracyX)
 
-        sortedAccuracyX = accuracyX[accuracyX[:,0].argsort(),:]
+        sortedAccuracyX = accuracyX[accuracyX.argsort()]
         subplot2 = fig.add_subplot(1, 2, 2)
         subplot2.set_xlabel(' feature with ascending accuracy')
-        subplot2.set_ylabel('response accuracy')
-        subplot2.set_ylim([0, 1.0])
-        subplot2.plot(indexArray, sortedAccuracyX[:, 0])
+        # subplot2.set_ylabel('response prediction accuracy')
+        subplot2.set_ylim([0.4, 0.85])
+        subplot2.plot(indexArray, sortedAccuracyX)
         plt.savefig(os.path.join(outputImageDir, f"LR_diceT{diceThreshold:.0%}_accurayCurve.png"))
 
         plt.close()
