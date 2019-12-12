@@ -6,14 +6,24 @@
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
 
 # for train data:
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
+#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
+#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
 
 # for test data:
-#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
-#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
 
-checkIndiceList = [203, 213, 415, 448, 450, 462, 465, 482, 552, 563, 617, 636, 662, 688, 901, 902, 914, 1026, 1029, 1044, 1169, 1191, 1198, 1226, 1247, 1267, 1342, 1409, 1417, 1443, 1484, 1499, 1503, 1518]
+checkIndiceList = [7, 10, 17, 21, 25, 28, 30, 32, 45, 52, 54, 79, 84, 93, 127, 128, 135, 160, 172, 174, 178, 182, 199,
+                   203, 213, 224, 249, 250, 253, 260, 273, 278, 283, 286, 307, 333, 336, 344, 349, 356, 359, 371, 373,
+                   375, 380, 382, 386, 411, 415, 426, 432, 436, 441, 448, 450, 451, 456, 459, 462, 465, 469, 479, 482,
+                   495, 507, 541, 542, 543, 546, 548, 552, 562, 563, 578, 582, 587, 597, 598, 616, 617, 618, 629, 636,
+                   639, 648, 662, 670, 677, 681, 684, 685, 688, 704, 713, 720, 723, 736, 739, 748, 755, 781, 785, 792,
+                   834, 838, 840, 865, 870, 874, 875, 876, 879, 891, 901, 902, 903, 914, 922, 923, 947, 948, 955, 957,
+                   980, 997, 998, 1018, 1024, 1025, 1026, 1029, 1033, 1044, 1048, 1051, 1066, 1077, 1078, 1092, 1110,
+                   1113, 1119, 1137, 1151, 1169, 1172, 1177, 1191, 1198, 1204, 1206, 1207, 1220, 1226, 1231, 1234, 1243,
+                   1247, 1257, 1267, 1276, 1297, 1308, 1309, 1338, 1342, 1345, 1357, 1364, 1367, 1368, 1370, 1409, 1417,
+                   1418, 1419, 1426, 1429, 1442, 1443, 1454, 1462, 1473, 1480, 1484, 1490, 1499, 1503, 1507, 1518, 1528,
+                   1533]
 
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 outputAnalyzeDir = latentVectorDir + "/analyzeImage"
@@ -21,13 +31,13 @@ outputAnalyzeDir = latentVectorDir + "/analyzeImage"
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
 
 # for training data
-aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
+#aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
 
 # for test data
-#aList = range(0,89,100)
+aList = range(0,89,100)
 
 diceThresholdList=[x/100 for x in aList]
-accuracyThreshold = 0.7  # for each training feature
+accuracyThreshold = 0.68  # for each training feature
 #accuracyThreshold = 0.75  # for each test feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
 gpuDevice = 1   #GPU ID
