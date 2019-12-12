@@ -6,25 +6,25 @@
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
 
 # for train data:
-#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
-#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
 
 # for test data:
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
+#dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
+#latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
 
 checkIndiceList = [203, 213, 415, 448, 450, 462, 465, 482, 552, 563, 617, 636, 662, 688, 901, 902, 914, 1026, 1029, 1044, 1169, 1191, 1198, 1226, 1247, 1267, 1342, 1409, 1417, 1443, 1484, 1499, 1503, 1518]
 
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
-outputImageDir = latentVectorDir +"/analyzeImage"
+outputAnalyzeDir = latentVectorDir + "/analyzeImage"
 
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
 
 # for training data
-#aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
+aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
 
 # for test data
-aList = range(0,89,100)
+#aList = range(0,89,100)
 
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.7  # for each training feature
@@ -44,8 +44,8 @@ import math
 
 def main():
 
-    if not os.path.exists(outputImageDir):
-        os.mkdir(outputImageDir)
+    if not os.path.exists(outputAnalyzeDir):
+        os.mkdir(outputAnalyzeDir)
 
     # patient response
     with open(patientResponsePath) as f:
@@ -107,8 +107,8 @@ def main():
         std = np.repeat(std, N, axis=1)
         X = (X - mean) / std
 
-        W0File = os.path.join(latentVectorDir, "analyzeImage", f"LR_W0_dice{diceThreshold:.0%}.npy")
-        W1File = os.path.join(latentVectorDir, "analyzeImage", f"LR_W1_dice{diceThreshold:.0%}.npy")
+        W0File = os.path.join(outputAnalyzeDir, f"LR_W0_dice{diceThreshold:.0%}.npy")
+        W1File = os.path.join(outputAnalyzeDir, f"LR_W1_dice{diceThreshold:.0%}.npy")
         if useSavedW and os.path.exists(W0File) and os.path.exists(W1File):
             print("use loaded W0 and W1 for logistic regression")
             W0 = np.load(W0File)
@@ -158,6 +158,7 @@ def main():
         predictX = (sigmoidX >= 0.5).astype(np.int)
         Y = np.repeat(Y01, F, axis=0)
         accuracyX = ((predictX - Y) == 0).sum(axis=1) / N
+        np.save(os.path.join(outputAnalyzeDir, "accuracyFeature.npy"), accuracyX)
 
         # check prediction accuracy for training best indices
         print(f"best feature indices in training set:")
@@ -187,7 +188,7 @@ def main():
         # subplot2.set_ylabel('response prediction accuracy')
         subplot2.set_ylim([0.4, 0.85])
         subplot2.plot(indexArray, sortedAccuracyX)
-        plt.savefig(os.path.join(outputImageDir, f"LR_diceT{diceThreshold:.0%}_accurayCurve.png"))
+        plt.savefig(os.path.join(outputAnalyzeDir, f"LR_diceT{diceThreshold:.0%}_accurayCurve.png"))
 
         plt.close()
 
@@ -243,7 +244,7 @@ def main():
         fig.tight_layout()
         # fig.subplots_adjust(top=0.7)
         # plt.show()
-        plt.savefig(os.path.join(outputImageDir, f"LR_diceT{diceThreshold:.0%}.png"))
+        plt.savefig(os.path.join(outputAnalyzeDir, f"LR_diceT{diceThreshold:.0%}.png"))
         plt.close()
 
     print("Logistic Figure: x axis is normalized latent value, y is response\n green x is GroudTruth, red line is prediciton")
@@ -276,7 +277,7 @@ def main():
     plt.title(f"Single-Feature prediciton on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Prediction Accuracy')
-    plt.savefig(os.path.join(outputImageDir, f"SingleFeaturePrediction.png"))
+    plt.savefig(os.path.join(outputAnalyzeDir, f"SingleFeaturePrediction.png"))
     plt.close()
 
     fig = plt.figure()
@@ -285,7 +286,7 @@ def main():
     plt.title(f"Rate of Best Features on different dice thresholds")
     plt.xlabel('Dice Thresholds')
     plt.ylabel('Rate of Best Features')
-    plt.savefig(os.path.join(outputImageDir, f"rateBestFeatures.png"))
+    plt.savefig(os.path.join(outputAnalyzeDir, f"rateBestFeatures.png"))
     plt.close()
 
 if __name__ == "__main__":
