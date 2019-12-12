@@ -41,6 +41,9 @@ def main():
     GPUID = int(sys.argv[6])  # choices: 0,1,2,3 for lab server.
     useConsistencyLoss = False
 
+    if not os.path.exists(predictOutputDir):
+        os.mkdir(predictOutputDir)
+
     print(f'Program ID:  {os.getpid()}\n')
     print(f'Program commands: {sys.argv}')
     print(f'.........')

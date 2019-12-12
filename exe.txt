@@ -163,4 +163,18 @@ python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/
 # for test data
 python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict_20191210_024607 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 1
 
+=====================================
+
+#for network: 20191209_163139
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191209_163139/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191209_163139 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 1
+
+#for network: 20191210_164445
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_164445/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_164445 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 1
+
+#for network: 20191210_024607, the best network
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/labels_npy 0 1
+python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607 /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/labels_npy 0 1
+python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent  1
+python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent  1
+
 

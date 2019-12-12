@@ -112,6 +112,7 @@ class SegV3DModel(BasicModel):
                            useLeakyReLU=self.m_useLeakyReLU)
         )# ouput size: 16N*7*7
         '''
+        # for 20191210_024607 nework
         self.m_up5Pooling = nn.Sequential(
             Deconv2dBlock(N*32, N*16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=7, padding=0)
