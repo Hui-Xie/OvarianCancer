@@ -75,7 +75,7 @@ net = FCClassifier()
 # Parameters of a model after .cuda() will be different objects with those before the call.
 net.to(device)
 
-optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
+optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
 loss = nn.BCELoss()
@@ -94,16 +94,18 @@ if not os.path.exists(logDir):
     os.mkdir(logDir)
 writer = SummaryWriter(log_dir=logDir)
 
-epochs = 15000000
+epochs = 6000
 preLoss = 100000
-net.train()
+
 print(f"Fully Conneted Classifier is training and save at {netPath}")
 for epoch in range(epochs):
+    net.train()
     trOutputs, trLoss = net.forward(trainingX, gts=trainingY)
     optimizer.zero_grad()
     trLoss.backward()
     optimizer.step()
 
+    net.eval()
     with torch.no_grad():
          trAccuracy = computeAccuracy(trOutputs,trainingY)
          testOutputs, testLoss =  net.forward(testX, gts=testY)
