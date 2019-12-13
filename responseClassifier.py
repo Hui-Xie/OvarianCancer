@@ -22,7 +22,7 @@ logDir = trainLatentDir +"/log"
 
 F=1536  # full feature length of a latent vector
 extractF = 192 # lenght of extacted features
-device = 1   #GPU ID
+device = 3   #GPU ID
 
 import json
 import os
