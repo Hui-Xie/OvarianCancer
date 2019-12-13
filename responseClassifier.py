@@ -18,6 +18,7 @@ testLatentDir  = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/l
 suffix = '.npy'
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 netPath = "/home/hxie1/temp_netParameters/OvarianCancer/FCClassifier"
+logDir = trainLatentDir +"/log"
 
 F=1536  # full feature length of a latent vector
 extractF = 192 # lenght of extacted features
@@ -33,9 +34,15 @@ from FCClassifier import FCClassifier
 import torch.optim as optim
 from NetMgr import NetMgr
 import datetime
+from torch.utils.tensorboard import SummaryWriter
 
 # extract feature and ground truth
 
+def computeAccuracy(y, gt):
+    y = (y>=0.5).int()
+    N = gt.shape[0]
+    accuracy = ((y - gt) == 0).sum(dim=0) / N
+    return accuracy
 
 def loadXY(latentDir, patientResponse):
     originalCwd = os.getcwd()
@@ -45,7 +52,7 @@ def loadXY(latentDir, patientResponse):
 
     N  = len(trainingFilesList)
     X = torch.zeros((N, extractF), dtype=torch.float, device=device, requires_grad=False)
-    Y = torch.zeros((N, 1), dtype=torch.int, device=device, requires_grad=False)
+    Y = torch.zeros((N, 1), dtype=torch.float, device=device, requires_grad=False)
     for i, filePath in enumerate(trainingFilesList):
         patientID = getStemName(filePath, suffix)[:8]
         V = np.load(filePath)
@@ -83,14 +90,33 @@ netMgr = NetMgr(net, netPath, device)
 if 2 == len(getFilesList(netPath, ".pt")):
     netMgr.loadNet("train")
 
+if not os.path.exists(logDir):
+    os.mkdir(logDir)
+writer = SummaryWriter(log_dir=logDir)
+
 epochs = 15000000
-oldTestLoss = 100000
+preLoss = 100000
+net.train()
+print(f"Fully Conneted Classifier is training and save at {netPath}")
+for epoch in range(epochs):
+    trOutputs, trLoss = net.forward(trainingX, gts=trainingY)
+    optimizer.zero_grad()
+    trLoss.backward()
+    optimizer.step()
 
-print("We are here")
+    with torch.no_grad():
+         trAccuracy = computeAccuracy(trOutputs,trainingY)
+         testOutputs, testLoss =  net.forward(testX, gts=testY)
+         testAccuracy = computeAccuracy(testOutputs, testY)
+
+    writer.add_scalar('Loss/train', trLoss, epoch)
+    writer.add_scalar('Loss/test', testLoss, epoch)
+    writer.add_scalar('Accuracy/train', trAccuracy, epoch)
+    writer.add_scalar('Accuracy/test', testAccuracy, epoch)
+
+    if testLoss < preLoss:
+        preLoss = testLoss
+        netMgr.saveNet(netPath)
 
 
-# run network
-
-# print out
-
-
+print(f"================End of FC Classifier================")

@@ -26,7 +26,7 @@ class FCClassifier(BasicModel):
         x = self.m_layer4(x)
         x = self.m_layer5(x)
 
-        if gts==None:
+        if gts is None:
             return x
         else:
             # compute loss (put loss here is to save main GPU memory)
@@ -37,5 +37,5 @@ class FCClassifier(BasicModel):
                 lossFunc.to(device)
                 loss += lossFunc(x, gts) * weight
 
-            return loss
+            return x, loss
 
