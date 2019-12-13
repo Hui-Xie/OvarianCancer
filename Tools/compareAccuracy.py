@@ -28,7 +28,7 @@ plt.yscale('linear')
 plt.scatter(indexArray, trainAccuracy,s=1)
 plt.scatter(indexArray, testAccuracy,s=1)
 plt.legend(['training', 'test'])
-plt.show()
+#plt.show()
 
 plt.savefig(os.path.join(outputAnalyzeDir, f"accurayComparision.png"))
 
