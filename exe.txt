@@ -177,4 +177,7 @@ python3.7 TestSegV3d_ROI.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_
 python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent  1
 python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/SegV3d_ROI/20191210_024607/Best  /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/nrrd_npy /home/hxie1/data/OvarianCancerCT/patientResponseDict.json /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent  1
 
+# train the FC classifier
+nohup python3.7 responseClassifier.py &
+tensorboard  --logdir /local/vol00/home/hxie1/c-xwu000_data/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607/log
 

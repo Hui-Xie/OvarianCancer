@@ -142,16 +142,15 @@ class LinearBlock(nn.Module):
         self.m_linear = nn.Linear(inFeatures, outFeatures, bias=bias)
         self.m_norm = nn.LayerNorm(outFeatures, elementwise_affine=False)
 
-    def forward(self, x):
+    def forward(self, x, useNonLinearActivation=True):
         y = self.m_linear(x)
 
-        # without Normalization
         featureMapSize = y.shape[-1]
         if featureMapSize > 8:
-            y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
-                else F.leaky_relu(self.m_norm(y), inplace=True)
-        else:
+            y = self.m_norm(y)
+        if useNonLinearActivation:
             y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
                 else F.leaky_relu(y, inplace=True)
+
         return y
 

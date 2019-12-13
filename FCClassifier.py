@@ -23,7 +23,7 @@ class FCClassifier(BasicModel):
         x = self.m_layer1(x)
         x = self.m_layer2(x)
         x = self.m_layer3(x)
-        x = self.m_layer4(x)
+        x = self.m_layer4(x, useNonLinearActivation=False) # output size =1, do not use ReLU
         x = self.m_layer5(x)
 
         if gts is None:
