@@ -18,7 +18,7 @@ testLatentDir  = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/l
 suffix = '.npy'
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 netPath = "/home/hxie1/temp_netParameters/OvarianCancer/FCClassifier"
-logDir = trainLatentDir +"/log"
+
 
 
 import json
@@ -88,6 +88,7 @@ if 2 == len(getFilesList(netPath, ".pt")):
     netMgr = NetMgr(net, netPath, device)
     netMgr.loadNet("train")
     print(f"Fully Conneted Classifier load from  {netPath}")
+    timeStr = getStemName(netPath)
 else:
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
@@ -95,12 +96,14 @@ else:
     netMgr = NetMgr(net, netPath, device)
     print(f"Fully Conneted Classifier starts training from scratch, and save at {netPath}")
 
+logDir = trainLatentDir +"/log/" +timeStr
 if not os.path.exists(logDir):
     os.mkdir(logDir)
 writer = SummaryWriter(log_dir=logDir)
 
 epochs = 8000
 preLoss = 100000
+preAccuracy = 0
 
 
 for epoch in range(epochs):
@@ -121,8 +124,8 @@ for epoch in range(epochs):
     writer.add_scalar('Accuracy/train', trAccuracy, epoch)
     writer.add_scalar('Accuracy/test', testAccuracy, epoch)
 
-    if testLoss < preLoss:
-        preLoss = testLoss
+    if testAccuracy > preAccuracy:
+        preAccuracy = testAccuracy
         netMgr.saveNet(netPath)
 
 

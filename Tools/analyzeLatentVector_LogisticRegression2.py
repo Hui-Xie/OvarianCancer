@@ -42,7 +42,7 @@ accuracyThreshold = 0.68  # for each training feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
 K = 16 # the top K maximum accuracy positions
 
-useSavedW = False
+useSavedW = True
 
 import json
 import numpy as np
