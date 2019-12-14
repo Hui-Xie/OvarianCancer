@@ -301,6 +301,8 @@ def main():
     plt.savefig(os.path.join(outputAnalyzeDir, f"rateBestFeatures.png"))
     plt.close()
 
+    print("====================end of Logistic Regression 2================")
+
 if __name__ == "__main__":
     main()
 
