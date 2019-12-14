@@ -77,7 +77,7 @@ net = FCClassifier()
 # Parameters of a model after .cuda() will be different objects with those before the call.
 net.to(device)
 
-optimizer = optim.Adam(net.parameters(), lr=0.00001, weight_decay=0)
+optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
 loss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float))
