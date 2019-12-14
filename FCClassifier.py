@@ -11,12 +11,14 @@ class FCClassifier(BasicModel):
         super().__init__()
 
         self.m_layer0 = nn.LayerNorm(192, elementwise_affine=False)
-        self.m_layer1 = LinearBlock(192, 1)  # output logits, which needs sigmoid inside the loss function.
+        self.m_layer1 = LinearBlock(192, 50)
+        self.m_layer2 = LinearBlock(50, 1)  # output logits, which needs sigmoid inside the loss function.
 
     def forward(self, x, gts=None):
         device = x.device
         x = self.m_layer0(x)
-        x = self.m_layer1(x, useNonLinearActivation=False) # output size =1, do not use ReLU
+        x = self.m_layer1(x)
+        x = self.m_layer2(x, useNonLinearActivation=False) # output size =1, do not use ReLU
 
         if gts is None:
             return x  # output logits
