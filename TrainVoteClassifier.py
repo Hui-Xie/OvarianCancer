@@ -103,7 +103,7 @@ if not os.path.exists(logDir):
     os.mkdir(logDir)
 writer = SummaryWriter(log_dir=logDir)
 
-epochs = 8000
+epochs = 188000
 preLoss = 100000
 preAccuracy = 0
 
