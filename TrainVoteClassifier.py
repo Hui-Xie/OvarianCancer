@@ -17,7 +17,7 @@ trainLatentDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/late
 testLatentDir  = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
 suffix = '.npy'
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
-netPath = "/home/hxie1/temp_netParameters/OvarianCancer/FCClassifier"
+netPath = "/home/hxie1/temp_netParameters/OvarianCancer/VoteClassfier"
 
 
 
