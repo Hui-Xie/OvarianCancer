@@ -27,11 +27,13 @@ from FilesUtilities import *
 import numpy as np
 import torch
 import torch.nn as nn
-from FCClassifier import FCClassifier
+from VoteClassifier import VoteClassifier
 import torch.optim as optim
 from NetMgr import NetMgr
 import datetime
 from torch.utils.tensorboard import SummaryWriter
+from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
+
 
 rawF=1536  # full feature length of a latent vector
 F = 192 # lenght of extacted features
@@ -41,10 +43,10 @@ device = torch.device('cuda:3')   #GPU ID
 
 def computeAccuracy(y, gt):
     '''
-    y: logits before sigmoid
+    y:  probility
     gt: ground truth
     '''
-    y = (y>=0).int()
+    y = (y>=0.5).int()
     N = gt.shape[0]
     gt = gt.int()
     accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
@@ -71,7 +73,7 @@ with open(patientResponsePath) as f:
 trainingX, trainingY = loadXY(trainLatentDir, patientResponse)
 testX,     testY     = loadXY(testLatentDir,  patientResponse)
 
-net = FCClassifier()
+net = VoteClassifier()
 # Important:
 # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
 # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -80,7 +82,7 @@ net.to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
-loss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device))
+loss = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device))
 net.appendLossFunc(loss, 1)
 
 # Load network
@@ -110,7 +112,7 @@ for epoch in range(epochs):
     net.train()
     trOutputs, trLoss = net.forward(trainingX, gts=trainingY)
     optimizer.zero_grad()
-    trLoss.backward()
+    trLoss.backward(gradient=torch.ones(trLoss.shape).to(device))
     optimizer.step()
     trAccuracy = computeAccuracy(trOutputs, trainingY)
 
@@ -119,8 +121,8 @@ for epoch in range(epochs):
          testOutputs, testLoss =  net.forward(testX, gts=testY)
          testAccuracy = computeAccuracy(testOutputs, testY)
 
-    writer.add_scalar('Loss/train', trLoss, epoch)
-    writer.add_scalar('Loss/test', testLoss, epoch)
+    writer.add_scalar('Loss/train', trLoss.sum()/F, epoch)
+    writer.add_scalar('Loss/test', testLoss.sum()/F, epoch)
     writer.add_scalar('Accuracy/train', trAccuracy, epoch)
     writer.add_scalar('Accuracy/test', testAccuracy, epoch)
 

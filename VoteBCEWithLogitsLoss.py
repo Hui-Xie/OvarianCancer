@@ -9,10 +9,10 @@ import sys
 import collections
 
 
-class FeatureBCEWithLogitsLoss(_Loss):
-    def __init__(self, posWeight=1):
+class VoteBCEWithLogitsLoss(_Loss):
+    def __init__(self, pos_weight=1):
         super().__init__()
-        self.m_posWeight = posWeight
+        self.m_posWeight = pos_weight
 
 
     def forward(self, x, gts):
@@ -23,6 +23,5 @@ class FeatureBCEWithLogitsLoss(_Loss):
         gtsPlane = gts.expand((B,F))
         loss = -gtsPlane*torch.log(sigmoidx)*self.m_posWeight - (1.0-gtsPlane)*torch.log(1-sigmoidx)
         loss = loss.sum(dim=0)*1.0/B
-        with torch.no_grad:
-            predictProb = sigmoidx.sum(dim=1)*1.0/F
+        predictProb = sigmoidx.sum(dim=1)*1.0/F
         return predictProb, loss

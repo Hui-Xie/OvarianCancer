@@ -25,7 +25,7 @@ class SingleConnectedLayer(nn.Module):
         W0 = self.m_W0.expand((B,F)) # plane
         W1 = self.m_W1.diag()   # Diagonal matrix
         W2 = self.m_W2.diag()   # Diagonal matrix
-        y = W0 + x*W1 + x**2*W2  # linear regression output logits
+        y = W0 + torch.mm(x,W1) + torch.mm(x**2,W2)  # linear regression output logits
         return y
 
 
