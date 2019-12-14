@@ -45,15 +45,11 @@ def computeAccuracy(y, gt):
     return accuracy
 
 def loadXY(latentDir, patientResponse):
-    originalCwd = os.getcwd()
-    os.chdir(latentDir)
-    trainingFilesList = [os.path.abspath(x) for x in os.listdir(latentDir) if suffix in x]
-    os.chdir(originalCwd)
-
-    N  = len(trainingFilesList)
+    filesList = getFilesList(latentDir, suffix)
+    N  = len(filesList)
     X = torch.zeros((N, extractF), dtype=torch.float, device=device, requires_grad=False)
     Y = torch.zeros((N, 1), dtype=torch.float, device=device, requires_grad=False)
-    for i, filePath in enumerate(trainingFilesList):
+    for i, filePath in enumerate(filesList):
         patientID = getStemName(filePath, suffix)[:8]
         V = np.load(filePath)
         assert (F,) == V.shape
@@ -82,13 +78,16 @@ loss = nn.BCELoss()
 net.appendLossFunc(loss, 1)
 
 # Load network
-curTime = datetime.datetime.now()
-timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-netPath = os.path.join(netPath, timeStr)
-netMgr = NetMgr(net, netPath, device)
-
 if 2 == len(getFilesList(netPath, ".pt")):
+    netMgr = NetMgr(net, netPath, device)
     netMgr.loadNet("train")
+    print(f"Fully Conneted Classifier load from  {netPath}")
+else:
+    curTime = datetime.datetime.now()
+    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+    netPath = os.path.join(netPath, timeStr)
+    netMgr = NetMgr(net, netPath, device)
+    print(f"Fully Conneted Classifier starts training from scratch, and save at {netPath}")
 
 if not os.path.exists(logDir):
     os.mkdir(logDir)
@@ -97,17 +96,17 @@ writer = SummaryWriter(log_dir=logDir)
 epochs = 6000
 preLoss = 100000
 
-print(f"Fully Conneted Classifier is training and save at {netPath}")
+
 for epoch in range(epochs):
     net.train()
     trOutputs, trLoss = net.forward(trainingX, gts=trainingY)
     optimizer.zero_grad()
     trLoss.backward()
     optimizer.step()
+    trAccuracy = computeAccuracy(trOutputs, trainingY)
 
     net.eval()
     with torch.no_grad():
-         trAccuracy = computeAccuracy(trOutputs,trainingY)
          testOutputs, testLoss =  net.forward(testX, gts=testY)
          testAccuracy = computeAccuracy(testOutputs, testY)
 
