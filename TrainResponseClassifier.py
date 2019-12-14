@@ -17,12 +17,9 @@ trainLatentDir = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/late
 testLatentDir  = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
 suffix = '.npy'
 patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
-netPath = "/home/hxie1/temp_netParameters/OvarianCancer/FCClassifier"
+netPath = "/home/hxie1/temp_netParameters/OvarianCancer/FCClassifier/20191213_165824"
 logDir = trainLatentDir +"/log"
 
-F=1536  # full feature length of a latent vector
-extractF = 192 # lenght of extacted features
-device = 3   #GPU ID
 
 import json
 import os
@@ -36,12 +33,17 @@ from NetMgr import NetMgr
 import datetime
 from torch.utils.tensorboard import SummaryWriter
 
+F=1536  # full feature length of a latent vector
+extractF = 192 # lenght of extacted features
+device = torch.device('cuda:3')   #GPU ID
+
 # extract feature and ground truth
 
 def computeAccuracy(y, gt):
     y = (y>=0.5).int()
     N = gt.shape[0]
-    accuracy = ((y - gt) == 0).sum(dim=0) / N
+    gt = gt.int()
+    accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
     return accuracy
 
 def loadXY(latentDir, patientResponse):

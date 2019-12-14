@@ -129,7 +129,7 @@ def main():
         sigmoidX = 1.0 / (1.0 + np.exp(-(W0Ex + W1Ex * X)))
         predictX = (sigmoidX >= 0.5).astype(np.int)
         Y = np.reshape(np.repeat(Y01, F * H * W, axis=0), X.shape)
-        accuracyX = ((predictX - Y) == 0).sum(axis=3) / N
+        accuracyX = ((predictX - Y) == 0).sum(axis=3)*1.0 / N
 
         minAccuracy.append(accuracyX.min())
         meanAccuracy.append(accuracyX.mean())

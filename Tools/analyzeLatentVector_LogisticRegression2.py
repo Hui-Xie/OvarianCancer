@@ -167,7 +167,7 @@ def main():
         sigmoidX = 1.0 / (1.0 + np.exp(-(W0Ex + W1Ex * X)))
         predictX = (sigmoidX >= 0.5).astype(np.int)
         Y = np.repeat(Y01, F, axis=0)
-        accuracyX = ((predictX - Y) == 0).sum(axis=1) / N
+        accuracyX = ((predictX - Y) == 0).sum(axis=1)*1.0 / N
         np.save(os.path.join(outputAnalyzeDir, "accuracyFeature.npy"), accuracyX)
 
         # check prediction accuracy for training best indices
