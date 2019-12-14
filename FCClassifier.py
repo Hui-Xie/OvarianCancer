@@ -10,19 +10,18 @@ class FCClassifier(BasicModel):
     def __init__(self):
         super().__init__()
 
-        self.m_layer0 = nn.LayerNorm(192, elementwise_affine=False)
-        self.m_layer1 = LinearBlock(192, 120)
-        self.m_layer2 = LinearBlock(120, 70)
-        self.m_layer3 = LinearBlock(70, 40)
-        self.m_layer4 = LinearBlock(40, 1)  # output logits, which needs sigmoid inside the loss function.
+        self.m_layers = nn.Sequential(
+            nn.LayerNorm(192, elementwise_affine=False),
+            LinearBlock(192, 120),
+            LinearBlock(120, 70),
+            LinearBlock(70, 40),
+            LinearBlock(40, 1, useNonLinearActivation=False)  # output logits, which needs sigmoid inside the loss function.
+        )
+
 
     def forward(self, x, gts=None):
         device = x.device
-        x = self.m_layer0(x)
-        x = self.m_layer1(x)
-        x = self.m_layer2(x)
-        x = self.m_layer3(x)
-        x = self.m_layer4(x, useNonLinearActivation=False) # output size =1, do not use ReLU
+        x = self.m_layers(x)
 
         if gts is None:
             return x  # output logits

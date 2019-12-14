@@ -134,21 +134,22 @@ class LinearBlock(nn.Module):
     Linear block
     """
 
-    def __init__(self, inFeatures, outFeatures, useLeakyReLU=False, bias=True):
+    def __init__(self, inFeatures, outFeatures, useLeakyReLU=False, bias=True, useNonLinearActivation=True):
         super().__init__()
 
         self.m_useLeakyReLU = useLeakyReLU
+        self.m_useNonLinearActivation = useNonLinearActivation
 
         self.m_linear = nn.Linear(inFeatures, outFeatures, bias=bias)
         self.m_norm = nn.LayerNorm(outFeatures, elementwise_affine=False)
 
-    def forward(self, x, useNonLinearActivation=True):
+    def forward(self, x):
         y = self.m_linear(x)
 
         featureMapSize = y.shape[-1]
         if featureMapSize > 8:
             y = self.m_norm(y)
-        if useNonLinearActivation:
+        if self.m_useNonLinearActivation:
             y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
                 else F.leaky_relu(y, inplace=True)
 
