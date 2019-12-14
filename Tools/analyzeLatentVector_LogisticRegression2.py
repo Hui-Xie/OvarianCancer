@@ -40,10 +40,9 @@ diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.68  # for each training feature
 #accuracyThreshold = 0.75  # for each test feature
 F,W = 1536,1  #Features, Width of latent vector, per patient
-gpuDevice = 1   #GPU ID
 K = 16 # the top K maximum accuracy positions
 
-useSavedW = True
+useSavedW = False
 
 import json
 import numpy as np
@@ -51,6 +50,9 @@ import os
 import matplotlib.pyplot as plt
 import torch
 import math
+
+gpuDevice = torch.device('cuda:3')   #GPU ID
+
 
 def main():
 
@@ -166,7 +168,7 @@ def main():
 
         sigmoidX = 1.0 / (1.0 + np.exp(-(W0Ex + W1Ex * X)))
         predictX = (sigmoidX >= 0.5).astype(np.int)
-        Y = np.repeat(Y01, F, axis=0)
+        Y = np.repeat(Y01, F, axis=0).astype(np.int)
         accuracyX = ((predictX - Y) == 0).sum(axis=1)*1.0 / N
         np.save(os.path.join(outputAnalyzeDir, "accuracyFeature.npy"), accuracyX)
 
