@@ -14,8 +14,7 @@ class FCClassifier(BasicModel):
         self.m_layer1 = LinearBlock(192, 100)
         self.m_layer2 = LinearBlock(100, 50)
         self.m_layer3 = LinearBlock(50, 25)
-        self.m_layer4 = LinearBlock(25, 1)
-        self.m_layer5 = nn.Sigmoid()
+        self.m_layer4 = LinearBlock(25, 1)  # output logits, which needs sigmoid inside the loss function.
 
     def forward(self, x, gts=None):
         device = x.device
@@ -24,10 +23,9 @@ class FCClassifier(BasicModel):
         x = self.m_layer2(x)
         x = self.m_layer3(x)
         x = self.m_layer4(x, useNonLinearActivation=False) # output size =1, do not use ReLU
-        x = self.m_layer5(x)
 
         if gts is None:
-            return x
+            return x  # output logits
         else:
             # compute loss (put loss here is to save main GPU memory)
             loss = torch.tensor(0.0).to(device)

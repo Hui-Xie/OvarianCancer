@@ -40,7 +40,11 @@ device = torch.device('cuda:3')   #GPU ID
 # extract feature and ground truth
 
 def computeAccuracy(y, gt):
-    y = (y>=0.5).int()
+    '''
+    y: logits before sigmoid
+    gt: ground truth
+    '''
+    y = (y>=0).int()
     N = gt.shape[0]
     gt = gt.int()
     accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
@@ -76,7 +80,7 @@ net.to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
-loss = nn.BCELoss()
+loss = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float))
 net.appendLossFunc(loss, 1)
 
 # Load network
