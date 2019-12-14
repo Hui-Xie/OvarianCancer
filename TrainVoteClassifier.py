@@ -48,7 +48,7 @@ def computeAccuracy(y, gt):
     '''
     y = (y>=0.5).int()
     N = gt.shape[0]
-    gt = gt.int()
+    gt = gt.squeeze().int()
     accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
     return accuracy
 
@@ -121,14 +121,14 @@ for epoch in range(epochs):
          testOutputs, testLoss =  net.forward(testX, gts=testY)
          testAccuracy = computeAccuracy(testOutputs, testY)
 
-    writer.add_scalar('Loss/train', trLoss.sum()/F, epoch)
-    writer.add_scalar('Loss/test', testLoss.sum()/F, epoch)
+    writer.add_scalar('Loss/train', trLoss.sum().item()/F, epoch)
+    writer.add_scalar('Loss/test', testLoss.sum().item()/F, epoch)
     writer.add_scalar('Accuracy/train', trAccuracy, epoch)
     writer.add_scalar('Accuracy/test', testAccuracy, epoch)
 
     if testAccuracy > preAccuracy:
         preAccuracy = testAccuracy
         netMgr.saveNet(netPath)
-
+    
 
 print(f"================End of FC Classifier================")
