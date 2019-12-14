@@ -129,6 +129,6 @@ for epoch in range(epochs):
     if testAccuracy > preAccuracy:
         preAccuracy = testAccuracy
         netMgr.saveNet(netPath)
-    
+
 
 print(f"================End of FC Classifier================")

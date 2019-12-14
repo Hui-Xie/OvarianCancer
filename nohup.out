@@ -1,0 +1,4 @@
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:1351: UserWarning: nn.functional.sigmoid is deprecated. Use torch.sigmoid instead.
+  warnings.warn("nn.functional.sigmoid is deprecated. Use torch.sigmoid instead.")
+Fully Conneted Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/VoteClassfier/20191214_155158
+================End of FC Classifier================
