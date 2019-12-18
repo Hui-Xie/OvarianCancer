@@ -50,6 +50,14 @@ def computeAccuracy(y, gt):
     accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
     return accuracy
 
+def computeTNR(y,gt): # True Negative Rate, Specificity
+    y = (y >= 0).int()
+    N = gt.shape[0]
+    gt = gt.int()
+    TNR = ((y+gt)==0).sum(dim=0)*1.0 / N
+    return TNR
+
+
 def loadXY(latentDir, patientResponse):
     filesList = getFilesList(latentDir, suffix)
     N  = len(filesList)
