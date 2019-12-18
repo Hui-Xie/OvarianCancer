@@ -82,7 +82,7 @@ net.to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
-loss = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device))
+loss = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device), weightedVote=False)
 net.appendLossFunc(loss, 1)
 
 # Load network

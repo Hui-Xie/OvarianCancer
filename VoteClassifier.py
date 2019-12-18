@@ -10,9 +10,12 @@ class VoteClassifier(BasicModel):
     def __init__(self):
         super().__init__()
 
+
         self.m_layers = nn.Sequential(
-            nn.LayerNorm(192, elementwise_affine=False),
+            #nn.LayerNorm(192, elementwise_affine=False),
+            nn.BatchNorm1d(192),
             SingleConnectedLayer(192)
+
         )
 
 
