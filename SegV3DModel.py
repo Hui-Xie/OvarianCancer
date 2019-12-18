@@ -96,9 +96,9 @@ class SegV3DModel(BasicModel):
         )# outputSize:32N*1*1, which needs squeeze
 
         self.m_down5 = nn.Sequential(
-            LinearBlock(N*32, N*32, useLeakyReLU=self.m_useLeakyReLU),
-            LinearBlock(N*32, N*32, useLeakyReLU=self.m_useLeakyReLU),
-            LinearBlock(N*32, N*32, useLeakyReLU=self.m_useLeakyReLU)
+            LinearBlock(N*32, N*32, useLeakyReLU=self.m_useLeakyReLU, normModule=nn.LayerNorm(N*32, elementwise_affine=False)),
+            LinearBlock(N*32, N*32, useLeakyReLU=self.m_useLeakyReLU, normModule=nn.LayerNorm(N*32, elementwise_affine=False)),
+            LinearBlock(N*32, N*32, useLeakyReLU=self.m_useLeakyReLU, normModule=nn.LayerNorm(N*32, elementwise_affine=False))
         )#outputSize:32N
 
         # here is the place to output latent vector
