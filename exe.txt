@@ -179,7 +179,7 @@ python3.7 generateLatentVectors.py /home/hxie1/temp_netParameters/OvarianCancer/
 
 # train the FC classifier
 # best FC classifier: /home/hxie1/temp_netParameters/OvarianCancer/FCClassifier/20191214_113210
-nohup python3.7 TrainResponseClassifier.py &
+nohup python3.7 TrainFCClassifier.py &
 tensorboard  --logdir /local/vol00/home/hxie1/c-xwu000_data/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607/log/
 
 # train the VoteClassifier

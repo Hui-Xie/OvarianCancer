@@ -12,6 +12,7 @@ class FCClassifier(BasicModel):
 
         self.m_layers = nn.Sequential(
             nn.LayerNorm(192, elementwise_affine=False),
+            #nn.BatchNorm1d(192),
             LinearBlock(192, 120),
             LinearBlock(120, 70),
             LinearBlock(70, 40),
