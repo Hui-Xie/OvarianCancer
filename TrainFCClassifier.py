@@ -50,6 +50,8 @@ def computeAccuracy(y, gt):
     accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
     return accuracy
 
+# accuracy = TPR*P/T + TNR*N/T where T is total number
+
 def computeTNR(y,gt): # True Negative Rate, Specificity
     y = (y >= 0).int()
     N = gt.shape[0]

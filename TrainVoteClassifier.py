@@ -52,6 +52,21 @@ def computeAccuracy(y, gt):
     accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
     return accuracy
 
+# accuracy = TPR*P/T + TNR*N/T where T is total number
+
+def computeTNR(y,gt): # True Negative Rate, Specificity
+    y = (y >= 0.5).int()
+    N = gt.shape[0]
+    gt = gt.squeeze().int()
+    TNR = ((y+gt)==0).sum(dim=0)*1.0 / (N-gt.sum(dim=0))
+    return TNR
+
+def computeTPR(y, gt): #True Positive Rate, sensitivity
+    y = (y >= 0.5).int()
+    gt = gt.squeeze().int()
+    TPR = ((y*gt)==1).sum(dim=0)*1.0/gt.sum(dim=0)
+    return TPR
+
 def loadXY(latentDir, patientResponse):
     filesList = getFilesList(latentDir, suffix)
     N  = len(filesList)
@@ -115,14 +130,22 @@ for epoch in range(epochs):
     trLoss.backward(gradient=torch.ones(trLoss.shape).to(device))
     optimizer.step()
     trAccuracy = computeAccuracy(trOutputs, trainingY)
+    trTPR = computeTPR(trOutputs, trainingY)
+    trTNR = computeTNR(trOutputs, trainingY)
 
     net.eval()
     with torch.no_grad():
          testOutputs, testLoss =  net.forward(testX, gts=testY)
          testAccuracy = computeAccuracy(testOutputs, testY)
+         testTPR = computeTPR(testOutputs, testY)
+         testTNR = computeTNR(testOutputs, testY)
 
     writer.add_scalar('Loss/train', trLoss.sum().item()/F, epoch)
     writer.add_scalar('Loss/test', testLoss.sum().item()/F, epoch)
+    writer.add_scalar('TPR/train', trTPR, epoch)
+    writer.add_scalar('TPR/test', testTPR, epoch)
+    writer.add_scalar('TNR/train', trTNR, epoch)
+    writer.add_scalar('TNR/test', testTNR, epoch)
     writer.add_scalar('Accuracy/train', trAccuracy, epoch)
     writer.add_scalar('Accuracy/test', testAccuracy, epoch)
 
