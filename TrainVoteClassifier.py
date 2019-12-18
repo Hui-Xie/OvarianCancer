@@ -46,25 +46,25 @@ def computeAccuracy(y, gt):
     y:  probility
     gt: ground truth
     '''
-    y = (y>=0.5).int()
+    y = (y>=0.0).squeeze().int()
     N = gt.shape[0]
     gt = gt.squeeze().int()
-    accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
+    accuracy = ((y - gt) == 0).sum()*1.0 / N
     return accuracy
 
 # accuracy = TPR*P/T + TNR*N/T where T is total number
 
 def computeTNR(y,gt): # True Negative Rate, Specificity
-    y = (y >= 0.5).int()
+    y = (y >= 0.0).squeeze().int()
     N = gt.shape[0]
     gt = gt.squeeze().int()
-    TNR = ((y+gt)==0).sum(dim=0)*1.0 / (N-gt.sum(dim=0))
+    TNR = ((y+gt)==0).sum()*1.0 / (N-gt.sum())
     return TNR
 
 def computeTPR(y, gt): #True Positive Rate, sensitivity
-    y = (y >= 0.5).int()
+    y = (y >= 0.0).squeeze().int()
     gt = gt.squeeze().int()
-    TPR = ((y*gt)==1).sum(dim=0)*1.0/gt.sum(dim=0)
+    TPR = ((y*gt)==1).sum()*1.0/gt.sum()
     return TPR
 
 def loadXY(latentDir, patientResponse):
@@ -97,8 +97,10 @@ net.to(device)
 optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
-loss = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device), weightedVote=False)
-net.appendLossFunc(loss, 1)
+loss0 = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device), weightedVote=False)
+net.appendLossFunc(loss0, 1)
+loss1 = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device))
+net.appendLossFunc(loss1, 1)
 
 # Load network
 if 2 == len(getFilesList(netPath, ".pt")):
@@ -140,8 +142,8 @@ for epoch in range(epochs):
          testTPR = computeTPR(testOutputs, testY)
          testTNR = computeTNR(testOutputs, testY)
 
-    writer.add_scalar('Loss/train', trLoss.sum().item()/F, epoch)
-    writer.add_scalar('Loss/test', testLoss.sum().item()/F, epoch)
+    writer.add_scalar('Loss/train', trLoss, epoch)
+    writer.add_scalar('Loss/test', testLoss, epoch)
     writer.add_scalar('TPR/train', trTPR, epoch)
     writer.add_scalar('TPR/test', testTPR, epoch)
     writer.add_scalar('TNR/train', trTNR, epoch)
