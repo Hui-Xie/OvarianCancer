@@ -14,9 +14,9 @@ class FCClassifier(BasicModel):
             nn.LayerNorm(192, elementwise_affine=False),
             #nn.BatchNorm1d(192, affine=False),
             LinearBlock(192, 120, normModule=nn.LayerNorm(120, elementwise_affine=False)),
-            nn.Dropout(p=0.7),
+            nn.Dropout(p=0.5),
             LinearBlock(120, 70, normModule=nn.LayerNorm(70, elementwise_affine=False)),
-            nn.Dropout(p=0.6),
+            nn.Dropout(p=0.5),
             LinearBlock(70, 40, normModule=nn.LayerNorm(40, elementwise_affine=False)),
             nn.Dropout(p=0.5),
             LinearBlock(40, 1, useNonLinearActivation=False)  # output logits, which needs sigmoid inside the loss function.
