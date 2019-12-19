@@ -21,7 +21,8 @@ class VoteClassifier(BasicModel):
             SingleConnectedLayer(192)   #output: B*F feature logits
         )
         self.m_layers2 = nn.Sequential(
-            nn.LayerNorm(192, elementwise_affine=False),
+            #nn.LayerNorm(192, elementwise_affine=False),
+            nn.Tanh(),
             # nn.BatchNorm1d(192, affine=False),
             LinearBlock(192, 120, normModule=nn.LayerNorm(120, elementwise_affine=False)),
             LinearBlock(120, 70, normModule=nn.LayerNorm(70, elementwise_affine=False)),
