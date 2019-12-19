@@ -16,6 +16,7 @@ class BasicModel(nn.Module):
         self.m_lossFuncList = []
         self.m_lossWeightList = []
         self.m_consistencyLoss = None
+        self.m_epoch = 0
 
     def forward(self, x):
         pass

@@ -1,7 +1,0 @@
-Fully Conneted Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/VoteClassfier/20191218_152730
-Traceback (most recent call last):
-  File "TrainVoteClassifier.py", line 131, in <module>
-    optimizer.step()
-  File "/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/optim/adam.py", line 96, in step
-    exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
-KeyboardInterrupt

@@ -18,7 +18,8 @@ class VoteBCEWithLogitsLoss(_Loss):
         loss = -gtsPlane*torch.log(sigmoidx)*self.m_posWeight - (1.0-gtsPlane)*torch.log(1-sigmoidx)
         loss = loss.sum()*1.0/(B*F)
         if self.m_weightedVote:
-            predictProb = sigmoidx.sum(dim=1)*1.0/F
+            voteProb = sigmoidx.sum(dim=1)*1.0/F
         else:
-            predictProb = (sigmoidx >=0.5).int().sum(dim=1) * 1.0 / F
-        return predictProb, loss
+            voteProb = (sigmoidx >=0.5).int().sum(dim=1) * 1.0 / F
+        voteLogit = torch.log(voteProb / (1 - voteProb))
+        return voteLogit, loss

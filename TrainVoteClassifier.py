@@ -43,7 +43,7 @@ device = torch.device('cuda:3')   #GPU ID
 
 def computeAccuracy(y, gt):
     '''
-    y:  probility
+    y:  logits before probility
     gt: ground truth
     '''
     y = (y>=0.0).squeeze().int()
@@ -126,6 +126,7 @@ preAccuracy = 0
 
 
 for epoch in range(epochs):
+    net.m_epoch = epoch
     net.train()
     trOutputs, trLoss = net.forward(trainingX, gts=trainingY)
     optimizer.zero_grad()
