@@ -94,7 +94,7 @@ net = VoteClassifier()
 # Parameters of a model after .cuda() will be different objects with those before the call.
 net.to(device)
 
-optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=1)
+optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
 loss0 = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device), weightedVote=False)
