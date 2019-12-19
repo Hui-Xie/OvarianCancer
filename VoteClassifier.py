@@ -34,6 +34,8 @@ class VoteClassifier(BasicModel):
         )
 
     def forward(self, x, gts):
+        # this is for 75% max test accuracy network:  20191219_123556:
+
         device = x.device
         loss0 = torch.tensor(0.0).to(device)
         loss1 = torch.tensor(0.0).to(device)
@@ -49,16 +51,44 @@ class VoteClassifier(BasicModel):
                 lossFunc1 = self.m_lossFuncList[1]
                 weight1 = self.m_lossWeightList[1]
                 loss1 = lossFunc1(x1, gts) * weight1
+                loss = (loss0 + loss1) / 2.0
             else:
                 x1 = voteLogit
+                loss = loss0
         else:
             x1 = self.m_layers2(x0)
             lossFunc1 = self.m_lossFuncList[1]
             weight1 = self.m_lossWeightList[1]
             loss1 = lossFunc1(x1, gts) * weight1
+            loss = (loss0 + loss1) / 2.0
 
-        loss = (loss0 + loss1) / 2.0
         return x1, loss
+       
+
+        # after pretraiining, the singleConnnected layer does not use loss again.
+        '''
+        x0 = self.m_layers1(x)
+
+        if self.training:
+            if self.m_epoch > preTrainEpochs:
+                x1 = self.m_layers2(x0)
+                lossFunc1 = self.m_lossFuncList[1]
+                weight1 = self.m_lossWeightList[1]
+                loss = lossFunc1(x1, gts) * weight1
+            else:
+                lossFunc0 = self.m_lossFuncList[0]
+                weight0 = self.m_lossWeightList[0]
+                voteLogit, loss = lossFunc0(x0, gts) * weight0
+                x1 = voteLogit
+        else:
+            x1 = self.m_layers2(x0)
+            lossFunc1 = self.m_lossFuncList[1]
+            weight1 = self.m_lossWeightList[1]
+            loss = lossFunc1(x1, gts) * weight1
+
+        return x1, loss
+
+        '''
 
 
 
