@@ -43,7 +43,8 @@ class VoteClassifier(BasicModel):
         x0 = self.m_layers1(x)
         lossFunc0 = self.m_lossFuncList[0]
         weight0 = self.m_lossWeightList[0]
-        voteLogit, loss0 = lossFunc0(x0, gts) * weight0
+        voteLogit, loss0 = lossFunc0(x0, gts)
+        loss0 = loss0*weight0
 
         if self.training:
             if self.m_epoch > preTrainEpochs:
@@ -51,7 +52,7 @@ class VoteClassifier(BasicModel):
                 lossFunc1 = self.m_lossFuncList[1]
                 weight1 = self.m_lossWeightList[1]
                 loss1 = lossFunc1(x1, gts) * weight1
-                loss = (loss0 + loss1) / 2.0
+                loss = loss0 + loss1
             else:
                 x1 = voteLogit
                 loss = loss0
@@ -60,7 +61,7 @@ class VoteClassifier(BasicModel):
             lossFunc1 = self.m_lossFuncList[1]
             weight1 = self.m_lossWeightList[1]
             loss1 = lossFunc1(x1, gts) * weight1
-            loss = (loss0 + loss1) / 2.0
+            loss = loss0 + loss1
 
         return x1, loss
        

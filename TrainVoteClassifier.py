@@ -98,9 +98,9 @@ optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
 net.setOptimizer(optimizer)
 
 loss0 = VoteBCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device), weightedVote=False)
-net.appendLossFunc(loss0, 1)
+net.appendLossFunc(loss0, 0.5)
 loss1 = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([15*1.0/20], dtype=torch.float, device=device))
-net.appendLossFunc(loss1, 1)
+net.appendLossFunc(loss1, 0.5)
 
 # Load network
 if 2 == len(getFilesList(netPath, ".pt")):
