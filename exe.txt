@@ -191,3 +191,4 @@ nohup python3.7 TrainVoteClassifier.py &
 # 20191214_155913: y = w0+w1*x+ x^2*w2
 # 20191214_161531: y = w0+w1*x
 # 20191219_122414: can get 69% test accuracy.
+# 20191219_123556: can get 75% max test accruacy, and stable at 73%, which is bigger than 71% majority prediction;
