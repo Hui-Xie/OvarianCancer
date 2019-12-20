@@ -15,9 +15,9 @@ class VoteClassifier(BasicModel):
             nn.LayerNorm(192, elementwise_affine=False),
             #nn.BatchNorm1d(192),
             SingleConnectedLayer(192),
-            nn.Tanh(),
+            nn.ReLU(),
             SingleConnectedLayer(192),
-            nn.Tanh(),
+            nn.ReLU(),
             SingleConnectedLayer(192)   #output: B*F feature logits
         )
         self.m_layers2 = nn.Sequential(
@@ -27,7 +27,7 @@ class VoteClassifier(BasicModel):
             LinearBlock(192, 120, normModule=nn.LayerNorm(120, elementwise_affine=False)),
             nn.Dropout(p=0.5),
             LinearBlock(120, 70, normModule=nn.LayerNorm(70, elementwise_affine=False)),
-            nn.Dropout(p=0.3), 
+            nn.Dropout(p=0.3),
             LinearBlock(70, 40, normModule=nn.LayerNorm(40, elementwise_affine=False)),
             LinearBlock(40, 1, useNonLinearActivation=False)
             # output logits, which needs sigmoid inside the loss function.
