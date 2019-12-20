@@ -21,5 +21,5 @@ class VoteBCEWithLogitsLoss(_Loss):
             voteProb = sigmoidx.sum(dim=1)*1.0/F
         else:
             voteProb = (sigmoidx >=0.5).int().sum(dim=1) * 1.0 / F
-        voteLogit = torch.log(voteProb / (1 - voteProb))
+        voteLogit = torch.log(voteProb / (1.0 - voteProb))
         return voteLogit, loss
