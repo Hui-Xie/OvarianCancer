@@ -1,14 +1,10 @@
 # train optimal surgical result, survival, and chemo result at same time.
-import sys
 import datetime
-import random
-import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils import data
 import logging
 
-from OCDataSet import *
+from ResponsePrediction.OCDataSet import *
 from FilesUtilities import *
 from MeasureUtilities import *
 from ResAttentionNet import ResAttentionNet
