@@ -14,12 +14,12 @@ class OVDataPartition():
     """
     here: labelsPath is the response file path
     """
-    def __init__(self, inputsDir, labelsPath, inputSuffix, K_fold=0, k=0, logInfoFun=print):
+    def __init__(self, inputsDir, labelsPath, inputSuffix, K_folds=0, k=0, logInfoFun=print):
         self.m_inputsDir = inputsDir
         self.m_inputFilesListFile = os.path.join(self.m_inputsDir, "inputFilesList.txt")
         self.m_labelsPath = labelsPath
         self.m_inputSuffix = inputSuffix
-        self.m_KFold = K_fold
+        self.m_KFold = K_folds
         self.m_k = k
         self.m_logInfo = logInfoFun
 

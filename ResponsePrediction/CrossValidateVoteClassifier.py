@@ -3,6 +3,7 @@
 import sys
 import yaml
 import torch
+from .OCDataSet import *
 
 def printUsage(argv):
     print("============ Cross Validation Vote Classifier =============")
@@ -30,6 +31,14 @@ def main():
     F = cfg["F"]
     device = eval(cfg["device"])  # convert string to class object.
     featureIndices = cfg["featureIndices"]
+
+    #
+    dataPartitions = OVDataPartition(latentDir, patientResponsePath, suffix, K_folds=K_folds, k=fold_k)
+
+    trainingData = OVDataSet('training', dataPartitions)
+    validationData = OVDataSet('validation', dataPartitions)
+    testData = OVDataSet('test', dataPartitions)
+
 
     print("================End of Cross Validation==============")
 

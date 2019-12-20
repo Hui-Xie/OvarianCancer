@@ -49,7 +49,7 @@ def main():
 
     device = torch.device(f"cuda:{GPUID}" if torch.cuda.is_available() else "cpu")
 
-    dataPartitions = OVDataPartition(dataInputsPath, responseFile, inputSuffix, K_fold=0, k=0, logInfoFun=print)
+    dataPartitions = OVDataPartition(dataInputsPath, responseFile, inputSuffix, K_folds=0, k=0, logInfoFun=print)
 
     allData = OVDataSet('all', dataPartitions, transform=None, logInfoFun=logging.info)
 
