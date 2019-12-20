@@ -22,7 +22,7 @@ class VoteClassifier(BasicModel):
         )
         self.m_layers2 = nn.Sequential(
             #nn.LayerNorm(192, elementwise_affine=False),
-            nn.Tanh(),
+            nn.Sigmoid(),
             # nn.BatchNorm1d(192, affine=False),
             LinearBlock(192, 120, normModule=nn.LayerNorm(120, elementwise_affine=False)),
             nn.Dropout(p=0.5),
