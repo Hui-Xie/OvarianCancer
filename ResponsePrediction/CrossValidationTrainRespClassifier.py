@@ -96,7 +96,7 @@ def main():
     epochs = 180000
     preLoss = 100000
     preAccuracy = 0
-    initialEpoch = 50000  # for debug
+    initialEpoch = 0  # for debug
 
     for epoch in range(initialEpoch, epochs):
         random.seed()
@@ -118,7 +118,7 @@ def main():
             trGts = torch.cat((trGts, gts)) if trBatch != 1 else gts
 
         trLoss = trLoss/trBatch
-        print (f"epoch:{epoch}, trLoss = {trLoss.item()}")
+        # print (f"epoch:{epoch}, trLoss = {trLoss.item()}")
         trAccuracy = computeAccuracy(trOutputs, trGts)
         trTPR = computeTPR(trOutputs, trGts)
         trTNR = computeTNR(trOutputs, trGts)
