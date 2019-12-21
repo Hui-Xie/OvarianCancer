@@ -101,7 +101,7 @@ class OVDataSet(data.Dataset):
         self.m_logInfo = logInfoFun
         self.m_labels = self.getLabels(self.m_dataIDs)
         if isinstance(self.m_labels[0], float):
-            self.m_logInfo(f"{name} dataset:\t total {len(self.m_labels)} files, where 1 has {sum(self.m_labels)} with rate of {sum(self.m_labels) / len(self.m_labels)}")
+            self.m_logInfo(f"{name} dataset:\t total {len(self.m_labels)} files, where 1 has {sum(self.m_labels):.0f} with rate of {sum(self.m_labels) / len(self.m_labels)}")
         elif isinstance(self.m_labels[0], list):
             labelsArray = np.array(self.m_labels)
             shape = labelsArray.shape
