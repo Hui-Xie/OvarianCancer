@@ -36,6 +36,7 @@ class FCClassifier(BasicModel):
                 if weight == 0:
                     continue
                 lossFunc.to(device)
+                gts = gts.view_as(x)
                 loss += lossFunc(x, gts) * weight
 
             return x, loss

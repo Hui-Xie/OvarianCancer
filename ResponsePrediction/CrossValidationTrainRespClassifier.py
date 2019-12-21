@@ -17,7 +17,8 @@ from NetMgr import NetMgr
 
 sys.path.append(".")
 from OCDataSet import *
-from VoteClassifier import *
+from VoteClassifier import VoteClassifier
+from FCClassifier import FCClassifier
 from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
 from AccuracyFunc import *
 
@@ -62,7 +63,8 @@ def main():
     # testData = OVDataSet('test', dataPartitions, preLoadData=True)
 
     # construct network
-    net = VoteClassifier()
+    #net = VoteClassifier()
+    net = FCClassifier()
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -72,10 +74,19 @@ def main():
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=3000, min_lr=1e-8)
 
-    loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
-    net.appendLossFunc(loss0, 0.5)
-    loss1 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
-    net.appendLossFunc(loss1, 0.5)
+    if isinstance(net, VoteClassifier):
+        loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
+        net.appendLossFunc(loss0, 0.5)
+        loss1 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
+        net.appendLossFunc(loss1, 0.5)
+        preTrainEpoch = 10000
+    elif isinstance(net, FCClassifier):
+        loss0 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
+        net.appendLossFunc(loss0, 1)
+        preTrainEpoch = 0
+    else:
+        print(f"Error: maybe net error.")
+        return
 
     # Load network
     if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
@@ -152,9 +163,9 @@ def main():
         writer.add_scalar('TNR/validation', validTNR, epoch)
         writer.add_scalar('Accuracy/train', trAccuracy, epoch)
         writer.add_scalar('Accuracy/validation', validAccuracy, epoch)
-        writer.add_scalar('LearningRate', optimizer.param_groups[0]['lr'], epoch)
+        writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validAccuracy > preAccuracy and epoch > 10000:
+        if validAccuracy > preAccuracy and epoch > preTrainEpoch:
             preAccuracy = validAccuracy
             netMgr.saveNet(netPath)
 

@@ -5,7 +5,7 @@ suffix: ".npy"
 patientResponsePath: "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json"
 K_folds: 10
 fold_k:  0
-netPath: "/home/hxie1/temp_netParameters/OvarianCancer/VoteClassfier"  # net is saved at netpath+ filename
+netPath: "/home/hxie1/temp_netParameters/OvarianCancer/VoteClassfier"  # net is saved at netpath + self_filename
 rawF: 1536  # full feature length of a latent vector
 F: 192 # lenght of extacted features
 device: torch.device('cuda:3')   #GPU ID
