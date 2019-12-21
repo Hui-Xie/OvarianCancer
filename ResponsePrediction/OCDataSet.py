@@ -125,12 +125,14 @@ class OVDataSet(data.Dataset):
         self.m_transform = transform
         self.m_logInfo = logInfoFun
         self.m_labels = self.getLabels(self.m_dataIDs)
+
         self.m_preLoadData = preLoadData
         if self.m_preLoadData:
            for i, dataID in enumerate(self.m_dataIDs):
                filename = self.m_dataPartitions.m_inputFilesList[dataID]
                data = np.load(filename).astype(np.float32)
                self.m_loadData = np.concatenate((self.m_loadData, data)) if i!=0 else data
+           self.m_loadData = self.m_loadData.reshape((i+1,-1))
 
         if isinstance(self.m_labels[0], float):
             self.m_logInfo(f"{name} dataset:\t total {len(self.m_labels)} files, where 1 has {sum(self.m_labels):.0f} with rate of {sum(self.m_labels) / len(self.m_labels)}")
@@ -151,7 +153,7 @@ class OVDataSet(data.Dataset):
         filename = self.m_dataPartitions.m_inputFilesList[ID]
         patientID = getStemName(filename, self.m_dataPartitions.m_inputSuffix)
         if self.m_preLoadData:
-            data = self.m_loadData[index]
+            data = self.m_loadData[index,]
         else:
             data = np.load(filename).astype(np.float32)
         label = self.m_labels[index]
