@@ -81,11 +81,11 @@ def main():
     if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
         netMgr = NetMgr(net, netPath, device)
         netMgr.loadNet("train")
-        print(f"Fully Conneted Classifier load from  {netPath}")
+        print(f"Response Classifier load from  {netPath}")
 
     else:
         netMgr = NetMgr(net, netPath, device)
-        print(f"Fully Conneted Classifier starts training from scratch, and save at {netPath}")
+        print(f"Response Classifier starts training from scratch, and save at {netPath}")
 
     logDir = latentDir + "/log/" + experimentName
     if not os.path.exists(logDir):
@@ -152,6 +152,7 @@ def main():
         writer.add_scalar('TNR/validation', validTNR, epoch)
         writer.add_scalar('Accuracy/train', trAccuracy, epoch)
         writer.add_scalar('Accuracy/validation', validAccuracy, epoch)
+        writer.add_scalar('LearningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validAccuracy > preAccuracy and epoch > 10000:
             preAccuracy = validAccuracy
