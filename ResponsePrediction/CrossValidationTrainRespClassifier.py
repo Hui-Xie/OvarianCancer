@@ -67,9 +67,9 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=3000, min_lr=1e-9)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=3000, min_lr=1e-8)
 
     loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
     net.appendLossFunc(loss0, 0.5)
