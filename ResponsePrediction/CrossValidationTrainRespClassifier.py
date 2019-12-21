@@ -76,7 +76,7 @@ def main():
     net.appendLossFunc(loss1, 0.5)
 
     # Load network
-    if 2 == len(getFilesList(netPath, ".pt")):
+    if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
         netMgr = NetMgr(net, netPath, device)
         netMgr.loadNet("train")
         print(f"Fully Conneted Classifier load from  {netPath}")
@@ -85,7 +85,7 @@ def main():
         netMgr = NetMgr(net, netPath, device)
         print(f"Fully Conneted Classifier starts training from scratch, and save at {netPath}")
 
-    logDir = latentDir + "/log/" + timeStr
+    logDir = latentDir + "/log/" + experimentName
     if not os.path.exists(logDir):
         os.makedirs(logDir)  # recursive dir creation
     writer = SummaryWriter(log_dir=logDir)
@@ -150,8 +150,8 @@ def main():
         if validAccuracy > preAccuracy:
             preAccuracy = validAccuracy
             netMgr.saveNet(netPath)
-            
-     print("================End of Cross Validation==============")
+
+    print("================End of Cross Validation==============")
 
 if __name__ == "__main__":
     main()

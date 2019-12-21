@@ -195,4 +195,4 @@ nohup python3.7 TrainVoteClassifier.py &
 # 20191220_133504: get 79.59% max test accuracy, and stable at 73%;
 
 
-python3.7 /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_10F_0.yaml
+python3.7  CrossValidationTrainRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_10F_0.yaml
