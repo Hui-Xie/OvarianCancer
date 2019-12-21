@@ -39,32 +39,6 @@ device = torch.device('cuda:3')   #GPU ID
 
 # extract feature and ground truth
 
-def computeAccuracy(y, gt):
-    '''
-    y: logits before sigmoid
-    gt: ground truth
-    '''
-    y = (y>=0).int()
-    N = gt.shape[0]
-    gt = gt.int()
-    accuracy = ((y - gt) == 0).sum(dim=0)*1.0 / N
-    return accuracy
-
-# accuracy = TPR*P/T + TNR*N/T where T is total number
-
-def computeTNR(y,gt): # True Negative Rate, Specificity
-    y = (y >= 0).int()
-    N = gt.shape[0]
-    gt = gt.int()
-    TNR = ((y+gt)==0).sum(dim=0)*1.0 / (N-gt.sum(dim=0))
-    return TNR
-
-def computeTPR(y, gt): #True Positive Rate, sensitivity
-    y = (y >= 0).int()
-    gt = gt.int()
-    TPR = ((y*gt)==1).sum(dim=0)*1.0/gt.sum(dim=0)
-    return TPR
-
 def loadXY(latentDir, patientResponse):
     filesList = getFilesList(latentDir, suffix)
     N  = len(filesList)

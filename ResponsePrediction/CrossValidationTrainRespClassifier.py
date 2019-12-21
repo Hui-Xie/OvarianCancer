@@ -48,7 +48,8 @@ def main():
     patientResponsePath = cfg["patientResponsePath"]
     K_folds = cfg["K_folds"]
     fold_k = cfg["fold_k"]
-    netPath = cfg["netPath"]+ "/" + experimentName
+    network = cfg["network"]
+    netPath = cfg["netPath"]+ "/"+network+ "/" + experimentName
     rawF = cfg["rawF"]
     F = cfg["F"]
     device = eval(cfg["device"])  # convert string to class object.
@@ -63,8 +64,7 @@ def main():
     # testData = OVDataSet('test', dataPartitions, preLoadData=True)
 
     # construct network
-    #net = VoteClassifier()
-    net = FCClassifier()
+    net = eval(network)()
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -98,7 +98,7 @@ def main():
         netMgr = NetMgr(net, netPath, device)
         print(f"Response Classifier starts training from scratch, and save at {netPath}")
 
-    logDir = latentDir + "/log/" + experimentName
+    logDir = latentDir + "/log/"+ network+ "/" + experimentName
     if not os.path.exists(logDir):
         os.makedirs(logDir)  # recursive dir creation
     writer = SummaryWriter(log_dir=logDir)
