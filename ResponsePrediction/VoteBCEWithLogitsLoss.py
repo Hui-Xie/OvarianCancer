@@ -11,8 +11,7 @@ class VoteBCEWithLogitsLoss(_Loss):
 
     def forward(self, x, gts):
         B,F = x.shape
-        BB,C = gts.shape
-        assert B == BB and C==1
+        gts =gts.reshape((B,1))
         sigmoidx = torch.sigmoid(x)
         gtsPlane = gts.expand((B,F))
         loss = -gtsPlane*torch.log(sigmoidx)*self.m_posWeight - (1.0-gtsPlane)*torch.log(1-sigmoidx)

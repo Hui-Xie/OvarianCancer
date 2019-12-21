@@ -8,6 +8,32 @@ import torch
 
 preTrainEpochs = 10000
 
+def computeAccuracy(y, gt):
+    '''
+    y:  logits before probility
+    gt: ground truth
+    '''
+    y = (y>=0.0).squeeze().int()
+    N = gt.shape[0]
+    gt = gt.squeeze().int()
+    accuracy = ((y - gt) == 0).sum()*1.0 / N
+    return accuracy
+
+# accuracy = TPR*P/T + TNR*N/T where T is total number
+
+def computeTNR(y,gt): # True Negative Rate, Specificity
+    y = (y >= 0.0).squeeze().int()
+    N = gt.shape[0]
+    gt = gt.squeeze().int()
+    TNR = ((y+gt)==0).sum()*1.0 / (N-gt.sum())
+    return TNR
+
+def computeTPR(y, gt): #True Positive Rate, sensitivity
+    y = (y >= 0.0).squeeze().int()
+    gt = gt.squeeze().int()
+    TPR = ((y*gt)==1).sum()*1.0/gt.sum()
+    return TPR
+
 class VoteClassifier(BasicModel):
     def __init__(self):
         super().__init__()
@@ -51,6 +77,7 @@ class VoteClassifier(BasicModel):
                 x1 = self.m_layers2(x0)
                 lossFunc1 = self.m_lossFuncList[1]
                 weight1 = self.m_lossWeightList[1]
+                gts = gts.view_as(x1)
                 loss1 = lossFunc1(x1, gts) * weight1
                 loss = loss0 + loss1
             else:
@@ -60,6 +87,7 @@ class VoteClassifier(BasicModel):
             x1 = self.m_layers2(x0)
             lossFunc1 = self.m_lossFuncList[1]
             weight1 = self.m_lossWeightList[1]
+            gts = gts.view_as(x1)
             loss1 = lossFunc1(x1, gts) * weight1
             loss = loss0 + loss1
 

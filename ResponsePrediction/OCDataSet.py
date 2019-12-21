@@ -109,9 +109,9 @@ class OVDataPartition():
             count1 += label
             countAll += 1
         count0 = countAll - count1
-        self.m_logInfo(f"In this training or all partition:")
-        self.m_logInfo(f"0 has {count0} elements, with a rate of  {count0 / countAll} ")
-        self.m_logInfo(f"1 has {count1} elements, with a rate of  {count1 / countAll} ")
+        self.m_logInfo(f"In this training partition:")
+        self.m_logInfo(f"0 has {count0:.0f} files, with a rate of  {count0 / countAll} ")
+        self.m_logInfo(f"1 has {count1:.0f} files, with a rate of  {count1 / countAll} ")
         posWeight = torch.tensor([count0*1.0 / count1], dtype=torch.float)
         self.m_logInfo(f"Positive weight = {posWeight}")
         return posWeight
@@ -152,7 +152,7 @@ class OVDataSet(data.Dataset):
             data = self.m_transform(data)
         else:
             data = torch.from_numpy(data)
-        if data.squeeze().dims ==1:
+        if data.squeeze().dim() ==1:
             return  data, label, patientID
         else:
             return data.unsqueeze(dim=0), label, patientID
