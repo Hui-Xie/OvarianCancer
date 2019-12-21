@@ -152,7 +152,7 @@ def main():
         writer.add_scalar('Accuracy/train', trAccuracy, epoch)
         writer.add_scalar('Accuracy/validation', validAccuracy, epoch)
 
-        if validAccuracy > preAccuracy:
+        if validAccuracy > preAccuracy and epoch > 10000:
             preAccuracy = validAccuracy
             netMgr.saveNet(netPath)
 
