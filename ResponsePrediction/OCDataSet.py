@@ -91,6 +91,30 @@ class OVDataPartition():
                     self.m_partitions["training"] += folds0[i].tolist() + folds1[i].tolist()
             self.m_logInfo(f"{K}-fold cross validation: the {k}th fold is for test, the {k1}th fold is for validation, remaining folds are for training.")
 
+    def getPositiveWeight(self):
+        count1 = 0
+        countAll = 0
+
+        if "all" in self.m_partitions.keys():
+            trainingPartition = self.m_partitions["all"]
+        elif "training" in  self.m_partitions.keys():
+            trainingPartition = self.m_partitions["training"]
+        else:
+            print("Error: program can not find all or training partition in OVDataSegPartition")
+            exit(-1)
+
+        countFiles = len(trainingPartition)
+        for index in trainingPartition:
+            label = self.m_labelsList[index]
+            count1 += label
+            countAll += 1
+        count0 = countAll - count1
+        self.m_logInfo(f"In this training or all partition:")
+        self.m_logInfo(f"0 has {count0} elements, with a rate of  {count0 / countAll} ")
+        self.m_logInfo(f"1 has {count1} elements, with a rate of  {count1 / countAll} ")
+        posWeight = torch.tensor([count0*1.0 / count1], dtype=torch.float)
+        self.m_logInfo(f"Positive weight = {posWeight}")
+        return posWeight
 
 
 class OVDataSet(data.Dataset):
