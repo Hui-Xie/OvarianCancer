@@ -193,3 +193,6 @@ nohup python3.7 TrainVoteClassifier.py &
 # 20191219_122414: can get 69% test accuracy.
 # 20191219_123556: can get 75% max test accruacy, and stable at 73%, which is bigger than 71% majority prediction;
 # 20191220_133504: get 79.59% max test accuracy, and stable at 73%;
+
+
+python3.7 /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_10F_0.yaml
