@@ -128,7 +128,10 @@ class OVDataSet(data.Dataset):
             data = self.m_transform(data)
         else:
             data = torch.from_numpy(data)
-        return data.unsqueeze(dim=0), label, patientID
+        if data.squeeze().dims ==1:
+            return  data, label, patientID
+        else:
+            return data.unsqueeze(dim=0), label, patientID
 
     def getLabels(self, dataIDs):
         labels = []

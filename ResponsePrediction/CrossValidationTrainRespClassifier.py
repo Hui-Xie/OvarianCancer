@@ -3,7 +3,8 @@
 import sys
 import yaml
 import torch
-from .OCDataSet import *
+sys.path.append(".")
+from OCDataSet import *
 
 def printUsage(argv):
     print("============ Cross Validation Vote Classifier =============")
@@ -12,6 +13,7 @@ def printUsage(argv):
 
 
 def main():
+
     if len(sys.argv) != 2:
         print("Error: input parameters error.")
         printUsage(sys.argv)
