@@ -8,32 +8,6 @@ import torch
 
 preTrainEpochs = 10000
 
-def computeAccuracy(y, gt):
-    '''
-    y:  logits before probility
-    gt: ground truth
-    '''
-    y = (y>=0.0).squeeze().int()
-    N = gt.shape[0]
-    gt = gt.squeeze().int()
-    accuracy = ((y - gt) == 0).sum()*1.0 / N
-    return accuracy
-
-# accuracy = TPR*P/T + TNR*N/T where T is total number
-
-def computeTNR(y,gt): # True Negative Rate, Specificity
-    y = (y >= 0.0).squeeze().int()
-    N = gt.shape[0]
-    gt = gt.squeeze().int()
-    TNR = ((y+gt)==0).sum()*1.0 / (N-gt.sum())
-    return TNR
-
-def computeTPR(y, gt): #True Positive Rate, sensitivity
-    y = (y >= 0.0).squeeze().int()
-    gt = gt.squeeze().int()
-    TPR = ((y*gt)==1).sum()*1.0/gt.sum()
-    return TPR
-
 class VoteClassifier(BasicModel):
     def __init__(self):
         super().__init__()
@@ -92,32 +66,8 @@ class VoteClassifier(BasicModel):
             loss = loss0 + loss1
 
         return x1, loss
-       
 
-        # after pretraiining, the singleConnnected layer does not use loss again.
-        '''
-        x0 = self.m_layers1(x)
 
-        if self.training:
-            if self.m_epoch > preTrainEpochs:
-                x1 = self.m_layers2(x0)
-                lossFunc1 = self.m_lossFuncList[1]
-                weight1 = self.m_lossWeightList[1]
-                loss = lossFunc1(x1, gts) * weight1
-            else:
-                lossFunc0 = self.m_lossFuncList[0]
-                weight0 = self.m_lossWeightList[0]
-                voteLogit, loss = lossFunc0(x0, gts) * weight0
-                x1 = voteLogit
-        else:
-            x1 = self.m_layers2(x0)
-            lossFunc1 = self.m_lossFuncList[1]
-            weight1 = self.m_lossWeightList[1]
-            loss = lossFunc1(x1, gts) * weight1
-
-        return x1, loss
-
-        '''
 
 
 

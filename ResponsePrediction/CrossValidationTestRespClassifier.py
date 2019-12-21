@@ -17,9 +17,9 @@ from NetMgr import NetMgr
 sys.path.append(".")
 from OCDataSet import *
 from VoteClassifier import *
+# from FCClassifier import *
 from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
 from AccuracyFunc import *
-
 
 def printUsage(argv):
     print("============ Cross Validation Vote Classifier =============")
@@ -56,20 +56,20 @@ def main():
     dataPartitions = OVDataPartition(latentDir, patientResponsePath, suffix, K_folds=K_folds, k=fold_k)
     positiveWeight = dataPartitions.getPositiveWeight().to(device)
 
-    trainingData = OVDataSet('training', dataPartitions, preLoadData=True)
-    validationData = OVDataSet('validation', dataPartitions, preLoadData=True)
-    # testData = OVDataSet('test', dataPartitions, preLoadData=True)
+    trainingData = OVDataSet('training', dataPartitions)
+    validationData = OVDataSet('validation', dataPartitions)
+    # testData = OVDataSet('test', dataPartitions)
 
     # construct network
     net = VoteClassifier()
+    #net = FCClassifier()
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    optimizer = optim.Adam(net.parameters(), lr=0.1, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=0.0001, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.1, patience=10000, min_lr=1e-9)
 
     loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
     net.appendLossFunc(loss0, 0.5)
@@ -96,9 +96,8 @@ def main():
     epochs = 180000
     preLoss = 100000
     preAccuracy = 0
-    initialEpoch = 50000  # for debug
 
-    for epoch in range(initialEpoch, epochs):
+    for epoch in range(epochs):
         random.seed()
         net.m_epoch = epoch
 
@@ -118,12 +117,9 @@ def main():
             trGts = torch.cat((trGts, gts)) if trBatch != 1 else gts
 
         trLoss = trLoss/trBatch
-        print (f"epoch:{epoch}, trLoss = {trLoss.item()}")
         trAccuracy = computeAccuracy(trOutputs, trGts)
         trTPR = computeTPR(trOutputs, trGts)
         trTNR = computeTNR(trOutputs, trGts)
-
-        lrScheduler.step(trLoss)
 
         net.eval()
         with torch.no_grad():
@@ -155,6 +151,7 @@ def main():
         if validAccuracy > preAccuracy:
             preAccuracy = validAccuracy
             netMgr.saveNet(netPath)
+        print (f"epoch: {epoch}")
 
     print("================End of Cross Validation==============")
 

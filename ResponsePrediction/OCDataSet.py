@@ -23,6 +23,7 @@ class OVDataPartition():
         self.m_k = k
         self.m_logInfo = logInfoFun
 
+
         self.updateInputsList()
         self.updateLabelsList()
 
@@ -118,12 +119,19 @@ class OVDataPartition():
 
 
 class OVDataSet(data.Dataset):
-    def __init__(self, name, dataPartitions, transform=None, logInfoFun=print):
+    def __init__(self, name, dataPartitions, transform=None, logInfoFun=print, preLoadData=False):
         self.m_dataPartitions = dataPartitions
         self.m_dataIDs = self.m_dataPartitions.m_partitions[name]
         self.m_transform = transform
         self.m_logInfo = logInfoFun
         self.m_labels = self.getLabels(self.m_dataIDs)
+        self.m_preLoadData = preLoadData
+        if self.m_preLoadData:
+           for i, dataID in enumerate(self.m_dataIDs):
+               filename = self.m_dataPartitions.m_inputFilesList[dataID]
+               data = np.load(filename).astype(np.float32)
+               self.m_loadData = np.concatenate((self.m_loadData, data)) if i!=0 else data
+
         if isinstance(self.m_labels[0], float):
             self.m_logInfo(f"{name} dataset:\t total {len(self.m_labels)} files, where 1 has {sum(self.m_labels):.0f} with rate of {sum(self.m_labels) / len(self.m_labels)}")
         elif isinstance(self.m_labels[0], list):
@@ -142,8 +150,10 @@ class OVDataSet(data.Dataset):
         ID = self.m_dataIDs[index]
         filename = self.m_dataPartitions.m_inputFilesList[ID]
         patientID = getStemName(filename, self.m_dataPartitions.m_inputSuffix)
-
-        data = np.load(filename).astype(np.float32)
+        if self.m_preLoadData:
+            data = self.m_loadData[index]
+        else:
+            data = np.load(filename).astype(np.float32)
         label = self.m_labels[index]
         if isinstance(label, list):
             label = torch.tensor(label).t()
