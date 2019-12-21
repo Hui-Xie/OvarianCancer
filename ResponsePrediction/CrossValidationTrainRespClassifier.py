@@ -1,5 +1,6 @@
 
-import datetime
+#  training cross validation
+
 import random
 import sys
 
@@ -81,7 +82,7 @@ def main():
         netMgr = NetMgr(net, netPath, device)
         netMgr.loadNet("train")
         print(f"Fully Conneted Classifier load from  {netPath}")
-        timeStr = getStemName(netPath)
+
     else:
         netMgr = NetMgr(net, netPath, device)
         print(f"Fully Conneted Classifier starts training from scratch, and save at {netPath}")
