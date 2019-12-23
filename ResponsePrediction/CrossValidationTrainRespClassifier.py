@@ -42,6 +42,7 @@ def main():
         cfg = yaml.load(file, Loader=yaml.FullLoader)
 
     experimentName = getStemName(configFile, removedSuffix=".yaml")
+    print(f"Experiment: {experimentName}")
     batchSize = cfg["batchSize"]
     latentDir = cfg["latentDir"]
     suffix = cfg["suffix"]
@@ -50,6 +51,7 @@ def main():
     fold_k = cfg["fold_k"]
     network = cfg["network"]
     netPath = cfg["netPath"]+ "/"+network+ "/" + experimentName
+    print(f"netPath: {netPath}")
     rawF = cfg["rawF"]
     F = cfg["F"]
     device = eval(cfg["device"])  # convert string to class object.
