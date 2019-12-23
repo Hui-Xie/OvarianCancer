@@ -9,7 +9,7 @@ fold_k:  3
 network: "FCClassifier" # or "VoteClassifier"
 netPath: "/home/hxie1/temp_netParameters/OvarianCancer"  # net is saved at netpath / network / self_filename
 rawF: 1536  # full feature length of a latent vector
-F: 192 # lenght of extacted features
+F: 192 # length of extacted features
 device: torch.device('cuda:3')   #GPU ID
 featureIndices: [7, 10, 17, 21, 25, 28, 30, 32, 45, 52, 54, 79, 84, 93, 127, 128, 135, 160, 172, 174, 178, 182, 199,
                    203, 213, 224, 249, 250, 253, 260, 273, 278, 283, 286, 307, 333, 336, 344, 349, 356, 359, 371, 373,

@@ -36,7 +36,7 @@ from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
 
 
 rawF=1536  # full feature length of a latent vector
-F = 192 # lenght of extacted features
+F = 192 # length of extacted features
 device = torch.device('cuda:3')   #GPU ID
 
 # extract feature and ground truth
