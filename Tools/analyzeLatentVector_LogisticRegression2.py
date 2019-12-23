@@ -6,12 +6,16 @@
 # latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/latent/latent_20191023_153046"
 
 # for train data:
-dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
-latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
+# dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/predict/predict_20191210_024607/patientDice.json"
+# latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607"
 
 # for test data:
 #dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/predict/predict_20191210_024607/patientDice.json"
 #latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/test/latent/latent_20191210_024607"
+
+# for full data including training and test data:
+dicesFilePath =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/patientDice.json"
+latentVectorDir =  "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607"
 
 checkIndiceList = [7, 10, 17, 21, 25, 28, 30, 32, 45, 52, 54, 79, 84, 93, 127, 128, 135, 160, 172, 174, 178, 182, 199,
                    203, 213, 224, 249, 250, 253, 260, 273, 278, 283, 286, 307, 333, 336, 344, 349, 356, 359, 371, 373,
@@ -31,10 +35,10 @@ outputAnalyzeDir = latentVectorDir + "/analyzeImage"
 # aList = range(0,85,2)  #dice range 0% to 85%, step 2%
 
 # for training data
-aList = range(82,89,10)  #min dice range 82% to 90%, step 1%
+# aList = range(82,89,1)  #min dice range 82% to 90%, step 1%
 
 # for test data
-#aList = range(0,89,100)
+aList = range(0,89,100)
 
 diceThresholdList=[x/100 for x in aList]
 accuracyThreshold = 0.68  # for each training feature
