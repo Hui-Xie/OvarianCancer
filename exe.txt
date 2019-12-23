@@ -195,9 +195,13 @@ nohup python3.7 TrainVoteClassifier.py &
 # 20191220_133504: get 79.59% max test accuracy, and stable at 73%;
 
 
-# 20191221 train FCClassifier
+# experiment 20191221 train FCClassifier
 nohup python3.7  CrossValidationTrainRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_FC_10F_0.yaml &
 
-# 20191221 train VoteClassifier
+# experiment 20191221 train VoteClassifier
 nohup python3.7  CrossValidationTrainRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_Vote_10F_0.yaml &
 
+# experiment 20191221 test FCClassifier
+python3.7  CrossValidationTestRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_FC_10F_0.yaml
+# experiment 20191221 test VoteClassifier
+python3.7  CrossValidationTestRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/Latent_CV_20191221/latentCV_20191221_Vote_10F_0.yaml
