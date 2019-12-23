@@ -1,0 +1,26 @@
+Report date: 02:25pm, Dec 23th, 2019
+Summary:
+1  dataset size:84 patients, 65.48% of which are majority 1 response;
+2  10-fold cross validation of 84 patients: train 8 folds, validate 1 fold, and test 1 fold;
+3  model choosing: in each fold cross validation, save the network model with the  max validation accuracy, and then use this saved model for independent test-fold test;
+4  Merge 10 fold test results with 10 models over the all dataset , compute its accuracy and  sensitivity(TPR) and specificity(TNR):
+    VoteClassifier: accuracy = 0.5952380952380952, TPR =0.7454545454545455, TNR=0.3103448275862069
+    FCClassifier:   accuracy = 0.5714285714285714, TPR =0.6363636363636364, TNR=0.4482758620689655
+
+Result analysis:
+1   59.5% accuracy is higher than random guess, but low than majority prediction 65.48%;
+2   VoteClassifier is a little higher than FCClassifier,but it is not significant in statistics;
+3   The result of last week is a result of fine tune network parameters while observing the  specific test data of 49 patients, which can not generalize;
+4   In these 84 patient, 35 patients have a mean dice 92.88%;
+
+Latent vector generation:
+1   From 169 patients with weak annotated ovarian cancer, choose 84 patients with visible primary cancer;
+2   In the above 84 patients, random choose 35 patients to  manually  extend weak annotation, according to the location and intensity of primary weak annotation, into full 3D ground truth;
+3   using 35 patients with full 3D ground truth of primary cancer, train a segmentation network which gets segmentation train mean dice of 92.88%;
+4   using this trained segmentation network to test remaining 49 patients, get test dice of 68.9% against weak annotation;
+5   using above segmentation network to generate 84 latents for response prediction;
+7   In these 84 patients, the latent vector corresponding dices:
+     for 35 patients  with 3D full ground truth: minDice = 82%, meanDice=92.88%, maxDice=98.16%
+     for 49 patients  with weak annotation ground truth: minDice=0%, meanDice=68.93%, maxDice=95.56%;
+
+Experiment name: Latent_CV_20191221  (for backup)
