@@ -1,0 +1,5 @@
+Experiment Design:
+1  Only choose latent vectors which have a high dice greater than 82%;
+2  the 35 latent vector at dir: /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/latent_20191210_024607
+   meet high dice standard;
+
