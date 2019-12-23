@@ -55,7 +55,7 @@ import matplotlib.pyplot as plt
 import torch
 import math
 
-gpuDevice = torch.device('cuda:3')   #GPU ID
+gpuDevice = torch.device('cuda:1')   #GPU ID
 
 
 def main():
