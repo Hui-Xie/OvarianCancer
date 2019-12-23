@@ -13,7 +13,8 @@ from NetMgr import NetMgr
 
 sys.path.append(".")
 from OCDataSet import *
-from VoteClassifier import *
+from VoteClassifier import VoteClassifier
+from FCClassifier import FCClassifier
 from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
 from AccuracyFunc import *
 
@@ -42,7 +43,8 @@ def main():
     patientResponsePath = cfg["patientResponsePath"]
     K_folds = cfg["K_folds"]
     fold_k = cfg["fold_k"]
-    netPath = cfg["netPath"] + "/" + experimentName
+    network = cfg["network"]
+    netPath = cfg["netPath"] + "/"+network+ "/" + experimentName
     rawF = cfg["rawF"]
     F = cfg["F"]
     device = eval(cfg["device"])  # convert string to class object.
@@ -54,16 +56,25 @@ def main():
     testData = OVDataSet('test', dataPartitions, preLoadData=True)
 
     # construct network
-    net = VoteClassifier()
+    net = eval(network)()
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device)
 
-    loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
-    net.appendLossFunc(loss0, 0.5)
-    loss1 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
-    net.appendLossFunc(loss1, 0.5)
+    if isinstance(net, VoteClassifier):
+        loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
+        net.appendLossFunc(loss0, 0.5)
+        loss1 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
+        net.appendLossFunc(loss1, 0.5)
+
+    elif isinstance(net, FCClassifier):
+        loss0 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
+        net.appendLossFunc(loss0, 1)
+
+    else:
+        print(f"Error: maybe net error.")
+        return
 
     # Load network
     if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
@@ -73,7 +84,7 @@ def main():
     else:
         print(f"Error: program can not load network")
 
-    logDir = latentDir + "/log/" + experimentName
+    logDir = latentDir + "/log/"+ network+ "/" + experimentName
     if not os.path.exists(logDir):
         os.makedirs(logDir)  # recursive dir creation
     testResultFilename = os.path.join(logDir, f"testResult_CV{fold_k}.json")
@@ -99,7 +110,7 @@ def main():
 
     # print result:
     N = testOutputs.shape[0]
-    print(f"In the fold_{fold_k} CV: testSetSize={N}, Accuracy={testAccuracy}, TPR={testTPR}, TNR={testTNR}")
+    print(f"In the fold_{fold_k} CV test of network {network}: testSetSize={N}, Accuracy={testAccuracy}, TPR={testTPR}, TNR={testTNR}")
     testResult = {}
     for i in range(N):
         testResult[testPatientIDs[i]] = (1 if testOutputs[i].item() >=0 else 0)
