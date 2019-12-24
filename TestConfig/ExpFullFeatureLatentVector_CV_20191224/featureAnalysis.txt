@@ -43,3 +43,136 @@ num of Best Features:   [49]
 rate of Best Features:  [0.031901041666666664]
 ====================end of Logistic Regression 2================
 
+Training Log:
+Experiment: ExpFullFeatureLV_CV_20191224_10F_8
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_8
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 8th fold is for test, the 9th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 24 files, with a rate of  0.34782608695652173
+1 has 45 files, with a rate of  0.6521739130434783
+Positive weight = tensor([0.5333])
+training dataset:	 total 69 files, where 1 has 45 with rate of 0.6521739130434783
+validation dataset:	 total 7 files, where 1 has 5 with rate of 0.7142857142857143
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_8
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_9
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_9
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 9th fold is for test, the 0th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 24 files, with a rate of  0.35294117647058826
+1 has 44 files, with a rate of  0.6470588235294118
+Positive weight = tensor([0.5455])
+training dataset:	 total 68 files, where 1 has 44 with rate of 0.6470588235294118
+validation dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_9
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_4
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_4
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 4th fold is for test, the 5th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.34328358208955223
+1 has 44 files, with a rate of  0.6567164179104478
+Positive weight = tensor([0.5227])
+training dataset:	 total 67 files, where 1 has 44 with rate of 0.6567164179104478
+validation dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_4
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_7
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_7
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 7th fold is for test, the 8th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3382352941176471
+1 has 45 files, with a rate of  0.6617647058823529
+Positive weight = tensor([0.5111])
+training dataset:	 total 68 files, where 1 has 45 with rate of 0.6617647058823529
+validation dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_7
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_0
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_0
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+training dataset:	 total 66 files, where 1 has 43 with rate of 0.6515151515151515
+validation dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_0
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_1
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_1
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 1th fold is for test, the 2th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+training dataset:	 total 66 files, where 1 has 43 with rate of 0.6515151515151515
+validation dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_1
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_3
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_3
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 3th fold is for test, the 4th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+training dataset:	 total 66 files, where 1 has 43 with rate of 0.6515151515151515
+validation dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_3
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_5
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_5
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 5th fold is for test, the 6th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3382352941176471
+1 has 45 files, with a rate of  0.6617647058823529
+Positive weight = tensor([0.5111])
+training dataset:	 total 68 files, where 1 has 45 with rate of 0.6617647058823529
+validation dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_5
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_2
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_2
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 2th fold is for test, the 3th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+training dataset:	 total 66 files, where 1 has 43 with rate of 0.6515151515151515
+validation dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_2
+================End of Cross Validation==============
+Experiment: ExpFullFeatureLV_CV_20191224_10F_6
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_6
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 6th fold is for test, the 7th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3382352941176471
+1 has 45 files, with a rate of  0.6617647058823529
+Positive weight = tensor([0.5111])
+training dataset:	 total 68 files, where 1 has 45 with rate of 0.6617647058823529
+validation dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier starts training from scratch, and save at /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_6
+================End of Cross Validation==============
+(base) [c-xwu000:ResponsePrediction]#
+
