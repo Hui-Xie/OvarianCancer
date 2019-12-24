@@ -176,3 +176,167 @@ Response Classifier starts training from scratch, and save at /home/hxie1/temp_n
 ================End of Cross Validation==============
 (base) [c-xwu000:ResponsePrediction]#
 
+
+# Test result
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_0.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_0
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_0
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 0th fold is for test, the 1th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+test dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_0
+In the fold_0 CV test of network FullFeatureVoteClassifier: testSetSize=9, Accuracy=0.8888888955116272, TPR=1.0, TNR=0.6666666865348816
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_0/testResult_CV0.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_1.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_1
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_1
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 1th fold is for test, the 2th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+test dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_1
+In the fold_1 CV test of network FullFeatureVoteClassifier: testSetSize=9, Accuracy=0.7777777910232544, TPR=0.8333333134651184, TNR=0.6666666865348816
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_1/testResult_CV1.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_2.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_2
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_2
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 2th fold is for test, the 3th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+test dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_2
+In the fold_2 CV test of network FullFeatureVoteClassifier: testSetSize=9, Accuracy=0.2222222238779068, TPR=0.3333333432674408, TNR=0.0
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_2/testResult_CV2.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_3.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_3
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_3
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 3th fold is for test, the 4th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3484848484848485
+1 has 43 files, with a rate of  0.6515151515151515
+Positive weight = tensor([0.5349])
+test dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_3
+In the fold_3 CV test of network FullFeatureVoteClassifier: testSetSize=9, Accuracy=0.2222222238779068, TPR=0.1666666716337204, TNR=0.3333333432674408
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_3/testResult_CV3.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_4.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_4
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_4
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 4th fold is for test, the 5th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.34328358208955223
+1 has 44 files, with a rate of  0.6567164179104478
+Positive weight = tensor([0.5227])
+test dataset:	 total 9 files, where 1 has 6 with rate of 0.6666666666666666
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_4
+In the fold_4 CV test of network FullFeatureVoteClassifier: testSetSize=9, Accuracy=0.3333333432674408, TPR=0.5, TNR=0.0
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_4/testResult_CV4.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_5.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_5
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_5
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 5th fold is for test, the 6th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3382352941176471
+1 has 45 files, with a rate of  0.6617647058823529
+Positive weight = tensor([0.5111])
+test dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_5
+In the fold_5 CV test of network FullFeatureVoteClassifier: testSetSize=8, Accuracy=0.5, TPR=0.4000000059604645, TNR=0.6666666865348816
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_5/testResult_CV5.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_6.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_6
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_6
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 6th fold is for test, the 7th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3382352941176471
+1 has 45 files, with a rate of  0.6617647058823529
+Positive weight = tensor([0.5111])
+test dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_6
+In the fold_6 CV test of network FullFeatureVoteClassifier: testSetSize=8, Accuracy=0.375, TPR=0.0, TNR=1.0
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_6/testResult_CV6.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_7.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_7
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_7
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 7th fold is for test, the 8th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 23 files, with a rate of  0.3382352941176471
+1 has 45 files, with a rate of  0.6617647058823529
+Positive weight = tensor([0.5111])
+test dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_7
+In the fold_7 CV test of network FullFeatureVoteClassifier: testSetSize=8, Accuracy=0.125, TPR=0.20000000298023224, TNR=0.0
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_7/testResult_CV7.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_8.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_8
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_8
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 8th fold is for test, the 9th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 24 files, with a rate of  0.34782608695652173
+1 has 45 files, with a rate of  0.6521739130434783
+Positive weight = tensor([0.5333])
+test dataset:	 total 8 files, where 1 has 5 with rate of 0.625
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_8
+In the fold_8 CV test of network FullFeatureVoteClassifier: testSetSize=8, Accuracy=0.375, TPR=0.20000000298023224, TNR=0.6666666865348816
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_8/testResult_CV8.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_9.yaml
+Experiment: ExpFullFeatureLV_CV_20191224_10F_9
+netPath: /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_9
+Infor: In all data of 84 files, label 0 has 29 files,
+	  and label 1 has 55 files, where positive response rate = 0.6547619047619048 in full data
+10-fold cross validation: the 9th fold is for test, the 0th fold is for validation, remaining folds are for training.
+In this training partition:
+0 has 24 files, with a rate of  0.35294117647058826
+1 has 44 files, with a rate of  0.6470588235294118
+Positive weight = tensor([0.5455])
+test dataset:	 total 7 files, where 1 has 5 with rate of 0.7142857142857143
+Response Classifier load from  /home/hxie1/temp_netParameters/OvarianCancer/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_9
+In the fold_9 CV test of network FullFeatureVoteClassifier: testSetSize=7, Accuracy=0.4285714626312256, TPR=0.6000000238418579, TNR=0.0
+result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_9/testResult_CV9.json
+================ End of Cross Validation Test ==============
+(base) [c-xwu000:ResponsePrediction]#
+
+
+# merge result:
+python3.7 statisticTestResponse.py
+In /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/mergeTestResult.xls:
+accuracy = 0.42857142857142855, TPR =0.43636363636363634, TNR=0.41379310344827586 for total N=84 test files 10 folds
+===========end of statistic test response result=============
+
+
+
+

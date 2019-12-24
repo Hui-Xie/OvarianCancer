@@ -9,8 +9,14 @@ patientResponsePath = "/home/hxie1/data/OvarianCancerCT/patientResponseDict.json
 #outputExcelPath = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/extractLatent_20191210_024607/log/FCClassifier/FCClassifierResult.xls"
 
 # for EXpHighDiceLatentVector_CV_20191223 experiment
-testResult0Path = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/extractLatent_20191210_024607/log/VoteClassifier/ExpHighDiceLV_CV_20191223_Vote_10F_0/testResult_CV0.json"
-outputExcelPath = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/extractLatent_20191210_024607/log/VoteClassifier/mergeTestResult.xls"
+# testResult0Path = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/extractLatent_20191210_024607/log/VoteClassifier/ExpHighDiceLV_CV_20191223_Vote_10F_0/testResult_CV0.json"
+# outputExcelPath = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/extractLatent_20191210_024607/log/VoteClassifier/mergeTestResult.xls"
+
+# for ExpFullFeatureLV_CV_20191224 experiment
+testResult0Path = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/ExpFullFeatureLV_CV_20191224_10F_0/testResult_CV0.json"
+outputExcelPath = "/home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/LatentCrossValidation/rawLatent_20191210_024607/log/FullFeatureVoteClassifier/mergeTestResult.xls"
+
+
 
 import json
 from xlwt import Workbook
