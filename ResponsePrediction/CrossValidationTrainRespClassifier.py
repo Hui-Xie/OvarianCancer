@@ -19,6 +19,7 @@ sys.path.append(".")
 from OCDataSet import *
 from VoteClassifier import VoteClassifier
 from FCClassifier import FCClassifier
+from FullFeatureVoteClassifier import FullFeatureVoteClassifier
 from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
 from AccuracyFunc import *
 
@@ -66,7 +67,10 @@ def main():
     # testData = OVDataSet('test', dataPartitions, preLoadData=True)
 
     # construct network
-    net = eval(network)()
+    if network == "FullFeatureVoteClassifier":
+        net = eval(network)(rawF)
+    else:
+        net = eval(network)()
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -84,6 +88,10 @@ def main():
         preTrainEpoch = 10000
     elif isinstance(net, FCClassifier):
         loss0 = nn.BCEWithLogitsLoss(pos_weight=positiveWeight)
+        net.appendLossFunc(loss0, 1)
+        preTrainEpoch = 0
+    elif isinstance(net, FullFeatureVoteClassifier):
+        loss0 = VoteBCEWithLogitsLoss(pos_weight=positiveWeight, weightedVote=False)
         net.appendLossFunc(loss0, 1)
         preTrainEpoch = 0
     else:

@@ -157,3 +157,27 @@ result file is in /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/late
 (base) [c-xwu000:ResponsePrediction]#
 
 
+==========Merge Report=================
+(base) [c-xwu000:ResponsePrediction]#python3.7 statisticTestResponse.py
+In /home/hxie1/data/OvarianCancerCT/primaryROI1_1_3/training/latent/extractLatent_20191210_024607/log/VoteClassifier/mergeTestResult.xls:
+accuracy = 0.6, TPR =0.55, TNR=0.6666666666666666 for total N=35 test files 10 folds
+===========end of statistic test response result=============
+
+Report:
+1  This experiment(ExpHighDiceLatentVector_CV_20191223) uses only 35 high-segmentatation-dice patients' latent vector, which corresponds with high dice against full 3D ground truth
+    (minDice = 82%, meanDice=92.88%, maxDice=98.16%).
+2  35 patients have mojority response 1s of 57.14%;
+3  10-fold cross validation of 35 high dice patients: train 8 folds, validate 1 fold, and test 1 fold;
+4  model choosing: in each fold cross validation, save the network model with the  max validation accuracy, and then use this saved model for independent test-fold test;
+5  Merge 10 fold test results with 10 models over the all dataset , compute its accuracy and  sensitivity(TPR) and specificity(TNR):
+    VoteClassifier: accuracy = 0.6, TPR =0.55, TNR=0.6666666666666666 for total N=35 test files 10 folds
+
+Analysis:
+1  Comparing with experiment Latent_CV_20191221, its accuracy improves 1%;
+2  But this 33 high-dice patient dataset has majority 1s of 57.14%, which means its accuracy over 10-fold cross validation exceeds majority prediction about 3%;
+3  Can we say high dice give a better result? I am not sure as data set is too small.
+
+
+
+
+

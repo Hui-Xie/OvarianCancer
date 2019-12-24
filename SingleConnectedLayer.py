@@ -12,16 +12,16 @@ class SingleConnectedLayer(nn.Module):
         self.m_W1 = nn.Parameter(torch.zeros((F), dtype=torch.float, requires_grad=True))
         #self.m_W2 = nn.Parameter(torch.zeros((F), dtype=torch.float, requires_grad=True))
         # initialize W
-        #self.m_W1.data.fill_(0.01)
+        self.m_W1.data.fill_(0.01)
         #self.m_W2.data.fill_(0.01)
-        nn.init.normal_(self.m_W0, mean=0.0, std=1.0)
-        nn.init.normal_(self.m_W1, mean=0.0, std=1.0)
+        #nn.init.normal_(self.m_W0, mean=0.0, std=1.0)
+        #nn.init.normal_(self.m_W1, mean=0.0, std=1.0)
         #nn.init.normal_(self.m_W2, mean=0.0, std=1.0)
 
 
     def forward(self, x):
         """
-        y = W0+W1*x +W2*x^2  for each feature
+        y = W0+W1*x for each feature
         """
         B,F = x.shape
         assert F == self.m_numFeatures

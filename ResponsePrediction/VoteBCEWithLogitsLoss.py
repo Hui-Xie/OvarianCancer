@@ -18,8 +18,7 @@ class VoteBCEWithLogitsLoss(_Loss):
         gtsPlane = gts.expand((B,F))
         loss = -gtsPlane*func.logsigmoid(x)*self.m_posWeight - (1.0-gtsPlane)*func.logsigmoid(-x)
         loss = loss.sum()*1.0/(B*F)
-        #if torch.isnan(loss).item():
-        #    print(f"loss is NaN")
+
         sigmoidx = torch.sigmoid(x)
         if self.m_weightedVote:
             voteProb = sigmoidx.sum(dim=1)*1.0/F

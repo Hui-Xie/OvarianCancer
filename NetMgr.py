@@ -8,7 +8,7 @@ class NetMgr:
         self.m_net = net
         self.m_netPath = netPath
         if not os.path.exists(self.m_netPath):
-            os.mkdir(self.m_netPath)
+            os.makedirs(self.m_netPath)
         self.m_device = device
 
         if 'Best' == os.path.basename(netPath):
