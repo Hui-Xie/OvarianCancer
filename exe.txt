@@ -209,4 +209,4 @@ python3.7  CrossValidationTestRespClassifier.py /home/hxie1/Projects/OvarianCanc
 
 # 20191223 for high dice letent vector
 nohup python3.7  CrossValidationTrainRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/ExpHighDiceLatentVector_CV_20191223/ExpHighDiceLV_CV_20191223_Vote_10F_0.yaml &
-
+python3.7  CrossValidationTestRespClassifier.py /home/hxie1/Projects/OvarianCancer/TestConfig/ExpHighDiceLatentVector_CV_20191223/ExpHighDiceLV_CV_20191223_Vote_10F_0.yaml
