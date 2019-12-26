@@ -8,8 +8,8 @@ import json
 from torch.utils import data
 
 sys.path.append("..")
-from FilesUtilities import *
-from NetMgr import NetMgr
+from utilities.FilesUtilities import *
+from framework.NetMgr import NetMgr
 
 sys.path.append(".")
 from OCDataSet import *

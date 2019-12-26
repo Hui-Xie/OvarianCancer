@@ -1,7 +1,7 @@
 
 import sys
 sys.path.append("..")
-from FilesUtilities import *
+from utilities.FilesUtilities import *
 
 
 def computeAccuracy(y, gt):

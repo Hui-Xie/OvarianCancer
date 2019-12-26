@@ -1,9 +1,9 @@
 #
 
-from BasicModel import BasicModel
-from SingleConnectedLayer import *
+from framework.BasicModel import BasicModel
+from framework.SingleConnectedLayer import *
 import torch.nn as nn
-from ConvBlocks import LinearBlock
+from framework.ConvBlocks import LinearBlock
 import torch
 
 preTrainEpochs = 10000

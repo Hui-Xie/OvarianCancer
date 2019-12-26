@@ -12,8 +12,8 @@ from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
 sys.path.append("..")
-from FilesUtilities import *
-from NetMgr import NetMgr
+from utilities.FilesUtilities import *
+from framework.NetMgr import NetMgr
 
 sys.path.append(".")
 from OCDataSet import *

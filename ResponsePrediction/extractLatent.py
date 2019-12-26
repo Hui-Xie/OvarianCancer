@@ -23,7 +23,7 @@ featureIndices = [7, 10, 17, 21, 25, 28, 30, 32, 45, 52, 54, 79, 84, 93, 127, 12
 
 import sys
 sys.path.append("..")
-from FilesUtilities import *
+from utilities.FilesUtilities import *
 import numpy as np
 import os
 

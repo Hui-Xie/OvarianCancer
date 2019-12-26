@@ -2,7 +2,7 @@
 #Ovarian Cancer DataSet
 import sys
 import random
-from FilesUtilities import *
+from utilities.FilesUtilities import *
 import numpy as np
 import math
 import json

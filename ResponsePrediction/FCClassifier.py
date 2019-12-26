@@ -1,7 +1,7 @@
 #
 
-from BasicModel import BasicModel
-from ConvBlocks import LinearBlock
+from framework.BasicModel import BasicModel
+from framework.ConvBlocks import LinearBlock
 import torch.nn as nn
 import torch
 

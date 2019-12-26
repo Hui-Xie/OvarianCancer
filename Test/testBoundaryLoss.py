@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 sys.path.append("..")
-from CustomizedLoss import *
+from framework.CustomizedLoss import *
 import torch.nn as nn
 
 import torch

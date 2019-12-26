@@ -23,13 +23,13 @@ netPath = "/home/hxie1/temp_netParameters/OvarianCancer/VoteClassfier"
 
 import json
 import os
-from FilesUtilities import *
+from utilities.FilesUtilities import *
 import numpy as np
 import torch
 import torch.nn as nn
 from VoteClassifier import VoteClassifier
 import torch.optim as optim
-from NetMgr import NetMgr
+from framework.NetMgr import NetMgr
 import datetime
 from torch.utils.tensorboard import SummaryWriter
 from VoteBCEWithLogitsLoss import VoteBCEWithLogitsLoss
