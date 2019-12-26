@@ -3,7 +3,11 @@ import sys
 import yaml
 import os
 
+
 import torch
+sys.path.append(".")
+from OCTDataSet import OCTDataSet
+
 
 
 def printUsage(argv):
@@ -31,9 +35,17 @@ def main():
     batchSize = cfg["batchSize"]
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
-    trainLabelPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
-    validationImagePath = os.path.join(dataDir,"validation", f"images_CV{k:d}.npy")
-    validationLabelPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
+    trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
+    trainIDPath     = os.path.join(dataDir,"training", f"patientID_CV{k:d}.json")
+
+    validationImagesPath = os.path.join(dataDir,"validation", f"images_CV{k:d}.npy")
+    validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
+    validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
+
+    trainDataSet = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=None, device=device, sigma=sigma)
+    validationDataSet = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=None, device=device, sigma=sigma)
+
+    x = trainDataSet.__getitem__(30)
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 
