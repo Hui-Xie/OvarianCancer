@@ -45,7 +45,6 @@ def main():
     trainDataSet = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=None, device=device, sigma=sigma)
     validationDataSet = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=None, device=device, sigma=sigma)
 
-    x = trainDataSet.__getitem__(30)
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 

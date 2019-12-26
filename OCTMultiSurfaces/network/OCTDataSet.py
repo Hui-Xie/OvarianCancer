@@ -7,7 +7,7 @@ import torch
 
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20):
+    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0):
         self.m_device = device
         self.m_sigma = sigma
         self.m_images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.m_device)  # slice, H, W
