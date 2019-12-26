@@ -1,21 +1,6 @@
 # best solution:  Cardano's Formula
 #  https://brilliant.org/wiki/cardano-method/
 
-
-'''
-a=1
-b=-6.0
-c=11.0
-d=-6
-# this cubic equation has 3 real root solution: 1,2,3
-
-'''
-a=1.0
-b =-270.0
-c = 23600.0-0.00002
-d = -660000.0+0.00001*170   # which get x = 109. good.
-
-
 def cubicFunc(x, a, b, c, d):
     return a*(x**3)+b*(x**2)+c*x+d
 
