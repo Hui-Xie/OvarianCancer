@@ -1,8 +1,6 @@
-# ax^3+ bx^2+cx+d =0, where a !=0
-#formula from: https://sciencing.com/how-to-factor-polynomials-of-degree-3-12751796.html
-# but this formula only gives one solution which may has 3 solution.
+# best solution:  Cardano's Formula
+#  https://brilliant.org/wiki/cardano-method/
 
-# best solution:https://math.vanderbilt.edu/schectex/courses/cubic/
 
 '''
 a=1
@@ -18,21 +16,54 @@ c = 23600.0-0.00002
 d = -660000.0+0.00001*170   # which get x = 109. good.
 
 
-def f(x):
+def cubicFunc(x, a, b, c, d):
     return a*(x**3)+b*(x**2)+c*x+d
 
+def solveCubicEquation(a,b,c,d):
+    # ref: https://brilliant.org/wiki/cardano-method/
+    Q = (3*a*c-b*b)/(9*a*a)
+    R = (9*a*b*c-27*a*a*d-2*b*b*b)/(54*a*a*a)
+    S = (R+(Q*Q*Q+R*R)**(1/2))**(1/3)
+    T = (R-(Q*Q*Q+R*R)**(1/2))**(1/3)
+    x1 = S+T-b/(3*a)
+    x2 = -(S+T)/2.0-b/(3*a)+ 1j*(S-T)*(3**(1/2))/2.0
+    x3 = -(S+T)/2.0-b/(3*a)- 1j*(S-T)*(3**(1/2))/2.0
+    return x1, x2, x3
 
-p =-b/(3*a)
-q =p**3+(b*c-3*a*d)/(6*a*a)
-r =c/(3*a)
+def main():
 
-x = (q+(q*q+(r-p*p)**3)**(1/2))**(1/3) + (q-(q*q+(r-p*p)**3)**(1/2))**(1/3) +p
+    print("Verify a cubic equation having 3 real root solution: 1,2,3" )
+    a = 1
+    b = -6.0
+    c = 11.0
+    d = -6
+    x1,x2,x3 = solveCubicEquation(a,b,c,d)
+    print(f"roots: x1={x1}, x2={x2}, x3={x3}")
+    print("Verify:")
+    print(f" x1={x1}, f(x1) = {cubicFunc(x1,a,b,c,d)}")
+    print(f" x2={x2}, f(x2) = {cubicFunc(x2, a, b, c, d)}")
+    print(f" x3={x3}, f(x3) = {cubicFunc(x3, a, b, c, d)}")
 
 
-print(f"x= {x}")
-print(f"f(x)= {f(x)}")
+    print("\n")
+    print("Verify a cubic equation whose solution should be 60-110 range, whith expection 100")
+    a = 1.0
+    b = -270.0
+    c = 23600.0 - 0.00002
+    d = -660000.0 + 0.00001 * 170
+    x1, x2, x3 = solveCubicEquation(a, b, c, d)
+    print(f"roots: x1={x1}, x2={x2}, x3={x3}")
+    print("Verify:")
+    print(f" x1={x1}, f(x1) = {cubicFunc(x1, a, b, c, d)}")
+    print(f" x2={x2}, f(x2) = {cubicFunc(x2, a, b, c, d)}")
+    print(f" x3={x3}, f(x3) = {cubicFunc(x3, a, b, c, d)}")
 
-# it only get root x=3 with tiny virtual part.
+
+    print ("======= The end ==========")
+
+if __name__ == "__main__":
+    main()
+
 
 
 
