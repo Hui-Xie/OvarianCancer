@@ -1,0 +1,14 @@
+# Use basic Unet + KLDLoss for OCT multisurface
+dataDir: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/"
+K_Folds: 10
+fold_k:  0   # k
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{0}.npy
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{0}.npy
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{0}.npy
+
+sigma: 20  # For gaussian  ground truth
+device: torch.device('cuda:3')   #GPU ID
+batchSize: 48
