@@ -41,7 +41,7 @@ class OCTDataSet(data.Dataset):
         X = torch.arange(start=0.0, end=H, step=1.0).view((H,1)).to(self.m_device)
         X = X.expand((Num_Surface,H,W))
         pi = math.pi
-        G  = math.exp(-(X-Mu)**2/(2*sigma*sigma))/(simga*math.sqrt(2*pi))
+        G  = torch.exp(-(X-Mu)**2/(2*sigma*sigma))/(sigma*math.sqrt(2*pi))
         return G
 
 
