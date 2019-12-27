@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 sys.path.append(".")
 from OCTDataSet import OCTDataSet
-from .OCTUnet import OCTUnet
+from OCTUnet import OCTUnet
 
 from utilities.FilesUtilities import *
 from framework.NetMgr import NetMgr
@@ -101,56 +101,43 @@ def main():
         net.train()
         trBatch = 0
         trLoss = 0.0
-        for inputs, labels, patientIDs in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
+        for batchData in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            inputs = inputs.to(device, dtype=torch.float)
-            gts = labels.to(device, dtype=torch.float)
-            outputs, loss = net.forward(inputs, gts=gts)
+            softmaxOutputs, loss = net.forward(batchData['images'], gts=batchData['gaussianGTs'])
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(device))
             optimizer.step()
             trLoss += loss
-            trOutputs = torch.cat((trOutputs, outputs)) if trBatch != 1 else outputs
-            trGts = torch.cat((trGts, gts)) if trBatch != 1 else gts
 
         trLoss = trLoss / trBatch
-        # print (f"epoch:{epoch}, trLoss = {trLoss.item()}")
-        trAccuracy = computeAccuracy(trOutputs, trGts)
-        trTPR = computeTPR(trOutputs, trGts)
-        trTNR = computeTNR(trOutputs, trGts)
-
         lrScheduler.step(trLoss)
 
         net.eval()
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
-            for inputs, labels, patientIDs in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
+            for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1
-                inputs = inputs.to(device, dtype=torch.float)
-                gts = labels.to(device, dtype=torch.float)
-                outputs, loss = net.forward(inputs, gts=gts)
+                softmaxOutputs, loss = net.forward(batchData['images'], gts=batchData['gaussianGTs'])
                 validLoss += loss
-                validOutputs = torch.cat((validOutputs, outputs)) if validBatch != 1 else outputs
-                validGts = torch.cat((validGts, gts)) if validBatch != 1 else gts
+                validOutputs = torch.cat((validOutputs, softmaxOutputs)) if validBatch != 1 else softmaxOutputs
+                validGts = torch.cat((validGts, batchData['gaussianGTs'])) if validBatch != 1 else batchData['gaussianGTs']
 
             validLoss = validLoss / validBatch
+
+            # this needs modify
             validAccuracy = computeAccuracy(validOutputs, validGts)
             validTPR = computeTPR(validOutputs, validGts)
             validTNR = computeTNR(validOutputs, validGts)
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
-        writer.add_scalar('TPR/train', trTPR, epoch)
-        writer.add_scalar('TPR/validation', validTPR, epoch)
-        writer.add_scalar('TNR/train', trTNR, epoch)
-        writer.add_scalar('TNR/validation', validTNR, epoch)
         writer.add_scalar('Accuracy/train', trAccuracy, epoch)
         writer.add_scalar('Accuracy/validation', validAccuracy, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validAccuracy > preAccuracy and epoch > preTrainEpoch:
+        if validAccuracy > preAccuracy:
             preAccuracy = validAccuracy
             netMgr.saveNet(netPath)
 
