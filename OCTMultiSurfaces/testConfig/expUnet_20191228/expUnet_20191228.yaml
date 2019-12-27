@@ -18,3 +18,6 @@ sigma: 20.0  # For gaussian  ground truth, in float
 device: torch.device('cuda:2')   #GPU ID
 batchSize: 48
 startFilters: 24  # the num of fitler in first layer of Unet
+
+network: "OCTUnet"
+netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename

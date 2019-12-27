@@ -8,6 +8,7 @@ import torch
 sys.path.append(".")
 from OCTDataSet import OCTDataSet
 
+from utilities.FilesUtilities import *
 
 
 def printUsage(argv):
@@ -27,6 +28,9 @@ def main():
     with open(configFile) as file:
         cfg = yaml.load(file, Loader=yaml.FullLoader)
 
+    experimentName = getStemName(configFile, removedSuffix=".yaml")
+    print(f"Experiment: {experimentName}")
+
     dataDir = cfg["dataDir"]
     K = cfg["K_Folds"]
     k = cfg["fold_k"]
@@ -34,6 +38,9 @@ def main():
     device = eval(cfg["device"])  # convert string to class object.
     batchSize = cfg["batchSize"]
     startFilters = cfg["startFilters"]  # the num of fitler in first layer of Unet
+    network = cfg["network"]
+    netPath = cfg["netPath"] + "/" + network + "/" + experimentName
+
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
     trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
@@ -45,6 +52,9 @@ def main():
 
     trainDataSet = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=None, device=device, sigma=sigma)
     validationDataSet = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=None, device=device, sigma=sigma)
+
+
+    x = validationDataSet.__getitem__(10)
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
