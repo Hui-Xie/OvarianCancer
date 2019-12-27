@@ -203,7 +203,7 @@ class OCTUnet(BasicModel):
         )
 
         self.m_up0 = nn.Sequential(
-            nn.Conv3d(N, numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1*1
+            nn.Conv2d(N, numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:numSurfaces*496*512
 
 

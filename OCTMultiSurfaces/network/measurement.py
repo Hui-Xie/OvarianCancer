@@ -19,6 +19,7 @@ def computeMuVariance(x):
     P = torch.pow(x, 2).float()
     PColSum = torch.sum(P, dim=-2, keepdim=True).expand(P.size())  # column means H direction
     P = P/PColSum
+    del PColSum   # in order to free memory for further reuse.
 
     # compute mu
     Y = torch.arange(H).view((H,1)).expand(P.size()).float().to(device)
@@ -48,10 +49,10 @@ def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.780):
     N,NumSurface, W = predicitons.shape
 
     Error = torch.abs(predicitons-gts)
-    stdSurface, muSurface = torch.std_mean(Error, dim=(0,2)) *hPixelSize
+    stdSurface, muSurface = tuple(x*hPixelSize for x in torch.std_mean(Error, dim=(0,2)))
     stdPatient = torch.FloatTensor([torch.std(Error[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(N // slicesPerPatient)]) *hPixelSize
     muPatient  = torch.FloatTensor([torch.mean(Error[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(N // slicesPerPatient)]) *hPixelSize
-    std, mu = torch.std_mean(Error) * hPixelSize
+    std, mu = tuple(x*hPixelSize for x in torch.std_mean(Error))
     return stdSurface, muSurface, stdPatient,muPatient, std,mu
 
 

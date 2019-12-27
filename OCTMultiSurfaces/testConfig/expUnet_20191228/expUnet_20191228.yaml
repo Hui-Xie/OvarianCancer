@@ -16,9 +16,9 @@ fold_k:  0   # k
 
 numSurfaces: 11  # num of surfaces in an image
 sigma: 20.0  # For gaussian  ground truth, in float
-device: torch.device('cuda:2')   #GPU ID
-batchSize: 48
-startFilters: 24  # the num of fitler in first layer of Unet
+device: torch.device('cuda:3')   #GPU ID
+batchSize: 6
+startFilters: 12  # the num of filters in first layer of Unet
 
 # some physical parameter of images
 slicesPerPatient: 31
