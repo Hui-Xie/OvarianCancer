@@ -47,6 +47,8 @@ def main():
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
     network = cfg["network"]
     netPath = cfg["netPath"] + "/" + network + "/" + experimentName
+    slicesPerPatient = cfg["slicesPerPatient"] # 31
+    hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
 
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")

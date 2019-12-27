@@ -20,5 +20,9 @@ device: torch.device('cuda:2')   #GPU ID
 batchSize: 48
 startFilters: 24  # the num of fitler in first layer of Unet
 
+# some physical parameter of images
+slicesPerPatient: 31
+hPixelSize: 3.870  # unit: micrometer, in y/height direction
+
 network: "OCTUnet"
 netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
