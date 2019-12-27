@@ -15,6 +15,7 @@ from OCTUnet import OCTUnet
 from measurement import *
 
 from utilities.FilesUtilities import *
+from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 
 
@@ -140,8 +141,8 @@ def main():
         writer.add_scalar('Loss/validation', validLoss, epoch)
         writer.add_scalar('ValidationError/mean(um)', mu, epoch)
         writer.add_scalar('ValidationError/stdDeviation(um)', std, epoch)
-        writer.add_scalars('ValidationError/muSurface(um)', muSurface, epoch)
-        writer.add_scalars('ValidationError/muPatient(um)', muPatient, epoch)
+        writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurface), epoch)
+        writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatient), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss > preLoss:

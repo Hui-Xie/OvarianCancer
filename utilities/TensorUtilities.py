@@ -12,4 +12,10 @@ def zeroMeanNormalize(x, dim=1):
         xout[i,] = (xs- m[i])/std[i]
     return xout
 
+def convertTensor2Dict(aTensor):
+    result ={}
+    N = aTensor.numel()
+    for i in range(N):
+        result[str(i)] = aTensor[i]
+    return result
 
