@@ -12,6 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append(".")
 from OCTDataSet import OCTDataSet
 from OCTUnet import OCTUnet
+from measurement import *
 
 from utilities.FilesUtilities import *
 from framework.NetMgr import NetMgr
@@ -92,7 +93,7 @@ def main():
     writer = SummaryWriter(log_dir=logDir)
 
     # train
-    epochs = 180000
+    epochs = 1360000
     preLoss = 100000
     initialEpoch = 0  # for debug
 
@@ -124,23 +125,27 @@ def main():
                 softmaxOutputs, loss = net.forward(batchData['images'], gts=batchData['gaussianGTs'])
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, softmaxOutputs)) if validBatch != 1 else softmaxOutputs
-                validGts = torch.cat((validGts, batchData['gaussianGTs'])) if validBatch != 1 else batchData['gaussianGTs']
+                validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
 
             validLoss = validLoss / validBatch
 
             # this needs modify
-            validAccuracy = computeAccuracy(validOutputs, validGts)
-            validTPR = computeTPR(validOutputs, validGts)
-            validTNR = computeTNR(validOutputs, validGts)
+            predictMu, predictSigma2 = computeMuVariance(validOutputs)
+            stdSurface, muSurface, stdPatient, muPatient, std, mu = computeErrorStdMu(predictMu, validGts,
+                                                                                      slicesPerPatient=slicesPerPatient,
+                                                                                      hPixelSize=hPixelSize)
+
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
-        writer.add_scalar('Accuracy/train', trAccuracy, epoch)
-        writer.add_scalar('Accuracy/validation', validAccuracy, epoch)
+        writer.add_scalar('ValidationError/mean(um)', mu, epoch)
+        writer.add_scalar('ValidationError/stdDeviation(um)', std, epoch)
+        writer.add_scalars('ValidationError/muSurface(um)', muSurface, epoch)
+        writer.add_scalars('ValidationError/muPatient(um)', muPatient, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validAccuracy > preAccuracy:
-            preAccuracy = validAccuracy
+        if validLoss > preLoss:
+            preLoss = validLoss
             netMgr.saveNet(netPath)
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
