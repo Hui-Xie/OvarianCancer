@@ -9,7 +9,7 @@ from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 
 class OCTUnet(BasicModel):
-    def __init__(self, numSurfaces=11, N=24):  # K is the final output classification number.
+    def __init__(self, numSurfaces=11, N=24):
         '''
         inputSize: 496*512 (H,W)
         outputSize:numSurfaces*496*512 (Surface, H, W)
@@ -250,14 +250,17 @@ class OCTUnet(BasicModel):
         x = self.m_up1(x) + x
 
 
-        outputs = self.m_up0(x)
+        x = self.m_up0(x)
+
+        # the input given to KLDivLoss is expected to contain log-probabilities
+        softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to considder batch dimension
+        logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
 
         # compute loss (put loss here is to save main GPU memory)
         loss = torch.tensor(0.0).to(x.device)
         for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
             if weight == 0:
                 continue
-            lossFunc.to(x.device)
-            loss += lossFunc(outputs, gts) * weight
+            loss += lossFunc(logSoftmaxOutputs, gts) * weight
 
-        return outputs, loss
+        return softmaxOutputs, loss
