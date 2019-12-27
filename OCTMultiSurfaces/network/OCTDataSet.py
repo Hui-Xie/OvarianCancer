@@ -4,14 +4,11 @@ import json
 import math
 import torch
 
-
-
 class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0):
         self.m_device = device
         self.m_sigma = sigma
         self.m_images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.m_device)  # slice, H, W
-
         self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device)  # slice, num_surface, W
         with open(IDPath) as f:
             self.m_IDs = json.load(f)
@@ -31,8 +28,8 @@ class OCTDataSet(data.Dataset):
 
     def gaussianizeLabels(self, rawLabels, sigma, H):
         '''
-        input: tensor(slice, Num_surface, W)
-        output: tensor(slice, Num_surace, H, W)
+        input: tensor(Num_surface, W)
+        output: tensor(Num_surace, H, W)
         '''
         Mu = rawLabels
         Num_Surface, W = Mu.shape

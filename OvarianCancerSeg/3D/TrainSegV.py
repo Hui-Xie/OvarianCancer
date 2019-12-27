@@ -1,5 +1,4 @@
 import sys
-import os
 import datetime
 import random
 import torch
@@ -16,11 +15,8 @@ from torchsummary import summary
 from framework.SegDataMgr import SegDataMgr
 from OvarianCancerSeg.trial.SegV3DModel import SegV3DModel
 from SegV2DModel import SegV2DModel
-from SegV2DModel_78 import SegV2DModel_78
 from framework.NetMgr import NetMgr
 from framework.CustomizedLoss import FocalCELoss,BoundaryLoss1
-
-import numpy as np
 
 # you may need to change the file name and log Notes below for every training.
 trainLogFile = r'''/home/hxie1/Projects/OvarianCancer/trainLog/Log_20190523.txt'''

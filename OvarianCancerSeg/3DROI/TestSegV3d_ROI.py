@@ -1,13 +1,5 @@
 # train Seg 3d V model
-import sys
 import datetime
-import random
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils import data
-import logging
-import numpy as np
 
 from OvarianCancerSeg.OCDataSegSet import *
 from utilities.FilesUtilities import *

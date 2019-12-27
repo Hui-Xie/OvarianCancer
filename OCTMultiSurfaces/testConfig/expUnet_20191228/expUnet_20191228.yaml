@@ -17,3 +17,4 @@ fold_k:  0   # k
 sigma: 20.0  # For gaussian  ground truth, in float
 device: torch.device('cuda:2')   #GPU ID
 batchSize: 48
+startFilters: 24  # the num of fitler in first layer of Unet

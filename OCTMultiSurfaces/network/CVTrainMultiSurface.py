@@ -33,6 +33,7 @@ def main():
     sigma = cfg["sigma"]  # for gausssian ground truth
     device = eval(cfg["device"])  # convert string to class object.
     batchSize = cfg["batchSize"]
+    startFilters = cfg["startFilters"]  # the num of fitler in first layer of Unet
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
     trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
