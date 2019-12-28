@@ -6,6 +6,9 @@ import sys
 import torch.nn as nn
 import torch.nn.functional as F
 
+sys.path.append(".")
+from measurement import *
+
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
@@ -209,7 +212,7 @@ class OCTUnet(BasicModel):
         )  # output size:numSurfaces*496*512
 
 
-    def forward(self, inputs, gts=None):
+    def forward(self, inputs, gaussianGTs=None, GTs=None):
         # compute outputs
         x0 = self.m_down0Pooling(inputs)
         x0 = self.m_down0(x0) + x0    # this residual link may hurts dice performance.
@@ -256,13 +259,17 @@ class OCTUnet(BasicModel):
 
         # the input given to KLDivLoss is expected to contain log-probabilities
         softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to considder batch dimension
-        logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
 
-        # compute loss (put loss here is to save main GPU memory)
-        loss = torch.tensor(0.0).to(x.device)
-        for lossFunc, weight in zip(self.m_lossFuncList, self.m_lossWeightList):
-            if weight == 0:
-                continue
-            loss += lossFunc(logSoftmaxOutputs, gts) * weight
+        lossFunc, lossWeight = self.getCurrentLossFunc()
+
+        if isinstance(lossFunc, nn.KLDivLoss):
+            logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
+            loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
+        elif isinstance(lossFunc, nn.SmoothL1Loss):
+            mu,sigma2 = computeMuVariance(softmaxOutputs)
+            loss = lossFunc(mu, GTs)*lossWeight
+
+        else:
+            assert("Error Loss function in net.forward!")
 
         return softmaxOutputs, loss

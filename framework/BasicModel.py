@@ -16,7 +16,9 @@ class BasicModel(nn.Module):
         self.m_lossFuncList = []
         self.m_lossWeightList = []
         self.m_consistencyLoss = None
+        self.m_lossEpochList = []  # specify the running epochs for each loss
         self.m_epoch = 0
+        self.m_currentLossFunc = None
 
     def forward(self, x):
         pass
@@ -24,9 +26,10 @@ class BasicModel(nn.Module):
     def setOptimizer(self, optimizer):
         self.m_optimizer = optimizer
 
-    def appendLossFunc(self, lossFunc, weight = 1.0):
+    def appendLossFunc(self, lossFunc, weight=1.0, epochs=1000):
         self.m_lossFuncList.append(lossFunc)
         self.m_lossWeightList.append(weight)
+        self.m_lossEpochList.append(epochs)
 
     def getOnlyLossFunc(self):
         assert (1 == len(self.m_lossFuncList))
@@ -35,11 +38,29 @@ class BasicModel(nn.Module):
     def lossFunctionsInfo(self):
         return f'Loss Functions List: ' + f'\t'.join(f'{type(loss).__name__} with weight of {weight}; ' for loss, weight in zip(self.m_lossFuncList, self.m_lossWeightList))
 
+    def getCurrentLossFunc(self):
+        N = len(self.m_lossFuncList)
+        accumulateEpochs = self.m_lossEpochList[0]
+        for i in range(N):
+            if self.m_epoch < accumulateEpochs:
+                self.m_currentLossFunc = self.m_lossFuncList[i]
+                return self.m_currentLossFunc, self.m_lossWeightList[i]
+            else:
+                if i+1 <= N-1:
+                    accumulateEpochs +=self.m_lossEpochList[i+1]
+                continue
+        self.m_currentLossFunc = self.m_lossFuncList[N-1]
+        return self.m_currentLossFunc, self.m_lossWeightList[N-1]
+
+
     def updateLossWeightList(self, weightList):
         self.m_lossWeightList = weightList
 
     def getLossWeightList(self):
         return self.m_lossWeightList
+
+    def getLossEpochList(self):
+        return self.m_lossEpochList
 
     def batchTrain(self, inputs, labels):
         self.m_optimizer.zero_grad()

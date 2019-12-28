@@ -38,7 +38,7 @@ def computeMuVariance(x):
 
     return mu.squeeze(dim=-2),sigma2
 
-def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.780):
+def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     '''
     Compute error standard deviation and mean along diffrent dimension.
 

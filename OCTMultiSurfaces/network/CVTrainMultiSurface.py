@@ -49,8 +49,7 @@ def main():
     device = eval(cfg["device"])  # convert string to class object.
     batchSize = cfg["batchSize"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
-    network = cfg["network"]
-    netPath = cfg["netPath"] + "/" + network + "/" + experimentName
+
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
 
@@ -59,6 +58,13 @@ def main():
     # for salt-pepper noise
     saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
     saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
+
+    network = cfg["network"]
+    netPath = cfg["netPath"] + "/" + network + "/" + experimentName
+    lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
+    lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
+    lossFunc1 = cfg["lossFunc1"] #  "nn.SmoothL1Loss().to(device)"
+    lossFunc1Epochs = cfg["lossFunc1Epochs"] # the epoch number of using lossFunc1
 
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
@@ -83,11 +89,14 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=300, min_lr=1e-8)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=250, min_lr=1e-8)
 
+    # KLDivLoss is for Guassuian Ground truth for Unet
+    loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+    net.appendLossFunc(loss0, weight=1.0, epochs=lossFunc0Epochs)
+    loss1 = eval(lossFunc1)
+    net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
 
-    loss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-    net.appendLossFunc(loss, 1.0)
 
     # Load network
     if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
@@ -117,7 +126,7 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            softmaxOutputs, loss = net.forward(batchData['images'], gts=batchData['gaussianGTs'])
+            _softmaxOutputs, loss = net.forward(batchData['images'], gaussanGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(device))
             optimizer.step()
@@ -133,7 +142,7 @@ def main():
             for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1
-                softmaxOutputs, loss = net.forward(batchData['images'], gts=batchData['gaussianGTs'])
+                softmaxOutputs, loss = net.forward(batchData['images'], gaussanGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, softmaxOutputs)) if validBatch != 1 else softmaxOutputs
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
