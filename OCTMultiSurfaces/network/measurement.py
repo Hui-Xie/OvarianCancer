@@ -27,7 +27,14 @@ def computeMuVariance(x):
 
     # compute sigma2 (variance)
     Mu = mu.expand(P.size())
-    sigma2 = torch.sum(P*torch.pow(Y-Mu,2), dim=-2,keepdim=False)
+
+    #sigma2 = torch.sum(P*torch.pow(Y-Mu,2), dim=-2,keepdim=False)
+    # this method is to avoid using big GPU memory .
+    for b in range(B):
+        if 0==b:
+            sigma2 = torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)
+        else:
+            sigma2 = torch.cat((sigma2, torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)))
 
     return mu.squeeze(dim=-2),sigma2
 
