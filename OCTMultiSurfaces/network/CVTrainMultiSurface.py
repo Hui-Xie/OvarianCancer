@@ -83,7 +83,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=3000, min_lr=1e-8)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=300, min_lr=1e-8)
 
 
     loss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
@@ -155,7 +155,7 @@ def main():
         writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatient), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validLoss > preLoss:
+        if validLoss < preLoss:
             preLoss = validLoss
             netMgr.saveNet(netPath)
 
