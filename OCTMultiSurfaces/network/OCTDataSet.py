@@ -3,12 +3,17 @@ import numpy as np
 import json
 import math
 import torch
+import torchvision.transforms as TF
 
 class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0):
         self.m_device = device
         self.m_sigma = sigma
-        self.m_images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, H, W
+        images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, H, W
+        # normalize images for each slice
+        std,mean = torch.std_mean(images, dim=(1,2))
+        self.m_images = TF.Normalize(mean, std)(images)
+
         self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, num_surface, W
         with open(IDPath) as f:
             self.m_IDs = json.load(f)
@@ -20,7 +25,10 @@ class OCTDataSet(data.Dataset):
 
     def __getitem__(self, index):
         S, H, W = self.m_images.shape
-        result = {"images": self.m_images[index,].unsqueeze(dim=0),
+        data = self.m_images[index,]
+        if self.m_transform:
+            data = self.m_transform(data)
+        result = {"images": data.unsqueeze(dim=0),
                   "GTs": self.m_labels[index,],
                   "gaussianGTs": self.gaussianizeLabels(self.m_labels[index,], self.m_sigma, H),
                   "IDs": self.m_IDs[str(index)]}

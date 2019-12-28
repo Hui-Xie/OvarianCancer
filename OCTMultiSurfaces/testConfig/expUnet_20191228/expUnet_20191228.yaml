@@ -24,5 +24,13 @@ startFilters: 12  # the num of filters in first layer of Unet
 slicesPerPatient: 31
 hPixelSize: 3.870  # unit: micrometer, in y/height direction
 
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt-pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+# data augmentation
+
 network: "OCTUnet"
 netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename

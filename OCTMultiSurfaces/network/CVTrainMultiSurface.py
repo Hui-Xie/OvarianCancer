@@ -13,6 +13,7 @@ sys.path.append(".")
 from OCTDataSet import OCTDataSet
 from OCTUnet import OCTUnet
 from measurement import *
+from OCTTransform import *
 
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
@@ -52,6 +53,12 @@ def main():
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
 
+    augmentProb = cfg["augmentProb"]
+    gaussianNoiseStd = cfg["gaussianNoiseStd"]  # gausssian nosie std with mean =0
+    # for salt-pepper noise
+    saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
+    saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
+
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
     trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
@@ -61,7 +68,9 @@ def main():
     validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
     validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=None, device=device, sigma=sigma)
+    tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate)
+
+    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=None, device=device, sigma=sigma)
 
     # construct network
