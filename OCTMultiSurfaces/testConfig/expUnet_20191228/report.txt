@@ -1,0 +1,12 @@
+# 20191228
+1   Network: Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax
+2   Comparison experiment of 20191129: segment surface 1 only, got 3.49 micrometer mean error with 3.87 micrometer pixel size in height direction;
+3   Today experiment of 20191228 validation result for the 0th fold of 10-fold cross validation(train 8 folds, validation on 1 fold)
+      Segment 11 surfaces simultaneously.  On the validation data after 720+ epochs, test result like blow. (all value in the table have unit micrometer(um))
+      A   for surface 1, its physical mean error is 3.622 micrometer(um), less than 1 pixel;
+      B  surface 0 (the top surface) has the minimal mean physical error, 1.884 um; and surface 10(the bottom surface) also has a small error: 2.161um.
+      C  surface 2 has the max mean physical error, 4.552 um, bigger than 1 pixel;
+      D  In patient dimension, the max mean physical error for patient over all surfaces is 3.45 um;
+      E  for all validation fold patient and all surface, the physical mean is 3.01 um, and standard deviation is 3.10um, both less than 1 pixel.
+     please refer figure and table below.
+     This is just a validation result for fold 0. After tune network and othe fold cross validation, I will output formal test result.
