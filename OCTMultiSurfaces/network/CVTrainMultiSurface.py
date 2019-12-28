@@ -15,6 +15,7 @@ from OCTUnet import OCTUnet
 from measurement import *
 from OCTTransform import *
 
+sys.path.append("../..")
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
