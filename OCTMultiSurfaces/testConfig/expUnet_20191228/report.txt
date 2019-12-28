@@ -1,4 +1,5 @@
-# 20191228
+# 20191228:
+log at: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/log/OCTUnet/expUnet_20191227
 1   Network: Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax
 2   Comparison experiment of 20191129: segment surface 1 only, got 3.49 micrometer mean error with 3.87 micrometer pixel size in height direction;
 3   Today experiment of 20191228 validation result for the 0th fold of 10-fold cross validation(train 8 folds, validation on 1 fold)

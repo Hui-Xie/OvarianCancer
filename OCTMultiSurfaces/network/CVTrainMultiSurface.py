@@ -126,7 +126,7 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            _softmaxOutputs, loss = net.forward(batchData['images'], gaussanGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+            _softmaxOutputs, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(device))
             optimizer.step()
@@ -142,10 +142,11 @@ def main():
             for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1
-                softmaxOutputs, loss = net.forward(batchData['images'], gaussanGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+                softmaxOutputs, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, softmaxOutputs)) if validBatch != 1 else softmaxOutputs
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
+                validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
             validLoss = validLoss / validBatch
 
@@ -167,6 +168,7 @@ def main():
         if validLoss < preLoss:
             preLoss = validLoss
             netMgr.saveNet(netPath)
+
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 
