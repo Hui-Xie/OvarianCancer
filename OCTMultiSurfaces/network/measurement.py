@@ -16,14 +16,14 @@ def computeMuVariance(x):
 
     # square probability to strengthen the big probability, and to reduce variance
     # "The rich get richer and the poor get poorer"
-    P = torch.pow(x, 2).to(dtype=torch.float16)
+    P = torch.pow(x, 2).to(device=device, dtype=torch.float16)
     PColSum = torch.sum(P, dim=-2, keepdim=True).expand(P.size())  # column means H direction
     P = P/PColSum
     del PColSum   # in order to free memory for further reuse.
     torch.cuda.empty_cache()
 
     # compute mu
-    Y = torch.arange(H).view((H,1)).expand(P.size()).short().to(device)
+    Y = torch.arange(H).view((H,1)).expand(P.size()).to(device=device, dtype=torch.int16)
     # mu = torch.sum(P*Y, dim=-2, keepdim=True)
     # use slice method to comput P*Y
     for b in range(B):
