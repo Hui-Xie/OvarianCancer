@@ -85,7 +85,7 @@ def main():
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    net.to(device)
+    net.to(device=device, dtype=torch.float16)
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
