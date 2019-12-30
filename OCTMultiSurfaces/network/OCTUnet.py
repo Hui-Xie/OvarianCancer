@@ -267,7 +267,7 @@ class OCTUnet(BasicModel):
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
         elif isinstance(lossFunc, nn.SmoothL1Loss):
             mu,sigma2 = computeMuVariance(softmaxOutputs)
-            loss = lossFunc(mu, GTs.to(mu))*lossWeight
+            loss = lossFunc(mu, GTs)*lossWeight
 
         else:
             assert("Error Loss function in net.forward!")

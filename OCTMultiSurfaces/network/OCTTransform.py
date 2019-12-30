@@ -30,7 +30,7 @@ class OCTDataTransform(object):
         # salt-pepper noise
         if random.uniform(0, 1) < self.m_prob:
             # salt: maxValue; pepper: minValue
-            mask = torch.empty(data.size(),dtype=torch.float,device=device).uniform_(0,1)
+            mask = torch.empty(data.size(),dtype=torch.float16,device=device).uniform_(0,1)
             pepperMask = mask <= self.m_saltPepperRate
             saltMask = mask <= self.m_saltPepperRate*self.m_saltRate
             pepperMask ^= saltMask

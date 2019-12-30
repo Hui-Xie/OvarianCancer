@@ -40,6 +40,6 @@ network: "OCTUnet"
 netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 
 lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
-lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
+lossFunc0Epochs: 1   # the epoch number of using lossFunc0
 lossFunc1: "nn.SmoothL1Loss().to(device)"
-lossFunc1Epochs: 1000
+lossFunc1Epochs: 1
