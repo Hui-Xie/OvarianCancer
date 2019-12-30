@@ -16,7 +16,7 @@ def computeMuVariance(x):
 
     # square probability to strengthen the big probability, and to reduce variance
     # "The rich get richer and the poor get poorer"
-    P = torch.pow(x, 2).float16()
+    P = torch.pow(x, 2).to(dtype=torch.float16)
     PColSum = torch.sum(P, dim=-2, keepdim=True).expand(P.size())  # column means H direction
     P = P/PColSum
     del PColSum   # in order to free memory for further reuse.
