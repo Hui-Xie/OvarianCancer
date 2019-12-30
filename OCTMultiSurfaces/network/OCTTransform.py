@@ -24,13 +24,13 @@ class OCTDataTransform(object):
 
         # gaussian noise
         if random.uniform(0, 1) < self.m_prob:
-            data = data + torch.normal(0.0, self.m_noiseStd, size=data.size()).to(device)
+            data = data + torch.normal(0.0, self.m_noiseStd, size=data.size()).to(device=device,dtype=torch.float)
             dirt = True
 
         # salt-pepper noise
         if random.uniform(0, 1) < self.m_prob:
             # salt: maxValue; pepper: minValue
-            mask = torch.empty(data.size(),dtype=torch.float16,device=device).uniform_(0,1)
+            mask = torch.empty(data.size(),dtype=torch.float,device=device).uniform_(0,1)
             pepperMask = mask <= self.m_saltPepperRate
             saltMask = mask <= self.m_saltPepperRate*self.m_saltRate
             pepperMask ^= saltMask

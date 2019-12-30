@@ -20,7 +20,8 @@ def computeMuVariance(x):
     PColSum = torch.sum(P, dim=-2, keepdim=True).expand(P.size())  # column means H direction
     P = P/PColSum
     del PColSum   # in order to free memory for further reuse.
-    torch.cuda.empty_cache()
+    with torch.cuda.device(device): # using context is to avoid extra GPU using in GPU0 for empty_cache()
+        torch.cuda.empty_cache()
 
     # compute mu
     Y = torch.arange(H).view((H,1)).expand(P.size()).to(device=device, dtype=torch.int16)
@@ -33,7 +34,8 @@ def computeMuVariance(x):
             PY = torch.cat((PY, (P[b,]*Y[b,]).unsqueeze(dim=0)))
     mu = torch.sum(PY, dim=-2, keepdim=True)
     del PY  # hope to free memory.
-    torch.cuda.empty_cache()
+    with torch.cuda.device(device):
+        torch.cuda.empty_cache()
 
     # compute sigma2 (variance)
     Mu = mu.expand(P.size())

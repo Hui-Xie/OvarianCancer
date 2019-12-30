@@ -85,7 +85,7 @@ def main():
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    net.to(device=device, dtype=torch.float16)
+    net.to(device=device)
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
@@ -114,7 +114,7 @@ def main():
 
     # train
     epochs = 1360000
-    preLoss = 100000
+    preLoss = 2041  # float 16 has maxvalue: 2048
     initialEpoch = 0  # for debug
 
     for epoch in range(initialEpoch, epochs):
