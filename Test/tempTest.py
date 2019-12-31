@@ -36,8 +36,8 @@ print(f"Vstd = {Vstd}")
 
 import torch
 #x = torch.tensor([1.0+2.0*1j], requires_grad=True, dtype=torch.complex32)
-x = torch.tensor([1.0+1.0*1j], requires_grad=True)
-y = (x.real)**2+3.0
+x = torch.tensor([1.0], requires_grad=True)
+y = (torch.abs(x+(2+1*1j)))**2+3.0
 y.backward()
 print(f"x.grad = {x.grad}")
 
