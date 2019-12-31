@@ -4,7 +4,18 @@
 '''
  in WolframeAlpha
 
- solve { x^3-(a+b+c)*x^2+(a*b+a*c+b* c-2*f)*x+f*(a+c)-a* b*c==0  && x>a && x<c && 0.1>f>0 && a>0 && b>0  && c>0 }
+ solve { x^3-(a+b+c)*x^2+(a*b+a*c+b*c-2*f)*x+f*(a+c)-a*b*c==0  && x>a && x<c && 0.1>f>0 && a>0 && b>0  && c>0 }
+
+ output:
+ 0<f<1/10 and
+  x = -((1 - i sqrt(3)) (2 a^3 - 3 a^2 b - 3 a^2 c + sqrt(4 (-a^2 + a b + a c - b^2 + b c - c^2 - 6 f)^3 + (2 a^3 - 3 a^2 b - 3 a^2 c - 3 a b^2 + 12 a b c - 3 a c^2 - 9 a f + 2 b^3 - 3 b^2 c - 3 b c^2 + 18 b f + 2 c^3 - 9 c f)^2) - 3 a b^2 + 12 a b c - 3 a c^2 - 9 a f + 2 b^3 - 3 b^2 c - 3 b c^2 + 18 b f + 2 c^3 - 9 c f)^(1/3))/(6 2^(1/3)) + ((1 + i sqrt(3)) (-a^2 + a b + a c - b^2 + b c - c^2 - 6 f))/(3 2^(2/3) (2 a^3 - 3 a^2 b - 3 a^2 c + sqrt(4 (-a^2 + a b + a c - b^2 + b c - c^2 - 6 f)^3 + (2 a^3 - 3 a^2 b - 3 a^2 c - 3 a b^2 + 12 a b c - 3 a c^2 - 9 a f + 2 b^3 - 3 b^2 c - 3 b c^2 + 18 b f + 2 c^3 - 9 c f)^2) - 3 a b^2 + 12 a b c - 3 a c^2 - 9 a f + 2 b^3 - 3 b^2 c - 3 b c^2 + 18 b f + 2 c^3 - 9 c f)^(1/3)) + 1/3 (a + b + c)
+  and c>0 and b>0 and 0<a<c
+
+  In form understood by WolframeAlpha
+
+  x = -((1-I*sqrt(3))*(2*a^3-3*a^2*b - 3*a^2*c + sqrt(4*(-a^2 + a*b + a*c - b^2 + b*c - c^2 - 6*f)^3 + (2*a^3 - 3*a^2*b - 3*a^2*c - 3*a*b^2 + 12*a*b*c - 3*a*c^2 - 9*a*f + 2*b^3 - 3*b^2*c - 3*b*c^2 + 18*b*f + 2*c^3 - 9*c*f)^2) - 3*a*b^2 + 12*a*b*c - 3*a*c^2 - 9*a*f + 2*b^3 - 3*b^2*c - 3*b*c^2 + 18*b*f + 2*c^3 - 9*c*f)^(1/3))/(6*2^(1/3))  + ((1 + I*sqrt(3))*(-a^2 + a*b + a*c - b^2 + b*c - c^2 - 6*f))/(3*2^(2/3)* (2*a^3 - 3*a^2*b - 3*a^2*c + sqrt(4*(-a^2 + a*b + a*c - b^2 + b*c - c^2 - 6*f)^3  + (2*a^3 - 3*a^2*b - 3*a^2*c - 3*a*b^2 + 12*a*b*c - 3*a*c^2 - 9*a*f + 2*b^3 - 3*b^2*c - 3*b*c^2 + 18*b*f + 2*c^3 - 9*c*f)^2) - 3*a*b^2 + 12*a*b*c  - 3*a*c^2 - 9*a*f + 2*b^3 - 3*b^2*c - 3*b*c^2 + 18*b*f + 2*c^3 - 9*c*f)^(1/3)) + 1/3*(a + b + c)
+
+
 
  or
  an example:
