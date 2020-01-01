@@ -34,7 +34,7 @@
 
 def cubicFunc(x, s1, s2, s3, f):
     a = 1.0
-    b = s1 + s2 + s3
+    b = -(s1 + s2 + s3)
     c = s1 * s2 + s1 * s3 + s2 * s3 - 2 * f
     d = f * (s1 + s3) - s1 * s2 * s3
     # where a, b,c are the coefficient of cubic equation.
@@ -61,13 +61,12 @@ def wolframeCubic(a, b, c, f):
                 Q * 3 * 2 ** (2.0 / 3)) + (a + b + c) / 3.0  # choice by wolframAlpha, as a<x<c
     x3 = -Q * (1 + 1j * 3 ** (1 / 2)) / (6 * 2 ** (1.0 / 3)) + P * (1 - 1j * 3 ** (1 / 2)) / (
                 Q * 3 * 2 ** (2.0 / 3)) + (a + b + c) / 3.0
+    # these are real and imaginary parts acccording explict i;
     x3Real = -Q / (6 * 2 ** (1.0 / 3)) + P / (Q * 3 * 2 ** (2.0 / 3)) + (a + b + c) / 3.0
-    x3Imag = -Q * 3 ** (1 / 2) / (6 * 2 ** (1.0 / 3)) - P * 3 ** (1 / 2) / (
-                Q * 3 * 2 ** (2.0 / 3))
+    x3Imag = -Q * 3 ** (1 / 2) / (6 * 2 ** (1.0 / 3)) - P * 3 ** (1 / 2) / ( Q * 3 * 2 ** (2.0 / 3))
 
-
-    #xReal = -Q/(6*2**(1.0/3))+P/(Q*3*2**(2.0/3))+(a+b+c)/3.0
-    #xImag = Q*3**(1/2)/(6*2**(1.0/3))+ P*3**(1/2)/(Q*3*2**(2.0/3))
+    # these are real and imaginary parts considering the Q hax implicit i;
+    x3Real = x3Real + x3Imag*1j   # multiply 1j may be a problem.
 
     return x1,x2,x3, x3Real, x3Imag
 
@@ -78,12 +77,12 @@ def wolframeCubic(a, b, c, f):
 
 
 
-def solveCubicEquationCardano(s1, s2, s3, f):
+def cardanoCubic(s1, s2, s3, f):
     # ref: https://brilliant.org/wiki/cardano-method/
     #  solve { x^3-(a+b+c)*x^2+(a*b+a*c+b*c-2*f)*x+f*(a+c)-a*b*c==0  && x>a && x<c && 0.1>f>0 && a>0 && b>0  && c>0 } over the reals
     #  s1, s2, s3 are the k iteration surface location, f is learningRate*barrierParameter
     a = 1.0
-    b = s1+s2+s3
+    b = -(s1+s2+s3)
     c = s1*s2 + s1*s3+ s2*s3-2*f
     d = f*(s1+s3)-s1*s2*s3
     # where a, b,c are the coefficient of cubic equation.
@@ -101,16 +100,17 @@ def main():
     print("\n")
     print("Use WolframAlpha method")
     s1 =60.0   #surface1
-    s2 =100.0
+    s2 =60.1
     s3 =110.0
     f = 0.01
-    print(f"for a={s1}, b={s2}, c={s3}, f={f},  slove: solve { x^3-(a+b+c)*x^2+(a*b+a*c+b*c-2*f)*x+f*(a+c)-a*b*c==0  && x>a && x<c && 0.1>f>0 && a>0 && b>0  && c>0 } over the reals")
+    print(f"for a={s1}, b={s2}, c={s3}, f={f}")
+    print("slove: solve { x^3-(a+b+c)*x^2+(a*b+a*c+b*c-2*f)*x+f*(a+c)-a*b*c==0  && x>a && x<c && 0.1>f>0 && a>0 && b>0  && c>0 } over the reals")
     x1, x2,x3, x3Real, x3Imag = wolframeCubic(s1,s2,s3,f)
     print (f"x1={x1}, x2={x2}, \n x3={x3},\n x3Real={x3Real}, x3Imag={x3Imag}")
 
     print("\n")
     print("Use Cardao Formula")
-    x1, x2, x3 = solveCubicEquationCardano(s1,s2,s3,f)
+    x1, x2, x3 = cardanoCubic(s1, s2, s3, f)
     print(f"roots: x1={x1}, x2={x2}, x3={x3}")
     print("Verify:")
     print(f" x1={x1}, f(x1) = {cubicFunc(x1, s1,s2,s3,f)}")
