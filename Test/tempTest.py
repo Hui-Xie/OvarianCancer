@@ -42,6 +42,12 @@ y.backward()
 
 print(f"x.grad = {x.grad}")
 
+import math
+ln = math.log2
+
+def f(x):
+    y = (x-100)^2 /0.1 -0.01*(ln(110-x)+ ln(x-60))
+    return y
 
 
 print("==================")

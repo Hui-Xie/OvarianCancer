@@ -99,9 +99,9 @@ def cardanoCubic(s1, s2, s3, f):
 def main():
     print("\n")
     print("Use WolframAlpha method")
-    s1 =60.0   #surface1
-    s2 =60.1
-    s3 =110.0
+    s1 =99.0   #surface1
+    s2 =100
+    s3 =101.0
     f = 0.01
     print(f"for a={s1}, b={s2}, c={s3}, f={f}")
     print("slove: solve { x^3-(a+b+c)*x^2+(a*b+a*c+b*c-2*f)*x+f*(a+c)-a*b*c==0  && x>a && x<c && 0.1>f>0 && a>0 && b>0  && c>0 } over the reals")
@@ -109,7 +109,7 @@ def main():
     print (f"x1={x1}, x2={x2}, \n x3={x3},\n x3Real={x3Real}, x3Imag={x3Imag}")
 
     print("\n")
-    print("Use Cardao Formula")
+    print("Use Cardano Formula")
     x1, x2, x3 = cardanoCubic(s1, s2, s3, f)
     print(f"roots: x1={x1}, x2={x2}, x3={x3}")
     print("Verify:")
