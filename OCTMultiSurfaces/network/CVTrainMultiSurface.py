@@ -64,6 +64,7 @@ def main():
     loadNetPath = cfg['loadNetPath']
     if "" != loadNetPath:
         netPath = loadNetPath
+    initialEpoch = cfg["initialEpoch"]
 
     lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
     lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
@@ -119,7 +120,6 @@ def main():
     # train
     epochs = 1360000
     preLoss = 2041  # float 16 has maxvalue: 2048
-    initialEpoch = 0  # for debug
 
     for epoch in range(initialEpoch, epochs):
         random.seed()
