@@ -259,6 +259,8 @@ class OCTUnet(BasicModel):
 
         # the input given to KLDivLoss is expected to contain log-probabilities
         softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to considder batch dimension
+        mu, sigma2 = computeMuVariance(softmaxOutputs)
+        S = mu   # surface locations in (B,S,W) dimension
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
 
@@ -266,10 +268,17 @@ class OCTUnet(BasicModel):
             logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
         elif isinstance(lossFunc, nn.SmoothL1Loss):
-            mu,sigma2 = computeMuVariance(softmaxOutputs)
-            loss = lossFunc(mu, GTs)*lossWeight
+             # proximal IPM optimization
+            useProxialIPM = self.getParameter('useProxialIPM')
+            if useProxialIPM:
+                learningStepIPM = self.getParameter("learningStepIPM")
+                nIterationIPM = self.addParameter("nIterationIPM")
+                S = proximalIPM(S,sigma2, nIterations=nIterationIPM, learningStep=learningStepIPM)
 
+            loss = lossFunc(S, GTs)*lossWeight
         else:
             assert("Error Loss function in net.forward!")
 
-        return softmaxOutputs, loss
+        return S, loss
+        # return suraceLocation S in (B,S,W) dimension and loss
+

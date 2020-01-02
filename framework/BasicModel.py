@@ -19,9 +19,16 @@ class BasicModel(nn.Module):
         self.m_lossEpochList = []  # specify the running epochs for each loss
         self.m_epoch = 0
         self.m_currentLossFunc = None
+        self.m_parametersDict={}
 
     def forward(self, x):
         pass
+
+    def addParameter(self, nameStr, value):
+        self.m_parametersDict[nameStr] = value
+
+    def getParameter(self, nameStr):
+        return self.m_parametersDict[nameStr]
 
     def setOptimizer(self, optimizer):
         self.m_optimizer = optimizer

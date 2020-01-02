@@ -72,6 +72,7 @@ def main():
     lossFunc1Epochs = cfg["lossFunc1Epochs"] # the epoch number of using lossFunc1
 
     # Proximal IPM Optimization
+    useProxialIPM = cfg['useProxialIPM']
     learningStepIPM =cfg['learningStepIPM'] # 0.1
     nIterationIPM =cfg['nIterationIPM'] # : 50
 
@@ -105,6 +106,10 @@ def main():
     loss1 = eval(lossFunc1)
     net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
 
+    net.addParameter('useProxialIPM', useProxialIPM)
+    net.addParameter("learningStepIPM",learningStepIPM)
+    net.addParameter("nIterationIPM", nIterationIPM)
+
 
     # Load network
     if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
@@ -133,7 +138,7 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            _softmaxOutputs, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+            _S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(device))
             optimizer.step()
@@ -149,17 +154,17 @@ def main():
             for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1
-                softmaxOutputs, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+                # S is surface location in (B,S,W) dimension, the predicted Mu
+                S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
                 validLoss += loss
-                validOutputs = torch.cat((validOutputs, softmaxOutputs)) if validBatch != 1 else softmaxOutputs
+                validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
             validLoss = validLoss / validBatch
 
-            # this needs modify
-            predictMu, predictSigma2 = computeMuVariance(validOutputs)
-            stdSurface, muSurface, stdPatient, muPatient, std, mu = computeErrorStdMu(predictMu, validGts,
+            # Error Std and mean
+            stdSurface, muSurface, stdPatient, muPatient, std, mu = computeErrorStdMu(validOutputs, validGts,
                                                                                       slicesPerPatient=slicesPerPatient,
                                                                                       hPixelSize=hPixelSize)
 
