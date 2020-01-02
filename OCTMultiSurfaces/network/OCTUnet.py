@@ -272,7 +272,7 @@ class OCTUnet(BasicModel):
             useProxialIPM = self.getParameter('useProxialIPM')
             if useProxialIPM:
                 learningStepIPM = self.getParameter("learningStepIPM")
-                nIterationIPM = self.addParameter("nIterationIPM")
+                nIterationIPM = self.getParameter("nIterationIPM")
                 S = proximalIPM(S,sigma2, nIterations=nIterationIPM, learningStep=learningStepIPM)
 
             loss = lossFunc(S, GTs)*lossWeight
