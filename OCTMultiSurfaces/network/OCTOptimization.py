@@ -1,5 +1,5 @@
 
-# some measurement function for OCT Multisurface segmentation
+# some optimizatino and measurement function for OCT Multisurface segmentation
 
 import torch
 
