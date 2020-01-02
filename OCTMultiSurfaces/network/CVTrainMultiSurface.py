@@ -181,7 +181,7 @@ def main():
             preLoss = validLoss
             netMgr.saveNet(netPath)
 
-        # print(f"finished epoch: {epoch}")
+        print(f"finished epoch: {epoch}")
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 
