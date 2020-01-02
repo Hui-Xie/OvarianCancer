@@ -61,6 +61,10 @@ def main():
 
     network = cfg["network"]
     netPath = cfg["netPath"] + "/" + network + "/" + experimentName
+    loadNetPath = cfg['loadNetPath']
+    if "" != loadNetPath:
+        netPath = loadNetPath
+
     lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
     lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
     lossFunc1 = cfg["lossFunc1"] #  "nn.SmoothL1Loss().to(device)"
