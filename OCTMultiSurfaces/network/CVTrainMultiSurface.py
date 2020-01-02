@@ -12,7 +12,7 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append(".")
 from OCTDataSet import OCTDataSet
 from OCTUnet import OCTUnet
-from measurement import *
+from OCTOptimization import *
 from OCTTransform import *
 
 sys.path.append("../..")
@@ -71,6 +71,9 @@ def main():
     lossFunc1 = cfg["lossFunc1"] #  "nn.SmoothL1Loss().to(device)"
     lossFunc1Epochs = cfg["lossFunc1Epochs"] # the epoch number of using lossFunc1
 
+    # Proximal IPM Optimization
+    learningStepIPM =cfg['learningStepIPM'] # 0.1
+    nIterationIPM =cfg['nIterationIPM'] # : 50
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
     trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")

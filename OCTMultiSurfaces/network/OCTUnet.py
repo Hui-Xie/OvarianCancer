@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 sys.path.append(".")
-from measurement import *
+from OCTOptimization import *
 
 sys.path.append("../..")
 from framework.BasicModel import BasicModel

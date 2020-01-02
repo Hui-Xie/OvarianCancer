@@ -47,3 +47,8 @@ lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given 
 lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
 lossFunc1: "nn.SmoothL1Loss().to(device)"
 lossFunc1Epochs: 1000
+
+# Proximal IPM Optimization
+learningStepIPM: 0.1
+nIterationIPM: 50
+

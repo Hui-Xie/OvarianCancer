@@ -50,6 +50,26 @@ def computeMuVariance(x):
 
     return mu.squeeze(dim=-2),sigma2
 
+def proximalIPM(mu,sigma2, nIterations=50, learningStep=0.01):
+    '''
+    use proximal IPM method to optimize the output surface location by Unet.
+
+    :param mu: mean of size (B,S,W), where S is surface
+    :param sigma2: variance of size(B,S,W)
+    :param nIterations: the iteration number  of proximal IPM method
+    :return:
+           S: the optimized surface locations in [B,S, W] dimension.
+    '''
+    # get initial surface locations in ascending order, which do not need gradient
+    S0 = mu.clone().detach()
+    with torch.no_grad():
+        S, _ = torch.sort(S0, dim=-2)  # get intial surface locations in ascending order
+    # IPM iteration
+    for i in range(nIterations):
+        S = S-learningStep*(S-mu)/sigma2
+        S, _ = torch.sort(S, dim=-2)
+    return S
+
 def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     '''
     Compute error standard deviation and mean along diffrent dimension.
