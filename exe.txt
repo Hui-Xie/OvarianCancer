@@ -216,7 +216,7 @@ nohup python3.7  CrossValidationTrainRespClassifier.py  /home/hxie1/Projects/Ova
 python3.7  CrossValidationTestRespClassifier.py  /home/hxie1/Projects/OvarianCancer/TestConfig/ExpFullFeatureLatentVector_CV_20191224/ExpFullFeatureLV_CV_20191224_10F_0.yaml
 
 # 20191228 train OCT multisurface
-nohup python3.7 CVTrainMultiSurface.py /home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnet_20191228/expUnet_20191228.yaml &
+nohup python3.7 CVTrainMultiSurface.py /home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnet_20191228/expUnet_20191228_CV0.yaml &
 
 # 20191230 debug OCT multisurface
 python3.7 CVTrainMultiSurface.py  /home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnet_debug/expUnet_debug.yaml
