@@ -41,7 +41,6 @@ network: "OCTUnet"
 netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV0_debug"  # this is pretrained network
 
-
 # use loadNetpath, below loss function may need revise.
 lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
 lossFunc0Epochs: 1000   # the epoch number of using lossFunc0

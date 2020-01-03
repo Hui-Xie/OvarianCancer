@@ -108,7 +108,7 @@ def main():
 
 
     # Load network
-    if os.path.exists(netPath) and len(getFilesList(netPath, ".pt") >= 2 ):
+    if os.path.exists(netPath) and len(getFilesList(netPath, ".pt")) >= 2 :
         netMgr = NetMgr(net, netPath, device)
         netMgr.loadNet("train")
         print(f"Network load from  {netPath}")
@@ -128,7 +128,7 @@ def main():
 
     # train
     epochs = 1360000
-    preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParameterDict else 2041  # float 16 has maxvalue: 2048
+    preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
     if net.training:
         initialEpoch = net.getConfigParameter("epoch")
     else:
