@@ -64,7 +64,6 @@ def main():
     loadNetPath = cfg['loadNetPath']
     if "" != loadNetPath:
         netPath = loadNetPath
-    initialEpoch = cfg["initialEpoch"]
 
     lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
     lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
@@ -106,19 +105,21 @@ def main():
     loss1 = eval(lossFunc1)
     net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
 
-    net.addParameter('useProxialIPM', useProxialIPM)
-    net.addParameter("learningStepIPM",learningStepIPM)
-    net.addParameter("nIterationIPM", nIterationIPM)
 
 
     # Load network
-    if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
+    if os.path.exists(netPath) and len(getFilesList(netPath, ".pt") >= 2 ):
         netMgr = NetMgr(net, netPath, device)
         netMgr.loadNet("train")
         print(f"Network load from  {netPath}")
     else:
         netMgr = NetMgr(net, netPath, device)
         print(f"Net starts training from scratch, and save at {netPath}")
+
+    # according config file to update config parameter, maybe not necessary
+    net.updateConfigParameter('useProxialIPM', useProxialIPM)
+    net.updateConfigParameter("learningStepIPM", learningStepIPM)
+    net.updateConfigParameter("nIterationIPM", nIterationIPM)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):
@@ -127,7 +128,11 @@ def main():
 
     # train
     epochs = 1360000
-    preLoss = 2041  # float 16 has maxvalue: 2048
+    preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParameterDict else 2041  # float 16 has maxvalue: 2048
+    if net.training:
+        initialEpoch = net.getConfigParameter("epoch")
+    else:
+        initialEpoch = 0
 
     for epoch in range(initialEpoch, epochs):
         random.seed()
@@ -178,6 +183,8 @@ def main():
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preLoss:
+            net.updateConfigParameter("validationLoss", validLoss)
+            net.updateConfigParameter("epoch", net.m_epoch)
             preLoss = validLoss
             netMgr.saveNet(netPath)
 

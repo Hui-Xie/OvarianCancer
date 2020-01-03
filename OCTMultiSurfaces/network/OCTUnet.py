@@ -269,10 +269,10 @@ class OCTUnet(BasicModel):
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
         elif isinstance(lossFunc, nn.SmoothL1Loss):
              # proximal IPM optimization
-            useProxialIPM = self.getParameter('useProxialIPM')
+            useProxialIPM = self.getConfigParameter('useProxialIPM')
             if useProxialIPM:
-                learningStepIPM = self.getParameter("learningStepIPM")
-                nIterationIPM = self.getParameter("nIterationIPM")
+                learningStepIPM = self.getConfigParameter("learningStepIPM")
+                nIterationIPM = self.getConfigParameter("nIterationIPM")
                 S = proximalIPM(S,sigma2, nIterations=nIterationIPM, learningStep=learningStepIPM)
 
             loss = lossFunc(S, GTs)*lossWeight
