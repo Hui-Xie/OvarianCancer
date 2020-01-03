@@ -16,8 +16,7 @@ class OCTDataSet(data.Dataset):
         std,mean = torch.std_mean(images, dim=(1,2))
         self.m_images = TF.Normalize(mean, std)(images)
 
-        # GTs uses float16, while gaussianGTs use float32
-        self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device, dtype=torch.float16)  # slice, num_surface, W
+        self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, num_surface, W
         with open(IDPath) as f:
             self.m_IDs = json.load(f)
         self.m_transform = transform

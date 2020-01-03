@@ -36,18 +36,11 @@ print(f"Vstd = {Vstd}")
 
 import torch
 #x = torch.tensor([1.0+2.0*1j], requires_grad=True, dtype=torch.complex32)
-x = torch.tensor([-1.0], requires_grad=True)
-y = torch.pow(x,1.0/3)+3.0
+x = torch.tensor([5.0, 1.0, 3.0, 2.0], requires_grad=True)
+x1, _ = torch.sort(x)
+y = torch.pow(x1,2.0).sum()
 y.backward()
 
 print(f"x.grad = {x.grad}")
-
-import math
-ln = math.log2
-
-def f(x):
-    y = (x-100)^2 /0.1 -0.01*(ln(110-x)+ ln(x-60))
-    return y
-
 
 print("==================")
