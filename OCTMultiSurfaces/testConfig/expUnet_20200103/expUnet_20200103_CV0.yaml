@@ -3,6 +3,8 @@
 # first train with KLDivLoss 1000 epochs, then train SmoothL1Loss 1000 epochs.
 
 # inherit from expUnet_20191228_CV0 network
+# change SmoothL1Loss into sum mode.
+
 
 
 dataDir: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/"
@@ -46,7 +48,7 @@ loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/net
 # use loadNetpath, below loss function may need revise.
 lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
 lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
-lossFunc1: "nn.SmoothL1Loss().to(device)"
+lossFunc1: "nn.SmoothL1Loss(reduction='sum').to(device)"
 lossFunc1Epochs: 1000
 
 # Proximal IPM Optimization

@@ -97,7 +97,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=250, min_lr=1e-8)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.4, patience=150, min_lr=1e-8)
 
     # KLDivLoss is for Guassuian Ground truth for Unet
     loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
@@ -129,6 +129,7 @@ def main():
     # train
     epochs = 1360000
     preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
+    preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 2.7
     if net.training:
         initialEpoch = net.getConfigParameter("epoch")
     else:
@@ -169,23 +170,25 @@ def main():
             validLoss = validLoss / validBatch
 
             # Error Std and mean
-            stdSurface, muSurface, stdPatient, muPatient, std, mu = computeErrorStdMu(validOutputs, validGts,
+            stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(validOutputs, validGts,
                                                                                       slicesPerPatient=slicesPerPatient,
                                                                                       hPixelSize=hPixelSize)
 
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
-        writer.add_scalar('ValidationError/mean(um)', mu, epoch)
-        writer.add_scalar('ValidationError/stdDeviation(um)', std, epoch)
-        writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurface), epoch)
-        writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatient), epoch)
+        writer.add_scalar('ValidationError/mean(um)', muError, epoch)
+        writer.add_scalar('ValidationError/stdDeviation(um)', stdError, epoch)
+        writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurfaceError), epoch)
+        writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatientError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validLoss < preLoss:
+        if validLoss < preLoss or muError < preErrorMean:
             net.updateConfigParameter("validationLoss", validLoss)
             net.updateConfigParameter("epoch", net.m_epoch)
+            net.updateConfigParameter("errorMean", muError)
             preLoss = validLoss
+            preErrorMean = muError
             netMgr.saveNet(netPath)
 
         # print(f"finished epoch: {epoch}")
