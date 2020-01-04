@@ -52,7 +52,7 @@ lossFunc1: "nn.SmoothL1Loss(reduction='sum').to(device)"
 lossFunc1Epochs: 1000
 
 # Proximal IPM Optimization
-useProxialIPM: True
+useProxialIPM: False
 learningStepIPM: 0.1
 nIterationIPM: 100
 

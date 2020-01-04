@@ -258,9 +258,9 @@ class OCTUnet(BasicModel):
         x = self.m_up0(x)
 
         # the input given to KLDivLoss is expected to contain log-probabilities
-        softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to considder batch dimension
+        softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to consider batch dimension
         mu, sigma2 = computeMuVariance(softmaxOutputs)
-        S = mu   # surface locations in (B,S,W) dimension
+        S, _ = torch.sort(mu, dim=-2)  # sorted surface locations in (B,S,W) dimension
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
 
@@ -273,9 +273,10 @@ class OCTUnet(BasicModel):
             if useProxialIPM:
                 learningStepIPM = self.getConfigParameter("learningStepIPM")
                 nIterationIPM = self.getConfigParameter("nIterationIPM")
-                S = proximalIPM(S,sigma2, nIterations=nIterationIPM, learningStep=learningStepIPM)
+                S = proximalIPM(mu,sigma2, S, nIterations=nIterationIPM, learningStep=learningStepIPM)
 
-            loss = lossFunc(S, GTs)*lossWeight
+            #lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
+            loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
         else:
             assert("Error Loss function in net.forward!")
 
