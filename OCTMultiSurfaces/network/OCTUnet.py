@@ -268,17 +268,20 @@ class OCTUnet(BasicModel):
             logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
         elif isinstance(lossFunc, nn.SmoothL1Loss):
-             # proximal IPM optimization
+            #lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
+            loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
+        elif isinstance(lossFunc, OCTMultiSurfaceLoss):
+            loss = lossFunc(mu, sigma2, GTs)
+        else:
+            assert("Error Loss function in net.forward!")
+
+        # proximal IPM optimization in inference stage
+        with torch.no_grad():
             useProxialIPM = self.getConfigParameter('useProxialIPM')
             if useProxialIPM:
                 learningStepIPM = self.getConfigParameter("learningStepIPM")
                 nIterationIPM = self.getConfigParameter("nIterationIPM")
-                S = proximalIPM(mu,sigma2, S, nIterations=nIterationIPM, learningStep=learningStepIPM)
-
-            #lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
-            loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
-        else:
-            assert("Error Loss function in net.forward!")
+                S = proximalIPM(mu, sigma2, S, nIterations=nIterationIPM, learningStep=learningStepIPM)
 
         return S, loss
         # return suraceLocation S in (B,S,W) dimension and loss

@@ -50,9 +50,10 @@ def computeMuVariance(x):
 
     return mu.squeeze(dim=-2),sigma2
 
-def proximalIPM(mu,sigma2, sortedS, nIterations=50, learningStep=0.01):
+def proximalIPM(mu,sigma2, sortedS, nIterations=100, learningStep=0.01):
     '''
-    use proximal IPM method to optimize the output surface location by Unet.
+    use proximal IPM method to optimize the final output surface location by Unet.
+    It is used in inference stage.
 
     :param mu: mean of size (B,S,W), where S is surface
     :param sigma2: variance of size(B,S,W)
@@ -66,11 +67,19 @@ def proximalIPM(mu,sigma2, sortedS, nIterations=50, learningStep=0.01):
         return sortedS
 
     # get initial surface locations in ascending order, which do not need gradient
-    S = sortedS.clone().detach()
+    S0 = sortedS.clone().detach()
     # IPM iteration
+    S=S0
     for i in range(nIterations):
-        S = S-learningStep*(S-mu)/sigma2
-        S, _ = torch.sort(S, dim=-2)
+        S1 = S0-learningStep*(S0-mu)/sigma2
+        S2, _ = torch.sort(S1, dim=-2)
+        S0 = S2
+        if torch.all(S2.eq(S1)):
+            S = S1
+            continue
+        else:  # when swapping occures, value reaches its boundary
+            break
+
     return S
 
 def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
@@ -97,6 +106,19 @@ def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     std, mu = tuple(x*hPixelSize for x in torch.std_mean(Error))
     return stdSurface, muSurface, stdPatient,muPatient, std,mu
 
+
+class OCTMultiSurfaceLoss():
+
+    def __init__(self, reduction='mean'):
+        self.m_reduction = reduction
+
+    def __call__(self, Mu, Sigma2, GTs):
+        loss = 0.5*torch.pow(GTs-Mu, 2)/Sigma2
+        loss = loss.sum()
+        if "mean" == self.m_reduction:
+            num = torch.numel(Mu)
+            loss /=num
+        return loss
 
 
 
