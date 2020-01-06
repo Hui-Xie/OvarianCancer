@@ -282,7 +282,9 @@ class OCTUnet(BasicModel):
                 learningStepIPM = self.getConfigParameter("learningStepIPM")
                 nIterationIPM = self.getConfigParameter("nIterationIPM")
                 S = proximalIPM(mu, sigma2, S, nIterations=nIterationIPM, learningStep=learningStepIPM)
+            else:
+                S = gauranteeSurfaceOrder(mu, S)
 
         return S, loss
-        # return suraceLocation S in (B,S,W) dimension and loss
+        # return surfaceLocation S in (B,S,W) dimension and loss
 

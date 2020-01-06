@@ -77,7 +77,7 @@ def proximalIPM(mu,sigma2, sortedS, nIterations=100, learningStep=0.01):
         if torch.all(S2.eq(S1)):
             S = S1
             continue
-        else:  # when swapping occures, value reaches its boundary
+        else:  # when one swapping occures, at least one value reaches its boundary
             break
 
     return S
@@ -120,5 +120,15 @@ class OCTMultiSurfaceLoss():
             loss /=num
         return loss
 
+
+def gauranteeSurfaceOrder(mu, sortedS):
+    if torch.all(mu.eq(sortedS)):
+        return mu
+    B,surfaceNum,W = mu.size()
+    S = sortedS.clone()
+    for i in range(1,surfaceNum-1): # ignore consider the top surface and bottom surface
+        S[:, i, :] = torch.where(mu[:, i, :] > S[:, i, :], S[:, i + 1, :], S[:, i, :])
+        S[:, i, :] = torch.where(mu[:, i, :] < S[:, i, :], S[:, i - 1, :], S[:, i, :])
+    return S
 
 

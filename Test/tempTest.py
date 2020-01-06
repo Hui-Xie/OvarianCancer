@@ -32,38 +32,28 @@ Vstd = np.std(VDiff)
 print(f"Vstd = {Vstd}")
 '''
 
-
-
 import torch
-#x = torch.tensor([1.0+2.0*1j], requires_grad=True, dtype=torch.complex32)
-x = torch.tensor([5.0, 1.0, 3.0, 2.0], requires_grad=True)
-x1, _ = torch.sort(x)
-y = torch.pow(x1,2.0).sum()
-y.backward()
 
-print(f"x.grad = {x.grad}")
+def gauranteeSurfaceOrder(mu, sortedS):
+    if torch.all(mu.eq(sortedS)):
+        return mu
+    B,surfaceNum,W = mu.size()
+    S = sortedS.clone()
+    for i in range(1,surfaceNum-1): # ignore consider the top surface and bottom surface
+        S[:, i, :] = torch.where(mu[:, i, :] > S[:, i, :], S[:, i + 1, :], S[:, i, :])
+        S[:, i, :] = torch.where(mu[:, i, :] < S[:, i, :], S[:, i - 1, :], S[:, i, :])
+    return S
 
-nIterations = 150
-mu = torch.tensor([3.0,2.0,1.0,5])
-S0, _ = torch.sort(mu)
-learningStep = 0.01
-sigma2 = 1
+def main():
+    mu = (torch.rand(3,5,6)*1000).to(dtype=torch.int32)
+    sortedS, _ = torch.sort(mu,dim=-2)
+    print(f"mu= \n{mu}")
+    print(f"sortedS = \n{sortedS}")
+    S = gauranteeSurfaceOrder(mu, sortedS)
+    print(f"S = \n{S}")
+
+    print("==================")
 
 
-# IPM iteration
-S=S0
-for i in range(nIterations):
-    S1 = S0-learningStep*(S0-mu)/sigma2
-    error = ((S1 - mu) ** 2 / sigma2).sum()
-    S2, _ = torch.sort(S1)
-    S0 = S2
-    print(f"i= {i}, S1={S1}, S2={S2}. sort= {not torch.all(S2.eq(S1))}, error={error}")
-    if torch.all(S2.eq(S1)):
-        S = S1
-        continue
-    else:
-        break
-
-print( f"S = {S}")
-
-print("==================")
+if __name__ == "__main__":
+    main()
