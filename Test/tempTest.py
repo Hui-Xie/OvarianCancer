@@ -52,6 +52,11 @@ def main():
     S = gauranteeSurfaceOrder(mu, sortedS)
     print(f"S = \n{S}")
 
+
+    i =0
+    while i<20:
+        print(f"i={i}")
+        i = i+5
     print("==================")
 
 

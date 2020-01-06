@@ -121,14 +121,57 @@ class OCTMultiSurfaceLoss():
         return loss
 
 
-def gauranteeSurfaceOrder(mu, sortedS):
+def gauranteeSurfaceOrder(mu, sortedS, sigma2):
     if torch.all(mu.eq(sortedS)):
         return mu
     B,surfaceNum,W = mu.size()
+    device = mu.device()
+
+    # method1: use upper bound and lower bound to replace its current location value
     S = sortedS.clone()
     for i in range(1,surfaceNum-1): # ignore consider the top surface and bottom surface
         S[:, i, :] = torch.where(mu[:, i, :] > S[:, i, :], S[:, i + 1, :], S[:, i, :])
         S[:, i, :] = torch.where(mu[:, i, :] < S[:, i, :], S[:, i - 1, :], S[:, i, :])
+
+    # method2: along the H(surface)direction, if n>1 continious locations all do not equal with ist sorted location sortedS,
+    #          then the inverse-variance-weigted average as one location should be one best approximate to the all orginal n disorder locations.
+    #          this is a local thinking to achieve subpixel accuracy.
+
+    # find equal location
+    S = torch.zeros_like(mu)   # 0 means the location has not been process.
+    S = torch.where(mu == sortedS, mu, S)
+
+    # convert tensor to cpu
+    S_cpu = S.cpu()
+    sigma2_cpu = sigma2.cpu()
+    mu_cpu =mu.cpu()
+    sortedS_cpu = sortedS.cpu()
+
+    # element-wise local optimization
+    for b in range(0,B):
+        for w in range(0,W):
+            s = 0
+            while(s<surfaceNum):
+                if 0 == S_cpu[b,s,w]:
+                    n = 1  # n continious disorder predicted locations
+                    while s+n<surfaceNum and 0 == S_cpu[b,s+n,w]:
+                        n += 1
+                    if 1 == n:
+                        S_cpu[b,s,w] = sortedS_cpu[b,s,w]
+                    else:
+                        numerator = 0.0
+                        denominator = 0.0
+                        for k in range(0, n):
+                            numerator += mu_cpu[b,s+k,w]/sigma2_cpu[b,s+k,w]
+                            denominator += 1.0/sigma2_cpu[b,s+k,w]
+                        x = numerator/denominator
+                        for k in range(0, n):
+                            S_cpu[b, s+k, w] = x
+                    s = s+n
+                else:
+                    s += 1
+    S = S_cpu.to(device)
+
     return S
 
 
