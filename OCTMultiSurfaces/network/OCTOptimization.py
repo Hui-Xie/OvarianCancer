@@ -121,6 +121,12 @@ class OCTMultiSurfaceLoss():
             loss /=num
         return loss
 
+def interpolateGapLISs():
+    pass
+
+def gauranteeSurfaceOrder():
+    pass
+
 
 def gauranteeSurfaceOrder(mu, sortedS, sigma2):
     if torch.all(mu.eq(sortedS)):
@@ -175,6 +181,13 @@ def gauranteeSurfaceOrder(mu, sortedS, sigma2):
 
     return S
 
+def getLISs(mu):
+    B, surfaceNum, W = mu.size()
+    LISs = torch.zeros_like(mu)
+    for b in range(0,B):
+        for w in range(0,W):
+            LISs[b,:,w] = getLIS(mu[b,:,w])
+    return LISs
 
 def getLIS(inputTensor):
     '''
