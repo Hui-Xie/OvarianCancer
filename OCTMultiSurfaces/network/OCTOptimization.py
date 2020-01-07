@@ -2,6 +2,7 @@
 # some optimizatino and measurement function for OCT Multisurface segmentation
 
 import torch
+import math
 
 def computeMuVariance(x):
     '''
@@ -175,3 +176,47 @@ def gauranteeSurfaceOrder(mu, sortedS, sigma2):
     return S
 
 
+def getLIS(inputTensor):
+    '''
+    get Largest Increasing Subsequence  with non-choosing element marked as 0
+    https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+
+    :param inputTensor:
+    :return: Tensor with choosing element in its location with non-choosing element marked as 0, same length with inputTensor
+    '''
+    X = inputTensor
+    N = len(inputTensor)
+    P = torch.zeros(N, dtype=torch.long)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
+    M = torch.zeros(N+1,dtype=torch.long)
+
+    L = 0
+    for i in range(0,N):
+        # Binary search for the largest positive j ≤ L such that X[M[j]] <= X[i]
+        lo = 1
+        hi = L
+        while lo <= hi:
+            mid = math.ceil((lo + hi) / 2)
+            if X[M[mid]] <= X[i]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        # After searching, lo is 1 greater than the length of the longest prefix of X[i]
+        newL = lo
+
+        # The predecessor of X[i] is the last index of the subsequence of length newL - 1
+        P[i] = M[newL - 1]
+        M[newL] = i  # save index of choosing element.
+
+        if newL > L:
+            # If we found a subsequence longer than any we've found yet, update L
+            L = newL
+
+    # Reconstruct the longest increasing subsequence LIS
+    LIS = torch.zeros_like(inputTensor)
+    k = M[L]
+    for i in range(0,L):
+        LIS[k] = X[k]
+        k = P[k]
+
+    return LIS

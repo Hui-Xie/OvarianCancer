@@ -33,30 +33,24 @@ print(f"Vstd = {Vstd}")
 '''
 
 import torch
+import sys
+sys.path.append("../OCTMultiSurfaces/network")
+from OCTOptimization import *
 
-def gauranteeSurfaceOrder(mu, sortedS):
-    if torch.all(mu.eq(sortedS)):
-        return mu
-    B,surfaceNum,W = mu.size()
-    S = sortedS.clone()
-    for i in range(1,surfaceNum-1): # ignore consider the top surface and bottom surface
-        S[:, i, :] = torch.where(mu[:, i, :] > S[:, i, :], S[:, i + 1, :], S[:, i, :])
-        S[:, i, :] = torch.where(mu[:, i, :] < S[:, i, :], S[:, i - 1, :], S[:, i, :])
-    return S
 
 def main():
-    mu = (torch.rand(3,5,6)*1000).to(dtype=torch.int32)
-    sortedS, _ = torch.sort(mu,dim=-2)
-    print(f"mu= \n{mu}")
-    print(f"sortedS = \n{sortedS}")
-    S = gauranteeSurfaceOrder(mu, sortedS)
-    print(f"S = \n{S}")
+    A = torch.tensor([0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15])
+    ALIS = getLIS(A)
+    print(f"A =  {A}, \nALIS= {ALIS}")
 
+    B = torch.tensor([10, 22, 9, 33, 21, 50, 41, 60, 80])
+    BLIS = getLIS(B)
+    print(f"B =  {B}, \nBLIS= {BLIS}")
 
-    i =0
-    while i<20:
-        print(f"i={i}")
-        i = i+5
+    B = torch.tensor([50, 3, 10, 7, 40, 80])
+    BLIS = getLIS(B)
+    print(f"B =  {B}, \nBLIS= {BLIS}")
+
     print("==================")
 
 
