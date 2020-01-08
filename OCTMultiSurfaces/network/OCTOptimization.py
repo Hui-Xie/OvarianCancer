@@ -71,19 +71,11 @@ def proximalIPM(mu,sigma2, sortedS, nIterations=100, learningStep=0.01):
         return sortedS
 
     # get initial surface locations in ascending order, which do not need gradient
-    S0 = sortedS.clone().detach()
+    S = sortedS.clone().detach()
     # IPM iteration
-    S=S0
     for i in range(nIterations):
-        S1 = S0-learningStep*(S0-mu)/sigma2
-        S2, _ = torch.sort(S1, dim=-2)
-        S0 = S2
-        if torch.all(S2.eq(S1)):
-            S = S1
-            continue
-        else:  # when one swapping occures, at least one value reaches its boundary
-            break
-
+        S = S-learningStep*(S-mu)/sigma2
+        S = gauranteeSurfaceOrder(S)
     return S
 
 def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
@@ -124,6 +116,7 @@ class OCTMultiSurfaceLoss():
             loss /=num
         return loss
 
+# may discard it
 def fillGapOfLIS(batchLIS_cpu, mu):
     '''
     bounded nearest neighbour interpolation.
@@ -167,6 +160,103 @@ def fillGapOfLIS(batchLIS_cpu, mu):
                 else:
                     s += 1
     return  batchLIS_cpu.to(device)
+
+def markDisorderSectionFromLIS(mu, batchLIS_cpu):
+    '''
+
+    :param mu:
+    :param batchLIS_cpu: 0 marks non-choosing LIS elements. mu value corresponding 0 locations are always greater than previous choosing element.
+    :return: a tensor with 0 marking the disorder section
+    '''
+    assert batchLIS_cpu.size == mu.size
+    B, surfaceNum, W = mu.size()
+    device = mu.device()
+
+    # convert tensor to cpu
+    mu_cpu = mu.cpu()
+
+    # element-wise check maximum of mu corresponding each 0 section, if following LIS element< the maximum, change it into 0
+    for b in range(0, B):
+        for w in range(0, W):
+            s = 0
+            while (s < surfaceNum):
+                if 0 == batchLIS_cpu[b, s, w]:
+                    theMax = mu[b,s,w]
+                    n = 1  # n continious disorder predicted locations
+                    while s + n < surfaceNum and 0 == batchLIS_cpu[b, s + n, w]:
+                        n += 1
+                        theMax = mu[b,s+n,w] if mu[b,s+n,w] > theMax else  theMax
+                        
+                    if s - 1 >= 0:
+                        lowerBound = batchLIS_cpu[b, s - 1, w]
+                    if s + n < surfaceNum:
+                        upperbound = batchLIS_cpu[b, s + n, w]
+                    for k in range(0, n):
+                        if 0 == s:
+                            batchLIS_cpu[b, s + k, w] = upperbound
+                        elif s - 1 >= 0 and s + n < surfaceNum:
+                            if mu_cpu[b, s + k, w] <= lowerBound:
+                                batchLIS_cpu[b, s + k, w] = lowerBound
+                            else:  # mu_cpu[b, s+k , w] > lowerBound
+                                batchLIS_cpu[b, s + k, w] = upperbound
+                                lowerBound = upperbound  # avoid between 2 boundaries, there is first a big value, then a small value.
+                        else:  # s==surfaceNum-1
+                            batchLIS_cpu[b, s + k, w] = lowerBound
+                    s = s + n
+                else:
+                    s += 1
+    return batchLIS_cpu.to(device)
+
+
+#in continious disorder section, the optimization value should be its sigma2-inverse-weighted average
+def globalOptimization(mu, sigma2, disorderLIS):
+    if torch.all(mu.eq(disorderLIS)):
+        return mu
+    B, surfaceNum, W = mu.size()
+    device = mu.device()
+
+    # method: along the H(surface)direction, if n>1 continious locations all do not equal with ist sorted location sortedS,
+    #          then the variance-inverse-weighted average as one averaged location should be one best approximate to the all orginal n disorder locations.
+    #          this is a local thinking to achieve subpixel accuracy.
+
+    # find equal location
+    S = torch.zeros_like(mu)  # 0 means the location has not been process.
+    S = torch.where(mu == disorderLIS, mu, S)
+
+    # convert tensor to cpu
+    S_cpu = S.cpu()
+    sigma2_cpu = sigma2.cpu()
+    mu_cpu = mu.cpu()
+    sortedS_cpu = disorderLIS.cpu()
+
+    # element-wise local optimization
+    for b in range(0, B):
+        for w in range(0, W):
+            s = 0
+            while (s < surfaceNum):
+                if 0 == S_cpu[b, s, w]:
+                    n = 1  # n continious disorder predicted locations
+                    while s + n < surfaceNum and 0 == S_cpu[b, s + n, w]:
+                        n += 1
+                    if 1 == n:
+                        S_cpu[b, s, w] = sortedS_cpu[b, s, w]
+                    else:
+                        numerator = 0.0
+                        denominator = 0.0
+                        for k in range(0, n):
+                            numerator += mu_cpu[b, s + k, w] / sigma2_cpu[b, s + k, w]
+                            denominator += 1.0 / sigma2_cpu[b, s + k, w]
+                        x = numerator / denominator
+                        for k in range(0, n):
+                            S_cpu[b, s + k, w] = x
+                    s = s + n
+                else:
+                    s += 1
+    S = S_cpu.to(device)
+
+    return S
+
+
 
 def gauranteeSurfaceOrder(S):
     B,surfaceNum,W = S.size()
