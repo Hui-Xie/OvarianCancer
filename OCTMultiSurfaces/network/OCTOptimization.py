@@ -166,7 +166,9 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
 
     :param mu:
     :param batchLIS_cpu: 0 marks non-choosing LIS elements. mu value corresponding 0 locations are always greater than previous choosing element.
-    :return: a tensor with 0 marking the disorder section
+    :return: a tensor with 0 marking the disorder section:
+              min(confusionRegion) > lower boundary
+              max(confusionRegion) < upper boundary
 
     some example:
     test disroder region
@@ -188,7 +190,7 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
     mu = tensor([ 5,  2,  3,  5,  6,  9,  8, 10, 12])
     LIS = tensor([ 0,  2,  3,  5,  6,  0,  8, 10, 12])
     disorderLIS =tensor([ 0,  0,  0,  0,  6,  0,  0, 10, 12])
-    
+
     '''
     assert batchLIS_cpu.size() == mu.size()
     B, surfaceNum, W = mu.size()
@@ -254,37 +256,34 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
 
 
 #in continuous disorder section, the optimization value should be its sigma2-inverse-weighted average
-def globalOptimization(mu, sigma2, disorderLIS):
-    if torch.all(mu.eq(disorderLIS)):
+def constraintOptimization(mu, sigma2, confusionLIS):
+    if torch.all(mu.eq(confusionLIS)):
         return mu
     B, surfaceNum, W = mu.size()
     device = mu.device
 
-    # method: along the H(surface)direction, if n>1 continuous locations all do not equal with ist sorted location sortedS,
+    # convert tensor to cpu
+    sigma2_cpu = sigma2.cpu()
+    mu_cpu = mu.cpu()
+    S = confusionLIS.cpu()
+
+    # find constraint optimization location
+    # method: along the H(surface)direction, for each confusion region,
     #          then the variance-inverse-weighted average as one averaged location should be one best approximate to the all orginal n disorder locations.
     #          this is a local thinking to achieve subpixel accuracy.
 
-    # find equal location
-    S = torch.zeros_like(mu)  # 0 means the location has not been process.
-    S = torch.where(mu == disorderLIS, mu, S)
-
-    # convert tensor to cpu
-    S_cpu = S.cpu()
-    sigma2_cpu = sigma2.cpu()
-    mu_cpu = mu.cpu()
-    sortedS_cpu = disorderLIS.cpu()
-
-    # element-wise local optimization
+    # element-wise local constraint optimization
     for b in range(0, B):
         for w in range(0, W):
             s = 0
             while (s < surfaceNum):
-                if 0 == S_cpu[b, s, w]:
+                if 0 == S[b, s, w]:
                     n = 1  # n continuous disorder predicted locations
-                    while s + n < surfaceNum and 0 == S_cpu[b, s + n, w]:
+                    while s + n < surfaceNum and 0 == S[b, s + n, w]:
                         n += 1
                     if 1 == n:
-                        S_cpu[b, s, w] = sortedS_cpu[b, s, w]
+                        print(f"n should not equal 1 for confusion region")
+                        assert(False)
                     else:
                         numerator = 0.0
                         denominator = 0.0
@@ -293,11 +292,11 @@ def globalOptimization(mu, sigma2, disorderLIS):
                             denominator += 1.0 / sigma2_cpu[b, s + k, w]
                         x = numerator / denominator
                         for k in range(0, n):
-                            S_cpu[b, s + k, w] = x
+                            S[b, s + k, w] = x
                     s = s + n
                 else:
                     s += 1
-    S = S_cpu.to(device)
+    S = S.to(device)
 
     return S
 
