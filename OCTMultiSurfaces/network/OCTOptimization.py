@@ -10,7 +10,7 @@ def computeMuVariance(x):
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along each Height direction
     :return: mu:     mean in (BatchSize, NumSurface, W) dimension
-             sigma2: variance in (BatchSize, Numsurface, W) dimension.
+             sigma2: variance in (BatchSize, Numsurface, W) dimension, which will be datach from computation graph.
     '''
     device = x.device
     B,Num,H,W = x.size() # Num is the num of surface for each patient
@@ -48,6 +48,9 @@ def computeMuVariance(x):
             sigma2 = torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)
         else:
             sigma2 = torch.cat((sigma2, torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)))
+
+    # very important, otherwise sigma2 will increase to make the loss small
+    sigma2 = sigma2.detach()
 
     return mu.squeeze(dim=-2),sigma2
 
@@ -122,6 +125,13 @@ class OCTMultiSurfaceLoss():
         return loss
 
 def fillGapOfLIS(batchLIS_cpu, mu):
+    '''
+    bounded nearest neighbour interpolation.
+
+    :param batchLIS_cpu:
+    :param mu:
+    :return: batchLIS GPU version.
+    '''
     assert batchLIS_cpu.size == mu.size
     B, surfaceNum, W = mu.size()
     device = mu.device()
@@ -158,64 +168,24 @@ def fillGapOfLIS(batchLIS_cpu, mu):
                     s += 1
     return  batchLIS_cpu.to(device)
 
-def gauranteeSurfaceOrder():
-    # layer by layer from top to down
-    pass
+def gauranteeSurfaceOrder(S):
+    B,surfaceNum,W = S.size()
 
+    # use upper bound and lower bound to replace its current location value
+    # assume surface 0 (the top surface) is correct, and it will be basis for following layer.
+    # simple neighbor layer switch does not gaurantee global order: for example: 1 5 3 2 6 7 8 9
+    for i in range(1,surfaceNum):
+        S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        if i != surfaceNum-1:
+            S[:, i, :] = torch.where(S[:, i, :] > S[:, i + 1, :], S[:, i + 1, :], S[:, i, :])
 
-#   
-def gauranteeSurfaceOrder(mu, sortedS, sigma2):
-    if torch.all(mu.eq(sortedS)):
-        return mu
-    B,surfaceNum,W = mu.size()
-    device = mu.device()
-
-    # method1: use upper bound and lower bound to replace its current location value
-    S = sortedS.clone()
-    for i in range(1,surfaceNum-1): # ignore consider the top surface and bottom surface
-        S[:, i, :] = torch.where(mu[:, i, :] > S[:, i, :], S[:, i + 1, :], S[:, i, :])
-        S[:, i, :] = torch.where(mu[:, i, :] < S[:, i, :], S[:, i - 1, :], S[:, i, :])
-
-    # method2: along the H(surface)direction, if n>1 continious locations all do not equal with ist sorted location sortedS,
-    #          then the inverse-variance-weigted average as one location should be one best approximate to the all orginal n disorder locations.
-    #          this is a local thinking to achieve subpixel accuracy.
-
-    # find equal location
-    S = torch.zeros_like(mu)   # 0 means the location has not been process.
-    S = torch.where(mu == sortedS, mu, S)
-
-    # convert tensor to cpu
-    S_cpu = S.cpu()
-    sigma2_cpu = sigma2.cpu()
-    mu_cpu =mu.cpu()
-    sortedS_cpu = sortedS.cpu()
-
-    # element-wise local optimization
-    for b in range(0,B):
-        for w in range(0,W):
-            s = 0
-            while(s<surfaceNum):
-                if 0 == S_cpu[b,s,w]:
-                    n = 1  # n continious disorder predicted locations
-                    while s+n<surfaceNum and 0 == S_cpu[b,s+n,w]:
-                        n += 1
-                    if 1 == n:
-                        S_cpu[b,s,w] = sortedS_cpu[b,s,w]
-                    else:
-                        numerator = 0.0
-                        denominator = 0.0
-                        for k in range(0, n):
-                            numerator += mu_cpu[b,s+k,w]/sigma2_cpu[b,s+k,w]
-                            denominator += 1.0/sigma2_cpu[b,s+k,w]
-                        x = numerator/denominator
-                        for k in range(0, n):
-                            S_cpu[b, s+k, w] = x
-                    s = s+n
-                else:
-                    s += 1
-    S = S_cpu.to(device)
-
-    return S
+    # check global order
+    S0 =S[:,:-1,:]
+    S1 =S[:,1:, :]
+    if (S1 >= S0).all():
+        return S
+    else:
+        gauranteeSurfaceOrder(S)
 
 def getBatchLIS(mu):
     '''
