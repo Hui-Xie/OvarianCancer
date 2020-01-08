@@ -121,15 +121,49 @@ class OCTMultiSurfaceLoss():
             loss /=num
         return loss
 
-def interpolateGapLISs():
-    # gap shoudl get average
-    pass
+def fillGapOfLIS(batchLIS_cpu, mu):
+    assert batchLIS_cpu.size == mu.size
+    B, surfaceNum, W = mu.size()
+    device = mu.device()
+
+    # convert tensor to cpu
+    mu_cpu = mu.cpu()
+
+    # element-wise local nearest neighbor interpolation constrained in its lower boundary and upper boundary
+    for b in range(0, B):
+        for w in range(0, W):
+            s = 0
+            while (s < surfaceNum):
+                if 0 == batchLIS_cpu[b, s, w]:
+                    n = 1  # n continious disorder predicted locations
+                    while s + n < surfaceNum and 0 == batchLIS_cpu[b, s + n, w]:
+                        n += 1
+                    if s - 1 >= 0:
+                        lowerBound = batchLIS_cpu[b, s - 1, w]
+                    if s + n < surfaceNum:
+                        upperbound = batchLIS_cpu[b, s + n, w]
+                    for k in range(0, n):
+                        if 0==s:
+                            batchLIS_cpu[b, s+k, w] = upperbound
+                        elif s-1>=0 and s+n< surfaceNum:
+                            if mu_cpu[b, s+k, w] <= lowerBound:
+                                batchLIS_cpu[b, s+k, w] = lowerBound
+                            else: #mu_cpu[b, s+k , w] > lowerBound
+                                batchLIS_cpu[b, s+k, w] = upperbound
+                                lowerBound = upperbound   # avoid between 2 boundaries, there is first a big value, then a small value.
+                        else:   # s==surfaceNum-1
+                            batchLIS_cpu[b, s+k, w] = lowerBound
+                    s = s + n
+                else:
+                    s += 1
+    return  batchLIS_cpu.to(device)
 
 def gauranteeSurfaceOrder():
     # layer by layer from top to down
     pass
 
 
+#   
 def gauranteeSurfaceOrder(mu, sortedS, sigma2):
     if torch.all(mu.eq(sortedS)):
         return mu
@@ -190,12 +224,12 @@ def getBatchLIS(mu):
     :return: return a cpu-version batched LIS.
     '''
     B, surfaceNum, W = mu.size()
-    LIS = torch.zeros(mu.size(), device='cpu', dtype=torch.float)
+    LIS_cpu = torch.zeros(mu.size(), device='cpu', dtype=torch.float)
     mu_cpu = mu.cpu()
     for b in range(0,B):
         for w in range(0,W):
-            LIS[b,:,w] = getLIS(mu_cpu[b,:,w])
-    return LIS
+            LIS_cpu[b,:,w] = getLIS(mu_cpu[b,:,w])
+    return LIS_cpu
 
 def getLIS(inputTensor):
     '''
