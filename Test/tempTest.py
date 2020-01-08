@@ -60,8 +60,8 @@ def main():
     print(f"LIS = {LIS}")
     mu = mu.view(1,N,1)
     LIS = LIS.view(1,N,1)
-    disorderLIS = markDisorderSectionFromLIS(mu, LIS)
-    print(f"disorderLIS =\n {disorderLIS}")
+    disorderLIS = markConfusionSectionFromLIS(mu, LIS)
+    print(f"disorderLIS ={disorderLIS.view(N)}")
 
     print(f"\ntest disroder region")
     mu = torch.tensor([1, 5, 3, 2, 6, 9, 8, 10, 12])
@@ -71,8 +71,8 @@ def main():
     print(f"LIS = {LIS}")
     mu = mu.view(1, N, 1)
     LIS = LIS.view(1, N, 1)
-    disorderLIS = markDisorderSectionFromLIS(mu, LIS)
-    print(f"disorderLIS =\n {disorderLIS}")
+    disorderLIS = markConfusionSectionFromLIS(mu, LIS)
+    print(f"disorderLIS ={disorderLIS.view(N)}")
 
     print(f"\ntest disroder region")
     mu = torch.tensor([4, 5, 3, 2, 6, 9, 8, 10, 12])
@@ -82,8 +82,8 @@ def main():
     print(f"LIS = {LIS}")
     mu = mu.view(1, N, 1)
     LIS = LIS.view(1, N, 1)
-    disorderLIS = markDisorderSectionFromLIS(mu, LIS)
-    print(f"disorderLIS =\n {disorderLIS}")
+    disorderLIS = markConfusionSectionFromLIS(mu, LIS)
+    print(f"disorderLIS ={disorderLIS.view(N)}")
 
     print(f"\ntest disroder region")
     mu = torch.tensor([5, 2, 3, 5, 6, 9, 8, 10, 12])
@@ -93,8 +93,8 @@ def main():
     print(f"LIS = {LIS}")
     mu = mu.view(1, N, 1)
     LIS = LIS.view(1, N, 1)
-    disorderLIS = markDisorderSectionFromLIS(mu, LIS)
-    print(f"disorderLIS =\n {disorderLIS}")
+    disorderLIS = markConfusionSectionFromLIS(mu, LIS)
+    print(f"disorderLIS ={disorderLIS.view(N)}")
 
     print("==================")
 

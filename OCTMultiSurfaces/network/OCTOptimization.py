@@ -161,12 +161,34 @@ def fillGapOfLIS(batchLIS_cpu, mu):
                     s += 1
     return  batchLIS_cpu.to(device)
 
-def markDisorderSectionFromLIS(mu, batchLIS_cpu):
+def markConfusionSectionFromLIS(mu, batchLIS_cpu):
     '''
 
     :param mu:
     :param batchLIS_cpu: 0 marks non-choosing LIS elements. mu value corresponding 0 locations are always greater than previous choosing element.
     :return: a tensor with 0 marking the disorder section
+
+    some example:
+    test disroder region
+    mu = tensor([ 1,  5,  3,  2,  6,  7,  9, 12])
+    LIS = tensor([ 1,  0,  0,  2,  6,  7,  9, 12])
+    disorderLIS =tensor([ 1,  0,  0,  0,  6,  7,  9, 12])
+
+    test disroder region
+    mu = tensor([ 1,  5,  3,  2,  6,  9,  8, 10, 12])
+    LIS = tensor([ 1,  0,  0,  2,  6,  0,  8, 10, 12])
+    disorderLIS =tensor([ 1,  0,  0,  0,  6,  0,  0, 10, 12])
+
+    test disroder region
+    mu = tensor([ 4,  5,  3,  2,  6,  9,  8, 10, 12])
+    LIS = tensor([ 4,  5,  0,  0,  6,  0,  8, 10, 12])
+    disorderLIS =tensor([ 0,  0,  0,  0,  6,  0,  0, 10, 12])
+
+    test disroder region
+    mu = tensor([ 5,  2,  3,  5,  6,  9,  8, 10, 12])
+    LIS = tensor([ 0,  2,  3,  5,  6,  0,  8, 10, 12])
+    disorderLIS =tensor([ 0,  0,  0,  0,  6,  0,  0, 10, 12])
+    
     '''
     assert batchLIS_cpu.size() == mu.size()
     B, surfaceNum, W = mu.size()
@@ -183,16 +205,16 @@ def markDisorderSectionFromLIS(mu, batchLIS_cpu):
             while (s < surfaceNum):
                 if 0 == batchLIS_cpu[b, s, w]:
                     if theMax is None:
-                        theMax = mu[b, s, w]
+                        theMax = mu_cpu[b, s, w]
                     else:
-                        theMax = mu[b,s,w] if mu[b,s,w] > theMax else theMax
+                        theMax = mu_cpu[b,s,w] if mu_cpu[b,s,w] > theMax else theMax
                     n = 1  # n continuous disorder predicted locations
                     while s + n < surfaceNum and 0 == batchLIS_cpu[b, s + n, w]:
-                        theMax = mu[b, s + n, w] if mu[b, s + n, w] > theMax else theMax
+                        theMax = mu_cpu[b, s + n, w] if mu_cpu[b, s + n, w] > theMax else theMax
                         n += 1
                     k = s+n
                     while k< surfaceNum and 0 != batchLIS_cpu[b,k,w]:
-                        if  batchLIS_cpu[b,k,w] <= theMax:
+                        if  mu_cpu[b,k,w] <= theMax:
                             batchLIS_cpu[b, k, w] = 0
                         else:
                             break
@@ -200,6 +222,34 @@ def markDisorderSectionFromLIS(mu, batchLIS_cpu):
                     s = k
                 else:
                     s += 1
+
+    # element-wise check the minimum of mu in 0 section of LIS, if previous LIS element> the minimum, change it into 0
+    # in reverse direction of H direction
+    for b in range(0, B):
+        for w in range(0, W):
+            s = surfaceNum-1
+            theMin = None
+            while (s >= 0 ):
+                if 0 == batchLIS_cpu[b, s, w]:
+                    if theMin is None:
+                        theMin = mu_cpu[b, s, w]
+                    else:
+                        theMin = mu_cpu[b,s,w] if mu_cpu[b,s,w] < theMin else theMin
+                    n = 1  # n continuous disorder predicted locations
+                    while s - n >= 0 and 0 == batchLIS_cpu[b, s - n, w]:
+                        theMin = mu_cpu[b, s - n, w] if mu_cpu[b, s - n, w] < theMin else theMin
+                        n += 1
+                    k = s-n
+                    while k>=0 and 0 != batchLIS_cpu[b,k,w]:
+                        if  mu_cpu[b,k,w] >= theMin:
+                            batchLIS_cpu[b, k, w] = 0
+                        else:
+                            break
+                        k -= 1
+                    s = k
+                else:
+                    s -= 1
+
     return batchLIS_cpu.to(device)
 
 
