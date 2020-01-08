@@ -260,7 +260,12 @@ class OCTUnet(BasicModel):
         # the input given to KLDivLoss is expected to contain log-probabilities
         softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to consider batch dimension
         mu, sigma2 = computeMuVariance(softmaxOutputs)
-        S, _ = torch.sort(mu, dim=-2)  # sorted surface locations in (B,S,W) dimension
+
+        # constraint optimization
+        batchLIS_cpu = getBatchLIS(mu)  # cpu version
+        confusionLIS_cpu = markConfusionSectionFromLIS(mu, batchLIS_cpu)
+        S = constraintOptimization(mu, sigma2, confusionLIS_cpu) # result is at gpu same with mu
+
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
 
@@ -268,22 +273,15 @@ class OCTUnet(BasicModel):
             logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
         elif isinstance(lossFunc, nn.SmoothL1Loss):
-            #lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
-            loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
+            # lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
+            # loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
+
+            loss =  lossFunc(S, GTs) * lossWeight
         elif isinstance(lossFunc, OCTMultiSurfaceLoss):
             loss = lossFunc(mu, sigma2, GTs)
         else:
             assert("Error Loss function in net.forward!")
 
-        # proximal IPM optimization in inference stage
-        with torch.no_grad():
-            useProxialIPM = self.getConfigParameter('useProxialIPM')
-            if useProxialIPM:
-                learningStepIPM = self.getConfigParameter("learningStepIPM")
-                nIterationIPM = self.getConfigParameter("nIterationIPM")
-                S = proximalIPM(mu, sigma2, S, nIterations=nIterationIPM, learningStep=learningStepIPM)
-            else:
-                S = gauranteeSurfaceOrder(mu, S, sigma2)
 
         return S, loss
         # return surfaceLocation S in (B,S,W) dimension and loss

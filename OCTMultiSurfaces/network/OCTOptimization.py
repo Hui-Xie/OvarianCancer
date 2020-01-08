@@ -166,7 +166,7 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
 
     :param mu:
     :param batchLIS_cpu: 0 marks non-choosing LIS elements. mu value corresponding 0 locations are always greater than previous choosing element.
-    :return: a tensor with 0 marking the disorder section:
+    :return: a tensor with 0 marking the disorder section in cpu
               min(confusionRegion) > lower boundary
               max(confusionRegion) < upper boundary
 
@@ -194,7 +194,6 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
     '''
     assert batchLIS_cpu.size() == mu.size()
     B, surfaceNum, W = mu.size()
-    device = mu.device
 
     # convert tensor to cpu
     mu_cpu = mu.cpu()
@@ -252,20 +251,20 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
                 else:
                     s -= 1
 
-    return batchLIS_cpu.to(device)
+    return batchLIS_cpu
 
 
 #in continuous disorder section, the optimization value should be its sigma2-inverse-weighted average
-def constraintOptimization(mu, sigma2, confusionLIS):
-    if torch.all(mu.eq(confusionLIS)):
-        return mu
-    B, surfaceNum, W = mu.size()
+def constraintOptimization(mu, sigma2, confusionLIS_cpu):
     device = mu.device
-
     # convert tensor to cpu
     sigma2_cpu = sigma2.cpu()
     mu_cpu = mu.cpu()
-    S = confusionLIS.cpu()
+    S = confusionLIS_cpu
+
+    if torch.all(mu_cpu.eq(S)):
+        return mu
+    B, surfaceNum, W = mu_cpu.size()
 
     # find constraint optimization location
     # method: along the H(surface)direction, for each confusion region,
