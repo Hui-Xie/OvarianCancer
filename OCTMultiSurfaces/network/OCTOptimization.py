@@ -122,9 +122,11 @@ class OCTMultiSurfaceLoss():
         return loss
 
 def interpolateGapLISs():
+    # gap shoudl get average
     pass
 
 def gauranteeSurfaceOrder():
+    # layer by layer from top to down
     pass
 
 
@@ -181,13 +183,19 @@ def gauranteeSurfaceOrder(mu, sortedS, sigma2):
 
     return S
 
-def getLISs(mu):
+def getBatchLIS(mu):
+    '''
+
+    :param mu:
+    :return: return a cpu-version batched LIS.
+    '''
     B, surfaceNum, W = mu.size()
-    LISs = torch.zeros_like(mu)
+    LIS = torch.zeros(mu.size(), device='cpu', dtype=torch.float)
+    mu_cpu = mu.cpu()
     for b in range(0,B):
         for w in range(0,W):
-            LISs[b,:,w] = getLIS(mu[b,:,w])
-    return LISs
+            LIS[b,:,w] = getLIS(mu_cpu[b,:,w])
+    return LIS
 
 def getLIS(inputTensor):
     '''
