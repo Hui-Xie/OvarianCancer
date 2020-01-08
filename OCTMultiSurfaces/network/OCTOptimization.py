@@ -125,9 +125,9 @@ def fillGapOfLIS(batchLIS_cpu, mu):
     :param mu:
     :return: batchLIS GPU version.
     '''
-    assert batchLIS_cpu.size == mu.size
+    assert batchLIS_cpu.size() == mu.size()
     B, surfaceNum, W = mu.size()
-    device = mu.device()
+    device = mu.device
 
     # convert tensor to cpu
     mu_cpu = mu.cpu()
@@ -138,7 +138,7 @@ def fillGapOfLIS(batchLIS_cpu, mu):
             s = 0
             while (s < surfaceNum):
                 if 0 == batchLIS_cpu[b, s, w]:
-                    n = 1  # n continious disorder predicted locations
+                    n = 1  # n continuous disorder predicted locations
                     while s + n < surfaceNum and 0 == batchLIS_cpu[b, s + n, w]:
                         n += 1
                     if s - 1 >= 0:
@@ -168,54 +168,49 @@ def markDisorderSectionFromLIS(mu, batchLIS_cpu):
     :param batchLIS_cpu: 0 marks non-choosing LIS elements. mu value corresponding 0 locations are always greater than previous choosing element.
     :return: a tensor with 0 marking the disorder section
     '''
-    assert batchLIS_cpu.size == mu.size
+    assert batchLIS_cpu.size() == mu.size()
     B, surfaceNum, W = mu.size()
-    device = mu.device()
+    device = mu.device
 
     # convert tensor to cpu
     mu_cpu = mu.cpu()
 
-    # element-wise check maximum of mu corresponding each 0 section, if following LIS element< the maximum, change it into 0
+    # element-wise check the maximum of mu in 0 section of LIS, if following LIS element< the maximum, change it into 0
     for b in range(0, B):
         for w in range(0, W):
             s = 0
+            theMax = None
             while (s < surfaceNum):
                 if 0 == batchLIS_cpu[b, s, w]:
-                    theMax = mu[b,s,w]
-                    n = 1  # n continious disorder predicted locations
+                    if theMax is None:
+                        theMax = mu[b, s, w]
+                    else:
+                        theMax = mu[b,s,w] if mu[b,s,w] > theMax else theMax
+                    n = 1  # n continuous disorder predicted locations
                     while s + n < surfaceNum and 0 == batchLIS_cpu[b, s + n, w]:
+                        theMax = mu[b, s + n, w] if mu[b, s + n, w] > theMax else theMax
                         n += 1
-                        theMax = mu[b,s+n,w] if mu[b,s+n,w] > theMax else  theMax
-                        
-                    if s - 1 >= 0:
-                        lowerBound = batchLIS_cpu[b, s - 1, w]
-                    if s + n < surfaceNum:
-                        upperbound = batchLIS_cpu[b, s + n, w]
-                    for k in range(0, n):
-                        if 0 == s:
-                            batchLIS_cpu[b, s + k, w] = upperbound
-                        elif s - 1 >= 0 and s + n < surfaceNum:
-                            if mu_cpu[b, s + k, w] <= lowerBound:
-                                batchLIS_cpu[b, s + k, w] = lowerBound
-                            else:  # mu_cpu[b, s+k , w] > lowerBound
-                                batchLIS_cpu[b, s + k, w] = upperbound
-                                lowerBound = upperbound  # avoid between 2 boundaries, there is first a big value, then a small value.
-                        else:  # s==surfaceNum-1
-                            batchLIS_cpu[b, s + k, w] = lowerBound
-                    s = s + n
+                    k = s+n
+                    while k< surfaceNum and 0 != batchLIS_cpu[b,k,w]:
+                        if  batchLIS_cpu[b,k,w] <= theMax:
+                            batchLIS_cpu[b, k, w] = 0
+                        else:
+                            break
+                        k += 1
+                    s = k
                 else:
                     s += 1
     return batchLIS_cpu.to(device)
 
 
-#in continious disorder section, the optimization value should be its sigma2-inverse-weighted average
+#in continuous disorder section, the optimization value should be its sigma2-inverse-weighted average
 def globalOptimization(mu, sigma2, disorderLIS):
     if torch.all(mu.eq(disorderLIS)):
         return mu
     B, surfaceNum, W = mu.size()
-    device = mu.device()
+    device = mu.device
 
-    # method: along the H(surface)direction, if n>1 continious locations all do not equal with ist sorted location sortedS,
+    # method: along the H(surface)direction, if n>1 continuous locations all do not equal with ist sorted location sortedS,
     #          then the variance-inverse-weighted average as one averaged location should be one best approximate to the all orginal n disorder locations.
     #          this is a local thinking to achieve subpixel accuracy.
 
@@ -235,7 +230,7 @@ def globalOptimization(mu, sigma2, disorderLIS):
             s = 0
             while (s < surfaceNum):
                 if 0 == S_cpu[b, s, w]:
-                    n = 1  # n continious disorder predicted locations
+                    n = 1  # n continuous disorder predicted locations
                     while s + n < surfaceNum and 0 == S_cpu[b, s + n, w]:
                         n += 1
                     if 1 == n:
@@ -295,6 +290,9 @@ def getLIS(inputTensor):
     '''
     get Largest Increasing Subsequence  with non-choosing element marked as 0
     https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+    for example:
+    mu = tensor([ 4,  5,  3,  2,  6,  9,  8, 10, 12])
+    LIS = tensor([ 4,  5,  0,  0,  6,  0,  8, 10, 12])
 
     :param inputTensor:
     :return: Tensor with choosing element in its location with non-choosing element marked as 0, same length with inputTensor
