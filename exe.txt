@@ -223,3 +223,6 @@ python3.7 CVTrainMultiSurface.py  /home/hxie1/Projects/DeepLearningSeg/OCTMultiS
 
 # 20200103 launch OCt Multisurface with IPM optimzation
 nohup python3.7 CVTrainMultiSurface.py /home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnet_20200103/expUnet_20200103_CV0.yaml &
+
+# 20200109 test
+python3.7 CVTestMultiSurface.py /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnet_20191228/expUnet_20191228_CV0.yaml

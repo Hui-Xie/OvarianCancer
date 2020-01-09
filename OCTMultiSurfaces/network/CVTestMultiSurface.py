@@ -150,14 +150,25 @@ def main():
                                                                                   hPixelSize=hPixelSize)
     #generate predicted images
     B,S,W = testOutputs.shape
+    images = images.cpu().numpy()
+    testOutputs = testOutputs.cpu().numpy()
+    testGts = testGts.cpu().numpy()
     for b in range(B):
         # example: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
         patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
         f = plt.figure()
-        plt.imshow(images[b,].cpu().numpy(), cmap='gray')
+
+        subplot1 = plt.subplot(1, 2, 1)
+        subplot1.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            plt.plot(range(0, W), testOutputs[b, s, :].cpu().numpy(), linewidth=0.7)
-        plt.savefig(os.path.join(outputDir, patientID_Index + "_predict.png"))
+            subplot1.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.7)
+
+        subplot2 = plt.subplot(1, 2, 2)
+        subplot2.imshow(images[b,].squeeze(), cmap='gray')
+        for s in range(0, S):
+            subplot2.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.7)
+
+        plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_Predict.png"))
         plt.close()
 
     epoch = 0
@@ -168,16 +179,16 @@ def main():
     writer.add_scalars('ValidationError/stdSurface(um)', convertTensor2Dict(stdSurfaceError), epoch)
     writer.add_scalars('ValidationError/stdPatient(um)', convertTensor2Dict(stdPatientError), epoch)
 
-    with open(os.path.join(outputDir,"output.txt")) as file:
-        file.write(f"Test: {experimentName}")
-        file.write(f"loadNetPath: {netPath}")
-        file.write(f"B,S,W = {B,S,W}")
-        file.write(f"stdSurfaceError = {stdSurfaceError}")
-        file.write(f"muSurfaceError = {muSurfaceError}")
-        file.write(f"stdPatientError = {stdPatientError}")
-        file.write(f"muPatientError = {muPatientError}")
-        file.write(f"stdError = {stdError}")
-        file.write(f"muError = {muError}")
+    with open(os.path.join(outputDir,"output.txt"), "w") as file:
+        file.write(f"Test: {experimentName}\n")
+        file.write(f"loadNetPath: {netPath}\n")
+        file.write(f"B,S,W = {B,S,W}\n")
+        file.write(f"stdSurfaceError = {stdSurfaceError}\n")
+        file.write(f"muSurfaceError = {muSurfaceError}\n")
+        file.write(f"stdPatientError = {stdPatientError}\n")
+        file.write(f"muPatientError = {muPatientError}\n")
+        file.write(f"stdError = {stdError}\n")
+        file.write(f"muError = {muError}\n")
 
 
     print("============ End of Cross valiation test for OCT Multisurface Network ===========")
