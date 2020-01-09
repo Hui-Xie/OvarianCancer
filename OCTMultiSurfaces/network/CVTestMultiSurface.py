@@ -3,13 +3,11 @@
 
 import sys
 import yaml
-import random
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
 from torch.utils import data
-from torch.utils.tensorboard import SummaryWriter
+
 
 sys.path.append(".")
 from OCTDataSet import OCTDataSet
@@ -96,12 +94,10 @@ def main():
     loss1 = eval(lossFunc1)
     net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
 
-
-
     # Load network
     if os.path.exists(netPath) and len(getFilesList(netPath, ".pt")) >= 2 :
         netMgr = NetMgr(net, netPath, device)
-        netMgr.loadNet("train")
+        netMgr.loadNet("test")
         print(f"Network load from  {netPath}")
     else:
         print(f"Can not find pretrained network for test!")
@@ -119,28 +115,25 @@ def main():
     net.eval()
     with torch.no_grad():
         testBatch = 0
-        testLoss = 0.0
         for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
-            testLoss += loss
+            S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
             testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
-
-        testLoss = testLoss / testBatch
 
         # Error Std and mean
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
-
-
+        print(f"Test: {experimentName}")
+        print(f"loadNetPath: {loadNetPath}")
+        print(f"stdSurfaceError, \tmuSurfaceError,\tstdPatientError, \tmuPatientError, \tstdError, \tmuError")
+        print(f"{stdSurfaceError}, \t{muSurfaceError},\t{stdPatientError}, \t{muPatientError}, \t{stdError}, \t{muError}")
 
 
     print("============ End of Cross valiation test for OCT Multisurface Network ===========")
-
 
 
 if __name__ == "__main__":
