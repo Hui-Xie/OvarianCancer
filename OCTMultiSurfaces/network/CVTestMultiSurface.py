@@ -78,6 +78,7 @@ def main():
     loadNetPath = cfg['loadNetPath']
     if "" != loadNetPath:
         netPath = loadNetPath
+    outputDir = cfg["outputDir"]
 
     lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
     lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
@@ -126,7 +127,8 @@ def main():
         os.makedirs(logDir)  # recursive dir creation
     writer = SummaryWriter(log_dir=logDir)
 
-    outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
+    if outputDir=="":
+        outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)  # recursive dir creation
 

@@ -262,7 +262,7 @@ class OCTUnet(BasicModel):
         mu, sigma2 = computeMuVariance(softmaxOutputs)
 
         # constraint optimization
-        if not self.training:
+        if (not self.training) and False:
             batchLIS_cpu = getBatchLIS(mu)  # cpu version
             confusionLIS_cpu = markConfusionSectionFromLIS(mu, batchLIS_cpu)
             S = constraintOptimization(mu, sigma2, confusionLIS_cpu) # result is at gpu same with mu

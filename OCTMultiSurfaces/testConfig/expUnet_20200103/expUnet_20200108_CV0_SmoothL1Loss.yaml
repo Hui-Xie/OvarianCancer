@@ -44,6 +44,7 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 network: "OCTUnet"
 netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20200108_CV0_SmoothL1Loss"  # this is pretrained network
+outputDir: ""
 
 # use loadNetpath, below loss function may need revise.
 lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
