@@ -191,7 +191,7 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(netPath)
 
-        print(f"finished epoch: {epoch}")
+
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 

@@ -262,10 +262,12 @@ class OCTUnet(BasicModel):
         mu, sigma2 = computeMuVariance(softmaxOutputs)
 
         # constraint optimization
-        batchLIS_cpu = getBatchLIS(mu)  # cpu version
-        confusionLIS_cpu = markConfusionSectionFromLIS(mu, batchLIS_cpu)
-        S = constraintOptimization(mu, sigma2, confusionLIS_cpu) # result is at gpu same with mu
-
+        if not self.training:
+            batchLIS_cpu = getBatchLIS(mu)  # cpu version
+            confusionLIS_cpu = markConfusionSectionFromLIS(mu, batchLIS_cpu)
+            S = constraintOptimization(mu, sigma2, confusionLIS_cpu) # result is at gpu same with mu
+        else:
+            S = mu
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
 
