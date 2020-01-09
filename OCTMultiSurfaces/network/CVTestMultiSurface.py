@@ -7,6 +7,7 @@ import yaml
 import torch
 import torch.nn as nn
 from torch.utils import data
+from torch.utils.tensorboard import SummaryWriter
 
 
 sys.path.append(".")
@@ -110,6 +111,7 @@ def main():
     outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)  # recursive dir creation
+    writer = SummaryWriter(log_dir=outputDir)
 
     # test
     net.eval()
@@ -127,10 +129,23 @@ def main():
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
+        epoch = 0
+        writer.add_scalar('ValidationError/mean(um)', muError, epoch)
+        writer.add_scalar('ValidationError/stdDeviation(um)', stdError, epoch)
+        writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurfaceError), epoch)
+        writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatientError), epoch)
+        writer.add_scalars('ValidationError/stdSurface(um)', convertTensor2Dict(stdSurfaceError), epoch)
+        writer.add_scalars('ValidationError/stdPatient(um)', convertTensor2Dict(stdPatientError), epoch)
+
+
         print(f"Test: {experimentName}")
-        print(f"loadNetPath: {loadNetPath}")
-        print(f"stdSurfaceError, \tmuSurfaceError,\tstdPatientError, \tmuPatientError, \tstdError, \tmuError")
-        print(f"{stdSurfaceError}, \t{muSurfaceError},\t{stdPatientError}, \t{muPatientError}, \t{stdError}, \t{muError}")
+        print(f"loadNetPath: {netPath}")
+        print(f"stdSurfaceError = {stdSurfaceError}")
+        print(f"muSurfaceError = {muSurfaceError}")
+        print(f"stdPatientError = {stdPatientError}")
+        print(f"muPatientError = {muPatientError}")
+        print(f"stdError = {stdError}")
+        print(f"muError = {muError}")
 
 
     print("============ End of Cross valiation test for OCT Multisurface Network ===========")
