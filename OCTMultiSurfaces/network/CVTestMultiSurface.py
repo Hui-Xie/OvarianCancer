@@ -27,6 +27,17 @@ def printUsage(argv):
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
+def extractFileName(str):
+    '''
+
+    :param str: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+    :return: output: 4511_OD_29134_OCT06
+    '''
+    stem = str[:str.rfind("_Volume/")]
+    patientID = stem[stem.rfind("/")+1:]
+    OCTIndex = str[str.rfind("_"):-4]
+    return patientID+OCTIndex
+
 def main():
 
     if len(sys.argv) != 2:
@@ -129,6 +140,15 @@ def main():
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
+    #generate images
+    B,S,W = testOutputs.shape
+    for b in range(B):
+        # example: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+        patientID_Index = extractFileName(testIDs[b])
+
+
+
+
     epoch = 0
     writer.add_scalar('ValidationError/mean(um)', muError, epoch)
     writer.add_scalar('ValidationError/stdDeviation(um)', stdError, epoch)
