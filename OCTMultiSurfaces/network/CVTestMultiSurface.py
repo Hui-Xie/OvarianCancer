@@ -21,6 +21,8 @@ from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 
+import matplotlib.pyplot as plt
+
 
 def printUsage(argv):
     print("============ Cross Validation Test OCT MultiSurface Network =============")
@@ -119,10 +121,14 @@ def main():
     net.updateConfigParameter("learningStepIPM", learningStepIPM)
     net.updateConfigParameter("nIterationIPM", nIterationIPM)
 
+    logDir = dataDir + "/log/" + network + "/" + experimentName + "/testLog"
+    if not os.path.exists(logDir):
+        os.makedirs(logDir)  # recursive dir creation
+    writer = SummaryWriter(log_dir=logDir)
+
     outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
     if not os.path.exists(outputDir):
         os.makedirs(outputDir)  # recursive dir creation
-    writer = SummaryWriter(log_dir=outputDir)
 
     # test
     net.eval()
@@ -132,6 +138,8 @@ def main():
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
             S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+
+            images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
             testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
@@ -140,14 +148,17 @@ def main():
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
-    #generate images
+    #generate predicted images
     B,S,W = testOutputs.shape
     for b in range(B):
         # example: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-        patientID_Index = extractFileName(testIDs[b])
-
-
-
+        patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
+        f = plt.figure()
+        plt.imshow(images[b,], cmap='gray')
+        for s in range(0, S):
+            plt.plot(range(0, W), testOutputs[b, s, :], linewidth=0.7)
+        plt.savefig(os.path.join(outputDir, patientID_Index + "_predict.png"))
+        plt.close()
 
     epoch = 0
     writer.add_scalar('ValidationError/mean(um)', muError, epoch)
@@ -157,15 +168,16 @@ def main():
     writer.add_scalars('ValidationError/stdSurface(um)', convertTensor2Dict(stdSurfaceError), epoch)
     writer.add_scalars('ValidationError/stdPatient(um)', convertTensor2Dict(stdPatientError), epoch)
 
-
-    print(f"Test: {experimentName}")
-    print(f"loadNetPath: {netPath}")
-    print(f"stdSurfaceError = {stdSurfaceError}")
-    print(f"muSurfaceError = {muSurfaceError}")
-    print(f"stdPatientError = {stdPatientError}")
-    print(f"muPatientError = {muPatientError}")
-    print(f"stdError = {stdError}")
-    print(f"muError = {muError}")
+    with open(os.path.join(outputDir,"output.txt")) as file:
+        file.write(f"Test: {experimentName}")
+        file.write(f"loadNetPath: {netPath}")
+        file.write(f"B,S,W = {B,S,W}")
+        file.write(f"stdSurfaceError = {stdSurfaceError}")
+        file.write(f"muSurfaceError = {muSurfaceError}")
+        file.write(f"stdPatientError = {stdPatientError}")
+        file.write(f"muPatientError = {muPatientError}")
+        file.write(f"stdError = {stdError}")
+        file.write(f"muError = {muError}")
 
 
     print("============ End of Cross valiation test for OCT Multisurface Network ===========")
