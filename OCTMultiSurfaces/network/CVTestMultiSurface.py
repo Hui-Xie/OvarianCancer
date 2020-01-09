@@ -154,9 +154,9 @@ def main():
         # example: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
         patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
         f = plt.figure()
-        plt.imshow(images[b,], cmap='gray')
+        plt.imshow(images[b,].cpu().numpy(), cmap='gray')
         for s in range(0, S):
-            plt.plot(range(0, W), testOutputs[b, s, :], linewidth=0.7)
+            plt.plot(range(0, W), testOutputs[b, s, :].cpu().numpy(), linewidth=0.7)
         plt.savefig(os.path.join(outputDir, patientID_Index + "_predict.png"))
         plt.close()
 
