@@ -437,7 +437,7 @@ def getLIS_gpu(X):
     get Largest Increasing Subsequence  with non-choosing element marked as 0, in each H direction.
     https://en.wikipedia.org/wiki/Longest_increasing_subsequence
 
-
+    only support maximum length of 128 of sort direction
 
     :param X:  of size(B,S,W)
     :return: Tensor with choosing element in its location with non-choosing element marked as 0, same length with input X
@@ -445,31 +445,29 @@ def getLIS_gpu(X):
 
     B,S,W = X.shape
     device =X.device
-    P = torch.zeros((B,S,W), dtype=torch.long, device=device)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
-    M = torch.zeros((B,S+1,W),dtype=torch.long,device=device)  # maximum element in each active subsequence
+    P = torch.zeros((B,S,W), dtype=torch.int8, device=device)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
+    M = torch.zeros((B,S+1,W),dtype=torch.int8, device=device)  # maximum element in each active subsequence
 
-    L =  torch.zeros((B,W), dtype=torch.long, device=device) # length of each LIS
+    L =  torch.zeros((B,W), dtype=torch.int8, device=device) # length of each LIS
     for i in range(0,S):
         # Binary search for the largest positive j ≤ L such that X[M[j]] <= X[i]
-        lo = 1
-        hi = L
-        while lo <= hi:
-            mid = math.ceil((lo + hi) / 2)
-            if X[M[mid]] <= X[i]:
-                lo = mid + 1
-            else:
-                hi = mid - 1
+        lo = torch.empty((B,W), dtype=torch.int8, device=device).fill_(1)
+        hi = L.clone()
+        mid = lo.clone()
+        while (lo <= hi).any():
+            mid = torch.where(lo <= hi,((lo + hi) / 2).ceil(), mid)
+            lo  = torch.where(X[:,M[mid],:] <= X[:,i,:] and lo<=hi, mid+1, lo)
+            hi  = torch.where(X[:,M[mid],:] >  X[:,i,:] and lo<=hi, mid-1, hi)
 
         # After searching, lo is 1 greater than the length of the longest prefix of X[i]
         newL = lo
 
         # The predecessor of X[i] is the last index of the subsequence of length newL - 1
-        P[i] = M[newL - 1]
-        M[newL] = i  # save index of choosing element.
+        P[:,i,:] = M[newL - 1]
+        M[newL].fill_(i)  # save index of choosing element.
 
-        if newL > L:
-            # If we found a subsequence longer than any we've found yet, update L
-            L = newL
+        # If we found a subsequence longer than any we've found yet, update L
+        L = torch.where(newL>L, newL, L)
 
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(X)
