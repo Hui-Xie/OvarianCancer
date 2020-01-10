@@ -110,6 +110,41 @@ def main():
 
     print("==================")
 
+    print ("test gauranteeSurfaceOrder")
+    S = torch.tensor([1, 5, 3, 2, 6, 7, 8, 9])
+    N = len(S)
+    LIS = getLIS(S)
+    S = S.view(1,N,1)
+    print(f"S input = {S.view(N)}")
+
+    LIS = LIS.view(1, N, 1)
+    S = gauranteeSurfaceOrder(S, LIS)
+    print(f"S output = {S.view(N)}")
+    print("")
+
+    S = torch.tensor([1, 3, 2, 5, 6, 7, 8, 9])
+    N = len(S)
+    LIS = getLIS(S)
+    S = S.view(1, N, 1)
+    print(f"S input = {S.view(N)}")
+
+    LIS = LIS.view(1, N, 1)
+    S = gauranteeSurfaceOrder(S, LIS)
+    print(f"S output = {S.view(N)}")
+    print("")
+
+    S = torch.tensor([1, 4, 5, 2, 6, 7, 8, 9])
+    N = len(S)
+    LIS = getLIS(S)
+    S = S.view(1, N, 1)
+    print(f"S input = {S.view(N)}")
+    # S = fillGapOfLIS(getBatchLIS(S), S)
+
+    LIS = LIS.view(1, N, 1)
+    S = gauranteeSurfaceOrder(S, LIS)
+    print(f"S output = {S.view(N)}")
+    print("")
+
 
 if __name__ == "__main__":
     main()

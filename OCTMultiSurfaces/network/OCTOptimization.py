@@ -116,12 +116,30 @@ class OCTMultiSurfaceLoss():
             loss /=num
         return loss
 
+def fillGapOfLIS_gpu(batchLIS, S):
+    '''
+    0 in batchLIS mean non LIS elements
+
+    :param batchLIS:
+    :param S:
+    :return:
+    '''
+
+    # get lowerbound of each 0 element
+
+
+    # get upperbound of each 0 element
+
+    # fill the gap
+
+
+
 # may discard it
 def fillGapOfLIS(batchLIS_cpu, mu):
     '''
     bounded nearest neighbour interpolation.
 
-    :param batchLIS_cpu:
+    :param batchLIS_cpu: 0 is non LIS element.
     :param mu:
     :return: batchLIS GPU version.
     '''
@@ -255,6 +273,9 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
 
 
 #in continuous disorder section, the optimization value should be its sigma2-inverse-weighted average
+# this can not gaurantee the minimum cost:
+# for example: 1,5,2,3,9 when all variances are 1, has better solution: 1, 3.3, 3.3, 3.3, 9
+#              1,5,2,3,9 when all variances are 1,100, 1,1,1, has better solution: 1, 2, 2, 3,9
 def constraintOptimization(mu, sigma2, confusionLIS_cpu):
     device = mu.device
     # convert tensor to cpu
@@ -301,24 +322,40 @@ def constraintOptimization(mu, sigma2, confusionLIS_cpu):
 
 
 
-def gauranteeSurfaceOrder(S):
+def gauranteeSurfaceOrder(S, batchLIS):
+    '''
+    for example:
+    S input = tensor([1, 5, 3, 2, 6, 7, 8, 9])
+    S output = tensor([1, 2, 2, 2, 6, 7, 8, 9])
+
+    S input = tensor([1, 3, 2, 5, 6, 7, 8, 9])
+    S output = tensor([1, 2, 2, 5, 6, 7, 8, 9])
+
+    S input = tensor([1, 4, 5, 2, 6, 7, 8, 9])
+    S output = tensor([1, 4, 5, 5, 6, 7, 8, 9])
+
+    :param S:
+    :return:
+    '''
     B,surfaceNum,W = S.size()
+
+    # check global order at entry
+    S0 = S[:, :-1, :]
+    S1 = S[:, 1:, :]
+    if (S1 >= S0).all():
+        return S
 
     # use upper bound and lower bound to replace its current location value
     # assume surface 0 (the top surface) is correct, and it will be basis for following layer.
     # simple neighbor layer switch does not gaurantee global order: for example: 1 5 3 2 6 7 8 9
     for i in range(1,surfaceNum):
-        S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :] and 0 == batchLIS[:,i,:], S[:, i - 1, :], S[:, i, :])
         if i != surfaceNum-1:
-            S[:, i, :] = torch.where(S[:, i, :] > S[:, i + 1, :], S[:, i + 1, :], S[:, i, :])
+            S[:, i, :] = torch.where(S[:, i, :] > S[:, i + 1, :] and 0 == batchLIS[:,i,:], S[:, i + 1, :], S[:, i, :])
 
-    # check global order
-    S0 =S[:,:-1,:]
-    S1 =S[:,1:, :]
-    if (S1 >= S0).all():
-        return S
-    else:
-        gauranteeSurfaceOrder(S)
+    # recursive call to make sure order gaurantee
+    S = gauranteeSurfaceOrder(S, batchLIS)
+    return S
 
 def getBatchLIS(mu):
     '''
@@ -347,6 +384,7 @@ def getLIS(inputTensor):
     '''
     X = inputTensor
     N = len(inputTensor)
+    assert 1 == X.dim()
     P = torch.zeros(N, dtype=torch.long)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
     M = torch.zeros(N+1,dtype=torch.long)
 
