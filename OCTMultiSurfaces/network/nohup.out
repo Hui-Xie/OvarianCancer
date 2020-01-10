@@ -1,8 +1,0 @@
-Experiment: expUnet_20200103_CV0_OCTMulitSurfaceLoss
-Traceback (most recent call last):
-  File "CVTrainMultiSurface.py", line 201, in <module>
-    main()
-  File "CVTrainMultiSurface.py", line 105, in main
-    loss1 = eval(lossFunc1)
-  File "<string>", line 1, in <module>
-AttributeError: 'OCTMultiSurfaceLoss' object has no attribute 'to'

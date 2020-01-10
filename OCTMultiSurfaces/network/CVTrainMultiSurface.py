@@ -131,7 +131,7 @@ def main():
     preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
     preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 2.7
     if net.training:
-        initialEpoch = net.getConfigParameter("epoch")
+        initialEpoch = net.getConfigParameter("epoch") if "epoch" in net.m_configParametersDict else 0
     else:
         initialEpoch = 0
 
