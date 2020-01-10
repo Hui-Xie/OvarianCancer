@@ -277,6 +277,18 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
 # for example: 1,5,2,3,9 when all variances are 1, has better solution: 1, 3.3, 3.3, 3.3, 9
 #              1,5,2,3,9 when all variances are 1,100, 1,1,1, has better solution: 1, 2, 2, 3,9
 def constraintOptimization(mu, sigma2, confusionLIS_cpu):
+    '''
+    idea:
+            batchLIS_cpu = getBatchLIS(mu)  # cpu version
+            confusionLIS_cpu = markConfusionSectionFromLIS(mu, batchLIS_cpu)
+            S = constraintOptimization(mu, sigma2, confusionLIS_cpu) # result is at gpu same with mu
+
+    :param mu:
+    :param sigma2:
+    :param confusionLIS_cpu:
+    :return:
+    '''
+
     device = mu.device
     # convert tensor to cpu
     sigma2_cpu = sigma2.cpu()
@@ -413,6 +425,54 @@ def getLIS(inputTensor):
 
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(inputTensor)
+    k = M[L]
+    for i in range(0,L):
+        LIS[k] = X[k]
+        k = P[k]
+
+    return LIS
+
+def getLIS_gpu(X):
+    '''
+    get Largest Increasing Subsequence  with non-choosing element marked as 0, in each H direction.
+    https://en.wikipedia.org/wiki/Longest_increasing_subsequence
+
+
+
+    :param X:  of size(B,S,W)
+    :return: Tensor with choosing element in its location with non-choosing element marked as 0, same length with input X
+    '''
+
+    B,S,W = X.shape
+    device =X.device
+    P = torch.zeros((B,S,W), dtype=torch.long, device=device)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
+    M = torch.zeros((B,S+1,W),dtype=torch.long,device=device)  # maximum element in each active subsequence
+
+    L =  torch.zeros((B,W), dtype=torch.long, device=device) # length of each LIS
+    for i in range(0,S):
+        # Binary search for the largest positive j ≤ L such that X[M[j]] <= X[i]
+        lo = 1
+        hi = L
+        while lo <= hi:
+            mid = math.ceil((lo + hi) / 2)
+            if X[M[mid]] <= X[i]:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        # After searching, lo is 1 greater than the length of the longest prefix of X[i]
+        newL = lo
+
+        # The predecessor of X[i] is the last index of the subsequence of length newL - 1
+        P[i] = M[newL - 1]
+        M[newL] = i  # save index of choosing element.
+
+        if newL > L:
+            # If we found a subsequence longer than any we've found yet, update L
+            L = newL
+
+    # Reconstruct the longest increasing subsequence LIS
+    LIS = torch.zeros_like(X)
     k = M[L]
     for i in range(0,L):
         LIS[k] = X[k]

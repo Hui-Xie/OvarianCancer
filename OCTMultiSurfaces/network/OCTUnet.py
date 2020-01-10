@@ -261,13 +261,7 @@ class OCTUnet(BasicModel):
         softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to consider batch dimension
         mu, sigma2 = computeMuVariance(softmaxOutputs)
 
-        # constraint optimization
-        if (not self.training) and False:
-            batchLIS_cpu = getBatchLIS(mu)  # cpu version
-            confusionLIS_cpu = markConfusionSectionFromLIS(mu, batchLIS_cpu)
-            S = constraintOptimization(mu, sigma2, confusionLIS_cpu) # result is at gpu same with mu
-        else:
-            S = mu
+        S = mu
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
 
