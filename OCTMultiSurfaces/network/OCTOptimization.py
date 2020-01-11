@@ -427,6 +427,8 @@ def getLIS(inputTensor):
             # If we found a subsequence longer than any we've found yet, update L
             L = newL
 
+        print(f"i ={i}, X = {X.view(X.numel())}, M={M.view(M.numel())}, P={P.view(P.numel())}, lo={lo}, L={L}")
+
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(inputTensor)
     k = M[L]
@@ -445,7 +447,7 @@ def getLIS_gpu(X):
     all index use torch.long
 
     :param X:  of size(B,S,W)
-    :return: Tensor with choosing element in its location keeep original value, and non-choosing element marked as 0, same length with input X
+    :return: Tensor with choosing element in its original location keeping original value, and non-choosing element marked as 0, same length with input X
     '''
 
     B,S,W = X.shape
@@ -459,15 +461,17 @@ def getLIS_gpu(X):
     L =  torch.zeros((B,W), dtype=torch.long, device=device) # length of each LIS
     for i in range(0,S):
         # Binary search for the largest positive j ≤ L such that X[M[j]] <= X[i]
-        lo = torch.empty((B,W), dtype=torch.long, device=device).fill_(1)
+        lo = torch.ones((B,W), dtype=torch.long, device=device)
         hi = L
-        mid = lo.clone()
+        mid = torch.zeros((B,W), dtype=torch.long, device=device)
         while (lo <= hi).any():
             mid = torch.where(lo <= hi, torch.ceil((lo + hi) / 2.0).long(), mid)
             mid3D = mid.unsqueeze(dim=1)
-            X_M_mid = X.gather(1, mid3D).squeeze(dim=1)
+            X_M_mid = X.gather(1, M.gather(1,mid3D)).squeeze(dim=1)
+            loRaw = lo.clone()
             lo  = torch.where((X_M_mid <= X[:,i,:]) & (lo <= hi), mid+1, lo)
-            hi  = torch.where((X_M_mid >  X[:,i,:]) & (lo <= hi), mid-1, hi)
+            hi  = torch.where((X_M_mid >  X[:,i,:]) & (loRaw <= hi), mid-1, hi)
+
 
         # After searching, lo is 1 greater than the length of the longest prefix of X[i]
         newL = lo
@@ -479,6 +483,8 @@ def getLIS_gpu(X):
 
         # If we found a subsequence longer than any we've found yet, update L
         L = torch.where(newL>L, newL, L)
+
+        print(f"i ={i}, X = {X.view(X.numel())}, M={M.view(M.numel())}, P={P.view(P.numel())}, lo={lo.view(lo.numel())}, L={L.view(L.numel())}")
 
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(X)

@@ -39,6 +39,10 @@ from OCTOptimization import *
 
 
 def main():
+    '''
+
+
+
     A = torch.tensor([0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15])
     ALIS = getLIS(A)
     print(f"A =  {A}, \nALIS= {ALIS}")
@@ -145,8 +149,16 @@ def main():
     print(f"S output = {S.view(N)}")
     print("")
 
+    '''
+
     print(f"======================test parallel getLIS in GPU======================")
-    X = (torch.rand(3,11,5)*100).int()
+    #X = (torch.rand(2,5,5)*10+1).int()
+    X = torch.tensor([2,8,5,2,1])
+    print(f"X = {X}")
+    x1D =getLIS(X)
+    print(f"X1D LIS = {x1D}")
+    X = X.view(1,torch.numel(X),1)
+    X.to(torch.device('cuda:0'))
     print(f"X = \n{X}\n")
     LIS_X = getLIS_gpu(X)
     print(f"LIS_X =\n{LIS_X}")
