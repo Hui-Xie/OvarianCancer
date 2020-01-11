@@ -477,6 +477,7 @@ def getLIS_gpu(X):
         # The predecessor of X[i] is the last index of the subsequence of length newL - 1
         P[:,i,:] = M[BIndex, (newL - 1).view(N), WIndex].view(B,W)
         M[BIndex, newL.view(N), WIndex].fill_(i)  # save index of choosing element.
+        # https://discuss.pytorch.org/t/creating-a-mask-tensor-from-an-index-tensor/31648
 
         # If we found a subsequence longer than any we've found yet, update L
         L = torch.where(newL>L, newL, L)
