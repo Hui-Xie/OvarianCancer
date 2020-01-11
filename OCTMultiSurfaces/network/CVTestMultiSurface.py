@@ -173,17 +173,20 @@ def main():
             patientIDList.append(extractPaitentID(testIDs[b]))
         f = plt.figure()
 
-        subplot1 = plt.subplot(1, 2, 1)
+        subplot1 = plt.subplot(1, 3, 1)
         subplot1.imshow(images[b,].squeeze(), cmap='gray')
-        for s in range(0, S):
-            subplot1.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.7)
 
-        subplot2 = plt.subplot(1, 2, 2)
+        subplot2 = plt.subplot(1, 3, 2)
         subplot2.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot2.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.7)
+            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.7)
 
-        plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_Predict.png"), dpi=300)
+        subplot3 = plt.subplot(1, 3, 3)
+        subplot3.imshow(images[b,].squeeze(), cmap='gray')
+        for s in range(0, S):
+            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.7)
+
+        plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi=300)
         plt.close()
 
     epoch = 0
