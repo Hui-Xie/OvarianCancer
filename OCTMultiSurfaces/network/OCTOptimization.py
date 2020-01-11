@@ -360,10 +360,11 @@ def gauranteeSurfaceOrder(S, batchLIS):
     # use upper bound and lower bound to replace its current location value
     # assume surface 0 (the top surface) is correct, and it will be basis for following layer.
     # simple neighbor layer switch does not gaurantee global order: for example: 1 5 3 2 6 7 8 9
+    # Note: & has far higher priority than and operator.
     for i in range(1,surfaceNum):
-        S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :] and 0 == batchLIS[:,i,:], S[:, i - 1, :], S[:, i, :])
+        S[:, i, :] = torch.where((S[:, i, :] < S[:, i - 1, :]) & (0 == batchLIS[:,i,:]), S[:, i - 1, :], S[:, i, :])
         if i != surfaceNum-1:
-            S[:, i, :] = torch.where(S[:, i, :] > S[:, i + 1, :] and 0 == batchLIS[:,i,:], S[:, i + 1, :], S[:, i, :])
+            S[:, i, :] = torch.where((S[:, i, :] > S[:, i + 1, :]) & (0 == batchLIS[:,i,:]), S[:, i + 1, :], S[:, i, :])
 
     # recursive call to make sure order gaurantee
     S = gauranteeSurfaceOrder(S, batchLIS)
@@ -441,7 +442,7 @@ def getLIS_gpu(X):
     for inpupt X of size (B,S,W)
     https://en.wikipedia.org/wiki/Longest_increasing_subsequence
 
-    only support maximum length of 128 in the sort direction,as all index data use torch.int8
+    all index data use torch.long
 
     :param X:  of size(B,S,W)
     :return: Tensor with choosing element in its location and non-choosing element marked as 0, same length with input X
@@ -449,26 +450,26 @@ def getLIS_gpu(X):
 
     B,S,W = X.shape
     device =X.device
-    P = torch.zeros((B,S,W), dtype=torch.int8, device=device)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
+    P = torch.zeros((B,S,W), dtype=torch.long, device=device)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
 
-    M = torch.zeros((B,S+1,W),dtype=torch.int8, device=device)  #   stores the index k of the smallest value X[k]
+    M = torch.zeros((B,S+1,W),dtype=torch.long, device=device)  #   stores the index k of the smallest value X[k]
     # such that there is an increasing subsequence of length j ending at X[k] on the range k ≤ i. Note that j ≤ (i+1),
     # because j ≥ 1 represents the length of the increasing subsequence, and k ≥ 0 represents the index of its termination.
 
-    L =  torch.zeros((B,W), dtype=torch.int8, device=device) # length of each LIS
+    L =  torch.zeros((B,W), dtype=torch.long, device=device) # length of each LIS
     BIndex, WIndex = (L+1).nonzero(as_tuple=True)  # for flatted tuple as index, each tuple has length of N
     N = B*W  # number of LISs
 
     for i in range(0,S):
         # Binary search for the largest positive j ≤ L such that X[M[j]] <= X[i]
-        lo = torch.empty((B,W), dtype=torch.int8, device=device).fill_(1)
+        lo = torch.empty((B,W), dtype=torch.long, device=device).fill_(1)
         hi = L.clone()
         mid = lo.clone()
         while (lo <= hi).any():
-            mid = torch.where(lo <= hi,((lo + hi) / 2).ceil(), mid)
+            mid = torch.where(lo <= hi, torch.ceil((lo + hi) / 2.0).long(), mid)
             X_M_mid = X[BIndex, mid.view(N), WIndex].view(B,W)  # X[M[mid]]
-            lo  = torch.where(X_M_mid <= X[:,i,:] and lo<=hi, mid+1, lo)
-            hi  = torch.where(X_M_mid >  X[:,i,:] and lo<=hi, mid-1, hi)
+            lo  = torch.where((X_M_mid <= X[:,i,:]) & (lo <= hi), mid+1, lo)
+            hi  = torch.where((X_M_mid >  X[:,i,:]) & (lo <= hi), mid-1, hi)
 
         # After searching, lo is 1 greater than the length of the longest prefix of X[i]
         newL = lo
@@ -483,7 +484,7 @@ def getLIS_gpu(X):
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(X)
     k = M[BIndex, L.view(N), WIndex].view(N)
-    k0 = torch.zeros((B,W), dtype=torch.int8, device=device).view(N) # indicate all initial index
+    k0 = torch.zeros((B,W), dtype=torch.long, device=device).view(N) # indicate all initial index
     while k.bool().any():
         LIS[BIndex, k, WIndex] = torch.where(k.bool(), X[BIndex, k, WIndex], LIS[BIndex, k, WIndex])
         k = torch.where(k.bool(), P[BIndex, k, WIndex], k0)

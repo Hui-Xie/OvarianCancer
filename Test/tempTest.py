@@ -145,6 +145,12 @@ def main():
     print(f"S output = {S.view(N)}")
     print("")
 
+    print(f"======================test parallel getLIS in GPU======================")
+    X = (torch.rand(3,11,5)*100).int()
+    print(f"X = \n{X}\n")
+    LIS_X = getLIS_gpu(X)
+    print(f"LIS_X =\n{LIS_X}")
+
 
 if __name__ == "__main__":
     main()
