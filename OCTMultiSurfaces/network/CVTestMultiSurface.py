@@ -200,9 +200,9 @@ def main():
         file.write(f"B,S,W = {B,S,W}\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
+        file.write(f"patientIDList ={patientIDList}\n")
         file.write(f"stdPatientError = {stdPatientError}\n")
         file.write(f"muPatientError = {muPatientError}\n")
-        file.write(f"patientIDList ={patientIDList}\n")
         file.write(f"stdError = {stdError}\n")
         file.write(f"muError = {muError}\n")
 
