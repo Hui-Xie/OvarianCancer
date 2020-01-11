@@ -29,6 +29,16 @@ def printUsage(argv):
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
+def extractPaitentID(str):
+    '''
+
+       :param str: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+       :return: output: 4511_OD_29134_OCT06
+       '''
+    stem = str[:str.rfind("_Volume/")]
+    patientID = stem[stem.rfind("/") + 1:]
+    return patientID
+
 def extractFileName(str):
     '''
 
@@ -155,9 +165,12 @@ def main():
     images = images.cpu().numpy()
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
+    patientIDList = []
     for b in range(B):
         # example: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
         patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
+        if "_OCT01" in patientID_Index:
+            patientIDList.append(extractPaitentID(testIDs[b]))
         f = plt.figure()
 
         subplot1 = plt.subplot(1, 2, 1)
@@ -170,7 +183,7 @@ def main():
         for s in range(0, S):
             subplot2.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.7)
 
-        plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_Predict.png"))
+        plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_Predict.png"), dpi=300)
         plt.close()
 
     epoch = 0
@@ -189,6 +202,7 @@ def main():
         file.write(f"muSurfaceError = {muSurfaceError}\n")
         file.write(f"stdPatientError = {stdPatientError}\n")
         file.write(f"muPatientError = {muPatientError}\n")
+        file.write(f"patientIDList ={patientIDList}\n")
         file.write(f"stdError = {stdError}\n")
         file.write(f"muError = {muError}\n")
 
