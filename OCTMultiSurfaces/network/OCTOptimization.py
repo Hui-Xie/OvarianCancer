@@ -398,7 +398,10 @@ def getLIS(inputTensor):
     N = len(inputTensor)
     assert 1 == X.dim()
     P = torch.zeros(N, dtype=torch.long)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
-    M = torch.zeros(N+1,dtype=torch.long)
+
+    M = torch.zeros(N+1,dtype=torch.long) #   stores the index k of the smallest value X[k]
+    # such that there is an increasing subsequence of length j ending at X[k] on the range k ≤ i. Note that j ≤ (i+1),
+    # because j ≥ 1 represents the length of the increasing subsequence, and k ≥ 0 represents the index of its termination.
 
     L = 0
     for i in range(0,N):
@@ -435,20 +438,27 @@ def getLIS(inputTensor):
 def getLIS_gpu(X):
     '''
     get Largest Increasing Subsequence  with non-choosing element marked as 0, in each H direction.
+    for inpupt X of size (B,S,W)
     https://en.wikipedia.org/wiki/Longest_increasing_subsequence
 
-    only support maximum length of 128 of sort direction
+    only support maximum length of 128 in the sort direction,as all index data use torch.int8
 
     :param X:  of size(B,S,W)
-    :return: Tensor with choosing element in its location with non-choosing element marked as 0, same length with input X
+    :return: Tensor with choosing element in its location and non-choosing element marked as 0, same length with input X
     '''
 
     B,S,W = X.shape
     device =X.device
     P = torch.zeros((B,S,W), dtype=torch.int8, device=device)  #  stores the index of the predecessor of X[k] in the longest increasing subsequence ending at X[k].
-    M = torch.zeros((B,S+1,W),dtype=torch.int8, device=device)  # maximum element in each active subsequence
+
+    M = torch.zeros((B,S+1,W),dtype=torch.int8, device=device)  #   stores the index k of the smallest value X[k]
+    # such that there is an increasing subsequence of length j ending at X[k] on the range k ≤ i. Note that j ≤ (i+1),
+    # because j ≥ 1 represents the length of the increasing subsequence, and k ≥ 0 represents the index of its termination.
 
     L =  torch.zeros((B,W), dtype=torch.int8, device=device) # length of each LIS
+    BIndex, WIndex = (L+1).nonzero(as_tuple=True)  # for flatted tuple as index, each tuple has length of N
+    N = B*W  # number of LISs
+
     for i in range(0,S):
         # Binary search for the largest positive j ≤ L such that X[M[j]] <= X[i]
         lo = torch.empty((B,W), dtype=torch.int8, device=device).fill_(1)
@@ -456,24 +466,26 @@ def getLIS_gpu(X):
         mid = lo.clone()
         while (lo <= hi).any():
             mid = torch.where(lo <= hi,((lo + hi) / 2).ceil(), mid)
-            lo  = torch.where(X[:,M[mid],:] <= X[:,i,:] and lo<=hi, mid+1, lo)
-            hi  = torch.where(X[:,M[mid],:] >  X[:,i,:] and lo<=hi, mid-1, hi)
+            X_M_mid = X[BIndex, mid.view(N), WIndex].view(B,W)  # X[M[mid]]
+            lo  = torch.where(X_M_mid <= X[:,i,:] and lo<=hi, mid+1, lo)
+            hi  = torch.where(X_M_mid >  X[:,i,:] and lo<=hi, mid-1, hi)
 
         # After searching, lo is 1 greater than the length of the longest prefix of X[i]
         newL = lo
 
         # The predecessor of X[i] is the last index of the subsequence of length newL - 1
-        P[:,i,:] = M[newL - 1]
-        M[newL].fill_(i)  # save index of choosing element.
+        P[:,i,:] = M[BIndex, (newL - 1).view(N), WIndex].view(B,W)
+        M[BIndex, newL, WIndex].fill_(i)  # save index of choosing element.
 
         # If we found a subsequence longer than any we've found yet, update L
         L = torch.where(newL>L, newL, L)
 
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(X)
-    k = M[L]
-    for i in range(0,L):
-        LIS[k] = X[k]
-        k = P[k]
+    k = M[BIndex, L.view(N), WIndex].view(N)
+    k0 = torch.zeros((B,W), dtype=torch.int8, device=device).view(N) # indicate all initial index
+    while k.bool().any():
+        LIS[BIndex, k, WIndex] = torch.where(k.bool(), X[BIndex, k, WIndex], LIS[BIndex, k, WIndex])
+        k = torch.where(k.bool(), P[BIndex, k, WIndex], k0)
 
     return LIS
