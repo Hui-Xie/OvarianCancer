@@ -82,7 +82,7 @@ def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1
         S = gauranteeSurfaceOrder(S, batchLIS)
         if torch.abs(S-preS).mean() < criterion:
             break
-    print(f"in this IPM: after {i} iterations to exit")
+    print(f"IPM used {i} iterations.")
     return S
 
 def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
