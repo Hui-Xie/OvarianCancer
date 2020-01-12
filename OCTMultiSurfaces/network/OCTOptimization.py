@@ -487,12 +487,14 @@ def getLIS_gpu(X):
         print(f"i ={i}, X = {X.view(X.numel())}, M={M.view(M.numel())}, P={P.view(P.numel())}, lo={lo.view(lo.numel())}, L={L.view(L.numel())}")
 
     # Reconstruct the longest increasing subsequence LIS
+    numTotalNonZeros = L.sum()
     LIS = torch.zeros_like(X)
     L3D = L.unsqueeze(dim=1)
     k = M.gather(1,L3D)  # both k and k0 are 3D tensor.
-    k0 = torch.zeros((B,1, W), dtype=torch.long, device=device) # indicate all initial index
-    while k.bool().any():
-        LIS.scatter_(1,k, torch.where(k.bool(), X.gather(1,k), LIS))
-        k = torch.where(k.bool(), P.gather(1,k), k0)
+    LIS.scatter_(1, k, X.gather(1, k))
+    while LIS.nonzero().size()[0]< numTotalNonZeros:
+        k = P.gather(1, k)
+        LIS.scatter_(1,k, X.gather(1,k))
+
 
     return LIS
