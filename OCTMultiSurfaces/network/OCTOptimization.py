@@ -116,25 +116,7 @@ class OCTMultiSurfaceLoss():
             loss /=num
         return loss
 
-def fillGapOfLIS_gpu(batchLIS, S):
-    '''
-    0 in batchLIS mean non LIS elements
-
-    :param batchLIS:
-    :param S:
-    :return:
-    '''
-
-    # get lowerbound of each 0 element
-
-
-    # get upperbound of each 0 element
-
-    # fill the gap
-
-
-
-# may discard it
+# may discard it, as it is a cpu version too slow.
 def fillGapOfLIS(batchLIS_cpu, mu):
     '''
     bounded nearest neighbour interpolation.
@@ -179,6 +161,8 @@ def fillGapOfLIS(batchLIS_cpu, mu):
                     s += 1
     return  batchLIS_cpu.to(device)
 
+# may depreciate it.
+# the assumption that confusion region has same mu value, which is not optimal solution when sigmas in them have big difference.
 def markConfusionSectionFromLIS(mu, batchLIS_cpu):
     '''
 
@@ -349,6 +333,7 @@ def gauranteeSurfaceOrder(S, batchLIS):
     :param S:
     :return:
     '''
+    assert S.size == batchLIS.size()
     B,surfaceNum,W = S.size()
 
     # check global order at entry
@@ -363,14 +348,14 @@ def gauranteeSurfaceOrder(S, batchLIS):
     # Note: & has far higher priority than and operator.
     for i in range(1,surfaceNum):
         S[:, i, :] = torch.where((S[:, i, :] < S[:, i - 1, :]) & (0 == batchLIS[:,i,:]), S[:, i - 1, :], S[:, i, :])
-        if i != surfaceNum-1:
+        if i < surfaceNum-1:
             S[:, i, :] = torch.where((S[:, i, :] > S[:, i + 1, :]) & (0 == batchLIS[:,i,:]), S[:, i + 1, :], S[:, i, :])
 
     # recursive call to make sure order gaurantee
     S = gauranteeSurfaceOrder(S, batchLIS)
     return S
 
-def getBatchLIS(mu):
+def getBatchLIS_cpu(mu):
     '''
 
     :param mu:
@@ -381,10 +366,10 @@ def getBatchLIS(mu):
     mu_cpu = mu.cpu()
     for b in range(0,B):
         for w in range(0,W):
-            LIS_cpu[b,:,w] = getLIS(mu_cpu[b,:,w])
+            LIS_cpu[b,:,w] = getaLIS(mu_cpu[b, :, w])
     return LIS_cpu
 
-def getLIS(inputTensor):
+def getaLIS(inputTensor):
     '''
     get Largest Increasing Subsequence  with non-choosing element marked as 0
     https://en.wikipedia.org/wiki/Longest_increasing_subsequence
@@ -437,7 +422,7 @@ def getLIS(inputTensor):
 
     return LIS
 
-def getLIS_gpu(X):
+def getBatchLIS_gpu(X):
     '''
     get Largest Increasing Subsequence  with non-choosing element marked as 0, in each H direction.
     for inpupt X of size (B,S,W)
@@ -492,7 +477,5 @@ def getLIS_gpu(X):
         LIS.scatter_(1, k, torch.where(L3D>0, X.gather(1, k), LIS.gather(1,k)))
         k = P.gather(1, k)
         L3D = L3D-1
-
-
 
     return LIS

@@ -164,7 +164,7 @@ def main():
 
     # X.to(torch.device('cuda:0'))
     print(f"X = \n{X}\n")
-    LIS_X = getLIS_gpu(X)
+    LIS_X = getBatchLIS_gpu(X)
     print(f"LIS_X =\n{LIS_X}")
 
 
