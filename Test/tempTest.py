@@ -152,16 +152,17 @@ def main():
     '''
 
     print(f"======================test parallel getLIS in GPU======================")
-    #X = (torch.rand(2,11,5)*100+1).int()
-
+    X = (torch.rand(2,11,5)*100).int()
+    '''
+    
     X = torch.tensor([2,8,5,2,1])
     print(f"X = {X}")
     x1D =getLIS(X)
     print(f"X1D LIS = {x1D}")
     X = X.view(1,torch.numel(X),1)
+    '''
 
-
-    X.to(torch.device('cuda:0'))
+    # X.to(torch.device('cuda:0'))
     print(f"X = \n{X}\n")
     LIS_X = getLIS_gpu(X)
     print(f"LIS_X =\n{LIS_X}")
