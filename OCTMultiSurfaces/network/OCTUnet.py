@@ -271,6 +271,12 @@ class OCTUnet(BasicModel):
         elif isinstance(lossFunc, nn.SmoothL1Loss):
             # lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
             # loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
+            useProxialIPM = self.getConfigParameter('useProxialIPM')
+            if useProxialIPM:
+                learningStepIPM = self.getConfigParameter("learningStepIPM")
+                maxIterationIPM = self.getConfigParameter("maxIterationIPM")
+                criterionIPM    = self.getConfigParameter("criterionIPM")
+                S = proximalIPM(mu,sigma2, maxIterations=maxIterationIPM, learningStep=learningStepIPM, criterion = criterionIPM )
 
             loss =  lossFunc(S, GTs) * lossWeight
         elif isinstance(lossFunc, OCTMultiSurfaceLoss):

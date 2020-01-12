@@ -52,5 +52,6 @@ lossFunc1Epochs: 1000
 # Proximal IPM Optimization
 useProxialIPM: True  # Flase means use gauranteeSurfaceOrder module.
 learningStepIPM: 0.1
-nIterationIPM: 100
+maxIterationIPM: 100
+criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
 

@@ -54,7 +54,7 @@ def computeMuVariance(x):
 
     return mu.squeeze(dim=-2),sigma2
 
-def proximalIPM(mu,sigma2, sortedS, nIterations=100, learningStep=0.01):
+def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1 ):
     '''
     use proximal IPM method to optimize the final output surface location by Unet.
     It is used in inference stage.
@@ -66,16 +66,23 @@ def proximalIPM(mu,sigma2, sortedS, nIterations=100, learningStep=0.01):
     :return:
            S: the optimized surface locations in [B,S, W] dimension.
     '''
+    # get initial sorted S0 in ascending order,
+    batchLIS = getBatchLIS_gpu(mu)
+    S0 = gauranteeSurfaceOrder(mu, batchLIS)
+    if torch.all(mu.eq(S0)):
+        return mu
 
-    if torch.all(mu.eq(sortedS)):
-        return sortedS
-
-    # get initial surface locations in ascending order, which do not need gradient
-    S = sortedS.clone().detach()
+    # S0 do not need gradient in back propagation
+    S = S0.clone().detach()
     # IPM iteration
-    for i in range(nIterations):
+    for i in range(0, maxIterations):
+        preS = S.clone()
         S = S-learningStep*(S-mu)/sigma2
-        S = gauranteeSurfaceOrder(S)
+        batchLIS = getBatchLIS_gpu(S)
+        S = gauranteeSurfaceOrder(S, batchLIS)
+        if torch.abs(S-preS).mean() < criterion:
+            break
+    print(f"in this IPM: after {i} iterations to exit")
     return S
 
 def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):

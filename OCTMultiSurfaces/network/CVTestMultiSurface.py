@@ -97,8 +97,11 @@ def main():
 
     # Proximal IPM Optimization
     useProxialIPM = cfg['useProxialIPM']
-    learningStepIPM =cfg['learningStepIPM'] # 0.1
-    nIterationIPM =cfg['nIterationIPM'] # : 50
+    if useProxialIPM:
+        learningStepIPM = cfg['learningStepIPM']  # 0.1
+        maxIterationIPM = cfg['maxIterationIPM']  # : 50
+        criterionIPM = cfg['criterionIPM']
+
 
     testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
     testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
@@ -127,10 +130,12 @@ def main():
     else:
         print(f"Can not find pretrained network for test!")
 
-    # according config file to update config parameter, maybe not necessary
+    # according config file to update config parameter
     net.updateConfigParameter('useProxialIPM', useProxialIPM)
-    net.updateConfigParameter("learningStepIPM", learningStepIPM)
-    net.updateConfigParameter("nIterationIPM", nIterationIPM)
+    if useProxialIPM:
+        net.updateConfigParameter("learningStepIPM", learningStepIPM)
+        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
+        net.updateConfigParameter("criterion", criterionIPM)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName + "/testLog"
     if not os.path.exists(logDir):

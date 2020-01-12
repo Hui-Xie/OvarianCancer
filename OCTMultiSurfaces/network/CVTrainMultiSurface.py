@@ -72,8 +72,10 @@ def main():
 
     # Proximal IPM Optimization
     useProxialIPM = cfg['useProxialIPM']
-    learningStepIPM =cfg['learningStepIPM'] # 0.1
-    nIterationIPM =cfg['nIterationIPM'] # : 50
+    if useProxialIPM:
+        learningStepIPM =cfg['learningStepIPM'] # 0.1
+        maxIterationIPM =cfg['maxIterationIPM'] # : 50
+        criterionIPM = cfg['criterionIPM']
 
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
     trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
@@ -116,10 +118,12 @@ def main():
         netMgr = NetMgr(net, netPath, device)
         print(f"Net starts training from scratch, and save at {netPath}")
 
-    # according config file to update config parameter, maybe not necessary
+    # according config file to update config parameter
     net.updateConfigParameter('useProxialIPM', useProxialIPM)
-    net.updateConfigParameter("learningStepIPM", learningStepIPM)
-    net.updateConfigParameter("nIterationIPM", nIterationIPM)
+    if useProxialIPM:
+        net.updateConfigParameter("learningStepIPM", learningStepIPM)
+        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
+        net.updateConfigParameter("criterion", criterionIPM)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):
