@@ -427,7 +427,6 @@ def getLIS(inputTensor):
             # If we found a subsequence longer than any we've found yet, update L
             L = newL
 
-        print(f"i ={i}, X = {X.view(X.numel())}, M={M.view(M.numel())}, P={P.view(P.numel())}, lo={lo}, L={L}")
 
     # Reconstruct the longest increasing subsequence LIS
     LIS = torch.zeros_like(inputTensor)
@@ -484,17 +483,16 @@ def getLIS_gpu(X):
         # If we found a subsequence longer than any we've found yet, update L
         L = torch.where(newL>L, newL, L)
 
-        print(f"i ={i}, X = {X.view(X.numel())}, M={M.view(M.numel())}, P={P.view(P.numel())}, lo={lo.view(lo.numel())}, L={L.view(L.numel())}")
 
     # Reconstruct the longest increasing subsequence LIS
-    numTotalNonZeros = L.sum()
     LIS = torch.zeros_like(X)
     L3D = L.unsqueeze(dim=1)
-    k = M.gather(1,L3D)  # both k and k0 are 3D tensor.
-    LIS.scatter_(1, k, X.gather(1, k))
-    while LIS.nonzero().size()[0]< numTotalNonZeros:
+    k = M.gather(1,L3D)  # k is a 3D tensor.
+    while (L3D>0).any():
+        LIS.scatter_(1, k, torch.where(L3D>0, X.gather(1, k), LIS.gather(1,k)))
         k = P.gather(1, k)
-        LIS.scatter_(1,k, X.gather(1,k))
+        L3D = L3D-1
+
 
 
     return LIS
