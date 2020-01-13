@@ -77,7 +77,8 @@ def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1
     # IPM iteration
     for i in range(0, maxIterations):
         preS = S.clone()
-        S = S-learningStep*(S-mu)/sigma2
+        # S = S-learningStep*(S-mu)/sigma2  # 1st gradient method
+        S = S-learningStep*(S-mu)         # newton's method in optimization
         batchLIS = getBatchLIS_gpu(S)
         S = gauranteeSurfaceOrder(S, batchLIS)
         if torch.abs(S-preS).mean() < criterion:
