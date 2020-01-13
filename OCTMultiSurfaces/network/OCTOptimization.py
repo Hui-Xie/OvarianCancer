@@ -487,3 +487,13 @@ def getBatchLIS_gpu(X):
         L3D = L3D-1
 
     return LIS
+
+def DPComputeSurface(logP):
+    '''
+    use Dynamic Programming to compute best possible path choosing along a column, which has maximum probabilty for all chosen
+    locations.
+    :param logP: in (B, S,H, W) size. each element indicates the log probability of this location belong to a surface.
+    :return: S:  in(B,S,W) size. return most possbile surface location.
+    '''
+
+    
