@@ -488,12 +488,26 @@ def getBatchLIS_gpu(X):
 
     return LIS
 
-def DPComputeSurface(logP):
+def DPComputeSurfaces(logP):
     '''
     use Dynamic Programming to compute best possible path choosing along a column, which has maximum probabilty for all chosen
     locations.
-    :param logP: in (B, S,H, W) size. each element indicates the log probability of this location belong to a surface.
-    :return: S:  in(B,S,W) size. return most possbile surface location.
+    This computation do not need gradient.
+    :param logP: in (B, NumSurfaces,H, W) size. each element indicates the log probability of this location belong to a surface.
+    :return: S:  in (B,NumSurfaces, W) size. return most possbile surface location.
+
+    the real groundtruth for OCT surface is integer.
+    
     '''
 
-    
+    # build reward table for maximum probabilty path choosing.
+    R = lopP.clone().detach() # Reward table
+    B, NumSurfaces, H, W = R.shape
+    with torch.no_grad():
+        for s in range(1, NumSurfaces):
+
+
+
+
+
+
