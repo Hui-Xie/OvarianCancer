@@ -497,7 +497,7 @@ def DPComputeSurfaces(logP):
     :return: S:  in (B,NumSurfaces, W) size. return most possbile surface location.
 
     the real groundtruth for OCT surface is integer.
-    
+
     '''
 
     # build reward table for maximum probabilty path choosing.
