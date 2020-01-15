@@ -215,7 +215,7 @@ def main():
         file.write(f"muError = {muError}\n")
 
 
-    print("============ End of Cross valiation test for OCT Multisurface Network ===========")
+    print(f"============ End of Cross valiation test for OCT Multisurface Network: {experimentName} ===========")
 
 
 if __name__ == "__main__":
