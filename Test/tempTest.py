@@ -172,9 +172,10 @@ def main():
     '''
 
     print("Test dynamic programmming")
-    B, NumSurfaces, H, W = 1,11,30,1
-    logP = torch.log(torch.rand(B, NumSurfaces, H, W))
-    print(f"logP = {logP}")
+    B, NumSurfaces, H, W = 1,5,8,1
+    logP = torch.rand(B, NumSurfaces, H, W)
+    print(f"logP: size= {logP.shape}")
+    print(f"logP = \n{logP.squeeze()}")
     L = DPComputeSurfaces(logP)
     print(f"L = {L}")
 

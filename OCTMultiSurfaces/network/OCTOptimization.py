@@ -524,6 +524,10 @@ def DPComputeSurfaces(logP):
                 cumMaxValue[:, s, h, :] = torch.where(R[:, s, h, :] >= cumMaxValue[:, s, h - 1, :], R[:, s, h, :], cumMaxValue[:, s, h - 1, :])
                 cumMaxIndex[:, s, h, :] = torch.where(R[:, s, h, :] >= cumMaxValue[:, s, h - 1, :], h*torch.ones((B,W), dtype=torch.int16, device=device), cumMaxIndex[:, s, h - 1, :])
 
+        #debug:
+        print(f"cumMaxValue = \n{cumMaxValue.squeeze()}")
+        print(f"cumMaxIndex = \n{cumMaxIndex.squeeze()}")
+        print(f"R = \n{R.squeeze()}")
 
         # find the maximum R at final surface s and backtrack
         L = torch.zeros((B,NumSurfaces,W),dtype=torch.int16, device=device)
