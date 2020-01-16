@@ -489,15 +489,14 @@ def getBatchLIS_gpu(X):
     return LIS
 
 def DPComputeSurfaces(logP):
-    pass
     '''
-    use Dynamic Programming to compute best possible path choosing along a column, which has maximum probabilty for all chosen
+    use Dynamic Programming to compute best possible path choosing along a column, which has maximum probability for all chosen
     locations.
-    This computation do not need gradient.
+    This computation do not need gradient because of its combination optimization.
     :param logP: in (B, NumSurfaces,H, W) size. each element indicates the log probability of this location belong to a surface.
-    :return: L:  in (B,NumSurfaces, W) size. return most possbile surface locations.
+    :return: Loc:  in (B,NumSurfaces, W) size. return most possible surface locations.
 
-    the real groundtruth for OCT surface are integers.
+    Notes: the real groundtruth for OCT surface are integers.
     '''
 
     device = logP.device
@@ -511,6 +510,7 @@ def DPComputeSurfaces(logP):
 
         # build surface 0  cumMax along H dimension
         cumMaxValue[:, 0, 0, :] = R[:, 0, 0, :]
+        # indicate the index along H dimension in cumMaxValue
         cumMaxIndex[:, :, 0, :] = torch.zeros((B,NumSurfaces,W), dtype=torch.int16, device=device)
         for h in range(1,H):
             cumMaxValue[:, 0, h,:] = torch.where(R[:, 0, h,:] >= cumMaxValue[:, 0, h-1,:], R[:, 0, h,:], cumMaxValue[:, 0, h-1,:] )
@@ -530,13 +530,14 @@ def DPComputeSurfaces(logP):
         print(f"R = \n{R.squeeze()}")
 
         # find the maximum R at final surface s and backtrack
-        L = torch.zeros((B,NumSurfaces,W),dtype=torch.int16, device=device)
-        l = cumMaxIndex[:,NumSurfaces-1, H-1,:]
+        Loc = torch.zeros((B,NumSurfaces,W),dtype=torch.int16, device=device)
+        loc = cumMaxIndex[:,NumSurfaces-1, H-1,:]
         for s in range(NumSurfaces-1, -1, -1):
-            L[:,s,:] = l.squeeze(dim=1)
-            l = cumMaxIndex[:, s-1,:,:].gather(1,L[:,s,:].unsqueeze(dim=1).long())
+            Loc[:,s,:] = loc.squeeze(dim=1)
+            if s != 0:
+                loc = cumMaxIndex[:, s-1,:,:].gather(1,Loc[:,s,:].unsqueeze(dim=1).long())
 
-        return L
+        return Loc
 
 
 
