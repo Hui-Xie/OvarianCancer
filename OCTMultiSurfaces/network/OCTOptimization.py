@@ -495,20 +495,47 @@ def DPComputeSurfaces(logP):
     locations.
     This computation do not need gradient.
     :param logP: in (B, NumSurfaces,H, W) size. each element indicates the log probability of this location belong to a surface.
-    :return: S:  in (B,NumSurfaces, W) size. return most possbile surface location.
+    :return: L:  in (B,NumSurfaces, W) size. return most possbile surface locations.
 
-    the real groundtruth for OCT surface is integer.
-
-    
-    # build reward table for maximum probabilty path choosing.
-    R = lopP.clone().detach() # Reward table
-    B, NumSurfaces, H, W = R.shape
-    with torch.no_grad():
-        for s in range(1, NumSurfaces):
+    the real groundtruth for OCT surface are integers.
     '''
 
+    device = logP.device
+    with torch.no_grad():
+        # build reward table for maximum probabilty path choosing.
+        R = logP.clone().detach() # Reward table with original logP as all initial values
+        B, NumSurfaces, H, W = R.shape
 
-		
+        cumMaxValue =  torch.zeros((B,NumSurfaces,H, W), dtype=torch.float32, device=device)
+        cumMaxIndex =  torch.zeros((B,NumSurfaces,H, W), dtype=torch.int16, device=device)
+
+        # build surface 0  cumMax along H dimension
+        cumMaxValue[:, 0, 0, :] = R[:, 0, 0, :]
+        cumMaxIndex[:, :, 0, :] = torch.zeros((B,NumSurfaces,W), dtype=torch.int16, device=device)
+        for h in range(1,H):
+            cumMaxValue[:, 0, h,:] = torch.where(R[:, 0, h,:] >= cumMaxValue[:, 0, h-1,:], R[:, 0, h,:], cumMaxValue[:, 0, h-1,:] )
+            cumMaxIndex[:, 0, h,:] = torch.where(R[:, 0, h,:] >= cumMaxValue[:, 0, h-1,:], h*torch.ones((B,W), dtype=torch.int16, device=device),  cumMaxIndex[:, 0, h-1,:] )
+
+        for s in range(1, NumSurfaces):
+            R[:,s,:,:] += cumMaxValue[:, s-1,:, :]  # core recursive formula
+
+            cumMaxValue[:, s, 0, :] = R[:, s, 0, :]
+            for h in range(1, H):
+                cumMaxValue[:, s, h, :] = torch.where(R[:, s, h, :] >= cumMaxValue[:, s, h - 1, :], R[:, s, h, :], cumMaxValue[:, s, h - 1, :])
+                cumMaxIndex[:, s, h, :] = torch.where(R[:, s, h, :] >= cumMaxValue[:, s, h - 1, :], h*torch.ones((B,W), dtype=torch.int16, device=device), cumMaxIndex[:, s, h - 1, :])
+
+
+        # find the maximum R at final surface s and backtrack
+        L = torch.zeros((B,NumSurfaces,W),dtype=torch.int16, device=device)
+        l = cumMaxIndex[:,NumSurfaces-1, H-1,:]
+        for s in range(NumSurfaces-1, -1, -1):
+            L[:,s,:] = l.squeeze(dim=1)
+            l = cumMaxIndex[:, s-1,:,:].gather(1,L[:,s,:].unsqueeze(dim=1).long())
+
+        return L
+
+
+
 
 
 

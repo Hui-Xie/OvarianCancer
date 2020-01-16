@@ -151,10 +151,12 @@ def main():
 
     '''
 
+    '''
     print(f"======================test parallel getLIS in GPU======================")
     X = (torch.rand(2,11,5)*100).int()
     '''
-    
+
+    '''
     X = torch.tensor([2,8,5,2,1])
     print(f"X = {X}")
     x1D =getLIS(X)
@@ -162,10 +164,20 @@ def main():
     X = X.view(1,torch.numel(X),1)
     '''
 
+    '''
     # X.to(torch.device('cuda:0'))
     print(f"X = \n{X}\n")
     LIS_X = getBatchLIS_gpu(X)
     print(f"LIS_X =\n{LIS_X}")
+    '''
+
+    print("Test dynamic programmming")
+    B, NumSurfaces, H, W = 1,11,30,1
+    logP = torch.log(torch.rand(B, NumSurfaces, H, W))
+    print(f"logP = {logP}")
+    L = DPComputeSurfaces(logP)
+    print(f"L = {L}")
+
 
 
 if __name__ == "__main__":
