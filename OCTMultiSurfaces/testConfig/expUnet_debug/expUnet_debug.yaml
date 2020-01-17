@@ -39,7 +39,9 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 network: "OCTUnet"
 netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV0_debug"  # this is pretrained network
+# if loadNetPath !="", netPath will be replaced by loadNetPath
+# the netParameters in below loadNetPath is from trained expUnet_20191228_CV1/
+loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_debug"  # this is pretrained network
 outputDir: ""
 
 
@@ -50,8 +52,11 @@ lossFunc1: "nn.SmoothL1Loss().to(device)"
 lossFunc1Epochs: 1000
 
 # Proximal IPM Optimization
-useProxialIPM: True  # Flase means use gauranteeSurfaceOrder module.
+useProxialIPM: False  # Flase means use gauranteeSurfaceOrder module.
 learningStepIPM: 0.1
 maxIterationIPM: 100
 criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
+
+useDynamicProgramming: True
+
 

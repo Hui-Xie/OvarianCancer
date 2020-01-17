@@ -257,15 +257,14 @@ class OCTUnet(BasicModel):
 
         x = self.m_up0(x)
 
-        # the input given to KLDivLoss is expected to contain log-probabilities
         softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to consider batch dimension
         mu, sigma2 = computeMuVariance(softmaxOutputs)
-
         S = mu
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
 
         if isinstance(lossFunc, nn.KLDivLoss):
+            # the input to KLDivLoss is expected to contain log-probabilities
             logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
         elif isinstance(lossFunc, nn.SmoothL1Loss):
@@ -278,7 +277,15 @@ class OCTUnet(BasicModel):
                 criterionIPM    = self.getConfigParameter("criterionIPM")
                 S = proximalIPM(mu,sigma2, maxIterations=maxIterationIPM, learningStep=learningStepIPM, criterion = criterionIPM )
 
-            loss =  lossFunc(S, GTs) * lossWeight
+            useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
+            if useDynamicProgramming:
+                logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
+                DPLoc = DPComputeSurfaces(logSoftmaxOutputs)
+                loss = lossFunc(S, GTs) * lossWeight + OCT_DislocationLoss(DPLoc, logSoftmaxOutputs, GTs)
+                S = DPLoc.float()
+            else:
+                loss =  lossFunc(S, GTs) * lossWeight
+
         elif isinstance(lossFunc, OCTMultiSurfaceLoss):
             loss = lossFunc(mu, sigma2, GTs)
         else:

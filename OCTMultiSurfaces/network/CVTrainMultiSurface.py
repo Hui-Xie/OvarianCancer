@@ -77,6 +77,8 @@ def main():
         maxIterationIPM =cfg['maxIterationIPM'] # : 50
         criterionIPM = cfg['criterionIPM']
 
+    useDynamicProgramming = cfg['useDynamicProgramming']
+
     trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
     trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
     trainIDPath     = os.path.join(dataDir,"training", f"patientID_CV{k:d}.json")
@@ -125,6 +127,8 @@ def main():
         net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
         net.updateConfigParameter("criterion", criterionIPM)
 
+    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
+
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):
         os.makedirs(logDir)  # recursive dir creation
@@ -133,7 +137,7 @@ def main():
     # train
     epochs = 1360000
     preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
-    preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 3.0
+    preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 3.3
     if net.training:
         initialEpoch = net.getConfigParameter("epoch") if "epoch" in net.m_configParametersDict else 0
     else:
