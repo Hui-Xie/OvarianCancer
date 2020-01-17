@@ -172,8 +172,20 @@ def main():
     '''
 
     print("Test dynamic programmming")
-    B, NumSurfaces, H, W = 1,5,8,1
+    B, NumSurfaces, H, W = 3,5,8,4
     logP = torch.rand(B, NumSurfaces, H, W)
+
+    '''
+    logP = torch.tensor(
+           [[0.1, 0.5, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1],
+            [0.1, 0.1, 0.4, 0.1, 0.2, 0.1, 0.2, 0.1],
+            [0.1, 0.1, 0.1, 0.5, 0.1, 0.1, 0.1, 0.4],
+            [0.1, 0.1, 0.1, 0.1, 0.5, 0.1, 0.1, 0.8],
+            [0.1, 0.1, 0.1, 0.1, 0.1, 0.5, 0.1, 0.1]])
+    '''
+
+
+    logP = logP.view(B, NumSurfaces, H, W)
     print(f"logP: size= {logP.shape}")
     print(f"logP = \n{logP.squeeze()}")
     L = DPComputeSurfaces(logP)
