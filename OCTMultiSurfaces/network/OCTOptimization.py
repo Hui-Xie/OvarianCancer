@@ -131,7 +131,7 @@ class OCT_DislocationLoss():
 
     def __call__(self, DPLoc, logP, GTs):
         epsilon = -1e-8
-        logPGTs = logP.gather(2,GTs.unsqueeze(dim=2)).squeeze(dim=2)
+        logPGTs = logP.gather(2,GTs.long().unsqueeze(dim=2)).squeeze(dim=2)
         logPLoc = logP.gather(2,DPLoc.unsqueeze(dim=2)).squeeze(dim=2)
 
         loss = torch.pow(GTs-DPLoc, 2)*logPGTs/(epsilon+logPLoc)

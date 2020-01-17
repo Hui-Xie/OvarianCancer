@@ -281,7 +281,8 @@ class OCTUnet(BasicModel):
             if useDynamicProgramming:
                 logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
                 DPLoc = DPComputeSurfaces(logSoftmaxOutputs)
-                loss = lossFunc(S, GTs) * lossWeight + OCT_DislocationLoss(DPLoc, logSoftmaxOutputs, GTs)
+                dislocationLossFunc = OCT_DislocationLoss()
+                loss = lossFunc(S, GTs) * lossWeight + dislocationLossFunc(DPLoc, logSoftmaxOutputs, GTs)
                 S = DPLoc.float()
             else:
                 loss =  lossFunc(S, GTs) * lossWeight
