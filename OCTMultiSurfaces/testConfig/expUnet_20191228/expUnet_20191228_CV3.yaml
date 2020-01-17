@@ -50,3 +50,5 @@ useProxialIPM: False
 learningStepIPM: 0.1
 maxIterationIPM: 100
 criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
+
+useDynamicProgramming: False

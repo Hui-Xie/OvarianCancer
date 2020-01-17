@@ -102,6 +102,7 @@ def main():
         maxIterationIPM = cfg['maxIterationIPM']  # : 50
         criterionIPM = cfg['criterionIPM']
 
+    useDynamicProgramming = cfg['useDynamicProgramming']
 
     testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
     testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
@@ -136,6 +137,8 @@ def main():
         net.updateConfigParameter("learningStepIPM", learningStepIPM)
         net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
         net.updateConfigParameter("criterion", criterionIPM)
+
+    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName + "/testLog"
     if not os.path.exists(logDir):
