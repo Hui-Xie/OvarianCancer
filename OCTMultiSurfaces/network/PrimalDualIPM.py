@@ -35,26 +35,31 @@ def forward(ctx, Mu, Q, A, S0, Lambda, alpha, epsilon):
     alpha = alpha.unsqueeze(dim=-1).unsqueeze(dim=-1) # in size: B,W,1,1
     S = S0
     Ones = torch.ones(B,W,N-1,1)
+    m = N-1
 
     while True:
         AS = torch.matmul(A,S)
-        DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda
+        DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
 
         # update t
-        t = -alpha*(N-1) / torch.matmul(AS.transpose(-1,-2), Lambda)    # t is in (B,W, 1,1) size
+        t = -alpha*m / torch.matmul(AS.transpose(-1,-2), Lambda)    # t is in (B,W, 1,1) size
 
         # compute primal dual search direction
         R1 = torch.matmul(Q,S-Mu)+torch.matmul(torch.transpose(A,-1,-2), Lambda) # the upper part of residual matrix R, in size:B,W,N,1
-        R2 = torch.matmul(DLambda,AS)- Ones/t.expand_as(Ones)  # the lower part of residual matrixt R, in size: B,W, N-1,1
+        R2 = torch.matmul(DLambda, AS)- Ones/t.expand_as(Ones)  # the lower part of residual matrixt R, in size: B,W, N-1,1
         R = torch.cat((R1,R2),dim=-2) # in size: B,W, 2N-1,1
         M = torch.cat(
             (torch.cat((Q, A.transpose(-1,-2)), dim=-1),
             torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
-            dim=-2)
+            dim=-2)  # in size: B,W,2N-1,2N-1
         MInv = torch.inverse(M)
-        PD = -torch.matmul(MInv,R) # primal dual improve direction
+        PD = -torch.matmul(MInv,R) # primal dual improve direction, in size: B,W,2N-1,1
+        PD_S = PD[:,:,0:N,:]
+        PD_Lambda = PD[:,:,N:,:]
 
         # linear search to determine step
+        negPDLambda = (PD_Lambda<0).int()*PD_Lambda # in size: B,W, N-1,1
+
 
 
 
