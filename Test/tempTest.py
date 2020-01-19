@@ -214,7 +214,7 @@ def main():
     A = A.unsqueeze(dim=0).unsqueeze(dim=0)
     A = A.expand(B, W, N-1,N)
 
-    S0 = torch.tensor([1.0,2.0,3.0,4.0,5.0,5.0,7.0,8.0,9.0,10.0,11.0])
+    S0 = torch.tensor([1.0,2.0,3.0,4.0,4.0,7.0,7.0,8.0,9.0,10.0,11.0])
     S0 = S0.unsqueeze(dim=0).unsqueeze(dim=0)
     S0 = S0.expand(B,W,N)
 
