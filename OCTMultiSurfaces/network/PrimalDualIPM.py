@@ -6,7 +6,18 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx,dL):
-        pass
+        Mu, Q, S, MInv = ctx.saved_tensors
+        dMu = dQ = dA = dS0 = dLambda = dalpha =depsilon = None
+        assert dL.dim() == 4
+        B,W,N,_ = dL.shape
+        dL_sLambda = torch.cat((dL,torch.zeros(B,W,N-1,1)), dim=-2)  # size: B,W,2N-1,1
+        d_sLambda = -torch.matmul(torch.transpose(MInv,-1,-2), dL_sLambda)  # size: B,W,2N-1,1
+        ds = d_sLambda[:,:,0:N,:]  # in size: B,W,N,1
+        if ctx.needs_input_grad[1]:
+            dQ = torch.matmul(ds,torch.transpose(S-Mu,-1,-2))
+        dMu = -torch.matmul(Q,ds)
+        # todo may need to squeeze to make sure dimension consistent.
+        return dMu, dQ, dA, dS0, dLambda, dalpha, depsilon
 
     @staticmethod
     def getResidualMatrix(Q,S,Mu,A, Lambda, t, AS, DLambda):
@@ -105,12 +116,11 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
-            print (f"R2Norm = \n{R2Norm}")
+            # print (f"R2Norm = \n{R2Norm}")
             if R2Norm.max() < epsilon:
                 break
 
-        # debug forward, comment it. In the future, it will uncomment
-        #ctx.save_for_backward(MInv) # in size: B,W,2N-1,2N-1
+        ctx.save_for_backward(Mu, Q, S, MInv)
 
         return S # in size: B,W,N,1
 
