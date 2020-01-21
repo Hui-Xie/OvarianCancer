@@ -130,9 +130,14 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
 class SeparationPrimalDualIPM(nn.Module):
     def __init__(self):
-        pass
+        super().__init__()
+        # todo: define A, Lambda, alpha, epsilon here which all are non-learning parameter
 
-    def forward(self, Mu, Sigma2Reciprocal):
-        return SeparationPrimalDualIPMFunction.apply(Mu, Sigma2Reciprocal)
+
+
+
+    def forward(self, Mu, Q):
+        # todo compute S0 here
+        return SeparationPrimalDualIPMFunction.apply(Mu, Q, A, S0, Lambda, alpha, epsilon)
 
 
