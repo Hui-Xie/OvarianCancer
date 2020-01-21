@@ -10,6 +10,9 @@ from FileUtilities import *
 
 volumesDir = "/home/hxie1/data/OCT_Beijing/control"
 segsDir = "/home/hxie1/data/OCT_Beijing/Correcting_Seg"
+H=496
+W=768
+DPI =96 # resolution 1920*1080 and diagonal 23".
 
 def main():
     volumesList = glob.glob(volumesDir+f"/*_Volume")
@@ -32,14 +35,15 @@ def main():
             pathStem = os.path.splitext(imageFile)[0]
             baseName = os.path.splitext(os.path.basename(imageFile))[0]
             image = mpimg.imread(imageFile)
-            f = plt.figure()
+            f = plt.figure(dpi=DPI, frameon=False)
+            f.set_size_inches(W/ float(DPI), H / float(DPI))
             plt.imshow(image, cmap='gray')
             for s in range(0, surface_num):
-                plt.plot(range(0,X), surfacesArray[z,s,:], linewidth=0.7)
-            titleName = patient + f"_OCT{z+1:02d}_surface"
-            plt.title(titleName)
+                plt.plot(range(0,X), surfacesArray[z,s,:], linewidth=0.4)
+            titleName = patient + f"_OCT{z+1:02d}_surfaces"
+            plt.axis('off')
 
-            plt.savefig(os.path.join(volumeDir, titleName+".png"))
+            plt.savefig(os.path.join(volumeDir, titleName+".png"), dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
         print(f"output volume surface for {volumeDir}")
 

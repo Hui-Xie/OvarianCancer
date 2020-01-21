@@ -2,6 +2,8 @@
 
 
 segDir = "/home/hxie1/data/OCT_Beijing/Correcting_Seg"
+volumesDir = "/home/hxie1/data/OCT_Beijing/control"
+outputDir = "/home/hxie1/data/OCT_Beijing/markErrorGT"
 
 
 # glob all file
@@ -18,21 +20,24 @@ device = torch.device('cuda:1')
 # torch.set_printoptions(threshold=10000)
 
 patientsList = glob.glob(segDir + f"/*_Volume_Sequence_Surfaces_Iowa.xml")
-outputFile = open(os.path.join(segDir, "violateSeparation.txt"), "w")
+outputFile = open(os.path.join(outputDir, "violateSeparation.txt"), "w")
 
 
 notes1 ="Check whether ground truth conforms the separation constraints: h_{i+1} >= h_i, where i is surface index.\n"
 notes2 ="Only check 128:640 columns with column starting index 0 for each paitent and each OCT Bscan.\n"
 notes3 ="In output below , column index w mean column (w+128) in original width 768 OCT images.\n"
-notes4 ="In output below, bsan index starts with 0 which corresponds OCT1 in the original images.\n "
+notes4 ="In output below, bscan index starts with 0 which corresponds OCT1 in the original images.\n "
 
 print(notes1, notes2, notes3, notes4, file=outputFile)
 
 
 errorPatients = 0
 errorNum = 0
-for patientXml in patientsList:
-    surfacesArray = getSurfacesArray(patientXml)
+for patientXmlPath in patientsList:
+    patientSurfaceName = os.path.splitext(os.path.basename(patientXmlPath))[0] # e.g. 1062_OD_9512_Volume_Sequence_Surfaces_Iowa
+    patientVolumeName = patientSurfaceName[0:patientSurfaceName.find("_Sequence_Surfaces_Iowa")]  # 1062_OD_9512_Volume
+
+    surfacesArray = getSurfacesArray(patientXmlPath)
     Z, Num_Surfaces, W = surfacesArray.shape
     assert Z == 31 and Num_Surfaces == 11 and W == 768
     surfacesArray = surfacesArray[:,:,128:640]
@@ -43,11 +48,11 @@ for patientXml in patientsList:
         continue
     else:
         errorPatients +=1
-        patient = os.path.splitext(os.path.basename(patientXml))[0]
+
         errorLocations = torch.nonzero(surface0 > surface1)
         currentErrorNum = errorLocations.shape[0]
         errorNum += currentErrorNum
-        outputFile.write(f"\n{patient} violates surface separation constraints in {errorLocations.shape[0]} locations indicated by below coordinates (BScan, surface, width):\n")
+        outputFile.write(f"\n{patientSurfaceName} violates surface separation constraints in {errorLocations.shape[0]} locations indicated by below coordinates (BScan, surface, width):\n")
         for i in range(currentErrorNum):
             if 0 != i%10 and i!=0:
                 outputFile.write(f"[{errorLocations[i,0].item():2d},{errorLocations[i,1].item():2d},{errorLocations[i,2].item():3d}], ")

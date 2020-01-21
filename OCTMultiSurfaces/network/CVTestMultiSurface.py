@@ -188,13 +188,13 @@ def main():
         subplot2 = plt.subplot(1, 3, 2)
         subplot2.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.7)
+            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.4)
         subplot2.axis('off')
 
         subplot3 = plt.subplot(1, 3, 3)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.7)
+            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.4)
         subplot3.axis('off')
 
         plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi=300)
