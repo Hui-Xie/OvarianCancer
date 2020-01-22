@@ -94,6 +94,10 @@ for patientXmlPath in patientsList:
             volumeDir = os.path.join(outputDir,patientVolumeName)
             if not os.path.exists(volumeDir):
                 os.makedirs(volumeDir)  # recursive dir creation
+
+            # a perfect solution for exact pixel size image.
+            plt.margins(0)
+            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
             plt.savefig(os.path.join(volumeDir, titleName + ".png"), dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
 

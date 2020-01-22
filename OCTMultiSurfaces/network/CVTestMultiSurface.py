@@ -201,6 +201,7 @@ def main():
             subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.4)
         subplot3.axis('off')
 
+        plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
         plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()

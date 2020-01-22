@@ -43,7 +43,9 @@ def main():
             titleName = patient + f"_OCT{z+1:02d}_surfaces"
             plt.axis('off')
 
-            # I can not find a solution for exact pixel size image.
+            # a perfect solution for exact pixel size image.
+            plt.margins(0)
+            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
             plt.savefig(os.path.join(volumeDir, titleName+".png"), dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
         print(f"output volume surface for {volumeDir}")
