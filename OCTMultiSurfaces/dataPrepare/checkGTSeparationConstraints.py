@@ -85,11 +85,11 @@ for patientXmlPath in patientsList:
 
 
             while i<currentErrorNum and errorLocations[i,0]==s:
-                plt.scatter(errorLocations[i,2]+128, surfacesArray[s,errorLocations[i,1],errorLocations[i,2]], s=2, c='r', marker='x')
+                plt.scatter(errorLocations[i,2]+128, surfacesArray[s,errorLocations[i,1],errorLocations[i,2]], s=1, c='r', marker='x')
                 i +=1
 
             plt.axis('off')
-            volumeDir = os.path.join(volumesDir,patientVolumeName)
+            volumeDir = os.path.join(outputDir,patientVolumeName)
             if not os.path.exists(volumeDir):
                 os.makedirs(volumeDir)  # recursive dir creation
             plt.savefig(os.path.join(volumeDir, titleName + ".png"), dpi='figure', bbox_inches='tight', pad_inches=0)
