@@ -54,6 +54,17 @@ def computeMuVariance(x):
 
     return mu.squeeze(dim=-2),sigma2
 
+def getQFromVariance(sigma2):
+    '''
+
+    :param sigma2: variance in (BatchSize, N, W) dimension
+    :return: Q: the diagonal reciprocal of variance in (B,W,N,N) size
+    '''
+    R = (1.0/sigma2).transpose(-1,-2) # the reciprocal in size of (B,W,N)
+    Q = torch.diag_embed(R, dim=0)
+    return Q
+
+
 def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1 ):
     '''
     use proximal IPM method to optimize the final output surface location by Unet.
@@ -61,7 +72,6 @@ def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1
 
     :param mu: mean of size (B,S,W), where S is surface
     :param sigma2: variance of size(B,S,W)
-    :param sortedS: sorted S from mu in ascending order
     :param nIterations: the iteration number  of proximal IPM method
     :return:
            S: the optimized surface locations in [B,S, W] dimension.

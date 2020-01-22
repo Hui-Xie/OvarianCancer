@@ -1,6 +1,9 @@
 
 import torch
 import torch.nn as nn
+import sys
+sys.path.append(".")
+from OCTOptimization import *
 
 class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
@@ -122,22 +125,46 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
         ctx.save_for_backward(Mu, Q, S, MInv)
 
-        return S # in size: B,W,N,1
+        return S.squeeze(dim=-1) # in size: B,W,N
 
 
 
 
 
 class SeparationPrimalDualIPM(nn.Module):
-    def __init__(self):
+    def __init__(self, B,W,N):
+        '''
+        :param B: BatchSize
+        :param W: Image width
+        :param N: number of surfaces
+        '''
         super().__init__()
-        # todo: define A, Lambda, alpha, epsilon here which all are non-learning parameter
 
+        # define A, Lambda, alpha, epsilon here which all are non-learning parameter
+        A = (torch.eye(N, N) + torch.diag(torch.ones(N - 1) * -1, 1))[0:-1] # for s_i - s_{i+1} <= 0 constraint
+        A = A.unsqueeze(dim=0).unsqueeze(dim=0)
+        self.m_A = A.expand(B, W, N - 1, N)
 
-
+        self.m_Lambda = torch.rand(B, W, N - 1)
+        self.m_alpha = 10 + torch.rand(B, W)  # enlarge factor for t
+        self.m_epsilon = 0.001
 
     def forward(self, Mu, Q):
-        # todo compute S0 here
-        return SeparationPrimalDualIPMFunction.apply(Mu, Q, A, S0, Lambda, alpha, epsilon)
+        '''
+
+        :param Mu: mean of size (B,S,W), where S is surface
+        :param Q: diagonal Reciprocal of variance in (B,W,N,N) size
+        :return:
+        '''
+        # compute S0 here
+        with torch.no_grad():
+            batchLIS = getBatchLIS_gpu(Mu)
+            S0 = gauranteeSurfaceOrder(Mu, batchLIS)
+            if torch.all(Mu.eq(S0)):
+                return Mu
+
+        # todo: switch H and W axis ordder
+
+        return SeparationPrimalDualIPMFunction.apply(Mu, Q, self.m_A, S0, self.m_Lambda, self.m_alpha, self.m_epsilon)
 
 
