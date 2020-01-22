@@ -33,6 +33,8 @@ notes4 ="In output below, bscan index starts with 0 which corresponds OCT1 in th
 
 print(notes1, notes2, notes3, notes4, file=outputFile)
 
+print(f"this program will run about 20 mins, please wait.....")
+
 W = 768
 H = 496
 
