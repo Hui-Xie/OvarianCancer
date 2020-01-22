@@ -87,7 +87,7 @@ for patientXmlPath in patientsList:
 
 
             while i<currentErrorNum and errorLocations[i,0]==s:
-                plt.scatter(errorLocations[i,2]+128, surfacesArray[s,errorLocations[i,1],errorLocations[i,2]], s=1, c='r', marker='x')
+                plt.scatter(errorLocations[i,2]+128, surfacesArray[s,errorLocations[i,1],errorLocations[i,2]], s=1, c='r', marker='o')
                 i +=1
 
             plt.axis('off')
