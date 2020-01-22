@@ -179,7 +179,11 @@ def main():
         patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
         if "_OCT01" in patientID_Index:
             patientIDList.append(extractPaitentID(testIDs[b]))
-        f = plt.figure()
+
+        f = plt.figure(frameon=False)
+        DPI = f.dpi
+        H = 496
+        f.set_size_inches(W*3/float(DPI), H/float(DPI))
 
         subplot1 = plt.subplot(1, 3, 1)
         subplot1.imshow(images[b,].squeeze(), cmap='gray')
@@ -197,7 +201,8 @@ def main():
             subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.4)
         subplot3.axis('off')
 
-        plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi=300)
+        plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
+        plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     epoch = 0
