@@ -28,7 +28,10 @@ class BasicModel(nn.Module):
         self.m_configParametersDict[nameStr] = value
 
     def getConfigParameter(self, nameStr):
-        return self.m_configParametersDict[nameStr]
+        if nameStr in self.m_configParametersDict:
+            return self.m_configParametersDict[nameStr]
+        else:
+            return False
 
     def setOptimizer(self, optimizer):
         self.m_optimizer = optimizer

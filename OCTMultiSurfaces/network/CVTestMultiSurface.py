@@ -103,6 +103,7 @@ def main():
         criterionIPM = cfg['criterionIPM']
 
     useDynamicProgramming = cfg['useDynamicProgramming']
+    usePrimalDualIPM = cfg['usePrimalDualIPM']
 
     testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
     testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
@@ -139,6 +140,7 @@ def main():
         net.updateConfigParameter("criterion", criterionIPM)
 
     net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
+    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName + "/testLog"
     if not os.path.exists(logDir):
