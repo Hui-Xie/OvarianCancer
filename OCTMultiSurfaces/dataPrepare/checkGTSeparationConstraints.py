@@ -24,6 +24,7 @@ device = torch.device('cuda:1')
 
 patientsList = glob.glob(segDir + f"/*_Volume_Sequence_Surfaces_Iowa.xml")
 outputFile = open(os.path.join(outputDir, "violateSeparation.txt"), "w")
+analyzeFile = open(os.path.join(outputDir, "analysis.txt"), "w")
 
 
 notes1 ="Check whether ground truth conforms the separation constraints: h_{i+1} >= h_i, where i is surface index.\n"
@@ -59,6 +60,8 @@ for patientXmlPath in patientsList:
         errorLocations = torch.nonzero(surface0 > surface1)
         currentErrorNum = errorLocations.shape[0]
         errorNum += currentErrorNum
+
+        # for exact coordinates of dislocations
         outputFile.write(f"\n{patientSurfaceName} violates surface separation constraints in {errorLocations.shape[0]} locations indicated by below coordinates (BScan, surface, width):\n")
         for i in range(currentErrorNum):
             if 0 != i%10 and i!=0:
@@ -66,6 +69,19 @@ for patientXmlPath in patientsList:
             else:
                 outputFile.write(f"\n[{errorLocations[i,0].item():2d},{errorLocations[i,1].item():2d},{errorLocations[i,2].item():3d}], ")
         outputFile.write("\n")
+
+        # for analysis about the dislocations
+        analyzeFile.write(f"\n{patientSurfaceName}:\n")
+        analyzeFile.write(f"ErrorSurface, \tInvolvedBscans\n")
+        surfacesSet = set(errorLocations[:,1].tolist())
+        surfaceBscanDict = {}
+        for s in surfacesSet:
+            surfaceBscanDict[str(s)] = set()
+        for i in range(currentErrorNum):
+            surfaceBscanDict[str(errorLocations[i,1].item())].add(errorLocations[i,0].item())
+        for s in surfacesSet:
+            analyzeFile.write(f"{s}, \t{surfaceBscanDict[str(s)]}\n")
+
 
         #load original images
         imagesList = glob.glob(volumesDir+f"/{patientVolumeName}/" + f"*_OCT[0-3][0-9].jpg")
@@ -103,7 +119,10 @@ for patientXmlPath in patientsList:
 
 
 outputFile.write(f"\n\n=============== {errorPatients} patients with total {errorNum} locations have ground truth not conforming separation constraints ============")
+analyzeFile.write(f"\n\n=============== {errorPatients} patients with total {errorNum} locations have ground truth not conforming separation constraints ============")
 outputFile.close()
+analyzeFile.close()
+
 print("===========  End of program ===============\n\n")
 
 
