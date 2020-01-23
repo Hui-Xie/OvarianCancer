@@ -61,7 +61,7 @@ def getQFromVariance(sigma2):
     :return: Q: the diagonal reciprocal of variance in (B,W,N,N) size
     '''
     R = (1.0/sigma2).transpose(-1,-2) # the reciprocal in size of (B,W,N)
-    Q = torch.diag_embed(R, dim=0)
+    Q = torch.diag_embed(R, offset=0)
     return Q
 
 

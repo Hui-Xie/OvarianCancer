@@ -149,11 +149,11 @@ class SeparationPrimalDualIPM(nn.Module):
         self.m_alpha = 10 + torch.rand(B, W)  # enlarge factor for t
         self.m_epsilon = 0.001
 
-    def forward(self, Mu, Q):
+    def forward(self, Mu, sigma2):
         '''
 
-        :param Mu: mean of size (B,S,W), where S is surface
-        :param Q: diagonal Reciprocal of variance in (B,W,N,N) size
+        :param Mu: mean of size (B,N,W), where N is the number of surfaces
+        :param Sigma2: variance of size (B,N,W), where N is number of surfaces
         :return:
         '''
         # compute S0 here
@@ -163,8 +163,20 @@ class SeparationPrimalDualIPM(nn.Module):
             if torch.all(Mu.eq(S0)):
                 return Mu
 
-        # todo: switch H and W axis ordder
+        # get Q from sigma2
+        # Q: diagonal Reciprocal of variance in (B,W,N,N) size
+        Q = getQFromVariance(sigma2) # in B,W,N,N
 
-        return SeparationPrimalDualIPMFunction.apply(Mu, Q, self.m_A, S0, self.m_Lambda, self.m_alpha, self.m_epsilon)
+        # switch H and W axis ordder
+        MuIPM = Mu.transpose(dim0=-1,dim1=-2)
+        S0IPM = S0.transpose(dim0=-1,dim1=-2)
+
+        S = SeparationPrimalDualIPMFunction.apply(MuIPM, Q, self.m_A, S0IPM, self.m_Lambda, self.m_alpha, self.m_epsilon) # in size: B,W,N
+
+        # switch H and W axis order back
+        S = S.transpose(dim0=-1,dim1=-2) # in size:B,N,W
+        return S
+
+
 
 

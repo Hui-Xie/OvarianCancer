@@ -36,7 +36,7 @@ import torch
 import sys
 sys.path.append("../OCTMultiSurfaces/network")
 from OCTOptimization import *
-from PrimalDualIPM import *
+from OCTPrimalDualIPM import *
 
 
 def main():
@@ -179,6 +179,7 @@ def main():
 
     '''
 
+
     '''
     logP = torch.tensor(
            [[0.1, 0.5, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1],
@@ -195,37 +196,48 @@ def main():
     L = DPComputeSurfaces(logP)
     print(f"L = {L}")
     '''
-
+    '''
+    
     print("test Primal dual IPM method")
     ctx = None
-    B,W,N= 2,3,11
+    B, W, N = 2, 3, 11
 
-    Mu = torch.tensor([1.0,2.0,3.0,6.0,5.0,4.0, 7.0,8.0,9.0,10.0,11.0])
+    Mu = torch.tensor([1.0, 2.0, 3.0, 6.0, 5.0, 4.0, 7.0, 8.0, 9.0, 10.0, 11.0])
     print(f"Mu= {Mu}")
     Mu = Mu.unsqueeze(dim=0).unsqueeze(dim=0)
-    Mu = Mu.expand(B,W,N)
+    Mu = Mu.expand(B, W, N)
 
-    Q  = torch.eye(N)
+    Q = torch.eye(N)
     Q = Q.unsqueeze(dim=0).unsqueeze(dim=0)
     Q = Q.expand(B, W, N, N)
 
-    A = (torch.eye(N,N)+torch.diag(torch.ones(N-1)*-1, 1))[0:-1]
+    A = (torch.eye(N, N) + torch.diag(torch.ones(N - 1) * -1, 1))[0:-1]
     print(f"A=\n{A}")
     A = A.unsqueeze(dim=0).unsqueeze(dim=0)
-    A = A.expand(B, W, N-1,N)
+    A = A.expand(B, W, N - 1, N)
 
-    S0 = torch.tensor([1.0,2.0,3.0,4.0,4.0,4.0,7.0,8.0,9.0,10.0,11.0])
+    S0 = torch.tensor([1.0, 2.0, 3.0, 4.0, 4.0, 4.0, 7.0, 8.0, 9.0, 10.0, 11.0])
     S0 = S0.unsqueeze(dim=0).unsqueeze(dim=0)
-    S0 = S0.expand(B,W,N)
+    S0 = S0.expand(B, W, N)
 
-    Lambda = torch.rand(B,W,N-1)
-    alpha = 10+ torch.rand(B,W)
+    Lambda = torch.rand(B, W, N - 1)
+    alpha = 10 + torch.rand(B, W)
     epsilon = 0.001
-
 
     S = SeparationPrimalDualIPMFunction.forward(ctx, Mu, Q, A, S0, Lambda, alpha, epsilon)
     print(f"S.shape = {S.shape}")
-    print (f"S =\n{S}")
+    print(f"S =\n{S}")
+    '''
+
+    B,N,W = 2,4,3
+
+    sigma2 = torch.rand((B,N,W))
+    reciprocal_sigma2 = 1/sigma2
+    print(f"reciprocal_sigma2 = \n{reciprocal_sigma2}")
+
+    Q = getQFromVariance(sigma2)
+    print(f"Q = \n{Q}")
+
 
 
 
