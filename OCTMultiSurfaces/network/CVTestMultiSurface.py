@@ -57,6 +57,9 @@ def main():
         printUsage(sys.argv)
         return -1
 
+    # debug:
+    MarkGTDisorder = True
+
     # parse config file
     configFile = sys.argv[1]
     with open(configFile) as file:
@@ -189,6 +192,12 @@ def main():
 
         subplot1 = plt.subplot(1, 3, 1)
         subplot1.imshow(images[b,].squeeze(), cmap='gray')
+        if MarkGTDisorder:
+            import numpy as np
+            gt0 = testGts[b, 0:-1, :]
+            gt1 = testGts[b, 1:,   :]
+            errorLocations = np.nonzeros(gt0>gt1)
+            plt.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')
         subplot1.axis('off')
 
         subplot2 = plt.subplot(1, 3, 2)
@@ -205,7 +214,10 @@ def main():
 
         plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
-        plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+        if MarkGTDisorder:
+            plt.savefig(os.path.join(outputDir, patientID_Index + "_MarkedImage_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+        else:
+            plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     epoch = 0
