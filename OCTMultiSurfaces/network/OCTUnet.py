@@ -8,6 +8,7 @@ import torch.nn.functional as F
 
 sys.path.append(".")
 from OCTOptimization import *
+from OCTPrimalDuaoIPM import *
 
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
@@ -267,28 +268,44 @@ class OCTUnet(BasicModel):
             # the input to KLDivLoss is expected to contain log-probabilities
             logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
             loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
+
         elif isinstance(lossFunc, nn.SmoothL1Loss):
+            # below 2 lines are discarded try.
             # lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
             # loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
+
+
             useProxialIPM = self.getConfigParameter('useProxialIPM')
+            useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
+            usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
+
             if useProxialIPM:
                 learningStepIPM = self.getConfigParameter("learningStepIPM")
                 maxIterationIPM = self.getConfigParameter("maxIterationIPM")
                 criterionIPM    = self.getConfigParameter("criterionIPM")
                 S = proximalIPM(mu,sigma2, maxIterations=maxIterationIPM, learningStep=learningStepIPM, criterion = criterionIPM )
+                loss = lossFunc(S, GTs) * lossWeight
 
-            useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
-            if useDynamicProgramming:
+            elif useDynamicProgramming:
                 logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
                 DPLoc = DPComputeSurfaces(logSoftmaxOutputs)
                 dislocationLossFunc = OCT_DislocationLoss()
                 loss = lossFunc(S, GTs) * lossWeight + dislocationLossFunc(DPLoc, logSoftmaxOutputs, GTs)
                 S = DPLoc.float()
+
+            elif usePrimalDualIPM:
+                B,N,W = mu.shape
+                separationPrimalDualIPM = SeparationPrimalDualIPM(B,W,N)
+                S = separationPrimalDualIPM(mu,sigma2)
+                loss = lossFunc(S, GTs) * lossWeight
+
             else:
+                # here S does not implement constrained optimization
                 loss =  lossFunc(S, GTs) * lossWeight
 
         elif isinstance(lossFunc, OCTMultiSurfaceLoss):
             loss = lossFunc(mu, sigma2, GTs)
+
         else:
             assert("Error Loss function in net.forward!")
 

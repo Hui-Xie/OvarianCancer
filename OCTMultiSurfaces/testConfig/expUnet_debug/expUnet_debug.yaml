@@ -1,4 +1,4 @@
-# debug for dynamic programming
+# debug for primal dual IPM
 
 # Use basic Unet + KLDLoss for OCT multisurface
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss
@@ -57,6 +57,8 @@ learningStepIPM: 0.1
 maxIterationIPM: 100
 criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
 
-useDynamicProgramming: True
+useDynamicProgramming: False
+
+usePrimalDualIPM: True
 
 

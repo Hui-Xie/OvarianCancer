@@ -39,6 +39,11 @@ from OCTOptimization import *
 from OCTPrimalDualIPM import *
 
 
+def func1(a):
+    a = a+1
+    return a
+
+
 def main():
     '''
 
@@ -239,7 +244,10 @@ def main():
     print(f"Q = \n{Q}")
 
 
-
+    B = 30
+    C = func1(B)
+    print(f"C = {C}")
+    print(f"B = {B}")
 
 
 

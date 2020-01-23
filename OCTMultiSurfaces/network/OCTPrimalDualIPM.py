@@ -11,15 +11,16 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
     def backward(ctx,dL):
         Mu, Q, S, MInv = ctx.saved_tensors
         dMu = dQ = dA = dS0 = dLambda = dalpha =depsilon = None
-        assert dL.dim() == 4
-        B,W,N,_ = dL.shape
+        assert dL.dim() == 3
+        B,W,N = dL.shape
+        assert MInv.shape[0] == 2*N-1
+        dL = dL.unsqueeze(dim=-1)
         dL_sLambda = torch.cat((dL,torch.zeros(B,W,N-1,1)), dim=-2)  # size: B,W,2N-1,1
         d_sLambda = -torch.matmul(torch.transpose(MInv,-1,-2), dL_sLambda)  # size: B,W,2N-1,1
         ds = d_sLambda[:,:,0:N,:]  # in size: B,W,N,1
         if ctx.needs_input_grad[1]:
             dQ = torch.matmul(ds,torch.transpose(S-Mu,-1,-2))
         dMu = -torch.matmul(Q,ds)
-        # todo may need to squeeze to make sure dimension consistent.
         return dMu, dQ, dA, dS0, dLambda, dalpha, depsilon
 
     @staticmethod
@@ -155,6 +156,7 @@ class SeparationPrimalDualIPM(nn.Module):
         :param Mu: mean of size (B,N,W), where N is the number of surfaces
         :param Sigma2: variance of size (B,N,W), where N is number of surfaces
         :return:
+                S: the optimized surface location in (B,N,W) size
         '''
         # compute S0 here
         with torch.no_grad():
