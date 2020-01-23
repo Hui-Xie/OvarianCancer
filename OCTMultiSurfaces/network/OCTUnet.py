@@ -8,7 +8,7 @@ import torch.nn.functional as F
 
 sys.path.append(".")
 from OCTOptimization import *
-from OCTPrimalDuaoIPM import *
+from OCTPrimalDualIPM import *
 
 sys.path.append("../..")
 from framework.BasicModel import BasicModel

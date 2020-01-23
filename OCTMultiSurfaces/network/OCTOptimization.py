@@ -368,7 +368,7 @@ def gauranteeSurfaceOrder(S, batchLIS):
     :param S:
     :return:
     '''
-    assert S.size == batchLIS.size()
+    assert S.size() == batchLIS.size()
     B,surfaceNum,W = S.size()
 
     # check global order at entry
