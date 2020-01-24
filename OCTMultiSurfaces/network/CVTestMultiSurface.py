@@ -196,8 +196,9 @@ def main():
             import numpy as np
             gt0 = testGts[b, 0:-1, :]
             gt1 = testGts[b, 1:,   :]
-            errorLocations = np.nonzeros(gt0>gt1)
-            plt.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')
+            errorLocations = np.nonzero(gt0>gt1)  # return as tuple
+            if len(errorLocations[0]) > 0:
+                plt.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')
         subplot1.axis('off')
 
         subplot2 = plt.subplot(1, 3, 2)
