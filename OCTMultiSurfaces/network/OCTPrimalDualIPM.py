@@ -51,7 +51,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
         '''
         assert Mu.shape == S0.shape
-        B,W,N = Mu.size() # N is numSurfaces
+        B,W,N = Mu.shape # N is numSurfaces
         assert torch.all(alpha > 1) and epsilon >0
         Mu = Mu.unsqueeze(dim=-1)  # in size: B,W,N,1
         S0 = S0.unsqueeze(dim=-1)  # in size:B,W,N,1

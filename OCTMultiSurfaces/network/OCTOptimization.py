@@ -369,26 +369,15 @@ def gauranteeSurfaceOrder(S, batchLIS):
     :return:
     '''
     assert S.size() == batchLIS.size()
-    B,surfaceNum,W = S.size()
+    B, surfaceNum, W = S.size()
 
-    # check global order at entry
-    S0 = S[:, :-1, :]
-    S1 = S[:, 1:, :]
-    if (S1 >= S0).all():
-        return S
-
-    # use upper bound and lower bound to replace its current location value
-    # assume surface 0 (the top surface) is correct, and it will be basis for following layer.
-    # simple neighbor layer switch does not gaurantee global order: for example: 1 5 3 2 6 7 8 9
-    # Note: & has far higher priority than and operator.
+    # get minimum value along column dimension in S
+    columnMin, _ = torch.min(S, dim=-2)
+    # for surface=0; if batachLIS=0, fill the above clomn minimum value
+    batchLIS[:,0,:] = torch.where(0 == batchLIS[:,0,:], columnMin, batchLIS[:,0,:])
     for i in range(1,surfaceNum):
-        S[:, i, :] = torch.where((S[:, i, :] < S[:, i - 1, :]) & (0 == batchLIS[:,i,:]), S[:, i - 1, :], S[:, i, :])
-        if i < surfaceNum-1:
-            S[:, i, :] = torch.where((S[:, i, :] > S[:, i + 1, :]) & (0 == batchLIS[:,i,:]), S[:, i + 1, :], S[:, i, :])
-
-    # recursive call to make sure order gaurantee
-    S = gauranteeSurfaceOrder(S, batchLIS)
-    return S
+        batchLIS[:, i, :] = torch.where(0 == batchLIS[:,i,:], batchLIS[:, i - 1, :], batchLIS[:, i, :])
+    return batchLIS
 
 def getBatchLIS_cpu(mu):
     '''
@@ -400,7 +389,8 @@ def getBatchLIS_cpu(mu):
     LIS_cpu = torch.zeros(mu.size(), device='cpu', dtype=torch.float)
     mu_cpu = mu.cpu()
     for b in range(0,B):
-        for w in range(0,W):
+
+       for w in range(0,W):
             LIS_cpu[b,:,w] = getaLIS(mu_cpu[b, :, w])
     return LIS_cpu
 
@@ -465,7 +455,7 @@ def getBatchLIS_gpu(X):
 
     all index use torch.long
 
-    :param X:  of size(B,S,W)
+    :param X:  of size(B,N,W)
     :return: Tensor with choosing element in its original location keeping original value, and non-choosing element marked as 0, same length with input X
     '''
 
