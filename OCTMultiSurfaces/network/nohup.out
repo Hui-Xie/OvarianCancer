@@ -1,44 +1,3 @@
-
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV0
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV0
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV0 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV1
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV1
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV1 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV9
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV9
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV9 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV3
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV3
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV3 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV2
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV2
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV2 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV4
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV4
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV4 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV5
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV5
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV5 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV6
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV6
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV6 ===========
 /home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
   "See the documentation of nn.Upsample for details.".format(mode))
 Experiment: expUnet_20191228_CV7
@@ -46,6 +5,11 @@ Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet
 ============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV7 ===========
 /home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
   "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnet_20191228_CV8
-Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV8
-============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV8 ===========
+Experiment: expUnet_20191228_CV4
+Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV4
+============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV4 ===========
+/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  "See the documentation of nn.Upsample for details.".format(mode))
+Experiment: expUnet_20191228_CV4
+Network load from  /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV4
+============ End of Cross valiation test for OCT Multisurface Network: expUnet_20191228_CV4 ===========

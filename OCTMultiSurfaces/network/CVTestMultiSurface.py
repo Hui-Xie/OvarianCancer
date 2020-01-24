@@ -190,6 +190,9 @@ def main():
         H = 496
         f.set_size_inches(W*3/float(DPI), H/float(DPI))
 
+        plt.margins(0)
+        plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
+
         subplot1 = plt.subplot(1, 3, 1)
         subplot1.imshow(images[b,].squeeze(), cmap='gray')
         if MarkGTDisorder:
@@ -198,7 +201,7 @@ def main():
             gt1 = testGts[b, 1:,   :]
             errorLocations = np.nonzero(gt0>gt1)  # return as tuple
             if len(errorLocations[0]) > 0:
-                plt.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')
+                subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')
         subplot1.axis('off')
 
         subplot2 = plt.subplot(1, 3, 2)
