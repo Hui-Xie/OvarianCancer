@@ -373,7 +373,7 @@ def gauranteeSurfaceOrder(S, batchLIS):
 
     # get minimum value along column dimension in S
     columnMin, _ = torch.min(S, dim=-2)
-    # for surface=0; if batachLIS=0, fill the above clomn minimum value
+    # for surface=0; if batachLIS=0, fill the above column minimum value
     batchLIS[:,0,:] = torch.where(0 == batchLIS[:,0,:], columnMin, batchLIS[:,0,:])
     for i in range(1,surfaceNum):
         batchLIS[:, i, :] = torch.where(0 == batchLIS[:,i,:], batchLIS[:, i - 1, :], batchLIS[:, i, :])

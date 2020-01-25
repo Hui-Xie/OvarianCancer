@@ -295,7 +295,7 @@ class OCTUnet(BasicModel):
 
             elif usePrimalDualIPM:
                 B,N,W = mu.shape
-                separationPrimalDualIPM = SeparationPrimalDualIPM(B,W,N)
+                separationPrimalDualIPM = SeparationPrimalDualIPM(B,W,N, device=mu.device)
                 S = separationPrimalDualIPM(mu,sigma2)
                 loss = lossFunc(S, GTs) * lossWeight
 

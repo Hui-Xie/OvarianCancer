@@ -26,7 +26,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
     @staticmethod
     def getResidualMatrix(Q,S,Mu,A, Lambda, t, AS, DLambda):
         B, W, N, _ = Mu.shape  # N is numSurfaces
-        Ones = torch.ones(B,W,N-1,1)
+        Ones = torch.ones(B,W,N-1,1, device=Mu.device)
         R1 = torch.matmul(Q, S - Mu) + torch.matmul(torch.transpose(A, -1, -2), Lambda)  # the upper part of residual matrix R, in size:B,W,N,1
         R2 = torch.matmul(DLambda, AS) - Ones / t.expand_as(Ones)  # the lower part of residual matrixt R, in size: B,W, N-1,1
         R = torch.cat((R1, R2), dim=-2)  # in size: B,W, 2N-1,1
@@ -133,7 +133,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
 
 class SeparationPrimalDualIPM(nn.Module):
-    def __init__(self, B,W,N):
+    def __init__(self, B,W,N,device=torch.device('cuda:0')):
         '''
         :param B: BatchSize
         :param W: Image width
@@ -142,12 +142,12 @@ class SeparationPrimalDualIPM(nn.Module):
         super().__init__()
 
         # define A, Lambda, alpha, epsilon here which all are non-learning parameter
-        A = (torch.eye(N, N) + torch.diag(torch.ones(N - 1) * -1, 1))[0:-1] # for s_i - s_{i+1} <= 0 constraint
+        A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(N - 1, device=device) * -1, 1))[0:-1] # for s_i - s_{i+1} <= 0 constraint
         A = A.unsqueeze(dim=0).unsqueeze(dim=0)
         self.m_A = A.expand(B, W, N - 1, N)
 
-        self.m_Lambda = torch.rand(B, W, N - 1)
-        self.m_alpha = 10 + torch.rand(B, W)  # enlarge factor for t
+        self.m_Lambda = torch.rand(B, W, N - 1, device=device)
+        self.m_alpha = 10 + torch.rand(B, W, device=device)  # enlarge factor for t
         self.m_epsilon = 0.001
 
     def forward(self, Mu, sigma2):
