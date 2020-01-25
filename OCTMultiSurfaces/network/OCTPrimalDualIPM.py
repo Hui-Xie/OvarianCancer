@@ -101,13 +101,16 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 break
 
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
-        ctx.Mu = Mu
-        ctx.Q = Q
-        ctx.S = S
-        ctx.MInv = MInv
+        if torch.is_grad_enabled():
+            ctx.Mu = Mu
+            ctx.Q = Q
+            ctx.S = S
+            ctx.MInv = MInv
 
-        S = S.squeeze(dim=-1)  # in size: B,W,N
-        S.requires_grad_()
+            S = S.squeeze(dim=-1)  # in size: B,W,N
+            S.requires_grad_()
+        else:
+            S = S.squeeze(dim=-1)  # in size: B,W,N
 
         return S
 
@@ -115,25 +118,30 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
     @staticmethod
     def backward(ctx, dL):
         # Mu, Q, S, MInv = ctx.saved_tensors
-        device = dL.device
-        Mu = ctx.Mu
-        Q = ctx.Q
-        S = ctx.S
-        MInv = ctx.MInv
 
         dMu = dQ = dA = dS0 = dLambda = dalpha = depsilon = None
-        assert dL.dim() == 3
-        B, W, N = dL.shape
-        assert MInv.shape[2] == 2 * N - 1
-        dL = dL.unsqueeze(dim=-1)
-        dL_sLambda = torch.cat((dL, torch.zeros(B, W, N - 1, 1, device=device) ), dim=-2)  # size: B,W,2N-1,1
-        d_sLambda = -torch.matmul(torch.transpose(MInv, -1, -2), dL_sLambda)  # size: B,W,2N-1,1
-        ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
-        if ctx.needs_input_grad[1]:
-            dQ = torch.matmul(ds, torch.transpose(S - Mu, -1, -2)) # size: B,W, N,N
-        dMu = -torch.matmul(Q, ds) # size: B,W,N,1
-        dMu = dMu.squeeze(dim=-1) # size: B,W,N
+        if torch.is_grad_enabled():
+            device = dL.device
+            Mu = ctx.Mu
+            Q = ctx.Q
+            S = ctx.S
+            MInv = ctx.MInv
+
+            assert dL.dim() == 3
+            B, W, N = dL.shape
+            assert MInv.shape[2] == 2 * N - 1
+            dL = dL.unsqueeze(dim=-1)
+            dL_sLambda = torch.cat((dL, torch.zeros(B, W, N - 1, 1, device=device) ), dim=-2)  # size: B,W,2N-1,1
+            d_sLambda = -torch.matmul(torch.transpose(MInv, -1, -2), dL_sLambda)  # size: B,W,2N-1,1
+            ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
+            if ctx.needs_input_grad[1]:
+                dQ = torch.matmul(ds, torch.transpose(S - Mu, -1, -2)) # size: B,W, N,N
+            dMu = -torch.matmul(Q, ds) # size: B,W,N,1
+            dMu = dMu.squeeze(dim=-1) # size: B,W,N
+
         return dMu, dQ, dA, dS0, dLambda, dalpha, depsilon
+
+
 
     @staticmethod
     def getResidualMatrix(Q,S,Mu,A, Lambda, t, AS, DLambda):
