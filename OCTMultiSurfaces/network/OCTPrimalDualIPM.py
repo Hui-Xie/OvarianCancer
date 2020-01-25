@@ -8,19 +8,22 @@ from OCTOptimization import *
 class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
     @staticmethod
-    def backward(ctx,dL):
-        Mu, Q, S, MInv = ctx.saved_tensors
-        dMu = dQ = dA = dS0 = dLambda = dalpha =depsilon = None
+    def backward(ctx, dL):
+        # Mu, Q, S, MInv = ctx.saved_tensors
+        # Mu,Q,S = ctx.saved_tensors
+        MInv = ctx.MInv
+
+        dMu = dQ = dA = dS0 = dLambda = dalpha = depsilon = None
         assert dL.dim() == 3
-        B,W,N = dL.shape
-        assert MInv.shape[0] == 2*N-1
+        B, W, N = dL.shape
+        assert MInv.shape[0] == 2 * N - 1
         dL = dL.unsqueeze(dim=-1)
-        dL_sLambda = torch.cat((dL,torch.zeros(B,W,N-1,1)), dim=-2)  # size: B,W,2N-1,1
-        d_sLambda = -torch.matmul(torch.transpose(MInv,-1,-2), dL_sLambda)  # size: B,W,2N-1,1
-        ds = d_sLambda[:,:,0:N,:]  # in size: B,W,N,1
+        dL_sLambda = torch.cat((dL, torch.zeros(B, W, N - 1, 1)), dim=-2)  # size: B,W,2N-1,1
+        d_sLambda = -torch.matmul(torch.transpose(MInv, -1, -2), dL_sLambda)  # size: B,W,2N-1,1
+        ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
         if ctx.needs_input_grad[1]:
-            dQ = torch.matmul(ds,torch.transpose(S-Mu,-1,-2))
-        dMu = -torch.matmul(Q,ds)
+            dQ = torch.matmul(ds, torch.transpose(S - Mu, -1, -2))
+        dMu = -torch.matmul(Q, ds)
         return dMu, dQ, dA, dS0, dLambda, dalpha, depsilon
 
     @staticmethod
@@ -124,9 +127,14 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             if R2Norm.max() < epsilon:
                 break
 
-        ctx.save_for_backward(Mu, Q, S, MInv)
+        #ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
+        ctx.save_for_backward(Mu, Q, S)
+        ctx.MInv = MInv
 
-        return S.squeeze(dim=-1) # in size: B,W,N
+        S = S.squeeze(dim=-1)  # in size: B,W,N
+        S.requires_grad_()
+
+        return S
 
 
 
