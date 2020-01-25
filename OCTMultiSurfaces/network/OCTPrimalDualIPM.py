@@ -101,16 +101,15 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 break
 
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
+
         if torch.is_grad_enabled():
             ctx.Mu = Mu
             ctx.Q = Q
             ctx.S = S
             ctx.MInv = MInv
 
-            S = S.squeeze(dim=-1)  # in size: B,W,N
-            S.requires_grad_()
-        else:
-            S = S.squeeze(dim=-1)  # in size: B,W,N
+        S = S.squeeze(dim=-1)  # in size: B,W,N
+        S.requires_grad_(requires_grad=torch.is_grad_enabled())
 
         return S
 
