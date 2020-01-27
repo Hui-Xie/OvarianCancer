@@ -9,18 +9,20 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
     @staticmethod
     def forward(ctx, Mu, Q, A, S0, Lambda, alpha, epsilon):
         '''
+        the forward of constrained convex optimization with Primal-Dual Interior Point Method.
+
         S* = arg min_{S} {(S-Mu)' *Q* (S-Mu)/2}, such that A <= 0
 
-        :param ctx: context object
+        :param ctx: autograd context object
         :param Mu: predicted mean,  in (B,W, NumSurfaces) size, in below N=NumSurfaces
         :param Q: Sigma2Reciprocal: Q, the diagonal reciprocal of variance in (B,W,N,N) size
         :param A: constraint matrix A <= 0 with A of size(n-1, n), in (B, W, N-1,N) size
-        :param S0: in (B,W, N) size
-        :param Lambda: dual variable, in (B,W,N-1) size
+        :param S0: the initial feasibible solution, in (B,W, N) size
+        :param Lambda: Lagragian dual variable, in (B,W,N-1) size
         :param alpha: IPM iteration t enlarge variable, in (B,W) size, alpha >1
         :param epsilon: float scalar, error tolerance
 
-        :return: S: the optimal S, surface location in (B, W,N) size
+        :return: S: the optimal solution S, surface location in (B, W,N) size
                  MInverse:  (2n-1)*(2n-1) matrix,where n= NumSurfaces, save for backward
 
         '''
@@ -48,8 +50,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             t = -alpha * m / torch.matmul(AS.transpose(-1, -2), Lambda)  # t is in (B,W, 1,1) size
 
             # compute primal dual search direction
-            R = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S0, Mu, A, Lambda, t, AS,
-                                                                  DLambda)  # in size: B,W, 2N-1,1
+            R = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S0, Mu, A, Lambda, t, AS, DLambda)  # in size: B,W, 2N-1,1
             M = torch.cat(
                 (torch.cat((Q, A.transpose(-1, -2)), dim=-1),
                  torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
@@ -85,7 +86,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
             R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
             R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
-            while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
+            while torch.any(R2Norm > (1 - beta2 * step) * RNorm):  #todo here exists infinite loop
                 step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
                 stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
                 stepExpandN_1 = step.expand(B, W, N - 1, 1)
