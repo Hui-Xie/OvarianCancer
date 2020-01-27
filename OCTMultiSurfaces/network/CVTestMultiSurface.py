@@ -170,6 +170,7 @@ def main():
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
         # Error Std and mean
+        testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
