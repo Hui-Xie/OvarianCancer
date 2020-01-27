@@ -35,14 +35,11 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
         alpha = alpha.unsqueeze(dim=-1).unsqueeze(dim=-1)  # in size: B,W,1,1
 
         m = N - 1
-        beta1 = 0.55  # step shrink coefficient
+        beta1 = 0.4  # step shrink coefficient
         beta2 = 0.055
 
         S = S0
         Lambda = Lambda0
-
-        AS = torch.matmul(A, S)  # in size: B,W, N-1, 1
-        DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
 
         while True:
             # preserve the previous iteration as S0  and Lambda0
@@ -50,11 +47,14 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             S0 = S.clone()
             Lambda0 = Lambda.clone()
 
+            AS = torch.matmul(A, S)  # in size: B,W, N-1, 1
+            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
+
             # update t
             t = -alpha * m / torch.matmul(AS.transpose(-1, -2), Lambda)  # t is in (B,W, 1,1) size
 
-            # compute primal dual search direction
-            R = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S0, Mu, A, Lambda0, t, AS, DLambda)  # in size: B,W, 2N-1,1
+            # compute primal dual search direction according S0 and Lambda0 value
+            R = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)  # in size: B,W, 2N-1,1
             M = torch.cat(
                 (torch.cat((Q, A.transpose(-1, -2)), dim=-1),
                  torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
@@ -90,8 +90,10 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
             R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
             R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
-            while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
-                step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
+            #while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
+            while torch.any(R2Norm > RNorm):
+                # step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
+                step = torch.where(R2Norm > RNorm, step * beta1, step)
                 stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
                 stepExpandN_1 = step.expand_as(PD_Lambda) # in size: B,W,N-1,1
                 S = S0 + stepExpandN * PD_S
