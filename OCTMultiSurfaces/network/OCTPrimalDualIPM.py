@@ -68,8 +68,11 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             # make sure updated Lambda >=0
             negPDLambda = (PD_Lambda < 0).int() * PD_Lambda + (PD_Lambda >= 0).int() * (
                 -1) * Lambda  # in size: B,W, N-1,1
-            step, _ = (-Lambda / negPDLambda).min(dim=-2, keepdim=True)
+            step = -(Lambda / negPDLambda)   # in torch.tensor 0/0 = nan, and -0/(-2) = -0, and -(0/(-2)) = 0
+            step = torch.where(step != step, torch.ones_like(step), step)  # replace nan as 1
+            step, _ = step.min(dim=-2, keepdim=True)
             step = 0.99 * step  # in size: B,W,1,1
+            # assert (step == step).all().item()  # detect nan because of nan!=nan
 
             # make sure AS<0
             stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
@@ -90,10 +93,8 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
             R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
             R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
-            #while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
-            while torch.any(R2Norm > RNorm):
-                # step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
-                step = torch.where(R2Norm > RNorm, step * beta1, step)
+            while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
+                step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
                 stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
                 stepExpandN_1 = step.expand_as(PD_Lambda) # in size: B,W,N-1,1
                 S = S0 + stepExpandN * PD_S
@@ -103,12 +104,11 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
-            # print (f"R2Norm = \n{R2Norm}")
+
             if R2Norm.max() < epsilon:
                 break
 
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
-
         if torch.is_grad_enabled():
             ctx.Mu = Mu
             ctx.Q = Q
@@ -180,7 +180,7 @@ class SeparationPrimalDualIPM(nn.Module):
 
         self.m_Lambda = torch.rand(B, W, N - 1, device=device)
         self.m_alpha = 10 + torch.rand(B, W, device=device)  # enlarge factor for t
-        self.m_epsilon = 0.1  # 0.001 is too small.
+        self.m_epsilon = 0.01  # 0.001 is too small.
 
     def forward(self, Mu, sigma2):
         '''
