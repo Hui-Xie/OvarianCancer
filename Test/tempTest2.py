@@ -16,6 +16,8 @@ class Foo(autograd.Function):
 
 inp = torch.rand(100, requires_grad=True)
 
+print(f"torchversion: {torch.__version__}")
+
 with torch.no_grad():
     Foo.apply(inp).sum()
 print("Ok")
