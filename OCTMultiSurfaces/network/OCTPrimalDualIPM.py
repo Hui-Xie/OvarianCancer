@@ -35,7 +35,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
         alpha = alpha.unsqueeze(dim=-1).unsqueeze(dim=-1)  # in size: B,W,1,1
 
         m = N - 1
-        beta1 = 0.4  # step shrink coefficient
+        beta1 = 0.5  # step shrink coefficient
         beta2 = 0.055
 
         S = S0
@@ -180,7 +180,7 @@ class SeparationPrimalDualIPM(nn.Module):
 
         self.m_Lambda = torch.rand(B, W, N - 1, device=device)
         self.m_alpha = 10 + torch.rand(B, W, device=device)  # enlarge factor for t
-        self.m_epsilon = 0.001
+        self.m_epsilon = 0.1  # 0.001 is too small.
 
     def forward(self, Mu, sigma2):
         '''
