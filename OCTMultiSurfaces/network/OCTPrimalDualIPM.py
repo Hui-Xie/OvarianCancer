@@ -41,7 +41,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
         S = S0
         Lambda = Lambda0
 
-        nIterations = 0
+        nIPMIterations = 0
         while True:
             # preserve the previous iteration as S0  and Lambda0
             # while S and Lambda indicate current S and Lambda
@@ -105,11 +105,11 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
-            nIterations +=1
-            if R2Norm.max() < epsilon:
+            nIPMIterations +=1
+            if R2Norm.max() < epsilon or nIPMIterations >7: # IPM generally iterates 6-7 iterations.
                 break
 
-        print(f"Primal-dual IPM nIterations = {nIterations}")
+        print(f"Primal-dual IPM nIterations = {nIPMIterations}")
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
         if torch.is_grad_enabled():
             ctx.Mu = Mu
