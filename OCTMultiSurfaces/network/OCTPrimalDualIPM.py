@@ -41,6 +41,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
         S = S0
         Lambda = Lambda0
 
+        nIterations = 0
         while True:
             # preserve the previous iteration as S0  and Lambda0
             # while S and Lambda indicate current S and Lambda
@@ -59,7 +60,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 (torch.cat((Q, A.transpose(-1, -2)), dim=-1),
                  torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
                 dim=-2)  # in size: B,W,2N-1,2N-1
-            MInv = torch.inverse(M)
+            MInv = torch.pinverse(M)  # use pseudo-inverse to avoid singular matrix
             PD = -torch.matmul(MInv, R)  # primal dual improve direction, in size: B,W,2N-1,1
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
             PD_Lambda = PD[:, :, N:, :]  # in size: B,W,N-1,1
@@ -104,10 +105,11 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
-
+            nIterations +=1
             if R2Norm.max() < epsilon:
                 break
 
+        print(f"Primal-dual IPM nIterations = {nIterations}")
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
         if torch.is_grad_enabled():
             ctx.Mu = Mu
