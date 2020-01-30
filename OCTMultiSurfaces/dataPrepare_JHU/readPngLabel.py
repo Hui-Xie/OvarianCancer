@@ -1,5 +1,5 @@
-pngFilePath = "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms06_spectralis_macula_v1_s1_R_24.png"
-labelFilePath = "/home/hxie1/data/OCT_JHU/preprocessedData/label/ms06_spectralis_macula_v1_s1_R_24.txt"
+pngFilePath = "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms16_spectralis_macula_v1_s1_R_1.png"
+labelFilePath = "/home/hxie1/data/OCT_JHU/preprocessedData/label/ms16_spectralis_macula_v1_s1_R_1.txt"
 outputDir = "/home/hxie1/data/OCT_JHU/output"
 
 import json

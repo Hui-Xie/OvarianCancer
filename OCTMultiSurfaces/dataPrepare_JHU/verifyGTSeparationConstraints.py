@@ -20,9 +20,12 @@ for segFile in segList:
     if np.any(surfaces0 > surfaces1):
         errorLocations = np.nonzero(surfaces0>surfaces1)
         print(f"error location at file: {segFile}:\n \t {errorLocations}")
-        print(f"surface value: {surfaces0[errorLocations]}")
-        print(f"its next layer value: {surfaces1[errorLocations]}")
+        print(f"error surface value: {surfaces0[errorLocations]}")
+        print(f"its next surface value: {surfaces1[errorLocations]}")
+        print(f"its next next surface value: {surfaces1[errorLocations[0]+1, errorLocations[1]]}")
         print("\n")
 print("=========End of program====== ")
+
+# fix ground truth error: use small value to replace, intead swap, the big value
 
 
