@@ -41,7 +41,7 @@ saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 # data augmentation
 
-network: "OCTUnet"
+network: "OCTUnetTongren"
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath:  "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20200108_CV0_SmoothL1Loss"  # this is pretrained network
 outputDir: ""

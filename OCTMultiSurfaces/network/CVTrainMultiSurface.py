@@ -81,13 +81,22 @@ def main():
     useDynamicProgramming = cfg['useDynamicProgramming']
     usePrimalDualIPM = cfg['usePrimalDualIPM']
 
-    trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
-    trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
-    trainIDPath     = os.path.join(dataDir,"training", f"patientID_CV{k:d}.json")
+    if -1==k and 0==K:  # do not use cross validation
+        trainImagesPath = os.path.join(dataDir, "training", f"images.npy")
+        trainLabelsPath = os.path.join(dataDir, "training", f"surfaces.npy")
+        trainIDPath = os.path.join(dataDir, "training", f"patientID.json")
 
-    validationImagesPath = os.path.join(dataDir,"validation", f"images_CV{k:d}.npy")
-    validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
-    validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
+        validationImagesPath = os.path.join(dataDir, "validation", f"images.npy")
+        validationLabelsPath = os.path.join(dataDir, "validation", f"surfaces.npy")
+        validationIDPath = os.path.join(dataDir, "validation", f"patientID.json")
+    else:  # use cross validation
+        trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
+        trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
+        trainIDPath     = os.path.join(dataDir,"training", f"patientID_CV{k:d}.json")
+
+        validationImagesPath = os.path.join(dataDir,"validation", f"images_CV{k:d}.npy")
+        validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
+        validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
 
     tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate)
 

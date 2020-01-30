@@ -1,10 +1,7 @@
 # OCTUnet for multisurface segmentation
 
 
-import torch
 import sys
-import torch.nn as nn
-import torch.nn.functional as F
 
 sys.path.append(".")
 from OCTOptimization import *
