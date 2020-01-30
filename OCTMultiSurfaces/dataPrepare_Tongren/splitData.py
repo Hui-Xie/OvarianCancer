@@ -1,10 +1,10 @@
 # from one fold CV data, split the last one patient data out for validation
-imageFilePath = "/home/hxie1/data/OCT_Beijing/numpy/test/originalCV5/images_CV5.npy"
-surfaceFilePath = "/home/hxie1/data/OCT_Beijing/numpy/test/originalCV5/surfaces_CV5.npy"
-patientIDFilePath = "/home/hxie1/data/OCT_Beijing/numpy/test/originalCV5/patientID_CV5.json"
+imageFilePath = "/home/hxie1/data/OCT_Tongren/numpy/test/originalCV5/images_CV5.npy"
+surfaceFilePath = "/home/hxie1/data/OCT_Tongren/numpy/test/originalCV5/surfaces_CV5.npy"
+patientIDFilePath = "/home/hxie1/data/OCT_Tongren/numpy/test/originalCV5/patientID_CV5.json"
 
-output1Path = "/home/hxie1/data/OCT_Beijing/numpy/test"
-output2Path = "/home/hxie1/data/OCT_Beijing/numpy/validation"
+output1Path = "/home/hxie1/data/OCT_Tongren/numpy/test"
+output2Path = "/home/hxie1/data/OCT_Tongren/numpy/validation"
 
 nCut = 31  #we cut last nCut slides into output2Path
 

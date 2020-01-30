@@ -25,7 +25,7 @@ Summary:
 =====================================================================
 CV0:
 Test: expUnet_20191228_CV0
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV0
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV0
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.5708, 4.5510, 5.0862, 4.5920, 3.8351, 4.0189, 4.9384, 3.4977, 2.9430, 2.9496, 2.7499], device='cuda:1')
 muSurfaceError = tensor([1.8404, 4.2833, 5.7992, 4.7526, 3.9920, 4.1561, 3.3091, 4.0271, 3.2395, 3.3488, 2.4682], device='cuda:1')
@@ -38,7 +38,7 @@ muError = 3.746938705444336
 =====================================================================
 CV1:
 Test: expUnet_20191228_CV1
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV1
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV1
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.7322, 3.8543, 4.2381, 3.4214, 3.2267, 3.4822, 2.0212, 2.9705, 3.0812, 2.5836, 2.2924], device='cuda:3')
 muSurfaceError = tensor([1.9514, 3.6272, 4.6211, 3.3106, 3.0710, 3.5570, 2.2211, 3.7395, 3.4096, 2.6363, 2.2393], device='cuda:3')
@@ -51,7 +51,7 @@ muError = 3.1258327960968018
 =====================================================================
 CV2:
 Test: expUnet_20191228_CV2
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV2
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV2
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.5897, 3.8727, 4.1696, 3.5122, 2.5484, 2.9014, 1.5621, 3.0188, 2.5203, 1.8675, 1.4988], device='cuda:3')
 muSurfaceError = tensor([1.9424, 3.7233, 4.9488, 3.8123, 3.0786, 3.0950, 1.9423, 3.8779, 3.0792, 2.3047, 1.9813], device='cuda:3')
@@ -63,7 +63,7 @@ muError = 3.071448564529419
 
 =====================================================================
 CV3:Test: expUnet_20191228_CV3
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV3
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV3
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.3613, 3.6152, 4.3908, 2.8100, 2.6040, 2.8283, 1.6004, 2.6582, 2.3060, 2.2131, 1.6669], device='cuda:3')
 muSurfaceError = tensor([1.6840, 3.4571, 4.4555, 3.2533, 3.1603, 3.2265, 2.0590, 3.1977, 2.7924, 2.7643, 2.0936], device='cuda:3')
@@ -76,7 +76,7 @@ muError = 2.9221506118774414
 =====================================================================
 CV4:
 Test: expUnet_20191228_CV4
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV4
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV4
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.7784, 4.1396, 3.8241, 2.8597, 2.6964, 3.1843, 1.7057, 2.6402, 4.8236, 1.7558, 1.7333], device='cuda:3')
 muSurfaceError = tensor([1.6514, 3.6809, 4.4573, 3.1964, 3.0045, 3.4786, 2.0364, 3.4050, 3.3310, 2.0876, 2.0850], device='cuda:3')
@@ -89,7 +89,7 @@ muError = 2.946722984313965
 =====================================================================
 CV5:
 Test: expUnet_20191228_CV5
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV5
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV5
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.4745, 4.2662, 4.4793, 3.8869, 3.7723, 4.0851, 1.6228, 2.6845, 2.1261, 1.7369, 1.6919], device='cuda:3')
 muSurfaceError = tensor([1.7012, 3.9680, 4.8371, 4.1877, 3.9056, 4.0303, 1.9693, 3.3080, 2.5765, 2.1254, 2.0025], device='cuda:3')
@@ -102,7 +102,7 @@ muError = 3.1465237140655518
 =====================================================================
 CV6:
 Test: expUnet_20191228_CV6
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV6
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV6
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.8334, 3.2213, 4.4546, 3.5883, 3.8394, 3.8456, 6.6122, 6.5582, 3.4639, 2.3518, 1.9090], device='cuda:1')
 muSurfaceError = tensor([1.6959, 3.2130, 4.8481, 3.1580, 3.0905, 3.3451, 2.9504, 4.5092, 3.7309, 2.6952, 1.9811], device='cuda:1')
@@ -115,7 +115,7 @@ muError = 3.201585292816162
 =====================================================================
 CV7:
 Test: expUnet_20191228_CV7
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV7
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV7
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.5446, 3.4431, 3.8692, 2.8651, 3.3571, 3.3776, 1.4589, 3.0267, 3.4267, 2.0155, 1.4600], device='cuda:3')
 muSurfaceError = tensor([1.7521, 3.4066, 4.5032, 3.3322, 3.9396, 3.9942, 1.8653, 3.6948, 3.8350, 2.5361, 1.8689], device='cuda:3')
@@ -128,7 +128,7 @@ muError = 3.157099723815918
 =====================================================================
 CV8:
 Test: expUnet_20191228_CV8
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV8
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV8
 B,S,W = (155, 11, 512)
 stdSurfaceError = tensor([1.5374, 3.6029, 4.3582, 2.9352, 2.6502, 4.2196, 1.9833, 2.5606, 2.7881, 1.9575, 1.6113], device='cuda:2')
 muSurfaceError = tensor([1.8712, 3.8867, 4.7004, 3.2731, 3.1860, 4.2300, 2.2259, 3.3660, 3.2300, 2.5243, 1.9436], device='cuda:2')
@@ -141,7 +141,7 @@ muError = 3.1306567192077637
 =====================================================================
 CV9:
 Test: expUnet_20191228_CV9
-loadNetPath: /home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV9
+loadNetPath: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV9
 B,S,W = (124, 11, 512)
 stdSurfaceError = tensor([1.3164, 2.7170, 3.7577, 2.3956, 2.0680, 2.2903, 1.3180, 2.3785, 2.7232, 1.7188, 1.4038], device='cuda:2')
 muSurfaceError = tensor([1.6422, 2.8289, 4.9164, 2.9483, 2.6477, 2.7385, 1.7410, 2.9343, 3.0746, 2.2411, 1.8094], device='cuda:2')

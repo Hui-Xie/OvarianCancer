@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from FileUtilities import *
 
-volumesDir = "/home/hxie1/data/OCT_Beijing/control"
-segsDir = "/home/hxie1/data/OCT_Beijing/Correcting_Seg"
+volumesDir = "/home/hxie1/data/OCT_Tongren/control"
+segsDir = "/home/hxie1/data/OCT_Tongren/Correcting_Seg"
 H=496
 W=768
 

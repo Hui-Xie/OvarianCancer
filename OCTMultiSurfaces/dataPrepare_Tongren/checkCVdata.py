@@ -1,7 +1,7 @@
 # check generated cross validation image and surface data with specific slice.
 
-imagesPath = "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/test/images_CV6.npy"
-surfacesPath = "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/test/surfaces_CV6.npy"
+imagesPath = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/test/images_CV6.npy"
+surfacesPath = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/test/surfaces_CV6.npy"
 displayIndex = 70
 
 import numpy as np

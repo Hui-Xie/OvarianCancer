@@ -4,8 +4,8 @@ import glob
 import os
 from imageio import imread, imwrite
 
-originVolumes = "/home/hxie1/data/OCT_Beijing/control"
-outputVolumes = "/home/hxie1/data/OCT_Beijing/truncatedControl"
+originVolumes = "/home/hxie1/data/OCT_Tongren/control"
+outputVolumes = "/home/hxie1/data/OCT_Tongren/truncatedControl"
 H = 496
 W = 768
 

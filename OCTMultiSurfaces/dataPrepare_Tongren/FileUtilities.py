@@ -59,7 +59,7 @@ def getSurfacesArray(segFile):
 def getPatientID_Slice(fileName):
     '''
 
-    :param fileName: e.g. "/home/hxie1/data/OCT_Beijing/control/4162_OD_23992_Volume/20110616012458_OCT10.jpg"
+    :param fileName: e.g. "/home/hxie1/data/OCT_Tongren/control/4162_OD_23992_Volume/20110616012458_OCT10.jpg"
     :return: e.g. '4162_OD_23992, OCT10'
     '''
     splitPath = os.path.split(fileName)

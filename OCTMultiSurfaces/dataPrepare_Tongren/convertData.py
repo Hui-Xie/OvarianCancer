@@ -17,10 +17,10 @@ H = 496
 NumSurfaces = 11
 NumSlices = 31  # for each patient
 
-volumesDir = "/home/hxie1/data/OCT_Beijing/control"
-segsDir = "/home/hxie1/data/OCT_Beijing/Correcting_Seg"
+volumesDir = "/home/hxie1/data/OCT_Tongren/control"
+segsDir = "/home/hxie1/data/OCT_Tongren/Correcting_Seg"
 
-outputDir = "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet"
+outputDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet"
 patientsListFile = os.path.join(outputDir, "patientsList.txt")
 
 def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):

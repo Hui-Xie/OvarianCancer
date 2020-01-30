@@ -1,7 +1,7 @@
 
 # add config Parameter Dict file for old network
 
-netPath = "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV7"
+netPath = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV7"
 
 import torch
 import os

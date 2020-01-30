@@ -3,7 +3,7 @@
 # Use basic Unet + KLDLoss for OCT multisurface
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss
 # first train with KLDivLoss 1000 epochs, then train SmoothL1Loss 1000 epochs.
-dataDir: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/"
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K_Folds: 10
 fold_k:  1   # k
@@ -39,10 +39,10 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 # data augmentation
 
 network: "OCTUnet"
-netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 # the netParameters in below loadNetPath was copied from trained expUnet_20191228_CV1/ at Jan 27th, 2020
-loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_debug"  # this is pretrained network
+loadNetPath:  "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_debug"  # this is pretrained network
 outputDir: ""
 
 

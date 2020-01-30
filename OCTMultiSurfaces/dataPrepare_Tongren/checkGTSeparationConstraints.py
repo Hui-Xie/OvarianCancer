@@ -1,9 +1,9 @@
 
 
 
-segDir = "/home/hxie1/data/OCT_Beijing/Correcting_Seg"
-volumesDir = "/home/hxie1/data/OCT_Beijing/control"
-outputDir = "/home/hxie1/data/OCT_Beijing/markErrorGT"
+segDir = "/home/hxie1/data/OCT_Tongren/Correcting_Seg"
+volumesDir = "/home/hxie1/data/OCT_Tongren/control"
+outputDir = "/home/hxie1/data/OCT_Tongren/markErrorGT"
 
 
 # glob all file

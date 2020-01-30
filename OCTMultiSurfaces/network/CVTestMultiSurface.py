@@ -32,7 +32,7 @@ def printUsage(argv):
 def extractPaitentID(str):
     '''
 
-       :param str: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+       :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
        :return: output: 4511_OD_29134_OCT06
        '''
     stem = str[:str.rfind("_Volume/")]
@@ -42,7 +42,7 @@ def extractPaitentID(str):
 def extractFileName(str):
     '''
 
-    :param str: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+    :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
     :return: output: 4511_OD_29134_OCT06
     '''
     stem = str[:str.rfind("_Volume/")]
@@ -183,7 +183,7 @@ def main():
     testGts = testGts.cpu().numpy()
     patientIDList = []
     for b in range(B):
-        # example: "/home/hxie1/data/OCT_Beijing/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+        # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
         patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
         if "_OCT01" in patientID_Index:
             patientIDList.append(extractPaitentID(testIDs[b]))

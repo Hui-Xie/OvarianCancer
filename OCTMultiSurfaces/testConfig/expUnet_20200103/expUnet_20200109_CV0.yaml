@@ -5,7 +5,7 @@
 # inherit from expUnet_20191228_CV0 network
 # use confusionLIS + constraintOptimization only at reference stage.
 
-dataDir: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/"
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K_Folds: 10
 fold_k:  0   # k
@@ -40,8 +40,8 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 # data augmentation
 
 network: "OCTUnet"
-netPath: "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath:  "/home/hxie1/data/OCT_Beijing/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20200109_CV0"  # this is pretrained network
+netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath:  "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20200109_CV0"  # this is pretrained network
 outputDir: ""
 
 # use loadNetpath, below loss function may need revise.
