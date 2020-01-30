@@ -109,7 +109,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             if R2Norm.max() < epsilon or nIPMIterations >7: # IPM generally iterates 6-7 iterations.
                 break
 
-        print(f"Primal-dual IPM nIterations = {nIPMIterations}")
+        # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
         if torch.is_grad_enabled():
             ctx.Mu = Mu
