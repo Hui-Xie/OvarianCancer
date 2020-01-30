@@ -31,7 +31,7 @@ for segFile in segList:
     with open(os.path.join(correctedSegDir, patientIDBsan+".json"), "w") as f:
         f.write(jsonData)
 
-print(f"total nCountIncorrectFiles = {nCountIncorrectFiles}")
+print(f"total nCountIncorrectFiles = {nCountIncorrectFiles} in {inputSegDir}")
 print(f"corrected file output at {correctedSegDir}")
 print("=========End of program====== ")
 

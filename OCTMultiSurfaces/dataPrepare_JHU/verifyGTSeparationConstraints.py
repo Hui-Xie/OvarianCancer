@@ -5,9 +5,9 @@ import glob
 import json
 import numpy as np
 
-segDir = "/home/hxie1/data/OCT_JHU/preprocessedData/label"
+segDir = "/home/hxie1/data/OCT_JHU/preprocessedData/correctedLabel"
 
-segList = glob.glob(segDir + f"/*_spectralis_macula_v1_s1_R_*.txt")
+segList = glob.glob(segDir + f"/*_spectralis_macula_v1_s1_R_*.json")
 
 print(f"total {len(segList)} seg files")
 
@@ -29,7 +29,7 @@ for segFile in segList:
         print(f"its next next surface value: {surfaces1[errorLocations[0]+1, errorLocations[1]]}")
         print("\n")
 
-print(f"total nCountIncorrectFiles = {nCountIncorrectFiles}")
+print(f"total nCountIncorrectFiles = {nCountIncorrectFiles} in {segDir}")
 print("=========End of program====== ")
 
 # fix ground truth error: use small value to replace, intead swap, the big value
