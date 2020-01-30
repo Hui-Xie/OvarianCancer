@@ -19,6 +19,7 @@ fold_k:  1   # k
 #     label: dataDir + test + surfaces_CV{k}.npy
 #     IDs  : dataDir + test + patientID_CV{k}.json
 
+groundTruthInteger: False
 numSurfaces: 11  # num of surfaces in an image
 sigma: 20.0  # For gaussian  ground truth, in float
 device: torch.device('cuda:3')   #GPU ID

@@ -44,6 +44,7 @@ def main():
     dataDir = cfg["dataDir"]
     K = cfg["K_Folds"]
     k = cfg["fold_k"]
+    groundTruthInteger = cfg["groundTruthInteger"]
     numSurfaces = cfg["numSurfaces"]
     sigma = cfg["sigma"]  # for gausssian ground truth
     device = eval(cfg["device"])  # convert string to class object.
@@ -178,7 +179,8 @@ def main():
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
             validLoss = validLoss / validBatch
-            validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
+            if groundTruthInteger:
+                validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # Error Std and mean
             stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(validOutputs, validGts,
                                                                                       slicesPerPatient=slicesPerPatient,
