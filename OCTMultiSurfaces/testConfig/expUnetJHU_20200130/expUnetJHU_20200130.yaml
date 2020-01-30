@@ -1,7 +1,7 @@
 # train and test JHU OCT data
 # Use basic Unet + KLDLoss for OCT multisurface
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss
-# first train with KLDivLoss 1000 epochs, then train SmoothL1Loss 1000 epochs.
+# first train with KLDivLoss 1000 epochs, then train SmoothL1Loss 500 epochs.
 dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K_Folds: 0
@@ -52,7 +52,7 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 # data augmentation
 
 network: "OCTUnetJHU"
-netPath: "/home/hxie1/data/OCT_Tongren/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 #
 loadNetPath:  ""  # this is pretrained network
