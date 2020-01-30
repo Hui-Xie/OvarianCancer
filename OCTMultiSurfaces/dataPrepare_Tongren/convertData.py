@@ -51,7 +51,6 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
            return
 
         for z in range(0, Z):
-            # todo: maybe we need to normalize input image with mean 0 and std 1.
             allPatientsImageArray[s,] = imread(imagesList[z])
             patientIDDict[str(s)] = imagesList[z]
             s +=1
@@ -63,6 +62,10 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     # flip axis order to fit with Leixin's network with format(slices, Width, Height)
     # allPatientsImageArray = np.swapaxes(allPatientsImageArray, 1,2)
     # allPatientsSurfaceArray = np.swapaxes(allPatientsSurfaceArray, 1,2)
+
+    # gaurantee surface separation constraints, s_i <= s_{i+1} in each A-Scan.
+    # above error is only 1.6% of all pixel points in Tongren data, direct sort in each A-Scan to gaurantee surface order.
+    allPatientsSurfaceArray = np.sort(allPatientsSurfaceArray, axis=-2)
 
     # save
     np.save(goalImageFile, allPatientsImageArray)
