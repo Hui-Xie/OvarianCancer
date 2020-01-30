@@ -11,7 +11,7 @@ sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 
-class OCTUnet(BasicModel):
+class OCTUnetTongren(BasicModel):
     def __init__(self, numSurfaces=11, N=24):
         '''
         inputSize: 496*512 (H,W)

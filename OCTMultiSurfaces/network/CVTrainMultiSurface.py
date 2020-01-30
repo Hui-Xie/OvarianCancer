@@ -11,7 +11,8 @@ from torch.utils.tensorboard import SummaryWriter
 
 sys.path.append(".")
 from OCTDataSet import OCTDataSet
-from OCTUnet import OCTUnet
+from OCTUnetTongren import OCTUnetTongren
+from OCTUnetJHU import OCTUnetJHU
 from OCTOptimization import *
 from OCTTransform import *
 
@@ -195,7 +196,8 @@ def main():
             stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(validOutputs, validGts,
                                                                                       slicesPerPatient=slicesPerPatient,
                                                                                       hPixelSize=hPixelSize)
-
+        # debug
+        print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)

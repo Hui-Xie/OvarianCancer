@@ -11,7 +11,7 @@ sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 
-class OCTUnet(BasicModel):
+class OCTUnetJHU(BasicModel):
     def __init__(self, numSurfaces=9, N=24):
         '''
         inputSize:  128*1024 (H,W)
