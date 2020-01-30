@@ -71,6 +71,7 @@ def main():
     dataDir = cfg["dataDir"]
     K = cfg["K_Folds"]
     k = cfg["fold_k"]
+
     groundTruthInteger = cfg["groundTruthInteger"]
     numSurfaces = cfg["numSurfaces"]
     sigma = cfg["sigma"]  # for gausssian ground truth
@@ -109,9 +110,14 @@ def main():
     useDynamicProgramming = cfg['useDynamicProgramming']
     usePrimalDualIPM = cfg['usePrimalDualIPM']
 
-    testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
-    testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
-    testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
+    if -1==k and 0==K:  # do not use cross validation
+        testImagesPath = os.path.join(dataDir, "test", f"images.npy")
+        testLabelsPath = os.path.join(dataDir, "test", f"surfaces.npy")
+        testIDPath = os.path.join(dataDir, "test", f"patientID.json")
+    else:  # use cross validation
+        testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
+        testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
+        testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
 
     testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma)
 

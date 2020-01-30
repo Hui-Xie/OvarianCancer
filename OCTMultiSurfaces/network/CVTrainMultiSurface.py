@@ -44,6 +44,7 @@ def main():
     dataDir = cfg["dataDir"]
     K = cfg["K_Folds"]
     k = cfg["fold_k"]
+
     groundTruthInteger = cfg["groundTruthInteger"]
     numSurfaces = cfg["numSurfaces"]
     sigma = cfg["sigma"]  # for gausssian ground truth
@@ -86,9 +87,9 @@ def main():
         trainLabelsPath = os.path.join(dataDir, "training", f"surfaces.npy")
         trainIDPath = os.path.join(dataDir, "training", f"patientID.json")
 
-        validationImagesPath = os.path.join(dataDir, "validation", f"images.npy")
-        validationLabelsPath = os.path.join(dataDir, "validation", f"surfaces.npy")
-        validationIDPath = os.path.join(dataDir, "validation", f"patientID.json")
+        validationImagesPath = os.path.join(dataDir, "test", f"images.npy")
+        validationLabelsPath = os.path.join(dataDir, "test", f"surfaces.npy")
+        validationIDPath = os.path.join(dataDir, "test", f"patientID.json")
     else:  # use cross validation
         trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
         trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
