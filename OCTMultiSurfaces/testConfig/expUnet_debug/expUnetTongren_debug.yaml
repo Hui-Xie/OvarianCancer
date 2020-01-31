@@ -22,7 +22,7 @@ fold_k:  1   # k
 groundTruthInteger: False
 numSurfaces: 11  # num of surfaces in an image
 sigma: 20.0  # For gaussian  ground truth, in float
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:0')   #GPU ID
 batchSize: 4
 startFilters: 12  # the num of filters in first layer of Unet
 
@@ -41,7 +41,8 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 network: "OCTUnetTongren"
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
-# the netParameters in below loadNetPath was copied from trained expUnet_20191228_CV1/ at Jan 27th, 2020
+# the netParameters in below loadNetPath was copied from
+#  /local/vol00/scratch/Users/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20191228_CV1 at Jan 31st, 2020
 loadNetPath:  "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnetTongren/expUnetTongren_debug"  # this is pretrained network
 outputDir: ""
 
