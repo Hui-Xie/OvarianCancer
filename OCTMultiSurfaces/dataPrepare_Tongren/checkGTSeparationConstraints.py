@@ -17,14 +17,14 @@ import os
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import numpy as np
 
-
-device = torch.device('cuda:1')
+device = torch.device('cuda:0')
 # torch.set_printoptions(threshold=10000)
 
 patientsList = glob.glob(segDir + f"/*_Volume_Sequence_Surfaces_Iowa.xml")
-outputFile = open(os.path.join(outputDir, "violateSeparation.txt"), "w")
-analyzeFile = open(os.path.join(outputDir, "analysis.txt"), "w")
+outputFile = open(os.path.join(outputDir, "violateSeparationRemoveSurface8.txt"), "w")
+analyzeFile = open(os.path.join(outputDir, "analysisRemoveSurface8.txt"), "w")
 
 
 notes1 ="Check whether ground truth conforms the separation constraints: h_{i+1} >= h_i, where i is surface index.\n"
@@ -33,6 +33,10 @@ notes3 ="In output below , column index w mean column (w+128) in original width 
 notes4 ="In output below, bscan index starts with 0 which corresponds OCT1 in the original images.\n "
 
 print(notes1, notes2, notes3, notes4, file=outputFile)
+
+notes5 = "At Jan 31th, 2020, we remove the surface of index 8, to further check separation constraints."
+
+print(notes5, file=outputFile)
 
 print(f"this program will run about 20 mins, please wait.....")
 
@@ -44,11 +48,17 @@ errorNum = 0
 for patientXmlPath in patientsList:
     patientSurfaceName = os.path.splitext(os.path.basename(patientXmlPath))[0] # e.g. 1062_OD_9512_Volume_Sequence_Surfaces_Iowa
     patientVolumeName = patientSurfaceName[0:patientSurfaceName.find("_Sequence_Surfaces_Iowa")]  # 1062_OD_9512_Volume
-    patientName =  patientVolumeName[0:patientVolumeName.find("_Volume")]
+    patientName =  patientVolumeName[0:patientVolumeName.find("_Volume")]   # 1062_OD_9512
 
     surfacesArray = getSurfacesArray(patientXmlPath)
     Z, Num_Surfaces, W = surfacesArray.shape
     assert Z == 31 and Num_Surfaces == 11 and W == 768
+
+    # now erase surface 8 on Jan 31th, 2020
+    surfacesArray = np.delete(surfacesArray, 8, axis=1)
+    Z, Num_Surfaces, W = surfacesArray.shape
+    assert Z == 31 and Num_Surfaces == 10 and W == 768
+
     surfacesArray = surfacesArray[:,:,128:640]
     surfaces = torch.from_numpy(surfacesArray).to(device)
     surface0 = surfaces[:,:-1,:]
@@ -118,8 +128,8 @@ for patientXmlPath in patientsList:
             plt.close()
 
 
-outputFile.write(f"\n\n=============== {errorPatients} patients with total {errorNum} locations have ground truth not conforming separation constraints ============")
-analyzeFile.write(f"\n\n=============== {errorPatients} patients with total {errorNum} locations have ground truth not conforming separation constraints ============")
+outputFile.write(f"\n\n=============== {errorPatients} patients with total {errorNum} locations have ground truth not conforming separation constraints ============\n")
+analyzeFile.write(f"\n\n=============== {errorPatients} patients with total {errorNum} locations have ground truth not conforming separation constraints ============\n")
 outputFile.close()
 analyzeFile.close()
 
