@@ -60,7 +60,16 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 (torch.cat((Q, A.transpose(-1, -2)), dim=-1),
                  torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
                 dim=-2)  # in size: B,W,2N-1,2N-1
-            MInv = torch.pinverse(M)  # use pseudo-inverse to avoid singular matrix
+
+            try:
+                MInv = torch.inverse(M)
+            except RuntimeError as err:
+                if "singular U" in str(err):
+                    # use pseudo-inverse to handle singular square matrix, but pinverse costs 10-20 times of time of inverse.
+                    MInv = torch.pinverse(M)
+                else:
+                    raise RuntimeError(err)
+
             PD = -torch.matmul(MInv, R)  # primal dual improve direction, in size: B,W,2N-1,1
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
             PD_Lambda = PD[:, :, N:, :]  # in size: B,W,N-1,1

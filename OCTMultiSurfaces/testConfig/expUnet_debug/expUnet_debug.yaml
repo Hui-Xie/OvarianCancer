@@ -38,11 +38,11 @@ saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 # data augmentation
 
-network: "OCTUnetJHU"
+network: "OCTUnetTongren"
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 # the netParameters in below loadNetPath was copied from trained expUnet_20191228_CV1/ at Jan 27th, 2020
-loadNetPath:  "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_debug"  # this is pretrained network
+loadNetPath:  "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnetTongren/expUnetTongren_debug"  # this is pretrained network
 outputDir: ""
 
 
