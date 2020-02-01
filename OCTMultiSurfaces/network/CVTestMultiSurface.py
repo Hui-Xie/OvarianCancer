@@ -7,7 +7,6 @@ import yaml
 import torch
 import torch.nn as nn
 from torch.utils import data
-from torch.utils.tensorboard import SummaryWriter
 
 
 sys.path.append(".")
@@ -23,6 +22,7 @@ from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def printUsage(argv):
@@ -59,7 +59,8 @@ def main():
         return -1
 
     # debug:
-    MarkGTDisorder = True
+    MarkGTDisorder = False
+    MarkPredictDisorder = True
 
     # parse config file
     configFile = sys.argv[1]
@@ -153,11 +154,6 @@ def main():
     net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
     net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
 
-    logDir = dataDir + "/log/" + network + "/" + experimentName + "/testLog"
-    if not os.path.exists(logDir):
-        os.makedirs(logDir)  # recursive dir creation
-    writer = SummaryWriter(log_dir=logDir)
-
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
     if not os.path.exists(outputDir):
@@ -185,42 +181,61 @@ def main():
                                                                                   hPixelSize=hPixelSize)
     #generate predicted images
     B,S,W = testOutputs.shape
-    images = images.cpu().numpy()
+    images = images.cpu().numpy().squeeze()
+    B,H,W = images.shape
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
     for b in range(B):
-        # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-        patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
-        if "_OCT01" in patientID_Index:
-            patientIDList.append(extractPaitentID(testIDs[b]))
+        if "OCT_Tongren" in dataDir:
+            # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+            patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
+            if "_OCT01" in patientID_Index:
+                patientIDList.append(extractPaitentID(testIDs[b]))
+        if "OCT_JHU" in dataDir:
+            # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_1.png'
+            patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_1
+            if "_s1_R_1" in patientID_Index:
+                patientIDList.append(patientID_Index[0:4])  # e.g. hc01
+
 
         f = plt.figure(frameon=False)
         DPI = f.dpi
-        H = 496
-        f.set_size_inches(W*3/float(DPI), H/float(DPI))
+        if W/H > 16/9:  # normal screen resolution rate is 16:9
+            f.set_size_inches(W/ float(DPI), H*3 / float(DPI))
+            subplotRow = 3
+            subplotCol = 1
+        else:
+            f.set_size_inches(W*3/float(DPI), H/float(DPI))
+            subplotRow = 1
+            subplotCol = 3
 
         plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
-        subplot1 = plt.subplot(1, 3, 1)
+        subplot1 = plt.subplot(subplotRow, subplotCol, 1)
         subplot1.imshow(images[b,].squeeze(), cmap='gray')
         if MarkGTDisorder:
-            import numpy as np
             gt0 = testGts[b, 0:-1, :]
             gt1 = testGts[b, 1:,   :]
             errorLocations = np.nonzero(gt0>gt1)  # return as tuple
             if len(errorLocations[0]) > 0:
-                subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')
+                subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')  # red for gt disorder
+        if MarkPredictDisorder:
+            predict0 = testOutputs[b, 0:-1, :]
+            predict1 = testOutputs[b, 1:,   :]
+            errorLocations = np.nonzero(predict0 > predict1)  # return as tuple
+            if len(errorLocations[0]) > 0:
+                subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
         subplot1.axis('off')
 
-        subplot2 = plt.subplot(1, 3, 2)
+        subplot2 = plt.subplot(subplotRow, subplotCol, 2)
         subplot2.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
             subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.4)
         subplot2.axis('off')
 
-        subplot3 = plt.subplot(1, 3, 3)
+        subplot3 = plt.subplot(subplotRow, subplotCol, 3)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
             subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.4)
@@ -232,18 +247,11 @@ def main():
             plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
-    epoch = 0
-    writer.add_scalar('ValidationError/mean(um)', muError, epoch)
-    writer.add_scalar('ValidationError/stdDeviation(um)', stdError, epoch)
-    writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurfaceError), epoch)
-    writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatientError), epoch)
-    writer.add_scalars('ValidationError/stdSurface(um)', convertTensor2Dict(stdSurfaceError), epoch)
-    writer.add_scalars('ValidationError/stdPatient(um)', convertTensor2Dict(stdPatientError), epoch)
 
     with open(os.path.join(outputDir,"output.txt"), "w") as file:
         file.write(f"Test: {experimentName}\n")
         file.write(f"loadNetPath: {netPath}\n")
-        file.write(f"B,S,W = {B,S,W}\n")
+        file.write(f"B,S,H,W = {B,S,H, W}\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
         file.write(f"patientIDList ={patientIDList}\n")
