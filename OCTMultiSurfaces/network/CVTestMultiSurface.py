@@ -23,6 +23,7 @@ from framework.NetMgr import NetMgr
 
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 
 
 def printUsage(argv):
@@ -30,7 +31,7 @@ def printUsage(argv):
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
-def extractPaitentID(str):
+def extractPaitentID(str):  # for Tongren data
     '''
 
        :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
@@ -40,7 +41,7 @@ def extractPaitentID(str):
     patientID = stem[stem.rfind("/") + 1:]
     return patientID
 
-def extractFileName(str):
+def extractFileName(str): # for Tongren data
     '''
 
     :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
@@ -252,6 +253,8 @@ def main():
         file.write(f"Test: {experimentName}\n")
         file.write(f"loadNetPath: {netPath}\n")
         file.write(f"B,S,H,W = {B,S,H, W}\n")
+        file.write(f"net.m_configParametersDict:\n {json.dumps(net.m_configParametersDict, indent=4)}\n")
+        file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
         file.write(f"patientIDList ={patientIDList}\n")
