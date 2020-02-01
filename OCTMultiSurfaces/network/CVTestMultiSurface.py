@@ -23,7 +23,6 @@ from framework.NetMgr import NetMgr
 
 import matplotlib.pyplot as plt
 import numpy as np
-import json
 
 
 def printUsage(argv):
@@ -273,8 +272,10 @@ def main():
         file.write(f"muError = {muError}\n")
         file.write(f"pixel numerber of violating surfacae-separation constraints: {len(violateConstraintErrors[0])}\n")
         if 0 != len(violateConstraintErrors[0]):
-            file.write("file list of violating surfacae-separation constraints:\n")
-            for s in np.nditer(violateConstraintErrors[0]):
+            violateConstraintSlices = set(violateConstraintErrors[0])
+            file.write(f"slice numerber of violating surfacae-separation constraints: {len(violateConstraintSlices)}\n")
+            file.write("slice list of violating surfacae-separation constraints:\n")
+            for s in violateConstraintSlices:
                 file.write(f"\t{testIDs[s]}\n")
 
 
