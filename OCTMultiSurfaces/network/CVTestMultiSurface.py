@@ -62,6 +62,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = True
+    OutputPredictImages = False
 
     # parse config file
     configFile = sys.argv[1]
@@ -199,6 +200,8 @@ def main():
             if "_s1_R_1" in patientID_Index:
                 patientIDList.append(patientID_Index[0:4])  # e.g. hc01
 
+        if not OutputPredictImages:
+            continue
 
         f = plt.figure(frameon=False)
         DPI = f.dpi
@@ -253,7 +256,8 @@ def main():
         file.write(f"Test: {experimentName}\n")
         file.write(f"loadNetPath: {netPath}\n")
         file.write(f"B,S,H,W = {B,S,H, W}\n")
-        file.write(f"net.m_configParametersDict:\n {json.dumps(net.m_configParametersDict, indent=4)}\n")
+        file.write(f"net.m_configParametersDict:\n")
+        [file.write(f"\t{key}\t : {value}\n") for key, value in net.m_configParametersDict.items()]
         file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
