@@ -270,11 +270,11 @@ def main():
         file.write(f"muPatientError = {muPatientError}\n")
         file.write(f"stdError = {stdError}\n")
         file.write(f"muError = {muError}\n")
-        file.write(f"pixel numerber of violating surfacae-separation constraints: {len(violateConstraintErrors[0])}\n")
+        file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
         if 0 != len(violateConstraintErrors[0]):
             violateConstraintSlices = set(violateConstraintErrors[0])
-            file.write(f"slice numerber of violating surfacae-separation constraints: {len(violateConstraintSlices)}\n")
-            file.write("slice list of violating surfacae-separation constraints:\n")
+            file.write(f"slice number of violating surface-separation constraints: {len(violateConstraintSlices)}\n")
+            file.write("slice list of violating surface-separation constraints:\n")
             for s in violateConstraintSlices:
                 file.write(f"\t{testIDs[s]}\n")
 
