@@ -251,13 +251,18 @@ def main():
             plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
+    # check testOutputs whehter violate surface-separation constraints
+    testOutputs0 = testOutputs[:,0:-1,:]
+    testOutputs1 = testOutputs[:, 1:, :]
+    violateConstraintErrors = np.nonzero(testOutputs0 > testOutputs1)
 
+    # final output result:
     with open(os.path.join(outputDir,"output.txt"), "w") as file:
         file.write(f"Test: {experimentName}\n")
         file.write(f"loadNetPath: {netPath}\n")
         file.write(f"B,S,H,W = {B,S,H, W}\n")
         file.write(f"net.m_configParametersDict:\n")
-        [file.write(f"\t{key}\t : {value}\n") for key, value in net.m_configParametersDict.items()]
+        [file.write(f"\t{key}:{value}\n") for key, value in net.m_configParametersDict.items()]
         file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
@@ -266,6 +271,12 @@ def main():
         file.write(f"muPatientError = {muPatientError}\n")
         file.write(f"stdError = {stdError}\n")
         file.write(f"muError = {muError}\n")
+        file.write(f"pixel numerber of violating surfacae-separation constraints: {len(violateConstraintErrors[0])}\n")
+        if 0 != len(violateConstraintErrors[0]):
+            file.write("file list of violating surfacae-separation constraints:\n")
+            for s in np.nditer(violateConstraintErrors[0]):
+                file.write(f"\t{testIDs[s]}\n")
+
 
 
     print(f"============ End of Cross valiation test for OCT Multisurface Network: {experimentName} ===========")
