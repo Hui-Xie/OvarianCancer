@@ -41,7 +41,7 @@ startFilters: 24  # the num of filters in first layer of Unet
 
 # some physical parameter of images
 slicesPerPatient: 49
-hPixelSize: 3.9  # unit: micrometer, in y/height direction
+hPixelSize: 3.86725  # unit: micrometer, in y/height direction
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate

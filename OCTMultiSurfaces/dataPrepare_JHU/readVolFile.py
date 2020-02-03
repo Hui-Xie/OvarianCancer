@@ -5,8 +5,8 @@ import heyexReader
 from scipy.io import loadmat
 
 volFilePath  = "/home/hxie1/data/OCT_JHU/OCT_Manual_Delineations-2018_June_29/vol/hc01_spectralis_macula_v1_s1_R.vol"
-#matFilePath =  "/home/hxie1/data/OCT_JHU/OCT_Manual_Delineations-2018_June_29/delineation/hc01_spectralis_macula_v1_s1_R.mat"
-matFilePath = "/localscratch/Users/hxie1/temp/example.mat"
+matFilePath =  "/home/hxie1/data/OCT_JHU/OCT_Manual_Delineations-2018_June_29/delineation/hc01_spectralis_macula_v1_s1_R.mat"
+#matFilePath = "/localscratch/Users/hxie1/temp/example.mat"
 vol = heyexReader.volFile(volFilePath)
 
 
