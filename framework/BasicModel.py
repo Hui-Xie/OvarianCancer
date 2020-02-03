@@ -51,14 +51,15 @@ class BasicModel(nn.Module):
     def getCurrentLossFunc(self):
         N = len(self.m_lossFuncList)
         accumulateEpochs = self.m_lossEpochList[0]
-        for i in range(N):
-            if self.m_epoch < accumulateEpochs:
-                self.m_currentLossFunc = self.m_lossFuncList[i]
-                return self.m_currentLossFunc, self.m_lossWeightList[i]
-            else:
-                if i+1 <= N-1:
-                    accumulateEpochs +=self.m_lossEpochList[i+1]
-                continue
+        if self.training:
+            for i in range(N):
+                if self.m_epoch < accumulateEpochs:
+                    self.m_currentLossFunc = self.m_lossFuncList[i]
+                    return self.m_currentLossFunc, self.m_lossWeightList[i]
+                else:
+                    if i+1 <= N-1:
+                        accumulateEpochs +=self.m_lossEpochList[i+1]
+                    continue
         self.m_currentLossFunc = self.m_lossFuncList[N-1]
         return self.m_currentLossFunc, self.m_lossWeightList[N-1]
 
