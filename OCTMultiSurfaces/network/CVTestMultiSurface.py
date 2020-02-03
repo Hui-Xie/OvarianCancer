@@ -61,7 +61,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = True
-    OutputPredictImages = False
+    OutputPredictImages = True
 
     # parse config file
     configFile = sys.argv[1]
