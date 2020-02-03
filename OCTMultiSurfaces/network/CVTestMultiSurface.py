@@ -61,7 +61,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = True
-    OutputPredictImages = True
+    OutputPredictImages = False
 
     # parse config file
     configFile = sys.argv[1]
@@ -177,13 +177,36 @@ def main():
         # Error Std and mean
         if groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
+
+        '''
+        # exclude bad output result:
+        badSliceNameList =["/home/hxie1/data/OCT_JHU/preprocessedData/image/hc03_spectralis_macula_v1_s1_R_41.png",
+                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/hc07_spectralis_macula_v1_s1_R_1.png",
+                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_23.png",
+                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_24.png",
+                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_25.png",
+                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_26.png" ]
+        badSlicePosSet= set([testIDs.index(x) for x in badSliceNameList])
+        N =len(testIDs)
+        remainSlicePosSet = set([*range(0,N)])- badSlicePosSet
+        remainslicePosTuple = tuple(remainSlicePosSet)
+        testIDs = [testIDs[x] for x in remainslicePosTuple]
+        testOutputs = testOutputs[remainslicePosTuple,:,:]
+        testGts = testGts[remainslicePosTuple,:,:]
+        # end of exluding bad output result
+
+        '''
+
+
+
+
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
     #generate predicted images
-    B,S,W = testOutputs.shape
     images = images.cpu().numpy().squeeze()
     B,H,W = images.shape
+    B, S, W = testOutputs.shape
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
