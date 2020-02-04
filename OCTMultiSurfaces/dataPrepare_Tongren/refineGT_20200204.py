@@ -58,7 +58,7 @@ def convertList2RangeStr(aList):
     return output
 
 def main():
-    device = torch.device('cuda:0')
+    device = torch.device('cuda:1')
 
     patientsList = glob.glob(segDir + f"/*_Volume_Sequence_Surfaces_Iowa.xml")
     outputFile = open(os.path.join(outputDir, "violateSeparation_20120204.txt"), "w")
@@ -71,7 +71,7 @@ def main():
     notes4 ='''
     In output below, bscan index starts with 0 which corresponds OCT1 in the original images.\n 
     At Feb 04th, 2020:
-    According to notes of doctors, I plan below solution to refine the ground truth:
+    According to notes of doctors, I did below solution to refine the ground truth:
     
     1   delete ill cases: #34169, and # 2579;  
     2   ROI left shifts 25 pixel for case 5363_OD_25453;
