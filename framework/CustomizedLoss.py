@@ -393,7 +393,7 @@ class DistanceCrossEntropyLoss(_Loss):
         return ret * self.m_lambda
 
 
-class GeneralizedDiceLoss(_Loss):
+class GeneralizedBinaryDiceLoss(_Loss):
     """
      please refer paper "Generalized Dice overlap as a deep learning loss function for highly unbalanced segmentations"
      at link: https://arxiv.org/pdf/1707.03237.pdf
@@ -428,10 +428,36 @@ class GeneralizedDiceLoss(_Loss):
 
         PPlusT = torch.sum(P+T, dim=sampleDims)
         PTimesT = torch.sum(P*T, dim=sampleDims)
-        numerator = (w1+w2)*PTimesT-w2*PPlusT+N*w2
+        numerator = (w1+w2)*PTimesT-w2*PPlusT+N*w2  # use 1-P1 to replace P2.
         denominator = (w1-w2)*PPlusT + 2.0*N*w2
         ret = 1.0-2.0*numerator/denominator  # GDL in batch
 
         if self.reduction != 'none':
             ret = torch.mean(ret) if self.reduction == 'mean' else torch.sum(ret)
         return ret*self.m_lambda
+
+# support multiclass generalized Dice Loss
+class GeneralizedDiceLoss():
+    def __init__(self, K=2):
+        '''
+
+        :param K: the number of classes for dice
+        '''
+        self.m_K = K
+
+    def forward(self, inputx, target):
+        '''
+
+        :param inputx: float32 tensor, size of (B,K,H,W), where K is the number of classes. inputx is the logits before softmax.
+        :param target: long tensor, size of (B,H,W), where each element has a long value of [0,K) indicate the belonging class
+        :return: a float scalar of mean dice over all classes and over batchSize.
+
+        '''
+        # convert logits to probability for inputx
+
+        # convert target of size(B,H,W) into (B,K,H,W) into one-hot float32 probability
+
+        # generalized dice loss
+
+
+

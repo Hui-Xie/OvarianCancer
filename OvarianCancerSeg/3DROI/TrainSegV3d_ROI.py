@@ -249,7 +249,7 @@ def main():
 
     # lossWeight = dataPartitions.getLossWeight()
     # loss = DistanceCrossEntropyLoss(weight=lossWeight) # or weight=torch.tensor([1.0, 8.7135]) for whole dataset
-    loss = GeneralizedDiceLoss()
+    loss = GeneralizedBinaryDiceLoss()
     net.appendLossFunc(loss, 1)
     # boundaryLoss = BoundaryLoss1(weight=lossWeight)
     # net.appendLossFunc(boundaryLoss, 0)
