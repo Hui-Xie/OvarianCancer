@@ -51,6 +51,31 @@ class OCTDataSet(data.Dataset):
         G  = torch.exp(-(X-Mu)**2/(2*sigma*sigma))/(sigma*math.sqrt(2*pi))
         return G
 
+    def getLayersLabel(self, surfaceLabels, height):
+        '''
+
+        :param surfaceLabels: float tensor in size of (N,W) where N is the number of surfaces.
+                height: original image height
+        :return: layerLabels: long tensor in size of (H, W) in which each element is long integer  of [0,N] indicating belonging layer
+
+        '''
+        H = height
+        device = surfaceLabels.device
+        N,W = surfaceLabels.shape # N is the number of surface
+        layerLabels = torch.zeros((H, W), dtype=torch.long, device=device)
+        surfaceLabels = (surfaceLabels + 0.5).long() # let surface height match grid
+        surfacesCode = torch.tensor(range(1,N+1)).unsqueeze(dim=-1).expand_as(surfaceLabels)
+        layerLabels = torch.scatter(0, surfaceLabels, surfacesCode)
+        curveLoc = surfaceLabels[0,:]+1
+        bottom = torch.ones((1,W),  dtype=torch.long, device=device)*H
+        zeroWidth = torch.zeros((1,W), dtype=torch.long, device=device)
+        while torch.any(curveLoc < bottom):
+            layerLabels[curveLoc,:] = torch.where(zeroWidth == layerLabels[curveLoc,:],  layerLabels[curveLoc-1,:], layerLabels[curveLoc,:])
+            curveLoc = torch.where(curveLoc < bottom, curveLoc+1, curveLoc)
+
+
+
+
 
 
 
