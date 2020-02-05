@@ -453,7 +453,13 @@ class GeneralizedDiceLoss():
         :return: a float scalar of mean dice over all classes and over batchSize.
 
         '''
+        B,K,H,W = input.shape
+        assert (B,H,W) == target.shape
+
         # convert logits to probability for inputx
+        inputxMaxDim1, _ = torch.max(inputx, dim=1, keepdim=True)
+        inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
+        softmaxInput = F.softmax(inputx - inputxMaxDim1, 1)  # use inputMaxDim1 is to avoid overflow.
 
         # convert target of size(B,H,W) into (B,K,H,W) into one-hot float32 probability
 
