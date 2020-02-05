@@ -395,7 +395,7 @@ class DistanceCrossEntropyLoss(_Loss):
 
 class GeneralizedDiceLoss(_Loss):
     """
-     please refer paper "Generalised Dice overlap as a deep learning loss function for highly unbalanced segmentations"
+     please refer paper "Generalized Dice overlap as a deep learning loss function for highly unbalanced segmentations"
      at link: https://arxiv.org/pdf/1707.03237.pdf
 
      Current only support binary segmentation.
