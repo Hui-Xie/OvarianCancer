@@ -3,7 +3,7 @@ import numpy as np
 import json
 import math
 import torch
-# import torchvision.transforms as TF
+import torchvision.transforms as TF
 
 
 def gaussianizeLabels(rawLabels, sigma, H):
