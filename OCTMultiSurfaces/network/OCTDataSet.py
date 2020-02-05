@@ -73,7 +73,8 @@ class OCTDataSet(data.Dataset):
         result = {"images": data.unsqueeze(dim=0),
                   "GTs": self.m_labels[index,],
                   "gaussianGTs": gaussianizeLabels(self.m_labels[index,], self.m_sigma, H),
-                  "IDs": self.m_IDs[str(index)]}
+                  "IDs": self.m_IDs[str(index)],
+                  "layers": getLayerLabels(self.m_labels[index,],H) }
         return result
 
 
