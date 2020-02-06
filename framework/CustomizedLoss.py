@@ -438,12 +438,8 @@ class GeneralizedBinaryDiceLoss(_Loss):
 
 # support multiclass generalized Dice Loss
 class GeneralizedDiceLoss():
-    def __init__(self, K=2):
-        '''
-
-        :param K: the number of classes for dice
-        '''
-        self.m_K = K
+    def __init__(self):
+        pass
 
     def forward(self, inputx, target):
         '''
@@ -453,8 +449,10 @@ class GeneralizedDiceLoss():
         :return: a float scalar of mean dice over all classes and over batchSize.
 
         '''
-        B,K,H,W = input.shape
+        B,K,H,W = inputx.shape
         assert (B,H,W) == target.shape
+        assert K == target.max()+1
+        device = inputx.device
 
         # convert logits to probability for inputx
         inputxMaxDim1, _ = torch.max(inputx, dim=1, keepdim=True)
@@ -462,8 +460,19 @@ class GeneralizedDiceLoss():
         softmaxInput = F.softmax(inputx - inputxMaxDim1, 1)  # use inputMaxDim1 is to avoid overflow.
 
         # convert target of size(B,H,W) into (B,K,H,W) into one-hot float32 probability
+        targetProb = torch.zeros_like(inputx)
+        for k in range(0,K):
+            targetProb[:,k,:,:] = torch.where(k ==target, torch.ones_like(target), targetProb[:,k,:,:])
+
+        # compute weight of each class
+        W = torch.zeros(K, device=device, dtype=torch.float64)
+        for k in range(0,K):
+            W[k] = torch.tensor(1.0).double()/((k == target).sum()**2)
 
         # generalized dice loss
+        sumDims = (0,2,3)
+        GDL = 1.0-2.0*((softmaxInput*targetProb).sum(dim=sumDims)*W).sum()/((softmaxInput+targetProb).sum(dim=sumDims)*W).sum()
+        return GDL
 
 
 
