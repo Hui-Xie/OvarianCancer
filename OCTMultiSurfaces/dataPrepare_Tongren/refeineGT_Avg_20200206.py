@@ -6,8 +6,8 @@ According to notes of doctors, I plan below solution to refine the ground truth:
 2   ROI left shifts 25 pixel for case 5363; done
 3   use yaxing 20200202 updated 6 cases to replace old ground truth cases;  done;
 4   delete  all surface 8 for all 47 cases;  done
-5   near foveas place, average to erase artifacts: solve  the disorder of surface 1,2,3,4, 5 near foveas;
-6   sort along all columns for all patients: solve all disorder of surface 7, 8,9,
+5   near foveas in first 5 surface  average to erase artifacts: solve  the disorder of surface 1,2,3,4, 5 near foveas;  done
+6   sort along all columns for all patients: solve all disorder of surface 7, 8,9,  done.
 
 After these, I will output visual images of current xml ground truth, disorder location, our adjusted result, for doctor to further review.
 
@@ -75,7 +75,7 @@ def main():
     2   ROI left shifts 25 pixel for case 5363_OD_25453;
     3   use yaxing 20200202 updated 6 cases to replace old ground truth cases;  
     4   delete  all surface 8 for all 47 cases;
-    5   near foveas place, average to erase artifacts: solve  the disorder of surface 0, 1,2,3,4, 5 near foveas;
+    5   near foveas in first 5 surfaces,  average to erase artifacts: solve the disorder of surface 0-5 near foveas;
     6   sort along all columns for all patients: solve all disorder of surface 7, 8,9,
 
     After these, I will output visual images of current xml ground truth, disorder location, our adjusted result, for doctor to further review.
@@ -84,7 +84,7 @@ def main():
 
     print(notes, file=outputFile)
 
-    print(f"this program will run about 20 mins, please wait.....")
+    print(f"This program will run about 20 mins, please wait.....")
 
     W = 768
     H = 496
@@ -99,18 +99,18 @@ def main():
         patientName = patientVolumeName[0:patientVolumeName.find("_Volume")]  # 1062_OD_9512
 
         surfacesArray = getSurfacesArray(patientXmlPath)
-        Z, Num_Surfaces, W = surfacesArray.shape
+        B, Num_Surfaces, W = surfacesArray.shape
         if 11 == Num_Surfaces:
             surfacesArray = np.delete(surfacesArray, 8, axis=1)  # delete surface 8
-            Z, Num_Surfaces, W = surfacesArray.shape
-            assert Z == 31 and Num_Surfaces == 10 and W == 768
+            B, Num_Surfaces, W = surfacesArray.shape
+            assert B == 31 and Num_Surfaces == 10 and W == 768
 
         if "5363_OD_25453" == patientName:
             surfacesArray = surfacesArray[:, :, 103:615]  # left shift 25 pixels for case 5363_OD_25453
         else:
             surfacesArray = surfacesArray[:, :, 128:640]
 
-        correctedSurfacesArray = np.sort(surfacesArray, axis=-2)  # correct all surface constraint
+
 
         surfaces = torch.from_numpy(surfacesArray).to(device)
         surface0 = surfaces[:, :-1, :]
@@ -146,6 +146,39 @@ def main():
                 surfaceBscanDict[str(errorLocations[i, 1].item())].add(errorLocations[i, 0].item())
             for s in surfacesSet:
                 analyzeFile.write(f"{s}, \t{convertList2RangeStr(list(surfaceBscanDict[str(s)]))}\n")
+
+            # use average method along column to correct disorders in surface 0-4 near foveas
+            surfacesCopy = torch.zeros_like(surfaces)  # surfaceCopy contain the first disorder values only, it and its next row value along column violate constraints
+            surfacesCopy[:,0:-1,:] = torch.where(surface0 > surface1, surface0, torch.zeros_like(surface0))
+
+            B,N,W = surfaces.shape
+            MaxMergeSurfaces = 5
+            for b in range(0, B):
+                for w in range(W*2//5, W*3//5): # only focus on fovea region.
+                    s = 0
+                    while (s < MaxMergeSurfaces): # in fovea region, the first 5 surfaces may merge into one surface.
+                        if 0 != surfacesCopy[b, s, w]:
+                            n = 1  # n continuous disorder locations
+                            while s + n < MaxMergeSurfaces and 0 != surfacesCopy[b, s + n, w]:
+                                n += 1
+                            # get the average of disorder surfaces
+                            correctValue = 0.0
+                            for k in range(0, n+1): # n+1 consider its next disorder value
+                                correctValue += surfaces[b,s+k,w]
+                            correctValue /= (n+1)
+
+                            # fill the average value
+                            for k in range(0, n):
+                                surfacesCopy[b, s + k, w] = correctValue
+                            s = s + n+1
+                        else:
+                            s += 1
+            # after average the disorder near fovea, fill other values which may also be disorder
+            surfacesCopy = torch.where(0 == surfacesCopy, surfaces, surfacesCopy)
+
+            # final fully sort along column
+            correctedSurfacesArray = torch.sort(surfacesCopy, dim=-2).cpu().numpy()  # correct all surface constraint
+
 
             # load original images
             imagesList = glob.glob(volumesDir + f"/{patientVolumeName}/" + f"*_OCT[0-3][0-9].jpg")
