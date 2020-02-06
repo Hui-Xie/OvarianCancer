@@ -6,7 +6,7 @@ According to notes of doctors, I plan below solution to refine the ground truth:
 2   ROI left shifts 25 pixel for case 5363; done
 3   use yaxing 20200202 updated 6 cases to replace old ground truth cases;  done;
 4   delete  all surface 8 for all 47 cases;  done
-5   near foveas in first 5 surface  average to erase artifacts: solve  the disorder of surface 1,2,3,4, 5 near foveas;  done
+5   near foveas in first 5 surface  average to erase artifacts: solve  the disorder of surface [0-5) near foveas;  done
 6   sort along all columns for all patients: solve all disorder of surface 7, 8,9,  done.
 
 After these, I will output visual images of current xml ground truth, disorder location, our adjusted result, for doctor to further review.
@@ -159,7 +159,7 @@ def main():
                     while (s < MaxMergeSurfaces): # in fovea region, the first 5 surfaces may merge into one surface.
                         if 0 != surfacesCopy[b, s, w]:
                             n = 1  # n continuous disorder locations
-                            while s + n < MaxMergeSurfaces and 0 != surfacesCopy[b, s + n, w]:
+                            while s + n+1 < MaxMergeSurfaces and 0 != surfacesCopy[b, s + n, w]:
                                 n += 1
                             # get the average of disorder surfaces
                             correctValue = 0.0
@@ -168,7 +168,7 @@ def main():
                             correctValue /= (n+1)
 
                             # fill the average value
-                            for k in range(0, n):
+                            for k in range(0, n+1):
                                 surfacesCopy[b, s + k, w] = correctValue
                             s = s + n+1
                         else:
