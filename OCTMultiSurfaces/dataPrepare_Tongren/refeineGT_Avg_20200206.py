@@ -177,8 +177,8 @@ def main():
             surfacesCopy = torch.where(0 == surfacesCopy, surfaces, surfacesCopy)
 
             # final fully sort along column
-            correctedSurfacesArray = torch.sort(surfacesCopy, dim=-2).cpu().numpy()  # correct all surface constraint
-
+            correctedSurfacesArray, _ = torch.sort(surfacesCopy, dim=-2)  # correct all surface constraint
+            correctedSurfacesArray = correctedSurfacesArray.cpu().numpy()
 
             # load original images
             imagesList = glob.glob(volumesDir + f"/{patientVolumeName}/" + f"*_OCT[0-3][0-9].jpg")
