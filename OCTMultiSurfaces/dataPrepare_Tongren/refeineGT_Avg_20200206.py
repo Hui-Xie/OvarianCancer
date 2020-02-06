@@ -68,15 +68,15 @@ def main():
     In output below , column index w mean column (w+128) in original width 768 OCT images.
          
     In output below, bscan index starts with 0 which corresponds OCT1 in the original images.\n 
-    At Feb 04th, 2020:
+    At Feb 06th, 2020:
     According to notes of doctors, I did below solution to refine the ground truth:
 
-    1   delete ill cases: #34169, and # 2579;  
-    2   ROI left shifts 25 pixel for case 5363_OD_25453;
-    3   use yaxing 20200202 updated 6 cases to replace old ground truth cases;  
-    4   delete  all surface 8 for all 47 cases;
-    5   near foveas in first 5 surfaces,  average to erase artifacts: solve the disorder of surface 0-5 near foveas;
-    6   sort along all columns for all patients: solve all disorder of surface 7, 8,9,
+    1   delete ill cases: #34169, and # 2579; 
+    2   ROI left shifts 25 pixel for case 5363_OD_25453;
+    3   use yaxing 20200202 updated 6 cases to replace old ground truth cases;  
+    4   delete  all surface 8 for all 47 cases;
+    5   near foveas in first 5 surfaces,  average disorder along column to erase artifacts: solve the disorder of surface 0-5 near foveas;
+    6   sort along all columns for all patients: solve all disorder of surface 7, 8,9 or other locations;
 
     After these, I will output visual images of current xml ground truth, disorder location, our adjusted result, for doctor to further review.
 
