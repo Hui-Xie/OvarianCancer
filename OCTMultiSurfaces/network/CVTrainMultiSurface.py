@@ -13,6 +13,7 @@ sys.path.append(".")
 from OCTDataSet import OCTDataSet
 from OCTUnetTongren import OCTUnetTongren
 from OCTUnetJHU import OCTUnetJHU
+from OCTUnetSurfaceLayerJHU import OCTUnetSurfaceLayerJHU
 from OCTOptimization import *
 from OCTTransform import *
 
@@ -183,7 +184,7 @@ def main():
                                                               num_workers=0):
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
-                S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+                S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs

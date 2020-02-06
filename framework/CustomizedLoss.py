@@ -441,6 +441,9 @@ class GeneralizedDiceLoss():
     def __init__(self):
         pass
 
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
     def forward(self, inputx, target):
         '''
 
@@ -460,7 +463,7 @@ class GeneralizedDiceLoss():
         softmaxInput = F.softmax(inputx - inputxMaxDim1, 1)  # use inputMaxDim1 is to avoid overflow.
 
         # convert target of size(B,H,W) into (B,K,H,W) into one-hot float32 probability
-        targetProb = torch.zeros_like(inputx)
+        targetProb = torch.zeros(inputx.shape, dtype=torch.long, device=device)
         for k in range(0,K):
             targetProb[:,k,:,:] = torch.where(k ==target, torch.ones_like(target), targetProb[:,k,:,:])
 

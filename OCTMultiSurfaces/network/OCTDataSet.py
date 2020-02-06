@@ -36,7 +36,7 @@ def getLayerLabels(surfaceLabels, height):
     N, W = surfaceLabels.shape  # N is the number of surface
     layerLabels = torch.zeros((H, W), dtype=torch.long, device=device)
     surfaceLabels = (surfaceLabels + 0.5).long()  # let surface height match grid
-    surfaceCodes = torch.tensor(range(1, N + 1)).unsqueeze(dim=-1).expand_as(surfaceLabels)
+    surfaceCodes = torch.tensor(range(1, N + 1), device=device).unsqueeze(dim=-1).expand_as(surfaceLabels)
     layerLabels.scatter_(0, surfaceLabels, surfaceCodes)
 
     for i in range(1,H):
