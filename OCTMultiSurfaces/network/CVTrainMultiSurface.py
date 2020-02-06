@@ -166,7 +166,7 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            _S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+            _S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(device))
             optimizer.step()

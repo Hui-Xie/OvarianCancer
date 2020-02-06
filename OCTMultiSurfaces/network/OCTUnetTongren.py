@@ -210,7 +210,7 @@ class OCTUnetTongren(BasicModel):
         )  # output size:numSurfaces*496*512
 
 
-    def forward(self, inputs, gaussianGTs=None, GTs=None):
+    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):
         # compute outputs
         x0 = self.m_down0Pooling(inputs)
         x0 = self.m_down0(x0) + x0    # this residual link may hurts dice performance.
