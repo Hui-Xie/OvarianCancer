@@ -4,6 +4,7 @@
 
 
 import sys
+import torch
 
 sys.path.append(".")
 from OCTOptimization import *
@@ -12,7 +13,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss
 
 class OCTUnetSurfaceLayerJHU(BasicModel):
     def __init__(self, numSurfaces=9, N=24):
@@ -267,20 +268,26 @@ class OCTUnetSurfaceLayerJHU(BasicModel):
         x = self.m_up1(x) + x
 
 
-        xs = self.m_surfaces(x)  # xs means x_surfaces
-        xl = self.m_layers(x)    # xs means x_layers
+        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*128*1024
+        xl = self.m_layers(x)    # xs means x_layers,   # output size: B*(numSurfaces+1)*128*1024
 
         '''
         useProxialIPM = self.getConfigParameter('useProxialIPM')
         useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
         usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
+        
         '''
+        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
 
         generalizedDiceLoss= GeneralizedDiceLoss()
         loss_layerDice = generalizedDiceLoss(xl, layerGTs)
 
-        kldDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)   # the input given is expected to contain log-probabilities
-        loss_kldDiv = kldDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
+        if useCEReplaceKLDiv:
+            CELoss = MultiClassCrossEntropyLoss()
+            loss_surfaceKLDiv = CELoss(xs, GTs)
+        else:
+            klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)   # the input given is expected to contain log-probabilities
+            loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
 
         smoothL1Loss = nn.SmoothL1Loss().to(device)
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
@@ -289,7 +296,8 @@ class OCTUnetSurfaceLayerJHU(BasicModel):
         S = separationPrimalDualIPM(mu, sigma2)
         loss_L1 = smoothL1Loss(S, GTs)
 
-        loss = loss_layerDice+ loss_kldDiv +loss_L1
+        weightL1 = 10.0
+        loss = loss_layerDice+ loss_surfaceKLDiv +loss_L1*weightL1
 
         return S, loss   # return surfaceLocation S in (B,S,W) dimension and loss
 

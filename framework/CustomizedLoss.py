@@ -477,5 +477,39 @@ class GeneralizedDiceLoss():
         GDL = 1.0-2.0*((softmaxInput*targetProb).sum(dim=sumDims)*W).sum()/((softmaxInput+targetProb).sum(dim=sumDims)*W).sum()
         return GDL
 
+# support multiclass CrossEntropy Loss
+class MultiClassCrossEntropyLoss():
+    def __init__(self):
+        pass
+
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
+    def forward(self, inputx, target):
+        '''
+        multiclass surface location cross entropy.
+        this loss expect the corresponding prob at target location has maximum.
+
+        :param inputx:  raw, unnormalized scores for each class; or logits before softmax, in size: B,N,H,W
+        :param target:  size: B,N,W; indicates surface location
+        :return: a scalar
+        '''
+        B,N,H,W = inputx.shape
+        assert (B,N,W) == target.shape
+
+        # convert logits to probability for inputx
+        inputxMaxDim1, _ = torch.max(inputx, dim=1, keepdim=True)
+        inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
+        softmaxInput = F.softmax(inputx - inputxMaxDim1, 1)  # use inputMaxDim1 is to avoid overflow. size: B,N,H,W
+
+        targetIndex = (target +0.5).long().unsqueeze(dim=2) # size: B,N,1,W
+
+        surfaceProb = torch.gather(softmaxInput, dim=2,index=targetIndex)  # size: B,N,1,W
+
+        loss = (-surfaceProb.log()).sum()
+        return loss
+
+
+
 
 

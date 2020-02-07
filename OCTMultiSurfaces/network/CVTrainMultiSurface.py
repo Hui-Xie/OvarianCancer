@@ -83,6 +83,7 @@ def main():
 
     useDynamicProgramming = cfg['useDynamicProgramming']
     usePrimalDualIPM = cfg['usePrimalDualIPM']
+    useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
 
     if -1==k and 0==K:  # do not use cross validation
         trainImagesPath = os.path.join(dataDir, "training", f"images.npy")
@@ -143,6 +144,7 @@ def main():
 
     net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
     net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
+    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):
