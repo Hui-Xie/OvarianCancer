@@ -76,4 +76,4 @@ usePrimalDualIPM: True
 
 useLayerDice: True
 
-
+useCEReplaceKLDiv: False

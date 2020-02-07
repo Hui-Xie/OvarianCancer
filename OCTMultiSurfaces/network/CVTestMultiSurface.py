@@ -13,6 +13,7 @@ sys.path.append(".")
 from OCTDataSet import OCTDataSet
 from OCTUnetTongren import OCTUnetTongren
 from OCTUnetJHU import OCTUnetJHU
+from OCTUnetSurfaceLayerJHU import OCTUnetSurfaceLayerJHU
 from OCTOptimization import *
 from OCTTransform import *
 
@@ -112,6 +113,7 @@ def main():
 
     useDynamicProgramming = cfg['useDynamicProgramming']
     usePrimalDualIPM = cfg['usePrimalDualIPM']
+    useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
 
     if -1==k and 0==K:  # do not use cross validation
         testImagesPath = os.path.join(dataDir, "test", f"images.npy")
@@ -154,6 +156,7 @@ def main():
 
     net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
     net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
+    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
@@ -167,7 +170,7 @@ def main():
         for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'])
+            S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
 
             images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
