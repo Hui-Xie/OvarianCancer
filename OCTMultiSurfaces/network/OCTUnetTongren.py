@@ -10,6 +10,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss
 
 class OCTUnetTongren(BasicModel):
     def __init__(self, numSurfaces=11, N=24):
@@ -205,13 +206,24 @@ class OCTUnetTongren(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
-        self.m_up0 = nn.Sequential(
+        # 2 branches:
+        self.m_surfaces = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(N, numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:numSurfaces*496*512
+
+        self.m_layers = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            nn.Conv2d(N, numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
+        )  # output size:(numSurfaces+1)*496*512
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):
         # compute outputs
+        device = inputs.device
+
         x0 = self.m_down0Pooling(inputs)
         x0 = self.m_down0(x0) + x0    # this residual link may hurts dice performance.
         x0 = self.m_down0(x0)
@@ -252,61 +264,37 @@ class OCTUnetTongren(BasicModel):
         x = self.m_up1Pooling(x) + x0
         x = self.m_up1(x) + x
 
+        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*128*1024
+        xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*128*1024
 
-        x = self.m_up0(x)
+        '''
+        useProxialIPM = self.getConfigParameter('useProxialIPM')
+        useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
+        usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
 
-        softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to consider batch dimension
-        mu, sigma2 = computeMuVariance(softmaxOutputs)
-        S = mu
+        '''
+        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
 
-        lossFunc, lossWeight = self.getCurrentLossFunc()
+        generalizedDiceLoss = GeneralizedDiceLoss()
+        loss_layerDice = generalizedDiceLoss(xl, layerGTs)
 
-        if isinstance(lossFunc, nn.KLDivLoss):
-            # the input to KLDivLoss is expected to contain log-probabilities
-            logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
-            loss = lossFunc(logSoftmaxOutputs, gaussianGTs) * lossWeight
-
-        elif isinstance(lossFunc, nn.SmoothL1Loss):
-            # below 2 lines are discarded try.
-            # lossFunc(S,mu) is to speed up the gradient of wrong-order locations, considering its swapping neighbors.
-            # loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
-
-
-            useProxialIPM = self.getConfigParameter('useProxialIPM')
-            useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
-            usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
-
-            if useProxialIPM:
-                learningStepIPM = self.getConfigParameter("learningStepIPM")
-                maxIterationIPM = self.getConfigParameter("maxIterationIPM")
-                criterionIPM    = self.getConfigParameter("criterionIPM")
-                S = proximalIPM(mu,sigma2, maxIterations=maxIterationIPM, learningStep=learningStepIPM, criterion = criterionIPM )
-                loss = lossFunc(S, GTs) * lossWeight
-
-            elif useDynamicProgramming:
-                logSoftmaxOutputs = nn.LogSoftmax(dim=-2)(x)
-                DPLoc = DPComputeSurfaces(logSoftmaxOutputs)
-                dislocationLossFunc = OCT_DislocationLoss()
-                loss = lossFunc(S, GTs) * lossWeight + dislocationLossFunc(DPLoc, logSoftmaxOutputs, GTs)
-                S = DPLoc.float()
-
-            elif usePrimalDualIPM:
-                B,N,W = mu.shape
-                separationPrimalDualIPM = SeparationPrimalDualIPM(B,W,N, device=mu.device)
-                S = separationPrimalDualIPM(mu,sigma2)
-                loss = lossFunc(S, GTs) * lossWeight
-
-            else:
-                # here S does not implement constrained optimization
-                loss =  lossFunc(S, GTs) * lossWeight
-
-        elif isinstance(lossFunc, OCTMultiSurfaceLoss):
-            loss = lossFunc(mu, sigma2, GTs)
-
+        if useCEReplaceKLDiv:
+            CELoss = MultiClassCrossEntropyLoss()
+            loss_surfaceKLDiv = CELoss(xs, GTs)
         else:
-            assert("Error Loss function in net.forward!")
+            klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+            loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
 
+        smoothL1Loss = nn.SmoothL1Loss().to(device)
+        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
+        B, N, W = mu.shape
+        separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
+        S = separationPrimalDualIPM(mu, sigma2)
+        loss_L1 = smoothL1Loss(S, GTs)
 
-        return S, loss
-        # return surfaceLocation S in (B,S,W) dimension and loss
+        weightL1 = 10.0
+        loss = loss_layerDice + loss_surfaceKLDiv + loss_L1 * weightL1
+
+        return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
+
 

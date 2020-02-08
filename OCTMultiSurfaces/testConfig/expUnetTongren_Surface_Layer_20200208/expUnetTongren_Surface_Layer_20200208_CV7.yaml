@@ -1,0 +1,64 @@
+# base on corrected and refined Ground truth with guarantee of surface-separation constraint.
+# total patient 47 which excluded 2 ill patients.
+# raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
+# convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_20200207.py
+# numSurface = 10
+
+# Use basic Unet + KLDLoss for OCT multisurface
+# Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss + IPM
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K_Folds: 10
+fold_k:  7   # k
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+groundTruthInteger: True
+numSurfaces: 10  # num of surfaces in an image
+sigma: 20.0  # For gaussian  ground truth, in float
+device: torch.device('cuda:1')   #GPU ID
+batchSize: 4
+startFilters: 12  # the num of filters in first layer of Unet
+
+# some physical parameter of images
+slicesPerPatient: 31
+hPixelSize: 3.870  # unit: micrometer, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt-pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+# data augmentation
+
+network: "OCTUnetTongren"
+netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "" # reserve for pretrained network.
+outputDir: ""
+
+# do not use these loss function
+lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
+lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
+lossFunc1: "nn.SmoothL1Loss().to(device)"
+lossFunc1Epochs: 500
+
+
+# Proximal IPM Optimization
+useProxialIPM: False
+learningStepIPM: 0.1
+maxIterationIPM: 100
+criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
+
+useDynamicProgramming: False
+usePrimalDualIPM: True
+useLayerDice: True
+useCEReplaceKLDiv: False
