@@ -5,7 +5,7 @@ configFile = "/home/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetSurfaceLayerJH
 
 configDict = torch.load(configFile)
 
-print(f"Information in {configFile}")
+print(f"Information in {configFile}\n")
 for key, value in configDict.items():
     print(f"\t{key}:{value}")
 

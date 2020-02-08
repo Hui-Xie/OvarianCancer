@@ -1,6 +1,5 @@
 # convert data and refine data
 
-
 import glob as glob
 import os
 import sys
@@ -10,13 +9,14 @@ import random
 import numpy as np
 from imageio import imread
 import json
+import torch
 
 
 K = 10  # K-fold Cross validation, the k-fold is for test, (k+1)%K is validation, others for training.
 
-W = 768
+W = 512 # original images have width of 768, we only clip middle 512.
 H = 496
-NumSurfaces = 11
+NumSurfaces = 10  # in xml files, there are 11 surfaces, we will delete inaccurate surface 8
 NumSlices = 31  # for each patient
 
 volumesDir = "/home/hxie1/data/OCT_Tongren/control"
@@ -24,6 +24,7 @@ segsDir = "/home/hxie1/data/OCT_Tongren/refinedGT_20200204"
 
 outputDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet"
 patientsListFile = os.path.join(outputDir, "patientsList.txt")
+device = torch.device("cuda:0")
 
 def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):
     # image in slices, Heigh, Width axis order
@@ -43,14 +44,19 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
 
         surfacesArray = getSurfacesArray(segFile)
         Z,surfaces_num, X = surfacesArray.shape
-        assert X == W and surfaces_num == NumSurfaces
+        if 11 == Num_Surfaces:
+            surfacesArray = np.delete(surfacesArray, 8, axis=1)  # delete inaccurate surface 8
+            B, Num_Surfaces, X = surfacesArray.shape
+            assert B == 31 and Num_Surfaces == 10 and X == 768
+
+        # remove the leftmost and rightmost 128 columns for each B-scans as the segmentation is not accurate
+        if "5363_OD_25453" == patientName:
+            surfacesArray = surfacesArray[:, :, 103:615]  # left shift 25 pixels for case 5363_OD_25453
+        else:
+            surfacesArray = surfacesArray[:, :, 128:640]
         allPatientsSurfaceArray[s:s+Z,:,:] = surfacesArray
 
-        if "5363_OD_25453" == patientName:
-            s_5363_OD_25453 = s
-            sZ__5363_OD_25453 = s+Z
-
-        # read image data
+        # read image data and clip
         imagesList = glob.glob(volume + f"/*_OCT[0-3][0-9].jpg")
         imagesList.sort()
         if Z != len(imagesList):
@@ -58,23 +64,52 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
            return
 
         for z in range(0, Z):
-            allPatientsImageArray[s,] = imread(imagesList[z])
+            if "5363_OD_25453" == patientName:
+                allPatientsImageArray[s,] = imread(imagesList[z])[:,103:615]
+            else:
+                allPatientsImageArray[s,] = imread(imagesList[z])[:,128:640]
             patientIDDict[str(s)] = imagesList[z]
             s +=1
-
-    # remove the leftmost and rightmost 128 columns for each B-scans as the segmentation is not accurate
-    # todo use  "5363_OD_25453" z ID to left shift image and surface
-
-    allPatientsImageArray = allPatientsImageArray[:,:,128:640]
-    allPatientsSurfaceArray = allPatientsSurfaceArray[:,:,128:640]
 
     # flip axis order to fit with Leixin's network with format(slices, Width, Height)
     # allPatientsImageArray = np.swapaxes(allPatientsImageArray, 1,2)
     # allPatientsSurfaceArray = np.swapaxes(allPatientsSurfaceArray, 1,2)
 
-    # gaurantee surface separation constraints, s_i <= s_{i+1} in each A-Scan.
-    # above error is only 1.6% of all pixel points in Tongren data, direct sort in each A-Scan to gaurantee surface order.
-    allPatientsSurfaceArray = np.sort(allPatientsSurfaceArray, axis=-2)
+    # adjust inaccurate manual segmentation error near foveas
+    # use average method along column to correct disorders in surface 0-4 near foveas
+    surfaces = torch.from_numpy(allPatientsSurfaceArray).to(device)
+    surface0 = surfaces[:, :-1, :]
+    surface1 = surfaces[:, 1:, :]
+    surfacesCopy = torch.zeros_like(surfaces)  # surfaceCopy contain the first disorder values only, it and its next row value along column violate constraints
+    surfacesCopy[:, 0:-1, :] = torch.where(surface0 > surface1, surface0, torch.zeros_like(surface0))
+
+    B, N, W = surfaces.shape
+    MaxMergeSurfaces = 5
+    for b in range(0, B):
+        for w in range(W * 2 // 5, W * 3 // 5):  # only focus on fovea region.
+            s = 0
+            while (s < MaxMergeSurfaces):  # in fovea region, the first 5 surfaces may merge into one surface.
+                if 0 != surfacesCopy[b, s, w]:
+                    n = 1  # n continuous disorder locations
+                    while s + n + 1 < MaxMergeSurfaces and 0 != surfacesCopy[b, s + n, w]:
+                        n += 1
+                    # get the average of disorder surfaces
+                    correctValue = 0.0
+                    for k in range(0, n + 1):  # n+1 consider its next disorder value
+                        correctValue += surfaces[b, s + k, w]
+                    correctValue /= (n + 1)
+
+                    # fill the average value
+                    for k in range(0, n + 1):
+                        surfacesCopy[b, s + k, w] = correctValue
+                    s = s + n + 1
+                else:
+                    s += 1
+    # after average the disorder near fovea, fill other values which may also be disorder
+    surfacesCopy = torch.where(0 == surfacesCopy, surfaces, surfacesCopy)
+    # final fully sort along column
+    correctedSurfacesArray, _ = torch.sort(surfacesCopy, dim=-2)  # correct all surface constraint
+    allPatientsSurfaceArray = correctedSurfacesArray.cpu().numpy()
 
     # save
     np.save(goalImageFile, allPatientsImageArray)
