@@ -113,11 +113,11 @@ def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     '''
     N,NumSurface, W = predicitons.shape
 
-    Error = torch.abs(predicitons-gts)
-    stdSurface, muSurface = tuple(x*hPixelSize for x in torch.std_mean(Error, dim=(0,2)))
-    stdPatient = torch.FloatTensor([torch.std(Error[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(N // slicesPerPatient)]) *hPixelSize
-    muPatient  = torch.FloatTensor([torch.mean(Error[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(N // slicesPerPatient)]) *hPixelSize
-    std, mu = tuple(x*hPixelSize for x in torch.std_mean(Error))
+    absError = torch.abs(predicitons-gts)
+    stdSurface, muSurface = tuple(x*hPixelSize for x in torch.std_mean(absError, dim=(0,2)))
+    stdPatient = torch.FloatTensor([torch.std(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(N // slicesPerPatient)]) *hPixelSize
+    muPatient  = torch.FloatTensor([torch.mean(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(N // slicesPerPatient)]) *hPixelSize
+    std, mu = tuple(x*hPixelSize for x in torch.std_mean(absError))
     return stdSurface, muSurface, stdPatient,muPatient, std,mu
 
 

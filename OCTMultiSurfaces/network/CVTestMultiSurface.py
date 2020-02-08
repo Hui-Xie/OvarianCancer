@@ -62,7 +62,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = True
-    OutputPredictImages = True
+    OutputPredictImages = False
 
     # parse config file
     configFile = sys.argv[1]
@@ -220,10 +220,11 @@ def main():
             if "_OCT01" in patientID_Index:
                 patientIDList.append(extractPaitentID(testIDs[b]))
         if "OCT_JHU" in dataDir:
-            # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_1.png'
-            patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_1
-            if "_s1_R_1" in patientID_Index:
-                patientIDList.append(patientID_Index[0:4])  # e.g. hc01
+            # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
+            patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_19
+            patient = patientID_Index[0:4] # e.g. hc01
+            if "_s1_R_19" in patientID_Index and patient not in patientIDList:
+                patientIDList.append(patient)
 
         if not OutputPredictImages:
             continue
