@@ -12,11 +12,10 @@ import json
 import torch
 
 
-K = 10  # K-fold Cross validation, the k-fold is for test, (k+1)%K is validation, others for training.
-
-W = 512 # original images have width of 768, we only clip middle 512.
+K = 10   # K-fold Cross validation, the k-fold is for test, (k+1)%K is validation, others for training.
+W = 512  # original images have width of 768, we only clip middle 512
 H = 496
-NumSurfaces = 10  # in xml files, there are 11 surfaces, we will delete inaccurate surface 8
+N = 10  # in xml files, there are 11 surfaces, we will delete inaccurate surface 8
 NumSlices = 31  # for each patient
 
 volumesDir = "/home/hxie1/data/OCT_Tongren/control"
@@ -33,7 +32,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
         return
 
     allPatientsImageArray = np.empty((len(volumesList)*NumSlices,H, W), dtype=np.float)
-    allPatientsSurfaceArray = np.empty((len(volumesList)*NumSlices, NumSurfaces, W),dtype=np.int)
+    allPatientsSurfaceArray = np.empty((len(volumesList)*NumSlices, N, W),dtype=np.int)
     patientIDDict = {}
 
     s = 0 # initial slice for each patient
@@ -43,7 +42,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
         segFile = os.path.join(segsDir, segFile)
 
         surfacesArray = getSurfacesArray(segFile)
-        Z,surfaces_num, X = surfacesArray.shape
+        Z,Num_Surfaces, X = surfacesArray.shape
         if 11 == Num_Surfaces:
             surfacesArray = np.delete(surfacesArray, 8, axis=1)  # delete inaccurate surface 8
             B, Num_Surfaces, X = surfacesArray.shape
@@ -83,7 +82,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     surfacesCopy = torch.zeros_like(surfaces)  # surfaceCopy contain the first disorder values only, it and its next row value along column violate constraints
     surfacesCopy[:, 0:-1, :] = torch.where(surface0 > surface1, surface0, torch.zeros_like(surface0))
 
-    B, N, W = surfaces.shape
+    B = surfaces.shape[0]
     MaxMergeSurfaces = 5
     for b in range(0, B):
         for w in range(W * 2 // 5, W * 3 // 5):  # only focus on fovea region.
