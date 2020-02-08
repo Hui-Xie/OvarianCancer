@@ -1,8 +1,11 @@
 
 import torch
 
-configFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/OCTUnet/expUnet_20200117_CV1_DP/ConfigParameters.pt"
+configFile = "/home/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetSurfaceLayerJHU/expUnetJHU_IPM_SurfaceLayer_20200206/ConfigParameters.pt"
 
 configDict = torch.load(configFile)
 
-print(configDict)
+print(f"Information in {configFile}")
+for key, value in configDict.items():
+    print(f"\t{key}:{value}")
+
