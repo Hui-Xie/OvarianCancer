@@ -116,7 +116,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=50, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
     # KLDivLoss is for Guassuian Ground truth for Unet
     loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
