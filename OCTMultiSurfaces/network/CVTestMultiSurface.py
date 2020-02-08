@@ -202,10 +202,17 @@ def main():
 
 
 
-
+        '''
         stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
+        '''
+
+
+        stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDim(testOutputs, testGts,
+                                                                                  slicesPerPatient=slicesPerPatient,
+                                                                                  hPixelSize=hPixelSize)
+
     #generate predicted images
     images = images.cpu().numpy().squeeze()
     B,H,W = images.shape
@@ -293,8 +300,8 @@ def main():
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
         file.write(f"patientIDList ={patientIDList}\n")
-        file.write(f"stdPatientError = {stdPatientError}\n")
-        file.write(f"muPatientError = {muPatientError}\n")
+        #file.write(f"stdPatientError = {stdPatientError}\n")
+        #file.write(f"muPatientError = {muPatientError}\n")
         file.write(f"stdError = {stdError}\n")
         file.write(f"muError = {muError}\n")
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")

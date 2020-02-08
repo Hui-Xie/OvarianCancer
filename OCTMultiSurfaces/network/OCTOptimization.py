@@ -120,6 +120,41 @@ def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     std, mu = tuple(x*hPixelSize for x in torch.std_mean(absError))
     return stdSurface, muSurface, stdPatient,muPatient, std,mu
 
+def computeErrorStdMuOverPatientDim(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
+    '''
+    Compute error standard deviation and mean along different dimension.
+
+    First convert absError on patient dimension
+
+
+    :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
+    :param gts: in (BatchSize, NumSurface, W) dimension
+    :param hPixelSize: in micrometer
+    :return: muSurface: (NumSurface) dimension, mean for each surface
+             stdSurface: (NumSurface) dimension
+             muPatient: (NumPatient) dimension, mean for each patient
+             stdPatient: (NumPatient) dimension
+             mu: a scalar, mean over all surfaces and all batchSize
+             std: a scalar
+    '''
+    B,N, W = predicitons.shape # where N is numSurface
+    absError = torch.abs(predicitons-gts)
+    absErrorPatient = torch.FloatTensor([torch.mean(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ], dim=(0,2)) for i in range(B // slicesPerPatient)]) *hPixelSize
+    # size of absErrorPatient:  [Patient, N]
+    stdSurface, muSurface = torch.std_mean(absErrorPatient, dim=0)
+    # size of stdSurface, muSurface: [N]
+    std, mu = torch.std_mean(absErrorPatient)
+    return stdSurface, muSurface, std,mu
+
+    '''
+    stdSurface, muSurface = tuple(x*hPixelSize for x in torch.std_mean(absError, dim=(0,2)))
+    stdPatient = torch.FloatTensor([torch.std(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(B // slicesPerPatient)]) *hPixelSize
+    muPatient  = torch.FloatTensor([torch.mean(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(B // slicesPerPatient)]) *hPixelSize
+    std, mu = tuple(x*hPixelSize for x in torch.std_mean(absError))
+    return stdSurface, muSurface, stdPatient,muPatient, std,mu
+    '''
+
+
 
 class OCTMultiSurfaceLoss():
 
