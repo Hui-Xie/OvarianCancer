@@ -137,24 +137,17 @@ def computeErrorStdMuOverPatientDim(predicitons, gts, slicesPerPatient=31, hPixe
              mu: a scalar, mean over all surfaces and all batchSize
              std: a scalar
     '''
+    device = predicitons.device
     B,N, W = predicitons.shape # where N is numSurface
     absError = torch.abs(predicitons-gts)
-    absErrorPatient = torch.FloatTensor([torch.mean(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ], dim=(0,2)) for i in range(B // slicesPerPatient)]) *hPixelSize
-    # size of absErrorPatient:  [Patient, N]
+    P = B // slicesPerPatient
+    absErrorPatient = torch.zeros((P,N), device=device)
+    for p in range(P):
+        absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient:(p + 1) * slicesPerPatient, ], dim=(0,2))*hPixelSize
     stdSurface, muSurface = torch.std_mean(absErrorPatient, dim=0)
     # size of stdSurface, muSurface: [N]
     std, mu = torch.std_mean(absErrorPatient)
     return stdSurface, muSurface, std,mu
-
-    '''
-    stdSurface, muSurface = tuple(x*hPixelSize for x in torch.std_mean(absError, dim=(0,2)))
-    stdPatient = torch.FloatTensor([torch.std(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(B // slicesPerPatient)]) *hPixelSize
-    muPatient  = torch.FloatTensor([torch.mean(absError[i * slicesPerPatient:(i + 1) * slicesPerPatient, ]) for i in range(B // slicesPerPatient)]) *hPixelSize
-    std, mu = tuple(x*hPixelSize for x in torch.std_mean(absError))
-    return stdSurface, muSurface, stdPatient,muPatient, std,mu
-    '''
-
-
 
 class OCTMultiSurfaceLoss():
 

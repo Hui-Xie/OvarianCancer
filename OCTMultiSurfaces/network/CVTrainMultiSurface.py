@@ -196,9 +196,9 @@ def main():
             if groundTruthInteger:
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # Error Std and mean
-            stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(validOutputs, validGts,
-                                                                                      slicesPerPatient=slicesPerPatient,
-                                                                                      hPixelSize=hPixelSize)
+            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDim(testOutputs, testGts,
+                                                                                                 slicesPerPatient=slicesPerPatient,
+                                                                                                 hPixelSize=hPixelSize)
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
@@ -206,9 +206,9 @@ def main():
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
         writer.add_scalar('ValidationError/mean(um)', muError, epoch)
-        writer.add_scalar('ValidationError/stdDeviation(um)', stdError, epoch)
+        writer.add_scalar('ValidationError/std(um)', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurfaceError), epoch)
-        writer.add_scalars('ValidationError/muPatient(um)', convertTensor2Dict(muPatientError), epoch)
+        writer.add_scalars('ValidationError/stdSurface(um)', convertTensor2Dict(stdSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preLoss or muError < preErrorMean:
