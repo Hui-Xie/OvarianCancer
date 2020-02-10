@@ -196,7 +196,7 @@ def main():
             if groundTruthInteger:
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # Error Std and mean
-            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDim(validOutputs, validGts,
+            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
                                                                                                  slicesPerPatient=slicesPerPatient,
                                                                                                  hPixelSize=hPixelSize)
         lrScheduler.step(validLoss)

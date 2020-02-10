@@ -120,7 +120,7 @@ def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     std, mu = tuple(x*hPixelSize for x in torch.std_mean(absError))
     return stdSurface, muSurface, stdPatient,muPatient, std,mu
 
-def computeErrorStdMuOverPatientDim(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
+def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     '''
     Compute error standard deviation and mean along different dimension.
 

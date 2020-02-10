@@ -209,7 +209,7 @@ def main():
         '''
 
 
-        stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDim(testOutputs, testGts,
+        stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
 
