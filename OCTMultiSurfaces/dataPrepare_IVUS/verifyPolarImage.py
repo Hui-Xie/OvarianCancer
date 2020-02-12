@@ -112,5 +112,30 @@ plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation.png"), dpi='fig
 plt.close()
 
 
+# convert polar image  back to cartesian image
+cartesianImage, cartesianLabel = polarConverter.polarImageLabel2Cartesian(polarImage,polarLabel,rotation=45)
+
+f4 = plt.figure(frameon=False)
+DPI = f4.dpi
+H,W = cartesianImage.shape
+rowSubplot= 1
+colSubplot= 2
+f4.set_size_inches(W*colSubplot/ float(DPI), H*rowSubplot/ float(DPI))
+plt.margins(0)
+plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
+
+subplot1 = plt.subplot(rowSubplot,colSubplot, 1)
+subplot1.imshow(cartesianImage, cmap='gray')
+subplot1.axis('off')
+
+subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
+subplot2.imshow(cartesianImage, cmap='gray')
+subplot2.plot(cartesianLabel[0,:,0], cartesianLabel[0,:,1], linewidth=0.4)
+subplot2.plot(cartesianLabel[1,:,0], cartesianLabel[1,:,1], linewidth=0.4)
+subplot2.axis('off')
+
+plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation_backCartesian.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.close()
+
 print("========Program Ends=============")
 
