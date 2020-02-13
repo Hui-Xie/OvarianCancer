@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class PolarCoordinate():
+class PolarCartesianConverter():
     def __init__(self, cartesianImageShape, centerx,centery, rMax, tMax=360):
         '''
 

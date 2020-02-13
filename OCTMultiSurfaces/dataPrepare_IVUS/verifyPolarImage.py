@@ -8,7 +8,7 @@ outputDir = "/home/hxie1/temp"
 
 import sys
 sys.path.append(".")
-from PolarCoordinate import PolarCoordinate
+from PolarCartesianConverter import PolarCartesianConverter
 
 
 
@@ -58,7 +58,7 @@ plt.close()
 
 
 # convert polar image
-polarConverter = PolarCoordinate(image.shape, W//2,H//2,min(W//2,H//2), 360)
+polarConverter = PolarCartesianConverter(image.shape, W//2,H//2,min(W//2,H//2), 360)
 label = np.array([lumenLabel,mediaLabel])
 
 polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(image,label,rotation=0)
