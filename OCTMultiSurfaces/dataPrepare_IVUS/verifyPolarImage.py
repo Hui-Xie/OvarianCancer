@@ -45,7 +45,7 @@ subplot2.plot(lumenLabel[:,0], lumenLabel[:,1], linewidth=0.4)
 subplot2.plot(mediaLabel[:,0], mediaLabel[:,1], linewidth=0.4)
 subplot2.axis('off')
 
-# verify the grond truth order
+# verify the ground truth order
 subplot3 = plt.subplot(rowSubplot,colSubplot, 3)
 subplot3.imshow(image, cmap='gray')
 for i in range(0, 360, 45):
@@ -119,7 +119,7 @@ f4 = plt.figure(frameon=False)
 DPI = f4.dpi
 H,W = cartesianImage.shape
 rowSubplot= 1
-colSubplot= 2
+colSubplot= 3
 f4.set_size_inches(W*colSubplot/ float(DPI), H*rowSubplot/ float(DPI))
 plt.margins(0)
 plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
@@ -133,6 +133,14 @@ subplot2.imshow(cartesianImage, cmap='gray')
 subplot2.plot(cartesianLabel[0,:,0], cartesianLabel[0,:,1], linewidth=0.4)
 subplot2.plot(cartesianLabel[1,:,0], cartesianLabel[1,:,1], linewidth=0.4)
 subplot2.axis('off')
+
+# verify the ground truth order
+subplot3 = plt.subplot(rowSubplot,colSubplot, 3)
+subplot3.imshow(cartesianImage, cmap='gray')
+for i in range(0, 360, 45):
+    subplot3.text(cartesianLabel[0,i,0], cartesianLabel[0,i,1], str(i//45), color = 'blue')
+    subplot3.text(cartesianLabel[1,i,0], cartesianLabel[1,i,1], str(i//45), color = 'red')
+subplot3.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation_backCartesian.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
