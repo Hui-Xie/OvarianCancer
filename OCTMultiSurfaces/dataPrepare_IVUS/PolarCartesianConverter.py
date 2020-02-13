@@ -20,7 +20,7 @@ class PolarCartesianConverter():
     def cartesianLabel2Polar(self, cartesianLabel, rotation=0):
         '''
 
-        :param cartesianLabel: C*N*2, where C is the number of class labels, N is number of points, 2 is 2 coordinates x and y;
+        :param cartesianLabel: C*N*2, where C is the number of contour labels, N is number of points, 2 is 2 coordinates x and y;
         :param rotation: rotation angular in integer degree of (0,360)
         :return: polarLabel: (t,r) in size (C,N,2)
 
@@ -59,8 +59,8 @@ class PolarCartesianConverter():
         return polarImage, polarLabel
 
     def polarLabel2Cartesian(self, polarLabel, rotation=0):
-        r = polarLabel[:, :, 1]  # size:C*N
         t = polarLabel[:, :, 0]  # size:C*N
+        r = polarLabel[:, :, 1]  # size:C*N
         rotation = rotation % 360
         if 0 != rotation:
             r = np.roll(r, rotation, axis=1)
