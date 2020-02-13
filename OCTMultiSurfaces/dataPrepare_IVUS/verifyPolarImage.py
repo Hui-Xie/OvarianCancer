@@ -87,26 +87,39 @@ plt.close()
 
 
 # convert polar image  with rotation
-polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(image,label,rotation=45)
+#polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(image,label,rotation=45)
+# use 2 lines:
+polarImage1, polarLabel1 = polarConverter.cartesianImageLabel2Polar(image,label,rotation=0)
+polarImage2, polarLabel2 = polarConverter.polarImageLabelRotate(polarImage1, polarLabel1, rotation=60)
 
 f3 = plt.figure(frameon=False)
 DPI = f3.dpi
 H,W = polarImage.shape
-rowSubplot= 1
+rowSubplot= 2
 colSubplot= 2
 f3.set_size_inches(W*colSubplot/ float(DPI), H*rowSubplot/ float(DPI))
 plt.margins(0)
 plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
 subplot1 = plt.subplot(rowSubplot,colSubplot, 1)
-subplot1.imshow(polarImage, cmap='gray')
+subplot1.imshow(polarImage1, cmap='gray')
 subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
-subplot2.imshow(polarImage, cmap='gray')
-subplot2.plot(polarLabel[0,:,0], polarLabel[0,:,1], linewidth=0.4)
-subplot2.plot(polarLabel[1,:,0], polarLabel[1,:,1], linewidth=0.4)
+subplot2.imshow(polarImage1, cmap='gray')
+subplot2.plot(polarLabel1[0,:,0], polarLabel1[0,:,1], linewidth=0.4)
+subplot2.plot(polarLabel1[1,:,0],  polarLabel1[1,:,1], linewidth=0.4)
 subplot2.axis('off')
+
+subplot3 = plt.subplot(rowSubplot,colSubplot, 3)
+subplot3.imshow(polarImage2, cmap='gray')
+subplot3.axis('off')
+
+subplot4 = plt.subplot(rowSubplot,colSubplot, 4)
+subplot4.imshow(polarImage2, cmap='gray')
+subplot4.plot(polarLabel2[0,:,0], polarLabel2[0,:,1], linewidth=0.4)
+subplot4.plot(polarLabel2[1,:,0], polarLabel2[1,:,1], linewidth=0.4)
+subplot4.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
@@ -144,6 +157,8 @@ subplot3.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation_backCartesian.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
+
+
 
 print("========Program Ends=============")
 

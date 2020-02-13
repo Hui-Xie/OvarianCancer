@@ -80,7 +80,6 @@ class PolarCartesianConverter():
         return polarImage, polarLabel
 
 
-
     def polarImageLabel2Cartesian(self, polarImage, polarLabel, rotation=0):
         rotation = rotation % 360
         if 0 != rotation:
@@ -91,5 +90,19 @@ class PolarCartesianConverter():
         cartesianLabel= self.polarLabel2Cartesian(polarLabel, rotation)
         return cartesianmage, cartesianLabel
 
+    def polarImageLabelRotate(self, polarImage, polarLabel, rotation=0):
+        '''
 
-
+        :param polarImage:
+        :param polarLabel:
+        :param rotation: in integer degree of [0,360]
+        :return: (rotated polarImage,rotated polarLabel) same size with input
+        '''
+        rotation = rotation % 360
+        if 0 != rotation:
+            polarImage = np.roll(polarImage, rotation, axis=1)
+            t = polarLabel[:, :, 0]  # size:C*N
+            r = polarLabel[:, :, 1]  # size:C*N
+            r = np.roll(r, rotation, axis=1)
+            polarLabel = np.concatenate((np.expand_dims(t, axis=-1), np.expand_dims(r, axis=-1)), axis=-1)
+        return (polarImage,polarLabel)
