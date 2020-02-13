@@ -40,7 +40,7 @@ for i in range(N):
         for j in range(pN):
             print(f"c=0,\t{j},\t {polarLabel[0,j,0]},\t  {polarLabel[0,j,1]}; \t\t c=1,\t{j},\t {polarLabel[1,j,0]},\t {polarLabel[1,j,1]}")
         print(f"c=0,\tN,\t t,\t r; \t\t c=1,\tN,\t t,\t r")
-        
+
     surfaces0 = polarLabel[0,:, 1]
     surfaces1 = polarLabel[1,:, 1]
     if np.any(surfaces0 > surfaces1):

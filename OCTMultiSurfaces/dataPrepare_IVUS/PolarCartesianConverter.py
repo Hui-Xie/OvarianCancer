@@ -26,17 +26,35 @@ class PolarCartesianConverter():
 
         '''
 
-        x = cartesianLabel[:, :, 0] - self.centerx
-        y = cartesianLabel[:, :, 1] - self.centery
-        r = np.flip(np.sqrt(x ** 2 + y ** 2), axis=1)  # size: C,N, flip because warpPolar is clockwise direction to warp.
+        x = cartesianLabel[:, :, 0] - self.centerx # cartesian x points to East, image x also points to East
+        y = self.centery - cartesianLabel[:, :, 1]  # cartesian y points to North, but image y points to South
+        r = np.sqrt(x ** 2 + y ** 2)
         t = (np.arctan2(y, x) + 2 * np.pi) % (2 * np.pi)  # size: C,N
         t = t * 360 / (2 * np.pi)
 
         rotation = rotation % 360
         if 0 != rotation:
-            r = np.roll(r, -rotation, axis=1)
+            r = np.roll(r, rotation, axis=1)
         polarLabel = np.concatenate((np.expand_dims(t, axis=-1), np.expand_dims(r, axis=-1)), axis=-1)
         return polarLabel
+
+    def polarLabel2Cartesian(self, polarLabel, rotation=0):
+        '''
+
+        :param polarLabel:
+        :param rotation: the previous rotation from cartesian to polar
+        :return: cartesianLabel: in C*N*2, where 2 is (x,y)
+        '''
+        t = polarLabel[:, :, 0]  # size:C*N
+        r = polarLabel[:, :, 1]  # size:C*N
+        rotation = rotation % 360
+        if 0 != rotation:
+            r = np.roll(r, -rotation, axis=1)
+        t = t * 2 * np.pi / 360
+        x = r * np.cos(t) + self.centerx  # cartesian x points to East, image x also points to East
+        y = self.centery - r * np.sin(t)  # cartesian y points to North, but image y points to South
+        cartesianLabel = np.concatenate((np.expand_dims(x, axis=-1), np.expand_dims(y, axis=-1)), axis=-1)
+        return cartesianLabel
 
     def cartesianImageLabel2Polar(self, cartesianImage, cartesianLabel, rotation=0):
         '''
@@ -58,18 +76,7 @@ class PolarCartesianConverter():
         polarLabel = self.cartesianLabel2Polar(cartesianLabel, rotation)
         return polarImage, polarLabel
 
-    def polarLabel2Cartesian(self, polarLabel, rotation=0):
-        t = polarLabel[:, :, 0]  # size:C*N
-        r = polarLabel[:, :, 1]  # size:C*N
-        rotation = rotation % 360
-        if 0 != rotation:
-            r = np.roll(r, rotation, axis=1)
-        t = t * 2 * np.pi / 360
-        r = np.flip(r, axis=1)
-        x = r * np.cos(t) + self.centerx
-        y = r * np.sin(t) + self.centery
-        cartesianLabel = np.concatenate((np.expand_dims(x, axis=-1), np.expand_dims(y, axis=-1)), axis=-1)
-        return cartesianLabel
+
 
     def polarImageLabel2Cartesian(self, polarImage, polarLabel, rotation=0):
         rotation = rotation % 360
