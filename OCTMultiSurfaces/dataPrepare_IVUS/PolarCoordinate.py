@@ -51,10 +51,9 @@ class PolarCoordinate():
             polarImage = np.roll(polarImage, -rotation, axis=1)
             r = np.roll(r, rotation, axis=1)
         t = t*2*np.pi/360
-        t = (t-2*np.pi)%(2*np.pi)  # todo
         r = np.flip(r, axis=1)
-        x = np.cos(t) + self.centerx
-        y = np.sin(t) + self.centery
+        x = r*np.cos(t) + self.centerx
+        y = r*np.sin(t) + self.centery
         polarImage = cv2.rotate(polarImage, cv2.ROTATE_90_COUNTERCLOCKWISE)
         cartesianmage = cv2.warpPolar(polarImage, self.cartesianImageShape, (self.centerx, self.centery), self.rMax,
                                    flags=cv2.WARP_FILL_OUTLIERS + cv2.WARP_INVERSE_MAP)
