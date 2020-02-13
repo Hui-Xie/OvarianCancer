@@ -32,6 +32,9 @@ class PolarCartesianConverter():
         t = (np.arctan2(y, x) + 2 * np.pi) % (2 * np.pi)  # size: C,N
         t = t * 360 / (2 * np.pi)
 
+        # avoid 360 is expressed into 0 at the final coordinate
+        t[:,self.tMax-1, 0] = np.where(t[:,self.tMax-1, 0] == 0, 359.9, t[:,self.tMax-1, 0])
+
         rotation = rotation % 360
         if 0 != rotation:
             r = np.roll(r, rotation, axis=1)
