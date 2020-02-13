@@ -58,7 +58,7 @@ plt.close()
 
 
 # convert polar image
-polarConverter = PolarCoordinate(W//2,H//2,min(W//2,H//2), 360)
+polarConverter = PolarCoordinate(image.shape, W//2,H//2,min(W//2,H//2), 360)
 label = np.array([lumenLabel,mediaLabel])
 
 polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(image,label,rotation=0)

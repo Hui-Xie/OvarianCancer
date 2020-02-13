@@ -2,14 +2,16 @@ import cv2
 import numpy as np
 
 class PolarCoordinate():
-    def __init__(self, centerx,centery, rMax, tMax=360):
+    def __init__(self, cartesianImageShape, centerx,centery, rMax, tMax=360):
         '''
 
+        :param cartesianImageShape: (H,W)
         :param centerx: Cartesian center x
         :param centery: Cartesian center y
         :param rMax: radial Max
         :param tMax: angular Max in [0,360] scale.
         '''
+        self.cartesianImageShape = cartesianImageShape
         self.centerx = centerx
         self.centery = centery
         self.rMax = rMax
@@ -25,7 +27,7 @@ class PolarCoordinate():
                  polarLabel: (t,r) in size (C,N,2)
 
         '''
-        self.cartesianImageShape = cartesianImage.shape
+
         polarImageSize = (self.rMax, self.tMax)
         polarImage = cv2.warpPolar(cartesianImage,polarImageSize, (self.centerx,self.centery), self.rMax, flags=cv2.WARP_FILL_OUTLIERS)
         polarImage = cv2.rotate(polarImage, cv2.ROTATE_90_CLOCKWISE)
@@ -34,7 +36,6 @@ class PolarCoordinate():
         r = np.flip(np.sqrt(x**2 + y**2),axis=1) # size: C,N, flip because warpPolar is clockwise direction to warp.
         t = (np.arctan2(y,x)+2*np.pi)%(2*np.pi)  # size: C,N
         t = t*360/(2*np.pi)
-
 
         rotation = rotation%360
         if 0 != rotation:
