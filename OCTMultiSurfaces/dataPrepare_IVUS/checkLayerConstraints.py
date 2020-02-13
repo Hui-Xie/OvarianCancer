@@ -18,7 +18,7 @@ segMediaList.sort()
 print(f"total {len(segLumenList)} seg lumen files")
 print(f"total {len(segMediaList)} seg media files")
 
-assert len(segLumenList) != len(segMediaList)
+assert len(segLumenList) == len(segMediaList)
 
 N = len(segLumenList)
 
