@@ -23,10 +23,11 @@ C = 2  # number of contour for each image
 W = 360 #N
 H = rawW//2
 
-# for training
-imagesDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM"
-segsDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
 
+imagesDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM"
+
+# for training
+segsDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
 # todo: for test
 
 outputDir = "/home/hxie1/data/IVUS/ploarNumpy"
@@ -73,20 +74,27 @@ def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPat
 
 def main():
     # get files list
-    imagesList = glob.glob(imagesDir + f"/frame_*_003.png")  # frame_05_0004_003.png
-    imagesList.sort()
+    segsList = glob.glob(segsDir + f"/lum_frame_*_003.txt")  # lum_frame_01_0004_003.txt
+    segsList.sort()
 
-    N = len(imagesList)
-    if "Training" in imagesDir: # from Training data, randomly extract 9 for validation
+    N = len(segsList)
+    if "Training" in segsList: # from Training data, randomly extract 9 for validation
         assert N==109
+
         fullList = list(range(N))
         validationIndices = random.sample(fullList, 9)
         validationImageList = []
-        for i in validationIndices:
-            validationImageList.append(imagesList[i])
-        for i in validationIndices:
-            del imagesList[i]
-        trainingImageList = imagesList
+        trainingImageList = []
+
+        for i in range(N):
+            patientID = os.path.splitext(os.path.basename(segsList[i]))[0]  # lum_frame_05_0004_003
+            patientID = patientID[4:]
+            imagePath = os.path.join(imagesDir,patientID+".png") # frame_01_0004_003.png
+
+            if i in validationIndices:
+                validationImageList.append(imagePath)
+            else:
+                trainingImageList.append(imagePath)
 
         print(f"train set has {len(trainingImageList)} files, while validation set has {len(validationImageList)} files.")
 
@@ -98,7 +106,15 @@ def main():
                                  os.path.join(outputDir, 'validation', f"patientID.json"))
 
     else:
-        testImageList = imagesList
+        assert N==326
+        testImageList = []
+        for i in range(N):
+            patientID = os.path.splitext(os.path.basename(segsList[i]))[0]  # lum_frame_05_0004_003
+            patientID = patientID[4:]
+            imagePath = os.path.join(imagesDir,patientID+".png") # frame_01_0004_003.png
+            testImageList.append(imagePath)
+
+
         print(f"test set has {len(testImageList)} files.")
 
         saveVolumeSurfaceToNumpy(testImageList, os.path.join(outputDir, 'test', f"images.npy"), \
