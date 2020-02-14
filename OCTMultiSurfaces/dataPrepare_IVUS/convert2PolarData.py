@@ -8,13 +8,20 @@ import sys
 import random
 import numpy as np
 from imageio import imread
+from numpy import genfromtxt
 import json
+import sys
+sys.path.append(".")
+from PolarCartesianConverter import PolarCartesianConverter
 
 # raw original image size
-W = 384
-H = 384
-NumSurfaces = 2
-NumSlices = 49  # the number of B-Scans for each patient
+rawW = 384
+rawH = 384
+C = 2  # number of contour for each image
+
+# polar image size
+W = 360 #N
+H = rawW//2
 
 # for training
 imagesDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM"
@@ -22,34 +29,38 @@ segsDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
 
 # todo: for test
 
-outputDir = "/home/sheen/c-xwu000_data/IVUS/ploarNumpy"
+outputDir = "/home/hxie1/data/IVUS/ploarNumpy"
 
 def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):
-    # image in (slices, Heigh, Width) axis order
-    # label in (slices, C, N, 2) axis order
+    # polar image in (slices, Heigh, Width) axis order
+    # polar label in (slices, C, W) axis order, where N is 360 representing degree from 0 to 359
     if len(imagesList) ==0:
         return
 
     allPatientsImageArray = np.empty((len(imagesList) , H, W), dtype=np.float)
-    allPatientsSurfaceArray = np.empty((len(imagesList), NumSurfaces, W), dtype=np.float) # the ground truth of JHU data is float
+    allPatientsSurfaceArray = np.empty((len(imagesList), C, W), dtype=np.float) # the ground truth is float
     patientIDDict = {}
+
+    imageShape = (rawH, rawW)
+    polarConverter = PolarCartesianConverter(imageShape, rawW // 2, rawH // 2, min(W // 2, H // 2), 360)
 
     s = 0 # initial slice index
     for imagePath in imagesList:
-        patientIDBsan = os.path.splitext(os.path.basename(imagePath))[0]
-        segFile = os.path.join(segsDir, patientIDBsan+".json")
+        patientID = os.path.splitext(os.path.basename(imagePath))[0]  # frame_05_0004_003
+        lumenSegFile = os.path.join(segsDir, "lum_"+patientID+".txt")       # lum_frame_01_0001_003.txt
+        mediaSegFile = os.path.join(segsDir, "med_"+patientID + ".txt")   # e.g. med_frame_01_0030_003.txt
+        lumenLabel = genfromtxt(lumenSegFile, delimiter=',')
+        mediaLabel = genfromtxt(mediaSegFile, delimiter=',')
 
-        with open(segFile) as json_file:
-            surfaces = json.load(json_file)['bds']
-        surfacesArray = np.asarray(surfaces)
+        cartesianLabel = np.array([lumenLabel, mediaLabel])
+        cartesianImage = imread(imagePath).astype(np.float32)
 
-        surfaces_num, X = surfacesArray.shape
-        assert X == W and surfaces_num == NumSurfaces
-        allPatientsSurfaceArray[s,:,:] = surfacesArray
+        polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(cartesianImage, cartesianLabel, rotation=0)
+        assert (H,W) == polarImage.shape
+        assert (C,W) == polarLabel.shape
 
-        # read image data
-        # JHU data has been normalize in its Matlab preprocessing
-        allPatientsImageArray[s,] = imread(imagePath)
+        allPatientsSurfaceArray[s,:,:] = polarLabel
+        allPatientsImageArray[s,] = polarImage
         patientIDDict[str(s)] = imagePath
         s +=1
 
