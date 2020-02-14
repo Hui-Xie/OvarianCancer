@@ -1,6 +1,7 @@
 # base IVUS polar image and polar label
 # training: 100 patients; validation: 9 patients; test: 326 patients;
 # numSurface = 2
+# Each image frame is 384 × 384 pixels in size, with in-frame resolution of 0.026 × 0.026 mm.
 
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss +layerDice + Soft argMax + SmoothL1Loss + IPM
 dataDir: "/home/hxie1/data/IVUS/polarNumpy"
@@ -36,13 +37,13 @@ groundTruthInteger: False
 numSurfaces: 2  # num of surfaces in an image
 sigma: 10.0  # For gaussianize  ground truth, in float
 device: torch.device('cuda:3')   #GPU ID
-batchSize: 10
+batchSize: 20
 startFilters: 24  # the num of filters in first layer of Unet
 
 # some physical parameter of images
 slicesPerPatient: 1
-# todo  maybe meaningless
-hPixelSize: 1  # pixelsize
+hPixelSize: 0.026 #Each image frame is 384 × 384 pixels in size, with in-frame resolution of 0.026 × 0.026 mm.
+#size_image is 0.026 mm in Volcano Data-set;
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate

@@ -96,9 +96,9 @@ def main():
         trainLabelsPath = os.path.join(dataDir, "training", f"surfaces.npy")
         trainIDPath = os.path.join(dataDir, "training", f"patientID.json")
 
-        validationImagesPath = os.path.join(dataDir, "test", f"images.npy")
-        validationLabelsPath = os.path.join(dataDir, "test", f"surfaces.npy")
-        validationIDPath = os.path.join(dataDir, "test", f"patientID.json")
+        validationImagesPath = os.path.join(dataDir, "validation", f"images.npy")
+        validationLabelsPath = os.path.join(dataDir, "validation", f"surfaces.npy")
+        validationIDPath = os.path.join(dataDir, "validation", f"patientID.json")
     else:  # use cross validation
         trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
         trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
@@ -122,7 +122,7 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=50, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
     # KLDivLoss is for Guassuian Ground truth for Unet
     loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
@@ -211,10 +211,10 @@ def main():
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
-        writer.add_scalar('ValidationError/mean(um)', muError, epoch)
-        writer.add_scalar('ValidationError/std(um)', stdError, epoch)
-        writer.add_scalars('ValidationError/muSurface(um)', convertTensor2Dict(muSurfaceError), epoch)
-        writer.add_scalars('ValidationError/stdSurface(um)', convertTensor2Dict(stdSurfaceError), epoch)
+        writer.add_scalar('ValidationError/mean', muError, epoch)
+        writer.add_scalar('ValidationError/std', stdError, epoch)
+        writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
+        writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preLoss or muError < preErrorMean:
