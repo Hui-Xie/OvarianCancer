@@ -128,7 +128,7 @@ plt.close()
 
 
 # convert polar image  back to cartesian image
-cartesianImage, cartesianLabel = polarConverter.polarImageLabel2Cartesian(polarImage,polarLabel,rotation=45)
+cartesianImage, cartesianLabel = polarConverter.polarImageLabel2Cartesian(polarImage2,polarLabel2,rotation=60)
 
 f4 = plt.figure(frameon=False)
 DPI = f4.dpi
