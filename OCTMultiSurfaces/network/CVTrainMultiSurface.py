@@ -63,6 +63,11 @@ def main():
     saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
     saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
 
+    if "IVUS" in dataDir:
+        rotation = cfg["rotation"]
+    else:
+        rotation = False
+
     network = cfg["network"]
     netPath = cfg["netPath"] + "/" + network + "/" + experimentName
     loadNetPath = cfg['loadNetPath']
@@ -102,7 +107,7 @@ def main():
         validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
         validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
 
-    tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate)
+    tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate, rotation=rotation)
 
     trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=None, device=device, sigma=sigma)
