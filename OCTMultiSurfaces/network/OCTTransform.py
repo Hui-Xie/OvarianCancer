@@ -4,14 +4,19 @@ import random
 import torch
 import torchvision.transforms as TF
 
+import sys
+sys.path.append("../dataPrepare_IVUS")
+from PolarCartesianConverter import *
+
 class OCTDataTransform(object):
-    def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5 ):
+    def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False):
         self.m_prob = prob
         self.m_noiseStd = noiseStd
         self.m_saltPepperRate = saltPepperRate
         self.m_saltRate = saltRate
+        self.m_rotation = rotation
 
-    def __call__(self, inputData):
+    def __call__(self, inputData, inputLabel=None):
         '''
 
         :param inputData:  a normalized Tensor of size(H,W),
@@ -21,6 +26,8 @@ class OCTDataTransform(object):
         device = inputData.device
         dirt =False
         data = inputData.clone()
+        if inputLabel is not None:
+            label = inputLabel.clone()
 
         # gaussian noise
         if random.uniform(0, 1) < self.m_prob:
@@ -40,13 +47,21 @@ class OCTDataTransform(object):
             data[torch.nonzero(saltMask,   as_tuple=True)] = max
             dirt =True
 
+        # rotation
+        if self.m_rotation and inputLabel is not None:
+            rotation = random.randint(0,359)
+            data, label = polarImageLabelRotate(data, label, rotation=rotation)
+
         # normalize again
         if dirt:
             std, mean = torch.std_mean(data)
             data = TF.Normalize([mean], [std])(data.unsqueeze(dim=0))
             data = data.squeeze(dim=0)
 
-        return data
+        if inputLabel is None:
+            return data
+        else:
+            return data, label
 
     def __repr__(self):
         return self.__class__.__name__

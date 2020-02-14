@@ -68,13 +68,14 @@ class OCTDataSet(data.Dataset):
     def __getitem__(self, index):
         S, H, W = self.m_images.shape
         data = self.m_images[index,]
+        label = self.m_labels[index,]
         if self.m_transform:
-            data = self.m_transform(data)
+            data, label = self.m_transform(data, label)
         result = {"images": data.unsqueeze(dim=0),
-                  "GTs": self.m_labels[index,],
-                  "gaussianGTs": gaussianizeLabels(self.m_labels[index,], self.m_sigma, H),
+                  "GTs": label,
+                  "gaussianGTs": gaussianizeLabels(label, self.m_sigma, H),
                   "IDs": self.m_IDs[str(index)],
-                  "layers": getLayerLabels(self.m_labels[index,],H) }
+                  "layers": getLayerLabels(label,H) }
         return result
 
 

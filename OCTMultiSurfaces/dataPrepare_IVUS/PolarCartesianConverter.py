@@ -3,6 +3,23 @@ import numpy as np
 from scipy import interpolate
 
 
+def polarImageLabelRotate(polarImage, polarLabel, rotation=0):
+    '''
+
+    :param polarImage: size of (H,W)
+    :param polarLabel: in size of (C,N)
+    :param rotation: in integer degree of [0,360]
+    :return: (rotated polarImage,rotated polarLabel) same size with input
+    '''
+    rotation = rotation % 360
+    if 0 != rotation:
+        polarImage = np.roll(polarImage, rotation, axis=1)
+        r = polarLabel  # size:C*N
+        r = np.roll(r, rotation, axis=1)
+        polarLabel = r
+    return (polarImage, polarLabel)
+
+
 class PolarCartesianConverter():
     def __init__(self, cartesianImageShape, centerx,centery, rMax, tMax=360):
         '''
@@ -102,18 +119,3 @@ class PolarCartesianConverter():
         cartesianLabel= self.polarLabel2Cartesian(polarLabel, rotation)
         return cartesianmage, cartesianLabel
 
-    def polarImageLabelRotate(self, polarImage, polarLabel, rotation=0):
-        '''
-
-        :param polarImage: in size of (C,N)
-        :param polarLabel:
-        :param rotation: in integer degree of [0,360]
-        :return: (rotated polarImage,rotated polarLabel) same size with input
-        '''
-        rotation = rotation % 360
-        if 0 != rotation:
-            polarImage = np.roll(polarImage, rotation, axis=1)
-            r = polarLabel  # size:C*N
-            r = np.roll(r, rotation, axis=1)
-            polarLabel = r
-        return (polarImage,polarLabel)
