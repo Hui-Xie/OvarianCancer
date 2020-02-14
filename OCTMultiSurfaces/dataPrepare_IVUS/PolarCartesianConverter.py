@@ -41,7 +41,8 @@ class PolarCartesianConverter():
         # interpolate into integer degree from 0 to 359
         rInterpolation = np.zeros((C,N),dtype=np.float32)
         for c in range(C):
-            rInterpolation[c,:]= interpolate.spline(t[c,:],r[c,:], np.arange(N))
+            tck = interpolate.splrep(t[c,:],r[c,:],xb=0, xe=360)
+            rInterpolation[c, :] = interpolate.splev(np.arange(N),tck)
 
         rotation = rotation % 360
         if 0 != rotation:
