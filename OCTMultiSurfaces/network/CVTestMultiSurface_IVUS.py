@@ -25,6 +25,8 @@ import numpy as np
 from imageio import imread
 from numpy import genfromtxt
 
+# import matlab.engine
+
 sys.path.append("../dataPrepare_IVUS")
 from PolarCartesianConverter import PolarCartesianConverter
 
@@ -209,7 +211,8 @@ def main():
 
     polarConverter = PolarCartesianConverter((384,384),192, 192, 192, 360)
 
-
+    # eng = matlab.engine.start_matlab()
+    # eng.addpath(r'/local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_IVUS')
     for b in range(B):
         patientID = os.path.splitext(os.path.basename(testIDs[b]))[0]  # frame_05_0004_003
 
@@ -224,14 +227,13 @@ def main():
         np.savetxt(lumenPredictFile, cartesianLabel[0,], fmt="%.1f", delimiter=", ")
         np.savetxt(mediaPredictFile, cartesianLabel[1,], fmt="%.1f", delimiter=", ")
 
-        # compute performance;
-
 
         # output image
         if not OutputPredictImages:
             continue
-        # cartesianLabel = np.concatenate((cartesianLabel, cartesianLabel[:,0,:]),axis=0)  # close curve.
+        cartesianLabel = np.concatenate((cartesianLabel, np.expand_dims(cartesianLabel[:,0,:],axis=1)),axis=1)  # close curve.
         imageb = imread(testIDs[b]).astype(np.float32)
+
         lumenGTLabel = genfromtxt(lumenGTFile, delimiter=',')
         mediaGTLabel = genfromtxt(mediaGTFile, delimiter=',')
 
@@ -269,7 +271,6 @@ def main():
 
         plt.savefig(os.path.join(outputImageDir, patientID + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
-        break;  # todo debug
 
     # check testOutputs whehter violate surface-separation constraints
     testOutputs0 = testOutputs[:,0:-1,:]
@@ -301,7 +302,7 @@ def main():
 
 
 
-    print(f"============ End of Cross valiation test for OCT Multisurface Network: {experimentName} ===========")
+    print(f"============ End of Test: {experimentName} ===========")
 
 
 if __name__ == "__main__":
