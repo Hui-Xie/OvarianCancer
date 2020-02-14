@@ -1,7 +1,8 @@
 
 import torch
 
-configFile = "/home/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetSurfaceLayerJHU/expUnetJHU_IPM_SurfaceLayer_20200206/ConfigParameters.pt"
+configDir = "/home/hxie1/data/IVUS/polarNumpy/netParameters/IVUSUnet/expUnetIVUS_20200214"
+configFile = configDir + "/ConfigParameters.pt"
 
 configDict = torch.load(configFile)
 
