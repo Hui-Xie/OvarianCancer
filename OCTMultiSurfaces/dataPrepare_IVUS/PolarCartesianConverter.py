@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import scipy.interpolate.spline as spline
+from scipy import interpolate
 
 
 class PolarCartesianConverter():
@@ -41,7 +41,7 @@ class PolarCartesianConverter():
         # interpolate into integer degree from 0 to 359
         rInterpolation = np.zeros((C,N),dtype=np.float32)
         for c in range(C):
-            rInterpolation[c,:]= spline(t[c,:],r[c,:], np.arange(N))
+            rInterpolation[c,:]= interpolate.spline(t[c,:],r[c,:], np.arange(N))
 
         rotation = rotation % 360
         if 0 != rotation:
