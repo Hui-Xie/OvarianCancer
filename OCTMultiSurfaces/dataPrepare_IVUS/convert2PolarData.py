@@ -78,7 +78,7 @@ def main():
     segsList.sort()
 
     N = len(segsList)
-    if "Training" in segsList: # from Training data, randomly extract 9 for validation
+    if "Training" in segsDir: # from Training data, randomly extract 9 for validation
         assert N==109
 
         fullList = list(range(N))
