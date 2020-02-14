@@ -36,7 +36,7 @@ groundTruthInteger: False
 numSurfaces: 2  # num of surfaces in an image
 sigma: 10.0  # For gaussianize  ground truth, in float
 device: torch.device('cuda:3')   #GPU ID
-batchSize: 4
+batchSize: 10
 startFilters: 24  # the num of filters in first layer of Unet
 
 # some physical parameter of images
