@@ -21,7 +21,7 @@ C = 2  # number of contour for each image
 
 # polar image size
 W = 360 #N
-H = rawW//2
+H = rawH//2
 
 
 imagesDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM"
@@ -30,7 +30,7 @@ imagesDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM"
 segsDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
 # todo: for test
 
-outputDir = "/home/hxie1/data/IVUS/ploarNumpy"
+outputDir = "/home/hxie1/data/IVUS/polarNumpy"
 
 def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):
     # polar image in (slices, Heigh, Width) axis order
@@ -43,7 +43,7 @@ def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPat
     patientIDDict = {}
 
     imageShape = (rawH, rawW)
-    polarConverter = PolarCartesianConverter(imageShape, rawW // 2, rawH // 2, min(W // 2, H // 2), 360)
+    polarConverter = PolarCartesianConverter(imageShape, rawW // 2, rawH // 2, min(rawW // 2, rawH // 2), 360)
 
     s = 0 # initial slice index
     for imagePath in imagesList:

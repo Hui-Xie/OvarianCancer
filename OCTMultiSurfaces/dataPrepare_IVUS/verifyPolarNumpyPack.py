@@ -1,6 +1,6 @@
 
 
-dataSetDir = "/home/hxie1/data/IVUS/ploarNumpy/training"
+dataSetDir = "/home/hxie1/data/IVUS/polarNumpy/training"
 outputDir = "/home/hxie1/temp"
 
 import numpy as np
