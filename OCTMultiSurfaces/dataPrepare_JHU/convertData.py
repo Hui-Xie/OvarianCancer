@@ -67,29 +67,29 @@ def main():
     N = len(imagesList)
     print(f"total {N} images files")
     imagesTrainList= []
-    imagesTestList= []
+    imagesValidationList= []
     for imagePath in imagesList:
         patientIDBsan = os.path.splitext(os.path.basename(imagePath))[0]
         patientID = patientIDBsan[0:4] #hc09 or ms04
         if patientID[0:2] == 'hc':
             if int(patientID[2:4]) <= 8:
-                imagesTestList.append(imagePath)
+                imagesValidationList.append(imagePath)
             else:
                 imagesTrainList.append(imagePath)
         else: # 'ms'
             if int(patientID[2:4]) <= 12:
-                imagesTestList.append(imagePath)
+                imagesValidationList.append(imagePath)
             else:
                 imagesTrainList.append(imagePath)
 
-    print(f"train set has {len(imagesTrainList)} files, while test set has {len(imagesTestList)} files")
+    print(f"train set has {len(imagesTrainList)} files, while validation set has {len(imagesValidationList)} files")
 
 
 
     # save to file
-    saveVolumeSurfaceToNumpy(imagesTestList, os.path.join(outputDir, 'test', f"images.npy"),\
-                                                 os.path.join(outputDir, 'test', f"surfaces.npy"), \
-                                                 os.path.join(outputDir, 'test', f"patientID.json"))
+    saveVolumeSurfaceToNumpy(imagesValidationList, os.path.join(outputDir, 'validation', f"images.npy"),\
+                                                 os.path.join(outputDir, 'validation', f"surfaces.npy"), \
+                                                 os.path.join(outputDir, 'validation', f"patientID.json"))
 
     saveVolumeSurfaceToNumpy(imagesTrainList, os.path.join(outputDir, 'training', f"images.npy"), \
                                                      os.path.join(outputDir, 'training', f"surfaces.npy"), \
