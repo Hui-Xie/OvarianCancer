@@ -32,17 +32,17 @@ for i in range(N):
     mediaLabel = genfromtxt(segMediaList[i], delimiter=',')
 
     label = np.array([lumenLabel, mediaLabel])
-    polarLabel = polarConverter.cartesianLabel2Polar(label, rotation=0) # output size: C*N*2, in (t,r)
+    polarLabel = polarConverter.cartesianLabel2Polar(label, rotation=0) # output size: C*N in radious
 
     if i==0:
-        pC,pN,_ = polarLabel.shape
-        print (f"c=0,\tN,\t t,\t r; \t\t c=1,\tN,\t t,\t r")
+        pC,pN = polarLabel.shape
+        print (f"c=0,\tN,\t r; \t\t c=1,\tN,\t r")
         for j in range(pN):
-            print(f"c=0,\t{j},\t {polarLabel[0,j,0]},\t  {polarLabel[0,j,1]}; \t\t c=1,\t{j},\t {polarLabel[1,j,0]},\t {polarLabel[1,j,1]}")
-        print(f"c=0,\tN,\t t,\t r; \t\t c=1,\tN,\t t,\t r")
+            print(f"c=0,\t{j},\t  {polarLabel[0,j]}; \t\t c=1,\t{j},\t {polarLabel[1,j]}")
+        print(f"c=0,\tN,\t r; \t\t c=1,\tN,\t r")
 
-    surfaces0 = polarLabel[0,:, 1]
-    surfaces1 = polarLabel[1,:, 1]
+    surfaces0 = polarLabel[0,:]
+    surfaces1 = polarLabel[1,:]
     if np.any(surfaces0 > surfaces1):
         nCountIncorrectFiles += 1
         errorLocations = np.nonzero(surfaces0>surfaces1)

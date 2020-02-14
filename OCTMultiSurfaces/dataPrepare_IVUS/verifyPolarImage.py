@@ -62,6 +62,8 @@ polarConverter = PolarCartesianConverter(image.shape, W//2,H//2,min(W//2,H//2), 
 label = np.array([lumenLabel,mediaLabel])
 
 polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(image,label,rotation=0)
+C,N = polarLabel.shape
+assert N==360
 
 f2 = plt.figure(frameon=False)
 DPI = f2.dpi
@@ -78,8 +80,8 @@ subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(polarImage, cmap='gray')
-subplot2.plot(polarLabel[0,:,0], polarLabel[0,:,1], linewidth=0.4)
-subplot2.plot(polarLabel[1,:,0], polarLabel[1,:,1], linewidth=0.4)
+subplot2.plot(np.arange(N), polarLabel[0,:], linewidth=0.4)
+subplot2.plot(np.arange(N), polarLabel[1,:], linewidth=0.4)
 subplot2.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
@@ -107,8 +109,8 @@ subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(polarImage1, cmap='gray')
-subplot2.plot(polarLabel1[0,:,0], polarLabel1[0,:,1], linewidth=0.4)
-subplot2.plot(polarLabel1[1,:,0],  polarLabel1[1,:,1], linewidth=0.4)
+subplot2.plot(np.arange(N), polarLabel1[0,:], linewidth=0.4)
+subplot2.plot(np.arange(N), polarLabel1[1,:], linewidth=0.4)
 subplot2.axis('off')
 
 subplot3 = plt.subplot(rowSubplot,colSubplot, 3)
@@ -117,8 +119,8 @@ subplot3.axis('off')
 
 subplot4 = plt.subplot(rowSubplot,colSubplot, 4)
 subplot4.imshow(polarImage2, cmap='gray')
-subplot4.plot(polarLabel2[0,:,0], polarLabel2[0,:,1], linewidth=0.4)
-subplot4.plot(polarLabel2[1,:,0], polarLabel2[1,:,1], linewidth=0.4)
+subplot4.plot(np.arange(N), polarLabel2[0,:], linewidth=0.4)
+subplot4.plot(np.arange(N), polarLabel2[1,:], linewidth=0.4)
 subplot4.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation.png"), dpi='figure', bbox_inches='tight', pad_inches=0)

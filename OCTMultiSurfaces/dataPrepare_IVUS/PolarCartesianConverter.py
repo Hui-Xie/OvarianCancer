@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import scipy.interpolate.spline as spline
+
 
 class PolarCartesianConverter():
     def __init__(self, cartesianImageShape, centerx,centery, rMax, tMax=360):
@@ -22,10 +24,11 @@ class PolarCartesianConverter():
 
         :param cartesianLabel: C*N*2, where C is the number of contour labels, N is number of points, 2 is 2 coordinates x and y;
         :param rotation: rotation angular in integer degree of (0,360)
-        :return: polarLabel: (t,r) in size (C,N,2)
+        :return: polarLabel: (r) in size (C,N) where N is 360 implying from degree 0 to degree 359
 
         '''
-
+        C,N,_ =cartesianLabel.shape
+        assert N==360
         x = cartesianLabel[:, :, 0] - self.centerx # cartesian x points to East, image x also points to East
         y = self.centery - cartesianLabel[:, :, 1]  # cartesian y points to North, but image y points to South
         r = np.sqrt(x ** 2 + y ** 2)
@@ -33,23 +36,31 @@ class PolarCartesianConverter():
         t = t * 360 / (2 * np.pi)
 
         # avoid 360 is expressed into 0 at the final coordinate
-        t[:,self.tMax-1] = np.where(t[:,self.tMax-1] == 0, self.tMax-1, t[:,self.tMax-1])
+        t[:,self.tMax-1] = np.where(t[:,self.tMax-1] == 0, 360, t[:,self.tMax-1])
+
+        # interpolate into integer degree from 0 to 359
+        rInterpolation = np.zeros((C,N),dtype=np.float32)
+        for c in range(C):
+            rInterpolation[c,:]= spline(t[c,:],r[c,:], np.arange(N))
 
         rotation = rotation % 360
         if 0 != rotation:
-            r = np.roll(r, rotation, axis=1)
-        polarLabel = np.concatenate((np.expand_dims(t, axis=-1), np.expand_dims(r, axis=-1)), axis=-1)
+            rInterpolation = np.roll(rInterpolation, rotation, axis=1)
+        polarLabel = rInterpolation
         return polarLabel
 
     def polarLabel2Cartesian(self, polarLabel, rotation=0):
         '''
 
-        :param polarLabel:
+        :param polarLabel: size of (C,N) where C is contour, N == 360 from degree 0 to degree 359
         :param rotation: the previous rotation from cartesian to polar
         :return: cartesianLabel: in C*N*2, where 2 is (x,y)
         '''
-        t = polarLabel[:, :, 0]  # size:C*N
-        r = polarLabel[:, :, 1]  # size:C*N
+        C,N = polarLabel.shape
+        assert N==360
+        t = np.expand_dims(np.arange(N), axis=0).repeat(C,axis=0)
+        r = polarLabel  # size:C*N
+        assert t.shape == r.shape
         rotation = rotation % 360
         if 0 != rotation:
             r = np.roll(r, -rotation, axis=1)
@@ -93,7 +104,7 @@ class PolarCartesianConverter():
     def polarImageLabelRotate(self, polarImage, polarLabel, rotation=0):
         '''
 
-        :param polarImage:
+        :param polarImage: in size of (C,N)
         :param polarLabel:
         :param rotation: in integer degree of [0,360]
         :return: (rotated polarImage,rotated polarLabel) same size with input
@@ -101,8 +112,7 @@ class PolarCartesianConverter():
         rotation = rotation % 360
         if 0 != rotation:
             polarImage = np.roll(polarImage, rotation, axis=1)
-            t = polarLabel[:, :, 0]  # size:C*N
-            r = polarLabel[:, :, 1]  # size:C*N
+            r = polarLabel  # size:C*N
             r = np.roll(r, rotation, axis=1)
-            polarLabel = np.concatenate((np.expand_dims(t, axis=-1), np.expand_dims(r, axis=-1)), axis=-1)
+            polarLabel = r
         return (polarImage,polarLabel)
