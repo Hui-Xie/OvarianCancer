@@ -14,6 +14,7 @@ from OCTDataSet import OCTDataSet
 from OCTUnetTongren import OCTUnetTongren
 from OCTUnetJHU import OCTUnetJHU
 from OCTUnetSurfaceLayerJHU import OCTUnetSurfaceLayerJHU
+from IVUSUnet import IVUSUnet
 from OCTOptimization import *
 from OCTTransform import *
 

@@ -3,7 +3,7 @@ import numpy as np
 from scipy import interpolate
 
 
-def polarImageLabelRotate(polarImage, polarLabel, rotation=0):
+def polarImageLabelRotate_Numpy(polarImage, polarLabel, rotation=0):
     '''
 
     :param polarImage: size of (H,W)
@@ -14,9 +14,7 @@ def polarImageLabelRotate(polarImage, polarLabel, rotation=0):
     rotation = rotation % 360
     if 0 != rotation:
         polarImage = np.roll(polarImage, rotation, axis=1)
-        r = polarLabel  # size:C*N
-        r = np.roll(r, rotation, axis=1)
-        polarLabel = r
+        polarLabel = np.roll(polarLabel, rotation, axis=1)
     return (polarImage, polarLabel)
 
 

@@ -102,7 +102,7 @@ plt.close()
 #polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(image,label,rotation=45)
 # use 2 lines:
 polarImage1, polarLabel1 = polarConverter.cartesianImageLabel2Polar(image,label,rotation=0)
-polarImage2, polarLabel2 = polarImageLabelRotate(polarImage1, polarLabel1, rotation=60)
+polarImage2, polarLabel2 = polarImageLabelRotate_Numpy(polarImage1, polarLabel1, rotation=60)
 
 f3 = plt.figure(frameon=False)
 DPI = f3.dpi
