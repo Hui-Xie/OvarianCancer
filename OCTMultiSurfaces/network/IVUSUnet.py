@@ -12,11 +12,11 @@ from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss
 
-class OCTUnetTongren(BasicModel):
+class IVUSUnet(BasicModel):
     def __init__(self, numSurfaces=11, N=24):
         '''
-        inputSize: 496*512 (H,W)
-        outputSize:numSurfaces*496*512 (Surface, H, W)
+        inputSize: 192*360 (H,W)
+        outputSize:numSurfaces*192*360 (Surface, H, W)
         :param numSurfaces:
         :param N: startFilters
         '''
@@ -26,18 +26,18 @@ class OCTUnetTongren(BasicModel):
         # downxPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
         self.m_down0Pooling = nn.Sequential(
             Conv2dBlock(1, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: N*496*512
+        )  # ouput size: N*192*360
         self.m_down0 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: N*496*512
+        )  # ouput size: N*192*360
 
         self.m_down1Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 2N*248*256
+        )  # ouput size: 2N*96*180
         self.m_down1 = nn.Sequential(
             Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -51,7 +51,7 @@ class OCTUnetTongren(BasicModel):
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 2, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 4N*124*128
+        )  # ouput size: 4N*48*90
         self.m_down2 = nn.Sequential(
             Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -65,7 +65,7 @@ class OCTUnetTongren(BasicModel):
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 4, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 8N*62*64
+        )  # ouput size: 8N*24*45
         self.m_down3 = nn.Sequential(
             Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -79,7 +79,7 @@ class OCTUnetTongren(BasicModel):
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 8, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 16N*31*32
+        )  # ouput size: 16N*12*22
 
         self.m_down4 = nn.Sequential(
             Conv2dBlock(N * 16, N * 16, convStride=1,
@@ -88,13 +88,13 @@ class OCTUnetTongren(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N * 16, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 16N*31*32
+        ) # ouput size: 16N*12*22
 
         self.m_down5Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 16, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # outputSize:32N*15*16
+        )  # outputSize:32N*6*11
 
         self.m_down5 = nn.Sequential(
             Conv2dBlock(N * 32, N * 32, convStride=1,
@@ -103,13 +103,13 @@ class OCTUnetTongren(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N * 32, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # outputSize:32N*15*16
+        )   # outputSize:32N*6*11
 
         self.m_down6Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 32, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # outputSize:64N*7*8
+        )  # outputSize:64N*3*5
 
         self.m_down6 = nn.Sequential(
             Conv2dBlock(N * 64, N * 64, convStride=1,
@@ -118,15 +118,15 @@ class OCTUnetTongren(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N * 64, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # outputSize:64N*7*8
+        )   # outputSize:64N*3*5
 
         # this is the bottleNeck at bottom
 
         self.m_up6Pooling = nn.Sequential(
-            nn.Upsample(size=(15, 16), mode='bilinear'),
+            nn.Upsample(size=(6, 11), mode='bilinear'),
             Conv2dBlock(N * 64, N * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 32N*15*16
+        )  # ouput size: 32N*6*11
         self.m_up6 = nn.Sequential(
             Conv2dBlock(N * 32, N * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -137,10 +137,10 @@ class OCTUnetTongren(BasicModel):
         )
 
         self.m_up5Pooling = nn.Sequential(
-            nn.Upsample(size=(31, 32), mode='bilinear'),
+            nn.Upsample(size=(12, 22), mode='bilinear'),
             Conv2dBlock(N * 32, N * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 16N*31*32
+        )  # ouput size: 16N*12*22
         self.m_up5 = nn.Sequential(
             Conv2dBlock(N * 16, N * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -151,10 +151,10 @@ class OCTUnetTongren(BasicModel):
         )
 
         self.m_up4Pooling = nn.Sequential(
-            nn.Upsample(size=(62, 64), mode='bilinear'),
+            nn.Upsample(size=(24, 45), mode='bilinear'),
             Conv2dBlock(N * 16, N * 8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 8N*62*64
+        )  # ouput size: 8N*24*45
         self.m_up4 = nn.Sequential(
             Conv2dBlock(N * 8, N * 8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -165,10 +165,10 @@ class OCTUnetTongren(BasicModel):
         )
 
         self.m_up3Pooling = nn.Sequential(
-            nn.Upsample(size=(124, 128), mode='bilinear'),
+            nn.Upsample(size=(48, 90), mode='bilinear'),
             Conv2dBlock(N * 8, N * 4, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 4N*124*128
+        )  # ouput size: 4N*48*90
         self.m_up3 = nn.Sequential(
             Conv2dBlock(N * 4, N * 4, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -179,10 +179,10 @@ class OCTUnetTongren(BasicModel):
         )
 
         self.m_up2Pooling = nn.Sequential(
-            nn.Upsample(size=(248, 256), mode='bilinear'),
+            nn.Upsample(size=(96, 180), mode='bilinear'),
             Conv2dBlock(N * 4, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 2N*248*256
+        )  # ouput size: 2N*96*180
         self.m_up2 = nn.Sequential(
             Conv2dBlock(N * 2, N * 2, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -193,10 +193,10 @@ class OCTUnetTongren(BasicModel):
         )
 
         self.m_up1Pooling = nn.Sequential(
-            nn.Upsample(size=(496, 512), mode='bilinear'),
+            nn.Upsample(size=(192, 360), mode='bilinear'),
             Conv2dBlock(N * 2, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: N*496*512
+        )  # ouput size: N*192*360
         self.m_up1 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -211,13 +211,13 @@ class OCTUnetTongren(BasicModel):
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(N, numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:numSurfaces*496*512
+        )  # output size:numSurfaces*192*360
 
         self.m_layers = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(N, numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:(numSurfaces+1)*496*512
+        )  # output size:(numSurfaces+1)*192*360
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):
