@@ -1,6 +1,6 @@
 
 
-dataSetDir = "/home/hxie1/data/IVUS/polarNumpy/validation"
+dataSetDir = "/home/hxie1/data/IVUS/polarNumpy/test"
 outputDir = "/home/hxie1/temp"
 
 import numpy as np
@@ -19,7 +19,7 @@ W = W1
 with open(os.path.join(dataSetDir,"patientID.json")) as json_file:
     patientIDs = json.load(json_file)
 
-k= 4 # random test number
+k= 129 # random test number
 
 patientID = os.path.splitext(os.path.basename(patientIDs[str(k)]))[0]
 

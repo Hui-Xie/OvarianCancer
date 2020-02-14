@@ -24,11 +24,13 @@ W = 360 #N
 H = rawH//2
 
 
+# for both training and test raw images.
 imagesDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM"
 
 # for training
-segsDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
-# todo: for test
+# segsDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
+# for test
+segsDir = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1"
 
 outputDir = "/home/hxie1/data/IVUS/polarNumpy"
 

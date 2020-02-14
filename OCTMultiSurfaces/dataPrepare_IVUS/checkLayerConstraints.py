@@ -1,6 +1,9 @@
 # check all layer constraints
 
-segDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
+# for training
+# segDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
+# for test set
+segDir = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1"
 H,W = 384,384
 
 import glob

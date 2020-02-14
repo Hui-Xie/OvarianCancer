@@ -1,8 +1,18 @@
 # verify polar image image and label
 
-imagePath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM/frame_01_0043_003.png"
-lumenLabelPath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS/lum_frame_01_0043_003.txt"
-mediaLabelPath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS/med_frame_01_0043_003.txt"
+# challenge patients: frame_01_0043_003.png in training set
+#                     frame_06_0009_003.png in test set
+
+imagePath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM/frame_06_0009_003.png"
+
+# for training set
+# lumenLabelPath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS/lum_frame_01_0043_003.txt"
+# mediaLabelPath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS/med_frame_01_0043_003.txt"
+
+# for test set
+lumenLabelPath = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1/lum_frame_06_0009_003.txt"
+mediaLabelPath = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1/med_frame_06_0009_003.txt"
+
 outputDir = "/home/hxie1/temp"
 
 
