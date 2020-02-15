@@ -88,6 +88,24 @@ def delacePolarImageLabel(data,label,lacingWidth):
 
     return data, label
 
+def delacePolarLabel(label, lacingWidth):
+    if 2 == label.dim():
+        H,W = label.shape
+        newW = W -2*lacingWidth
+        assert newW > 0
+        label = label[:, lacingWidth:newW+lacingWidth]
+    elif 3 == label.dim():
+        B,H,W = label.shape
+        newW = W - 2 * lacingWidth
+        assert newW > 0
+        label = label[:, :, lacingWidth:newW + lacingWidth]
+    else:
+        print("delacePolarLabel currently does not support >=4 dim tensor")
+        assert False
+
+    return label
+
+
 
 class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0):

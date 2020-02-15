@@ -10,7 +10,7 @@ from torch.utils import data
 
 
 sys.path.append(".")
-from OCTDataSet import OCTDataSet
+from OCTDataSet import *
 from IVUSUnet import IVUSUnet
 from OCTOptimization import *
 from OCTTransform import *
@@ -198,6 +198,10 @@ def main():
         stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
                                                                                   slicesPerPatient=slicesPerPatient,
                                                                                   hPixelSize=hPixelSize)
+    # Delace polar images and labels
+    if 0 != lacingWidth:
+        images, testOutputs = delacePolarImageLabel(images, testOutputs,lacingWidth)
+        testGts = delacePolarLabel(testGts, lacingWidth)
 
     #generate predicted images
     images = images.cpu().numpy().squeeze()
@@ -206,11 +210,6 @@ def main():
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
-
-    # todo: Delace
-    if 0 != lacingWidth:
-        pass
-
 
     outputTxtDir = os.path.join(outputDir, "text")
     outputImageDir = os.path.join(outputDir, "images")
