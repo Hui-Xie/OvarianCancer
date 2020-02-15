@@ -100,6 +100,11 @@ def main():
     # for salt-pepper noise
     saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
     saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
+    lacingWidth = cfg["lacingWidth"]
+    if "IVUS" in dataDir:
+        rotation = cfg["rotation"]
+    else:
+        rotation = False
 
     network = cfg["network"]
     netPath = cfg["netPath"] + "/" + network + "/" + experimentName
@@ -133,7 +138,7 @@ def main():
         testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
         testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
 
-    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma)
+    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,lacingWidth=lacingWidth)
 
     # construct network
     net = eval(network)(numSurfaces=numSurfaces, N=numStartFilters)
@@ -201,6 +206,11 @@ def main():
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
+
+    # todo: Delace
+    if 0 != lacingWidth:
+        pass
+
 
     outputTxtDir = os.path.join(outputDir, "text")
     outputImageDir = os.path.join(outputDir, "images")

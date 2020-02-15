@@ -13,7 +13,7 @@ gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used
 predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
 predictLumenFiles = {predictLumenFiles.name}';
 N = numel(predictLumenFiles);
-fprintf("Test set has %d images comparing with %s.\n\n", N, gtDir)
+fprintf("Test set has %d images comparing with ground truth at %s.\n\n", N, gtDir)
 
 % result data tables
 lumenDataTable = zeros(N, 4);

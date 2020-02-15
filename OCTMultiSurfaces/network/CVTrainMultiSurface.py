@@ -63,7 +63,7 @@ def main():
     # for salt-pepper noise
     saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
     saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
-
+    lacingWidth = cfg["lacingWidth"]
     if "IVUS" in dataDir:
         rotation = cfg["rotation"]
     else:
@@ -109,9 +109,11 @@ def main():
         validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
 
     tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate, rotation=rotation)
+    validationTransform = tainTransform
+    # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma)
-    validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=None, device=device, sigma=sigma)
+    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth)
+    validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma, lacingWidth=lacingWidth)
 
     # construct network
     net = eval(network)(numSurfaces=numSurfaces, N=numStartFilters)

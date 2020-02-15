@@ -32,9 +32,6 @@ f.set_size_inches(W*colSubplot/ float(DPI), H*rowSubplot/ float(DPI))
 plt.margins(0)
 plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
-plt.margins(0)
-plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
-
 subplot1 = plt.subplot(rowSubplot,colSubplot, 1)
 subplot1.imshow(images[k], cmap='gray')
 subplot1.axis('off')

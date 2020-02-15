@@ -44,9 +44,53 @@ def getLayerLabels(surfaceLabels, height):
 
     return layerLabels
 
+def lacePolarImageLabel(data,label,lacingWidth):
+    '''
+    for single polar image and label, lace both ends with rotation information.
+    in order to avoid inaccurate segmentation at image boundary
+
+    :param data: H*W in Tensor format
+    :param label: C*W, where C is the number of contour
+    :param lacingWidth: integer
+    :return:
+    '''
+    H,W = data.shape
+    assert lacingWidth<W
+    data =torch.cat((data[:,-lacingWidth:],data, data[:,:lacingWidth]),dim=1)
+    assert data.shape[1] == W+2*lacingWidth
+    label = torch.cat((label[:,-lacingWidth:],label, label[:,:lacingWidth]),dim=1)
+    return data, label
+
+def delacePolarImageLabel(data,label,lacingWidth):
+    '''
+    suport batch and single polar image and label
+
+    :param data: data: H*W in Tensor format
+    :param label: C*W, where C is the number of contour
+    :param lacingWidth: integer
+    :return:
+    '''
+    if 2 == data.dim():
+        H,W = data.shape
+        newW = W -2*lacingWidth
+        assert newW > 0
+        data  = data[:, lacingWidth:newW+lacingWidth]
+        label = label[:, lacingWidth:newW+lacingWidth]
+    elif 3 == data.dim():
+        B,H,W = data.shape
+        newW = W - 2 * lacingWidth
+        assert newW > 0
+        data = data[:, :, lacingWidth:newW + lacingWidth]
+        label = label[:, :, lacingWidth:newW + lacingWidth]
+    else:
+        print("delacePolarImageLabel currently does not support >=4 dim tensor")
+        assert False
+
+    return data, label
+
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0):
+    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0):
         self.m_device = device
         self.m_sigma = sigma
 
@@ -60,7 +104,7 @@ class OCTDataSet(data.Dataset):
         with open(IDPath) as f:
             self.m_IDs = json.load(f)
         self.m_transform = transform
-
+        self.m_lacingWidth = lacingWidth
 
     def __len__(self):
         return self.m_images.size()[0]
@@ -71,6 +115,9 @@ class OCTDataSet(data.Dataset):
         label = self.m_labels[index,]
         if self.m_transform:
             data, label = self.m_transform(data, label)
+        if 0 != self.m_lacingWidth:
+            data, label = lacePolarImageLabel(data,label,self.m_lacingWidth)
+
         result = {"images": data.unsqueeze(dim=0),
                   "GTs": label,
                   "gaussianGTs": gaussianizeLabels(label, self.m_sigma, H),
