@@ -6,6 +6,27 @@ from lxml import etree as ET
 import os
 import datetime
 
+def extractPaitentID(str):  # for Tongren data
+    '''
+
+       :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+       :return: output: 4511_OD_29134_OCT06
+       '''
+    stem = str[:str.rfind("_Volume/")]
+    patientID = stem[stem.rfind("/") + 1:]
+    return patientID
+
+def extractFileName(str): # for Tongren data
+    '''
+
+    :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+    :return: output: 4511_OD_29134_OCT06
+    '''
+    stem = str[:str.rfind("_Volume/")]
+    patientID = stem[stem.rfind("/")+1:]
+    OCTIndex = str[str.rfind("_"):-4]
+    return patientID+OCTIndex
+
 def loadInputFilesList(filename):
     filesList = []
     with open( filename, "r") as f:

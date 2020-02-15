@@ -25,32 +25,16 @@ from framework.NetMgr import NetMgr
 import matplotlib.pyplot as plt
 import numpy as np
 
+sys.path.append("../dataPrepare_Tongren")
+from TongrenFileUtilities import extractFileName
+
 
 def printUsage(argv):
     print("============ Cross Validation Test OCT MultiSurface Network =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
-def extractPaitentID(str):  # for Tongren data
-    '''
 
-       :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-       :return: output: 4511_OD_29134_OCT06
-       '''
-    stem = str[:str.rfind("_Volume/")]
-    patientID = stem[stem.rfind("/") + 1:]
-    return patientID
-
-def extractFileName(str): # for Tongren data
-    '''
-
-    :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-    :return: output: 4511_OD_29134_OCT06
-    '''
-    stem = str[:str.rfind("_Volume/")]
-    patientID = stem[stem.rfind("/")+1:]
-    OCTIndex = str[str.rfind("_"):-4]
-    return patientID+OCTIndex
 
 def main():
 
