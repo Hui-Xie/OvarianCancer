@@ -15,8 +15,9 @@ from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntrop
 class IVUSUnet(BasicModel):
     def __init__(self, numSurfaces=11, N=24):
         '''
-        inputSize: 192*360 (H,W)
-        outputSize:numSurfaces*192*360 (Surface, H, W)
+        rawInputSize: 192*360 (H,W)
+        with lacingWidth 30, inputSize changes 192*420(H,W)
+        outputSize:numSurfaces*192*420 (Surface, H, W)
         :param numSurfaces:
         :param N: startFilters
         '''
@@ -26,18 +27,18 @@ class IVUSUnet(BasicModel):
         # downxPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
         self.m_down0Pooling = nn.Sequential(
             Conv2dBlock(1, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: N*192*360
+        )  # ouput size: N*192*420
         self.m_down0 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: N*192*360
+        )
 
         self.m_down1Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 2N*96*180
+        )  # ouput size: 2N*96*210
         self.m_down1 = nn.Sequential(
             Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -51,7 +52,7 @@ class IVUSUnet(BasicModel):
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 2, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 4N*48*90
+        )  # ouput size: 4N*48*105
         self.m_down2 = nn.Sequential(
             Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -65,7 +66,7 @@ class IVUSUnet(BasicModel):
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 4, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 8N*24*45
+        )  # ouput size: 8N*24*52
         self.m_down3 = nn.Sequential(
             Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -79,7 +80,7 @@ class IVUSUnet(BasicModel):
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 8, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: 16N*12*22
+        )  # ouput size: 16N*12*26
 
         self.m_down4 = nn.Sequential(
             Conv2dBlock(N * 16, N * 16, convStride=1,
@@ -88,13 +89,13 @@ class IVUSUnet(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N * 16, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        ) # ouput size: 16N*12*22
+        )
 
         self.m_down5Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 16, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # outputSize:32N*6*11
+        )  # outputSize:32N*6*13
 
         self.m_down5 = nn.Sequential(
             Conv2dBlock(N * 32, N * 32, convStride=1,
@@ -103,13 +104,13 @@ class IVUSUnet(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N * 32, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )   # outputSize:32N*6*11
+        )
 
         self.m_down6Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
             Conv2dBlock(N * 32, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # outputSize:64N*3*5
+        )  # outputSize:64N*3*6
 
         self.m_down6 = nn.Sequential(
             Conv2dBlock(N * 64, N * 64, convStride=1,
@@ -118,15 +119,15 @@ class IVUSUnet(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N * 64, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )   # outputSize:64N*3*5
+        )
 
         # this is the bottleNeck at bottom
 
         self.m_up6Pooling = nn.Sequential(
-            nn.Upsample(size=(6, 11), mode='bilinear'),
+            nn.Upsample(size=(6, 13), mode='bilinear'),
             Conv2dBlock(N * 64, N * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 32N*6*11
+        )  # ouput size: 32N*6*13
         self.m_up6 = nn.Sequential(
             Conv2dBlock(N * 32, N * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -137,10 +138,10 @@ class IVUSUnet(BasicModel):
         )
 
         self.m_up5Pooling = nn.Sequential(
-            nn.Upsample(size=(12, 22), mode='bilinear'),
+            nn.Upsample(size=(12, 26), mode='bilinear'),
             Conv2dBlock(N * 32, N * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 16N*12*22
+        )  # ouput size: 16N*12*26
         self.m_up5 = nn.Sequential(
             Conv2dBlock(N * 16, N * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -151,10 +152,10 @@ class IVUSUnet(BasicModel):
         )
 
         self.m_up4Pooling = nn.Sequential(
-            nn.Upsample(size=(24, 45), mode='bilinear'),
+            nn.Upsample(size=(24, 52), mode='bilinear'),
             Conv2dBlock(N * 16, N * 8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 8N*24*45
+        )  # ouput size: 8N*24*52
         self.m_up4 = nn.Sequential(
             Conv2dBlock(N * 8, N * 8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -165,10 +166,10 @@ class IVUSUnet(BasicModel):
         )
 
         self.m_up3Pooling = nn.Sequential(
-            nn.Upsample(size=(48, 90), mode='bilinear'),
+            nn.Upsample(size=(48, 105), mode='bilinear'),
             Conv2dBlock(N * 8, N * 4, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 4N*48*90
+        )  # ouput size: 4N*48*105
         self.m_up3 = nn.Sequential(
             Conv2dBlock(N * 4, N * 4, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -179,10 +180,10 @@ class IVUSUnet(BasicModel):
         )
 
         self.m_up2Pooling = nn.Sequential(
-            nn.Upsample(size=(96, 180), mode='bilinear'),
+            nn.Upsample(size=(96, 210), mode='bilinear'),
             Conv2dBlock(N * 4, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-        )  # ouput size: 2N*96*180
+        )  # ouput size: 2N*96*210
         self.m_up2 = nn.Sequential(
             Conv2dBlock(N * 2, N * 2, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -193,10 +194,10 @@ class IVUSUnet(BasicModel):
         )
 
         self.m_up1Pooling = nn.Sequential(
-            nn.Upsample(size=(192, 360), mode='bilinear'),
+            nn.Upsample(size=(192, 420), mode='bilinear'),
             Conv2dBlock(N * 2, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )  # ouput size: N*192*360
+        )  # ouput size: N*192*420
         self.m_up1 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
@@ -211,13 +212,13 @@ class IVUSUnet(BasicModel):
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(N, numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:numSurfaces*192*360
+        )  # output size:numSurfaces*192*420
 
         self.m_layers = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(N, numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:(numSurfaces+1)*192*360
+        )  # output size:(numSurfaces+1)*192*420
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):

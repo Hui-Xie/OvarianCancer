@@ -2,6 +2,7 @@
 # training: 100 patients; validation: 9 patients; test: 326 patients;
 # numSurface = 2
 # Each image frame is 384 × 384 pixels in size, with in-frame resolution of 0.026 × 0.026 mm.
+# polar image with lace with 30, size of 192*420
 
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss +layerDice + Soft argMax + SmoothL1Loss + IPM
 dataDir: "/home/hxie1/data/IVUS/polarNumpy"
@@ -36,7 +37,7 @@ fold_k:  -1   # no cross validation
 groundTruthInteger: False
 numSurfaces: 2  # num of surfaces in an image
 sigma: 20.0  # For gaussianized  ground truth, in float
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 20
 startFilters: 24  # the num of filters in first layer of Unet
 
