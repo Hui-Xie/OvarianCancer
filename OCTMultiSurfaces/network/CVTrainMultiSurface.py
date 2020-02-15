@@ -132,8 +132,6 @@ def main():
     loss1 = eval(lossFunc1)
     net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
 
-
-
     # Load network
     if os.path.exists(netPath) and len(getFilesList(netPath, ".pt")) >= 2 :
         netMgr = NetMgr(net, netPath, device)
