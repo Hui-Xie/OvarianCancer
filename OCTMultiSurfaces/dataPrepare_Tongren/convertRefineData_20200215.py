@@ -1,4 +1,6 @@
 # convert data and refine data
+# according to Dr Yaxing Wang at Tongren direction: current surface 2 has too many manual segmentation error,so we do not consider surface 2 at this time
+
 
 import glob as glob
 import os
@@ -15,7 +17,7 @@ import torch
 K = 10   # K-fold Cross validation, the k-fold is for test, (k+1)%K is validation, others for training.
 W = 512  # original images have width of 768, we only clip middle 512
 H = 496
-N = 10  # in xml files, there are 11 surfaces, we will delete inaccurate surface 8
+N = 9  # in xml files, there are 11 surfaces, we will delete inaccurate surface 8, and then inaccurate surface 2
 NumSlices = 31  # for each patient
 
 volumesDir = "/home/hxie1/data/OCT_Tongren/control"
@@ -48,6 +50,10 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
             B, Num_Surfaces, X = surfacesArray.shape
             assert B == 31 and Num_Surfaces == 10 and X == 768
 
+            surfacesArray = np.delete(surfacesArray, 2, axis=1)  # delete inaccurate surface 2
+            B, Num_Surfaces, X = surfacesArray.shape
+            assert B == 31 and Num_Surfaces == 9 and X == 768
+
         # remove the leftmost and rightmost 128 columns for each B-scans as the segmentation is not accurate
         if "5363_OD_25453" == patientName:
             surfacesArray = surfacesArray[:, :, 103:615]  # left shift 25 pixels for case 5363_OD_25453
@@ -75,7 +81,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     # allPatientsSurfaceArray = np.swapaxes(allPatientsSurfaceArray, 1,2)
 
     # adjust inaccurate manual segmentation error near foveas
-    # use average method along column to correct disorders in surface 0-4 near foveas
+    # use average method along column to correct disorders in surface 0-3 near foveas as excluding surface 2
     surfaces = torch.from_numpy(allPatientsSurfaceArray).to(device)
     surface0 = surfaces[:, :-1, :]
     surface1 = surfaces[:, 1:, :]
@@ -83,11 +89,11 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     surfacesCopy[:, 0:-1, :] = torch.where(surface0 > surface1, surface0, torch.zeros_like(surface0))
 
     B = surfaces.shape[0]
-    MaxMergeSurfaces = 5
+    MaxMergeSurfaces = 4
     for b in range(0, B):
         for w in range(W * 2 // 5, W * 3 // 5):  # only focus on fovea region.
             s = 0
-            while (s < MaxMergeSurfaces):  # in fovea region, the first 5 surfaces may merge into one surface.
+            while (s < MaxMergeSurfaces):  # in fovea region, the first 4 surfaces (excluding surface2) may merge into one surface.
                 if 0 != surfacesCopy[b, s, w]:
                     n = 1  # n continuous disorder locations
                     while s + n + 1 < MaxMergeSurfaces and 0 != surfacesCopy[b, s + n, w]:
@@ -137,15 +143,16 @@ def main():
         random.shuffle(patientsList)
         saveInputFilesList(patientsList, patientsListFile)
 
-    # split files in sublist
+    # split files in sublist, this is a better method than before.
     N = len(patientsList)
-    patientsSubList = []
-    step = N // K
-    for i in range(0, K * step, step):
+    patientsSubList= []
+    step = N//K
+    for i in range(0,K*step, step):
         nexti = i + step
         patientsSubList.append(patientsList[i:nexti])
-    for i in range(K * step, N):
-        patientsSubList[i - K * step].append(patientsList[i])
+    for i in range(K*step, N):
+        patientsSubList[i-K*step].append(patientsList[i])
+
 
     # partition for test, validation, and training
     outputValidation = True

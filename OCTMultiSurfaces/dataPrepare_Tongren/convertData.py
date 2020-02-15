@@ -87,15 +87,13 @@ def main():
 
     # split files in sublist
     N = len(patientsList)
-    patientsSubList= []
-    step = int(N/K+0.5)
-    for i in range(0,N, step):
+    patientsSubList = []
+    step = N // K
+    for i in range(0, K * step, step):
         nexti = i + step
-        if nexti > N:
-            nexti = N
         patientsSubList.append(patientsList[i:nexti])
-        if nexti == N:
-            break
+    for i in range(K * step, N):
+        patientsSubList[i - K * step].append(patientsList[i])
 
     # partition for test, validation, and training
     outputValidation = True
