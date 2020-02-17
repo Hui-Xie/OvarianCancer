@@ -4,6 +4,7 @@
 # segDir = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS"
 # for test set
 segDir = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1"
+#segDir = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1"  #its cartesian point  number is various from 331-517
 H,W = 384,384
 
 import glob
@@ -30,6 +31,9 @@ nCountIncorrectFiles = 0
 imageShape = (H,W)
 polarConverter = PolarCartesianConverter(imageShape, W//2,H//2, min(W//2,H//2), 360)
 
+minR = H//2
+maxR = 0
+
 for i in range(N):
     lumenLabel = genfromtxt(segLumenList[i], delimiter=',')
     mediaLabel = genfromtxt(segMediaList[i], delimiter=',')
@@ -37,12 +41,21 @@ for i in range(N):
     label = np.array([lumenLabel, mediaLabel])
     polarLabel = polarConverter.cartesianLabel2Polar(label, rotation=0) # output size: C*N in radious
 
+    # compute min and max radius of polar surface
+    if np.amin(polarLabel) < minR:
+        minR = np.amin(polarLabel)
+    if np.amax(polarLabel) > maxR:
+        maxR =  np.amax(polarLabel)
+
+    '''
     if i==0:
         pC,pN = polarLabel.shape
         print (f"c=0,\tN,\t r; \t\t c=1,\tN,\t r")
         for j in range(pN):
             print(f"c=0,\t{j},\t  {polarLabel[0,j]}; \t\t c=1,\t{j},\t {polarLabel[1,j]}")
         print(f"c=0,\tN,\t r; \t\t c=1,\tN,\t r")
+    '''
+
 
     surfaces0 = polarLabel[0,:]
     surfaces1 = polarLabel[1,:]
@@ -56,4 +69,7 @@ for i in range(N):
         print("\n")
 
 print(f"total nCountIncorrectFiles = {nCountIncorrectFiles} in {segDir}")
-print("=========End of program====== ")
+
+print (f"in dataset {segDir}, polarLabel radialMin = {minR}, radialMax = {maxR}")
+
+print("=========End of program======\n")

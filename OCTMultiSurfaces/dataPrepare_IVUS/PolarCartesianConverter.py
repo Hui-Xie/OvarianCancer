@@ -13,8 +13,8 @@ def polarImageLabelRotate_Numpy(polarImage, polarLabel, rotation=0):
     '''
     rotation = rotation % 360
     if 0 != rotation:
-        polarImage = np.roll(polarImage, rotation, axis=1)
-        polarLabel = np.roll(polarLabel, rotation, axis=1)
+        polarImage = np.roll(polarImage, rotation, axis=-1)
+        polarLabel = np.roll(polarLabel, rotation, axis=-1)
     return (polarImage, polarLabel)
 
 

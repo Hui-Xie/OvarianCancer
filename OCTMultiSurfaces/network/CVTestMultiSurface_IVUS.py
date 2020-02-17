@@ -70,7 +70,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = True
-    OutputPredictImages = True
+    OutputPredictImages = False
 
     # parse config file
     configFile = sys.argv[1]
@@ -254,8 +254,11 @@ def main():
         mediaGTFile = os.path.join(testGTSegDir, "med_" + patientID + ".txt")  # e.g. med_frame_01_0030_003.txt
 
         cartesianLabel = polarConverter.polarLabel2Cartesian(testOutputs[b]) # size: C*N*2
-        np.savetxt(lumenPredictFile, cartesianLabel[0,], fmt="%.1f", delimiter=", ")
-        np.savetxt(mediaPredictFile, cartesianLabel[1,], fmt="%.1f", delimiter=", ")
+        # IVUS demanding format: only one decimal
+        np.savetxt(lumenPredictFile, cartesianLabel[0,], fmt="%.1f", delimiter=",")
+        np.savetxt(mediaPredictFile, cartesianLabel[1,], fmt="%.1f", delimiter=",")
+        #np.savetxt(lumenPredictFile, cartesianLabel[0,], delimiter=",")
+        #np.savetxt(mediaPredictFile, cartesianLabel[1,], delimiter=",")
 
 
         # output image
