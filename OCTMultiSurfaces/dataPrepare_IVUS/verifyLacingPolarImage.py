@@ -1,7 +1,7 @@
 # verify lace and delace polar image and label
 
 dataSetDir = "/home/hxie1/data/IVUS/polarNumpy/test"
-outputDir = "/home/hxie1/temp"
+outputDir = "/home/hxie1/data/temp"
 
 import numpy as np
 import os

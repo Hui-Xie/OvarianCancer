@@ -3,7 +3,7 @@
 imagePath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM/frame_02_0001_003.png"
 lumenLabelPath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS/lum_frame_02_0001_003.txt"
 mediaLabelPath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/LABELS/med_frame_02_0001_003.txt"
-outputDir = "/home/hxie1/temp"
+outputDir = "/home/hxie1/data/temp"
 
 
 import numpy as np

@@ -13,7 +13,7 @@ imagePath = "/home/hxie1/data/IVUS/Training_Set/Data_set_B/DCM/frame_06_0009_003
 lumenLabelPath = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1/lum_frame_06_0009_003.txt"
 mediaLabelPath = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1/med_frame_06_0009_003.txt"
 
-outputDir = "/home/hxie1/temp"
+outputDir = "/home/hxie1/data/temp"
 
 
 import sys

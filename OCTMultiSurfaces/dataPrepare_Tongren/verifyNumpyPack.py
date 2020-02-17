@@ -1,7 +1,7 @@
 
 
 dataSetDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/validation"
-outputDir = "/home/hxie1/temp"
+outputDir = "/home/hxie1/data/temp"
 
 kf=5 # k fold
 
