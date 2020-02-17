@@ -8,7 +8,7 @@ def polarImageLabelRotate_Tensor(polarImage, polarLabel, rotation=0):
 
     :param polarImage: size of (H,W) or (B,H,W)
     :param polarLabel: in size of (C,w) or (B,C,W)
-    :param rotation: in integer degree of [0,360]
+    :param rotation: in integer degree of [0,360], negative indicates reverse direction
     :return: (rotated polarImage,rotated polarLabel) same size with input
     '''
     assert polarLabel.dim() == polarLabel.dim()
@@ -18,6 +18,19 @@ def polarImageLabelRotate_Tensor(polarImage, polarLabel, rotation=0):
         polarImage = torch.roll(polarImage, rotation, dims=-1)
         polarLabel = torch.roll(polarLabel, rotation, dims=-1)
     return (polarImage, polarLabel)
+
+def polarLabelRotate_Tensor(polarLabel, rotation=0):
+    '''
+
+    :param polarLabel: in size of (C,w) or (B,C,W)
+    :param rotation: in integer degree of [0,360], negative indicates reverse direction
+    :return: (rotated polarImage,rotated polarLabel) same size with input
+    '''
+    rotation = rotation % 360
+    if 0 != rotation:
+        polarLabel = torch.roll(polarLabel, rotation, dims=-1)
+    return polarLabel
+
 
 def gaussianizeLabels(rawLabels, sigma, H):
     '''

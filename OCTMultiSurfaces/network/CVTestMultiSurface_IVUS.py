@@ -14,6 +14,7 @@ from OCTDataSet import *
 from IVUSUnet import IVUSUnet
 from OCTOptimization import *
 from OCTTransform import *
+from OCTAugmentation import *
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
@@ -105,6 +106,8 @@ def main():
         rotation = cfg["rotation"]
     else:
         rotation = False
+    TTA = cfg["TTA"]  # Test-Time Augmentation
+    TTA_StepDegree = cfg["TTA_SetpDegree"]
 
     network = cfg["network"]
     netPath = cfg["netPath"] + "/" + network + "/" + experimentName
@@ -138,7 +141,7 @@ def main():
         testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
         testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
 
-    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,lacingWidth=lacingWidth)
+
 
     # construct network
     net = eval(network)(numSurfaces=numSurfaces, N=numStartFilters)
@@ -180,30 +183,46 @@ def main():
     # test
     net.eval()
     with torch.no_grad():
-        testBatch = 0
-        for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
-            testBatch += 1
-            # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
 
-            images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
-            testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
-            testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
-            testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
+        # Test-Time Augmentation
+        nCountTTA = 0
+        for TTADegree in range(0, 360, TTA_StepDegree):
+            nCountTTA += 1
+            testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
+                                  lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree)
+            testBatch = 0
+            for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
+                testBatch += 1
+                # S is surface location in (B,S,W) dimension, the predicted Mu
+                S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
 
-        # Error Std and mean
-        if groundTruthInteger:
-            testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
+                images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
+                testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
+                testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
+                testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for output predict images' ID
 
-        stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
-                                                                                  slicesPerPatient=slicesPerPatient,
-                                                                                  hPixelSize=hPixelSize)
-    # Delace polar images and labels
-    if 0 != lacingWidth:
-        images.squeeze_(dim=1)  # squeeze channel dim
-        images, testOutputs = delacePolarImageLabel(images, testOutputs,lacingWidth)
-        testGts = delacePolarLabel(testGts, lacingWidth)
+            # Delace polar images and labels
+            images.squeeze_(dim=1)  # squeeze channel dim
+            if 0 != lacingWidth:
+                images, testOutputs = delacePolarImageLabel(images, testOutputs, lacingWidth)
+                testGts = delacePolarLabel(testGts, lacingWidth)
 
+            if 0 != TTADegree: # retate back
+                images,testOutputs = polarImageLabelRotate_Tensor(images, testOutputs, -TTADegree)
+                testGts = polarImageLabelRotate_Tensor(testGts, -TTADegree)
+
+            testOutputsTTA = testOutputsTTA + testOutputs if 1 != nCountTTA else testOutputs
+
+            if TTA ==False or 0 == TTA_StepDegree:
+                break
+         testOutputs = testOutputsTTA/nCountTTA  # average to get final prediction value
+
+    # Error Std and mean
+    if groundTruthInteger:
+        testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
+    stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
+                                                                                             slicesPerPatient=slicesPerPatient,
+                                                                                             hPixelSize=hPixelSize)
     #generate predicted images
     images = images.cpu().numpy().squeeze()
     B,H,W = images.shape

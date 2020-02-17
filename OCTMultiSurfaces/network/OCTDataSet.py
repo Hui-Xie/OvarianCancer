@@ -10,7 +10,7 @@ from OCTAugmentation import *
 
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0):
+    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0, TTA=False, TTA_Degree=0):
         self.m_device = device
         self.m_sigma = sigma
 
@@ -25,6 +25,8 @@ class OCTDataSet(data.Dataset):
             self.m_IDs = json.load(f)
         self.m_transform = transform
         self.m_lacingWidth = lacingWidth
+        self.m_TTA = TTA
+        self.m_TTA_Degree = TTA_Degree
 
     def __len__(self):
         return self.m_images.size()[0]
@@ -35,6 +37,10 @@ class OCTDataSet(data.Dataset):
         label = self.m_labels[index,]
         if self.m_transform:
             data, label = self.m_transform(data, label)
+
+        if self.m_TTA and 0 != self.m_TTA_Degree:
+            data, label = polarImageLabelRotate_Tensor(data, label, rotation=self.m_TTA_Degree)
+
         if 0 != self.m_lacingWidth:
             data, label = lacePolarImageLabel(data,label,self.m_lacingWidth)
 

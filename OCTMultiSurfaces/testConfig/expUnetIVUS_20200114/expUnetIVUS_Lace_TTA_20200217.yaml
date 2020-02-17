@@ -56,12 +56,12 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 rotation: True
 lacingWidth: 30  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 TTA: True       #Test-Time Augmentation
-TTA_Degree: 20 # roration degree of TTA, in degree
+TTA_StepDegree: 20 # roration step degree of TTA, in integer degree
 # data augmentation
 
 network: "IVUSUnet"
 netPath: "/home/hxie1/data/IVUS/polarNumpy/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: "" # reserve for pretrained network.
+loadNetPath: "/home/hxie1/data/IVUS/polarNumpy/netParameters/IVUSUnet/expUnetIVUS_Lace_20200215" # reserve for pretrained network.
 outputDir: ""
 
 # do not use these loss function
