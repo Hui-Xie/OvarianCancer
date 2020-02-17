@@ -37,7 +37,7 @@ fold_k:  -1   # no cross validation
 groundTruthInteger: False
 numSurfaces: 2  # num of surfaces in an image
 sigma: 20.0  # For gaussianized  ground truth, in float
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
 batchSize: 20
 startFilters: 24  # the num of filters in first layer of Unet
 

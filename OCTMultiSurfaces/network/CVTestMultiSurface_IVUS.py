@@ -200,6 +200,7 @@ def main():
                                                                                   hPixelSize=hPixelSize)
     # Delace polar images and labels
     if 0 != lacingWidth:
+        images.squeeze_(dim=1)  # squeeze channel dim
         images, testOutputs = delacePolarImageLabel(images, testOutputs,lacingWidth)
         testGts = delacePolarLabel(testGts, lacingWidth)
 
