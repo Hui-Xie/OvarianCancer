@@ -213,9 +213,10 @@ def main():
 
             testOutputsTTA = testOutputsTTA + testOutputs if 1 != nCountTTA else testOutputs
 
-            if TTA ==False or 0 == TTA_StepDegree:
+            if (TTA ==False or 0 == TTA_StepDegree):
                 break
-         testOutputs = testOutputsTTA/nCountTTA  # average to get final prediction value
+                
+        testOutputs = testOutputsTTA/nCountTTA  # average to get final prediction value
 
     # Error Std and mean
     if groundTruthInteger:
