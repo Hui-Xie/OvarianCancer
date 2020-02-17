@@ -3,20 +3,9 @@
 import random
 import torch
 import torchvision.transforms as TF
-
-def polarImageLabelRotate_Tensor(polarImage, polarLabel, rotation=0):
-    '''
-
-    :param polarImage: size of (H,W)
-    :param polarLabel: in size of (C,N)
-    :param rotation: in integer degree of [0,360]
-    :return: (rotated polarImage,rotated polarLabel) same size with input
-    '''
-    rotation = rotation % 360
-    if 0 != rotation:
-        polarImage = torch.roll(polarImage, rotation, dims=1)
-        polarLabel = torch.roll(polarLabel, rotation, dims=1)
-    return (polarImage, polarLabel)
+import sys
+sys.path.append(".")
+from OCTAugmentation import *
 
 class OCTDataTransform(object):
     def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False):
