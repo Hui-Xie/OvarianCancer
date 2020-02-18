@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.append("../dataPrepare_Tongren")
-from TongrenFileUtilities import extractFileName
+from TongrenFileUtilities import *
 
 
 def printUsage(argv):
