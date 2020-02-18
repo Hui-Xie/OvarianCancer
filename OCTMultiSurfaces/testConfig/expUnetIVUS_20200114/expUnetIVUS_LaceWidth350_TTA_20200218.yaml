@@ -3,7 +3,8 @@
 # numSurface = 2
 # Each image frame is 384 × 384 pixels in size, with in-frame resolution of 0.026 × 0.026 mm.
 # polar image with lace with 30, size of 192*420
-# Feb 17th: add TTA: Test-Time Augmentation
+# Feb 17th, 2020: add TTA: Test-Time Augmentation
+# Feb 18th, 2020: add automatic layer size function
 
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss +layerDice + Soft argMax + SmoothL1Loss + IPM
 dataDir: "/home/hxie1/data/IVUS/polarNumpy"
@@ -36,10 +37,16 @@ fold_k:  -1   # no cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-numSurfaces: 2  # num of surfaces in an image
 sigma: 20.0  # For gaussianized  ground truth, in float
 device: torch.device('cuda:1')   #GPU ID
-batchSize: 10
+batchSize: 5
+
+network: "SurfacesUnet"
+inputHight: 192
+inputWidth: 1060   # rawImageWidth +2 *lacingWidth
+inputChannels: 1
+nLayers: 7
+numSurfaces: 2  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 
 # some physical parameter of images
@@ -59,9 +66,9 @@ TTA: True       #Test-Time Augmentation
 TTA_StepDegree: 20 # roration step degree of TTA, in integer degree
 # data augmentation
 
-network: "IVUSUnet"
+
 netPath: "/home/hxie1/data/IVUS/polarNumpy/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: "/home/hxie1/data/IVUS/polarNumpy/netParameters/IVUSUnet/expUnetIVUS_Lace_20200215" # reserve for pretrained network.
+loadNetPath: "" # reserve for pretrained network.
 outputDir: ""
 
 # do not use these loss function
