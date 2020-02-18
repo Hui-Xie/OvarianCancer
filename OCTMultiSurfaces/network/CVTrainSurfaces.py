@@ -216,8 +216,8 @@ def main():
                                                                                                  slicesPerPatient=slicesPerPatient,
                                                                                                  hPixelSize=hPixelSize)
         lrScheduler.step(validLoss)
-        #debug
-        print(f"epoch {epoch} ends...")  # for smoke debug
+        # debug
+        # print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
