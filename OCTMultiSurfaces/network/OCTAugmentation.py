@@ -2,12 +2,13 @@
 
 import torch
 import math
+import cv2
 
 def polarImageLabelRotate_Tensor(polarImage, polarLabel, rotation=0):
     '''
 
     :param polarImage: size of (H,W) or (B,H,W)
-    :param polarLabel: in size of (C,w) or (B,C,W)
+    :param polarLabel: in size of (C,W) or (B,C,W)
     :param rotation: in integer degree of [0,360], negative indicates reverse direction
     :return: (rotated polarImage,rotated polarLabel) same size with input
     '''
@@ -130,3 +131,33 @@ def delacePolarLabel(label, lacingWidth):
         assert False
 
     return label
+
+def scalePolarImageRadial(polarImage, scaleFactor):
+    '''
+
+    :param polarImage: in (H,W) or (B,H,W)size
+    :param scaleFactor: a float
+    :return:
+    '''
+    dim = polarImage.dim()
+    if 2 == dim:
+        H,W = polarImage.shape  # H is radial, and W is angular
+        newH = H*scaleFactor
+        newPolarImage = cv2.resize(polarImage, (newH,W), interpolation=cv2.INTER_CUBIC)
+    elif 3 == dim:
+        B,H,W = polarImage.shape
+        newH = H*scaleFactor
+        newPolarImage = torch.zeros(())
+    return newPolarImage
+
+def scalePolarLabelRadial(polarLabel, scaleFactor):
+    '''
+
+    :param polarLabel: in C*W or B*C*W size
+    :param scaleFactor: float
+    :return:
+    '''
+    return polarLabel*scaleFactor
+
+
+
