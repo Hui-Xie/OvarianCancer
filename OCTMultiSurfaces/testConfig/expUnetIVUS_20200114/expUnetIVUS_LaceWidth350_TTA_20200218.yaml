@@ -38,7 +38,7 @@ fold_k:  -1   # no cross validation
 
 groundTruthInteger: False
 sigma: 20.0  # For gaussianized  ground truth, in float
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:0')   #GPU ID
 batchSize: 5
 
 network: "SurfacesUnet"

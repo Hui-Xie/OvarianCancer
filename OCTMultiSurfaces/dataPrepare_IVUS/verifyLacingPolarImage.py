@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import torch
 import sys
 sys.path.append("../network")
-from OCTDataSet import *
+from OCTAugmentation import *
 
 images = np.load(os.path.join(dataSetDir,"images.npy"))
 surfaces = np.load(os.path.join(dataSetDir,"surfaces.npy"))
@@ -25,7 +25,7 @@ with open(os.path.join(dataSetDir,"patientID.json")) as json_file:
     patientIDs = json.load(json_file)
 
 k= 53 # random test number
-lacingWidth = 150
+lacingWidth = 350
 
 patientID = os.path.splitext(os.path.basename(patientIDs[str(k)]))[0]
 
@@ -66,6 +66,6 @@ for s in range(0, S):
 subplot3.axis('off')
 
 
-plt.savefig(os.path.join(outputDir, patientID + "_Raw_lace_delace.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.savefig(os.path.join(outputDir, patientID + "_Raw_lace350_delace.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
 
