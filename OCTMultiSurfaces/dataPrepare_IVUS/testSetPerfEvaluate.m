@@ -6,10 +6,10 @@ compute luemen and media performance of IVUS data set
 clear all
 clc
 
-predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_LaceWidth350_TTA_20200218/testResult/text';
-%gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
+predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_Lace_Scale_TTA_20200219/testResult/text';
+gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
 %gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
-gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
+%gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
 predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
 predictLumenFiles = {predictLumenFiles.name}';
 N = numel(predictLumenFiles);
