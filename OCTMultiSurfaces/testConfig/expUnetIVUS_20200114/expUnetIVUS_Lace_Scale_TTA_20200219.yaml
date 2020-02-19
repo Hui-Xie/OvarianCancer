@@ -39,7 +39,7 @@ fold_k:  -1   # no cross validation
 
 groundTruthInteger: False
 sigma: 20.0  # For gaussianized  ground truth, in float
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 5
 
 network: "SurfacesUnet"
@@ -64,7 +64,7 @@ gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 rotation: True
-lacingWidth: 350  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+lacingWidth: 30  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 TTA: True       #Test-Time Augmentation
 TTA_StepDegree: 20 # roration step degree of TTA, in integer degree
 # data augmentation
