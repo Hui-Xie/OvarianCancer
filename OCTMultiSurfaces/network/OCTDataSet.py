@@ -10,7 +10,7 @@ from OCTAugmentation import *
 
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0, TTA=False, TTA_Degree=0):
+    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0, TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1):
         self.m_device = device
         self.m_sigma = sigma
 
@@ -27,12 +27,13 @@ class OCTDataSet(data.Dataset):
         self.m_lacingWidth = lacingWidth
         self.m_TTA = TTA
         self.m_TTA_Degree = TTA_Degree
+        self.m_scaleNumerator = scaleNumerator
+        self.m_scaleDenominator = scaleDenominator
 
     def __len__(self):
         return self.m_images.size()[0]
 
     def __getitem__(self, index):
-        S, H, W = self.m_images.shape
         data = self.m_images[index,]
         label = self.m_labels[index,]
         if self.m_transform:
@@ -44,6 +45,11 @@ class OCTDataSet(data.Dataset):
         if 0 != self.m_lacingWidth:
             data, label = lacePolarImageLabel(data,label,self.m_lacingWidth)
 
+        if 1 != self.m_scaleNumerator or 1 != self.m_scaleDenominator:  # this will change the Height of polar image
+            data = scalePolarImage(data, self.m_scaleNumerator, self.m_scaleDenominator)
+            label = scalePolarLabel(label, self.m_scaleNumerator, self.m_scaleDenominator)
+
+        H, W = data.shape
         result = {"images": data.unsqueeze(dim=0),
                   "GTs": label,
                   "gaussianGTs": gaussianizeLabels(label, self.m_sigma, H),

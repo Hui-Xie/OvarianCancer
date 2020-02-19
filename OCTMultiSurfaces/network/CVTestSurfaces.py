@@ -94,6 +94,8 @@ def main():
     network = cfg["network"]  #
     inputHight = cfg["inputHight"]  # 192
     inputWidth = cfg["inputWidth"]  # 1060  # rawImageWidth +2 *lacingWidth
+    scaleNumerator = cfg["scaleNumerator"]  # 2
+    scaleDenominator = cfg["scaleDenominator"]  # 3
     inputChannels = cfg["inputChannels"]  # 1
     nLayers = cfg["nLayers"]  # 7
     numSurfaces = cfg["numSurfaces"]
@@ -194,7 +196,7 @@ def main():
         for TTADegree in range(0, 360, TTA_StepDegree):
             nCountTTA += 1
             testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
-                                  lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree)
+                                  lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator)
             testBatch = 0
             for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
                 testBatch += 1
@@ -206,8 +208,15 @@ def main():
                 testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for output predict images' ID
 
-            # Delace polar images and labels
             images.squeeze_(dim=1)  # squeeze channel dim
+
+            # scale back: # this will change the Height of polar image
+            if 1 != scaleNumerator or 1 != scaleDenominator:
+                images = scalePolarImage(images, scaleDenominator, scaleNumerator)
+                testOutputs = scalePolarLabel(testOutputs, scaleDenominator, scaleNumerator)
+                testGts = scalePolarLabel(testGts, scaleDenominator, scaleNumerator)
+
+            # Delace polar images and labels
             if 0 != lacingWidth:
                 images, testOutputs = delacePolarImageLabel(images, testOutputs, lacingWidth)
                 testGts = delacePolarLabel(testGts, lacingWidth)

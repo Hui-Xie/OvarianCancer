@@ -59,6 +59,8 @@ def main():
     network = cfg["network"]#
     inputHight= cfg["inputHight"] # 192
     inputWidth= cfg["inputWidth"] #1060  # rawImageWidth +2 *lacingWidth
+    scaleNumerator= cfg["scaleNumerator"] #2
+    scaleDenominator= cfg["scaleDenominator"] #3
     inputChannels= cfg["inputChannels"] #1
     nLayers= cfg["nLayers"] #7
     numSurfaces = cfg["numSurfaces"]
@@ -121,9 +123,10 @@ def main():
     validationTransform = tainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth, TTA=False, TTA_Degree=0)
+    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
+                           TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,
-                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0)
+                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator)
 
     # construct network
     net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers, numSurfaces=numSurfaces, N=numStartFilters)

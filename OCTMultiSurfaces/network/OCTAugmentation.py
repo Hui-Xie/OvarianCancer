@@ -3,6 +3,7 @@
 import torch
 import math
 import cv2
+import numpy as np
 
 def polarImageLabelRotate_Tensor(polarImage, polarLabel, rotation=0):
     '''
@@ -132,32 +133,49 @@ def delacePolarLabel(label, lacingWidth):
 
     return label
 
-def scalePolarImageRadial(polarImage, scaleFactor):
+def scalePolarImage(polarImage, scaleNumerator, scaleDenominator):
     '''
+    scaling the radial of polarImage equals sacling X and Y or cartesian image.
+    result = R * scaleNumerator//scaleDenominator, where scale factor is better for integer.
 
-    :param polarImage: in (H,W) or (B,H,W)size
-    :param scaleFactor: a float
+    :param polarImage: in (H,W) or (B,H,W)size in Tensor
+    :param scaleNumerator: a integer
+    :param scaleDenominator: a integer
+           both scaleFactor are better integer dividable by orginal value
     :return:
     '''
+    device = polarImage.device
     dim = polarImage.dim()
     if 2 == dim:
         H,W = polarImage.shape  # H is radial, and W is angular
-        newH = H*scaleFactor
-        newPolarImage = cv2.resize(polarImage, (newH,W), interpolation=cv2.INTER_CUBIC)
+        newH = int(H*scaleNumerator/scaleDenominator +0.5)
+        polarImage = polarImage.cpu().numpy()
+        newPolarImage = cv2.resize(polarImage, (W,newH),interpolation=cv2.INTER_CUBIC)  #cv2 dim is first W,and then Height
+        newPolarImage = torch.from_numpy(newPolarImage).to(device)
     elif 3 == dim:
         B,H,W = polarImage.shape
-        newH = H*scaleFactor
-        newPolarImage = torch.zeros(())
+        newH = int(H*scaleNumerator/scaleDenominator +0.5)
+        newPolarImage = np.zeros((B,H,W),dtype=torch.float32)
+        for b in range(B):
+            temp = polarImage[b].cpu().numpy()
+            newPolarImage[b] = cv2.resize(temp, (W,newH), interpolation=cv2.INTER_CUBIC)
+        newPolarImage = torch.from_numpy(newPolarImage).to(device)
+    else:
+        print("scalePolarImageRadial does not support dimension >= 4")
+        assert False
+
     return newPolarImage
 
-def scalePolarLabelRadial(polarLabel, scaleFactor):
+def scalePolarLabel(polarLabel, scaleNumerator, scaleDenominator):
     '''
+    result = R * scaleNumerator/scaleDenominator, where scale factor is better for integer.
 
     :param polarLabel: in C*W or B*C*W size
-    :param scaleFactor: float
+    :param scaleNumerator: a integer
+    :param scaleDenominator: a integer
     :return:
     '''
-    return polarLabel*scaleFactor
+    return polarLabel*scaleNumerator/scaleDenominator
 
 
 
