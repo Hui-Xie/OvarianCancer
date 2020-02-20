@@ -4,56 +4,95 @@
 import torch
 import math
 
-def computeMuVariance(x):
+def computeMuVariance(x): # without square weight
     '''
     Compute the mean and variance along H direction of each surface.
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along each Height direction
     :return: mu:     mean in (BatchSize, NumSurface, W) dimension
-             sigma2: variance in (BatchSize, Numsurface, W) dimension, which will be datach from computation graph.
+             sigma2: variance in (BatchSize, Numsurface, W) dimension
     '''
     device = x.device
     B,Num,H,W = x.size() # Num is the num of surface for each patient
 
-    # square probability to strengthen the big probability, and to reduce variance
-    # "The rich get richer and the poor get poorer"
-    P = torch.pow(x, 2).to(device=device, dtype=torch.float32)  # it must use float32. float16 will lead sigma2 overflow(NaN)
-    PColSum = torch.sum(P, dim=-2, keepdim=True).expand(P.size())  # column means H direction
-    P = P/PColSum
-    del PColSum   # in order to free memory for further reuse.
-    #with torch.cuda.device(device): # using context is to avoid extra GPU using in GPU0 for empty_cache()
-    #    torch.cuda.empty_cache()
-
     # compute mu
-    Y = torch.arange(H).view((H,1)).expand(P.size()).to(device=device, dtype=torch.int16)
-    # mu = torch.sum(P*Y, dim=-2, keepdim=True)
+    Y = torch.arange(H).view((H,1)).expand(x.size()).to(device=device, dtype=torch.int16)
+    # mu = torch.sum(x*Y, dim=-2, keepdim=True)
     # use slice method to comput P*Y
     for b in range(B):
         if 0==b:
-            PY = (P[b,]*Y[b,]).unsqueeze(dim=0)
+            PY = (x[b,]*Y[b,]).unsqueeze(dim=0)
         else:
-            PY = torch.cat((PY, (P[b,]*Y[b,]).unsqueeze(dim=0)))
+            PY = torch.cat((PY, (x[b,]*Y[b,]).unsqueeze(dim=0)))
     mu = torch.sum(PY, dim=-2, keepdim=True)
     del PY  # hope to free memory.
-    #with torch.cuda.device(device):
-    #    torch.cuda.empty_cache()
+
+    # compute sigma2 (variance)
+    Mu = mu.expand(x.size())
+
+    #sigma2 = torch.sum(x*torch.pow(Y-Mu,2), dim=-2,keepdim=False)
+    # this slice method is to avoid using big GPU memory .
+    for b in range(B):
+        if 0==b:
+            sigma2 = torch.sum(x[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)
+        else:
+            sigma2 = torch.cat((sigma2, torch.sum(x[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)))
+
+    # very important, otherwise sigma2 will increase to make the loss small
+    # allowing sigma2 back propogation give better test result in the IVUS data.
+    # sigma2 = sigma2.detach()
+
+    return mu.squeeze(dim=-2),sigma2
+
+
+def computeMuVarianceWithSquare(x): # with square probability, then normalize
+    '''
+    Compute the mean and variance along H direction of each surface.
+
+    :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along each Height direction
+    :return: mu:     mean in (BatchSize, NumSurface, W) dimension
+             sigma2: variance in (BatchSize, Numsurface, W) dimension
+    '''
+    device = x.device
+    B, Num, H, W = x.size()  # Num is the num of surface for each patient
+
+    # square probability to strengthen the big probability, and to reduce variance
+    # "The rich get richer and the poor get poorer"
+    P = torch.pow(x, 2).to(device=device,
+                           dtype=torch.float32)  # it must use float32. float16 will lead sigma2 overflow(NaN)
+    PColSum = torch.sum(P, dim=-2, keepdim=True).expand(P.size())  # column means H direction
+    P = P / PColSum
+    del PColSum  # in order to free memory for further reuse.
+
+    # compute mu
+    Y = torch.arange(H).view((H, 1)).expand(P.size()).to(device=device, dtype=torch.int16)
+    # mu = torch.sum(P*Y, dim=-2, keepdim=True)
+    # use slice method to comput P*Y
+    for b in range(B):
+        if 0 == b:
+            PY = (P[b,] * Y[b,]).unsqueeze(dim=0)
+        else:
+            PY = torch.cat((PY, (P[b,] * Y[b,]).unsqueeze(dim=0)))
+    mu = torch.sum(PY, dim=-2, keepdim=True)
+    del PY  # hope to free memory.
 
     # compute sigma2 (variance)
     Mu = mu.expand(P.size())
 
-    #sigma2 = torch.sum(P*torch.pow(Y-Mu,2), dim=-2,keepdim=False)
+    # sigma2 = torch.sum(P*torch.pow(Y-Mu,2), dim=-2,keepdim=False)
     # this slice method is to avoid using big GPU memory .
     for b in range(B):
-        if 0==b:
-            sigma2 = torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)
+        if 0 == b:
+            sigma2 = torch.sum(P[b,] * torch.pow(Y[b,] - Mu[b,], 2), dim=-2, keepdim=False).unsqueeze(dim=0)
         else:
-            sigma2 = torch.cat((sigma2, torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)))
+            sigma2 = torch.cat(
+                (sigma2, torch.sum(P[b,] * torch.pow(Y[b,] - Mu[b,], 2), dim=-2, keepdim=False).unsqueeze(dim=0)))
 
     # very important, otherwise sigma2 will increase to make the loss small
     # all sigma2 back propogation give better test result in the IVUS data.
     # sigma2 = sigma2.detach()
 
-    return mu.squeeze(dim=-2),sigma2
+    return mu.squeeze(dim=-2), sigma2
 
 def getQFromVariance(sigma2):
     '''

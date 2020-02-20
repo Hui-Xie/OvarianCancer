@@ -290,7 +290,7 @@ class OCTUnetSurfaceLayerJHU(BasicModel):
             loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
 
         smoothL1Loss = nn.SmoothL1Loss().to(device)
-        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
+        mu, sigma2 = computeMuVarianceWithSquare(nn.Softmax(dim=-2)(xs))
         B, N, W = mu.shape
         separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
         S = separationPrimalDualIPM(mu, sigma2)

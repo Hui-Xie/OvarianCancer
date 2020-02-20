@@ -256,7 +256,7 @@ class OCTUnetJHU(BasicModel):
         x = self.m_up0(x)
 
         softmaxOutputs = nn.Softmax(dim=-2)(x)  # dim needs to consider batch dimension
-        mu, sigma2 = computeMuVariance(softmaxOutputs)
+        mu, sigma2 = computeMuVarianceWithSquare(softmaxOutputs)
         S = mu
 
         lossFunc, lossWeight = self.getCurrentLossFunc()
