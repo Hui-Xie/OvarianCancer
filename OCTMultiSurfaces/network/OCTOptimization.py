@@ -50,6 +50,7 @@ def computeMuVariance(x):
             sigma2 = torch.cat((sigma2, torch.sum(P[b,]*torch.pow(Y[b,]-Mu[b,],2), dim=-2,keepdim=False).unsqueeze(dim=0)))
 
     # very important, otherwise sigma2 will increase to make the loss small
+    # all sigma2 back propogation give better test result in the IVUS data.
     # sigma2 = sigma2.detach()
 
     return mu.squeeze(dim=-2),sigma2

@@ -314,7 +314,7 @@ def main():
     with open(os.path.join(outputDir,"output.txt"), "w") as file:
         file.write(f"Test: {experimentName}\n")
         file.write(f"loadNetPath: {netPath}\n")
-        file.write(f"config file: {configFile}")
+        file.write(f"config file: {configFile}\n")
         file.write(f"B,S,H,W = {B,S,H, W}\n")
         file.write(f"net.m_configParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_configParametersDict.items()]
