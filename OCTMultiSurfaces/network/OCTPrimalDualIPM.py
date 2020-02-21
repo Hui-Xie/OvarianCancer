@@ -11,12 +11,12 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
         '''
         the forward of constrained convex optimization with Primal-Dual Interior Point Method.
 
-        S* = arg min_{S} {(S-Mu)' *Q* (S-Mu)/2}, such that A <= 0
+        S* = arg min_{S} {(S-Mu)' *Q* (S-Mu)/2}, such that AS <= 0
 
         :param ctx: autograd context object
         :param Mu: predicted mean,  in (B,W, NumSurfaces) size, in below N=NumSurfaces
         :param Q: Sigma2Reciprocal: Q, the diagonal reciprocal of variance in (B,W,N,N) size
-        :param A: constraint matrix A <= 0 with A of size(n-1, n), in (B, W, N-1,N) size
+        :param A: constraint matrix AS <= 0 with A of size(n-1, n), in (B, W, N-1,N) size
         :param S0: the initial feasibible solution, in (B,W, N) size
         :param Lambda0: the initial Lagragian dual variable, in (B,W,N-1) size
         :param alpha: IPM iteration t enlarge variable, in (B,W) size, alpha >1
