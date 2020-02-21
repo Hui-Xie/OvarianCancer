@@ -303,11 +303,14 @@ class SurfacesUnet(BasicModel):
         usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
 
         '''
+        useLayerDice = self.getConfigParameter("useLayerDice")
+        if useLayerDice:
+            generalizedDiceLoss = GeneralizedDiceLoss()
+            loss_layerDice = generalizedDiceLoss(xl, layerGTs)
+        else:
+            loss_layerDice = 0.0
+
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
-
-        generalizedDiceLoss = GeneralizedDiceLoss()
-        loss_layerDice = generalizedDiceLoss(xl, layerGTs)
-
         if useCEReplaceKLDiv:
             CELoss = MultiClassCrossEntropyLoss()
             loss_surfaceKLDiv = CELoss(xs, GTs)
