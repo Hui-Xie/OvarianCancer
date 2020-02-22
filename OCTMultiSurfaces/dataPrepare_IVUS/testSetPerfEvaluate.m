@@ -6,7 +6,7 @@ compute luemen and media performance of IVUS data set
 clear all
 clc
 
-predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_Lace_BPSigma2_SoftArgMax_TTA_20200220/testResult/text';
+predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_RemoveLayerSeg_20200221/testResult/text';
 %gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
 %gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
 gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';

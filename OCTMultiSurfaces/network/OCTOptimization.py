@@ -118,7 +118,7 @@ def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1
     '''
     # get initial sorted S0 in ascending order,
     batchLIS = getBatchLIS_gpu(mu)
-    S0 = gauranteeSurfaceOrder(mu, batchLIS)
+    S0 = guaranteeSurfaceOrder(mu, batchLIS)
     if torch.all(mu.eq(S0)):
         return mu
 
@@ -130,7 +130,7 @@ def proximalIPM(mu,sigma2, maxIterations=100, learningStep=0.01, criterion = 0.1
         # S = S-learningStep*(S-mu)/sigma2  # 1st gradient method
         S = S-learningStep*(S-mu)         # newton's method in optimization
         batchLIS = getBatchLIS_gpu(S)
-        S = gauranteeSurfaceOrder(S, batchLIS)
+        S = guaranteeSurfaceOrder(S, batchLIS)
         if torch.abs(S-preS).mean() < criterion:
             break
     print(f"IPM used {i} iterations.")
@@ -360,7 +360,7 @@ def markConfusionSectionFromLIS(mu, batchLIS_cpu):
 
 
 #in continuous disorder section, the optimization value should be its sigma2-inverse-weighted average
-# this can not gaurantee the minimum cost:
+# this can not guarantee the minimum cost:
 # for example: 1,5,2,3,9 when all variances are 1, has better solution: 1, 3.3, 3.3, 3.3, 9
 #              1,5,2,3,9 when all variances are 1,100, 1,1,1, has better solution: 1, 2, 2, 3,9
 def constraintOptimization(mu, sigma2, confusionLIS_cpu):
@@ -421,7 +421,7 @@ def constraintOptimization(mu, sigma2, confusionLIS_cpu):
 
 
 
-def gauranteeSurfaceOrder(S, batchLIS):
+def guaranteeSurfaceOrder(S, batchLIS):
     '''
     for example:
     S input = tensor([1, 5, 3, 2, 6, 7, 8, 9])

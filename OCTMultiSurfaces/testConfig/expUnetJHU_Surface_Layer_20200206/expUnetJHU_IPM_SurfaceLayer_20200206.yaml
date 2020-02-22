@@ -65,7 +65,7 @@ lossFunc1: "nn.SmoothL1Loss().to(device)"
 lossFunc1Epochs: 500
 
 # Proximal IPM Optimization
-useProxialIPM: False  # Flase means use gauranteeSurfaceOrder module.
+useProxialIPM: False  # Flase means use guaranteeSurfaceOrder module.
 learningStepIPM: 0.1
 maxIterationIPM: 100
 criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.

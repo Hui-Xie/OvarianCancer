@@ -63,8 +63,8 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     # allPatientsImageArray = np.swapaxes(allPatientsImageArray, 1,2)
     # allPatientsSurfaceArray = np.swapaxes(allPatientsSurfaceArray, 1,2)
 
-    # gaurantee surface separation constraints, s_i <= s_{i+1} in each A-Scan.
-    # above error is only 1.6% of all pixel points in Tongren data, direct sort in each A-Scan to gaurantee surface order.
+    # guarantee surface separation constraints, s_i <= s_{i+1} in each A-Scan.
+    # above error is only 1.6% of all pixel points in Tongren data, direct sort in each A-Scan to guarantee surface order.
     allPatientsSurfaceArray = np.sort(allPatientsSurfaceArray, axis=-2)
 
     # save

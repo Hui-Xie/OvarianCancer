@@ -74,7 +74,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
             PD_Lambda = PD[:, :, N:, :]  # in size: B,W,N-1,1
 
-            # linear search to determine a feasible step which will gaurantee constraints
+            # linear search to determine a feasible step which will guarantee constraints
             # make sure updated Lambda >=0
             negPDLambda = (PD_Lambda < 0).int() * PD_Lambda + (PD_Lambda >= 0).int() * (
                 -1) * Lambda  # in size: B,W, N-1,1
@@ -204,7 +204,7 @@ class SeparationPrimalDualIPM(nn.Module):
         # compute S0 here
         with torch.no_grad():
             batchLIS = getBatchLIS_gpu(Mu)
-            S0 = gauranteeSurfaceOrder(Mu, batchLIS)
+            S0 = guaranteeSurfaceOrder(Mu, batchLIS)
             if torch.all(Mu.eq(S0)):
                 return Mu
 
