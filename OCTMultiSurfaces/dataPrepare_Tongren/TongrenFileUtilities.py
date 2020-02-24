@@ -10,7 +10,7 @@ def extractPaitentID(str):  # for Tongren data
     '''
 
        :param str: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-       :return: output: 4511_OD_29134_OCT06
+       :return: output: 4511_OD_29134
        '''
     stem = str[:str.rfind("_Volume/")]
     patientID = stem[stem.rfind("/") + 1:]
