@@ -1,7 +1,7 @@
 # measure the output performance of OCTExplorer with ground truth corrected by doctors
 
 explorerResultDir = "/home/hxie1/data/OCT_Tongren/OCTExplorerOutput/Control"  # extract only "*__Volume_Sequence_Surfaces_Iowa.xml" file, 50 files
-gtDir = "/home/hxie1/data/OCT_Tongren/refinedGT_20200204"  # corrected result by Tongren doctors, 47 files
+# gtDir = "/home/hxie1/data/OCT_Tongren/refinedGT_20200204"  # corrected result by Tongren doctors, 47 files
 
 # it is better to use generated numpy 10-Fold data as ground truth. Just choosing one fold is ok.
 numpyGTDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet" # include training, validation, and test 3 dirs
