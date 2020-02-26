@@ -1,6 +1,6 @@
 # measure the output performance of OCTExplorer with ground truth corrected by doctors
 
-explorerResultDir = "/home/hxie1/data/OCT_Tongren/OCTExplorerOutput/Control"  # extract only "*__Volume_Sequence_Surfaces_Iowa.xml" file, 50 files
+explorerResultDir = "/home/hxie1/data/OCT_Tongren/OCTExplorerOutput/Control"  # extract only "*__Volume_Sequence_Surfaces_Iowa.xml" file, 50 files, for Width of 768
 # gtDir = "/home/hxie1/data/OCT_Tongren/refinedGT_20200204"  # corrected result by Tongren doctors, 47 files
 
 # it is better to use generated numpy 10-Fold data as ground truth. Just choosing one fold is ok.
@@ -71,17 +71,19 @@ while s<S:
     if 11 == Num_Surfaces:
         patientSurfacesArray = np.delete(patientSurfacesArray, 8, axis=1)  # delete inaccurate surface 8
         B, Num_Surfaces, X = patientSurfacesArray.shape
-        assert B == 31 and Num_Surfaces == 10 and X == 768
+        assert B == 31 and Num_Surfaces == 10
 
         patientSurfacesArray = np.delete(patientSurfacesArray, 2, axis=1)  # delete inaccurate surface 2
         B, Num_Surfaces, X = patientSurfacesArray.shape
-        assert B == 31 and Num_Surfaces == 9 and X == 768
+        assert B == 31 and Num_Surfaces == 9
 
     # remove the leftmost and rightmost 128 columns for each B-scans as the segmentation is not accurate
-    if "5363_OD_25453" == patientID:
-        patientSurfacesArray = patientSurfacesArray[:, :, 103:615]  # left shift 25 pixels for case 5363_OD_25453
-    else:
-        patientSurfacesArray = patientSurfacesArray[:, :, 128:640]
+    if 768==X:
+        if "5363_OD_25453" == patientID:
+            patientSurfacesArray = patientSurfacesArray[:, :, 103:615]  # left shift 25 pixels for case 5363_OD_25453
+        else:
+            patientSurfacesArray = patientSurfacesArray[:, :, 128:640]
+
     explorerSurfaces[s:s + Z, :, :] = torch.from_numpy(patientSurfacesArray).to(device, dtype=torch.float)
 
     s += slicesPerPatient
