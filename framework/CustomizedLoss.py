@@ -1,6 +1,7 @@
 import torch.nn.functional as F
 from torch.nn.modules.loss import _WeightedLoss, _Loss
 import torch
+import torch.nn as nn
 from scipy import ndimage
 from scipy.ndimage.morphology import binary_dilation
 import numpy as np
@@ -508,6 +509,9 @@ class SmoothSurfaceLoss():
         Gw0 = target[:, :, 0:-1]
         Gw1 = target[:, :, 1:]
         loss = torch.pow((Sh0-Sh1)-(Gh0-Gh1), 2.0).mean()+torch.pow((Sw0-Sw1)-(Gw0-Gw1), 2.0).mean()
+
+        weight = 10.0
+        loss = loss + weight*(nn.MSELoss()(inputx, target))  # match MSELoss use.
 
         return loss
 
