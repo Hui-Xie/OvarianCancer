@@ -336,6 +336,15 @@ class SurfacesUnet(BasicModel):
         weightL1 = 10.0
         loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_L1 * weightL1
 
+        #debug
+        if loss_layerDice<0 or loss_surfaceKLDiv<0 or loss_smooth<0 or loss_L1 <0:
+            print("================Obeserve loss <0 ==================")
+            print(f"loss_layerDice = {loss_layerDice}")
+            print(f"loss_surfaceKLDiv = {loss_surfaceKLDiv}")
+            print(f"loss_smooth = {loss_smooth}")
+            print(f"loss_L1 = {loss_L1}")
+            assert False
+
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 
 
