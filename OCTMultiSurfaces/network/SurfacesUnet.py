@@ -11,7 +11,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss, SmoothSurfaceLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -294,8 +294,8 @@ class SurfacesUnet(BasicModel):
         x = self.m_up1Pooling(x) + x0
         x = self.m_up1(x) + x
 
-        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*128*1024
-        xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*128*1024
+        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
+        xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
 
         '''
         useProxialIPM = self.getConfigParameter('useProxialIPM')
@@ -320,13 +320,21 @@ class SurfacesUnet(BasicModel):
 
         smoothL1Loss = nn.SmoothL1Loss().to(device)
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
+
+        useSmoothSurface = self.getConfigParameter("useSmoothSurface")
+        if useSmoothSurface:
+            smoothSurfaceLoss = SmoothSurfaceLoss()
+            loss_smooth = smoothSurfaceLoss(mu, GTs)
+        else:
+            loss_smooth = 0.0
+
         B, N, W = mu.shape
         separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
         S = separationPrimalDualIPM(mu, sigma2)
         loss_L1 = smoothL1Loss(S, GTs)
 
         weightL1 = 10.0
-        loss = loss_layerDice + loss_surfaceKLDiv + loss_L1 * weightL1
+        loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_L1 * weightL1
 
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 

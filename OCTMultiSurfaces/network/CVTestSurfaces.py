@@ -139,6 +139,7 @@ def main():
     usePrimalDualIPM = cfg['usePrimalDualIPM']
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
     useLayerDice = cfg['useLayerDice']
+    useSmoothSurface = cfg['useSmoothSurface']
 
     if -1==k and 0==K:  # do not use cross validation
         testImagesPath = os.path.join(dataDir, "test", f"images.npy")
@@ -183,6 +184,7 @@ def main():
     net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
     net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
     net.updateConfigParameter("useLayerDice", useLayerDice)
+    net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
