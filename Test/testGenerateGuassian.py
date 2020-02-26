@@ -4,6 +4,7 @@ from OCTMultiSurfaces.network.OCTAugmentation import gaussianizeLabels
 import os
 
 import torch
+import torch.nn as nn
 import matplotlib.pyplot as plt
 
 device =torch.device("cuda:0")
@@ -35,5 +36,23 @@ print (f"a gaussian sample: {gaussianTensor[1, :, 0]}")
 
 plt.savefig(os.path.join(outputDir, "generateGuassian.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
+
+# test KLDiv loss
+GT = gaussianTensor[1, :, 0] # mean at 100's gaussian
+GTMaxProb,  GTMaxLoc= torch.max(GT,dim=0)
+
+P = torch.rand(GT.shape).to(device)
+P[GTMaxLoc:GTMaxLoc+5] = 10
+
+klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=0)(P), GT)
+
+print(f"loss_surfaceKLDiv = {loss_surfaceKLDiv}")
+
+
+
+
+
+
 print ("==============end of program ====")
 
