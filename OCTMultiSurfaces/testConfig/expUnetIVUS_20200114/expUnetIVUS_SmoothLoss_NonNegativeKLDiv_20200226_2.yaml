@@ -8,6 +8,7 @@
 # Feb 19th, 2020: allow Sigma2 to do back propagation.
 # Feb 20th, 2020: use SoftArgMax, instead of Weighted SoftArgMax
 # Feb 26th, 2020: Add SmoothSurfaceLoss; and when KLDivLoss<0, exclude it from Loss backward.
+#                  matching SmoothSurfaceLoss, use MSE instead of L1
 
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss +layerDice + Soft argMax + SmoothL1Loss + IPM
 dataDir: "/home/hxie1/data/IVUS/polarNumpy"

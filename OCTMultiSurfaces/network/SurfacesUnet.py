@@ -323,7 +323,7 @@ class SurfacesUnet(BasicModel):
             if loss_surfaceKLDiv < 0:
                 loss_surfaceKLDiv = 0.0
 
-        smoothL1Loss = nn.SmoothL1Loss().to(device)
+
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
@@ -336,10 +336,13 @@ class SurfacesUnet(BasicModel):
         B, N, W = mu.shape
         separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
         S = separationPrimalDualIPM(mu, sigma2)
-        loss_L1 = smoothL1Loss(S, GTs)
+
+        #smoothL1Loss = nn.SmoothL1Loss().to(device)
+        mseLoss = nn.MSELoss().to(device)
+        loss_mse = mseLoss(S, GTs)
 
         weightL1 = 10.0
-        loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_L1 * weightL1
+        loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_mse * weightL1
 
         #debug
         '''
