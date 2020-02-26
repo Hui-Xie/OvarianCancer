@@ -317,6 +317,11 @@ class SurfacesUnet(BasicModel):
         else:
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
             loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
+            '''
+            KLDiv Loss = \sum g_i*log(g_i/p_i). KLDivLoss<0, means big weight g_i < p_i, at this time, g_i is not a good guide to p_i.   
+            '''
+            if loss_surfaceKLDiv < 0:
+                loss_surfaceKLDiv = 0.0
 
         smoothL1Loss = nn.SmoothL1Loss().to(device)
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
