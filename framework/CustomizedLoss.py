@@ -477,6 +477,42 @@ class GeneralizedDiceLoss():
         GDL = 1.0-2.0*((softmaxInput*targetProb).sum(dim=sumDims)*W).sum()/((softmaxInput+targetProb).sum(dim=sumDims)*W).sum()
         return GDL
 
+class SmoothSurfaceLoss():
+    def __init__(self):
+        pass
+
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
+    def forward(self, inputx, target):
+        '''
+        measure  a sum of the square mean errors between S0-S1 and G0-G1 along H and W dimension respectively.
+
+        :param inputx: float32 tensor surface locations, size of (B,N,W), where N is the number of surfaces.
+        :param target: ground truth tensor surface locations, size of (B,N,W), where N is the number of surfaces.
+        :return: a sum of square mean error between S0-S1 and G0-G1 along H and W dimension respectively.
+
+        '''
+        B,N,W = inputx.shape
+        assert (B,N,W) == target.shape
+
+        # along N dimension
+        Sh0 = inputx[:,0:-1,:]  # size: B,(N-1),W
+        Sh1 = inputx[:,1:,  :]
+        Gh0 = target[:,0:-1,:]
+        Gh1 = target[:,1:,  :]
+
+        # along W dimension
+        Sw0 = inputx[:, :, 0:-1]  # size: B,N,(W-1)
+        Sw1 = inputx[:, :, 1:]
+        Gw0 = target[:, :, 0:-1]
+        Gw1 = target[:, :, 1:]
+        loss = torch.pow((Sh0-Sh1)-(Gh0-Gh1), 2.0).mean()+torch.pow((Sw0-Sw1)-(Gw0-Gw1), 2.0).mean()
+
+        return loss
+
+
+
 # support multiclass CrossEntropy Loss
 class MultiClassCrossEntropyLoss():
     def __init__(self):
