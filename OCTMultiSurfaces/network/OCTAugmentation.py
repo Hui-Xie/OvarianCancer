@@ -44,7 +44,7 @@ def gaussianizeLabels(rawLabels, sigma, H):
     Num_Surface, W = Mu.shape
     Mu = Mu.unsqueeze(dim=-2)
     Mu = Mu.expand((Num_Surface, H, W))
-    X = torch.arange(start=0.0, end=H, step=1.0).view((H, 1)).to(device, dtype=torch.float32)
+    X = torch.arange(start=0.0, end=H, step=1.0).view((1, H, 1)).to(device, dtype=torch.float32)
     X = X.expand((Num_Surface, H, W))
     pi = math.pi
     G = torch.exp(-(X - Mu) ** 2 / (2 * sigma * sigma)) / (sigma * math.sqrt(2 * pi))
