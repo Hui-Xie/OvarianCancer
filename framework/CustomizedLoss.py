@@ -50,6 +50,7 @@ class BoundaryLoss1(_Loss):
             sys.exit(-5)
 
     def forward(self, inputx, target):
+        # Todo: make dim=1 is correct in inputx dimenson.
         inputxMaxDim1, _= torch.max(inputx, dim=1, keepdim=True)
         inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
         softmaxInput = F.softmax(inputx-inputxMaxDim1, 1)  #use inputMaxDim1 is to avoid overflow.
@@ -538,16 +539,19 @@ class MultiClassCrossEntropyLoss():
         assert (B,N,W) == target.shape
 
         # convert logits to probability for inputx
-        inputxMaxDim1, _ = torch.max(inputx, dim=1, keepdim=True)
-        inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
-        softmaxInput = F.softmax(inputx - inputxMaxDim1, 1)  # use inputMaxDim1 is to avoid overflow. size: B,N,H,W
+        inputxMaxDim, _ = torch.max(inputx, dim=-2, keepdim=True)
+        inputxMaxDim = inputxMaxDim.expand_as(inputx)
+        softmaxInput = F.softmax(inputx - inputxMaxDim, -2)  # use inputMaxDim1 is to avoid overflow. size: B,N,H,W
 
-        targetIndex = (target +0.5).long().unsqueeze(dim=2) # size: B,N,1,W
+        targetIndex = (target +0.5).long().unsqueeze(dim=-2) # size: B,N,1,W
 
         surfaceProb = torch.gather(softmaxInput, dim=2,index=targetIndex)  # size: B,N,1,W
+        loss1 = (-(surfaceProb.log())).sum()  #-g_i*log(p_i)
 
-        loss = (-surfaceProb.log()).sum()
-        return loss
+        nonSurfaceProb = softmaxInput.scatter_(2,targetIndex, torch.zeros_like(targetIndex))
+        loss2 = (-((1.0-nonSurfaceProb).log())).sum()  # -(1-g_i)*log(1-p_i)
+
+        return loss1+loss2
 
 
 

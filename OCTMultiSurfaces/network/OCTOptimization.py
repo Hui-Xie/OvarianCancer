@@ -16,7 +16,7 @@ def computeMuVariance(x): # without square weight
     B,Num,H,W = x.size() # Num is the num of surface for each patient
 
     # compute mu
-    Y = torch.arange(H).view((H,1)).expand(x.size()).to(device=device, dtype=torch.int16)
+    Y = torch.arange(H).view((1,1,H,1)).expand(x.size()).to(device=device, dtype=torch.int16)
     # mu = torch.sum(x*Y, dim=-2, keepdim=True)
     # use slice method to comput P*Y
     for b in range(B):
@@ -65,7 +65,7 @@ def computeMuVarianceWithSquare(x): # with square probability, then normalize
     del PColSum  # in order to free memory for further reuse.
 
     # compute mu
-    Y = torch.arange(H).view((H, 1)).expand(P.size()).to(device=device, dtype=torch.int16)
+    Y = torch.arange(H).view((1,1,H, 1)).expand(P.size()).to(device=device, dtype=torch.int16)
     # mu = torch.sum(P*Y, dim=-2, keepdim=True)
     # use slice method to comput P*Y
     for b in range(B):
