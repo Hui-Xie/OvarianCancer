@@ -503,7 +503,7 @@ class SmoothSurfaceLoss():
         Similarly, in width direction, we compute similar MSE along width direction shift.
         Its goal is to learn surface curve changes along width direction.
 
-        Smooth Loss forces predicted surface waveShape / layerWidth  similar with ground truth.
+        Smooth Loss forces predicted surface waveShape / layerWidth  to be similar with ground truth.
         But it ignores surface location problem, so it needs to use with general MSE Loss together.
         General MSE Loss  gets surface locations, while SmoothLoss use relationship between surfaces
         or between adjacent columns to get better neighbour surface location through learning waveShape and layer width.

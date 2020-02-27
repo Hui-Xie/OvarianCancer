@@ -320,8 +320,8 @@ class SurfacesUnet(BasicModel):
             '''
             KLDiv Loss = \sum g_i*log(g_i/p_i). KLDivLoss<0, means big weight g_i < p_i, at this time, g_i is not a good guide to p_i.   
             '''
-            #if loss_surfaceKLDiv < 0:
-            #    loss_surfaceKLDiv = 0.0
+            if loss_surfaceKLDiv < 0:
+                loss_surfaceKLDiv = 0.0
 
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
 
