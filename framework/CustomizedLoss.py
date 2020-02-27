@@ -490,6 +490,26 @@ class SmoothSurfaceLoss():
         '''
         measure  a sum of the square mean errors between S0-S1 and G0-G1 along H and W dimension respectively.
 
+        Smooth Loss is a Mean Square Error measure between (S0 -S1) and (G0-G1),
+        where S0  and G0  are 0 to N-1 surfaces' prediction and ground truth, and S1 and G1  are 1 to N surfaces prediction and ground truth.
+        In other words, we expect the distance difference between predicted surface 0  and surface 1
+        are consistent with the distance difference between ground truth surface 0 and surface 1.
+
+        This loss forces network to learn the distance difference between surfaces, the laye width.
+        For example, if predicted surface 0 deviates ground truth surface 0 5 pixels,
+        this loss will forces  the predicted surface 1 also deviates ground truth surface 1 5 pixels, otherwise it will get some loss.
+        This is along height direction shift.
+
+        Similarly, in width direction, we compute similar MSE along width direction shift.
+        Its goal is to learn surface curve changes along width direction.
+
+        Smooth Loss forces predicted surface waveShape / layerWidth  similar with ground truth.
+        But it ignores surface location problem, so it needs to use with general MSE Loss together.
+        General MSE Loss  gets surface locations, while SmoothLoss use relationship between surfaces
+        or between adjacent columns to get better neighbour surface location through learning waveShape and layer width.
+        We can also think SmoothLoss amplifies the error of MSELoss.
+
+
         :param inputx: float32 tensor surface locations, size of (B,N,W), where N is the number of surfaces.
         :param target: ground truth tensor surface locations, size of (B,N,W), where N is the number of surfaces.
         :return: a sum of square mean error between S0-S1 and G0-G1 along H and W dimension respectively.

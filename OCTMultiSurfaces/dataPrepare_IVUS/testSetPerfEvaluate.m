@@ -6,10 +6,10 @@ compute luemen and media performance of IVUS data set
 clear all
 clc
 
-predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_RemoveLayerSeg_20200221/testResult/text';
+predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_SmoothLoss_NonNegativeKLDiv_20200226_2/testResult/text';
 %gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
-%gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
-gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
+gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
+%gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
 predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
 predictLumenFiles = {predictLumenFiles.name}';
 N = numel(predictLumenFiles);
