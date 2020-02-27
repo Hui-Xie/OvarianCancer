@@ -546,7 +546,8 @@ class MultiSurfacesCrossEntropyLoss():
         surfaceProb = torch.gather(softmaxInput, dim=2,index=targetIndex)  # size: B,N,1,W
         loss1 = (-(surfaceProb.log())).sum()  #-g_i*log(p_i)
 
-        nonSurfaceProb = softmaxInput.scatter_(2,targetIndex, torch.zeros_like(targetIndex))
+        nonSurfaceProb = softmaxInput.clone()
+        nonSurfaceProb.scatter_(2,targetIndex, torch.zeros(targetIndex.shape, dtype=torch.float, device=target.device))
         loss2 = (-((1.0-nonSurfaceProb).log())).sum()  # -(1-g_i)*log(1-p_i)
 
         return loss1+loss2
