@@ -480,8 +480,8 @@ class GeneralizedDiceLoss():
         return GDL
 
 class SmoothSurfaceLoss():
-    def __init__(self):
-        pass
+    def __init__(self, mseLossWeight=10.0):
+        self.mseLossWeight = mseLossWeight  # weight for embedded MSE loss
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
@@ -509,17 +509,15 @@ class SmoothSurfaceLoss():
         Sw1 = inputx[:, :, 1:]
         Gw0 = target[:, :, 0:-1]
         Gw1 = target[:, :, 1:]
-        loss = torch.pow((Sh0-Sh1)-(Gh0-Gh1), 2.0).mean()+torch.pow((Sw0-Sw1)-(Gw0-Gw1), 2.0).mean()
-
-        weight = 10.0
-        loss = loss + weight*(nn.MSELoss()(inputx, target))  # match MSELoss use.
+        loss = torch.pow((Sh0-Sh1)-(Gh0-Gh1), 2.0).mean()+torch.pow((Sw0-Sw1)-(Gw0-Gw1), 2.0).mean()\
+                + self.mseLossWeight* torch.pow(inputx-target, 2.0).mean()
 
         return loss
 
 
 
 # support multiclass CrossEntropy Loss
-class MultiClassCrossEntropyLoss():
+class MultiSurfacesCrossEntropyLoss():
     def __init__(self):
         pass
 

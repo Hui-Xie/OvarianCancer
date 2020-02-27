@@ -11,7 +11,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss, SmoothSurfaceLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -312,23 +312,22 @@ class SurfacesUnet(BasicModel):
 
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         if useCEReplaceKLDiv:
-            CELoss = MultiClassCrossEntropyLoss()
-            loss_surfaceKLDiv = CELoss(xs, GTs)
+            CELoss = MultiSurfacesCrossEntropyLoss()
+            loss_surfaceKLDiv = CELoss(xs, GTs)  # CrossEntropy is a kind of KLDiv
         else:
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-            loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
+            loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
             '''
             KLDiv Loss = \sum g_i*log(g_i/p_i). KLDivLoss<0, means big weight g_i < p_i, at this time, g_i is not a good guide to p_i.   
             '''
             if loss_surfaceKLDiv < 0:
                 loss_surfaceKLDiv = 0.0
 
-
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
         if useSmoothSurface:
-            smoothSurfaceLoss = SmoothSurfaceLoss()
+            smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(mu, GTs)
         else:
             loss_smooth = 0.0
@@ -337,24 +336,11 @@ class SurfacesUnet(BasicModel):
         separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
         S = separationPrimalDualIPM(mu, sigma2)
 
-        #smoothL1Loss = nn.SmoothL1Loss().to(device)
-        mseLoss = nn.MSELoss().to(device)
-        loss_mse = mseLoss(S, GTs)
-
+        l1Loss = nn.SmoothL1Loss().to(device)
         weightL1 = 10.0
-        loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_mse * weightL1
+        loss_L1 = l1Loss(S, GTs)
 
-        #debug
-        '''
-        if loss_layerDice<0 or loss_surfaceKLDiv<0 or loss_smooth<0 or loss_L1 <0:
-            print("================Obeserve loss <0 ==================")
-            print(f"loss_layerDice = {loss_layerDice}")
-            print(f"loss_surfaceKLDiv = {loss_surfaceKLDiv}")
-            print(f"loss_smooth = {loss_smooth}")
-            print(f"loss_L1 = {loss_L1}")
-            assert False
-        '''
-
+        loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_L1 * weightL1
 
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 

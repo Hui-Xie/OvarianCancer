@@ -13,7 +13,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiClassCrossEntropyLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss
 
 class OCTUnetSurfaceLayerJHU(BasicModel):
     def __init__(self, numSurfaces=9, N=24):
@@ -283,7 +283,7 @@ class OCTUnetSurfaceLayerJHU(BasicModel):
         loss_layerDice = generalizedDiceLoss(xl, layerGTs)
 
         if useCEReplaceKLDiv:
-            CELoss = MultiClassCrossEntropyLoss()
+            CELoss = MultiSurfacesCrossEntropyLoss()
             loss_surfaceKLDiv = CELoss(xs, GTs)
         else:
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)   # the input given is expected to contain log-probabilities
