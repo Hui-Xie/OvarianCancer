@@ -245,7 +245,7 @@ def main():
 
         if trLoss < preTrainingLoss:
             preTrainingLoss = trLoss
-            network.saveRealTimeNet(netPath)
+            netMgr.saveRealTimeNet(netPath)
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
