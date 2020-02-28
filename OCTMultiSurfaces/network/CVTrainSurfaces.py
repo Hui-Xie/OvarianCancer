@@ -176,7 +176,8 @@ def main():
 
     # train
     epochs = 1360000
-    preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
+    preTrainingLoss = 999999.0
+    preValidLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
     preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 3.3
     if net.training:
         initialEpoch = net.getConfigParameter("epoch") if "epoch" in net.m_configParametersDict else 0
@@ -234,14 +235,17 @@ def main():
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validLoss < preLoss or muError < preErrorMean:
+        if validLoss < preValidLoss or muError < preErrorMean:
             net.updateConfigParameter("validationLoss", validLoss)
             net.updateConfigParameter("epoch", net.m_epoch)
             net.updateConfigParameter("errorMean", muError)
-            preLoss = validLoss
+            preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(netPath)
 
+        if trLoss < preTrainingLoss:
+            preTrainingLoss = trLoss
+            network.saveRealTimeNet(netPath)
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

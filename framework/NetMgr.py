@@ -24,6 +24,16 @@ class NetMgr:
         torch.save(self.m_net.m_optimizer.state_dict(), os.path.join(netPath, "Optimizer.pt"))
         torch.save(self.m_net.m_configParametersDict, os.path.join(netPath, "ConfigParameters.pt"))
 
+    # save real time network parameters
+    def saveRealTimeNet(self, netPath=None):
+        if netPath is None:
+            realTimeNetPath = os.path.join(self.m_netPath, "realtime")
+        else:
+            realTimeNetPath = os.path.join(netPath, "realtime")
+        if not os.path.exists(realTimeNetPath):
+            os.makedirs(realTimeNetPath)  # for recursive make dirs.
+        self.saveNet(realTimeNetPath)
+
     def loadNet(self, mode):
         # Save on GPU, Load on GPU
         self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device))
