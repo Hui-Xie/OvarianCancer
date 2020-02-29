@@ -44,8 +44,10 @@ if 768 == X:
         patientSurfacesArray = patientSurfacesArray[:, :, 128:640]
 
 # read prediction image
-predImage = imread(predImagePath)
-rawImage = predImage[:,0:W]
+raWGTPredImage = imread(predImagePath)
+rawImage = raWGTPredImage[:,0:W]
+gtImage = raWGTPredImage[:,W:2*W]
+predImage = raWGTPredImage[:,2*W:]
 S = Num_Surfaces
 
 
@@ -54,20 +56,29 @@ f = plt.figure(frameon=False)
 DPI = f.dpi
 f.set_size_inches(W*4/float(DPI), H/float(DPI))
 subplotRow = 1
-subplotCol = 2
+subplotCol = 4
 
 plt.margins(0)
 plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
 subplot1 = plt.subplot(subplotRow, subplotCol, 1)
-subplot1.imshow(predImage, cmap='brg')
+subplot1.imshow(rawImage)
 subplot1.axis('off')
 
 subplot2 = plt.subplot(subplotRow, subplotCol, 2)
-subplot2.imshow(rawImage, cmap='gray')
-for s in range(0, S):
-    subplot2.plot(range(0, W), patientSurfacesArray[OCTSlice-1, s, :], linewidth=0.4)
+subplot2.imshow(gtImage)
 subplot2.axis('off')
 
-plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict_OCTExploerer.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+subplot3 = plt.subplot(subplotRow, subplotCol, 3)
+subplot3.imshow(rawImage, cmap='gray')
+for s in range(0, S):
+    subplot3.plot(range(0, W), patientSurfacesArray[OCTSlice-1, s, :], linewidth=0.4)
+subplot3.axis('off')
+
+subplot4 = plt.subplot(subplotRow, subplotCol, 4)
+subplot4.imshow(predImage)
+subplot4.axis('off')
+
+
+plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_OCTExploerer_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
