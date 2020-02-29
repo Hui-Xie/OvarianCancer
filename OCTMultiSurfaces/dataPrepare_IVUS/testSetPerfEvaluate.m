@@ -6,13 +6,14 @@ compute luemen and media performance of IVUS data set
 clear all
 clc
 
-predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_SmoothLoss_KLDivLossExcludeNegative_20200227_3/testResult/text';
+predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_SmoothLoss_Sigma40_20200228_4/testResult/text';
 %gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
 gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
 %gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
 predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
 predictLumenFiles = {predictLumenFiles.name}';
 N = numel(predictLumenFiles);
+fprintf("Prediction result dir: %s\n", predDir)
 fprintf("Test set has %d images comparing with ground truth at %s.\n", N, gtDir)
 
 % result data tables
