@@ -1,7 +1,8 @@
 # train and test JHU OCT data
 # Use basic Unet + KLDLoss for OCT multisurface
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss
-# Feb 28th, 2020, User SurfacesNet, sigma= 8
+# Feb 28th, 2020, User SurfacesNet
+# Feb 29th, 2020, Sigma = 20
 
 dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
@@ -34,8 +35,8 @@ fold_k:  -1   # -1 means do not use cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-sigma: 8.0  # For gaussian  ground truth, in float
-device: torch.device('cuda:1')   #GPU ID
+sigma: 20.0  # For gaussian  ground truth, in float
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
