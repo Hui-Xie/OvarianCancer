@@ -80,5 +80,5 @@ subplot4.imshow(predImage)
 subplot4.axis('off')
 
 
-plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_OCTExploerer_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.savefig(os.path.join(outputDir, patientID_Index + "_Raw_GT_OCTExplorer_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
