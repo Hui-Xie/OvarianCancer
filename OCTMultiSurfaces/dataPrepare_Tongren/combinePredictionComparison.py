@@ -60,7 +60,7 @@ plt.margins(0)
 plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
 subplot1 = plt.subplot(subplotRow, subplotCol, 1)
-subplot1.imshow(predImage, cmap='color')
+subplot1.imshow(predImage, cmap='brg')
 subplot1.axis('off')
 
 subplot2 = plt.subplot(subplotRow, subplotCol, 2)
