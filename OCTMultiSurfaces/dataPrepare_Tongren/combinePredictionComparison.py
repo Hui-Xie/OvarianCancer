@@ -1,6 +1,11 @@
 # prediction:
-patientID = "440_OD_5194"
-OCTSlice = 16
+#patientID = "440_OD_5194"
+#OCTSlice = 16
+
+# 120030_OD_3477_OCT15_Image_GT_Predict.png
+patientID = "120030_OD_3477"
+OCTSlice = 15
+
 predDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/OCTUnetTongren/expUnetTongren_9Surfaces_20200215_CV5/testResult"
 patientID_Index = patientID+f"_OCT{OCTSlice:02d}"
 predImagePath = predDir+ "/"+ patientID_Index+"_Image_GT_Predict.png"
