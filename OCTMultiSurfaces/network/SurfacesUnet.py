@@ -7,6 +7,7 @@ import math
 sys.path.append(".")
 from OCTOptimization import *
 from OCTPrimalDualIPM import *
+from OCTAugmentation import batchGaussianizeLabels
 
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
@@ -303,6 +304,7 @@ class SurfacesUnet(BasicModel):
         usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
 
         '''
+        B,N,H,W = xs.shape
         useLayerDice = self.getConfigParameter("useLayerDice")
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
@@ -310,20 +312,25 @@ class SurfacesUnet(BasicModel):
         else:
             loss_layerDice = 0.0
 
+        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
+
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         if useCEReplaceKLDiv:
             CELoss = MultiSurfacesCrossEntropyLoss()
             loss_surfaceKLDiv = CELoss(xs, GTs)  # CrossEntropy is a kind of KLDiv
         else:
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+            if 0 == len(gaussianGTs):  # sigma ==0 case
+                gaussianGTs= batchGaussianizeLabels(GTs, sigma2, H)
             loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
             '''
             KLDiv Loss = \sum g_i*log(g_i/p_i). KLDivLoss<0, means big weight g_i < p_i, at this time, g_i is not a good guide to p_i.   
             '''
             if loss_surfaceKLDiv < 0:
+                print(f"at eocch = {self.m_epoch}, loss_surfaceKLDiv = {loss_surfaceKLDiv} < 0 , discard it.")
                 loss_surfaceKLDiv = 0.0
 
-        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
+
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
         if useSmoothSurface:
@@ -332,7 +339,6 @@ class SurfacesUnet(BasicModel):
         else:
             loss_smooth = 0.0
 
-        B, N, W = mu.shape
         separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
         S = separationPrimalDualIPM(mu, sigma2)
 

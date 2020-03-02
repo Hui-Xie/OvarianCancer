@@ -36,9 +36,10 @@ def polarLabelRotate_Tensor(polarLabel, rotation=0):
 
 def gaussianizeLabels(rawLabels, sigma, H):
     '''
-    input: tensor(Num_surface, W)
+    input: tensor(Num_surface, W), both sigma and H are a scalar.
     output: tensor(Num_surace, H, W)
     '''
+    assert sigma != 0
     device = rawLabels.device
     Mu = rawLabels
     Num_Surface, W = Mu.shape
@@ -48,8 +49,44 @@ def gaussianizeLabels(rawLabels, sigma, H):
     X = X.expand((Num_Surface, H, W))
     pi = math.pi
     G = torch.exp(-(X - Mu) ** 2 / (2 * sigma * sigma)) / (sigma * math.sqrt(2 * pi))
+
+    # as G is discrete, it needs normalization to assure its sum =1.
+    # otherwise, it may lead occasionaly negative KLDiv Loss.
+    Sum = torch.sum(G, dim=-2, keepdim=True)
+    Sum = Sum.expand_as(G)
+    G = G/Sum
+
     return G
 
+def batchGaussianizeLabels(rawLabels, Sigma2, H):
+    '''
+
+    :param rawLables: in (B,N,W)
+    :param Simga2:  in(B,N,W)
+    :param H: a scalar
+    :return:
+           a tensor: (B,N,H,W)
+    '''
+    device = rawLabels.device
+    Mu = rawLabels
+    B, N, W = Mu.shape
+    Mu = Mu.unsqueeze(dim=-2)
+    Mu = Mu.expand((B, N, H, W)) # size: B,N, H,W
+    Sigma2 = Sigma2.unsqueeze(dim=-2)
+    Sigma2 = Sigma2.expand_as(Mu)
+
+    X = torch.arange(start=0.0, end=H, step=1.0).view((1, 1, H, 1)).to(device, dtype=torch.float32)
+    X = X.expand_as(Mu)
+    pi = math.pi
+    G = torch.exp(-(X - Mu) ** 2 / (2 * Sigma2)) / torch.sqrt(2 * pi*Sigma2)
+
+    # as G is discrete, it needs normalization to assure its sum =1.
+    # otherwise, it may lead occasionaly negative KLDiv Loss.
+    Sum = torch.sum(G, dim=-2, keepdim=True)
+    Sum = Sum.expand_as(G)
+    G = G / Sum
+
+    return G
 
 def getLayerLabels(surfaceLabels, height):
     '''

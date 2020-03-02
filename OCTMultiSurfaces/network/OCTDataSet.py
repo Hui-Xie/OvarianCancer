@@ -53,7 +53,7 @@ class OCTDataSet(data.Dataset):
         H, W = data.shape
         result = {"images": data.unsqueeze(dim=0),
                   "GTs": label,
-                  "gaussianGTs": gaussianizeLabels(label, self.m_sigma, H),
+                  "gaussianGTs": [] if 0 == self.m_sigma else gaussianizeLabels(label, self.m_sigma, H),
                   "IDs": self.m_IDs[str(index)],
                   "layers": getLayerLabels(label,H) }
         return result
