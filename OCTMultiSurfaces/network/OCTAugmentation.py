@@ -39,7 +39,8 @@ def gaussianizeLabels(rawLabels, sigma, H):
     input: tensor(Num_surface, W), both sigma and H are a scalar.
     output: tensor(Num_surace, H, W)
     '''
-    assert sigma != 0
+    if 0 == sigma:
+        return []
     device = rawLabels.device
     Mu = rawLabels
     Num_Surface, W = Mu.shape
