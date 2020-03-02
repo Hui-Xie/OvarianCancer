@@ -10,7 +10,8 @@ from OCTAugmentation import *
 
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0, TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1):
+    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0,
+                 TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1):
         self.m_device = device
         self.m_sigma = sigma
 
