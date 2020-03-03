@@ -42,7 +42,8 @@ def computeMuVariance(x): # without square weight
     # allowing sigma2 back propogation give better test result in the IVUS data.
     # todo: for experiment: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/
     #                      expUnetJHU_Surface_Layer_20200206/expUnetJHU_SurfaceNet_Sigma0_NoBPSigma_20200302_2.yaml
-    sigma2 = sigma2.detach()
+    # for IVUS data, Not backpropagating simga does not give better result;
+    # sigma2 = sigma2.detach()
 
     return mu.squeeze(dim=-2),sigma2
 
