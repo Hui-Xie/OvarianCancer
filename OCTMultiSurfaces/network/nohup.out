@@ -1,11 +1,1 @@
 
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnetJHU_SurfaceNet_Sigma0_20200302
-Network load from  /home/hxie1/data/OCT_JHU/numpy/netParameters/SurfacesUnet/expUnetJHU_SurfaceNet_Sigma0_20200302
-============ End of Cross valiation test for OCT Multisurface Network: expUnetJHU_SurfaceNet_Sigma0_20200302 ===========
-/home/hxie1/anaconda3/lib/python3.7/site-packages/torch/nn/functional.py:2494: UserWarning: Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
-  "See the documentation of nn.Upsample for details.".format(mode))
-Experiment: expUnetJHU_SurfaceNet_Sigma0_NoBPSigma_20200302_2
-Network load from  /home/hxie1/data/OCT_JHU/numpy/netParameters/SurfacesUnet/expUnetJHU_SurfaceNet_Sigma0_NoBPSigma_20200302_2
-============ End of Cross valiation test for OCT Multisurface Network: expUnetJHU_SurfaceNet_Sigma0_NoBPSigma_20200302_2 ===========
