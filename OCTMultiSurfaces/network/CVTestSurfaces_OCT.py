@@ -22,6 +22,7 @@ from framework.NetMgr import NetMgr
 
 import matplotlib.pyplot as plt
 import numpy as np
+import datetime
 
 sys.path.append("../dataPrepare_Tongren")
 from TongrenFileUtilities import *
@@ -41,8 +42,8 @@ def main():
 
     # debug:
     MarkGTDisorder = False
-    MarkPredictDisorder = True
-    OutputPredictImages = True
+    MarkPredictDisorder = False
+    OutputPredictImages = False
 
     # parse config file
     configFile = sys.argv[1]
@@ -285,7 +286,10 @@ def main():
     violateConstraintErrors = np.nonzero(testOutputs0 > testOutputs1)
 
     # final output result:
-    with open(os.path.join(outputDir,"output.txt"), "w") as file:
+    curTime = datetime.datetime.now()
+    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+
+    with open(os.path.join(outputDir,f"output_{timeStr}.txt"), "w") as file:
         file.write(f"Test: {experimentName}\n")
         file.write(f"loadNetPath: {netPath}\n")
         file.write(f"config file: {configFile}\n")
