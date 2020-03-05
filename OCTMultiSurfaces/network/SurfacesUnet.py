@@ -12,7 +12,7 @@ from OCTAugmentation import batchGaussianizeLabels
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -308,7 +308,8 @@ class SurfacesUnet(BasicModel):
         useLayerDice = self.getConfigParameter("useLayerDice")
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
-            loss_layerDice = generalizedDiceLoss(xl, layerGTs)
+            layerProb = logits2Prob(xl,dim=1)
+            loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
         else:
             loss_layerDice = 0.0
 

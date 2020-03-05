@@ -7,6 +7,12 @@ from scipy.ndimage.morphology import binary_dilation
 import numpy as np
 import sys
 
+def logits2Prob(x, dim):
+    # convert logits to probability for input x
+    xMaxDim, _ = torch.max(x, dim=dim, keepdim=True)
+    xMaxDim = xMaxDim.expand_as(x)
+    prob = F.softmax(x - xMaxDim, dim=dim)  # using inputMaxDim is to avoid overflow.
+    return prob
 
 
 class FocalCELoss(_WeightedLoss):
@@ -449,7 +455,7 @@ class GeneralizedDiceLoss():
     def forward(self, inputx, target):
         '''
 
-        :param inputx: float32 tensor, size of (B,K,H,W), where K is the number of classes. inputx is the logits before softmax.
+        :param inputx: float32 tensor, size of (B,K,H,W), where K is the number of classes. inputx is softmax probability along dimension K.
         :param target: long tensor, size of (B,H,W), where each element has a long value of [0,K) indicate the belonging class
         :return: a float scalar of mean dice over all classes and over batchSize.
 
@@ -458,11 +464,6 @@ class GeneralizedDiceLoss():
         assert (B,H,W) == target.shape
         assert K == target.max()+1
         device = inputx.device
-
-        # convert logits to probability for inputx
-        inputxMaxDim1, _ = torch.max(inputx, dim=1, keepdim=True)
-        inputxMaxDim1 = inputxMaxDim1.expand_as(inputx)
-        softmaxInput = F.softmax(inputx - inputxMaxDim1, 1)  # use inputMaxDim1 is to avoid overflow.
 
         # convert target of size(B,H,W) into (B,K,H,W) into one-hot float32 probability
         targetProb = torch.zeros(inputx.shape, dtype=torch.long, device=device)
@@ -476,7 +477,7 @@ class GeneralizedDiceLoss():
 
         # generalized dice loss
         sumDims = (0,2,3)
-        GDL = 1.0-2.0*((softmaxInput*targetProb).sum(dim=sumDims)*W).sum()/((softmaxInput+targetProb).sum(dim=sumDims)*W).sum()
+        GDL = 1.0-2.0*((inputx*targetProb).sum(dim=sumDims)*W).sum()/((inputx+targetProb).sum(dim=sumDims)*W).sum()
         return GDL
 
 class SmoothSurfaceLoss():

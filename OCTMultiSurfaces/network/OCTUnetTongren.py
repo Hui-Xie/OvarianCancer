@@ -10,7 +10,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss,logits2Prob
 
 class OCTUnetTongren(BasicModel):
     def __init__(self, numSurfaces=11, N=24):
@@ -276,7 +276,8 @@ class OCTUnetTongren(BasicModel):
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
 
         generalizedDiceLoss = GeneralizedDiceLoss()
-        loss_layerDice = generalizedDiceLoss(xl, layerGTs)
+        layerProb = logits2Prob(xl, dim=1)
+        loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
 
         if useCEReplaceKLDiv:
             CELoss = MultiSurfacesCrossEntropyLoss()
