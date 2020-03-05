@@ -454,6 +454,8 @@ class GeneralizedDiceLoss():
 
     def forward(self, inputx, target):
         '''
+         target: for N surfaces, surface 0 in its exact location marks as 1, surface N-1 in its exact location marks as N.
+                region pixel between surface i and surface i+1 marks as i.
 
         :param inputx: float32 tensor, size of (B,K,H,W), where K is the number of classes. inputx is softmax probability along dimension K.
         :param target: long tensor, size of (B,H,W), where each element has a long value of [0,K) indicate the belonging class

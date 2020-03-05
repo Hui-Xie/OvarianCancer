@@ -91,6 +91,8 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
 
 def getLayerLabels(surfaceLabels, height):
     '''
+    for N surfaces, surface 0 in its exact location marks as 1, surface N-1 in its exact location marks as N.
+    region pixel between surface i and surface i+1 marks as i.
 
     :param surfaceLabels: float tensor in size of (N,W) where N is the number of surfaces.
             height: original image height
@@ -103,12 +105,38 @@ def getLayerLabels(surfaceLabels, height):
     layerLabels = torch.zeros((H, W), dtype=torch.long, device=device)
     surfaceLabels = (surfaceLabels + 0.5).long()  # let surface height match grid
     surfaceCodes = torch.tensor(range(1, N + 1), device=device).unsqueeze(dim=-1).expand_as(surfaceLabels)
-    layerLabels.scatter_(0, surfaceLabels, surfaceCodes)
+    layerLabels.scatter_(0, surfaceLabels, surfaceCodes)  #surface 0 in its exact location marks as 1, surface N-1 mark as N.
 
     for i in range(1,H):
         layerLabels[i,:] = torch.where(0 == layerLabels[i,:], layerLabels[i-1,:], layerLabels[i,:])
 
     return layerLabels
+
+
+def layerProb2SurfaceMu(layerProb):
+    '''
+    From layer prob map to get surface location. it is reverse process of getLayerLabels
+
+    :param layerProb:  softmax probability of size (B,N+1,H,W), where N is the number of surfaces
+    :return: sufaceMu: in size (B,N,W)
+    '''
+    device = layerProb.device
+    B, Nplus1, H, W = layerProb.shape
+    N = Nplus1 - 1
+    surfaceMu = torch.zeros((B, N, W), dtype=torch.float, device=device)
+
+    layerMap = torch.argmax(layerProb, dim=1)  # size: (B,H,W) with longTensor
+    pos = torch.tensor(range(0, H), device=device).view(1,H,1).expand_as(layerMap)  # size: B,H,W
+    layerMap0 = layerMap[:,0:-1,:]
+    layerMap1 = layerMap[:,1:  ,:]  # size: B,H-1,W
+    diff = layerMap1 -layerMap0  # diff>0, indicate its next row is surface.
+
+    for i in range(0, N):
+        surfaceMu[:,i,:] = torch.where(diff==1, 1,0)
+
+    return None
+
+
 
 def lacePolarImageLabel(data,label,lacingWidth):
     '''

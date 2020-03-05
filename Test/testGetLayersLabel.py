@@ -1,7 +1,7 @@
 import torch
 import sys
 sys.path.append("../OCTMultiSurfaces/network")
-from OCTDataSet import *
+from OCTAugmentation import *
 
 
 def main():

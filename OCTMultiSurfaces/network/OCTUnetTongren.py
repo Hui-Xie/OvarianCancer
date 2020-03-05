@@ -10,7 +10,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss,logits2Prob
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, logits2Prob
 
 class OCTUnetTongren(BasicModel):
     def __init__(self, numSurfaces=11, N=24):

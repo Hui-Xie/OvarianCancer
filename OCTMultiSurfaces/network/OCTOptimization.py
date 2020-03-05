@@ -97,6 +97,12 @@ def computeMuVarianceWithSquare(x): # with square probability, then normalize
 
     return mu.squeeze(dim=-2), sigma2
 
+
+
+
+
+
+
 def getQFromVariance(sigma2):
     '''
 
