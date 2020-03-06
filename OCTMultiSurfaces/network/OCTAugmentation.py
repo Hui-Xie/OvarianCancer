@@ -149,7 +149,7 @@ def layerProb2SurfaceMu(layerProb):
         surfaceMu[:,i-1,:] = iSurface
 
     # fill lack surface
-    while (surfaceMu ==0).any():
+    if (surfaceMu ==0).any():
         surfaceMu[:,N-1,:], _ = torch.max(surfaceMu, dim=1)  # size: B,W
         for i in range(N-2,-1,-1): # surface(N-2) to surface0
             surfaceMu[:,i,:] = torch.where(0 == surfaceMu[:,i,:], surfaceMu[0,i+1,:], surfaceMu[:,i,:] )
