@@ -156,8 +156,6 @@ def layerProb2SurfaceMu(layerProb):
 
     return surfaceMu
 
-
-
 def lacePolarImageLabel(data,label,lacingWidth):
     '''
     for single polar image and label, lace both ends with rotation information.
