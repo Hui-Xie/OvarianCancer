@@ -29,7 +29,7 @@ def computeMuVariance(x, layerMu=None): # without square weight
     del PY  # hope to free memory.
 
     if layerMu is not None:  # consider LayerMu, adjust mu computed by surface only by average.
-       mu = (mu + layerMu.unsqueze(dim=-2))/2.0
+       mu = (mu + layerMu.unsqueeze(dim=-2))/2.0
 
     # compute sigma2 (variance)
     Mu = mu.expand(x.size())
@@ -84,7 +84,7 @@ def computeMuVarianceWithSquare(x, layerMu=None): # with square probability, the
     del PY  # hope to free memory.
 
     if layerMu is not None:  # consider LayerMu, adjust mu computed by surface only by average.
-       mu = (mu + layerMu.unsqueze(dim=-2))/2.0
+       mu = (mu + layerMu.unsqueeze(dim=-2))/2.0
 
     # compute sigma2 (variance)
     Mu = mu.expand(P.size())
