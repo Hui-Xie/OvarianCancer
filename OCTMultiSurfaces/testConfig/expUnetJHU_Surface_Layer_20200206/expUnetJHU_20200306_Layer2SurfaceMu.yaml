@@ -1,26 +1,16 @@
-# base IVUS polar image and polar label
-# training: 100 patients; validation: 9 patients; test: 326 patients;
-# numSurface = 2
-# Each image frame is 384 × 384 pixels in size, with in-frame resolution of 0.026 × 0.026 mm.
-# polar image with lace with 30, size of 192*420
-# Feb 17th, 2020: add TTA: Test-Time Augmentation
-# Feb 18th, 2020: add automatic layer size function
-# Feb 19th, 2020: allow Sigma2 to do back propagation.
-# Feb 20th, 2020: use SoftArgMax, instead of Weighted SoftArgMax
-# Feb 26th, 2020: Add SmoothSurfaceLoss; and when KLDivLoss<0, exclude it from Loss backward.
-#                  matching SmoothSurfaceLoss, use MSE instead of L1
-# Feb 27th, 2020 use KLDivLoss excluding possible negative value.
-# March 2nd, 2020 use dynamic sigma and sigma do not participate back propagation.
-# Mar 3rd, 2020, use dynamic simga and sigma participate back propagation.
-# Mar 4th, 2020: ablation: with layer dice
-# Mar 6th, 2020: add Layer2SurfaceMu
+# train and test JHU OCT data
+# Use basic Unet + KLDLoss for OCT multisurface
+# Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss
+# Feb 28th, 2020, User SurfacesNet, sigma= 8
+# March 02th, 2020, use dynamic Sigma
+# Mar 06th, 2020, use dynamic sigma, and suport back propagating sigma;
+#                 use layer2SurfaceMu.
 
-
-# Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss +layerDice + Soft argMax + SmoothL1Loss + IPM
-dataDir: "/home/hxie1/data/IVUS/polarNumpy"
+dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K_Folds: 0
-fold_k:  -1   # no cross validation
+fold_k:  -1   # -1 means do not use cross validation
+# when use cross validation:
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -47,39 +37,42 @@ fold_k:  -1   # no cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-sigma: 0  # For gaussianized  ground truth, in float
-device: torch.device('cuda:1')   #GPU ID
-batchSize: 5
+sigma: 0.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:2')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 4
 
 network: "SurfacesUnet"
-inputHight: 192   # original height
-inputWidth: 420   # rawImageWidth +2 *lacingWidth
+inputHight: 128   # original height
+inputWidth: 1024   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 1
 nLayers: 7
-numSurfaces: 2  # num of surfaces in an image
+numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 
+
 # some physical parameter of images
-slicesPerPatient: 1
-hPixelSize: 0.026 #Each image frame is 384 × 384 pixels in size, with in-frame resolution of 0.026 × 0.026 mm.
-#size_image is 0.026 mm in Volcano Data-set;
+slicesPerPatient: 49
+hPixelSize: 3.86725  # unit: micrometer, in y/height direction
 
 # data augmentation
-augmentProb: 0.7  #  data augmentation rate
+augmentProb: 0.4  #  data augmentation rate
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 # for salt-pepper noise
 saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
-rotation: True
-lacingWidth: 30  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
-TTA: True       #Test-Time Augmentation
-TTA_StepDegree: 20 # roration step degree of TTA, in integer degree
+rotation: False
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #Test-Time Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/IVUS/polarNumpy/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: "" # reserve for pretrained network.
+netPath: "/home/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
+# if loadNetPath !="", netPath will be replaced by loadNetPath
+# below loadNetPath is copied from "/home/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
+loadNetPath:  ""  # this is pretrained network
 outputDir: ""
 
 # do not use these loss function
@@ -87,7 +80,6 @@ lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given 
 lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
 lossFunc1: "nn.SmoothL1Loss().to(device)"
 lossFunc1Epochs: 500
-
 
 # Proximal IPM Optimization
 useProxialIPM: False
@@ -100,3 +92,5 @@ usePrimalDualIPM: True
 useLayerDice: True
 useCEReplaceKLDiv: False
 useSmoothSurface: True
+
+
