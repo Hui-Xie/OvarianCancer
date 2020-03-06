@@ -129,6 +129,16 @@ def layerProb2SurfaceMu(layerProb):
 
     layerMap = torch.argmax(layerProb, dim=1)  # size: (B,H,W) with longTensor of element[0,N]
 
+    # gaurantee order continuous and ordered
+    oldLayerMap = layerMap.clone()
+    layerMap[:,0,:], _ = torch.min(layerMap, dim=1)
+    for i in range(1,H):
+        layerMap[:,i,:] = torch.where(layerMap[:,i,:] < layerMap[:,i-1,:],
+                                      torch.where(oldLayerMap[:,i,:] != oldLayerMap[:,i-1,:], oldLayerMap[:,i-1,:]+1, layerMap[:,i-1,:]),
+                                      layerMap[:,i,:])
+    layerMap = torch.where(layerMap >N, N*torch.ones_like(layerMap), layerMap)
+
+
     layerMap0 = layerMap[:,0:-1,:]
     layerMap1 = layerMap[:,1:  ,:]  # size: B,H-1,W
     diff = (layerMap1 -layerMap0)  # size: B,H-1,W; diff>0, indicate its next row is surface.
@@ -145,7 +155,11 @@ def layerProb2SurfaceMu(layerProb):
     pos = torch.tensor(range(0, H), device=device).view(1, H, 1).expand_as(layerMap)  # size: B,H,W
     for i in range(1, N+1): # N surfaces
         iSurface = torch.where(surfaceMap == i, pos, zeroBHW) # size: B,H,W
-        iSurface, _ = torch.max(iSurface,dim=1)   # size: B,W; compress same index by choosing max position
+        #maybe use average of nonzeros element along dimenions is a better soltuion.
+        iSurfaceSum = torch.sum(iSurface, dim=1)
+        iSurfaceCount = (iSurface !=0).sum(dim=1) +1e-8
+        iSurface = iSurfaceSum/iSurfaceCount
+        #iSurface, _ = torch.max(iSurface,dim=1)   # size: B,W; compress same index by choosing max position
         surfaceMu[:,i-1,:] = iSurface
 
     # fill lack surface
