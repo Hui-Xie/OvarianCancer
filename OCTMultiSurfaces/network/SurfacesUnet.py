@@ -7,7 +7,7 @@ import math
 sys.path.append(".")
 from OCTOptimization import *
 from OCTPrimalDualIPM import *
-from OCTAugmentation import batchGaussianizeLabels
+from OCTAugmentation import *
 
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
@@ -306,14 +306,16 @@ class SurfacesUnet(BasicModel):
         '''
         B,N,H,W = xs.shape
         useLayerDice = self.getConfigParameter("useLayerDice")
+        layerMu = None # referenced surface mu computed by layer segmentation.
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             layerProb = logits2Prob(xl,dim=1)
             loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
+            layerMu = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
         else:
             loss_layerDice = 0.0
 
-        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs))
+        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu)
 
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         if useCEReplaceKLDiv:

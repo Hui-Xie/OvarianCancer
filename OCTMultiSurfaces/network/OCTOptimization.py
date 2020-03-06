@@ -4,16 +4,17 @@
 import torch
 import math
 
-def computeMuVariance(x): # without square weight
+def computeMuVariance(x, layerMu=None): # without square weight
     '''
     Compute the mean and variance along H direction of each surface.
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along each Height direction
+           LayerMu: the referenced surface mu from LayerProb, in size(B,N,W); where N = NumSurface.
     :return: mu:     mean in (BatchSize, NumSurface, W) dimension
              sigma2: variance in (BatchSize, Numsurface, W) dimension
     '''
     device = x.device
-    B,Num,H,W = x.size() # Num is the num of surface for each patient
+    B,N,H,W = x.size() # Num is the num of surface for each patient
 
     # compute mu
     Y = torch.arange(H).view((1,1,H,1)).expand(x.size()).to(device=device, dtype=torch.int16)
@@ -26,6 +27,9 @@ def computeMuVariance(x): # without square weight
             PY = torch.cat((PY, (x[b,]*Y[b,]).unsqueeze(dim=0)))
     mu = torch.sum(PY, dim=-2, keepdim=True)
     del PY  # hope to free memory.
+
+    if layerMu is not None:  # consider LayerMu, adjust mu computed by surface only by average.
+       mu = (mu + layerMu.unsqueze(dim=-2))/2.0
 
     # compute sigma2 (variance)
     Mu = mu.expand(x.size())
@@ -48,7 +52,7 @@ def computeMuVariance(x): # without square weight
     return mu.squeeze(dim=-2),sigma2
 
 
-def computeMuVarianceWithSquare(x): # with square probability, then normalize
+def computeMuVarianceWithSquare(x, layerMu=None): # with square probability, then normalize
     '''
     Compute the mean and variance along H direction of each surface.
 
@@ -78,6 +82,9 @@ def computeMuVarianceWithSquare(x): # with square probability, then normalize
             PY = torch.cat((PY, (P[b,] * Y[b,]).unsqueeze(dim=0)))
     mu = torch.sum(PY, dim=-2, keepdim=True)
     del PY  # hope to free memory.
+
+    if layerMu is not None:  # consider LayerMu, adjust mu computed by surface only by average.
+       mu = (mu + layerMu.unsqueze(dim=-2))/2.0
 
     # compute sigma2 (variance)
     Mu = mu.expand(P.size())
