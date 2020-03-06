@@ -115,7 +115,10 @@ def getLayerLabels(surfaceLabels, height):
 
 def layerProb2SurfaceMu(layerProb):
     '''
-    From layer prob map to get surface location. it is reverse process of getLayerLabels
+    From layer prob map to get surface location. it is like a reverse process of getLayerLabels.
+    But because layerProb is not strict order, and maybe some layers are lacking, it is more complicated than
+    a reverse process of getLayerLabels.
+
 
     :param layerProb:  softmax probability of size (B,N+1,H,W), where N is the number of surfaces
     :return: sufaceMu: in size (B,N,W)
@@ -123,18 +126,35 @@ def layerProb2SurfaceMu(layerProb):
     device = layerProb.device
     B, Nplus1, H, W = layerProb.shape
     N = Nplus1 - 1
-    surfaceMu = torch.zeros((B, N, W), dtype=torch.float, device=device)
 
-    layerMap = torch.argmax(layerProb, dim=1)  # size: (B,H,W) with longTensor
-    pos = torch.tensor(range(0, H), device=device).view(1,H,1).expand_as(layerMap)  # size: B,H,W
+    layerMap = torch.argmax(layerProb, dim=1)  # size: (B,H,W) with longTensor of element[0,N]
+
     layerMap0 = layerMap[:,0:-1,:]
     layerMap1 = layerMap[:,1:  ,:]  # size: B,H-1,W
-    diff = layerMap1 -layerMap0  # diff>0, indicate its next row is surface.
+    diff = layerMap1 -layerMap0  # size: B,H-1,W; diff>0, indicate its next row is surface.
 
-    for i in range(0, N):
-        surfaceMu[:,i,:] = torch.where(diff==1, 1,0)
+    diff = torch.cat((torch.zeros((B,1,W),device=device), diff), dim=1)
+    # size: B,H,W; if diff>0 indicate current pos is a possible surface
 
-    return None
+    zeroBHW = torch.zeros_like(diff)
+    surfaceMap = torch.where(diff>0, layerMap, zeroBHW)   # ignore negative diff
+    # size: B,H,W; where [1,N] indicate possible surface, 0 indicates non-surface location;
+
+    # compress same index
+    surfaceMu = torch.zeros((B, N, W), dtype=torch.float, device=device)
+    pos = torch.tensor(range(0, H), device=device).view(1, H, 1).expand_as(layerMap)  # size: B,H,W
+    for i in range(1, N+1): # N surfaces
+        iSurface = torch.where(surfaceMap == i, pos, zeroBHW) # size: B,H,W
+        iSurface, _ = torch.max(iSurface,dim=1)   # size: B,W; compress same index by choosing max position
+        surfaceMu[:,i-1,:] = iSurface
+
+    # fill lack surface
+    while (surfaceMu ==0).any():
+        surfaceMu[:,N-1,:], _ = torch.max(surfaceMu, dim=1)  # size: B,W
+        for i in range(N-2,-1,-1): # surface(N-2) to surface0
+            surfaceMu[:,i,:] = torch.where(0 == surfaceMu[:,i,:], surfaceMu[0,i+1,:], surfaceMu[:,i,:] )
+
+    return surfaceMu
 
 
 
