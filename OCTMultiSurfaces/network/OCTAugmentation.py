@@ -121,7 +121,7 @@ def layerProb2SurfaceMu(layerProb):
 
 
     :param layerProb:  softmax probability of size (B,N+1,H,W), where N is the number of surfaces
-    :return: sufaceMu: in size (B,N,W)
+    :return: sufaceMu: in size (B,N,W) with float
     '''
     device = layerProb.device
     B, Nplus1, H, W = layerProb.shape
@@ -131,9 +131,9 @@ def layerProb2SurfaceMu(layerProb):
 
     layerMap0 = layerMap[:,0:-1,:]
     layerMap1 = layerMap[:,1:  ,:]  # size: B,H-1,W
-    diff = layerMap1 -layerMap0  # size: B,H-1,W; diff>0, indicate its next row is surface.
+    diff = (layerMap1 -layerMap0)  # size: B,H-1,W; diff>0, indicate its next row is surface.
 
-    diff = torch.cat((torch.zeros((B,1,W),device=device), diff), dim=1)
+    diff = torch.cat((torch.zeros((B,1,W),device=device, dtype=torch.long), diff), dim=1)
     # size: B,H,W; if diff>0 indicate current pos is a possible surface
 
     zeroBHW = torch.zeros_like(diff)
