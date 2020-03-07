@@ -24,9 +24,10 @@ def main():
 
     layerProb = logits2Prob(layerProb, dim=1)
 
-    surfaceMu = layerProb2SurfaceMu(layerProb)
+    surfaceMu, surfaceConf = layerProb2SurfaceMu(layerProb)
 
     print(f"surfaceMu = \n{surfaceMu}")
+    print(f"surfaceConf= \n{surfaceConf}")
 
 
 

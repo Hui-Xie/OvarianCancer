@@ -121,7 +121,8 @@ def layerProb2SurfaceMu(layerProb):
 
 
     :param layerProb:  softmax probability of size (B,N+1,H,W), where N is the number of surfaces
-    :return: sufaceMu: in size (B,N,W) with float
+    :return: surfaceMu: in size (B,N,W) with float
+             surfaceConf: in size(B,N,W) indicate confidence of of each Mu.
     '''
     device = layerProb.device
     B, Nplus1, H, W = layerProb.shape
@@ -129,8 +130,8 @@ def layerProb2SurfaceMu(layerProb):
 
     layerMap = torch.argmax(layerProb, dim=1)  # size: (B,H,W) with longTensor of element[0,N]
 
-    # gaurantee order continuous and ordered
-    oldLayerMap = layerMap.clone()
+    # guarantee order continuous and ordered
+    oldLayerMap = layerMap.clone() # size: (B,H,W)
     layerMap[:,0,:], _ = torch.min(layerMap, dim=1)
     for i in range(1,H):
         layerMap[:,i,:] = torch.where(layerMap[:,i,:] < layerMap[:,i-1,:],
@@ -138,6 +139,9 @@ def layerProb2SurfaceMu(layerProb):
                                       layerMap[:,i,:])
     layerMap = torch.where(layerMap >N, N*torch.ones_like(layerMap), layerMap)
 
+    # compute mu's confidence
+    surfaceConf = (layerMap == oldLayerMap).sum(dim=1, keepdim=True)/H  # size: B,1, W
+    surfaceConf = surfaceConf.expand((B,N,W))
 
     layerMap0 = layerMap[:,0:-1,:]
     layerMap1 = layerMap[:,1:  ,:]  # size: B,H-1,W
@@ -168,7 +172,7 @@ def layerProb2SurfaceMu(layerProb):
         for i in range(N-2,-1,-1): # surface(N-2) to surface0
             surfaceMu[:,i,:] = torch.where(0 == surfaceMu[:,i,:], surfaceMu[0,i+1,:], surfaceMu[:,i,:] )
 
-    return surfaceMu
+    return surfaceMu, surfaceConf
 
 def lacePolarImageLabel(data,label,lacingWidth):
     '''

@@ -306,16 +306,17 @@ class SurfacesUnet(BasicModel):
         '''
         B,N,H,W = xs.shape
         useLayerDice = self.getConfigParameter("useLayerDice")
-        layerMu = None # referenced surface mu computed by layer segmentation.
+        layerMu = None # referred surface mu computed by layer segmentation.
+        layerConf = None
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             layerProb = logits2Prob(xl,dim=1)
             loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
-            layerMu = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
+            layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
         else:
             loss_layerDice = 0.0
 
-        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu)
+        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu, layerConf=layerConf)
 
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         if useCEReplaceKLDiv:

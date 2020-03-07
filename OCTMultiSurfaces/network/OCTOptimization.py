@@ -4,32 +4,38 @@
 import torch
 import math
 
-def computeMuVariance(x, layerMu=None): # without square weight
+def computeMuVariance(x, layerMu=None, layerConf=None): # without square weight
     '''
     Compute the mean and variance along H direction of each surface.
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along each Height direction
-           LayerMu: the referenced surface mu from LayerProb, in size(B,N,W); where N = NumSurface.
+           LayerMu: the referred surface mu from LayerProb, in size(B,N,W); where N = NumSurface.
+           LayerConf: the referred surface confidence from LayerProb, in size(B,N,W)
     :return: mu:     mean in (BatchSize, NumSurface, W) dimension
              sigma2: variance in (BatchSize, Numsurface, W) dimension
     '''
+    A =3.0  # weight factor to balance surfaceMu and LayerMu.
+
     device = x.device
     B,N,H,W = x.size() # Num is the num of surface for each patient
 
     # compute mu
     Y = torch.arange(H).view((1,1,H,1)).expand(x.size()).to(device=device, dtype=torch.int16)
     # mu = torch.sum(x*Y, dim=-2, keepdim=True)
-    # use slice method to comput P*Y
+    # use slice method to compute P*Y
     for b in range(B):
         if 0==b:
             PY = (x[b,]*Y[b,]).unsqueeze(dim=0)
         else:
             PY = torch.cat((PY, (x[b,]*Y[b,]).unsqueeze(dim=0)))
-    mu = torch.sum(PY, dim=-2, keepdim=True)
+    mu = torch.sum(PY, dim=-2, keepdim=True) # size: B,N,1,W
     del PY  # hope to free memory.
 
-    if layerMu is not None:  # consider LayerMu, adjust mu computed by surface only by average.
-       mu = (mu + layerMu.unsqueeze(dim=-2))/2.0
+    if (layerMu is not None) and (layerConf is not None):  # consider LayerMu, adjust mu computed by surface only
+       assert layerMu.shape == layerConf.shape
+       layerMu = layerMu.unsqueeze(dim=-2)
+       layerConf = layerConf.unsqueeze(dim=-2)
+       mu = (layerMu*layerConf + mu*(A-layerConf))/A
 
     # compute sigma2 (variance)
     Mu = mu.expand(x.size())
@@ -52,7 +58,7 @@ def computeMuVariance(x, layerMu=None): # without square weight
     return mu.squeeze(dim=-2),sigma2
 
 
-def computeMuVarianceWithSquare(x, layerMu=None): # with square probability, then normalize
+def computeMuVarianceWithSquare(x, layerMu=None, layerConf=None): # with square probability, then normalize
     '''
     Compute the mean and variance along H direction of each surface.
 
@@ -60,6 +66,7 @@ def computeMuVarianceWithSquare(x, layerMu=None): # with square probability, the
     :return: mu:     mean in (BatchSize, NumSurface, W) dimension
              sigma2: variance in (BatchSize, Numsurface, W) dimension
     '''
+    A = 3.0  # weight factor to balance surfaceMu and LayerMu.
     device = x.device
     B, Num, H, W = x.size()  # Num is the num of surface for each patient
 
@@ -80,11 +87,14 @@ def computeMuVarianceWithSquare(x, layerMu=None): # with square probability, the
             PY = (P[b,] * Y[b,]).unsqueeze(dim=0)
         else:
             PY = torch.cat((PY, (P[b,] * Y[b,]).unsqueeze(dim=0)))
-    mu = torch.sum(PY, dim=-2, keepdim=True)
+    mu = torch.sum(PY, dim=-2, keepdim=True) # size: B,N,1,W
     del PY  # hope to free memory.
 
-    if layerMu is not None:  # consider LayerMu, adjust mu computed by surface only by average.
-       mu = (mu + layerMu.unsqueeze(dim=-2))/2.0
+    if (layerMu is not None) and (layerConf is not None):  # consider LayerMu, adjust mu computed by surface only
+        assert layerMu.shape == layerConf.shape
+        layerMu = layerMu.unsqueeze(dim=-2)
+        layerConf = layerConf.unsqueeze(dim=-2)
+        mu = (layerMu * layerConf + mu * (A - layerConf)) / A
 
     # compute sigma2 (variance)
     Mu = mu.expand(P.size())
