@@ -7,6 +7,8 @@
 #                 use layer2SurfaceMu.
 #                 Expriment shows: After about 200 epochs, surface 8 error reduce down form 20 to 3.
 #                 without guarantee layer order modification.
+#Mar 7th, 2020. Add LayerConf and guarantee layer order.
+
 
 dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
@@ -40,7 +42,7 @@ fold_k:  -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
