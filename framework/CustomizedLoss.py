@@ -574,6 +574,32 @@ class MultiSurfacesCrossEntropyLoss():
         return loss1+loss2
 
 
+# support multiclass CrossEntropy Loss
+class MultiLayerCrossEntropyLoss():
+    def __init__(self, pixleWeight=None):
+        self.m_pixelWeight = pixleWeight  # B,N,H,W, where N is nLayer, instead of num of surfaces.
+
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
+    def forward(self, inputx, target):
+        '''
+         pixel-wised multiLayer cross entropy.
+        :param inputx:  N-layer probability of size: B,N,H,W
+        :param target:  long tensor, size of (B,H,W), where each element has a long value of [0,N-1] indicate the belonging class
+        :return: a scalar of loss
+        '''
+        B,N,H,W = inputx.shape
+        assert (B,H,W) == target.shape
+        device = inputx.device
+
+        # convert target of size(B,H,W) into (B,N,H,W) into one-hot float32 probability
+        targetProb = torch.zeros(inputx.shape, dtype=torch.long, device=device)  # size: B,N,H,W
+        for k in range(0, N):
+            targetProb[:, k, :, :] = torch.where(k == target, torch.ones_like(target), targetProb[:, k, :, :])
+
+        loss = (-self.m_pixelWeight*targetProb*inputx.log()).sum()
+        return loss
 
 
 
