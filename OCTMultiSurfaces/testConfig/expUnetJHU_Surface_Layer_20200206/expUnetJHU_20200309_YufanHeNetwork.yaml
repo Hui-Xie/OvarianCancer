@@ -8,8 +8,7 @@
 #                 Expriment shows: After about 200 epochs, surface 8 error reduce down form 20 to 3.
 #                 without guarantee layer order modification.
 #Mar 7th, 2020. Add LayerConf and guarantee layer order.
-#Mar 9th, 2020, Layerconf and Sigma=8
-
+#Mar 9th, 2020, use Yufan He's network: LayerDice +LayerCE+ L1, with ReLU.
 
 dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
@@ -42,8 +41,8 @@ fold_k:  -1   # -1 means do not use cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-sigma: 8.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:2')   #GPU ID
+sigma: 0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:3')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 

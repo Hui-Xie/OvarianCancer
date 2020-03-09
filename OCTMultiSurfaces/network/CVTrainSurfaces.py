@@ -17,6 +17,7 @@ from OCTUnetJHU import OCTUnetJHU
 from OCTUnetSurfaceLayerJHU import OCTUnetSurfaceLayerJHU
 from IVUSUnet import IVUSUnet
 from SurfacesUnet import SurfacesUnet
+from SurfacesUnet_YufanHe import SurfacesUnet_YufanHe
 from OCTOptimization import *
 from OCTTransform import *
 

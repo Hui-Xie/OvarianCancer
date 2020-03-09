@@ -13,7 +13,7 @@ import torch
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, computeWeightImage, MultiLayerCrossEntropyLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -36,50 +36,6 @@ def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, paddin
         W =int(math.floor((W+2*padding-dilation*(kernelSize-1)-1)/stride+1))
         layerSizeList.append((H, W))
     return  layerSizeList
-
-def computeWeightImage(images, labels, nLayers):
-    '''
-    reference: RelayNet formula(3):
-    w = 1 + w_1*I(|Grad(Images)|>0)+ w_2*I(images=Labels),
-    w_1 = 10, and w_2 = 5, I is indicator function.
-
-    :param images: in size of (B,H,W);
-    :param labels: in size of (B,Ns,W), where Ns is the number of surface
-    :return: a float tensor of size(B,nlayers,H,W),where nLayers= Ns+1
-    '''
-    B,H,W = images.shape
-    _,Ns,_ = labels.shape
-    device = images.device
-    N = nLayers
-    assert N-Ns ==1
-
-    images0H= images[:,0:-1,:]
-    images1H =images[:,1:  ,:] # size: B,H-1,W
-    gradH = images1H -images0H
-    gradH = torch.cat((gradH, torch.zeros((B,1,W), device=device)), dim=1) # size: B,H,W
-
-    images0W = images[:, :,0:-1]
-    images1W = images[:, :,1:  ]  # size: B,H,W-1
-    gradW = images1W - images0W
-    gradW = torch.cat((gradW, torch.zeros((B,H,1), device=device)), dim=2) # size: B,H,W
-
-    grad = torch.pow(gradH,2) + torch.pow(gradW,2)
-    grad = torch.sqrt(grad)   # size: B,H,W
-
-    grad.unsqueeze_(dim=1)
-    grad = grad.expand((B,N,H,W)) # size: B,N,H,W
-
-    oneBNHW = torch.ones_like(grad)
-    zeroBNHW = torch.zeros_like(grad)
-
-    labels = (labels +0.5).long() # size: B,N-1,W
-    labels = torch.cat((labels,torch.zeros((B,1,W),device=device)),dim =1) # size: B,N,W
-    labels = labels.unqueeze(dim=2)  #size: B,N,1,W
-    labelsBNHW = torch.scatter(zeroBNHW, dim=2,index=labels, src=oneBNHW)
-    w1 = 10.0
-    w2 = 5.0
-    W = oneBNHW + w1*torch.where(grad >0, oneBNHW, zeroBNHW) +w2*torch.where(labelsBNHW>0, oneBNHW,zeroBNHW)
-    return W
 
 class SurfacesUnet_YufanHe(BasicModel):
     ''''
@@ -357,52 +313,34 @@ class SurfacesUnet_YufanHe(BasicModel):
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             layerProb = logits2Prob(xl,dim=1)
-            loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
+            loss_layer = generalizedDiceLoss(layerProb, layerGTs)
             # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
 
             # add layer CE loss
-            layerCE = nn.CrossEntropyLoss(weight=)
+            imageWeight = computeWeightImage(inputs, GTs, N+1)
+            multiLayerCE = MultiLayerCrossEntropyLoss(pixleWeight=imageWeight)
+            loss_layer += multiLayerCE(layerProb, layerGTs)
 
         else:
             loss_layerDice = 0.0
 
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu, layerConf=layerConf)
 
-        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
-        if useCEReplaceKLDiv:
-            CELoss = MultiSurfacesCrossEntropyLoss()
-            loss_surfaceKLDiv = CELoss(xs, GTs)  # CrossEntropy is a kind of KLDiv
-        else:
-            klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-            if 0 == len(gaussianGTs):  # sigma ==0 case
-                gaussianGTs= batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-            '''
-            KLDiv Loss = \sum g_i*log(g_i/p_i). KLDivLoss<0, means big weight g_i < p_i, at this time, g_i is not a good guide to p_i.   
-            '''
-            if loss_surfaceKLDiv < 0:
-                print(f"at eocch = {self.m_epoch}, loss_surfaceKLDiv = {loss_surfaceKLDiv} < 0 , discard it.")
-                loss_surfaceKLDiv = 0.0
+        multiSurfaceCE = MultiSurfacesCrossEntropyLoss()
+        loss_surfaceKLDiv = multiSurfaceCE(xs, GTs)  # CrossEntropy is a kind of KLDiv
 
 
-
-        useSmoothSurface = self.getConfigParameter("useSmoothSurface")
-        if useSmoothSurface:
-            smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-            loss_smooth = smoothSurfaceLoss(mu, GTs)
-        else:
-            loss_smooth = 0.0
-
-        separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
-        S = separationPrimalDualIPM(mu, sigma2)
+        #ReLU to guarantee layer order
+        S = mu.clone()
+        for i in range(1,N):
+            S[:,i,:] = torch.where(S[:, i,:]< S[:,i-1,:], S[:,i-1,:], S[:,i,:])
 
         l1Loss = nn.SmoothL1Loss().to(device)
-        weightL1 = 10.0
         loss_L1 = l1Loss(S, GTs)
 
-        loss = loss_layerDice + loss_surfaceKLDiv + loss_smooth+ loss_L1 * weightL1
+        loss = loss_layer + loss_surfaceKLDiv + loss_L1
 
-        return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
+        return S, loss  # return surfaceLocation S in (B,N,W) dimension and loss
 
 
 

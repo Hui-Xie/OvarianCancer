@@ -574,6 +574,52 @@ class MultiSurfacesCrossEntropyLoss():
         return loss1+loss2
 
 
+
+def computeWeightImage(images, labels, nLayers):
+    '''
+    reference: RelayNet formula(3):
+    w = 1 + w_1*I(|Grad(Images)|>0)+ w_2*I(images=Labels),
+    w_1 = 10, and w_2 = 5, I is indicator function.
+
+    :param images: in size of (B,H,W);
+    :param labels: in size of (B,Ns,W), where Ns is the number of surface
+    :return: a float tensor of size(B,nlayers,H,W),where nLayers= Ns+1
+    '''
+    images = images.squeeze(dim=1) # erase channle dim
+    B,H,W = images.shape
+    _,Ns,_ = labels.shape
+    device = images.device
+    N = nLayers
+    assert N-Ns ==1
+
+    images0H= images[:,0:-1,:]
+    images1H =images[:,1:  ,:] # size: B,H-1,W
+    gradH = images1H -images0H
+    gradH = torch.cat((gradH, torch.zeros((B,1,W), device=device)), dim=1) # size: B,H,W
+
+    images0W = images[:, :,0:-1]
+    images1W = images[:, :,1:  ]  # size: B,H,W-1
+    gradW = images1W - images0W
+    gradW = torch.cat((gradW, torch.zeros((B,H,1), device=device)), dim=2) # size: B,H,W
+
+    grad = torch.pow(gradH,2) + torch.pow(gradW,2)
+    grad = torch.sqrt(grad)   # size: B,H,W
+
+    grad.unsqueeze_(dim=1)
+    grad = grad.expand((B,N,H,W)) # size: B,N,H,W
+
+    oneBNHW = torch.ones_like(grad)
+    zeroBNHW = torch.zeros_like(grad)
+
+    labels = (labels +0.5).long() # size: B,N-1,W
+    labels = torch.cat((labels,labels[:,-1,:].unsqueeze(dim=1)),dim =1) # size: B,N,W, repeat last surface value
+    labels = labels.unsqueeze(dim=2)  #size: B,N,1,W
+    labelsBNHW = torch.scatter(zeroBNHW, dim=2,index=labels, src=oneBNHW)
+    w1 = 10.0
+    w2 = 5.0
+    W = oneBNHW + w1*torch.where(grad >0, oneBNHW, zeroBNHW) +w2*torch.where(labelsBNHW>0, oneBNHW,zeroBNHW)
+    return W
+
 # support multiclass CrossEntropy Loss
 class MultiLayerCrossEntropyLoss():
     def __init__(self, pixleWeight=None):
