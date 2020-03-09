@@ -130,7 +130,8 @@ def main():
     trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
                            TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator, gradChannels=gradChannels)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,
-                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator, gradChannels=gradChannels)
+                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator,
+                                gradChannels=gradChannels)
 
     # construct network
     net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers, numSurfaces=numSurfaces, N=numStartFilters)
