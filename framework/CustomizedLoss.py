@@ -560,9 +560,7 @@ class MultiSurfacesCrossEntropyLoss():
         assert (B,N,W) == target.shape
 
         # convert logits to probability for inputx
-        inputxMaxDim, _ = torch.max(inputx, dim=-2, keepdim=True)
-        inputxMaxDim = inputxMaxDim.expand_as(inputx)
-        softmaxInput = F.softmax(inputx - inputxMaxDim, -2)  # use inputMaxDim1 is to avoid overflow. size: B,N,H,W
+        softmaxInput = logits2Prob(inputx, dim=-2)
 
         targetIndex = (target +0.5).long().unsqueeze(dim=-2) # size: B,N,1,W
 
