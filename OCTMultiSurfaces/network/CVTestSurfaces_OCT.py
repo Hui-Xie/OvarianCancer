@@ -73,6 +73,7 @@ def main():
     nLayers= cfg["nLayers"] #7
     numSurfaces = cfg["numSurfaces"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
+    gradChannels = cfg["gradChannels"]
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
@@ -119,7 +120,7 @@ def main():
 
     testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
                           lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator,
-                          scaleDenominator=scaleDenominator)
+                          scaleDenominator=scaleDenominator, gradChannels=gradChannels)
 
     # construct network
     net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers,

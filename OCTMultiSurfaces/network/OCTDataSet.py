@@ -88,7 +88,7 @@ class OCTDataSet(data.Dataset):
             grads = self.generateGradientImage(data, self.m_gradChannels)
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
-        
+
         result = {"images": image,
                   "GTs": label,
                   "gaussianGTs": [] if 0 == self.m_sigma else gaussianizeLabels(label, self.m_sigma, H),

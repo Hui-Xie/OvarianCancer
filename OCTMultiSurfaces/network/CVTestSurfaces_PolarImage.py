@@ -101,6 +101,7 @@ def main():
     nLayers = cfg["nLayers"]  # 7
     numSurfaces = cfg["numSurfaces"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
+    gradChannels = cfg["gradChannels"]
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
@@ -201,7 +202,8 @@ def main():
         for TTADegree in range(0, 360, TTA_StepDegree):
             nCountTTA += 1
             testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
-                                  lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator)
+                                  lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree, scaleNumerator=scaleNumerator,
+                                  scaleDenominator=scaleDenominator, gradChannels=gradChannels)
             testBatch = 0
             for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
                 testBatch += 1

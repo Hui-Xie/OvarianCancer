@@ -66,6 +66,7 @@ def main():
     nLayers= cfg["nLayers"] #7
     numSurfaces = cfg["numSurfaces"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
+    gradChannels= cfg["gradChannels"]
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
@@ -127,9 +128,9 @@ def main():
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
     trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
-                           TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator)
+                           TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator, gradChannels=gradChannels)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,
-                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator)
+                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator, gradChannels=gradChannels)
 
     # construct network
     net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers, numSurfaces=numSurfaces, N=numStartFilters)
