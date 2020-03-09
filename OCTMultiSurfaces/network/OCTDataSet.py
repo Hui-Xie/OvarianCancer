@@ -11,7 +11,7 @@ from OCTAugmentation import *
 
 class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0,
-                 TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1):
+                 TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1, gradChannels=0):
         self.m_device = device
         self.m_sigma = sigma
 
@@ -30,9 +30,41 @@ class OCTDataSet(data.Dataset):
         self.m_TTA_Degree = TTA_Degree
         self.m_scaleNumerator = scaleNumerator
         self.m_scaleDenominator = scaleDenominator
+        self.m_gradChannels = gradChannels
 
     def __len__(self):
         return self.m_images.size()[0]
+
+    def generateGradientImage(self, image, gradChannels):
+        H,W =image.shape
+        device = image.device
+        image0H = image[0:-1,:]  # size: H-1,W
+        image1H = image[1:,  :]
+        gradH   = image1H-image0H
+        gradH = torch.cat((gradH, torch.zeros((1, W), device=device)), dim=0)  # size: H,W
+
+        image0W = image[:,0:-1]  # size: H,W-1
+        image1W = image[:,1:  ]
+        gradW = image1W - image0W
+        gradW = torch.cat((gradW, torch.zeros((H, 1), device=device)), dim=1)  # size: H,W
+
+        if 1 == gradChannels:
+            return torch.sqrt(torch.pow(gradH,2)+torch.pow(gradW,2))
+        elif 2 == gradChannels:
+            return gradH, gradW,
+        elif 3 == gradChannels:
+            onesHW = torch.ones_like(image)
+            negOnesHW = -onesHW
+            signHW = torch.where(gradH*gradW >= 0, onesHW, negOnesHW)
+
+            e = 1e-8
+            gradDirection = torch.atan(signHW*(torch.abs(gradH)+e)/(torch.abs(gradW)+e))
+            return gradH, gradW, gradDirection
+        else:
+            print(f"Currently do not support gradChannels >3")
+            assert False
+            return None
+
 
     def __getitem__(self, index):
         data = self.m_images[index,]
@@ -51,7 +83,13 @@ class OCTDataSet(data.Dataset):
             label = scalePolarLabel(label, self.m_scaleNumerator, self.m_scaleDenominator)
 
         H, W = data.shape
-        result = {"images": data.unsqueeze(dim=0),
+        image = data.unsqueeze(dim=0)
+        if 0 != self.m_gradChannels:
+            grads = self.generateGradientImage(data, self.m_gradChannels)
+            for grad in grads:
+                image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
+        
+        result = {"images": image,
                   "GTs": label,
                   "gaussianGTs": [] if 0 == self.m_sigma else gaussianizeLabels(label, self.m_sigma, H),
                   "IDs": self.m_IDs[str(index)],
