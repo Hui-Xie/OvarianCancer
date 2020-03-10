@@ -605,7 +605,7 @@ def computeWeightImage(images, labels, nLayers):
     grad = torch.pow(gradH,2) + torch.pow(gradW,2)
     grad = torch.sqrt(grad)   # size: B,H,W
 
-    grad.unsqueeze_(dim=1)
+    grad = grad.unsqueeze(dim=1)
     grad = grad.expand((B,N,H,W)) # size: B,N,H,W
 
     oneBNHW = torch.ones_like(grad)

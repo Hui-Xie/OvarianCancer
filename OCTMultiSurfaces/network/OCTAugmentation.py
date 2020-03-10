@@ -103,7 +103,7 @@ def updateGaussianWithImageGradient(gaussDistr, imageGradMagnitude, weight=100):
     '''
     B,N,H,W = gaussDistr.shape
     grad = imageGradMagnitude
-    grad.unsqueeze_(dim=1)
+    grad = grad.unsqueeze(dim=1)
     grad = grad.expand((B, N, H, W))  # size: B,N,H,W
 
     G = (1.0+ weight*grad)*gaussDistr  # size: B,N,H,W
