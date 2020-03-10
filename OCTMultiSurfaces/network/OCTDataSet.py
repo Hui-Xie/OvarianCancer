@@ -48,20 +48,25 @@ class OCTDataSet(data.Dataset):
         gradW = image1W - image0W
         gradW = torch.cat((gradW, torch.zeros((H, 1), device=device)), dim=1)  # size: H,W
 
+        gradMagnitude = torch.sqrt(torch.pow(gradH,2)+torch.pow(gradW,2))
+
+        if gradChannels>=3:
+            onesHW = torch.ones_like(image)
+            negOnesHW = -onesHW
+            signHW = torch.where(gradH * gradW >= 0, onesHW, negOnesHW)
+            e = 1e-8
+            gradDirection = torch.atan(signHW * torch.abs(gradH) / (torch.abs(gradW) + e))
+
         if 1 == gradChannels:
-            return torch.sqrt(torch.pow(gradH,2)+torch.pow(gradW,2))
+            return gradMagnitude
         elif 2 == gradChannels:
             return gradH, gradW,
         elif 3 == gradChannels:
-            onesHW = torch.ones_like(image)
-            negOnesHW = -onesHW
-            signHW = torch.where(gradH*gradW >= 0, onesHW, negOnesHW)
-
-            e = 1e-8
-            gradDirection = torch.atan(signHW*(torch.abs(gradH)+e)/(torch.abs(gradW)+e))
-            return gradH, gradW, gradDirection
+             return gradH, gradW, gradDirection
+        elif 4 == gradChannels:
+            return gradH, gradW, gradMagnitude, gradDirection
         else:
-            print(f"Currently do not support gradChannels >3")
+            print(f"Currently do not support gradChannels >4")
             assert False
             return None
 

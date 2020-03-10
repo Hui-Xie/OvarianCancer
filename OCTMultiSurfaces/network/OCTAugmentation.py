@@ -59,6 +59,7 @@ def gaussianizeLabels(rawLabels, sigma, H):
 
     return G
 
+
 def batchGaussianizeLabels(rawLabels, Sigma2, H):
     '''
 
@@ -88,6 +89,33 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
     G = G / Sum
 
     return G
+
+
+def updateGaussianWithImageGradient(gaussDistr, imageGradMagnitude, weight=100):
+    '''
+    newDistr = (1 + weight*imageGradMagnitude)*gaussDistr
+    and then normalize along H dimension
+
+    :param gaussDistr: size of (B,N,H,W)
+    :param imageGradMagnitude:  size of (B,H,W)
+    :param weight:  a float scalar, e.g. 100
+    :return: updated gaussDir: size of (B,N,H,W)
+    '''
+    B,N,H,W = gaussDistr.shape
+    grad = imageGradMagnitude
+    grad.unsqueeze_(dim=1)
+    grad = grad.expand((B, N, H, W))  # size: B,N,H,W
+
+    G = (1.0+ weight*grad)*gaussDistr  # size: B,N,H,W
+
+    # as G is discrete, it needs normalization to assure its sum =1.
+    # otherwise, it may lead occasionaly negative KLDiv Loss.
+    Sum = torch.sum(G, dim=-2, keepdim=True)
+    Sum = Sum.expand_as(G)
+    G = G / Sum
+
+    return G
+
 
 def getLayerLabels(surfaceLabels, height):
     '''

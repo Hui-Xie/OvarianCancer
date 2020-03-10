@@ -326,8 +326,12 @@ class SurfacesUnet(BasicModel):
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs= batchGaussianizeLabels(GTs, sigma2, H)
+            _,C,_,_ = inputs.shape
+            if C==5:
+                imageGradMagnitude = inputs[:,3,:,:]
+                gaussianGTs = updateGaussianWithImageGradient(gaussianGTs, imageGradMagnitude, weight=100)
             loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-            
+
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
         if useSmoothSurface:
