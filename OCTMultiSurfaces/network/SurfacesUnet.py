@@ -332,6 +332,8 @@ class SurfacesUnet(BasicModel):
             imageGradMagnitude = inputs[:, 3, :, :]
             weight = getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
             weightedDivLoss = WeightedDivLoss(weight=weight ) # the input given is expected to contain log-probabilities
+            if 0 == len(gaussianGTs):  # sigma ==0 case
+                gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
             loss_surfaceDiv = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
         else:
