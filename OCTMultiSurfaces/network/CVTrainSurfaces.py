@@ -67,6 +67,7 @@ def main():
     numSurfaces = cfg["numSurfaces"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
     gradChannels= cfg["gradChannels"]
+    gradWeight = cfg["gradWeight"]
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
@@ -105,6 +106,7 @@ def main():
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
     useLayerDice = cfg['useLayerDice']
     useSmoothSurface = cfg['useSmoothSurface']
+    useWeightedDivLoss = cfg['useWeightedDivLoss']
 
     if -1==k and 0==K:  # do not use cross validation
         trainImagesPath = os.path.join(dataDir, "training", f"images.npy")
@@ -128,7 +130,8 @@ def main():
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
     trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
-                           TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator, gradChannels=gradChannels)
+                           TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator,
+                           gradChannels=gradChannels)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,
                                 lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator,
                                 gradChannels=gradChannels)
@@ -171,6 +174,8 @@ def main():
     net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
     net.updateConfigParameter("useLayerDice", useLayerDice)
     net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
+    net.updateConfigParameter("gradWeight", gradWeight)
+    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):

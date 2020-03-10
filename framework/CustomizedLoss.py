@@ -648,4 +648,28 @@ class MultiLayerCrossEntropyLoss():
         return loss
 
 
+class WeightedDivLoss():
+    def __init__(self, weight=None):
+        self.m_weight = weight  # B,N,H,W, where N is the num of surfaces.
+
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
+    def forward(self, inputxLogProb, target):
+        '''
+         loss = (\sum ( w_i*g_i*abs(log(g_i)-log(p_i)) ))/Num
+
+        :param inputxLogProb:  size: B,N,H,W, log probability of prediction
+        :param target:  size: B,N,H,W, ground truth probility.
+        :return: a scalar of loss
+        '''
+        B,N,H,W = inputxLogProb.shape
+        assert (B,N,H,W) == target.shape
+        assert (B,N,H,W) == self.m_weight.shape
+
+        div = target.log()-inputxLogProb
+        div = torch.where(div >=0, div, -div)
+        loss = (self.m_weight * target * div).mean()
+        return loss
+
 

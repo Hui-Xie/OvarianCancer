@@ -90,8 +90,21 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
 
     return G
 
+def getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=10):
+    """
+    weight = 1+ gradWeight*imageGradMagnitude
+    :param imageGradMagnitude: size of (B,H,W)
+    :return: size of (B,N,H,W) weight.
 
-def updateGaussianWithImageGradient(gaussDistr, imageGradMagnitude, weight=100):
+    """
+    B, H, W = imageGradMagnitude.shape
+    grad = imageGradMagnitude
+    grad = grad.unsqueeze(dim=1)
+    grad = grad.expand((B, N, H, W))  # size: B,N,H,W
+
+    return 1.0+ gradWeight*grad
+
+def deprecated_updateGaussianWithImageGradient(gaussDistr, imageGradMagnitude, weight=0.01):
     '''
     newDistr = (1 + weight*imageGradMagnitude)*gaussDistr
     and then normalize along H dimension

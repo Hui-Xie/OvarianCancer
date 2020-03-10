@@ -102,6 +102,7 @@ def main():
     numSurfaces = cfg["numSurfaces"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
     gradChannels = cfg["gradChannels"]
+    gradWeight = cfg["gradWeight"]
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
@@ -142,6 +143,8 @@ def main():
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
     useLayerDice = cfg['useLayerDice']
     useSmoothSurface = cfg['useSmoothSurface']
+    useWeightedDivLoss = cfg['useWeightedDivLoss']
+
 
     if -1==k and 0==K:  # do not use cross validation
         testImagesPath = os.path.join(dataDir, "test", f"images.npy")
@@ -187,6 +190,8 @@ def main():
     net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
     net.updateConfigParameter("useLayerDice", useLayerDice)
     net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
+    net.updateConfigParameter("gradWeight", gradWeight)
+    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"

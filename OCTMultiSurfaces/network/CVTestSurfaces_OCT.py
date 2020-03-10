@@ -75,6 +75,8 @@ def main():
     numSurfaces = cfg["numSurfaces"]
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
     gradChannels = cfg["gradChannels"]
+    gradWeight = cfg["gradWeight"]
+    useWeightedDivLoss = cfg['useWeightedDivLoss']
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
     hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
@@ -155,6 +157,8 @@ def main():
     net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
     net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
     net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
+    net.updateConfigParameter("gradWeight", gradWeight)
+    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
