@@ -215,6 +215,7 @@ def main():
                 testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for output predict images' ID
 
+            images = images[:,0,:,:]  # erase grad channels
             images.squeeze_(dim=1)  # squeeze channel dim
 
             # scale back: # this will change the Height of polar image

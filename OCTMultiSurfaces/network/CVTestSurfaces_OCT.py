@@ -211,6 +211,7 @@ def main():
                                                                                   hPixelSize=hPixelSize)
 
     #generate predicted images
+    images = images[:, 0, :, :]  # erase grad channels
     images = images.cpu().numpy().squeeze()
     B,H,W = images.shape
     B, S, W = testOutputs.shape
