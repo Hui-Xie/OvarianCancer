@@ -327,14 +327,7 @@ class SurfacesUnet(BasicModel):
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs= batchGaussianizeLabels(GTs, sigma2, H)
             loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-            '''
-            KLDiv Loss = \sum g_i*log(g_i/p_i). KLDivLoss<0, means big weight g_i < p_i, at this time, g_i is not a good guide to p_i.   
-            '''
-            if loss_surfaceKLDiv < 0:
-                print(f"at eocch = {self.m_epoch}, loss_surfaceKLDiv = {loss_surfaceKLDiv} < 0 , discard it.")
-                loss_surfaceKLDiv = 0.0
-
-
+            
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
         if useSmoothSurface:
