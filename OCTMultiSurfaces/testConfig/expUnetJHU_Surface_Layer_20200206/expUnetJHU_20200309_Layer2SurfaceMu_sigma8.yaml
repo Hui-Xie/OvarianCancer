@@ -56,6 +56,7 @@ inputChannels: 1
 nLayers: 7
 numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
+gradChannels: 0   # the adde gradient channels beside raw image channel
 
 
 # some physical parameter of images

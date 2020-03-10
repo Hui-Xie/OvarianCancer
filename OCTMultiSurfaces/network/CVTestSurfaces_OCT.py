@@ -12,6 +12,7 @@ from torch.utils import data
 sys.path.append(".")
 from OCTDataSet import *
 from SurfacesUnet import SurfacesUnet
+from SurfacesUnet_YufanHe import SurfacesUnet_YufanHe
 from OCTOptimization import *
 from OCTTransform import *
 
