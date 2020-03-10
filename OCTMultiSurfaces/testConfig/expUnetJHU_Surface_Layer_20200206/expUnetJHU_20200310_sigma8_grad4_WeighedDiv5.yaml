@@ -13,7 +13,8 @@
 #Mar 10th, 2020,  add update GaussianDitr with image grdient magnitude
 #                  and add 4 gradient channels in input.
 #                   use fixed sigma =8
-#                  imagegradient weight =1
+#                  imagegradient weight =10, weighted DivLoss
+
 
 
 dataDir: "/home/hxie1/data/OCT_JHU/numpy"
@@ -48,7 +49,7 @@ fold_k:  -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 8.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
@@ -62,7 +63,7 @@ nLayers: 7
 numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 4   # the adde gradient channels beside raw image channel
-gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+gradWeight: 5   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
 slicesPerPatient: 49
