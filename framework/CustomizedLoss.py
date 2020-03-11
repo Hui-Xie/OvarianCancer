@@ -564,66 +564,27 @@ class MultiSurfacesCrossEntropyLoss():
 
         targetIndex = (target +0.5).long().unsqueeze(dim=-2) # size: B,N,1,W
 
+        e =1e-8
         surfaceProb = torch.gather(softmaxInput, dim=2,index=targetIndex)  # size: B,N,1,W
-        loss1 = (-(surfaceProb.log())).sum()  #-g_i*log(p_i)
+        surfaceProb = surfaceProb +e
+        surfaceProb = torch.where(surfaceProb>1, torch.ones_like(surfaceProb), surfaceProb)
+        loss1 = (-(surfaceProb.log())).mean()  #-g_i*log(p_i)
 
         nonSurfaceProb = softmaxInput.clone()
-        nonSurfaceProb.scatter_(2,targetIndex, torch.zeros(targetIndex.shape, dtype=torch.float, device=target.device))
-        loss2 = (-((1.0-nonSurfaceProb).log())).sum()  # -(1-g_i)*log(1-p_i)
+        nonSurfaceProb.scatter_(2,targetIndex, torch.zeros_like(targetIndex).float())
+        nonSurfaceProb = torch.where(nonSurfaceProb==1, (1-e)*torch.ones_like(nonSurfaceProb), nonSurfaceProb)
+        loss2 = (-((1.0-nonSurfaceProb).log())).mean()  # -(1-g_i)*log(1-p_i)
 
         return loss1+loss2
 
 
 
-def computeWeightImage(images, labels, nLayers):
-    '''
-    reference: RelayNet formula(3):
-    w = 1 + w_1*I(|Grad(Images)|>0)+ w_2*I(images=Labels),
-    w_1 = 10, and w_2 = 5, I is indicator function.
 
-    :param images: in size of (B,H,W);
-    :param labels: in size of (B,Ns,W), where Ns is the number of surface
-    :return: a float tensor of size(B,nlayers,H,W),where nLayers= Ns+1
-    '''
-    images = images.squeeze(dim=1) # erase channle dim
-    B,H,W = images.shape
-    _,Ns,_ = labels.shape
-    device = images.device
-    N = nLayers
-    assert N-Ns ==1
-
-    images0H= images[:,0:-1,:]
-    images1H =images[:,1:  ,:] # size: B,H-1,W
-    gradH = images1H -images0H
-    gradH = torch.cat((gradH, torch.zeros((B,1,W), device=device)), dim=1) # size: B,H,W
-
-    images0W = images[:, :,0:-1]
-    images1W = images[:, :,1:  ]  # size: B,H,W-1
-    gradW = images1W - images0W
-    gradW = torch.cat((gradW, torch.zeros((B,H,1), device=device)), dim=2) # size: B,H,W
-
-    grad = torch.pow(gradH,2) + torch.pow(gradW,2)
-    grad = torch.sqrt(grad)   # size: B,H,W
-
-    grad = grad.unsqueeze(dim=1)
-    grad = grad.expand((B,N,H,W)) # size: B,N,H,W
-
-    oneBNHW = torch.ones_like(grad)
-    zeroBNHW = torch.zeros_like(grad)
-
-    labels = (labels +0.5).long() # size: B,N-1,W
-    labels = torch.cat((labels,labels[:,-1,:].unsqueeze(dim=1)),dim =1) # size: B,N,W, repeat last surface value
-    labels = labels.unsqueeze(dim=2)  #size: B,N,1,W
-    labelsBNHW = torch.scatter(zeroBNHW, dim=2,index=labels, src=oneBNHW)
-    w1 = 10.0
-    w2 = 5.0
-    W = oneBNHW + w1*torch.where(grad >0, oneBNHW, zeroBNHW) +w2*torch.where(labelsBNHW>0, oneBNHW,zeroBNHW)
-    return W
 
 # support multiclass CrossEntropy Loss
 class MultiLayerCrossEntropyLoss():
-    def __init__(self, pixleWeight=None):
-        self.m_pixelWeight = pixleWeight  # B,N,H,W, where N is nLayer, instead of num of surfaces.
+    def __init__(self, weight=None):
+        self.m_weight = weight  # B,N,H,W, where N is nLayer, instead of num of surfaces.
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
@@ -641,10 +602,13 @@ class MultiLayerCrossEntropyLoss():
 
         # convert target of size(B,H,W) into (B,N,H,W) into one-hot float32 probability
         targetProb = torch.zeros(inputx.shape, dtype=torch.long, device=device)  # size: B,N,H,W
-        for k in range(0, N):
+        for k in range(0, N): # N layers
             targetProb[:, k, :, :] = torch.where(k == target, torch.ones_like(target), targetProb[:, k, :, :])
 
-        loss = (-self.m_pixelWeight*targetProb*inputx.log()).sum()
+        e = 1e-8
+        inputx = inputx+e
+        inputx = torch.where(inputx>1, torch.ones_like(inputx), inputx)
+        loss = (-self.m_weight * targetProb * inputx.log()).mean()
         return loss
 
 

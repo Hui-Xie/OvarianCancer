@@ -104,6 +104,56 @@ def getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=10):
 
     return 1.0+ gradWeight*grad
 
+def getLayerWeightFromImageGradient(imageGradMagnitude, labels, nLayers, w1=10.0, w2=5.0):
+    '''
+    reference: RelayNet formula(3):
+    w = 1 + w_1*I(|Grad(Images)|>0)+ w_2*I(images=Labels),
+    w_1 = 10, and w_2 = 5, I is indicator function.
+
+    :param imageGradMagnitude: in size of (B,H,W);
+    :param labels: in size of (B,Ns,W), where Ns is the number of surface
+    :return: a float tensor of size(B,nlayers,H,W),where nLayers= Ns+1
+    '''
+    N = nLayers
+    B, H, W = imageGradMagnitude.shape
+    grad = imageGradMagnitude
+    grad = grad.unsqueeze(dim=1)
+    grad = grad.expand((B, N, H, W))  # size: B,N,H,W
+
+    assert (B,N-1,W) ==labels.shape
+
+    oneBNHW = torch.ones_like(grad)
+    zeroBNHW = torch.zeros_like(grad)
+
+    labels = (labels +0.5).long() # size: B,N-1,W
+    labels = torch.cat((labels,labels[:,-1,:].unsqueeze(dim=1)),dim =1) # size: B,N,W, repeat last surface value
+    labels = labels.unsqueeze(dim=2)  #size: B,N,1,W
+    labelsBNHW = torch.scatter(zeroBNHW, dim=2,index=labels, src=oneBNHW)
+
+    W = oneBNHW + w1*torch.where(grad >0, oneBNHW, zeroBNHW) +w2*torch.where(labelsBNHW>0, oneBNHW,zeroBNHW)
+
+    return W
+
+def getLayerWeightFromImages(images, labels, nLayers, w1=10.0, w2=5.0):
+    images = images.squeeze(dim=1)  # erase channel dim
+    B, H, W = images.shape
+    device = images.device
+
+    images0H = images[:, 0:-1, :]
+    images1H = images[:, 1:, :]  # size: B,H-1,W
+    gradH = images1H - images0H
+    gradH = torch.cat((gradH, torch.zeros((B, 1, W), device=device)), dim=1)  # size: B,H,W
+
+    images0W = images[:, :, 0:-1]
+    images1W = images[:, :, 1:]  # size: B,H,W-1
+    gradW = images1W - images0W
+    gradW = torch.cat((gradW, torch.zeros((B, H, 1), device=device)), dim=2)  # size: B,H,W
+
+    grad = torch.pow(gradH, 2) + torch.pow(gradW, 2)
+    grad = torch.sqrt(grad)  # size: B,H,W
+
+    return getLayerWeightFromImageGradient(grad, labels, nLayers, w1=w1, w2=w2)
+
 def deprecated_updateGaussianWithImageGradient(gaussDistr, imageGradMagnitude, weight=0.01):
     '''
     newDistr = (1 + weight*imageGradMagnitude)*gaussDistr

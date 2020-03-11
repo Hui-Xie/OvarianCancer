@@ -13,7 +13,7 @@ import torch
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, computeWeightImage, MultiLayerCrossEntropyLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, MultiLayerCrossEntropyLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -317,8 +317,8 @@ class SurfacesUnet_YufanHe(BasicModel):
             # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
 
             # add layer CE loss
-            imageWeight = computeWeightImage(inputs, GTs, N+1)
-            multiLayerCE = MultiLayerCrossEntropyLoss(pixleWeight=imageWeight)
+            layerWeight = getLayerWeightFromImages(inputs, GTs, N+1)
+            multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
             loss_layer += multiLayerCE(layerProb, layerGTs)
 
         else:
