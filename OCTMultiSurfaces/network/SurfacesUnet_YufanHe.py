@@ -327,7 +327,7 @@ class SurfacesUnet_YufanHe(BasicModel):
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu, layerConf=layerConf)
 
         multiSurfaceCE = MultiSurfacesCrossEntropyLoss()
-        loss_surfaceKLDiv = multiSurfaceCE(xs, GTs)  # CrossEntropy is a kind of KLDiv
+        loss_surface = multiSurfaceCE(xs, GTs)  # CrossEntropy is a kind of KLDiv
 
 
         #ReLU to guarantee layer order
@@ -338,7 +338,7 @@ class SurfacesUnet_YufanHe(BasicModel):
         l1Loss = nn.SmoothL1Loss().to(device)
         loss_L1 = l1Loss(S, GTs)
 
-        loss = loss_layer + loss_surfaceKLDiv + loss_L1
+        loss = loss_layer + loss_surface + loss_L1
 
         return S, loss  # return surfaceLocation S in (B,N,W) dimension and loss
 
