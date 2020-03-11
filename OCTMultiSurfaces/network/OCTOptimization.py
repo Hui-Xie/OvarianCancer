@@ -567,7 +567,7 @@ def getBatchLIS_gpu(X):
         lo = torch.ones((B,W), dtype=torch.long, device=device)
         hi = L
         mid = torch.zeros((B,W), dtype=torch.long, device=device)
-        while (lo <= hi).any():
+        while (lo <= hi).any():  # here maybe dead loop, when sigma=0. 
             mid = torch.where(lo <= hi, torch.ceil((lo + hi) / 2.0).long(), mid)
             mid3D = mid.unsqueeze(dim=1)
             X_M_mid = X.gather(1, M.gather(1,mid3D)).squeeze(dim=1)
