@@ -12,7 +12,7 @@ from OCTAugmentation import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiLayerCrossEntropyLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -311,10 +311,18 @@ class SurfacesUnet(BasicModel):
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             layerProb = logits2Prob(xl,dim=1)
-            loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
+            loss_layer = generalizedDiceLoss(layerProb, layerGTs)
+
+            _, C, _, _ = inputs.shape
+            assert C == 5
+            imageGradMagnitude = inputs[:, 3, :, :]
+            layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N+1)
+            multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
+            loss_layer += multiLayerCE(layerProb, layerGTs)
+
             layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
         else:
-            loss_layerDice = 0.0
+            loss_layer = 0.0
 
         mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu, layerConf=layerConf)
 
@@ -324,24 +332,24 @@ class SurfacesUnet(BasicModel):
 
         if useCEReplaceKLDiv:
             CELoss = MultiSurfacesCrossEntropyLoss()
-            loss_surfaceDiv = CELoss(xs, GTs)  # CrossEntropy is a kind of KLDiv
+            loss_surface = CELoss(xs, GTs)  # CrossEntropy is a kind of KLDiv
 
         elif useWeightedDivLoss:
             _, C, _, _ = inputs.shape
             assert C ==5
             imageGradMagnitude = inputs[:, 3, :, :]
-            weight = getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
-            weightedDivLoss = WeightedDivLoss(weight=weight ) # the input given is expected to contain log-probabilities
+            surfaceWeight = getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
+            weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surfaceDiv = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
+            loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
         else:
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
             # the input given is expected to contain log-probabilities
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surfaceDiv = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
+            loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
@@ -358,7 +366,7 @@ class SurfacesUnet(BasicModel):
         weightL1 = 10.0
         loss_L1 = l1Loss(S, GTs)
 
-        loss = loss_layerDice + loss_surfaceDiv + loss_smooth+ loss_L1 * weightL1
+        loss = loss_layer + loss_surface + loss_smooth+ loss_L1 * weightL1
 
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 
