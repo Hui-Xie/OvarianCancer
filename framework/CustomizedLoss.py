@@ -540,9 +540,9 @@ class SmoothSurfaceLoss():
 
 
 # support multiclass CrossEntropy Loss
-class MultiSurfacesCrossEntropyLoss():
-    def __init__(self):
-        pass
+class MultiSurfaceCrossEntropyLoss():
+    def __init__(self,  weight=None):
+        self.m_weight = weight   # B,N,H,W, where N is the num of surfaces.
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)
@@ -552,34 +552,27 @@ class MultiSurfacesCrossEntropyLoss():
         multiclass surface location cross entropy.
         this loss expect the corresponding prob at target location has maximum.
 
-        :param inputx:  raw, unnormalized scores for each class; or logits before softmax, in size: B,N,H,W
+        :param inputx:  softmax probability along H dimension, in size: B,N,H,W
         :param target:  size: B,N,W; indicates surface location
         :return: a scalar
         '''
         B,N,H,W = inputx.shape
         assert (B,N,W) == target.shape
-
-        # convert logits to probability for inputx
-        softmaxInput = logits2Prob(inputx, dim=-2)
+        device = inputx.device
 
         targetIndex = (target +0.5).long().unsqueeze(dim=-2) # size: B,N,1,W
 
-        e =1e-8
-        surfaceProb = torch.gather(softmaxInput, dim=2,index=targetIndex)  # size: B,N,1,W
-        surfaceProb = surfaceProb +e
-        surfaceProb = torch.where(surfaceProb>1, torch.ones_like(surfaceProb), surfaceProb)
-        loss1 = (-(surfaceProb.log())).mean()  #-g_i*log(p_i)
+        targetProb = torch.zeros(inputx.shape, dtype=torch.long, device=device)  # size: B,N,H,W
+        targetProb.scatter_(2, targetIndex, torch.ones_like(targetIndex))
 
-        nonSurfaceProb = softmaxInput.clone()
-        nonSurfaceProb.scatter_(2,targetIndex, torch.zeros_like(targetIndex).float())
-        nonSurfaceProb = torch.where(nonSurfaceProb==1, (1-e)*torch.ones_like(nonSurfaceProb), nonSurfaceProb)
-        loss2 = (-((1.0-nonSurfaceProb).log())).mean()  # -(1-g_i)*log(1-p_i)
-
-        return loss1+loss2
-
-
-
-
+        e = 1e-8
+        inputx = inputx + e
+        inputx = torch.where(inputx >= 1, (1 - e) * torch.ones_like(inputx), inputx)
+        if self.m_weight is not None:
+            loss = -(self.m_weight * (targetProb * inputx.log() + (1 - targetProb) * (1 - inputx).log())).mean()
+        else:
+            loss = -(targetProb * inputx.log() + (1 - targetProb) * (1 - inputx).log()).mean()
+        return loss
 
 # support multiclass CrossEntropy Loss
 class MultiLayerCrossEntropyLoss():
@@ -608,7 +601,10 @@ class MultiLayerCrossEntropyLoss():
         e = 1e-8
         inputx = inputx+e
         inputx = torch.where(inputx>=1, (1-e)*torch.ones_like(inputx), inputx)
-        loss = (-self.m_weight * (targetProb * inputx.log()+(1-targetProb)*(1-inputx).log())).mean()
+        if self.m_weight is not None:
+            loss = -(self.m_weight * (targetProb * inputx.log()+(1-targetProb)*(1-inputx).log())).mean()
+        else:
+            loss = -(targetProb * inputx.log()+(1-targetProb)*(1-inputx).log()).mean()
         return loss
 
 

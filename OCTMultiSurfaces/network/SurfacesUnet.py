@@ -12,7 +12,7 @@ from OCTAugmentation import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiLayerCrossEntropyLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiLayerCrossEntropyLoss, MultiSurfaceCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -298,25 +298,28 @@ class SurfacesUnet(BasicModel):
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
         xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
 
-        '''
-        useProxialIPM = self.getConfigParameter('useProxialIPM')
-        useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
-        usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
-
-        '''
         B,N,H,W = xs.shape
+
         useLayerDice = self.getConfigParameter("useLayerDice")
+        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
+        useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
+        gradWeight = self.getConfigParameter("gradWeight")
+
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
+        surfaceProb = logits2Prob(xs, dim=-2)
+        layerProb = logits2Prob(xl, dim=1)
+
+        _, C, _, _ = inputs.shape
+        assert C == 5
+        imageGradMagnitude = inputs[:, 3, :, :]
+        layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
+        surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
+
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
-            layerProb = logits2Prob(xl,dim=1)
             loss_layer = generalizedDiceLoss(layerProb, layerGTs)
 
-            _, C, _, _ = inputs.shape
-            assert C == 5
-            imageGradMagnitude = inputs[:, 3, :, :]
-            layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N+1)
             multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
             loss_layer += multiLayerCE(layerProb, layerGTs)
 
@@ -324,21 +327,13 @@ class SurfacesUnet(BasicModel):
         else:
             loss_layer = 0.0
 
-        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu, layerConf=layerConf)
-
-        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
-        useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
-        gradWeight = self.getConfigParameter("gradWeight")
+        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
         if useCEReplaceKLDiv:
-            CELoss = MultiSurfacesCrossEntropyLoss()
-            loss_surface = CELoss(xs, GTs)  # CrossEntropy is a kind of KLDiv
+            multiSufaceCE = MultiSurfaceCrossEntropyLoss(weight=surfaceWeight)
+            loss_surface = multiSufaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
         elif useWeightedDivLoss:
-            _, C, _, _ = inputs.shape
-            assert C ==5
-            imageGradMagnitude = inputs[:, 3, :, :]
-            surfaceWeight = getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
             weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
@@ -350,7 +345,6 @@ class SurfacesUnet(BasicModel):
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
             loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-
 
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
         if useSmoothSurface:

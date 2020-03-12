@@ -13,7 +13,7 @@ import torch
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, MultiLayerCrossEntropyLoss
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfaceCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, MultiLayerCrossEntropyLoss
 
 
 def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, padding=0, dilation=1):
@@ -310,9 +310,11 @@ class SurfacesUnet_YufanHe(BasicModel):
         useLayerDice = self.getConfigParameter("useLayerDice")
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
+        surfaceProb = logits2Prob(xs, dim=-2)
+        layerProb = logits2Prob(xl, dim=1)
+
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
-            layerProb = logits2Prob(xl,dim=1)
             loss_layer = generalizedDiceLoss(layerProb, layerGTs)
             # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
 
@@ -324,10 +326,10 @@ class SurfacesUnet_YufanHe(BasicModel):
         else:
             loss_layerDice = 0.0
 
-        mu, sigma2 = computeMuVariance(nn.Softmax(dim=-2)(xs), layerMu=layerMu, layerConf=layerConf)
+        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
-        multiSurfaceCE = MultiSurfacesCrossEntropyLoss()
-        loss_surface = multiSurfaceCE(xs, GTs)  # CrossEntropy is a kind of KLDiv
+        multiSurfaceCE = MultiSurfaceCrossEntropyLoss()
+        loss_surface = multiSurfaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
 
         #ReLU to guarantee layer order

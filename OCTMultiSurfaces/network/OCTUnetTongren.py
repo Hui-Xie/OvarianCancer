@@ -10,7 +10,7 @@ from OCTPrimalDualIPM import *
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfacesCrossEntropyLoss, logits2Prob
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfaceCrossEntropyLoss, logits2Prob
 
 class OCTUnetTongren(BasicModel):
     def __init__(self, numSurfaces=11, N=24):
@@ -275,19 +275,20 @@ class OCTUnetTongren(BasicModel):
         '''
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
 
-        generalizedDiceLoss = GeneralizedDiceLoss()
+        surfaceProb = logits2Prob(xs, dim=-2)
         layerProb = logits2Prob(xl, dim=1)
+        generalizedDiceLoss = GeneralizedDiceLoss()
         loss_layerDice = generalizedDiceLoss(layerProb, layerGTs)
 
         if useCEReplaceKLDiv:
-            CELoss = MultiSurfacesCrossEntropyLoss()
-            loss_surfaceKLDiv = CELoss(xs, GTs)
+            CELoss = MultiSurfaceCrossEntropyLoss()
+            loss_surfaceKLDiv = CELoss(surfaceProb, GTs)
         else:
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
             loss_surfaceKLDiv = klDivLoss(nn.LogSoftmax(dim=-2)(xs), gaussianGTs)
 
         smoothL1Loss = nn.SmoothL1Loss().to(device)
-        mu, sigma2 = computeMuVarianceWithSquare(nn.Softmax(dim=-2)(xs))
+        mu, sigma2 = computeMuVarianceWithSquare(surfaceProb)
         B, N, W = mu.shape
         separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
         S = separationPrimalDualIPM(mu, sigma2)

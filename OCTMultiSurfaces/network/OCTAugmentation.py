@@ -90,7 +90,7 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
 
     return G
 
-def getDivWeightFromImageGradient(imageGradMagnitude, N, gradWeight=10):
+def getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=10):
     """
     weight = 1+ gradWeight*imageGradMagnitude
     :param imageGradMagnitude: size of (B,H,W)
