@@ -142,6 +142,7 @@ def main():
     usePrimalDualIPM = cfg['usePrimalDualIPM']
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
     useLayerDice = cfg['useLayerDice']
+    useLayerCE = cfg['useLayerCE']
     useSmoothSurface = cfg['useSmoothSurface']
     useWeightedDivLoss = cfg['useWeightedDivLoss']
 
@@ -192,6 +193,7 @@ def main():
     net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
     net.updateConfigParameter("gradWeight", gradWeight)
     net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
+    net.updateConfigParameter("useLayerCE", useLayerCE)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"

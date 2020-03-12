@@ -76,6 +76,7 @@ def main():
     numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
     gradChannels = cfg["gradChannels"]
     gradWeight = cfg["gradWeight"]
+    useLayerCE = cfg['useLayerCE']
     useWeightedDivLoss = cfg['useWeightedDivLoss']
 
     slicesPerPatient = cfg["slicesPerPatient"] # 31
@@ -159,6 +160,7 @@ def main():
     net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
     net.updateConfigParameter("gradWeight", gradWeight)
     net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
+    net.updateConfigParameter("useLayerCE", useLayerCE)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"

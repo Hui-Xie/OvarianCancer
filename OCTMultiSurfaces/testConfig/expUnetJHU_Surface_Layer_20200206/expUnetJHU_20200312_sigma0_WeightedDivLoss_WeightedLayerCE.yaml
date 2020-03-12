@@ -104,6 +104,7 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: True
+useLayeCE: True
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True

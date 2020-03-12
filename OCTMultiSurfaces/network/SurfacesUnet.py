@@ -304,6 +304,8 @@ class SurfacesUnet(BasicModel):
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
         gradWeight = self.getConfigParameter("gradWeight")
+        useLayerCE = self.getConfigParameter("useLayerCE")
+        useSmoothSurface = self.getConfigParameter("useSmoothSurface")
 
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
@@ -320,8 +322,9 @@ class SurfacesUnet(BasicModel):
             generalizedDiceLoss = GeneralizedDiceLoss()
             loss_layer = generalizedDiceLoss(layerProb, layerGTs)
 
-            multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
-            loss_layer += multiLayerCE(layerProb, layerGTs)
+            if useLayerCE:
+                multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
+                loss_layer += multiLayerCE(layerProb, layerGTs)
 
             layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
         else:
@@ -346,7 +349,7 @@ class SurfacesUnet(BasicModel):
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
             loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
-        useSmoothSurface = self.getConfigParameter("useSmoothSurface")
+
         if useSmoothSurface:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(mu, GTs)

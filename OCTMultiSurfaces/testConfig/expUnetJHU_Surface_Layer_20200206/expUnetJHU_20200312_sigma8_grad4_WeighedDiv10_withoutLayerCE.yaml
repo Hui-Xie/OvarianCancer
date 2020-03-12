@@ -14,8 +14,8 @@
 #                  and add 4 gradient channels in input.
 #                   use fixed sigma =8
 #                  imagegradient weight =10, weighted DivLoss
-#Mar 11th, 2020,  add weighted layer CE, sigma =0
-#Mar 12th, 2020,  add weighted Surface CE and weighted LayerCE, sigma =0
+#Mar 12th, 2020. It is same with expUnetJHU_20200310_sigma8_grad4_WeighedDiv10.yaml
+#                  Weighted DivLoss, withou Layer CE Loss.
 
 
 
@@ -50,8 +50,8 @@ fold_k:  -1   # -1 means do not use cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-sigma: 0.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:3')   #GPU ID
+sigma: 8.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:0')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
@@ -104,9 +104,9 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: True
-useLayeCE: True
-useCEReplaceKLDiv: True
+useLayeCE: False
+useCEReplaceKLDiv: False
 useSmoothSurface: True
-useWeightedDivLoss: False
+useWeightedDivLoss: True
 
 
