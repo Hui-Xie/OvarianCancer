@@ -607,8 +607,8 @@ class MultiLayerCrossEntropyLoss():
 
         e = 1e-8
         inputx = inputx+e
-        inputx = torch.where(inputx>1, torch.ones_like(inputx), inputx)
-        loss = (-self.m_weight * targetProb * inputx.log()).mean()
+        inputx = torch.where(inputx>=1, (1-e)*torch.ones_like(inputx), inputx)
+        loss = (-self.m_weight * (targetProb * inputx.log()+(1-targetProb)*(1-inputx).log())).mean()
         return loss
 
 
