@@ -565,7 +565,7 @@ class MultiSurfaceCrossEntropyLoss():
         targetProb = torch.zeros(inputx.shape, dtype=torch.long, device=device)  # size: B,N,H,W
         targetProb.scatter_(2, targetIndex, torch.ones_like(targetIndex))
 
-        e = 1e-8
+        e = 1e-6
         inputx = inputx + e
         inputx = torch.where(inputx >= 1, (1 - e) * torch.ones_like(inputx), inputx)
         if self.m_weight is not None:
@@ -598,7 +598,8 @@ class MultiLayerCrossEntropyLoss():
         for k in range(0, N): # N layers
             targetProb[:, k, :, :] = torch.where(k == target, torch.ones_like(target), targetProb[:, k, :, :])
 
-        e = 1e-8
+        e = 1e-6
+        # 1e-8 is not ok, A=(1-e)*torch.ones_like(inputx) will still 1. and (1-A).log() will get -inf.
         inputx = inputx+e
         inputx = torch.where(inputx>=1, (1-e)*torch.ones_like(inputx), inputx)
         if self.m_weight is not None:
@@ -627,10 +628,14 @@ class WeightedDivLoss():
         assert (B,N,H,W) == target.shape
         assert (B,N,H,W) == self.m_weight.shape
 
-        e = 1e-8
+        e = 1e-6
         # 0*np.inf= nan
         # if target=0 -> target.log()= -inf -> logG_P =inf -> loss =nan.
-        logG_P = (target+e).log()-inputxLogProb
+        # 1e-8 is not ok, A=(1-e)*torch.ones_like(inputx) will still 1. and (1-A).log() will get -inf.
+        target = target + e
+        target = torch.where(target >= 1, (1 - e) * torch.ones_like(target), target)
+
+        logG_P = target.log()-inputxLogProb
         logG_P = torch.abs(logG_P)          #torch.where(logG_P >=0, logG_P, -logG_P)
         loss = (self.m_weight * target * logG_P).mean()
         return loss
