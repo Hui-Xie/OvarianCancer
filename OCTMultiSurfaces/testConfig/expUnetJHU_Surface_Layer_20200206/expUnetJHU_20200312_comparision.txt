@@ -1,0 +1,50 @@
+===============Network: expUnetJHU_20200312_sigma0_WeightedDivLoss_WeightedLayerCE ===========
+stdSurfaceError = tensor([0.5512, 0.6683, 0.4220, 0.4710, 0.6300, 0.8816, 0.5738, 0.8472, 1.9621],
+       device='cuda:1')
+muSurfaceError = tensor([2.4857, 3.1218, 2.8755, 3.1059, 2.7792, 2.6778, 2.1450, 3.4770, 3.1646],
+       device='cuda:1')
+patientIDList =['hc01', 'hc02', 'hc03', 'hc04', 'hc05', 'hc06', 'hc07', 'hc08', 'ms01', 'ms02', 'ms03', 'ms04', 'ms05', 'ms06', 'ms07', 'ms08', 'ms09', 'ms10', 'ms11', 'ms12']
+stdError = 0.9544479250907898
+muError = 2.870286226272583
+pixel number of violating surface-separation constraints: 0
+
+
+===============Network: expUnetJHU_20200312_sigma8_WeightedDivLoss_WeightedLayerCE ===========
+stdSurfaceError = tensor([0.3162, 0.7450, 0.4382, 0.3905, 0.6300, 0.6015, 0.7191, 1.2031, 1.8551],
+       device='cuda:2')
+muSurfaceError = tensor([2.4494, 3.0467, 2.9024, 3.1500, 2.7854, 2.5837, 2.0716, 3.6287, 3.1779],
+       device='cuda:2')
+patientIDList =['hc01', 'hc02', 'hc03', 'hc04', 'hc05', 'hc06', 'hc07', 'hc08', 'ms01', 'ms02', 'ms03', 'ms04', 'ms05', 'ms06', 'ms07', 'ms08', 'ms09', 'ms10', 'ms11', 'ms12']
+stdError = 0.9739811420440674
+muError = 2.866204261779785
+pixel number of violating surface-separation constraints: 0
+
+===============Network: expUnetJHU_20200312_sigma8_grad4_WeighedDiv10_withoutLayerCE ===========
+stdSurfaceError = tensor([0.2833, 0.5994, 0.4127, 0.4545, 0.5813, 0.6726, 1.0650, 0.8468, 2.1852],
+       device='cuda:0')
+muSurfaceError = tensor([2.3374, 3.0018, 2.8861, 3.0531, 2.7743, 2.6663, 2.0361, 3.3548, 3.1445],
+       device='cuda:0')
+patientIDList =['hc01', 'hc02', 'hc03', 'hc04', 'hc05', 'hc06', 'hc07', 'hc08', 'ms01', 'ms02', 'ms03', 'ms04', 'ms05', 'ms06', 'ms07', 'ms08', 'ms09', 'ms10', 'ms11', 'ms12']
+stdError = 1.0125483274459839
+muError = 2.8060455322265625
+
+===============Network: expUnetJHU_20200312_WeighedSurfaceCE_WeightedLayerCE ============(second)
+stdSurfaceError = tensor([0.3165, 0.6979, 0.4198, 0.6149, 0.5784, 0.5323, 0.7103, 0.8584, 2.0596],
+       device='cuda:3')
+muSurfaceError = tensor([2.3614, 2.9804, 2.9060, 3.2112, 2.7144, 2.6337, 1.9889, 3.5144, 2.8944],
+       device='cuda:3')
+patientIDList =['hc01', 'hc02', 'hc03', 'hc04', 'hc05', 'hc06', 'hc07', 'hc08', 'ms01', 'ms02', 'ms03', 'ms04', 'ms05', 'ms06', 'ms07', 'ms08', 'ms09', 'ms10', 'ms11', 'ms12']
+stdError = 0.9744219779968262
+muError = 2.8005447387695312
+pixel number of violating surface-separation constraints: 0
+
+==========Test: expUnetJHU_20200310_sigma8_grad4_WeighedDiv10=================(best)
+stdSurfaceError = tensor([0.2732, 0.6839, 0.3396, 0.6034, 0.5759, 0.5107, 0.5726, 0.8381, 1.6305],
+       device='cuda:3')
+muSurfaceError = tensor([2.3254, 3.0739, 2.8640, 3.2426, 2.7366, 2.6346, 1.9727, 3.3561, 2.8859],
+       device='cuda:3')
+patientIDList =['hc01', 'hc02', 'hc03', 'hc04', 'hc05', 'hc06', 'hc07', 'hc08', 'ms01', 'ms02', 'ms03', 'ms04', 'ms05', 'ms06', 'ms07', 'ms08', 'ms09', 'ms10', 'ms11', 'ms12']
+stdError = 0.8567406535148621
+muError = 2.7879691123962402
+pixel number of violating surface-separation constraints: 0
+
