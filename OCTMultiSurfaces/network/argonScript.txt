@@ -6,16 +6,16 @@ qsub -b y -cwd -N jobname -q queueName  -pe smp numSlots -e ~/temp_qsub/Error_jo
 # run at network dir:
 
 # Tongren CV0 test 20200315
-qsub -b y -cwd -N TRCV0 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV0.txt -o ~/temp_qsub/StdOutput_TRCV0.txt  python3.7 ./CVTrainSurfaces.py ../testConfig//expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV0_Sigma20_argon.yaml
+qsub -b y -cwd -N TRCV0 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV0.txt -o ~/temp_qsub/StdOutput_TRCV0.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV0_Sigma20_argon.yaml
 
 # Tongren CV3 test 20200315
-qsub -b y -cwd -N TRCV3 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV3.txt -o ~/temp_qsub/StdOutput_TRCV3.txt  python3.7 ./CVTrainSurfaces.py ../testConfig//expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV3_Sigma20_argon.yaml
+qsub -b y -cwd -N TRCV3 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV3.txt -o ~/temp_qsub/StdOutput_TRCV3.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV3_Sigma20_argon.yaml
 
 # Tongren CV4 test 20200315
-qsub -b y -cwd -N TRCV4 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV4.txt -o ~/temp_qsub/StdOutput_TRCV4.txt  python3.7 ./CVTrainSurfaces.py ../testConfig//expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV4_Sigma20_argon.yaml
+qsub -b y -cwd -N TRCV4 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV4.txt -o ~/temp_qsub/StdOutput_TRCV4.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV4_Sigma20_argon.yaml
 
 # Tongren CV7 test 20200315
-qsub -b y -cwd -N TRCV7 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV7.txt -o ~/temp_qsub/StdOutput_TRCV7.txt  python3.7 ./CVTrainSurfaces.py ../testConfig//expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV7_Sigma20_argon.yaml
+qsub -b y -cwd -N TRCV7 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV7.txt -o ~/temp_qsub/StdOutput_TRCV7.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV7_Sigma20_argon.yaml
 
 # Tongren CV9 test 20200315
-qsub -b y -cwd -N TRCV9 -q COE-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV9.txt -o ~/temp_qsub/StdOutput_TRCV9.txt  python3.7 ./CVTrainSurfaces.py ../testConfig//expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV9_Sigma20_argon.yaml
+qsub -b y -cwd -N TRCV9 -q COE-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV9.txt -o ~/temp_qsub/StdOutput_TRCV9.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV9_Sigma20_argon.yaml
