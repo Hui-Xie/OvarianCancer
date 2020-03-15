@@ -1,5 +1,7 @@
 # support various input size
 
+# need python package:  pillow(6.2.1), opencv, pytorch, torchvision, tensorboard
+
 import sys
 import yaml
 import random
