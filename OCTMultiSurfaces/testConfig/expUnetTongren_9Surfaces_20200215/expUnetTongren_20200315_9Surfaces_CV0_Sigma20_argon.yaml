@@ -1,0 +1,99 @@
+# base on corrected and refined Ground truth with guarantee of surface-separation constraint.
+# total patient 47 which excluded 2 ill patients.
+# raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
+# convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_20200215.py
+# numSurface = 9 as deleted inaccurate surface 8 and surface 2
+
+# Use basic Unet + KLDLoss for OCT multisurface
+# Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss + IPM
+
+# Mar 13th, 2020: wegithed divLoss, layerdice, reference from layer mu, sigma=20
+
+dataDir: "/Users/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K_Folds: 10
+fold_k:  0   # k
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+
+# when do not use cross validation:
+# training data:  dataDir + training + images.npy
+#         label: dataDir + training + surfaces.npy
+#         IDs  : dataDir + training + patientID.json
+
+# validation data:  dataDir + validation + images.npy
+#           label: dataDir + validation + surfaces.npy
+#           IDs  : dataDir + validation + patientID.json
+
+# test data:  dataDir + test + images.npy
+#     label: dataDir + test + surfaces.npy
+#     IDs  : dataDir + test + patientID.json
+
+groundTruthInteger: True
+sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:0')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 4
+
+network: "SurfacesUnet"
+inputHight: 496   # original height
+inputWidth: 512   # rawImageWidth
+scaleNumerator: 1
+scaleDenominator: 1
+inputChannels: 5 # rawImage + gradChannels
+nLayers: 7
+numSurfaces: 9  # num of surfaces in an image
+startFilters: 24  # the num of filters in first layer of Unet
+gradChannels: 4   # the adde gradient channels beside raw image channel
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+
+# some physical parameter of images
+slicesPerPatient: 31
+hPixelSize: 3.870  # unit: micrometer, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt-pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #Test-Time Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+# data augmentation
+
+netPath: "/Users/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "" # reserve for pretrained network.
+outputDir: ""
+
+# do not use these loss function
+lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
+lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
+lossFunc1: "nn.SmoothL1Loss().to(device)"
+lossFunc1Epochs: 500
+
+# Proximal IPM Optimization
+useProxialIPM: False
+learningStepIPM: 0.1
+maxIterationIPM: 100
+criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
+
+useDynamicProgramming: False
+usePrimalDualIPM: True
+useLayerDice: True
+useLayerCE: False
+useCEReplaceKLDiv: False
+useSmoothSurface: True
+useWeightedDivLoss: True
+
+
