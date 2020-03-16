@@ -1,18 +1,31 @@
-# base on corrected and refined Ground truth with guarantee of surface-separation constraint.
-# total patient 47 which excluded 2 ill patients.
-# raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
-# convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_20200215.py
-# numSurface = 9 as deleted inaccurate surface 8 and surface 2
-
+# train and test JHU OCT data
 # Use basic Unet + KLDLoss for OCT multisurface
-# Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss + IPM
+# Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss
+# Feb 28th, 2020, User SurfacesNet, sigma= 8
+# March 02th, 2020, use dynamic Sigma
+# Mar 06th, 2020, use dynamic sigma, and suport back propagating sigma;
+#                 use layer2SurfaceMu.
+#                 Expriment shows: After about 200 epochs, surface 8 error reduce down form 20 to 3.
+#                 without guarantee layer order modification.
+#Mar 7th, 2020. Add LayerConf and guarantee layer order.
+#Mar 9th, 2020, Layerconf and Sigma=8
+#                and add 3 gradient channels in input.
+#Mar 10th, 2020,  add update GaussianDitr with image grdient magnitude
+#                  and add 4 gradient channels in input.
+#                   use fixed sigma =8
+#                  imagegradient weight =10, weighted DivLoss
+#Mar 12th, 2020. It is same with expUnetJHU_20200310_sigma8_grad4_WeighedDiv10.yaml
+#                  Weighted DivLoss, withou Layer CE Loss.
+#Mar 13th, 2020, without LayerCE, without SmoothLoss.
+#Mar 176th, 2020, ablation: delete referring surface location from layer  segmentation.
 
-# Mar 13th, 2020: wegithed divLoss, layerdice, reference from layer mu, sigma=20
 
-dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+
+dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K_Folds: 10
-fold_k:  2   # k
+K_Folds: 0
+fold_k:  -1   # -1 means do not use cross validation
+# when use cross validation:
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -38,15 +51,15 @@ fold_k:  2   # k
 #     label: dataDir + test + surfaces.npy
 #     IDs  : dataDir + test + patientID.json
 
-groundTruthInteger: True
-sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:2')   #GPU ID
+groundTruthInteger: False
+sigma: 8.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:3')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
 network: "SurfacesUnet"
-inputHight: 496   # original height
-inputWidth: 512   # rawImageWidth
+inputHight: 128   # original height
+inputWidth: 1024   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 5 # rawImage + gradChannels
@@ -57,8 +70,8 @@ gradChannels: 4   # the adde gradient channels beside raw image channel
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
-slicesPerPatient: 31
-hPixelSize: 3.870  # unit: micrometer, in y/height direction
+slicesPerPatient: 49
+hPixelSize: 3.86725  # unit: micrometer, in y/height direction
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate
@@ -72,8 +85,10 @@ TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: "" # reserve for pretrained network.
+netPath: "/home/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
+# if loadNetPath !="", netPath will be replaced by loadNetPath
+# below loadNetPath is copied from "/home/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
+loadNetPath:  ""  # this is pretrained network
 outputDir: ""
 
 # do not use these loss function
@@ -91,7 +106,7 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: True
-useReferSurfaceFromLayer: True
+useReferSurfaceFromLayer: False
 useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True

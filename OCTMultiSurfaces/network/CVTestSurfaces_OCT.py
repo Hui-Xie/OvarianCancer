@@ -112,6 +112,7 @@ def main():
     useDynamicProgramming = cfg['useDynamicProgramming']
     usePrimalDualIPM = cfg['usePrimalDualIPM']
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
+    useReferSurfaceFromLayer = cfg['useReferSurfaceFromLayer']
 
     if -1==k and 0==K:  # do not use cross validation
         testImagesPath = os.path.join(dataDir, "test", f"images.npy")
@@ -161,6 +162,7 @@ def main():
     net.updateConfigParameter("gradWeight", gradWeight)
     net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
     net.updateConfigParameter("useLayerCE", useLayerCE)
+    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"

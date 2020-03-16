@@ -143,6 +143,7 @@ def main():
     usePrimalDualIPM = cfg['usePrimalDualIPM']
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
     useLayerDice = cfg['useLayerDice']
+    useReferSurfaceFromLayer = cfg['useReferSurfaceFromLayer']
     useLayerCE = cfg['useLayerCE']
     useSmoothSurface = cfg['useSmoothSurface']
     useWeightedDivLoss = cfg['useWeightedDivLoss']
@@ -191,6 +192,7 @@ def main():
     net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
     net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
     net.updateConfigParameter("useLayerDice", useLayerDice)
+    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
     net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
     net.updateConfigParameter("gradWeight", gradWeight)
     net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)

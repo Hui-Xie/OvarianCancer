@@ -301,11 +301,13 @@ class SurfacesUnet(BasicModel):
         B,N,H,W = xs.shape
 
         useLayerDice = self.getConfigParameter("useLayerDice")
+        useReferSurfaceFromLayer = self.getConfigParameter("useReferSurfaceFromLayer")
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
         gradWeight = self.getConfigParameter("gradWeight")
         useLayerCE = self.getConfigParameter("useLayerCE")
         useSmoothSurface = self.getConfigParameter("useSmoothSurface")
+
 
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
@@ -326,7 +328,8 @@ class SurfacesUnet(BasicModel):
                 multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
                 loss_layer += multiLayerCE(layerProb, layerGTs)
 
-            layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
+            if useReferSurfaceFromLayer:
+                layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
         else:
             loss_layer = 0.0
 
