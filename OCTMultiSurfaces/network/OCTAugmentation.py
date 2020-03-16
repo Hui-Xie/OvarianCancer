@@ -210,6 +210,19 @@ def layerProb2SurfaceMu(layerProb):
     But because layerProb is not strict order, and maybe some layers are lacking, it is more complicated than
     a reverse process of getLayerLabels.
 
+    We use a AScan as an example to explain this algorithm.
+
+    1   from layerProb using argmax along N layers dimension,
+        we  can get possibleLayerSeg (0000011112212333) where digital 0-3 indicate different layer.
+        one 1 inside a block of 2 indicates layer mislocation;
+    2   A should-be layer Seg  should be (0000011112222333) according to layer order principle,
+        compute the number of equal elements in above 2 sequences.  bigger number means big confidence;
+        and this confidence copy to all surface points in this Ascan;
+    3   compute the gradient of above sequence  (0000011112212333),
+        non-zero gradient means possible surface points;
+    4   finally, average same-layer possible locations,  and then fill missing Layer location (eg. for 0003333444 case )
+        by layer order principle, to get final surface location;
+
 
     :param layerProb:  softmax probability of size (B,N+1,H,W), where N is the number of surfaces
     :return: surfaceMu: in size (B,N,W) with float
