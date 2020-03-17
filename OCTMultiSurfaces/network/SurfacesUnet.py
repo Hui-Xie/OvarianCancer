@@ -302,6 +302,7 @@ class SurfacesUnet(BasicModel):
 
         useLayerDice = self.getConfigParameter("useLayerDice")
         useReferSurfaceFromLayer = self.getConfigParameter("useReferSurfaceFromLayer")
+        usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
         useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
         useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
         gradWeight = self.getConfigParameter("gradWeight")
@@ -359,8 +360,11 @@ class SurfacesUnet(BasicModel):
         else:
             loss_smooth = 0.0
 
-        separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
-        S = separationPrimalDualIPM(mu, sigma2)
+        if usePrimalDualIPM:
+            separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
+            S = separationPrimalDualIPM(mu, sigma2)
+        else:
+            S = mu
 
         l1Loss = nn.SmoothL1Loss().to(device)
         weightL1 = 10.0

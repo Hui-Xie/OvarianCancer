@@ -227,7 +227,7 @@ def main():
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
-    pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red',  'tab:olive', 'tab:brown', 'tab:pink',  'tab:purple','tab:cyan']
+    pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
     assert S <= len(pltColors)
     for b in range(B):
         if "OCT_Tongren" in dataDir:

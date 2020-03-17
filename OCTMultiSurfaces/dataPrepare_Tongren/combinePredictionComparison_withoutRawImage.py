@@ -63,8 +63,7 @@ subplotRow = 1
 subplotCol = 3
 f.set_size_inches(W*subplotCol/float(DPI), H*subplotRow/float(DPI))
 
-
-pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red',  'tab:olive', 'tab:brown', 'tab:pink',  'tab:purple','tab:cyan']
+pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
 assert S <= len(pltColors)
 
 plt.margins(0)
