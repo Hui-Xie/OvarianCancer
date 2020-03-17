@@ -227,6 +227,8 @@ def main():
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
+    pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red',  'tab:olive', 'tab:brown', 'tab:pink',  'tab:purple','tab:cyan']
+    assert S <= len(pltColors)
     for b in range(B):
         if "OCT_Tongren" in dataDir:
             # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
@@ -276,13 +278,13 @@ def main():
         subplot2 = plt.subplot(subplotRow, subplotCol, 2)
         subplot2.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.7)
+            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
         subplot2.axis('off')
 
         subplot3 = plt.subplot(subplotRow, subplotCol, 3)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.7)
+            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
         subplot3.axis('off')
 
         if MarkGTDisorder:

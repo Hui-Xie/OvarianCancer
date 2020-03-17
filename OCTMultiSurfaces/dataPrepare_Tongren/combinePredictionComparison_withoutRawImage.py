@@ -6,7 +6,7 @@
 patientID = "120030_OD_3477"
 OCTSlice = 15
 
-predDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/OCTUnetTongren/expUnetTongren_20200313_9Surfaces_CV5_Sigma20/testResult"
+predDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/SurfacesUnet/expUnetTongren_20200313_9Surfaces_CV5_Sigma20/testResult"
 patientID_Index = patientID+f"_OCT{OCTSlice:02d}"
 predImagePath = predDir+ "/"+ patientID_Index+"_Image_GT_Predict.png"
 # "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/OCTUnetTongren/expUnetTongren_9Surfaces_20200215_CV5/testResult/440_OD_5194_OCT16_Image_GT_Predict.png"
@@ -60,8 +60,9 @@ S = Num_Surfaces
 f = plt.figure(frameon=False)
 DPI = f.dpi
 subplotRow = 1
-subplotCol = 4
+subplotCol = 3
 f.set_size_inches(W*subplotCol/float(DPI), H*subplotRow/float(DPI))
+
 
 pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red',  'tab:olive', 'tab:brown', 'tab:pink',  'tab:purple','tab:cyan']
 assert S <= len(pltColors)
@@ -69,24 +70,20 @@ assert S <= len(pltColors)
 plt.margins(0)
 plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
-subplot1 = plt.subplot(subplotRow, subplotCol, 1)
-subplot1.imshow(rawImage)
-subplot1.axis('off')
-
-subplot2 = plt.subplot(subplotRow, subplotCol, 2)
+subplot2 = plt.subplot(subplotRow, subplotCol, 1)
 subplot2.imshow(gtImage)
 subplot2.axis('off')
 
-subplot3 = plt.subplot(subplotRow, subplotCol, 3)
+subplot3 = plt.subplot(subplotRow, subplotCol, 2)
 subplot3.imshow(rawImage, cmap='gray')
 for s in range(0, S):
     subplot3.plot(range(0, W), patientSurfacesArray[OCTSlice-1, s, :], pltColors[s], linewidth=0.9)
 subplot3.axis('off')
 
-subplot4 = plt.subplot(subplotRow, subplotCol, 4)
+subplot4 = plt.subplot(subplotRow, subplotCol, 3)
 subplot4.imshow(predImage)
 subplot4.axis('off')
 
 
-plt.savefig(os.path.join(outputDir, patientID_Index + "_Raw_GT_OCTExplorer_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_OCTExplorer_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()

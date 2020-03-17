@@ -323,14 +323,14 @@ def main():
 
         subplot2 = plt.subplot(subplotRow, subplotCol, 2)
         subplot2.imshow(imageb, cmap='gray')
-        subplot2.plot(lumenGTLabel[:, 0], lumenGTLabel[:, 1], linewidth=0.7)
-        subplot2.plot(mediaGTLabel[:, 0], mediaGTLabel[:, 1], linewidth=0.7)
+        subplot2.plot(lumenGTLabel[:, 0], lumenGTLabel[:, 1], linewidth=0.9)
+        subplot2.plot(mediaGTLabel[:, 0], mediaGTLabel[:, 1], linewidth=0.9)
         subplot2.axis('off')
 
         subplot3 = plt.subplot(subplotRow, subplotCol, 3)
         subplot3.imshow(imageb, cmap='gray')
         for s in range(0, S):
-            subplot3.plot(cartesianLabel[s,:,0], cartesianLabel[s,:,1], linewidth=0.7)
+            subplot3.plot(cartesianLabel[s,:,0], cartesianLabel[s,:,1], linewidth=0.9)
         subplot3.axis('off')
 
 
