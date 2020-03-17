@@ -40,7 +40,7 @@ fold_k:  2   # k
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:2')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
