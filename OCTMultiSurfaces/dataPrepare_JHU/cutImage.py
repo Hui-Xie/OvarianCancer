@@ -1,5 +1,5 @@
-imagePath1 = "/home/sheen/tempWork/hc01_spectralis_macula_v1_s1_R_22_GT_Predict_NoSmoothLoss.png"
-imagePath2 = "/home/sheen/tempWork/hc01_spectralis_macula_v1_s1_R_22_GT_Predict_WithSmoothLoss.png"
+imagePath1 = "/home/sheen/tempWork/hc02_spectralis_macula_v1_s1_R_21_GT_Predict_NoIPM.png"
+imagePath2 = "/home/sheen/tempWork/hc02_spectralis_macula_v1_s1_R_21_GT_Predict_WithIPM.png"
 outputDir = "/home/sheen/tempWork"
 
 import matplotlib.image as mpimg
@@ -10,9 +10,9 @@ image1 = mpimg.imread(imagePath1)
 image2 = mpimg.imread(imagePath2)  # H,W,4
 
 
-w = 450
+w = 400
 h = 0
-W = 120
+W = 200
 H = 128
 
 gtImage = image1[0:H, w:w+W,:]
@@ -40,5 +40,5 @@ subplot3 = plt.subplot(subplotRow, subplotCol, 3)
 subplot3.imshow(goodImage)
 subplot3.axis('off')
 
-plt.savefig(os.path.join(outputDir, "hc01_spectralis_macula_v1_s1_R_22_GT_NoSmooth_WithSmooth.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.savefig(os.path.join(outputDir, "hc02_spectralis_macula_v1_s1_R_21_GT_NoIPM_WithIPM.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
