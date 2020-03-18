@@ -44,7 +44,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    OutputPredictImages = False
+    OutputPredictImages = True
     Output2Images = True
 
     # parse config file
