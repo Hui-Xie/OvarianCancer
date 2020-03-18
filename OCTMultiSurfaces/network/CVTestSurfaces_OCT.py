@@ -255,8 +255,12 @@ def main():
         DPI = f.dpi
 
         if Output2Images:
-            subplotRow = 1
-            subplotCol = 2
+            if "OCT_Tongren" in dataDir:
+                subplotRow = 1
+                subplotCol = 2
+            else:
+                subplotRow = 2
+                subplotCol = 1
             f.set_size_inches(W*subplotCol / float(DPI), H * subplotRow / float(DPI))
         else:
             if W/H > 16/9:  # normal screen resolution rate is 16:9
@@ -300,7 +304,7 @@ def main():
         if "OCT_Tongren" in dataDir:
             subplot2.legend(surfaceNames, loc='lower center', ncol=4)
         else:
-            subplot2.legend(surfaceNames, loc='upper left', ncol=len(pltColors))
+            subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
         subplot2.axis('off')
 
         subplotIndex += 1
