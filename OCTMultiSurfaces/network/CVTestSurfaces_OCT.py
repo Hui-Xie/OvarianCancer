@@ -46,6 +46,7 @@ def main():
     MarkPredictDisorder = False
     OutputPredictImages = True
     Output2Images = True
+    needLegend = False
 
     # parse config file
     configFile = sys.argv[1]
@@ -301,10 +302,11 @@ def main():
         subplot2.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
             subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
-        if "OCT_Tongren" in dataDir:
-            subplot2.legend(surfaceNames, loc='lower center', ncol=4)
-        else:
-            subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+        if needLegend:
+            if "OCT_Tongren" in dataDir:
+                subplot2.legend(surfaceNames, loc='lower center', ncol=4)
+            else:
+                subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
         subplot2.axis('off')
 
         subplotIndex += 1
