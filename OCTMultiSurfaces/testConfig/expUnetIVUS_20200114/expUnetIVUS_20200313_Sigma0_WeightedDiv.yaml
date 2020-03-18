@@ -48,7 +48,7 @@ fold_k:  -1   # no cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussianized  ground truth, in float
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 5
 
 network: "SurfacesUnet"
@@ -100,6 +100,7 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: True
+useReferSurfaceFromLayer: True
 useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True

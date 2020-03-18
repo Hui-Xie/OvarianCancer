@@ -72,7 +72,8 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    OutputPredictImages = False
+    OutputPredictImages = True
+    Output2Images = True
 
     # parse config file
     configFile = sys.argv[1]
@@ -197,6 +198,7 @@ def main():
     net.updateConfigParameter("gradWeight", gradWeight)
     net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
     net.updateConfigParameter("useLayerCE", useLayerCE)
+    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
@@ -264,12 +266,8 @@ def main():
     testGts = testGts.cpu().numpy()
     patientIDList = []
 
-    outputTxtDir = os.path.join(outputDir, "text")
-    outputImageDir = os.path.join(outputDir, "images")
-    if not os.path.exists(outputTxtDir):
-        os.makedirs(outputTxtDir)  # recursive dir creation
-    if not os.path.exists(outputImageDir):
-        os.makedirs(outputImageDir)  # recursive dir creation
+    pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
+    assert S <= len(pltColors)
 
     polarConverter = PolarCartesianConverter((384,384),192, 192, 192, 360)
 
@@ -306,35 +304,46 @@ def main():
         DPI = f.dpi
         W=H=384
         if W/H > 16/9:  # normal screen resolution rate is 16:9
-            f.set_size_inches(W/ float(DPI), H*3 / float(DPI))
             subplotRow = 3
             subplotCol = 1
         else:
-            f.set_size_inches(W*3/float(DPI), H/float(DPI))
             subplotRow = 1
             subplotCol = 3
+        if Output2Images:
+            subplotRow = 1
+            subplotCol = 2
+        f.set_size_inches(W * subplotCol / float(DPI), H*subplotRow / float(DPI))
 
         plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
-        subplot1 = plt.subplot(subplotRow, subplotCol, 1)
-        subplot1.imshow(imageb, cmap='gray')
-        subplot1.axis('off')
+        subplotIndex = 0
 
-        subplot2 = plt.subplot(subplotRow, subplotCol, 2)
+        if not Output2Images:
+            subplotIndex += 1
+            subplot1 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+            subplot1.imshow(imageb, cmap='gray')
+            subplot1.axis('off')
+
+        subplotIndex += 1
+        subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot2.imshow(imageb, cmap='gray')
         subplot2.plot(lumenGTLabel[:, 0], lumenGTLabel[:, 1], linewidth=0.9)
         subplot2.plot(mediaGTLabel[:, 0], mediaGTLabel[:, 1], linewidth=0.9)
         subplot2.axis('off')
 
-        subplot3 = plt.subplot(subplotRow, subplotCol, 3)
+        subplotIndex += 1
+        subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot3.imshow(imageb, cmap='gray')
         for s in range(0, S):
             subplot3.plot(cartesianLabel[s,:,0], cartesianLabel[s,:,1], linewidth=0.9)
         subplot3.axis('off')
 
 
-        plt.savefig(os.path.join(outputImageDir, patientID + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+        if Output2Images:
+            plt.savefig(os.path.join(outputImageDir, patientID + "_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+        else:
+            plt.savefig(os.path.join(outputImageDir, patientID + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     # check testOutputs whehter violate surface-separation constraints
