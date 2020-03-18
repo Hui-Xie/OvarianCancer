@@ -64,6 +64,7 @@ subplotCol = 3
 f.set_size_inches(W*subplotCol/float(DPI), H*subplotRow/float(DPI))
 
 pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
+surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
 assert S <= len(pltColors)
 
 plt.margins(0)
@@ -77,6 +78,7 @@ subplot3 = plt.subplot(subplotRow, subplotCol, 2)
 subplot3.imshow(rawImage, cmap='gray')
 for s in range(0, S):
     subplot3.plot(range(0, W), patientSurfacesArray[OCTSlice-1, s, :], pltColors[s], linewidth=0.9)
+subplot3.legend(surfaceNames, loc='lower center', ncol=4)
 subplot3.axis('off')
 
 subplot4 = plt.subplot(subplotRow, subplotCol, 3)

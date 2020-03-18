@@ -47,6 +47,7 @@ def main():
     MarkGTDisorder = False
     MarkPredictDisorder = True
     OutputPredictImages = True
+    Output2Images =True
 
     # parse config file
     configFile = sys.argv[1]
@@ -204,68 +205,94 @@ def main():
     testOutputs = testOutputs.cpu().numpy()
     testGts = testGts.cpu().numpy()
     patientIDList = []
+
+    pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink', 'tab:red',
+                 'tab:cyan']
+    assert S <= len(pltColors)
+
     for b in range(B):
         if "OCT_Tongren" in dataDir:
             # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
             patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
             if "_OCT01" in patientID_Index:
                 patientIDList.append(extractPaitentID(testIDs[b]))
+            surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
         if "OCT_JHU" in dataDir:
             # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
             patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_19
             patient = patientID_Index[0:4] # e.g. hc01
             if "_s1_R_19" in patientID_Index and patient not in patientIDList:
                 patientIDList.append(patient)
+            surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-ONL','ELM', 'IS-OS', 'OS-RPE', 'BM']
 
         if not OutputPredictImages:
             continue
 
         f = plt.figure(frameon=False)
         DPI = f.dpi
-        if W/H > 16/9:  # normal screen resolution rate is 16:9
-            f.set_size_inches(W/ float(DPI), H*3 / float(DPI))
-            subplotRow = 3
-            subplotCol = 1
-        else:
-            f.set_size_inches(W*3/float(DPI), H/float(DPI))
+
+        if Output2Images:
             subplotRow = 1
-            subplotCol = 3
+            subplotCol = 2
+            f.set_size_inches(W*subplotCol / float(DPI), H * subplotRow / float(DPI))
+        else:
+            if W/H > 16/9:  # normal screen resolution rate is 16:9
+                f.set_size_inches(W/ float(DPI), H*3 / float(DPI))
+                subplotRow = 3
+                subplotCol = 1
+            else:
+                f.set_size_inches(W*3/float(DPI), H/float(DPI))
+                subplotRow = 1
+                subplotCol = 3
 
         plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
-        subplot1 = plt.subplot(subplotRow, subplotCol, 1)
-        subplot1.imshow(images[b,].squeeze(), cmap='gray')
-        if MarkGTDisorder:
-            gt0 = testGts[b, 0:-1, :]
-            gt1 = testGts[b, 1:,   :]
-            errorLocations = np.nonzero(gt0>gt1)  # return as tuple
-            if len(errorLocations[0]) > 0:
-                subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')  # red for gt disorder
-        if MarkPredictDisorder:
-            predict0 = testOutputs[b, 0:-1, :]
-            predict1 = testOutputs[b, 1:,   :]
-            errorLocations = np.nonzero(predict0 > predict1)  # return as tuple
-            if len(errorLocations[0]) > 0:
-                subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
-        subplot1.axis('off')
+        subplotIndex = 0
 
-        subplot2 = plt.subplot(subplotRow, subplotCol, 2)
+        if not Output2Images:
+            subplotIndex += 1
+            subplot1 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+            subplot1.imshow(images[b,].squeeze(), cmap='gray')
+            if MarkGTDisorder:
+                gt0 = testGts[b, 0:-1, :]
+                gt1 = testGts[b, 1:,   :]
+                errorLocations = np.nonzero(gt0>gt1)  # return as tuple
+                if len(errorLocations[0]) > 0:
+                    subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')  # red for gt disorder
+            if MarkPredictDisorder:
+                predict0 = testOutputs[b, 0:-1, :]
+                predict1 = testOutputs[b, 1:,   :]
+                errorLocations = np.nonzero(predict0 > predict1)  # return as tuple
+                if len(errorLocations[0]) > 0:
+                    subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
+            subplot1.axis('off')
+
+
+        subplotIndex +=1
+        subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot2.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), linewidth=0.4)
+            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.4)
+        subplot2.legend(surfaceNames, loc='lower center', ncol=4)
         subplot2.axis('off')
 
-        subplot3 = plt.subplot(subplotRow, subplotCol, 3)
+
+        subplotIndex += 1
+        subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
-            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), linewidth=0.4)
+            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.4)
         subplot3.axis('off')
 
-        if MarkGTDisorder:
-            plt.savefig(os.path.join(outputDir, patientID_Index + "_MarkedImage_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+
+        if not Output2Images:
+            if MarkGTDisorder:
+                plt.savefig(os.path.join(outputDir, patientID_Index + "_MarkedImage_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+            else:
+                plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         else:
-            plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+            plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     # check testOutputs whehter violate surface-separation constraints
