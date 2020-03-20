@@ -316,10 +316,13 @@ class SurfacesUnet(BasicModel):
         layerProb = logits2Prob(xl, dim=1)
 
         _, C, _, _ = inputs.shape
-        assert C == 5
-        imageGradMagnitude = inputs[:, 3, :, :]
-        layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
-        surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
+        if C == 5:
+            imageGradMagnitude = inputs[:, 3, :, :]
+            layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
+            surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
+        else:
+            layerWeight = None
+            surfaceWeight = None
 
         if useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
