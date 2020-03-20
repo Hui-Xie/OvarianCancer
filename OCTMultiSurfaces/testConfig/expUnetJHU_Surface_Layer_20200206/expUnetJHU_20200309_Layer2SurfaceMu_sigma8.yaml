@@ -57,7 +57,7 @@ nLayers: 7
 numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 0   # the adde gradient channels beside raw image channel
-
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
 slicesPerPatient: 49
@@ -96,7 +96,10 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: True
+useReferSurfaceFromLayer: True
+useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
+useWeightedDivLoss: True
 
 
