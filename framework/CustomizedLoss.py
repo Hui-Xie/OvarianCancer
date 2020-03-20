@@ -626,7 +626,8 @@ class WeightedDivLoss():
         '''
         B,N,H,W = inputxLogProb.shape
         assert (B,N,H,W) == target.shape
-        assert (B,N,H,W) == self.m_weight.shape
+        if self.m_weight is not None:
+            assert (B,N,H,W) == self.m_weight.shape
 
         e = 1e-6
         # 0*np.inf= nan
@@ -637,7 +638,10 @@ class WeightedDivLoss():
 
         logG_P = target.log()-inputxLogProb
         logG_P = torch.abs(logG_P)          #torch.where(logG_P >=0, logG_P, -logG_P)
-        loss = (self.m_weight * target * logG_P).mean()
+        if self.m_weight is not None:
+            loss = (self.m_weight * target * logG_P).mean()
+        else:
+            loss = (target * logG_P).mean()
         return loss
 
 
