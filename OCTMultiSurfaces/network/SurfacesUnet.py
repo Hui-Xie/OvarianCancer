@@ -300,15 +300,7 @@ class SurfacesUnet(BasicModel):
 
         B,N,H,W = xs.shape
 
-        useLayerDice = self.getConfigParameter("useLayerDice")
-        useReferSurfaceFromLayer = self.getConfigParameter("useReferSurfaceFromLayer")
-        usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
-        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
-        useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
-        gradWeight = self.getConfigParameter("gradWeight")
-        useLayerCE = self.getConfigParameter("useLayerCE")
-        useSmoothSurface = self.getConfigParameter("useSmoothSurface")
-
+        hps = self.hps
 
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
@@ -319,31 +311,31 @@ class SurfacesUnet(BasicModel):
         if C == 5:
             imageGradMagnitude = inputs[:, 3, :, :]
             layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
-            surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=gradWeight)
+            surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=hps.gradWeight)
         else:
             layerWeight = None
             surfaceWeight = None
 
-        if useLayerDice:
+        if hps.useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             loss_layer = generalizedDiceLoss(layerProb, layerGTs)
 
-            if useLayerCE:
+            if hps.useLayerCE:
                 multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
                 loss_layer += multiLayerCE(layerProb, layerGTs)
 
-            if useReferSurfaceFromLayer:
+            if hps.useReferSurfaceFromLayer:
                 layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
         else:
             loss_layer = 0.0
 
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
-        if useCEReplaceKLDiv:
+        if hps.useCEReplaceKLDiv:
             multiSufaceCE = MultiSurfaceCrossEntropyLoss(weight=surfaceWeight)
             loss_surface = multiSufaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
-        elif useWeightedDivLoss:
+        elif hps.useWeightedDivLoss:
             weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
@@ -357,13 +349,13 @@ class SurfacesUnet(BasicModel):
             loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
 
-        if useSmoothSurface:
+        if hps.useSmoothSurface:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(mu, GTs)
         else:
             loss_smooth = 0.0
 
-        if usePrimalDualIPM:
+        if hps.usePrimalDualIPM:
             separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
             S = separationPrimalDualIPM(mu, sigma2)
         else:

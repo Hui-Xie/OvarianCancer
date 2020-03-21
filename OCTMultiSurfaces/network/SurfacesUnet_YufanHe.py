@@ -307,13 +307,15 @@ class SurfacesUnet_YufanHe(BasicModel):
 
 
         B,N,H,W = xs.shape
-        useLayerDice = self.getConfigParameter("useLayerDice")
+
+        hps = self.hps
+
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
         surfaceProb = logits2Prob(xs, dim=-2)
         layerProb = logits2Prob(xl, dim=1)
 
-        if useLayerDice:
+        if hps.useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             loss_layer = generalizedDiceLoss(layerProb, layerGTs)
             # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.

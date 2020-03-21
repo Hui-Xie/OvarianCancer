@@ -27,6 +27,7 @@ sys.path.append("../..")
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
+from framework.ConfigReader import ConfigReader
 
 
 def printUsage(argv):
@@ -43,158 +44,77 @@ def main():
 
     # parse config file
     configFile = sys.argv[1]
-    with open(configFile) as file:
-        cfg = yaml.load(file, Loader=yaml.FullLoader)
+    hps = ConfigReader(configFile)
+    print(f"Experiment: {hps.experimentName}")
 
-    experimentName = getStemName(configFile, removedSuffix=".yaml")
-    print(f"Experiment: {experimentName}")
+    if -1==hps.k and 0==hps.K:  # do not use cross validation
+        trainImagesPath = os.path.join(hps.dataDir, "training", f"images.npy")
+        trainLabelsPath = os.path.join(hps.dataDir, "training", f"surfaces.npy")
+        trainIDPath = os.path.join(hps.dataDir, "training", f"patientID.json")
 
-    dataDir = cfg["dataDir"]
-    K = cfg["K_Folds"]
-    k = cfg["fold_k"]
-
-    groundTruthInteger = cfg["groundTruthInteger"]
-
-    sigma = cfg["sigma"]  # for gausssian ground truth
-    device = eval(cfg["device"])  # convert string to class object.
-    batchSize = cfg["batchSize"]
-
-    network = cfg["network"]#
-    inputHight= cfg["inputHight"] # 192
-    inputWidth= cfg["inputWidth"] #1060  # rawImageWidth +2 *lacingWidth
-    scaleNumerator= cfg["scaleNumerator"] #2
-    scaleDenominator= cfg["scaleDenominator"] #3
-    inputChannels= cfg["inputChannels"] #1
-    nLayers= cfg["nLayers"] #7
-    numSurfaces = cfg["numSurfaces"]
-    numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
-    gradChannels= cfg["gradChannels"]
-    gradWeight = cfg["gradWeight"]
-
-    slicesPerPatient = cfg["slicesPerPatient"] # 31
-    hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
-
-    augmentProb = cfg["augmentProb"]
-    gaussianNoiseStd = cfg["gaussianNoiseStd"]  # gausssian nosie std with mean =0
-    # for salt-pepper noise
-    saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
-    saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
-    lacingWidth = cfg["lacingWidth"]
-    if "IVUS" in dataDir:
-        rotation = cfg["rotation"]
-    else:
-        rotation = False
-
-
-    netPath = cfg["netPath"] + "/" + network + "/" + experimentName
-    loadNetPath = cfg['loadNetPath']
-    if "" != loadNetPath:
-        netPath = loadNetPath
-
-    lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
-    lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
-    lossFunc1 = cfg["lossFunc1"] #  "nn.SmoothL1Loss().to(device)"
-    lossFunc1Epochs = cfg["lossFunc1Epochs"] # the epoch number of using lossFunc1
-
-    # Proximal IPM Optimization
-    useProxialIPM = cfg['useProxialIPM']
-    if useProxialIPM:
-        learningStepIPM =cfg['learningStepIPM'] # 0.1
-        maxIterationIPM =cfg['maxIterationIPM'] # : 50
-        criterionIPM = cfg['criterionIPM']
-
-    useDynamicProgramming = cfg['useDynamicProgramming']
-    usePrimalDualIPM = cfg['usePrimalDualIPM']
-    useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
-    useLayerDice = cfg['useLayerDice']
-    useReferSurfaceFromLayer = cfg['useReferSurfaceFromLayer']
-    useLayerCE = cfg['useLayerCE']
-    useSmoothSurface = cfg['useSmoothSurface']
-    useWeightedDivLoss = cfg['useWeightedDivLoss']
-
-    if -1==k and 0==K:  # do not use cross validation
-        trainImagesPath = os.path.join(dataDir, "training", f"images.npy")
-        trainLabelsPath = os.path.join(dataDir, "training", f"surfaces.npy")
-        trainIDPath = os.path.join(dataDir, "training", f"patientID.json")
-
-        validationImagesPath = os.path.join(dataDir, "test", f"images.npy")
-        validationLabelsPath = os.path.join(dataDir, "test", f"surfaces.npy")
-        validationIDPath = os.path.join(dataDir, "test", f"patientID.json")
+        validationImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
+        validationLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
+        validationIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
     else:  # use cross validation
-        trainImagesPath = os.path.join(dataDir,"training", f"images_CV{k:d}.npy")
-        trainLabelsPath  = os.path.join(dataDir,"training", f"surfaces_CV{k:d}.npy")
-        trainIDPath     = os.path.join(dataDir,"training", f"patientID_CV{k:d}.json")
+        trainImagesPath = os.path.join(hps.dataDir,"training", f"images_CV{hps.k:d}.npy")
+        trainLabelsPath  = os.path.join(hps.dataDir,"training", f"surfaces_CV{hps.k:d}.npy")
+        trainIDPath     = os.path.join(hps.dataDir,"training", f"patientID_CV{hps.k:d}.json")
 
-        validationImagesPath = os.path.join(dataDir,"validation", f"images_CV{k:d}.npy")
-        validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
-        validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
+        validationImagesPath = os.path.join(hps.dataDir,"validation", f"images_CV{hps.k:d}.npy")
+        validationLabelsPath = os.path.join(hps.dataDir,"validation", f"surfaces_CV{hps.k:d}.npy")
+        validationIDPath    = os.path.join(hps.dataDir,"validation", f"patientID_CV{hps.k:d}.json")
 
-    tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate, rotation=rotation)
+    tainTransform = OCTDataTransform(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation)
     validationTransform = tainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
-                           TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator,
-                           gradChannels=gradChannels)
-    validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,
-                                lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator,
-                                gradChannels=gradChannels)
+    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=hps.device, sigma=hps.sigma, lacingWidth=hps.lacingWidth,
+                           TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator, scaleDenominator=hps.scaleDenominator,
+                           gradChannels=hps.gradChannels)
+    validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=hps.device, sigma=hps.sigma,
+                                lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator, scaleDenominator=hps.scaleDenominator,
+                                gradChannels=hps.gradChannels)
 
     # construct network
-    net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers, numSurfaces=numSurfaces, N=numStartFilters)
+    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers, numSurfaces=hps.numSurfaces, N=hps.numStartFilters)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    net.to(device=device)
+    net.to(device=hps.device)
 
     optimizer = optim.Adam(net.parameters(), lr=0.01, weight_decay=0)
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
     # KLDivLoss is for Guassuian Ground truth for Unet
-    loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-    net.appendLossFunc(loss0, weight=1.0, epochs=lossFunc0Epochs)
-    loss1 = eval(lossFunc1)
-    net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
+    loss0 = eval(hps.lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+    net.appendLossFunc(loss0, weight=1.0, epochs=hps.lossFunc0Epochs)
+    loss1 = eval(hps.lossFunc1)
+    net.appendLossFunc(loss1, weight=1.0, epochs=hps.lossFunc1Epochs)
 
     # Load network
-    if os.path.exists(netPath) and len(getFilesList(netPath, ".pt")) >= 2 :
-        netMgr = NetMgr(net, netPath, device)
+    if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
+        netMgr = NetMgr(net, hps.netPath, hps.device)
         netMgr.loadNet("train")
-        print(f"Network load from  {netPath}")
+        print(f"Network load from  {hps.netPath}")
     else:
-        netMgr = NetMgr(net, netPath, device)
-        print(f"Net starts training from scratch, and save at {netPath}")
+        netMgr = NetMgr(net, hps.netPath, hps.device)
+        print(f"Net starts training from scratch, and save at {hps.netPath}")
 
-    # according config file to update config parameter
-    net.updateConfigParameter('useProxialIPM', useProxialIPM)
-    if useProxialIPM:
-        net.updateConfigParameter("learningStepIPM", learningStepIPM)
-        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
-        net.updateConfigParameter("criterion", criterionIPM)
+    hps.logDir = hps.dataDir + "/log/" + hps.network + "/" + hps.experimentName
+    if not os.path.exists(hps.logDir):
+        os.makedirs(hps.logDir)  # recursive dir creation
+    writer = SummaryWriter(log_dir=hps.logDir)
 
-    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
-    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
-    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
-    net.updateConfigParameter("useLayerDice", useLayerDice)
-    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
-    net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
-    net.updateConfigParameter("gradWeight", gradWeight)
-    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
-    net.updateConfigParameter("useLayerCE", useLayerCE)
-
-    logDir = dataDir + "/log/" + network + "/" + experimentName
-    if not os.path.exists(logDir):
-        os.makedirs(logDir)  # recursive dir creation
-    writer = SummaryWriter(log_dir=logDir)
+    net.hps = hps
 
     # train
     epochs = 1360000
     preTrainingLoss = 999999.0
-    preValidLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
-    preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 3.3
+    preValidLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 2041  # float 16 has maxvalue: 2048
+    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 3.3
     if net.training:
-        initialEpoch = net.getConfigParameter("epoch") if "epoch" in net.m_configParametersDict else 0
+        initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:
         initialEpoch = 0
 
@@ -205,11 +125,11 @@ def main():
         net.train()
         trBatch = 0
         trLoss = 0.0
-        for batchData in data.DataLoader(trainData, batch_size=batchSize, shuffle=True, num_workers=0):
+        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
             _S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
             optimizer.zero_grad()
-            loss.backward(gradient=torch.ones(loss.shape).to(device))
+            loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
             trLoss += loss
 
@@ -220,7 +140,7 @@ def main():
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
-            for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False,
+            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
@@ -231,12 +151,12 @@ def main():
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
             validLoss = validLoss / validBatch
-            if groundTruthInteger:
+            if hps.groundTruthInteger:
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # Error Std and mean
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
-                                                                                                 slicesPerPatient=slicesPerPatient,
-                                                                                                 hPixelSize=hPixelSize)
+                                                                                                 slicesPerPatient=hps.slicesPerPatient,
+                                                                                                 hPixelSize=hps.hPixelSize)
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
@@ -250,16 +170,19 @@ def main():
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss or muError < preErrorMean:
-            net.updateConfigParameter("validationLoss", validLoss)
-            net.updateConfigParameter("epoch", net.m_epoch)
-            net.updateConfigParameter("errorMean", muError)
+            net.updateRunParameter("validationLoss", validLoss)
+            net.updateRunParameter("epoch", net.m_epoch)
+            net.updateRunParameter("errorMean", muError)
             preValidLoss = validLoss
             preErrorMean = muError
-            netMgr.saveNet(netPath)
+            netMgr.saveNet(hps.netPath)
 
         if trLoss < preTrainingLoss:
             preTrainingLoss = trLoss
-            netMgr.saveRealTimeNet(netPath)
+            netMgr.saveRealTimeNet(hps.netPath)
+
+        # debug
+        break
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

@@ -21,6 +21,7 @@ sys.path.append("../..")
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
+from framework.ConfigReader import ConfigReader
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -72,138 +73,50 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    OutputPredictImages = True
+    OutputPredictImages = False
     Output2Images = True
 
     # parse config file
     configFile = sys.argv[1]
-    with open(configFile) as file:
-        cfg = yaml.load(file, Loader=yaml.FullLoader)
-
-    experimentName = getStemName(configFile, removedSuffix=".yaml")
-    print(f"Experiment: {experimentName}")
-
-    assert "IVUS" in experimentName
-
-    dataDir = cfg["dataDir"]
-    K = cfg["K_Folds"]
-    k = cfg["fold_k"]
-
-    groundTruthInteger = cfg["groundTruthInteger"]
-    sigma = cfg["sigma"]  # for gausssian ground truth
-    device = eval(cfg["device"])  # convert string to class object.
-    batchSize = cfg["batchSize"]
-
-    network = cfg["network"]  #
-    inputHight = cfg["inputHight"]  # 192
-    inputWidth = cfg["inputWidth"]  # 1060  # rawImageWidth +2 *lacingWidth
-    scaleNumerator = cfg["scaleNumerator"]  # 2
-    scaleDenominator = cfg["scaleDenominator"]  # 3
-    inputChannels = cfg["inputChannels"]  # 1
-    nLayers = cfg["nLayers"]  # 7
-    numSurfaces = cfg["numSurfaces"]
-    numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
-    gradChannels = cfg["gradChannels"]
-    gradWeight = cfg["gradWeight"]
-
-    slicesPerPatient = cfg["slicesPerPatient"] # 31
-    hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
-
-    augmentProb = cfg["augmentProb"]
-    gaussianNoiseStd = cfg["gaussianNoiseStd"]  # gausssian nosie std with mean =0
-    # for salt-pepper noise
-    saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
-    saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
-    lacingWidth = cfg["lacingWidth"]
-    if "IVUS" in dataDir:
-        rotation = cfg["rotation"]
-    else:
-        rotation = False
-    TTA = cfg["TTA"]  # Test-Time Augmentation
-    TTA_StepDegree = cfg["TTA_StepDegree"]
-
-    netPath = cfg["netPath"] + "/" + network + "/" + experimentName
-    loadNetPath = cfg['loadNetPath']
-    if "" != loadNetPath:
-        netPath = loadNetPath
-    outputDir = cfg["outputDir"]
-
-    lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
-    lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
-    lossFunc1 = cfg["lossFunc1"] #  "nn.SmoothL1Loss().to(device)"
-    lossFunc1Epochs = cfg["lossFunc1Epochs"] # the epoch number of using lossFunc1
-
-    # Proximal IPM Optimization
-    useProxialIPM = cfg['useProxialIPM']
-    if useProxialIPM:
-        learningStepIPM = cfg['learningStepIPM']  # 0.1
-        maxIterationIPM = cfg['maxIterationIPM']  # : 50
-        criterionIPM = cfg['criterionIPM']
-
-    useDynamicProgramming = cfg['useDynamicProgramming']
-    usePrimalDualIPM = cfg['usePrimalDualIPM']
-    useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
-    useLayerDice = cfg['useLayerDice']
-    useReferSurfaceFromLayer = cfg['useReferSurfaceFromLayer']
-    useLayerCE = cfg['useLayerCE']
-    useSmoothSurface = cfg['useSmoothSurface']
-    useWeightedDivLoss = cfg['useWeightedDivLoss']
+    hps = ConfigReader(configFile)
+    print(f"Experiment: {hps.experimentName}")
+    assert "IVUS" in hps.experimentName
 
 
-    if -1==k and 0==K:  # do not use cross validation
-        testImagesPath = os.path.join(dataDir, "test", f"images.npy")
-        testLabelsPath = os.path.join(dataDir, "test", f"surfaces.npy")
-        testIDPath = os.path.join(dataDir, "test", f"patientID.json")
+    if -1==hps.k and 0==hps.K:  # do not use cross validation
+        testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
+        testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
+        testIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
     else:  # use cross validation
-        testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
-        testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
-        testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
+        testImagesPath = os.path.join(hps.dataDir,"test", f"images_CV{hps.k:d}.npy")
+        testLabelsPath = os.path.join(hps.dataDir,"test", f"surfaces_CV{hps.k:d}.npy")
+        testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
 
 
 
     # construct network
-    net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers, numSurfaces=numSurfaces, N=numStartFilters)
+    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers, numSurfaces=hps.numSurfaces, N=hps.numStartFilters)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    net.to(device=device)
+    net.to(device=hps.device)
 
     # KLDivLoss is for Guassuian Ground truth for Unet
-    loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-    net.appendLossFunc(loss0, weight=1.0, epochs=lossFunc0Epochs)
-    loss1 = eval(lossFunc1)
-    net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
+    loss0 = eval(hps.lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+    net.appendLossFunc(loss0, weight=1.0, epochs=hps.lossFunc0Epochs)
+    loss1 = eval(hps.lossFunc1)
+    net.appendLossFunc(loss1, weight=1.0, epochs=hps.lossFunc1Epochs)
 
     # Load network
-    if os.path.exists(netPath) and len(getFilesList(netPath, ".pt")) >= 2 :
-        netMgr = NetMgr(net, netPath, device)
+    if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
+        netMgr = NetMgr(net, hps.netPath, hps.device)
         netMgr.loadNet("test")
-        print(f"Network load from  {netPath}")
+        print(f"Network load from  {hps.netPath}")
     else:
         print(f"Can not find pretrained network for test!")
 
-    # according config file to update config parameter
-    net.updateConfigParameter('useProxialIPM', useProxialIPM)
-    if useProxialIPM:
-        net.updateConfigParameter("learningStepIPM", learningStepIPM)
-        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
-        net.updateConfigParameter("criterion", criterionIPM)
 
-    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
-    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
-    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
-    net.updateConfigParameter("useLayerDice", useLayerDice)
-    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
-    net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
-    net.updateConfigParameter("gradWeight", gradWeight)
-    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
-    net.updateConfigParameter("useLayerCE", useLayerCE)
-    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
-
-    if outputDir=="":
-        outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)  # recursive dir creation
+    net.hps = hps
 
     # test
     net.eval()
@@ -211,13 +124,13 @@ def main():
 
         # Test-Time Augmentation
         nCountTTA = 0
-        for TTADegree in range(0, 360, TTA_StepDegree):
+        for TTADegree in range(0, 360, hps.TTA_StepDegree):
             nCountTTA += 1
-            testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
-                                  lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree, scaleNumerator=scaleNumerator,
-                                  scaleDenominator=scaleDenominator, gradChannels=gradChannels)
+            testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=hps.device, sigma=hps.sigma,
+                                  lacingWidth=hps.lacingWidth, TTA=hps.TTA, TTA_Degree=hps.TTADegree, scaleNumerator=hps.scaleNumerator,
+                                  scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
             testBatch = 0
-            for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
+            for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
                 testBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
                 S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
@@ -231,15 +144,15 @@ def main():
             images.squeeze_(dim=1)  # squeeze channel dim
 
             # scale back: # this will change the Height of polar image
-            if 1 != scaleNumerator or 1 != scaleDenominator:
-                images = scalePolarImage(images, scaleDenominator, scaleNumerator)
-                testOutputs = scalePolarLabel(testOutputs, scaleDenominator, scaleNumerator)
-                testGts = scalePolarLabel(testGts, scaleDenominator, scaleNumerator)
+            if 1 != hps.scaleNumerator or 1 != hps.scaleDenominator:
+                images = scalePolarImage(images, hps.scaleDenominator, hps.scaleNumerator)
+                testOutputs = scalePolarLabel(testOutputs, hps.scaleDenominator, hps.scaleNumerator)
+                testGts = scalePolarLabel(testGts, hps.scaleDenominator, hps.scaleNumerator)
 
             # Delace polar images and labels
-            if 0 != lacingWidth:
-                images, testOutputs = delacePolarImageLabel(images, testOutputs, lacingWidth)
-                testGts = delacePolarLabel(testGts, lacingWidth)
+            if 0 != hps.lacingWidth:
+                images, testOutputs = delacePolarImageLabel(images, testOutputs, hps.lacingWidth)
+                testGts = delacePolarLabel(testGts, hps.lacingWidth)
 
             if 0 != TTADegree: # retate back
                 images,testOutputs = polarImageLabelRotate_Tensor(images, testOutputs, -TTADegree)
@@ -247,17 +160,19 @@ def main():
 
             testOutputsTTA = testOutputsTTA + testOutputs if 1 != nCountTTA else testOutputs
 
-            if (TTA ==False or 0 == TTA_StepDegree):
+            if (hps.TTA ==False or 0 == hps.TTA_StepDegree):
                 break
+
+            break
 
         testOutputs = testOutputsTTA/nCountTTA  # average to get final prediction value
 
     # Error Std and mean
-    if groundTruthInteger:
+    if hps.groundTruthInteger:
         testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
     stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
-                                                                                             slicesPerPatient=slicesPerPatient,
-                                                                                             hPixelSize=hPixelSize)
+                                                                                             slicesPerPatient=hps.slicesPerPatient,
+                                                                                             hPixelSize=hps.hPixelSize)
     #generate predicted images
     images = images.cpu().numpy().squeeze()
     B,H,W = images.shape
@@ -269,8 +184,8 @@ def main():
     pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
     assert S <= len(pltColors)
 
-    outputTxtDir = os.path.join(outputDir, "text")
-    outputImageDir = os.path.join(outputDir, "images")
+    outputTxtDir = os.path.join(hps.outputDir, "text")
+    outputImageDir = os.path.join(hps.outputDir, "images")
     if not os.path.exists(outputTxtDir):
         os.makedirs(outputTxtDir)  # recursive dir creation
     if not os.path.exists(outputImageDir):
@@ -362,13 +277,12 @@ def main():
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(outputDir,f"output_{timeStr}.txt"), "w") as file:
-        file.write(f"Test: {experimentName}\n")
-        file.write(f"loadNetPath: {netPath}\n")
-        file.write(f"config file: {configFile}\n")
+    with open(os.path.join(hps.outputDir,f"output_{timeStr}.txt"), "w") as file:
+        hps.printTo(file)
+        file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,H,W = {B,S,H, W}\n")
-        file.write(f"net.m_configParametersDict:\n")
-        [file.write(f"\t{key}:{value}\n") for key, value in net.m_configParametersDict.items()]
+        file.write(f"net.m_runParametersDict:\n")
+        [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
         file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
@@ -387,7 +301,7 @@ def main():
 
 
 
-    print(f"============ End of Test: {experimentName} ===========")
+    print(f"============ End of Test: {hps.experimentName} ===========")
 
 
 if __name__ == "__main__":

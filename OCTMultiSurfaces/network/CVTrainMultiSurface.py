@@ -144,17 +144,17 @@ def main():
         print(f"Net starts training from scratch, and save at {netPath}")
 
     # according config file to update config parameter
-    net.updateConfigParameter('useProxialIPM', useProxialIPM)
+    net.updateRunParameter('useProxialIPM', useProxialIPM)
     if useProxialIPM:
-        net.updateConfigParameter("learningStepIPM", learningStepIPM)
-        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
-        net.updateConfigParameter("criterion", criterionIPM)
+        net.updateRunParameter("learningStepIPM", learningStepIPM)
+        net.updateRunParameter("maxIterationIPM", maxIterationIPM)
+        net.updateRunParameter("criterion", criterionIPM)
 
-    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
-    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
-    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
+    net.updateRunParameter("useDynamicProgramming", useDynamicProgramming)
+    net.updateRunParameter("usePrimalDualIPM", usePrimalDualIPM)
+    net.updateRunParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
 
-    net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
+    net.updateRunParameter("useSmoothSurface", useSmoothSurface)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):
@@ -163,10 +163,10 @@ def main():
 
     # train
     epochs = 1360000
-    preLoss = net.getConfigParameter("validationLoss") if "validationLoss" in net.m_configParametersDict else 2041  # float 16 has maxvalue: 2048
-    preErrorMean = net.getConfigParameter("errorMean") if "errorMean" in net.m_configParametersDict else 3.3
+    preLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 2041  # float 16 has maxvalue: 2048
+    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 3.3
     if net.training:
-        initialEpoch = net.getConfigParameter("epoch") if "epoch" in net.m_configParametersDict else 0
+        initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:
         initialEpoch = 0
 
@@ -222,9 +222,9 @@ def main():
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preLoss or muError < preErrorMean:
-            net.updateConfigParameter("validationLoss", validLoss)
-            net.updateConfigParameter("epoch", net.m_epoch)
-            net.updateConfigParameter("errorMean", muError)
+            net.updateRunParameter("validationLoss", validLoss)
+            net.updateRunParameter("epoch", net.m_epoch)
+            net.updateRunParameter("errorMean", muError)
             preLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(netPath)

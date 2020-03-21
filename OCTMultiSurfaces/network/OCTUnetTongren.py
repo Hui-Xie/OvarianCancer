@@ -268,12 +268,12 @@ class OCTUnetTongren(BasicModel):
         xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*128*1024
 
         '''
-        useProxialIPM = self.getConfigParameter('useProxialIPM')
-        useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
-        usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
+        useProxialIPM = self.getRunParameter('useProxialIPM')
+        useDynamicProgramming = self.getRunParameter("useDynamicProgramming")
+        usePrimalDualIPM = self.getRunParameter("usePrimalDualIPM")
 
         '''
-        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
+        useCEReplaceKLDiv = self.getRunParameter("useCEReplaceKLDiv")
 
         surfaceProb = logits2Prob(xs, dim=-2)
         layerProb = logits2Prob(xl, dim=1)

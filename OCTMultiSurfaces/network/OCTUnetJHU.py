@@ -272,14 +272,14 @@ class OCTUnetJHU(BasicModel):
             # loss = (lossFunc(mu, S)+ lossFunc(mu, GTs))*lossWeight
 
 
-            useProxialIPM = self.getConfigParameter('useProxialIPM')
-            useDynamicProgramming = self.getConfigParameter("useDynamicProgramming")
-            usePrimalDualIPM = self.getConfigParameter("usePrimalDualIPM")
+            useProxialIPM = self.getRunParameter('useProxialIPM')
+            useDynamicProgramming = self.getRunParameter("useDynamicProgramming")
+            usePrimalDualIPM = self.getRunParameter("usePrimalDualIPM")
 
             if useProxialIPM:
-                learningStepIPM = self.getConfigParameter("learningStepIPM")
-                maxIterationIPM = self.getConfigParameter("maxIterationIPM")
-                criterionIPM    = self.getConfigParameter("criterionIPM")
+                learningStepIPM = self.getRunParameter("learningStepIPM")
+                maxIterationIPM = self.getRunParameter("maxIterationIPM")
+                criterionIPM    = self.getRunParameter("criterionIPM")
                 S = proximalIPM(mu,sigma2, maxIterations=maxIterationIPM, learningStep=learningStepIPM, criterion = criterionIPM )
                 loss = lossFunc(S, GTs) * lossWeight
 

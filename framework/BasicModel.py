@@ -19,17 +19,17 @@ class BasicModel(nn.Module):
         self.m_lossEpochList = []  # specify the running epochs for each loss
         self.m_epoch = 0
         self.m_currentLossFunc = None
-        self.m_configParametersDict={}  # it will arbitrary parameters of network including epoch, loss etc.
+        self.m_runParametersDict={}  # it will arbitrary parameters of network including epoch, loss etc.
 
     def forward(self, x):
         pass
 
-    def updateConfigParameter(self, nameStr, value):
-        self.m_configParametersDict[nameStr] = value
+    def updateRunParameter(self, nameStr, value):
+        self.m_runParametersDict[nameStr] = value
 
-    def getConfigParameter(self, nameStr):
-        if nameStr in self.m_configParametersDict:
-            return self.m_configParametersDict[nameStr]
+    def getRunParameter(self, nameStr):
+        if nameStr in self.m_runParametersDict:
+            return self.m_runParametersDict[nameStr]
         else:
             return False
 

@@ -20,6 +20,7 @@ sys.path.append("../..")
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
+from framework.ConfigReader import ConfigReader
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,138 +45,63 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    OutputPredictImages = True
+    OutputPredictImages = False
     Output2Images = True
     needLegend = True
 
     # parse config file
     configFile = sys.argv[1]
-    with open(configFile) as file:
-        cfg = yaml.load(file, Loader=yaml.FullLoader)
+    hps = ConfigReader(configFile)
+    print(f"Experiment: {hps.experimentName}")
+    assert "IVUS" not in hps.experimentName
 
-    experimentName = getStemName(configFile, removedSuffix=".yaml")
-    print(f"Experiment: {experimentName}")
-    assert "IVUS" not in experimentName
-
-    dataDir = cfg["dataDir"]
-    K = cfg["K_Folds"]
-    k = cfg["fold_k"]
-
-    groundTruthInteger = cfg["groundTruthInteger"]
-
-    sigma = cfg["sigma"]  # for gausssian ground truth
-    device = eval(cfg["device"])  # convert string to class object.
-    batchSize = cfg["batchSize"]
-
-    network = cfg["network"]#
-    inputHight= cfg["inputHight"] # 192
-    inputWidth= cfg["inputWidth"] #1060  # rawImageWidth +2 *lacingWidth
-    scaleNumerator= cfg["scaleNumerator"] #2
-    scaleDenominator= cfg["scaleDenominator"] #3
-    inputChannels= cfg["inputChannels"] #1
-    nLayers= cfg["nLayers"] #7
-    numSurfaces = cfg["numSurfaces"]
-    numStartFilters = cfg["startFilters"]  # the num of filter in first layer of Unet
-    gradChannels = cfg["gradChannels"]
-    gradWeight = cfg["gradWeight"]
-    useLayerCE = cfg['useLayerCE']
-    useWeightedDivLoss = cfg['useWeightedDivLoss']
-
-    slicesPerPatient = cfg["slicesPerPatient"] # 31
-    hPixelSize = cfg["hPixelSize"] #  3.870  # unit: micrometer, in y/height direction
-
-    augmentProb = cfg["augmentProb"]
-    gaussianNoiseStd = cfg["gaussianNoiseStd"]  # gausssian nosie std with mean =0
-    # for salt-pepper noise
-    saltPepperRate= cfg["saltPepperRate"]   # rate = (salt+pepper)/allPixels
-    saltRate= cfg["saltRate"]  # saltRate = salt/(salt+pepper)
-    lacingWidth = cfg["lacingWidth"]
-    rotation = False
-
-
-    netPath = cfg["netPath"] + "/" + network + "/" + experimentName
-    loadNetPath = cfg['loadNetPath']
-    if "" != loadNetPath:
-        netPath = loadNetPath
-    outputDir = cfg["outputDir"]
-
-    lossFunc0 = cfg["lossFunc0"] # "nn.KLDivLoss(reduction='batchmean').to(device)"
-    lossFunc0Epochs = cfg["lossFunc0Epochs"] #  the epoch number of using lossFunc0
-    lossFunc1 = cfg["lossFunc1"] #  "nn.SmoothL1Loss().to(device)"
-    lossFunc1Epochs = cfg["lossFunc1Epochs"] # the epoch number of using lossFunc1
-
-    # Proximal IPM Optimization
-    useProxialIPM = cfg['useProxialIPM']
-    if useProxialIPM:
-        learningStepIPM = cfg['learningStepIPM']  # 0.1
-        maxIterationIPM = cfg['maxIterationIPM']  # : 50
-        criterionIPM = cfg['criterionIPM']
-
-    useDynamicProgramming = cfg['useDynamicProgramming']
-    usePrimalDualIPM = cfg['usePrimalDualIPM']
-    useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
-    useReferSurfaceFromLayer = cfg['useReferSurfaceFromLayer']
-
-    if -1==k and 0==K:  # do not use cross validation
-        testImagesPath = os.path.join(dataDir, "test", f"images.npy")
-        testLabelsPath = os.path.join(dataDir, "test", f"surfaces.npy")
-        testIDPath = os.path.join(dataDir, "test", f"patientID.json")
+    if -1==hps.k and 0==hps.K:  # do not use cross validation
+        testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
+        testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
+        testIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
     else:  # use cross validation
-        testImagesPath = os.path.join(dataDir,"test", f"images_CV{k:d}.npy")
-        testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
-        testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
+        testImagesPath = os.path.join(hps.dataDir,"test", f"images_CV{hps.k:d}.npy")
+        testLabelsPath = os.path.join(hps.dataDir,"test", f"surfaces_CV{hps.k:d}.npy")
+        testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
 
-    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
-                          lacingWidth=lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator,
-                          scaleDenominator=scaleDenominator, gradChannels=gradChannels)
+    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=hps.device, sigma=hps.sigma,
+                          lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator,
+                          scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
 
     # construct network
-    net = eval(network)(inputHight, inputWidth, inputChannels=inputChannels, nLayers=nLayers,
-                        numSurfaces=numSurfaces, N=numStartFilters)
+    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
+                        numSurfaces=hps.numSurfaces, N=hps.numStartFilters)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    net.to(device=device)
+    net.to(device=hps.device)
 
     # KLDivLoss is for Guassuian Ground truth for Unet
-    loss0 = eval(lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-    net.appendLossFunc(loss0, weight=1.0, epochs=lossFunc0Epochs)
-    loss1 = eval(lossFunc1)
-    net.appendLossFunc(loss1, weight=1.0, epochs=lossFunc1Epochs)
+    loss0 = eval(hps.lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
+    net.appendLossFunc(loss0, weight=1.0, epochs=hps.lossFunc0Epochs)
+    loss1 = eval(hps.lossFunc1)
+    net.appendLossFunc(loss1, weight=1.0, epochs=hps.lossFunc1Epochs)
 
     # Load network
-    if os.path.exists(netPath) and len(getFilesList(netPath, ".pt")) >= 2 :
-        netMgr = NetMgr(net, netPath, device)
+    if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
+        netMgr = NetMgr(net, hps.netPath, hps.device)
         netMgr.loadNet("test")
-        print(f"Network load from  {netPath}")
+        print(f"Network load from  {hps.netPath}")
     else:
         print(f"Can not find pretrained network for test!")
 
-    # according config file to update config parameter
-    net.updateConfigParameter('useProxialIPM', useProxialIPM)
-    if useProxialIPM:
-        net.updateConfigParameter("learningStepIPM", learningStepIPM)
-        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
-        net.updateConfigParameter("criterion", criterionIPM)
+    if hps.outputDir=="":
+        hps.outputDir = hps.dataDir + "/log/" + hps.network + "/" + hps.experimentName +"/testResult"
+    if not os.path.exists(hps.outputDir):
+        os.makedirs(hps.outputDir)  # recursive dir creation
 
-    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
-    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
-    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
-    net.updateConfigParameter("gradWeight", gradWeight)
-    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
-    net.updateConfigParameter("useLayerCE", useLayerCE)
-    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
-
-    if outputDir=="":
-        outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"
-    if not os.path.exists(outputDir):
-        os.makedirs(outputDir)  # recursive dir creation
+    net.hps = hps
 
     # test
     net.eval()
     with torch.no_grad():
         testBatch = 0
-        for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
+        for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
             S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
@@ -185,9 +111,13 @@ def main():
             testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
+            break
+
         # Error Std and mean
-        if groundTruthInteger:
+        if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
+
+
 
         '''
         # exclude bad output result:
@@ -218,8 +148,8 @@ def main():
 
 
         stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
-                                                                                  slicesPerPatient=slicesPerPatient,
-                                                                                  hPixelSize=hPixelSize)
+                                                                                  slicesPerPatient=hps.slicesPerPatient,
+                                                                                  hPixelSize=hps.hPixelSize)
 
     #generate predicted images
     images = images[:, 0, :, :]  # erase grad channels
@@ -234,13 +164,13 @@ def main():
     assert S <= len(pltColors)
 
     for b in range(B):
-        if "OCT_Tongren" in dataDir:
+        if "OCT_Tongren" in hps.dataDir:
             # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
             patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
             if "_OCT01" in patientID_Index:
                 patientIDList.append(extractPaitentID(testIDs[b]))
             surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
-        if "OCT_JHU" in dataDir:
+        if "OCT_JHU" in hps.dataDir:
             # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
             patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_19
             patient = patientID_Index[0:4] # e.g. hc01
@@ -256,7 +186,7 @@ def main():
         DPI = f.dpi
 
         if Output2Images:
-            if "OCT_Tongren" in dataDir:
+            if "OCT_Tongren" in hps.dataDir:
                 subplotRow = 1
                 subplotCol = 2
             else:
@@ -303,7 +233,7 @@ def main():
         for s in range(0, S):
             subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
         if needLegend:
-            if "OCT_Tongren" in dataDir:
+            if "OCT_Tongren" in hps.dataDir:
                 subplot2.legend(surfaceNames, loc='lower center', ncol=4)
             else:
                 subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
@@ -318,11 +248,11 @@ def main():
 
         if not Output2Images:
             if MarkGTDisorder:
-                plt.savefig(os.path.join(outputDir, patientID_Index + "_MarkedImage_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+                plt.savefig(os.path.join(hps.outputDir, patientID_Index + "_MarkedImage_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
             else:
-                plt.savefig(os.path.join(outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+                plt.savefig(os.path.join(hps.outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         else:
-            plt.savefig(os.path.join(outputDir, patientID_Index + "_GT_Predict.png"), dpi='figure',
+            plt.savefig(os.path.join(hps.outputDir, patientID_Index + "_GT_Predict.png"), dpi='figure',
                         bbox_inches='tight', pad_inches=0)
         plt.close()
 
@@ -335,13 +265,12 @@ def main():
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(outputDir,f"output_{timeStr}.txt"), "w") as file:
-        file.write(f"Test: {experimentName}\n")
-        file.write(f"loadNetPath: {netPath}\n")
-        file.write(f"config file: {configFile}\n")
-        file.write(f"B,S,H,W = {B,S,H, W}\n")
-        file.write(f"net.m_configParametersDict:\n")
-        [file.write(f"\t{key}:{value}\n") for key, value in net.m_configParametersDict.items()]
+    with open(os.path.join(hps.outputDir,f"output_{timeStr}.txt"), "w") as file:
+        hps.printTo(file)
+        file.write("\n=======net running parameters=========\n")
+        file.write(f"B,S,H,W = {B, S, H, W}\n")
+        file.write(f"net.m_runParametersDict:\n")
+        [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
         file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
@@ -360,7 +289,7 @@ def main():
 
 
 
-    print(f"============ End of Cross valiation test for OCT Multisurface Network: {experimentName} ===========")
+    print(f"============ End of Cross valiation test for OCT Multisurface Network: {hps.experimentName} ===========")
 
 
 if __name__ == "__main__":
