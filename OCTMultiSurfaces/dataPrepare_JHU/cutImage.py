@@ -1,6 +1,6 @@
-imagePath1 = "/home/sheen/tempWork/hc02_spectralis_macula_v1_s1_R_21_GT_Predict_NoIPM.png"
-imagePath2 = "/home/sheen/tempWork/hc02_spectralis_macula_v1_s1_R_21_GT_Predict_WithIPM.png"
-outputDir = "/home/sheen/tempWork"
+imagePath1 = "/home/sheen/workTemp/hc01_spectralis_macula_v1_s1_R_22_GT_Predict_KLDiv.png"
+imagePath2 = "/home/sheen/workTemp/hc01_spectralis_macula_v1_s1_R_22_GT_Predict_WeightedDiv.png"
+outputDir = "/home/sheen/workTemp"
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
@@ -40,5 +40,5 @@ subplot3 = plt.subplot(subplotRow, subplotCol, 3)
 subplot3.imshow(goodImage)
 subplot3.axis('off')
 
-plt.savefig(os.path.join(outputDir, "hc02_spectralis_macula_v1_s1_R_21_GT_NoIPM_WithIPM.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.savefig(os.path.join(outputDir, "hc01_spectralis_macula_v1_s1_R_22_GT_KLDiv_WeightedDiv.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()

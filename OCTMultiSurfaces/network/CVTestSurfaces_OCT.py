@@ -46,7 +46,7 @@ def main():
     MarkPredictDisorder = False
     OutputPredictImages = True
     Output2Images = True
-    needLegend = False
+    needLegend = True
 
     # parse config file
     configFile = sys.argv[1]
