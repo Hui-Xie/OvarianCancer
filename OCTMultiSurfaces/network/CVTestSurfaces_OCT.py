@@ -76,11 +76,6 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
 
-    # KLDivLoss is for Guassuian Ground truth for Unet
-    loss0 = eval(hps.lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-    net.appendLossFunc(loss0, weight=1.0, epochs=hps.lossFunc0Epochs)
-    loss1 = eval(hps.lossFunc1)
-    net.appendLossFunc(loss1, weight=1.0, epochs=hps.lossFunc1Epochs)
 
     # Load network
     if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :

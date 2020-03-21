@@ -86,12 +86,6 @@ def main():
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
-    # KLDivLoss is for Guassuian Ground truth for Unet
-    loss0 = eval(hps.lossFunc0) #nn.KLDivLoss(reduction='batchmean').to(device)  # the input given is expected to contain log-probabilities
-    net.appendLossFunc(loss0, weight=1.0, epochs=hps.lossFunc0Epochs)
-    loss1 = eval(hps.lossFunc1)
-    net.appendLossFunc(loss1, weight=1.0, epochs=hps.lossFunc1Epochs)
-
     # Load network
     if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
         netMgr = NetMgr(net, hps.netPath, hps.device)
