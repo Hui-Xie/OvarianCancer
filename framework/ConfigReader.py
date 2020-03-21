@@ -2,8 +2,8 @@
 import torch
 import yaml
 import sys
-sys.path.append("../utilities")
-from FilesUtilities import getStemName
+sys.path.append("..")
+from utilities.FilesUtilities import getStemName
 import os
 
 class ConfigReader():
