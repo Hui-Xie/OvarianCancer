@@ -70,10 +70,11 @@ class ConfigReader():
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
 
-        self.lossFunc0 = cfg["lossFunc0"]  # "nn.KLDivLoss(reduction='batchmean').to(device)"
-        self.lossFunc0Epochs = cfg["lossFunc0Epochs"]  # the epoch number of using lossFunc0
-        self.lossFunc1 = cfg["lossFunc1"]  # "nn.SmoothL1Loss().to(device)"
-        self.lossFunc1Epochs = cfg["lossFunc1Epochs"]  # the epoch number of using lossFunc1
+        # deprecated.
+        #self.lossFunc0 = cfg["lossFunc0"]  # "nn.KLDivLoss(reduction='batchmean').to(device)"
+        #self.lossFunc0Epochs = cfg["lossFunc0Epochs"]  # the epoch number of using lossFunc0
+        #self.lossFunc1 = cfg["lossFunc1"]  # "nn.SmoothL1Loss().to(device)"
+        #self.lossFunc1Epochs = cfg["lossFunc1Epochs"]  # the epoch number of using lossFunc1
 
         # Proximal IPM Optimization
         self.useProxialIPM = cfg['useProxialIPM']

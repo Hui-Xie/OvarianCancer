@@ -76,11 +76,6 @@ netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParam
 loadNetPath: "" # reserve for pretrained network.
 outputDir: ""
 
-# do not use these loss function
-lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log-probabilities
-lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
-lossFunc1: "nn.SmoothL1Loss().to(device)"
-lossFunc1Epochs: 500
 
 # Proximal IPM Optimization
 useProxialIPM: False
