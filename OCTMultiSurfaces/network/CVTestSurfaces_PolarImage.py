@@ -109,7 +109,6 @@ def main():
     else:
         print(f"Can not find pretrained network for test!")
 
-
     net.hps = hps
 
     # test

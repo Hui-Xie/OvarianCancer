@@ -10,6 +10,7 @@
 # Mar 13th, 2020: wegithed divLoss, layerdice, reference from layer mu, sigma=20
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+#dataDir: "/home/sheen/temp"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K_Folds: 10
 fold_k:  8   # k

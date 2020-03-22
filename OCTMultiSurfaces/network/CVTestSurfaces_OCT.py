@@ -85,11 +85,6 @@ def main():
     else:
         print(f"Can not find pretrained network for test!")
 
-    if hps.outputDir=="":
-        hps.outputDir = hps.dataDir + "/log/" + hps.network + "/" + hps.experimentName +"/testResult"
-    if not os.path.exists(hps.outputDir):
-        os.makedirs(hps.outputDir)  # recursive dir creation
-
     net.hps = hps
 
     # test

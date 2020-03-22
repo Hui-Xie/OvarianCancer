@@ -25,8 +25,12 @@ class ConfigReader(object):
         else:
             self.netPath = cfg["netPath"] + "/" + self.network + "/" + self.experimentName
 
+        self.logDir = self.dataDir + "/log/" + self.network + "/" + self.experimentName
+        if not os.path.exists(self.logDir):
+            os.makedirs(self.logDir)  # recursive dir creation
+
         if self.outputDir == "":
-            self.outputDir = self.dataDir + "/log/" + self.network + "/" + self.experimentName + "/testResult"
+            self.outputDir = self.logDir + "/testResult"
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
 

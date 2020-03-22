@@ -95,11 +95,7 @@ def main():
         netMgr = NetMgr(net, hps.netPath, hps.device)
         print(f"Net starts training from scratch, and save at {hps.netPath}")
 
-    hps.logDir = hps.dataDir + "/log/" + hps.network + "/" + hps.experimentName
-    if not os.path.exists(hps.logDir):
-        os.makedirs(hps.logDir)  # recursive dir creation
     writer = SummaryWriter(log_dir=hps.logDir)
-
     net.hps = hps
 
     # train
