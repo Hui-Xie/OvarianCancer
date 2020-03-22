@@ -157,7 +157,6 @@ def main():
             if (hps.TTA ==False or 0 == hps.TTA_StepDegree):
                 break
 
-            break
 
         testOutputs = testOutputsTTA/nCountTTA  # average to get final prediction value
 

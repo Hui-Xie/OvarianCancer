@@ -106,7 +106,6 @@ def main():
             testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
-            break
 
         # Error Std and mean
         if hps.groundTruthInteger:

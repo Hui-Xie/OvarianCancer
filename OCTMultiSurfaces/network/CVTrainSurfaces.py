@@ -175,8 +175,6 @@ def main():
             preTrainingLoss = trLoss
             netMgr.saveRealTimeNet(hps.netPath)
 
-        # debug
-        break
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
