@@ -6,7 +6,7 @@ import os
 
 
 
-cfgFilePath = "/home/sheen/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV8_Sigma20.yaml"
+cfgFilePath = "/home/sheen/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200321_TestCfgReader.yaml"
 
 hps = ConfigReader(cfgFilePath)
 
