@@ -146,9 +146,13 @@ def main():
     for b in range(B):
         if "OCT_Tongren" in hps.dataDir:
             # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-            patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
-            if "_OCT01" in patientID_Index:
-                patientIDList.append(extractPaitentID(testIDs[b]))
+            # example: "/home/hxie1/data/OCT_Tongren/Glaucoma/209_OD_1554_Volume/30.jpg"  for glaucoma
+            patientPath, filename = os.path.split(testIDs[b])
+            patientID = os.path.basename(patientPath)
+            if patientID not in patientIDList:
+                patientIDList.append(patientID)
+            index = os.path.splitext(filename)[0]
+            patientID_Index = patientID +"_" +index
 
         if "OCT_JHU" in hps.dataDir:
             # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
@@ -226,7 +230,10 @@ def main():
             subplot2.axis('off')
 
         subplotIndex += 1
-        subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+        if 1 == subplotRow and 1 == subplotCol:
+            subplot3 = plt
+        else:
+            subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
             subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
