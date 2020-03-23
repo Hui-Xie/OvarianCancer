@@ -21,7 +21,7 @@ assert NSlice==49*31 and H==496 and W==512
 
 i=0
 while i<NSlice:
-    dirPath, fileName = os.path.split(patientIDPath[str(i)])
+    dirPath, fileName = os.path.split(patientIDs[str(i)])
     dirName = os.path.basename(dirPath)
     newDirPath = os.path.join(outputDir,dirName)
     if not os.path.exists(newDirPath):
