@@ -45,7 +45,7 @@ def main():
     # output config
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    
+
     outputXmlSegFiles = True
 
     OutputNumImages = 1
@@ -93,6 +93,11 @@ def main():
 
     net.hps = hps
 
+    if "OCT_Tongren" in hps.dataDir:
+        surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
+    if "OCT_JHU" in hps.dataDir:
+        surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-ONL', 'ELM', 'IS-OS', 'OS-RPE', 'BM']
+
     # test
     net.eval()
     with torch.no_grad():
@@ -111,6 +116,9 @@ def main():
         # Error Std and mean
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
+
+        if outputXmlSegFiles:
+            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir)
 
         if hps.existGTLabel:
             stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
@@ -135,14 +143,14 @@ def main():
             patientID_Index = extractFileName(testIDs[b])  #e.g.: 4511_OD_29134_OCT06
             if "_OCT01" in patientID_Index:
                 patientIDList.append(extractPaitentID(testIDs[b]))
-            surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
+
         if "OCT_JHU" in hps.dataDir:
             # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
             patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_19
             patient = patientID_Index[0:4] # e.g. hc01
             if "_s1_R_19" in patientID_Index and patient not in patientIDList:
                 patientIDList.append(patient)
-            surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-ONL', 'ELM', 'IS-OS', 'OS-RPE', 'BM']
+
 
 
         if OutputNumImages ==0:
@@ -224,7 +232,7 @@ def main():
         subplot3.axis('off')
 
 
-        plt.savefig(os.path.join(hps.outputDir, imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+        plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     # check testOutputs whether violate surface-separation constraints

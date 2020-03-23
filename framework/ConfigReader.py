@@ -31,8 +31,14 @@ class ConfigReader(object):
 
         if self.outputDir == "":
             self.outputDir = self.logDir + "/testResult"
+            self.imagesOutputDir = self.outputDir +"/images"
+            self.xmlOutputDir = self.outputDir + "/xml"
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
+        if not os.path.exists(self.imagesOutputDir):
+            os.makedirs(self.imagesOutputDir)  # recursive dir creation
+        if not os.path.exists(self.xmlOutputDir):
+            os.makedirs(self.xmlOutputDir)  # recursive dir creation
 
     def printTo(self, fileHandle):
         fileHandle.write(f"\n=============== Start of Config  ===========\n")
