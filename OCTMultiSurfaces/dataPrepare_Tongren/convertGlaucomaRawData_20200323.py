@@ -32,7 +32,7 @@ def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
         imagesList = glob.glob(volume + f"/[0-3][0-9].jpg")
         imagesList.sort()
         if NumSlices != len(imagesList):
-           print(f"Error: at {volumesList}, the slice number does not match jpg files.")
+           print(f"Error: at {volume}, the slice number does not match jpg files.")
            return
 
         for z in range(0, NumSlices):

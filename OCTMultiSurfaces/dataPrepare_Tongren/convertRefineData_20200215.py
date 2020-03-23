@@ -65,7 +65,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
         imagesList = glob.glob(volume + f"/*_OCT[0-3][0-9].jpg")
         imagesList.sort()
         if Z != len(imagesList):
-           print(f"Error: at {volumesList}, the slice number does not match jpg files.")
+           print(f"Error: at {volume}, the slice number does not match jpg files.")
            return
 
         for z in range(0, Z):
