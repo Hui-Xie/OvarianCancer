@@ -123,7 +123,7 @@ def getLayerWeightFromImageGradient(imageGradMagnitude, labels, nLayers, w1=10.0
     :param labels: in size of (B,Ns,W), where Ns is the number of surface
     :return: a float tensor of size(B,nlayers,H,W),where nLayers= Ns+1
     '''
-    if labels is None:
+    if labels is None or len(labels) == 0:
         return None
 
     N = nLayers

@@ -5,8 +5,8 @@
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/glaucomaRaw_W512"
 existGTLabel: False
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K_Folds: 0
-fold_k:  -1   # do not use cross validation
+K: 0     #K fold cross validation.
+k: -1   # do not use cross validation
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -34,7 +34,7 @@ fold_k:  -1   # do not use cross validation
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:3')   #GPU ID
+device: "torch.device('cuda:3')"   #GPU ID
 batchSize: 4
 
 network: "SurfacesUnet"

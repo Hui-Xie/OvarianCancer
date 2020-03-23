@@ -76,7 +76,8 @@ def main():
                                 gradChannels=hps.gradChannels)
 
     # construct network
-    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers, numSurfaces=hps.numSurfaces, N=hps.numStartFilters)
+    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
+                            numSurfaces=hps.numSurfaces, N=hps.startFilters)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.

@@ -103,10 +103,10 @@ class OCTDataSet(data.Dataset):
                 image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
 
         result = {"images": image,
-                  "GTs": label,
+                  "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.m_sigma or label is None  else gaussianizeLabels(label, self.m_sigma, H),
                   "IDs": self.m_IDs[str(index)],
-                  "layers": getLayerLabels(label,H) }
+                  "layers": [] if label is None else getLayerLabels(label,H) }
         return result
 
 

@@ -76,7 +76,7 @@ def main():
 
     # construct network
     net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
-                        numSurfaces=hps.numSurfaces, N=hps.numStartFilters)
+                        numSurfaces=hps.numSurfaces, N=hps.startFilters)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -109,7 +109,11 @@ def main():
 
             images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
-            testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] if hps.existGTLabel else None
+            if hps.existGTLabel:
+                testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs']
+            else:
+                testGts = None
+
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
 
