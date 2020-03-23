@@ -21,15 +21,15 @@ assert NSlice==49*31 and H==496 and W==512
 
 i=0
 while i<NSlice:
+    image = images[i,:,:]
+    
     dirPath, fileName = os.path.split(patientIDs[str(i)])
     dirName = os.path.basename(dirPath)
-    newDirPath = os.path.join(outputDir,dirName)
+    newDirPath = os.path.join(outputDir, dirName)
     if not os.path.exists(newDirPath):
         os.makedirs(newDirPath)  # recursive dir creation
-    for j in range(i, i+31):
-        image = images[j,:,:]
-        imwrite(os.path.join(newDirPath, fileName), image)
-    i +=31
+    imwrite(os.path.join(newDirPath, fileName), image)
+    i +=1
 
 print("====End of output all image of Width 512==============")
 
