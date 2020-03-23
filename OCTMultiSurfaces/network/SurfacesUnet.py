@@ -363,9 +363,9 @@ class SurfacesUnet(BasicModel):
         else:
             S = mu
 
+        weightL1 = 10.0
         if hps.existGTLabel:
             l1Loss = nn.SmoothL1Loss().to(device)
-            weightL1 = 10.0
             loss_L1 = l1Loss(S, GTs)
         else:
             loss_L1 = 0.0

@@ -45,9 +45,13 @@ def main():
     # output config
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    OutputPredictImages = False
+    
     outputXmlSegFiles = True
-    Output2Images = True
+
+    OutputNumImages = 1
+    # choose from 0, 1,2,3:----------
+    # 0: no image output; 1: Pediction; 2: GT and Prediciton; 3: Raw, GT, Prediction
+
     needLegend = True
 
 
@@ -141,36 +145,41 @@ def main():
             surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-ONL', 'ELM', 'IS-OS', 'OS-RPE', 'BM']
 
 
-        if not OutputPredictImages:
+        if OutputNumImages ==0:
             continue
 
         f = plt.figure(frameon=False)
         DPI = f.dpi
 
-        if Output2Images:
+        if OutputNumImages==2:
             if "OCT_Tongren" in hps.dataDir:
                 subplotRow = 1
                 subplotCol = 2
             else:
                 subplotRow = 2
                 subplotCol = 1
-            f.set_size_inches(W*subplotCol / float(DPI), H * subplotRow / float(DPI))
+            imageFileName = patientID_Index + "_GT_Predict.png"
+
+        elif OutputNumImages==1:
+            subplotRow = 1
+            subplotCol = 1
+            imageFileName = patientID_Index + "_Predict.png"
         else:
             if W/H > 16/9:  # normal screen resolution rate is 16:9
-                f.set_size_inches(W/ float(DPI), H*3 / float(DPI))
                 subplotRow = 3
                 subplotCol = 1
             else:
-                f.set_size_inches(W*3/float(DPI), H/float(DPI))
                 subplotRow = 1
                 subplotCol = 3
+            imageFileName = patientID_Index + "_Raw_GT_Predict.png"
+        f.set_size_inches(W * subplotCol / float(DPI), H * subplotRow / float(DPI))
 
         plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
         subplotIndex = 0
 
-        if not Output2Images:
+        if OutputNumImages>=3:
             subplotIndex += 1
 
             subplot1 = plt.subplot(subplotRow, subplotCol, subplotIndex)
@@ -189,33 +198,33 @@ def main():
                     subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
             subplot1.axis('off')
 
-        subplotIndex += 1
-        subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
-        subplot2.imshow(images[b,].squeeze(), cmap='gray')
-        for s in range(0, S):
-            subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
-        if needLegend:
-            if "OCT_Tongren" in hps.dataDir:
-                subplot2.legend(surfaceNames, loc='lower center', ncol=4)
-            else:
-                subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
-        subplot2.axis('off')
+        if OutputNumImages >=2:
+            subplotIndex += 1
+            subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+            subplot2.imshow(images[b,].squeeze(), cmap='gray')
+            for s in range(0, S):
+                subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
+            if needLegend:
+                if "OCT_Tongren" in hps.dataDir:
+                    subplot2.legend(surfaceNames, loc='lower center', ncol=4)
+                else:
+                    subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+            subplot2.axis('off')
 
         subplotIndex += 1
         subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         for s in range(0, S):
             subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
+        if needLegend:
+            if "OCT_Tongren" in hps.dataDir:
+                subplot3.legend(surfaceNames, loc='lower center', ncol=4)
+            else:
+                subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
         subplot3.axis('off')
 
-        if not Output2Images:
-            if MarkGTDisorder:
-                plt.savefig(os.path.join(hps.outputDir, patientID_Index + "_MarkedImage_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
-            else:
-                plt.savefig(os.path.join(hps.outputDir, patientID_Index + "_Image_GT_Predict.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
-        else:
-            plt.savefig(os.path.join(hps.outputDir, patientID_Index + "_GT_Predict.png"), dpi='figure',
-                        bbox_inches='tight', pad_inches=0)
+
+        plt.savefig(os.path.join(hps.outputDir, imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     # check testOutputs whether violate surface-separation constraints
@@ -233,15 +242,16 @@ def main():
         file.write(f"B,S,H,W = {B, S, H, W}\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
+
         file.write(f"\n\n===============Formal Output Result ===========\n")
-        file.write(f"stdSurfaceError = {stdSurfaceError}\n")
-        file.write(f"muSurfaceError = {muSurfaceError}\n")
         file.write(f"patientIDList ={patientIDList}\n")
-        #file.write(f"stdPatientError = {stdPatientError}\n")
-        #file.write(f"muPatientError = {muPatientError}\n")
-        file.write(f"stdError = {stdError}\n")
-        file.write(f"muError = {muError}\n")
+        if hps.existGTLabel:
+            file.write(f"stdSurfaceError = {stdSurfaceError}\n")
+            file.write(f"muSurfaceError = {muSurfaceError}\n")
+            file.write(f"stdError = {stdError}\n")
+            file.write(f"muError = {muError}\n")
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
+
         if 0 != len(violateConstraintErrors[0]):
             violateConstraintSlices = set(violateConstraintErrors[0])
             file.write(f"slice number of violating surface-separation constraints: {len(violateConstraintSlices)}\n")
