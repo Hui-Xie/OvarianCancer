@@ -13,13 +13,18 @@ def polarImageLabelRotate_Tensor(polarImage, polarLabel, rotation=0):
     :param rotation: in integer degree of [0,360], negative indicates reverse direction
     :return: (rotated polarImage,rotated polarLabel) same size with input
     '''
-    assert polarLabel.dim() == polarLabel.dim()
-    assert polarImage.shape[-1] == polarLabel.shape[-1]
     rotation = rotation % 360
-    if 0 != rotation:
-        polarImage = torch.roll(polarImage, rotation, dims=-1)
-        polarLabel = torch.roll(polarLabel, rotation, dims=-1)
-    return (polarImage, polarLabel)
+    if polarLabel is None:
+        if 0 != rotation:
+            polarImage = torch.roll(polarImage, rotation, dims=-1)
+        return (polarImage, None)
+    else:
+        assert polarLabel.dim() == polarLabel.dim()
+        assert polarImage.shape[-1] == polarLabel.shape[-1]
+        if 0 != rotation:
+            polarImage = torch.roll(polarImage, rotation, dims=-1)
+            polarLabel = torch.roll(polarLabel, rotation, dims=-1)
+        return (polarImage, polarLabel)
 
 def polarLabelRotate_Tensor(polarLabel, rotation=0):
     '''
@@ -29,7 +34,7 @@ def polarLabelRotate_Tensor(polarLabel, rotation=0):
     :return: (rotated polarImage,rotated polarLabel) same size with input
     '''
     rotation = rotation % 360
-    if 0 != rotation:
+    if 0 != rotation and polarLabel is not None:
         polarLabel = torch.roll(polarLabel, rotation, dims=-1)
     return polarLabel
 
@@ -39,6 +44,8 @@ def gaussianizeLabels(rawLabels, sigma, H):
     input: tensor(Num_surface, W), both sigma and H are a scalar.
     output: tensor(Num_surace, H, W)
     '''
+    assert rawLabels is not None
+
     if 0 == sigma:
         return []
     device = rawLabels.device
@@ -69,6 +76,8 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
     :return:
            a tensor: (B,N,H,W)
     '''
+    assert rawLabels is not None
+
     device = rawLabels.device
     Mu = rawLabels
     B, N, W = Mu.shape
@@ -114,6 +123,8 @@ def getLayerWeightFromImageGradient(imageGradMagnitude, labels, nLayers, w1=10.0
     :param labels: in size of (B,Ns,W), where Ns is the number of surface
     :return: a float tensor of size(B,nlayers,H,W),where nLayers= Ns+1
     '''
+    assert labels is not None
+
     N = nLayers
     B, H, W = imageGradMagnitude.shape
     grad = imageGradMagnitude
@@ -135,6 +146,8 @@ def getLayerWeightFromImageGradient(imageGradMagnitude, labels, nLayers, w1=10.0
     return W
 
 def getLayerWeightFromImages(images, labels, nLayers, w1=10.0, w2=5.0):
+    assert labels is not None
+
     images = images.squeeze(dim=1)  # erase channel dim
     B, H, W = images.shape
     device = images.device
@@ -190,6 +203,9 @@ def getLayerLabels(surfaceLabels, height):
     :return: layerLabels: long tensor in size of (H, W) in which each element is long integer  of [0,N] indicating belonging layer
 
     '''
+    if surfaceLabels is None:
+        return None
+
     H = height
     device = surfaceLabels.device
     N, W = surfaceLabels.shape  # N is the number of surface
@@ -292,7 +308,8 @@ def lacePolarImageLabel(data,label,lacingWidth):
     assert lacingWidth<W
     data =torch.cat((data[:,-lacingWidth:],data, data[:,:lacingWidth]),dim=1)
     assert data.shape[1] == W+2*lacingWidth
-    label = torch.cat((label[:,-lacingWidth:],label, label[:,:lacingWidth]),dim=1)
+    if label is not None:
+        label = torch.cat((label[:,-lacingWidth:],label, label[:,:lacingWidth]),dim=1)
     return data, label
 
 def delacePolarImageLabel(data,label,lacingWidth):
@@ -309,13 +326,15 @@ def delacePolarImageLabel(data,label,lacingWidth):
         newW = W -2*lacingWidth
         assert newW > 0
         data  = data[:, lacingWidth:newW+lacingWidth]
-        label = label[:, lacingWidth:newW+lacingWidth]
+        if label is not None:
+            label = label[:, lacingWidth:newW+lacingWidth]
     elif 3 == data.dim():
         B,H,W = data.shape
         newW = W - 2 * lacingWidth
         assert newW > 0
         data = data[:, :, lacingWidth:newW + lacingWidth]
-        label = label[:, :, lacingWidth:newW + lacingWidth]
+        if label is not None:
+            label = label[:, :, lacingWidth:newW + lacingWidth]
     else:
         print("delacePolarImageLabel currently does not support >=4 dim tensor")
         assert False
@@ -323,6 +342,8 @@ def delacePolarImageLabel(data,label,lacingWidth):
     return data, label
 
 def delacePolarLabel(label, lacingWidth):
+    if label is None:
+        return None
     if 2 == label.dim():
         H,W = label.shape
         newW = W -2*lacingWidth
@@ -381,7 +402,10 @@ def scalePolarLabel(polarLabel, scaleNumerator, scaleDenominator):
     :param scaleDenominator: a integer
     :return:
     '''
-    return polarLabel*scaleNumerator/scaleDenominator
+    if polarLabel is not None:
+        return polarLabel*scaleNumerator/scaleDenominator
+    else:
+        return None
 
 
 

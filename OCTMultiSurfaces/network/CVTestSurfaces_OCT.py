@@ -42,10 +42,11 @@ def main():
         printUsage(sys.argv)
         return -1
 
-    # debug:
+    # output config
     MarkGTDisorder = False
     MarkPredictDisorder = False
     OutputPredictImages = False
+    outputXmlSegFiles = True
     Output2Images = True
     needLegend = True
 
@@ -64,7 +65,7 @@ def main():
         testLabelsPath = os.path.join(hps.dataDir,"test", f"surfaces_CV{hps.k:d}.npy")
         testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
 
-    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=hps.device, sigma=hps.sigma,
+    testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=hps.device, sigma=hps.sigma,
                           lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator,
                           scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
 
@@ -105,36 +106,6 @@ def main():
         # Error Std and mean
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
-
-
-
-        '''
-        # exclude bad output result:
-        badSliceNameList =["/home/hxie1/data/OCT_JHU/preprocessedData/image/hc03_spectralis_macula_v1_s1_R_41.png",
-                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/hc07_spectralis_macula_v1_s1_R_1.png",
-                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_23.png",
-                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_24.png",
-                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_25.png",
-                           "/home/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_26.png" ]
-        badSlicePosSet= set([testIDs.index(x) for x in badSliceNameList])
-        N =len(testIDs)
-        remainSlicePosSet = set([*range(0,N)])- badSlicePosSet
-        remainslicePosTuple = tuple(remainSlicePosSet)
-        testIDs = [testIDs[x] for x in remainslicePosTuple]
-        testOutputs = testOutputs[remainslicePosTuple,:,:]
-        testGts = testGts[remainslicePosTuple,:,:]
-        # end of exluding bad output result
-
-        '''
-
-
-
-        '''
-        stdSurfaceError, muSurfaceError,stdPatientError, muPatientError, stdError, muError = computeErrorStdMu(testOutputs, testGts,
-                                                                                  slicesPerPatient=slicesPerPatient,
-                                                                                  hPixelSize=hPixelSize)
-        '''
-
 
         stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
                                                                                   slicesPerPatient=hps.slicesPerPatient,
@@ -245,7 +216,7 @@ def main():
                         bbox_inches='tight', pad_inches=0)
         plt.close()
 
-    # check testOutputs whehter violate surface-separation constraints
+    # check testOutputs whether violate surface-separation constraints
     testOutputs0 = testOutputs[:,0:-1,:]
     testOutputs1 = testOutputs[:, 1:, :]
     violateConstraintErrors = np.nonzero(testOutputs0 > testOutputs1)

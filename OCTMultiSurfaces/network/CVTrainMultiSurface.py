@@ -113,8 +113,8 @@ def main():
     validationTransform = tainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth, TTA=False, TTA_Degree=0)
-    validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,
+    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth, TTA=False, TTA_Degree=0)
+    validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform, device=device, sigma=sigma,
                                 lacingWidth=lacingWidth, TTA=False, TTA_Degree=0)
 
     # construct network

@@ -68,10 +68,10 @@ def main():
     validationTransform = tainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=hps.device, sigma=hps.sigma, lacingWidth=hps.lacingWidth,
+    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=tainTransform, device=hps.device, sigma=hps.sigma, lacingWidth=hps.lacingWidth,
                            TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator, scaleDenominator=hps.scaleDenominator,
                            gradChannels=hps.gradChannels)
-    validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=hps.device, sigma=hps.sigma,
+    validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform, device=hps.device, sigma=hps.sigma,
                                 lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator, scaleDenominator=hps.scaleDenominator,
                                 gradChannels=hps.gradChannels)
 

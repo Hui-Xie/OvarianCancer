@@ -10,7 +10,7 @@ from OCTAugmentation import *
 
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, labelPath, IDPath, transform=None, device=None, sigma=20.0, lacingWidth=0,
+    def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, device=None, sigma=20.0, lacingWidth=0,
                  TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1, gradChannels=0):
         self.m_device = device
         self.m_sigma = sigma
@@ -21,7 +21,11 @@ class OCTDataSet(data.Dataset):
         std,mean = torch.std_mean(images, dim=(1,2))
         self.m_images = TF.Normalize(mean, std)(images)
 
-        self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, num_surface, W
+        if labelPath is not None:
+            self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, num_surface, W
+        else:
+            self.m_labels = None
+
         with open(IDPath) as f:
             self.m_IDs = json.load(f)
         self.m_transform = transform
@@ -73,7 +77,11 @@ class OCTDataSet(data.Dataset):
 
     def __getitem__(self, index):
         data = self.m_images[index,]
-        label = self.m_labels[index,]
+        if self.m_labels is not None:
+            label = self.m_labels[index,]
+        else:
+            label = None
+
         if self.m_transform:
             data, label = self.m_transform(data, label)
 
@@ -96,7 +104,7 @@ class OCTDataSet(data.Dataset):
 
         result = {"images": image,
                   "GTs": label,
-                  "gaussianGTs": [] if 0 == self.m_sigma else gaussianizeLabels(label, self.m_sigma, H),
+                  "gaussianGTs": [] if 0 == self.m_sigma or label is None  else gaussianizeLabels(label, self.m_sigma, H),
                   "IDs": self.m_IDs[str(index)],
                   "layers": getLayerLabels(label,H) }
         return result

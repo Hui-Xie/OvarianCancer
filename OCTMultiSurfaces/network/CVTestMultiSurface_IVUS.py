@@ -188,7 +188,7 @@ def main():
         nCountTTA = 0
         for TTADegree in range(0, 360, TTA_StepDegree):
             nCountTTA += 1
-            testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma,
+            testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=device, sigma=sigma,
                                   lacingWidth=lacingWidth, TTA=TTA, TTA_Degree=TTADegree)
             testBatch = 0
             for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):

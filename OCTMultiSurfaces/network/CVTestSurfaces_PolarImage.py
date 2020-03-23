@@ -119,7 +119,7 @@ def main():
         nCountTTA = 0
         for TTADegree in range(0, 360, hps.TTA_StepDegree):
             nCountTTA += 1
-            testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=hps.device, sigma=hps.sigma,
+            testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=hps.device, sigma=hps.sigma,
                                   lacingWidth=hps.lacingWidth, TTA=hps.TTA, TTA_Degree=TTADegree, scaleNumerator=hps.scaleNumerator,
                                   scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
             testBatch = 0

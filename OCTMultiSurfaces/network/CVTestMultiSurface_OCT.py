@@ -109,7 +109,7 @@ def main():
         testLabelsPath = os.path.join(dataDir,"test", f"surfaces_CV{k:d}.npy")
         testIDPath    = os.path.join(dataDir,"test", f"patientID_CV{k:d}.json")
 
-    testData = OCTDataSet(testImagesPath, testLabelsPath, testIDPath, transform=None, device=device, sigma=sigma)
+    testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=device, sigma=sigma)
 
     # construct network
     net = eval(network)(numSurfaces=numSurfaces, N=numStartFilters)

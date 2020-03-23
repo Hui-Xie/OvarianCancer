@@ -27,6 +27,8 @@ class OCTDataTransform(object):
         data = inputData.clone()
         if inputLabel is not None:
             label = inputLabel.clone()
+        else:
+            label = None
 
         # gaussian noise
         if random.uniform(0, 1) < self.m_prob:
