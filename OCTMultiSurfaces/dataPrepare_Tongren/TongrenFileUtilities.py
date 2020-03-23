@@ -276,7 +276,8 @@ def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames,
         predicition = testOutputs[i:i+numBscan,:,:]
         dirPath, fileName = os.path.split(testIDs[i])
         for j in range(i+1,i+numBscan):
-            if dirPath !=  os.path.split(testIDs[j]):
+            dirPath1, fileName1 = os.path.split(testIDs[j])
+            if dirPath !=  dirPath1:
                 print(f"Error: testID is not continous in {testIDs[j]} against {dirPath}")
                 assert False
                 return

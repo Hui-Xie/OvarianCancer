@@ -107,7 +107,8 @@ def main():
             # S is surface location in (B,S,W) dimension, the predicted Mu
             S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
 
-            images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
+            batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
+            images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
             if hps.existGTLabel:
                 testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs']
@@ -121,21 +122,22 @@ def main():
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
 
-        if outputXmlSegFiles:
-            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir)
-
         if hps.existGTLabel:
             stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
                                                                                   slicesPerPatient=hps.slicesPerPatient,
                                                                                   hPixelSize=hps.hPixelSize)
+            testGts = testGts.cpu().numpy()
+
+        images = images.cpu().numpy().squeeze()
+        testOutputs = testOutputs.cpu().numpy()
+
+        if outputXmlSegFiles:
+            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir)
+
 
     #generate predicted images
-    images = images[:, 0, :, :]  # erase grad channels
-    images = images.cpu().numpy().squeeze()
     B,H,W = images.shape
     B, S, W = testOutputs.shape
-    testOutputs = testOutputs.cpu().numpy()
-    testGts = testGts.cpu().numpy()
     patientIDList = []
 
     pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
@@ -191,7 +193,7 @@ def main():
 
         subplotIndex = 0
 
-        if OutputNumImages>=3:
+        if OutputNumImages>=3 and hps.existGTLabel:
             subplotIndex += 1
 
             subplot1 = plt.subplot(subplotRow, subplotCol, subplotIndex)
@@ -210,7 +212,7 @@ def main():
                     subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
             subplot1.axis('off')
 
-        if OutputNumImages >=2:
+        if OutputNumImages >=2 and hps.existGTLabel:
             subplotIndex += 1
             subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
             subplot2.imshow(images[b,].squeeze(), cmap='gray')
