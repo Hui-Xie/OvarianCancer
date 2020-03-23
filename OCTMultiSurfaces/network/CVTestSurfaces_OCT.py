@@ -50,6 +50,7 @@ def main():
     Output2Images = True
     needLegend = True
 
+
     # parse config file
     configFile = sys.argv[1]
     hps = ConfigReader(configFile)
@@ -58,7 +59,7 @@ def main():
 
     if -1==hps.k and 0==hps.K:  # do not use cross validation
         testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
-        testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
+        testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy") if hps.existGTLabel else None
         testIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
     else:  # use cross validation
         testImagesPath = os.path.join(hps.dataDir,"test", f"images_CV{hps.k:d}.npy")
@@ -99,7 +100,7 @@ def main():
 
             images = torch.cat((images, batchData['images'])) if testBatch != 1 else batchData['images'] # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
-            testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] # Not Gaussian GTs
+            testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs'] if hps.existGTLabel else None
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
 
@@ -107,7 +108,8 @@ def main():
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
 
-        stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
+        if hps.existGTLabel:
+            stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
                                                                                   slicesPerPatient=hps.slicesPerPatient,
                                                                                   hPixelSize=hps.hPixelSize)
 

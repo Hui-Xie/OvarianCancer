@@ -318,9 +318,9 @@ class SurfacesUnet(BasicModel):
 
         if hps.useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
-            loss_layer = generalizedDiceLoss(layerProb, layerGTs)
+            loss_layer = generalizedDiceLoss(layerProb, layerGTs) if hps.existGTLabel else 0.0
 
-            if hps.useLayerCE:
+            if hps.useLayerCE and hps.existGTLabel:
                 multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
                 loss_layer += multiLayerCE(layerProb, layerGTs)
 
@@ -331,25 +331,27 @@ class SurfacesUnet(BasicModel):
 
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
-        if hps.useCEReplaceKLDiv:
-            multiSufaceCE = MultiSurfaceCrossEntropyLoss(weight=surfaceWeight)
-            loss_surface = multiSufaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
+        if hps.existGTLabel:
+            if hps.useCEReplaceKLDiv:
+                multiSufaceCE = MultiSurfaceCrossEntropyLoss(weight=surfaceWeight)
+                loss_surface = multiSufaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
-        elif hps.useWeightedDivLoss:
-            weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
-            if 0 == len(gaussianGTs):  # sigma ==0 case
-                gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
+            elif hps.useWeightedDivLoss:
+                weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
+                if 0 == len(gaussianGTs):  # sigma ==0 case
+                    gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
+                loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
+            else:
+                klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
+                # the input given is expected to contain log-probabilities
+                if 0 == len(gaussianGTs):  # sigma ==0 case
+                    gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
+                loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
         else:
-            klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
-            # the input given is expected to contain log-probabilities
-            if 0 == len(gaussianGTs):  # sigma ==0 case
-                gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
+            loss_surface =0.0
 
-
-        if hps.useSmoothSurface:
+        if hps.useSmoothSurface and hps.existGTLabel:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(mu, GTs)
         else:
@@ -361,9 +363,12 @@ class SurfacesUnet(BasicModel):
         else:
             S = mu
 
-        l1Loss = nn.SmoothL1Loss().to(device)
-        weightL1 = 10.0
-        loss_L1 = l1Loss(S, GTs)
+        if hps.existGTLabel:
+            l1Loss = nn.SmoothL1Loss().to(device)
+            weightL1 = 10.0
+            loss_L1 = l1Loss(S, GTs)
+        else:
+            loss_L1 = 0.0
 
         loss = loss_layer + loss_surface + loss_smooth+ loss_L1 * weightL1
 

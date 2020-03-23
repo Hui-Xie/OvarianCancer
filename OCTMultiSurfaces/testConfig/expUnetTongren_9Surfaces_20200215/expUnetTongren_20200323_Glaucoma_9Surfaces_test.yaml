@@ -3,6 +3,7 @@
 
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/glaucomaRaw_W512"
+existGTLabel: False
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K_Folds: 0
 fold_k:  -1   # do not use cross validation
