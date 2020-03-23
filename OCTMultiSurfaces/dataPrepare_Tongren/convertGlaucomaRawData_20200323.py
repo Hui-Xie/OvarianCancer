@@ -29,7 +29,7 @@ def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
     s = 0 # initial slice for each patient
     for volume in volumesList:
         # read image data and clip
-        imagesList = glob.glob(volume + f"/[0-3][0-9].jpg")
+        imagesList = glob.glob(volume + f"/*[0-3][0-9].jpg")
         imagesList.sort()
         if NumSlices != len(imagesList):
            print(f"Error: at {volume}, the slice number does not match jpg files.")
