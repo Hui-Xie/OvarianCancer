@@ -52,6 +52,8 @@ for file in filesList:
         G = gtImage[s,].astype(int)  # groundtruth image
         GC = binary_dilation(G != 1, dilateFilter) & G  # groundtruth contour
 
+
+
         subplot1 = plt.subplot(1, 2, 1)
         subplot1.imshow(R, cmap='gray', vmin=np.amin(R), vmax=np.amax(R))
         subplot1.set_title("Raw: " + patientID + f"_s{s}")

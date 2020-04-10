@@ -62,6 +62,11 @@ for file in filesList:
         GC = binary_dilation(G != 1, dilateFilter) & G  # groundtruth contour
         GCIndices = np.nonzero(GC)
 
+        np.set_printoptions(precision=1)
+        with open(os.path.join(outputDir, f"output_GC.txt"), "w") as file:
+            file.write(GC)
+            exit(0)
+
         plt.imshow(R, cmap='gray')
         plt.scatter(GCIndices[1], GCIndices[0],s=0.05)
         plt.axis('off')
