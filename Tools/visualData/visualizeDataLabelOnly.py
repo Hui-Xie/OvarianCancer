@@ -71,7 +71,7 @@ for file in filesList:
 
 
         plt.imshow(R, cmap='gray')
-        plt.scatter(GCIndices[1], GCIndices[0],s=0.0005)
+        plt.scatter(GCIndices[1], GCIndices[0],s=0.005)
         plt.axis('off')
 
         plt.savefig(os.path.join(outputDir, patientID + f"_s{s}.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
