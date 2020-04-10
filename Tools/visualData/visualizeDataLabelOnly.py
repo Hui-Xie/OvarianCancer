@@ -60,10 +60,10 @@ for file in filesList:
         R = rawImage[s,]  # raw image
         G = gtImage[s,].astype(int)  # groundtruth image
         GC = binary_dilation(G != 1, dilateFilter) & G  # groundtruth contour
+        GCIndices = np.nonzero(GC)
 
-
-        plt.imshow(R, cmap='gray', vmin=np.amin(R), vmax=np.amax(R))
-        # plt.imshow(GC, cmap='YlGn', alpha=0.3, vmin=np.amin(GC), vmax=np.amax(GC))
+        plt.imshow(R, cmap='gray')
+        plt.scatter(GCIndices[0], GCIndices[1],s=1)
         plt.axis('off')
 
         plt.savefig(os.path.join(outputDir, patientID + f"_s{s}.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
