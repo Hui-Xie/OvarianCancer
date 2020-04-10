@@ -3,7 +3,7 @@
 import os
 import sys
 import numpy as np
-sys.path.append("..")
+sys.path.append("../..")
 from utilities.FilesUtilities import *
 import matplotlib.pyplot as plt
 from scipy.ndimage.morphology import binary_dilation
