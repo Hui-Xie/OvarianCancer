@@ -63,11 +63,10 @@ for file in filesList:
         GCIndices = np.nonzero(GC)
 
         plt.imshow(R, cmap='gray')
-        plt.scatter(GCIndices[0], GCIndices[1],s=1)
+        plt.scatter(GCIndices[1], GCIndices[0],s=0.5)
         plt.axis('off')
 
         plt.savefig(os.path.join(outputDir, patientID + f"_s{s}.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
-        break  # debug
 
 print(f"totally generated {nFigs} png file. ")
