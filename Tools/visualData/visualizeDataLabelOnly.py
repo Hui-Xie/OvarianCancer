@@ -62,13 +62,16 @@ for file in filesList:
         GC = binary_dilation(G != 1, dilateFilter) & G  # groundtruth contour
         GCIndices = np.nonzero(GC)
 
+        '''
         np.set_printoptions(precision=1, threshold=np.inf)
         with open(os.path.join(outputDir, f"output_GC.txt"), "w") as file:
             file.write(np.array2string(GC))
             exit(0)
+        '''
+
 
         plt.imshow(R, cmap='gray')
-        plt.scatter(GCIndices[1], GCIndices[0],s=0.05)
+        plt.scatter(GCIndices[1], GCIndices[0],s=0.0005)
         plt.axis('off')
 
         plt.savefig(os.path.join(outputDir, patientID + f"_s{s}.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
