@@ -64,7 +64,7 @@ for file in filesList:
 
         np.set_printoptions(precision=1)
         with open(os.path.join(outputDir, f"output_GC.txt"), "w") as file:
-            file.write(GC)
+            file.write(np.array2string(GC))
             exit(0)
 
         plt.imshow(R, cmap='gray')
