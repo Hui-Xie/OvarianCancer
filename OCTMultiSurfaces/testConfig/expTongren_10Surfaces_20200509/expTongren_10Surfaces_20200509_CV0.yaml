@@ -11,8 +11,8 @@
 # Unet with a residual link inside each block + Gaussian Ground truth for multi-surface + KLDivLoss + Soft argMax + SmoothL1Loss + IPM
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces/"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K_Folds: 10
-fold_k:  0   # k
+K: 10   # K-fold cross validation
+k: 0   # the fold k
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
