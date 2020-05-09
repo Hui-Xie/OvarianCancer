@@ -20,7 +20,7 @@ NSlice1,H,W1 = images.shape
 NSlice2,S,W2 =  surfaces.shape
 assert NSlice1 ==NSlice2
 assert W1==W2
-assert S ==9 # as delete inaccurate surface 8 and 2.
+assert S ==10 # as delete inaccurate surface 8
 W = W1
 
 with open(os.path.join(dataSetDir,f"patientID_CV{kf:d}.json")) as json_file:
