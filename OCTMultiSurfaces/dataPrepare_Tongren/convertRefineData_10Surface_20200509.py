@@ -90,7 +90,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     surfacesCopy[:, 0:-1, :] = torch.where(surface0 > surface1, surface0, torch.zeros_like(surface0))
 
     B = surfaces.shape[0]
-    MaxMergeSurfaces = 4
+    MaxMergeSurfaces = 5
     for b in range(0, B):
         for w in range(W * 2 // 5, W * 3 // 5):  # only focus on fovea region.
             s = 0
