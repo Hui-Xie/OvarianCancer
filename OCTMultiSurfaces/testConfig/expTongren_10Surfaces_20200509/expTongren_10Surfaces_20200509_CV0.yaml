@@ -8,6 +8,7 @@
 
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces/"
+existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 10  # K-fold cross validation
 k: 0   # the fold k test
@@ -49,7 +50,7 @@ scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 5 # rawImage + gradChannels
 nLayers: 7
-numSurfaces: 10  # num of surfaces in an image  
+numSurfaces: 10  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 4   # the adde gradient channels beside raw image channel
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
