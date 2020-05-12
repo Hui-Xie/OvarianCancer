@@ -5,6 +5,11 @@
 #       therefore, we need to restore the 3th surface(ID=2) with BScan range 10-25.
 #       remove some patient samples: 1791，4765, and 34127，34169和2579
 
+# at May 12th, 2020:
+#      keep all good Bscans for training and validation;
+#      keep all Bscans for test;
+
+
 
 import glob as glob
 import os
@@ -44,7 +49,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     with open(yamlFilePath) as file:
         goodBscans = yaml.load(file, Loader=yaml.FullLoader)['goodBscans']
 
-    if '/traning/' in goalImageFile:
+    if '/traning/' in goalImageFile or '/validation/' in goalImageFile:
         totalNumSlices = 0
         for patientVolumePath in volumesList:
             patientVolumeName = os.path.splitext(os.path.basename(patientVolumePath))[0]
@@ -66,11 +71,10 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
         patientID = patientName[0:patientName.find("_OD_")]
         lowB = 0  # index of Bscan from 0 to 31, 31 is excluded.
         highB = NumSlices
-        if '/traning/' in goalImageFile:
+        if '/traning/' in goalImageFile or '/validation/' in goalImageFile:
             lowB = goodBscans[patientID][0]-1;
             highB = goodBscans[patientID][1];
         nSlices = highB-lowB
-
 
         surfacesArray = getSurfacesArray(segFile)
         Z,Num_Surfaces, X = surfacesArray.shape
