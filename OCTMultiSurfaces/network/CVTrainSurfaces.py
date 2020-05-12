@@ -145,9 +145,24 @@ def main():
             if hps.groundTruthInteger:
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # Error Std and mean
+
+            goodBScansInGtOrder =None
+            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBsans):
+                # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+                goodBScansInGtOrder = []
+                b = 0
+                while b < len(validIDs):
+                    patientPath, filename = os.path.split(validIDs[b])
+                    patientIDVolumeName = os.path.basename(patientPath)
+                    patientID = int(patientIDVolumeName[0:patientIDVolumeName.find("_OD_")])
+                    lowB = hps.goodBscans[patientID][0]-1
+                    highB = hps.goodBscans[patientID][1]
+                    goodBScansInGtOrder.append([lowB,highB])
+                    b += hps.slicePerPatient #validation data and test data both have 31 Bscans per patient
+
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
                                                                                                  slicesPerPatient=hps.slicesPerPatient,
-                                                                                                 hPixelSize=hps.hPixelSize)
+                                                                                                 hPixelSize=hps.hPixelSize, goodBScansInGtOrder=goodBScansInGtOrder)
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug

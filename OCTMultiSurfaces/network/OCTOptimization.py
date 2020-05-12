@@ -186,7 +186,7 @@ def computeErrorStdMu(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
     std, mu = tuple(x*hPixelSize for x in torch.std_mean(absError))
     return stdSurface, muSurface, stdPatient,muPatient, std,mu
 
-def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870):
+def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870, goodBScansInGtOrder=None):
     '''
     Compute error standard deviation and mean along different dimension.
 
@@ -196,6 +196,7 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
     :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
     :param gts: in (BatchSize, NumSurface, W) dimension
     :param hPixelSize: in micrometer
+    :param goodBScansInGtOrder:
     :return: muSurface: (NumSurface) dimension, mean for each surface
              stdSurface: (NumSurface) dimension
              muPatient: (NumPatient) dimension, mean for each patient
@@ -206,10 +207,18 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
     device = predicitons.device
     B,N, W = predicitons.shape # where N is numSurface
     absError = torch.abs(predicitons-gts)
-    P = B // slicesPerPatient
-    absErrorPatient = torch.zeros((P,N), device=device)
-    for p in range(P):
-        absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient:(p + 1) * slicesPerPatient, ], dim=(0,2))*hPixelSize
+
+    if goodBScansInGtOrder is None:
+        P = B // slicesPerPatient
+        absErrorPatient = torch.zeros((P,N), device=device)
+        for p in range(P):
+            absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient:(p + 1) * slicesPerPatient, ], dim=(0,2))*hPixelSize
+    else:
+        P = len(goodBScansInGtOrder)
+        absErrorPatient = torch.zeros((P, N), device=device)
+        for p in range(P):
+            absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient+goodBScansInGtOrder[p][0]:p * slicesPerPatient+goodBScansInGtOrder[p][1], ], dim=(0,2))*hPixelSize
+
     stdSurface, muSurface = torch.std_mean(absErrorPatient, dim=0)
     # size of stdSurface, muSurface: [N]
     std, mu = torch.std_mean(absErrorPatient)

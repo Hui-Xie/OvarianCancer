@@ -5,7 +5,7 @@ import json
 import numpy as np
 import os
 
-segDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/training"
+segDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/test"
 
 
 segFileList = glob.glob(os.path.join(segDir,"surfaces_CV*.npy"))
