@@ -3,7 +3,7 @@
 # raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
 # convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_10Surface_20200509.py
 # numSurface = 10 as deleted inaccurate surface 8
-# training and validation set use all good bscans, while test set uses all 31 Bscans.
+# training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
 
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/"
