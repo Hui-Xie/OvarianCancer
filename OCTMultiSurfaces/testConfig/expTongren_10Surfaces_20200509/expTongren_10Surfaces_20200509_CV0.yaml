@@ -97,6 +97,7 @@ useSmoothSurface: True
 useWeightedDivLoss: True
 
 goodBscans:
-  2639：[7,26]
-  2700：[8,25]
+    2639: [7, 26]
+    2700: [8, 25]
+
 #End of good Bscans.
