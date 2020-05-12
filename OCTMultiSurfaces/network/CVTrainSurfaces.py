@@ -147,7 +147,7 @@ def main():
             # Error Std and mean
 
             goodBScansInGtOrder =None
-            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBsans):
+            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
                 # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
                 goodBScansInGtOrder = []
                 b = 0
@@ -158,7 +158,7 @@ def main():
                     lowB = hps.goodBscans[patientID][0]-1
                     highB = hps.goodBscans[patientID][1]
                     goodBScansInGtOrder.append([lowB,highB])
-                    b += hps.slicePerPatient #validation data and test data both have 31 Bscans per patient
+                    b += hps.slicesPerPatient #validation data and test data both have 31 Bscans per patient
 
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
                                                                                                  slicesPerPatient=hps.slicesPerPatient,

@@ -126,9 +126,23 @@ def main():
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
 
         if hps.existGTLabel:
+            goodBScansInGtOrder = None
+            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
+                # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+                goodBScansInGtOrder = []
+                b = 0
+                while b < len(testIDs):
+                    patientPath, filename = os.path.split(testIDs[b])
+                    patientIDVolumeName = os.path.basename(patientPath)
+                    patientID = int(patientIDVolumeName[0:patientIDVolumeName.find("_OD_")])
+                    lowB = hps.goodBscans[patientID][0] - 1
+                    highB = hps.goodBscans[patientID][1]
+                    goodBScansInGtOrder.append([lowB, highB])
+                    b += hps.slicesPerPatient  # validation data and test data both have 31 Bscans per patient
+
             stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
                                                                                   slicesPerPatient=hps.slicesPerPatient,
-                                                                                  hPixelSize=hps.hPixelSize)
+                                                                                  hPixelSize=hps.hPixelSize, goodBScansInGtOrder=goodBScansInGtOrder)
             testGts = testGts.cpu().numpy()
 
         images = images.cpu().numpy().squeeze()
