@@ -53,7 +53,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
         totalNumSlices = 0
         for patientVolumePath in volumesList:
             patientVolumeName = os.path.splitext(os.path.basename(patientVolumePath))[0]
-            patientID = patientVolumeName[0:patientVolumeName.find("_OD_")]
+            patientID = int(patientVolumeName[0:patientVolumeName.find("_OD_")])
             totalNumSlices += goodBscans[patientID][1] - goodBscans[patientID][0] +1
     else:
         totalNumSlices = len(volumesList)*NumSlices
@@ -68,7 +68,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
         segFile = patientName+"_Sequence_Surfaces_Iowa.xml"
         segFile = os.path.join(segsDir, segFile)
 
-        patientID = patientName[0:patientName.find("_OD_")]
+        patientID = int(patientName[0:patientName.find("_OD_")])
         lowB = 0  # index of Bscan from 0 to 31, 31 is excluded.
         highB = NumSlices
         if '/traning/' in goalImageFile or '/validation/' in goalImageFile:

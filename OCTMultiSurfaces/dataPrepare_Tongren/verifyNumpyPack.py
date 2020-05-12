@@ -1,9 +1,9 @@
 
 
-dataSetDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces/validation"
+dataSetDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/test"
 outputDir = "/home/hxie1/data/temp"
 
-kf=7 # k fold
+kf=3 # k fold
 
 import numpy as np
 import os
@@ -26,7 +26,7 @@ W = W1
 with open(os.path.join(dataSetDir,f"patientID_CV{kf:d}.json")) as json_file:
     patientIDs = json.load(json_file)
 
-k= 20 # random test number
+k= 79 # random test number
 
 #example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
 patientID_Index = extractFileName(patientIDs[str(k)])  # e.g.: 4511_OD_29134_OCT06
