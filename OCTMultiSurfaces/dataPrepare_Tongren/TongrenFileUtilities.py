@@ -186,7 +186,7 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
 
     # some parameters:
     B, S, W = predicition.shape
-    assert S==9 and W ==512 and B==31
+    assert W ==512 and B==31
     assert S == len(surfaceNames)
 
     # make print pretty
