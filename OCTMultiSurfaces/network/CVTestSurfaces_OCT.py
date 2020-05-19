@@ -48,9 +48,13 @@ def main():
 
     outputXmlSegFiles = True
 
-    OutputNumImages = 3
+    OutputNumImages = 4
     # choose from 0, 1,2,3:----------
-    # 0: no image output; 1: Pediction; 2: GT and Prediciton; 3: Raw, GT, Prediction
+    # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
+    # 4: Raw, GT, Prediction with GT superpose in one image
+    if 4 == OutputNumImages:
+        comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
+        # GT uses red, while prediction uses green
 
     needLegend = True
 
@@ -186,6 +190,8 @@ def main():
         f = plt.figure(frameon=False)
         DPI = f.dpi
 
+
+
         if OutputNumImages==2:
             if "OCT_Tongren" in hps.dataDir:
                 subplotRow = 1
@@ -206,7 +212,10 @@ def main():
             else:
                 subplotRow = 1
                 subplotCol = 3
-            imageFileName = patientID_Index + "_Raw_GT_Predict.png"
+            if OutputNumImages == 4:
+                imageFileName = patientID_Index + f"_Raw_GT_Comparison_S_{comparisonSurfaceIndex:d}.png"
+            else:
+                imageFileName = patientID_Index + "_Raw_GT_Predict.png"
         f.set_size_inches(W * subplotCol / float(DPI), H * subplotRow / float(DPI))
 
         plt.margins(0)
@@ -252,13 +261,19 @@ def main():
         else:
             subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
-        for s in range(0, S):
-            subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
-        if needLegend:
-            if "OCT_Tongren" in hps.dataDir:
-                subplot3.legend(surfaceNames, loc='lower center', ncol=4)
-            else:
-                subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+        if OutputNumImages==4:
+            subplot3.plot(range(0, W), testGts[b, comparisonSurfaceIndex, :].squeeze(), 'tab:red', linewidth=0.9)
+            subplot3.plot(range(0, W), testOutputs[b, comparisonSurfaceIndex, :].squeeze(), 'tab:green', linewidth=0.9)
+            if needLegend:
+                subplot3.legend([f"GT_S_{comparisonSurfaceIndex}", f"Prediction_S_{comparisonSurfaceIndex}"], loc='lower center', ncol=2)
+        else:
+            for s in range(0, S):
+                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
+            if needLegend:
+                if "OCT_Tongren" in hps.dataDir:
+                    subplot3.legend(surfaceNames, loc='lower center', ncol=4)
+                else:
+                    subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
         subplot3.axis('off')
 
 
