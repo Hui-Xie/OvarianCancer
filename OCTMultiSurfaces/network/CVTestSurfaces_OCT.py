@@ -48,7 +48,7 @@ def main():
 
     outputXmlSegFiles = True
 
-    OutputNumImages = 1
+    OutputNumImages = 3
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Pediction; 2: GT and Prediciton; 3: Raw, GT, Prediction
 
