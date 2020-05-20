@@ -213,7 +213,7 @@ def main():
                 subplotRow = 1
                 subplotCol = 3
             if OutputNumImages == 4:
-                imageFileName = patientID_Index + f"_Raw_GT_Comparison_S_{comparisonSurfaceIndex:d}.png"
+                imageFileName = patientID_Index + f"_Raw_GT_Comparison_3S_center{comparisonSurfaceIndex:d}.png"
             else:
                 imageFileName = patientID_Index + "_Raw_GT_Predict.png"
         f.set_size_inches(W * subplotCol / float(DPI), H * subplotRow / float(DPI))
@@ -262,10 +262,23 @@ def main():
             subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
         subplot3.imshow(images[b,].squeeze(), cmap='gray')
         if OutputNumImages==4:
-            subplot3.plot(range(0, W), testGts[b, comparisonSurfaceIndex, :].squeeze(), 'tab:red', linewidth=0.9)
-            subplot3.plot(range(0, W), testOutputs[b, comparisonSurfaceIndex, :].squeeze(), 'tab:green', linewidth=0.9)
+            ls = comparisonSurfaceIndex -1 # low index for comparison surface index
+            if ls <0:
+                ls =0
+            hs =  comparisonSurfaceIndex +2 # high index
+            if hs > S:
+                hs = S
+            GTColor = ['tab:blue', 'tab:brown', 'tab:olive']
+            PredictionColor= ['tab:orange', 'tab:pink', 'tab:red',]
+            legendList = []
+            for s in range(ls, hs):
+                subplot3.plot(range(0, W), testGts[b, s, :].squeeze(), GTColor[s%3], linewidth=0.9)
+                legendList.append(f"GT_s{s}")
+            for s in range(ls, hs):
+                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), PredictionColor[s%3], linewidth=0.9)
+                legendList.append(f"Prediction_s{s}")
             if needLegend:
-                subplot3.legend([f"GT_S_{comparisonSurfaceIndex}", f"Prediction_S_{comparisonSurfaceIndex}"], loc='lower center', ncol=2)
+                subplot3.legend(legendList, loc='lower center', ncol=2)
         else:
             for s in range(0, S):
                 subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
