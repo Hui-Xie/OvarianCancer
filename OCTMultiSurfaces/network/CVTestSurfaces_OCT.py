@@ -15,6 +15,7 @@ from SurfacesUnet import SurfacesUnet
 from SurfacesUnet_YufanHe import SurfacesUnet_YufanHe
 from OCTOptimization import *
 from OCTTransform import *
+import time
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
@@ -106,6 +107,7 @@ def main():
         surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-ONL', 'ELM', 'IS-OS', 'OS-RPE', 'BM']
 
     # test
+    testStartTime = time.time()
     net.eval()
     with torch.no_grad():
         testBatch = 0
@@ -155,6 +157,7 @@ def main():
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir)
 
+    testEndTime = time.time()
 
     #generate predicted images
     B,H,W = images.shape
@@ -306,6 +309,7 @@ def main():
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,H,W = {B, S, H, W}\n")
+        file.write(f"Test time: {testEndTime-testStartTime} seconds.\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
 
