@@ -224,6 +224,32 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
     std, mu = torch.std_mean(absErrorPatient)
     return stdSurface, muSurface, std,mu
 
+def computeSpecificSurfaceErrorForEachPatient(surfaceIndex, predicitons, gts, slicesPerPatient=31, hPixelSize=3.870, goodBScansInGtOrder=None):
+    '''
+
+    :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
+    :param gts: in (BatchSize, NumSurface, W) dimension
+    :param hPixelSize: in micrometer
+    :param goodBScansInGtOrder:
+    :return: nPatients*1 vector
+    '''
+    device = predicitons.device
+    B,N, W = predicitons.shape # where N is numSurface
+    absError = torch.abs(predicitons-gts)
+
+    if goodBScansInGtOrder is None:
+        P = B // slicesPerPatient
+        absErrorPatient = torch.zeros((P,N), device=device)
+        for p in range(P):
+            absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient:(p + 1) * slicesPerPatient, ], dim=(0,2))*hPixelSize
+    else:
+        P = len(goodBScansInGtOrder)
+        absErrorPatient = torch.zeros((P, N), device=device)
+        for p in range(P):
+            absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient+goodBScansInGtOrder[p][0]:p * slicesPerPatient+goodBScansInGtOrder[p][1], ], dim=(0,2))*hPixelSize
+
+    return absErrorPatient[:, surfaceIndex]
+
 class OCTMultiSurfaceLoss():
 
     def __init__(self, reduction='mean'):
