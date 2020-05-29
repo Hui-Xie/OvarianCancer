@@ -181,6 +181,9 @@ def main():
             patientID = os.path.basename(patientPath)
             if patientID not in patientIDList:
                 patientIDList.append(patientID)
+            volumePath = hps.imagesOutputDir+"/"+patientID
+            if not os.path.exists(volumePath):
+                os.makedirs(volumePath)  # recursive dir creation
             index = os.path.splitext(filename)[0]
             patientID_Index = patientID +"_" +index
 
@@ -190,6 +193,7 @@ def main():
             patient = patientID_Index[0:4] # e.g. hc01
             if "_s1_R_19" in patientID_Index and patient not in patientIDList:
                 patientIDList.append(patient)
+
 
 
 
@@ -298,8 +302,10 @@ def main():
                     subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
         subplot3.axis('off')
 
-
-        plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+        if "OCT_Tongren" in hps.dataDir:
+            plt.savefig(os.path.join(volumePath,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+        else:
+            plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     # check testOutputs whether violate surface-separation constraints
