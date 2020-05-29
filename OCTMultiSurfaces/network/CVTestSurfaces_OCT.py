@@ -49,14 +49,13 @@ def main():
 
     outputXmlSegFiles = True
 
-    OutputNumImages = 4
+    OutputNumImages = 0
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
-    comparisonSurfaceIndex = None
-    if 4 == OutputNumImages:
-        comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
-        # GT uses red, while prediction uses green
+    #comparisonSurfaceIndex = None
+    comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
+    # GT uses red, while prediction uses green
 
     OnlyOutputGoodBscans =True
     needLegend = True
@@ -335,7 +334,7 @@ def main():
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
         if comparisonSurfaceIndex is not None:
-            file.write(f"comparisionSurfaceIndex = {comparisionSurfaceIndex}\n")
+            file.write(f"comparisonSurfaceIndex = {comparisonSurfaceIndex}\n")
             file.write(f"specificSurfError = {specificSurfError}\n")
 
         if 0 != len(violateConstraintErrors[0]):
