@@ -4,8 +4,8 @@ import yaml
 import glob
 import os
 
-srcPath = "/home/hxie1/data/OCT_Tongren/goodBscanPrediction_20200512/compareS2_31BscansForEachPatient"
-outputPath ="/home/hxie1/data/OCT_Tongren/goodBscanPrediction_20200512/compareS2_JustGoodBscansForEachPatient"
+srcPath = "/home/hxie1/data/OCT_Tongren/goodBscanPrediction_20200512/10Surfaces_31BscansForEachPatient"
+outputPath ="/home/hxie1/data/OCT_Tongren/goodBscanPrediction_20200512/10Surfaces_JustGoodBscansForEachPatient"
 yamlFilePath = "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_10Surfaces_allGoodBscans_20200512/allGoodBscans.yaml"
 
 # read good bscans config
