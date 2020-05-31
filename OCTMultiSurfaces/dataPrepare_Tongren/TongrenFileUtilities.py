@@ -263,7 +263,7 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
             for i in range(W):
                 ET.SubElement(bscanElemeent, 'y', {}).text = str(surface[i])
 
-    outputXMLFilename = outputDir + f"/{patientID}_Volume_Sequence_Surfaces_Prediction.xml"
+    outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
 def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir):
