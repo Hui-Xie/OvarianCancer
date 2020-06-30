@@ -70,7 +70,6 @@ def main():
         saveVolumeToNumpy(patientsSubList[i], os.path.join(outputDir, 'test', f"images_{i}.npy"), \
                                                os.path.join(outputDir, 'test', f"patientID_{i}.json") )
 
-
     print(f"total: {len(patientsList)} patients in {volumesDir}")
     print("===End of prorgram=========")
 
