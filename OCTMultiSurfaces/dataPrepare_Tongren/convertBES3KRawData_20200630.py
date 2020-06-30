@@ -31,7 +31,7 @@ def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
     s = 0 # initial slice for each patient
     for volume in volumesList:
         # read image data and clip
-        imagesList = glob.glob(volume + f"/*[0-3][0-9].jpg")
+        imagesList = glob.glob(volume + f"/*[0-9][0-9].jpg")
         imagesList.sort()
         if NumSlices != len(imagesList):
            print(f"Error: at {volume}, the slice number does not match jpg files.")
@@ -54,6 +54,26 @@ def main():
     else:
         patientsList = glob.glob(volumesDir + f"/*_Volume")
         patientsList.sort()
+
+        # check each volume has same number of imagess
+        errorVolumesList= []
+        errorVolumesNum = []
+        correctVolumesList = []
+        for volume in patientsList:
+            imagesList = glob.glob(volume + f"/*[0-9][0-9].jpg")
+            if NumSlices != len(imagesList):
+                errorVolumesList.append(volume)
+                errorVolumesNum.append(len(imagesList))
+            else:
+                correctVolumesList.append(volume)
+
+        with open(os.path.join(outputDir,f"ErrorVolumeList.txt"), "w") as file:
+            file.write("ErrorVolumeName, NumBScans,\n")
+            num = len(errorVolumesList)
+            for i in range(num):
+                file.write(f"{os.path.basename(errorVolumesList[i])}, {errorVolumesNum[i]},\n")
+
+        patientsList = correctVolumesList
         saveInputFilesList(patientsList, patientsListFile)
 
     # split files in sublist, this is a better method than before.
