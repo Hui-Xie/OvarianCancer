@@ -4,6 +4,7 @@ sys.path.append("../framework")
 from ConfigReader import ConfigReader
 import os
 
+import torch
 
 
 cfgFilePath = "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_10Surfaces_20200509/expTongren_10Surfaces_20200509_CV0.yaml"
@@ -22,6 +23,13 @@ goodBscans= hps.goodBscans
 
 with open("/home/hxie1/temp/output_test.txt", "w") as file:
     hps.printTo(file)
+
+
+# get GPU information
+N = torch.cuda.device_count()
+print(f"GPU number={N}")
+
+print(os.system("pwd"))
 
 
 print("=================end of Config Reader===========")
