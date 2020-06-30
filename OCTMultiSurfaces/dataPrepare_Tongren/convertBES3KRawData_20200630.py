@@ -14,9 +14,9 @@ W = 512  # original images have width of 768, we only clip middle 512
 H = 496
 NumSlices = 31  # for each patient
 
-#todo 
-volumesDir = "/home/hxie1/data/OCT_Tongren/Glaucoma"
-outputDir = "/home/hxie1/data/OCT_Tongren/numpy/glaucomaRaw_W512"
+
+volumesDir = "/home/hxie1/data/BES_3K/raw"
+outputDir = "/home/hxie1/data/BES_3K/numpy/W512"
 patientsListFile = os.path.join(outputDir, "patientsList.txt")
 
 def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
