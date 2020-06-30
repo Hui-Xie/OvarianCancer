@@ -13,7 +13,7 @@ import json
 W = 512  # original images have width of 768, we only clip middle 512
 H = 496
 NumSlices = 31  # for each patient
-K = 200 #
+K = 200 # total 6565 volumes, we divide them into 200 packages.
 
 
 volumesDir = "/home/hxie1/data/BES_3K/raw"
@@ -66,8 +66,9 @@ def main():
     for i in range(K * step, N):
         patientsSubList[i - K * step].append(patientsList[i])
 
-    saveVolumeToNumpy(patientsList, os.path.join(outputDir, 'test', f"images.npy"), \
-                                           os.path.join(outputDir, 'test', f"patientID.json") )
+    for i in range(K):
+        saveVolumeToNumpy(patientsSubList[i], os.path.join(outputDir, 'test', f"images_{i}.npy"), \
+                                               os.path.join(outputDir, 'test', f"patientID_{i}.json") )
 
 
     print(f"total: {len(patientsList)} patients in {volumesDir}")
