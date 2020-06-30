@@ -13,6 +13,7 @@ import json
 W = 512  # original images have width of 768, we only clip middle 512
 H = 496
 NumSlices = 31  # for each patient
+K = 200 #
 
 
 volumesDir = "/home/hxie1/data/BES_3K/raw"
@@ -53,11 +54,17 @@ def main():
     else:
         patientsList = glob.glob(volumesDir + f"/*_Volume")
         patientsList.sort()
-        random.seed(201910)
-        random.shuffle(patientsList)
         saveInputFilesList(patientsList, patientsListFile)
 
-    # do not divide into sublist
+    # split files in sublist, this is a better method than before.
+    N = len(patientsList)
+    patientsSubList = []
+    step = N // K
+    for i in range(0, K * step, step):
+        nexti = i + step
+        patientsSubList.append(patientsList[i:nexti])
+    for i in range(K * step, N):
+        patientsSubList[i - K * step].append(patientsList[i])
 
     saveVolumeToNumpy(patientsList, os.path.join(outputDir, 'test', f"images.npy"), \
                                            os.path.join(outputDir, 'test', f"patientID.json") )
