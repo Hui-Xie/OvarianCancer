@@ -88,7 +88,7 @@ def main():
 
     net.hps = hps
 
-    GPUIndex = int(hps.device[hps.device.find(":")+1,hps.device.find(":")+2])
+    GPUIndex = int(hps.GPUIndex)
 
     for k in range(GPUIndex, hps.K, hps.N_GPU):
         testImagesPath = os.path.join(hps.dataDir,"test", f"images_{k}.npy")
@@ -161,7 +161,7 @@ def main():
                 file.write("slice list of violating surface-separation constraints:\n")
                 for s in violateConstraintSlices:
                     file.write(f"\t{testIDs[s]}\n")
-
+        break  # smoke test
 
 
     print(f"============ End of BES3K test for OCT Multisurface Network: {hps.experimentName} ===========")
