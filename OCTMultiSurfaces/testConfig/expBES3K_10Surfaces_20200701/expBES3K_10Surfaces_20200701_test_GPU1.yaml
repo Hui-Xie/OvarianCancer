@@ -1,5 +1,6 @@
 # base on the trained 10-surface_allGoodBscan_20200512 network on CV5
 # train BES_3K data
+# test all packages whose (packageIndex%4) = GPUIndex
 
 dataDir: "/home/hxie1/data/BES_3K/numpy/W512/test"
 existGTLabel: False
@@ -33,7 +34,8 @@ k: 0   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
+N_GPU: 4
 batchSize: 4
 
 network: "SurfacesUnet"
