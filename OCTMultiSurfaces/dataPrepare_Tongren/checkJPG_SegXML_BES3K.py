@@ -8,10 +8,10 @@ import matplotlib.image as mpimg
 from TongrenFileUtilities import *
 from imageio import imread
 
-volumePath = "/home/hxie1/data/BES_3K/raw/106_OS_5451_Volume"
-xmlPath  = "/home/hxie1/data/BES_3K/numpy/W512/log/SurfacesUnet/expBES3K_10Surfaces_20200701_test_GPU2/testResult/xml/106_OS_5451_Volume_Sequence_Surfaces_Prediction.xml"
-outputDir = "/home/hxie1/temp"
-k = 15  #0-31 indicate the OCT B-scan
+volumePath = "/home/hxie1/data/BES_3K/raw/34645_OS_29027_Volume"
+xmlPath  = "/home/hxie1/data/BES_3K/numpy/W512/10SurfPredictionXml/34645_OS_29027_Volume_Sequence_Surfaces_Prediction.xml"
+outputDir = "/home/hxie1/data/temp"
+k = 23  #0-31 indicate the OCT B-scan
 H=496
 
 
