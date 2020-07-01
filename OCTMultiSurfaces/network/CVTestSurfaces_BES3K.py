@@ -143,7 +143,7 @@ def main():
         curTime = datetime.datetime.now()
         timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-        with open(os.path.join(hps.outputDir,f"output_pacakage{k}_{timeStr}.txt"), "w") as file:
+        with open(os.path.join(hps.outputDir,f"output_pacakage_{k}_{timeStr}.txt"), "w") as file:
             hps.printTo(file)
             file.write("\n=======net running parameters=========\n")
             file.write(f"B,S,H,W = {B, S, H, W}\n")
