@@ -161,7 +161,7 @@ def main():
                 file.write("slice list of violating surface-separation constraints:\n")
                 for s in violateConstraintSlices:
                     file.write(f"\t{testIDs[s]}\n")
-        break  # smoke test
+
 
 
     print(f"============ End of BES3K test for OCT Multisurface Network: {hps.experimentName} ===========")
