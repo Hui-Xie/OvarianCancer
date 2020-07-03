@@ -6,6 +6,8 @@ import os
 import glob
 import matplotlib.pyplot as plt
 from imageio import imread
+import numpy as np
+from lxml import etree as ET
 
 # Path for original OCT volume
 # volumePath = "/home/hxie1/data/BES_3K/raw/34645_OS_29027_Volume"
