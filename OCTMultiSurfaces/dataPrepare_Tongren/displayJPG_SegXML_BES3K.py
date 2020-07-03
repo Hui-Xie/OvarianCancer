@@ -71,7 +71,7 @@ def printUsage(argv):
     print("<xmlSegFilePath>: Path for OCT-Explorer readable xml segmentation file")
     print("<outputDir>:      Path for output directory")
     print("Example:")
-    print("python3.7 diaplayJPG_SegXML_BES3K.py /home/hxie1/data/BES_3K/raw/34645_OS_29027_Volume /home/hxie1/data/BES_3K/numpy/W512/10SurfPredictionXml/34645_OS_29027_Volume_Sequence_Surfaces_Prediction.xml /home/hxie1/data/temp")
+    print("python3.7 displayJPG_SegXML_BES3K.py /home/hxie1/data/BES_3K/raw/34645_OS_29027_Volume /home/hxie1/data/BES_3K/numpy/W512/10SurfPredictionXml/34645_OS_29027_Volume_Sequence_Surfaces_Prediction.xml /home/hxie1/data/temp")
     print("============ Display segmentation result of BES_3K volume data =============\n")
 
 def main():
