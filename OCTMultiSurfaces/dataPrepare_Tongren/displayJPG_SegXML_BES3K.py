@@ -66,7 +66,7 @@ def printUsage(argv):
     print("\n============ Display segmentation result of BES_3K volume data =============")
     print("Usage:")
     print(argv[0], "<rawVolumePath> <xmlSegFilePath> <outputDir>" )
-    print("Parameter Explanation:")
+    print("Explanation of parameters:")
     print("<rawVolumePath> : Path for original OCT volume")
     print("<xmlSegFilePath>: Path for OCT-Explorer readable xml segmentation file")
     print("<outputDir>:      Path for output directory")
