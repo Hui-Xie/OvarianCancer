@@ -104,7 +104,7 @@ def main():
 
     for k in range(K):
         image = imread(imagesList[k])[:, 128:640]
-        patientID_Index = os.path.basename(volumePath)+f"_OCT{k+1}"
+        patientID_Index = os.path.basename(volumePath)+f"_OCT{k+1:02d}"
 
         f = plt.figure(frameon=False)
         DPI = f.dpi

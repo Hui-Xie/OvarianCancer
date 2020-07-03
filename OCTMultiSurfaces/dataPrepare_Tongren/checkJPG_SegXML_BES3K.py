@@ -25,7 +25,7 @@ def main():
     imagesList.sort()
     image = imread(imagesList[k])[:, 128:640]
 
-    patientID_Index = os.path.basename(volumePath)+f"_OCT{k+1}"
+    patientID_Index = os.path.basename(volumePath)+f"_OCT{k+1:02d}"
 
     surfaces = getSurfacesArray(xmlPath)
     Z, S, W = surfaces.shape
