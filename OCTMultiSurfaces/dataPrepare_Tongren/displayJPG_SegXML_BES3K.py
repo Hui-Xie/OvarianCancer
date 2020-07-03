@@ -101,7 +101,7 @@ def main():
     Z, S, W = surfaces.shape
     assert K == Z
 
-
+    print(f"Please wait. It needs 1 minute to output {K} images ......")
     for k in range(K):
         image = imread(imagesList[k])[:, 128:640]
         patientID_Index = os.path.basename(volumePath)+f"_OCT{k+1:02d}"
