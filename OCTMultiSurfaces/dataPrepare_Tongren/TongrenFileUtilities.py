@@ -41,6 +41,7 @@ def saveInputFilesList(filesList, filename):
 
 def getSurfacesArray(segFile):
     """
+    Read segmentation result into numpy array from OCTExplorer readable xml file.
 
     :param segFile in xml format
     :return: array in  [Slices, Surfaces,X] order

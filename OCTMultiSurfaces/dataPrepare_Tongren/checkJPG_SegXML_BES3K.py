@@ -1,17 +1,22 @@
 # check raw volume JPG and Segmentation result correspondence for BES3K data.
 
-
 import os
 import glob
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-from TongrenFileUtilities import *
+from TongrenFileUtilies import getSurfacesArray
 from imageio import imread
 
+
+
+# Path for original OCT volume
 volumePath = "/home/hxie1/data/BES_3K/raw/34645_OS_29027_Volume"
+# Path for OCT-Explorer readable xml segmentation file
 xmlPath  = "/home/hxie1/data/BES_3K/numpy/W512/10SurfPredictionXml/34645_OS_29027_Volume_Sequence_Surfaces_Prediction.xml"
+# Path for output directory
 outputDir = "/home/hxie1/data/temp"
-k = 23  #0-31 indicate the OCT B-scan
+# slice index starting from 0
+k = 23  #[0,31) indicate the index of OCT B-scan starting from 0
+
 H=496
 
 
