@@ -3,7 +3,7 @@
 import torch
 import time
 
-N = 10*1024
+N = 12*1024
 device = torch.device("cuda:3")
 
 startTime = time.time()
@@ -28,5 +28,12 @@ memory usage:  1680343040 byte
 
 matrix memory: 10240*10240*4 = 419430400 byte = 419MB
 
+==============
+Matrix shape: torch.Size([12288, 12288])
+===Matrix Inverse running time: 4.199603319168091 seconds.
+memory usage:  2419064832 byte
+
+verify[1000,1000] =0.9997560977935791 
+verify[1000,100] =5.3988151194062084e-05 
 
 '''
