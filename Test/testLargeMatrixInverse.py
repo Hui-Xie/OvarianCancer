@@ -8,7 +8,7 @@ device = torch.device("cuda:3")
 
 startTime = time.time()
 M = torch.rand((N,N), device=device,requires_grad=True)
-identityM = torch.eye(N, device=device)*0.1
+identityM = torch.eye(N, device=device)*0.01
 M = M+identityM
 MInv = torch.inverse(M)
 memorysummary = torch.cuda.max_memory_allocated(device=device)
@@ -16,6 +16,10 @@ runTime = time.time()-startTime
 print(f"Matrix shape: {M.shape}")
 print(f"===Matrix Inverse running time: {runTime} seconds.")  # about 3.9 seconds.
 print(f"memory usage:  {memorysummary} byte\n")  #1.6GB
+verify =  torch.mm(M, MInv)
+
+print(f"verify[1000,1000] ={verify[1000,1000]} ")
+print(f"verify[1000,100] ={verify[1000,100]} ")
 
 '''
 Matrix shape: torch.Size([10240, 10240])
