@@ -1,29 +1,36 @@
+# General constrained quadratic IPM opimtization module
+
+
 
 import torch
 import torch.nn as nn
 import sys
 sys.path.append(".")
-from OCTOptimization import *
+# from OCTOptimization import *
 
-class SeparationPrimalDualIPMFunction(torch.autograd.Function):
+class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, Mu, Q, A, S0, Lambda0, alpha, epsilon):
+    def forward(ctx, H, b, A, d, S0, Lambda0, alpha, epsilon):
         '''
-        the forward of constrained convex optimization with Primal-Dual Interior Point Method.
+        the forward of constrained quadratic optimization with Primal-Dual Interior Point Method.
 
-        S* = arg min_{S} {(S-Mu)' *Q* (S-Mu)/2}, such that AS <= 0
+        S* = arg min_{S} {0.5*s^T*H*s+b^T*s+c}, such that AS <= d
 
         :param ctx: autograd context object
-        :param Mu: predicted mean,  in (B,W, NumSurfaces) size, in below N=NumSurfaces
-        :param Q: Sigma2Reciprocal: Q, the diagonal reciprocal of variance in (B,W,N,N) size
-        :param A: constraint matrix AS <= 0 with A of size(n-1, n), in (B, W, N-1,N) size
-        :param S0: the initial feasibible solution, in (B,W, N) size
-        :param Lambda0: the initial Lagragian dual variable, in (B,W,N-1) size
+        :param H: size(B,W,N,N)
+        :param b: size(B,W,N,1)
+        :param A: size(B,W,M,N) constraint matrix AS <= d
+        :param d: size(B,W,M,1)
+        :param S0: the initial feasible solution, in (B,W, N) size
+        :param Lambda0: the initial Lagragian dual variable, in (B,W,M) size
         :param alpha: IPM iteration t enlarge variable, in (B,W) size, alpha >1
         :param epsilon: float scalar, error tolerance
 
-        :return: S: the optimal solution S, surface location in (B, W,N) size
-                 MInverse:  (2n-1)*(2n-1) matrix,where n= NumSurfaces, save for backward
+        :return: S: the optimal solution S in (B, W,N) size
+
+        :save for backward propagation:
+                 Lambda: the optimal dual variable in (B,W,N) size
+                 MInverse:  (M+N)*(M+N) matrix
 
         '''
         assert Mu.shape == S0.shape
@@ -55,7 +62,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             t = -alpha * m / torch.matmul(AS.transpose(-1, -2), Lambda)  # t is in (B,W, 1,1) size
 
             # compute primal dual search direction according S0 and Lambda0 value
-            R = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)  # in size: B,W, 2N-1,1
+            R = ConstrainedIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)  # in size: B,W, 2N-1,1
             M = torch.cat(
                 (torch.cat((Q, A.transpose(-1, -2)), dim=-1),
                  torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
@@ -101,7 +108,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             RNorm = torch.norm(R, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
             Lambda = Lambda0 + stepExpandN_1 * PD_Lambda
             DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
-            R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
+            R2 = ConstrainedIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
             R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
             while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
                 step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
@@ -111,7 +118,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 AS = torch.matmul(A, S)  # AS update
                 Lambda = Lambda0 + stepExpandN_1 * PD_Lambda
                 DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
-                R2 = SeparationPrimalDualIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
+                R2 = ConstrainedIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
             nIPMIterations +=1
@@ -173,51 +180,64 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
 
 
 
-
-
-
-class SeparationPrimalDualIPM(nn.Module):
-    def __init__(self, B,W,N,device=torch.device('cuda:0')):
+# below is an application of IPM optimization function.
+class SoftConstrainedIPMModule(nn.Module):
+    def __init__(self ):
         '''
         :param B: BatchSize
         :param W: Image width
-        :param N: number of surfaces
+        :param N: number of surfaces, length of optimization vector.
+
+        totally this ConstrainedIPM class has B*W optimizations parallel.
         '''
         super().__init__()
 
-        # define A, Lambda, alpha, epsilon here which are non-learning parameter
-        A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(N - 1, device=device) * -1, 1))[0:-1] # for s_i - s_{i+1} <= 0 constraint
-        A = A.unsqueeze(dim=0).unsqueeze(dim=0)
-        self.m_A = A.expand(B, W, N - 1, N)
 
-        self.m_Lambda = torch.rand(B, W, N - 1, device=device)
-        self.m_alpha = 10 + torch.rand(B, W, device=device)  # enlarge factor for t
-        self.m_epsilon = 0.01  # 0.001 is too small.
-
-    def forward(self, Mu, sigma2):
+    def forward(self, c_lambda, Mu, sigma2, R):
         '''
 
+        :param c_lambda > 0: the balance weight of unary terms;
         :param Mu: mean of size (B,N,W), where N is the number of surfaces
         :param Sigma2: variance of size (B,N,W), where N is number of surfaces
+        :param R: learned rift of adjacent surfaces, in size (B,N,W)
         :return:
                 S: the optimized surface location in (B,N,W) size
         '''
-        # compute S0 here
+
+        B,N,W = Mu.shape
+        device = Mu.device
+
+        # compute initial feasible point of the optimization variable
         with torch.no_grad():
-            batchLIS = getBatchLIS_gpu(Mu)
-            S0 = guaranteeSurfaceOrder(Mu, batchLIS)
-            if torch.all(Mu.eq(S0)):
-                return Mu
+            S0, _ = torch.sort(Mu,dim=1)
+            S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
 
-        # get Q from sigma2
-        # Q: diagonal Reciprocal of variance in (B,W,N,N) size
-        Q = getQFromVariance(sigma2) # in B,W,N,N
+        # construct H and b matrix
+        H = torch.zeros((B,W,N,N), device=device)
+        b = torch.zeros((B,W,N,1), device=device)
 
-        # switch H and W axis ordder
-        MuIPM = Mu.transpose(dim0=-1,dim1=-2)
-        S0IPM = S0.transpose(dim0=-1,dim1=-2)
+        Mu = Mu.transpose(dim0=-1,dim1=-2) # in size:B,W,N
+        sigma2 = sigma2.transpose(dim0=-1,dim1=-2) # in size:B,W,N
+        R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N
+        for i in range(N):
+            H[:,:,i,i] +=c_lambda/sigma2[:,:,i] +2.0
+            b[:,:,i,0] +=-c_lambda*Mu[:,:,i]/sigma2[:,:,i]-2*R[:,:,i]
+            if i > 0:
+                H[:,:,i-1,i-1] += 2.0
+                H[:, :, i , i - 1] += -4.0
+                b[:, :, i-1, 0] += 2*R[:,:,i]
 
-        S = SeparationPrimalDualIPMFunction.apply(MuIPM, Q, self.m_A, S0IPM, self.m_Lambda, self.m_alpha, self.m_epsilon) # in size: B,W,N
+        # according to different application, define A, Lambda, alpha, epsilon here which are non-learning parameter
+        A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(N - 1, device=device) * -1, 1))[0:-1]  # for s_i - s_{i+1} <= 0 constraint
+        A = A.unsqueeze(dim=0).unsqueeze(dim=0)
+        A = A.expand(B, W, N - 1, N)
+        d = torch.zeros((B,W,N-1, 1),device=device)
+
+        Lambda0 = torch.rand(B, W, N - 1, device=device)
+        alpha = 10 + torch.rand(B, W, device=device)  # enlarge factor for t
+        epsilon = 0.01  # 0.001 is too small.
+
+        S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, alpha, epsilon) # in size: B,W,N
 
         # switch H and W axis order back
         S = S.transpose(dim0=-1,dim1=-2) # in size:B,N,W
