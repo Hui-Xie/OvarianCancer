@@ -152,7 +152,8 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
             d_sLambda = -torch.matmul(torch.transpose(MInv, -1, -2), dL_sLambda)  # size: B,W,2N-1,1
             ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
             if ctx.needs_input_grad[1]:
-                dQ = torch.matmul(ds, torch.transpose(S - Mu, -1, -2)) # size: B,W, N,N
+                SDiffMu = S - Mu
+                dQ = 0.5(torch.matmul(ds, torch.transpose(SDiffMu, -1, -2))+ torch.matmul(SDiffMu, torch.transpose(ds, -1, -2))) # size: B,W, N,N
             dMu = -torch.matmul(Q, ds) # size: B,W,N,1
             dMu = dMu.squeeze(dim=-1) # size: B,W,N
 
