@@ -10,7 +10,7 @@ sys.path.append(".")
 
 class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, H, b, A, d, S0, Lambda0, alpha, epsilon):
+    def forward(ctx, H, b, A, d, S0, Lambda0, beta3, epsilon):
         '''
         the forward of constrained quadratic optimization with Primal-Dual Interior Point Method.
 
@@ -21,28 +21,23 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         :param b: size(B,W,N,1)
         :param A: size(B,W,M,N) constraint matrix AS <= d
         :param d: size(B,W,M,1)
-        :param S0: the initial feasible solution, in (B,W, N) size
-        :param Lambda0: the initial Lagragian dual variable, in (B,W,M) size
-        :param alpha: IPM iteration t enlarge variable, in (B,W) size, alpha >1
+        :param S0: the initial feasible solution, in (B,W, N, 1) size
+        :param Lambda0: the initial Lagragian dual variable, in (B,W,M,1) size
+        :param beta3: IPM iteration t enlarge variable, in (B,W, 1, 1) size, beta3 >1
         :param epsilon: float scalar, error tolerance
 
-        :return: S: the optimal solution S in (B, W,N) size
+        :return: S: the optimal solution S in (B, W,N, 1) size
 
         :save for backward propagation:
-                 Lambda: the optimal dual variable in (B,W,N) size
-                 MInverse:  (M+N)*(M+N) matrix
+                 Lambda: the optimal dual variable in (B,W,N, 1) size
+                 J_Inverse:  (M+N)*(M+N) matrix
 
         '''
-        assert Mu.shape == S0.shape
-        B, W, N = Mu.shape  # N is numSurfaces
-        assert torch.all(alpha > 1) and epsilon > 0
-        Mu = Mu.unsqueeze(dim=-1)  # in size: B,W,N,1
-        S0 = S0.unsqueeze(dim=-1)  # in size:B,W,N,1
-        Lambda0 = Lambda0.unsqueeze(dim=-1)  # in size: B,W, N-1,1
-        alpha = alpha.unsqueeze(dim=-1).unsqueeze(dim=-1)  # in size: B,W,1,1
-
-        m = N - 1
-        beta1 = 0.5  # step shrink coefficient
+        B, W, N,One = S0.shape  # N is the length of optimizatino variable
+        B1,W1,M,N1 = A.shape
+        assert B==B1 and W==W1 and N==N1 and One==1
+        assert torch.all(beta3 > 1) and epsilon > 0
+        beta1 = 0.5  # alpha shrink coefficient
         beta2 = 0.055
 
         S = S0
@@ -55,70 +50,69 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             S0 = S.clone()
             Lambda0 = Lambda.clone()
 
-            AS = torch.matmul(A, S)  # in size: B,W, N-1, 1
-            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
+            AS = torch.matmul(A, S)  # in size: B,W, M, 1
+            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
 
             # update t
-            t = -alpha * m / torch.matmul(AS.transpose(-1, -2), Lambda)  # t is in (B,W, 1,1) size
+            t = -beta3 * M / torch.matmul((AS-d).transpose(-1, -2), Lambda)  # t is in (B,W, 1,1) size
 
             # compute primal dual search direction according S0 and Lambda0 value
-            R = ConstrainedIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)  # in size: B,W, 2N-1,1
-            M = torch.cat(
-                (torch.cat((Q, A.transpose(-1, -2)), dim=-1),
-                 torch.cat((torch.matmul(DLambda, A), -torch.diag_embed(AS.squeeze(dim=-1))), dim=-1)),
-                dim=-2)  # in size: B,W,2N-1,2N-1
+            R = ConstrainedIPMFunction.getResidualMatrix(H, b, A, d, S, Lambda, t, AS, DLambda)  # in size: B,W, N+M,1
+            J = torch.cat(
+                (torch.cat((H, A.transpose(-1, -2)), dim=-1),
+                 torch.cat((torch.matmul(DLambda, A), -torch.diag_embed((AS-d).squeeze(dim=-1))), dim=-1)),
+                dim=-2)  # in size: B,W,N+M,N+M
 
             try:
-                MInv = torch.inverse(M)
+                J_Inv = torch.inverse(J)  # in size: B,W,N+M,N+M
             except RuntimeError as err:
                 if "singular U" in str(err):
                     # use pseudo-inverse to handle singular square matrix, but pinverse costs 10-20 times of time of inverse.
-                    MInv = torch.pinverse(M)
+                    J_Inv = torch.pinverse(J)
                 else:
                     raise RuntimeError(err)
 
-            PD = -torch.matmul(MInv, R)  # primal dual improve direction, in size: B,W,2N-1,1
+            PD = -torch.matmul(J_Inv, R)  # primal dual improve direction, in size: B,W,N+M,1
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
-            PD_Lambda = PD[:, :, N:, :]  # in size: B,W,N-1,1
+            PD_Lambda = PD[:, :, N:, :]  # in size: B,W,M,1
 
-            # linear search to determine a feasible step which will guarantee constraints
+            # linear search to determine a feasible alpha which will guarantee constraints
             # make sure updated Lambda >=0
-            negPDLambda = (PD_Lambda < 0).int() * PD_Lambda + (PD_Lambda >= 0).int() * (
-                -1) * Lambda  # in size: B,W, N-1,1
-            step = -(Lambda / negPDLambda)   # in torch.tensor 0/0 = nan, and -0/(-2) = -0, and -(0/(-2)) = 0
-            step = torch.where(step != step, torch.ones_like(step), step)  # replace nan as 1
-            step, _ = step.min(dim=-2, keepdim=True)
-            step = 0.99 * step  # in size: B,W,1,1
-            # assert (step == step).all().item()  # detect nan because of nan!=nan
+            negPDLambda = (PD_Lambda < 0).int() * PD_Lambda + (PD_Lambda >= 0).int() * (-1) * Lambda  # in size: B,W, M,1
+            alpha = -(Lambda / negPDLambda)   # in torch.tensor 0/0 = nan, and -0/(-2) = -0, and -(0/(-2)) = 0
+            alpha = torch.where(alpha != alpha, torch.ones_like(alpha), alpha)  # replace nan as 1
+            alpha, _ = alpha.min(dim=-2, keepdim=True)
+            alpha = 0.99 * alpha  # in size: B,W,1,1
+            # assert (alpha == alpha).all().item()  # detect nan because of nan!=nan
 
             # make sure AS<0
-            stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
-            stepExpandN_1 = step.expand_as(PD_Lambda) # in size: B,W,N-1,1
-            S = S0 + stepExpandN * PD_S
+            alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
+            alphaExpandN_1 = alpha.expand_as(PD_Lambda) # in size: B,W,M,1
+            S = S0 + alphaExpandN * PD_S
             AS = torch.matmul(A, S)  # AS update
-            while torch.any(AS > 0):
-                step = torch.where(AS > 0, stepExpandN_1 * beta1, stepExpandN_1)
-                step, _ = step.min(dim=-2, keepdim=True)  # in size: B,W,1,1
-                stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
-                stepExpandN_1 = step.expand_as(PD_Lambda)  # in size: B,W,N-1,1
-                S = S0 + stepExpandN * PD_S
+            while torch.any(AS > d):
+                alpha = torch.where(AS > d, alphaExpandN_1 * beta1, alphaExpandN_1)
+                alpha, _ = alpha.min(dim=-2, keepdim=True)  # in size: B,W,1,1
+                alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
+                alphaExpandN_1 = alpha.expand_as(PD_Lambda)  # in size: B,W,M,1
+                S = S0 + alphaExpandN * PD_S
                 AS = torch.matmul(A, S)  # AS update
 
             # make sure norm2 of R reduce
             RNorm = torch.norm(R, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
-            Lambda = Lambda0 + stepExpandN_1 * PD_Lambda
-            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
-            R2 = ConstrainedIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
+            Lambda = Lambda0 + alphaExpandN_1 * PD_Lambda
+            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+            R2 = ConstrainedIPMFunction.getResidualMatrix(H, b, A, d, S, Lambda, t, AS, DLambda)
             R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
-            while torch.any(R2Norm > (1 - beta2 * step) * RNorm):
-                step = torch.where(R2Norm > (1 - beta2 * step) * RNorm, step * beta1, step)
-                stepExpandN = step.expand_as(PD_S)  # in size: B,W,N,1
-                stepExpandN_1 = step.expand_as(PD_Lambda) # in size: B,W,N-1,1
-                S = S0 + stepExpandN * PD_S
+            while torch.any(R2Norm > (1 - beta2 * alpha) * RNorm):
+                alpha = torch.where(R2Norm > (1 - beta2 * alpha) * RNorm, alpha * beta1, alpha)
+                alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
+                alphaExpandN_1 = alpha.expand_as(PD_Lambda) # in size: B,W,M,1
+                S = S0 + alphaExpandN * PD_S
                 AS = torch.matmul(A, S)  # AS update
-                Lambda = Lambda0 + stepExpandN_1 * PD_Lambda
-                DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,N-1,N-1
-                R2 = ConstrainedIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t, AS, DLambda)
+                Lambda = Lambda0 + alphaExpandN_1 * PD_Lambda
+                DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+                R2 = ConstrainedIPMFunction.getResidualMatrix(H, b, A, d, S, Lambda, t, AS, DLambda)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
             nIPMIterations +=1
@@ -128,10 +122,9 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
         # ctx.save_for_backward(Mu, Q, S, MInv) # save_for_backward is just for input and outputs
         if torch.is_grad_enabled():
-            ctx.Mu = Mu
-            ctx.Q = Q
             ctx.S = S
-            ctx.MInv = MInv
+            ctx.J_Inv = J_Inv
+            ctx.Lambda = Lambda
 
         S = S.squeeze(dim=-1)  # in size: B,W,N
         S.requires_grad_(requires_grad=torch.is_grad_enabled())
@@ -141,40 +134,45 @@ class ConstrainedIPMFunction(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, dL):
-        # Mu, Q, S, MInv = ctx.saved_tensors
-
-        dMu = dQ = dA = dS0 = dLambda = dalpha = depsilon = None
+        dH = db = dA = dd = dS0 = dLambda = dbeta3 = depsilon = None
         if torch.is_grad_enabled():
             device = dL.device
-            Mu = ctx.Mu
-            Q = ctx.Q
             S = ctx.S
-            MInv = ctx.MInv
+            J_Inv = ctx.J_Inv
+            Lambda = ctx.Lambda
 
             assert dL.dim() == 3
             B, W, N = dL.shape
-            assert MInv.shape[2] == 2 * N - 1
+            B1,W1,M,One = Lambda.shape
+            assert B==B1 and W==W1 and One==1
+            assert J_Inv.shape[2] == M+N
             dL = dL.unsqueeze(dim=-1)
-            dL_sLambda = torch.cat((dL, torch.zeros(B, W, N - 1, 1, device=device) ), dim=-2)  # size: B,W,2N-1,1
-            d_sLambda = -torch.matmul(torch.transpose(MInv, -1, -2), dL_sLambda)  # size: B,W,2N-1,1
+            dL_sLambda = torch.cat((dL, torch.zeros(B, W, M, 1, device=device) ), dim=-2)  # size: B,W,N+M,1
+            d_sLambda = -torch.matmul(torch.transpose(J_Inv, -1, -2), dL_sLambda)  # size: B,W,N+M,1
             ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
+            dlambda = d_sLambda[:, :, N:, :]  # in size: B,W,M,1
+            if ctx.needs_input_grad[0]:
+                dH = 0.5*(torch.matmul(S, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(ds, S.transpose(dim0=-1,dim1=-2)))  # size: B,W,N,N
             if ctx.needs_input_grad[1]:
-                SDiffMu = S - Mu
-                dQ = 0.5(torch.matmul(ds, torch.transpose(SDiffMu, -1, -2))+ torch.matmul(SDiffMu, torch.transpose(ds, -1, -2))) # size: B,W, N,N
-            dMu = -torch.matmul(Q, ds) # size: B,W,N,1
-            dMu = dMu.squeeze(dim=-1) # size: B,W,N
-
-        return dMu, dQ, dA, dS0, dLambda, dalpha, depsilon
+                db = ds  # size: B,W, N,1
+            if ctx.needs_input_grad[2]:
+                DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+                dA = torch.matmul(Lambda, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(DLambda, torch.matmul(dlambda, S.transpose(dim0=-1,dim1=-2)))
+            if ctx.needs_input_grad[3]:
+                DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+                dd = torch.matmul(DLambda,dlambda)
+                
+        return dH, db, dA, dd, dS0, dLambda, dbeta3, depsilon
 
 
 
     @staticmethod
-    def getResidualMatrix(Q,S,Mu,A, Lambda, t, AS, DLambda):
-        B, W, N, _ = Mu.shape  # N is numSurfaces
-        Ones = torch.ones(B,W,N-1,1, device=Mu.device)
-        R1 = torch.matmul(Q, S - Mu) + torch.matmul(torch.transpose(A, -1, -2), Lambda)  # the upper part of residual matrix R, in size:B,W,N,1
-        R2 = torch.matmul(DLambda, AS) - Ones / t.expand_as(Ones)  # the lower part of residual matrixt R, in size: B,W, N-1,1
-        R = torch.cat((R1, R2), dim=-2)  # in size: B,W, 2N-1,1
+    def getResidualMatrix(H, b, A, d, S, Lambda, t, AS, DLambda):
+        B, W, M, N = A.shape  # N is numuber of optimization variable
+        Ones = torch.ones(B,W,M,1, device=A.device)
+        R1 = torch.matmul(H, S) +b+ torch.matmul(torch.transpose(A, -1, -2), Lambda)  # the upper part of residual matrix R, in size:B,W,N,1
+        R2 = torch.matmul(DLambda, AS-d) - Ones / t.expand_as(Ones)  # the lower part of residual matrixt R, in size: B,W, M,1
+        R = torch.cat((R1, R2), dim=-2)  # in size: B,W, N+M,1
         return R
 
 
@@ -211,6 +209,7 @@ class SoftConstrainedIPMModule(nn.Module):
         with torch.no_grad():
             S0, _ = torch.sort(Mu,dim=1)
             S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
+            S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
 
         # construct H and b matrix
         H = torch.zeros((B,W,N,N), device=device)
@@ -227,17 +226,19 @@ class SoftConstrainedIPMModule(nn.Module):
                 H[:, :, i , i - 1] += -4.0
                 b[:, :, i-1, 0] += 2*R[:,:,i]
 
-        # according to different application, define A, Lambda, alpha, epsilon here which are non-learning parameter
-        A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(N - 1, device=device) * -1, 1))[0:-1]  # for s_i - s_{i+1} <= 0 constraint
+        # according to different application, define A, Lambda, beta3, epsilon here which are non-learning parameter
+        M = N-1  # number of constraints
+        A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(M, device=device) * -1, 1))[0:-1]  # for s_i - s_{i+1} <= 0 constraint
         A = A.unsqueeze(dim=0).unsqueeze(dim=0)
-        A = A.expand(B, W, N - 1, N)
-        d = torch.zeros((B,W,N-1, 1),device=device)
 
-        Lambda0 = torch.rand(B, W, N - 1, device=device)
-        alpha = 10 + torch.rand(B, W, device=device)  # enlarge factor for t
+        A = A.expand(B, W, M, N)
+        d = torch.zeros((B,W,M, 1),device=device)
+
+        Lambda0 = torch.rand(B, W, M, 1, device=device) # size: (B,W,M,1)
+        beta3 = 10 + torch.rand(B, W, 1, 1, device=device)  # enlarge factor for t, size:(B,W,1,1)
         epsilon = 0.01  # 0.001 is too small.
 
-        S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, alpha, epsilon) # in size: B,W,N
+        S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, beta3, epsilon) # in size: B,W,N
 
         # switch H and W axis order back
         S = S.transpose(dim0=-1,dim1=-2) # in size:B,N,W
