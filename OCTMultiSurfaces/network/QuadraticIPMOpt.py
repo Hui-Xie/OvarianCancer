@@ -228,7 +228,7 @@ class SoftConstrainedIPMModule(nn.Module):
         S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, beta3, epsilon) # in size: B,W,N,1
 
         # switch H and W axis order back
-        S.squeeze(dim=-1)
+        S = S.squeeze(dim=-1)
         S = S.transpose(dim0=-1,dim1=-2) # in size:B,N,W
         return S
 
