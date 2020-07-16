@@ -1,8 +1,6 @@
 # General constrained quadratic IPM opimtization module
 import torch
 import torch.nn as nn
-import sys
-sys.path.append(".")
 
 class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
