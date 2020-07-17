@@ -124,8 +124,6 @@ class OCTDataSet(data.Dataset):
         if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
             riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
 
-
-
         result = {"images": image,
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),

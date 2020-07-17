@@ -69,12 +69,12 @@ class Conv2dBlock(nn.Module):
     """
 
     def __init__(self, inChannels, outChannels, convStride=1, useSpectralNorm=False,
-                 useLeakyReLU=False, kernelSize=3, padding=1):
+                 useLeakyReLU=False, kernelSize=3, padding=1, dilation=1):
         super().__init__()
 
         self.m_useLeakyReLU = useLeakyReLU
 
-        self.m_conv = nn.Conv2d(inChannels, outChannels, kernel_size=kernelSize, stride=convStride, padding=padding, bias=True)
+        self.m_conv = nn.Conv2d(inChannels, outChannels, kernel_size=kernelSize, stride=convStride, padding=padding, dilation=dilation, bias=True)
         if useSpectralNorm:
             self.m_conv = nn.utils.spectral_norm(self.m_conv)
         # self.m_norm = nn.BatchNorm2d(outChannels)
