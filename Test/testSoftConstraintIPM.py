@@ -4,6 +4,7 @@ import torch
 import sys
 sys.path.append("../OCTMultiSurfaces/network")
 from QuadraticIPMOpt import *
+#from OCTPrimalDualIPM import *
 
 from torch.autograd import gradcheck
 
@@ -22,20 +23,17 @@ R = (torch.rand(B,N,W, device=device)+0.5) * torch.cat((Mu[:,0,:].unsqueeze(dim=
 R.retain_grad()
 c_lambda = 4*torch.max(sigma2)
 
-
 G = torch.tensor([[1,1,1],[3,3,3], [4,4,4], [6,6,6], [8,9,7]], dtype=dtype, device= device)
 G = G.unsqueeze(dim=0)
 G = torch.cat((G,G),dim=0)  # size:(B,N,W)
 
-print(f"torch.is_grad_enabled() = {torch.is_grad_enabled()}")
+# test softConstrainedIPM
+seperationIPM = SoftConstrainedIPMModule()
+S = seperationIPM(c_lambda, Mu,sigma2,R)
 
-softConstrainedIPM = SoftConstrainedIPMModule()
-S = softConstrainedIPM(c_lambda, Mu,sigma2,R)
-#S = Mu/sigma2 - R
-
-#test= gradcheck(softConstrainedIPM, [c_lambda, Mu,sigma2,R], eps=1e-6, atol=1e-4)
-#print(f"gradcheck test=\n {test}")
-
+# test HardSeparationIPMModule
+#seperationIPM = HardSeparationIPMModule()
+#S = seperationIPM(Mu,sigma2)
 
 loss = torch.pow(G-S,2).sum()
 

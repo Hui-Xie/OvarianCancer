@@ -358,8 +358,8 @@ class SurfacesUnet(BasicModel):
             loss_smooth = 0.0
 
         if hps.usePrimalDualIPM:
-            separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
-            S = separationPrimalDualIPM(mu, sigma2)
+            separationIPM = HardSeparationIPMModule()
+            S = separationIPM(mu, sigma2)
         else:
             S = mu
 

@@ -110,12 +110,12 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 break
 
         # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
-        if torch.is_grad_enabled():
-            ctx.S = S
-            ctx.J_Inv = J_Inv
-            ctx.Lambda = Lambda
+        # here torch.is_grad_enabled()= false
+        ctx.S = S
+        ctx.J_Inv = J_Inv
+        ctx.Lambda = Lambda
 
-        S.requires_grad_(requires_grad=torch.is_grad_enabled())
+        # S.requires_grad_(requires_grad=torch.is_grad_enabled())
 
         return S
 
@@ -130,12 +130,11 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         J_Inv = ctx.J_Inv
         Lambda = ctx.Lambda
 
-        assert dL.dim() == 3
-        B, W, N = dL.shape
-        B1,W1,M,One = Lambda.shape
-        assert B==B1 and W==W1 and One==1
+        assert dL.dim() == 4
+        B, W, N,One = dL.shape
+        B1,W1,M,One1 = Lambda.shape
+        assert B==B1 and W==W1 and One==One1 and One==1
         assert J_Inv.shape[2] == M+N
-        dL = dL.unsqueeze(dim=-1)
         dL_sLambda = torch.cat((dL, torch.zeros(B, W, M, 1, device=device) ), dim=-2)  # size: B,W,N+M,1
         d_sLambda = -torch.matmul(torch.transpose(J_Inv, -1, -2), dL_sLambda)  # size: B,W,N+M,1
         ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
