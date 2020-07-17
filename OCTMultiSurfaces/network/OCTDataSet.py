@@ -11,7 +11,6 @@ from OCTAugmentation import *
 
 class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, hps=None):
-        # device=None, sigma=20.0, lacingWidth=0, TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1, gradChannels=0
         self.hps = hps
 
         # image uses float32
@@ -95,7 +94,7 @@ class OCTDataSet(data.Dataset):
     def __getitem__(self, index):
         data = self.m_images[index,]
         if self.m_labels is not None:
-            label = self.m_labels[index,]
+            label = self.m_labels[index,] # size: N,W
         else:
             label = None
 
@@ -113,17 +112,26 @@ class OCTDataSet(data.Dataset):
             label = scalePolarLabel(label, self.hps.scaleNumerator, self.hps.scaleDenominator)
 
         H, W = data.shape
+        N, W1 = label.shape
+        assert W==W1
         image = data.unsqueeze(dim=0)
         if 0 != self.hps.gradChannels:
             grads = self.generateGradientImage(data, self.hps.gradChannels)
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
 
+        riftWidthGT = []
+        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
+            riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
+
+
+
         result = {"images": image,
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": self.m_IDs[str(index)],
-                  "layers": [] if label is None else getLayerLabels(label,H) }
+                  "layers": [] if label is None else getLayerLabels(label,H),
+                  "riftWidth": riftWidthGT}
         return result
 
 

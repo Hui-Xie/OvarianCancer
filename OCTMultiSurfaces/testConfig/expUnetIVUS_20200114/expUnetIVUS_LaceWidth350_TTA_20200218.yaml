@@ -42,7 +42,7 @@ device: torch.device('cuda:0')   #GPU ID
 batchSize: 5
 
 network: "SurfacesUnet"
-inputHight: 192
+inputHeight: 192
 inputWidth: 1060   # rawImageWidth +2 *lacingWidth
 inputChannels: 1
 nLayers: 7

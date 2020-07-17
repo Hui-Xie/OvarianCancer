@@ -50,7 +50,7 @@ device: torch.device('cuda:1')   #GPU ID
 batchSize: 5
 
 network: "SurfacesUnet"
-inputHight: 192   # original height
+inputHeight: 192   # original height
 inputWidth: 420   # rawImageWidth +2 *lacingWidth
 scaleNumerator: 1
 scaleDenominator: 1

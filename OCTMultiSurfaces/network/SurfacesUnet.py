@@ -45,7 +45,7 @@ class SurfacesUnet(BasicModel):
         :param N: startFilters
         '''
         super().__init__()
-        self.hps  =hps
+        self.hps = hps
         N = self.hps.startFilters
 
         self.m_layerSizeList = computeLayerSizeUsingMaxPool2D(self.hps.inputHeight, self.hps.inputWidth, self.hps.nLayers)
@@ -54,7 +54,7 @@ class SurfacesUnet(BasicModel):
         self.m_useLeakyReLU = True
         # downxPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
         self.m_down0Pooling = nn.Sequential(
-            Conv2dBlock(self.m_inputChannels, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+            Conv2dBlock(self.hps.inputChannels, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         )
         self.m_down0 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),

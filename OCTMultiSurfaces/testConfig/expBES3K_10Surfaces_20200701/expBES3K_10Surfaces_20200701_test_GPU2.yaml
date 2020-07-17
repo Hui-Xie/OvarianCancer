@@ -40,7 +40,7 @@ GPUIndex: 2
 batchSize: 4
 
 network: "SurfacesUnet"
-inputHight: 496   # original height
+inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1

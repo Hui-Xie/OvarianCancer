@@ -5,6 +5,7 @@
 # numSurface = 10 as deleted inaccurate surface 8
 # training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
 
+# for softConstraint Network
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/"
 existGTLabel: True
@@ -43,11 +44,11 @@ device: torch.device('cuda:0')   #GPU ID
 batchSize: 4
 
 network: "SurfacesUnet"
-inputHight: 496   # original height
+inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 5 # rawImage + gradChannels
+inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
 numSurfaces: 10  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet

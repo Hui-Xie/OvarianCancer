@@ -44,7 +44,7 @@ class SurfacesUnet_YufanHe(BasicModel):
     In: Medical Image Computing and Computer Assisted Intervention(MICCAI 2019).
     \doi{10.1007/978-3-030-32239-7\_14}
     '''
-    def __init__(self, inputHight, inputWidth, inputChannels=1, nLayers=7, numSurfaces=11, N=24):
+    def __init__(self, inputHeight, inputWidth, inputChannels=1, nLayers=7, numSurfaces=11, N=24):
         '''
         inputSize: inputChaneels*H*W
         outputSize: (Surface, H, W)
@@ -53,7 +53,7 @@ class SurfacesUnet_YufanHe(BasicModel):
         '''
         super().__init__()
 
-        self.m_inputHeight = inputHight
+        self.m_inputHeight = inputHeight
         self.m_inputWidth = inputWidth
         self.m_inputChannels = inputChannels
         self.m_nLayers = nLayers
