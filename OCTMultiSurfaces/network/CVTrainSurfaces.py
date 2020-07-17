@@ -68,16 +68,11 @@ def main():
     validationTransform = tainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=tainTransform, device=hps.device, sigma=hps.sigma, lacingWidth=hps.lacingWidth,
-                           TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator, scaleDenominator=hps.scaleDenominator,
-                           gradChannels=hps.gradChannels)
-    validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform, device=hps.device, sigma=hps.sigma,
-                                lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator, scaleDenominator=hps.scaleDenominator,
-                                gradChannels=hps.gradChannels)
+    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=tainTransform, hps=hps)
+    validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform,  hps=hps)
 
     # construct network
-    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
-                            numSurfaces=hps.numSurfaces, N=hps.startFilters)
+    net = eval(hps.network)(hps=hps)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -97,7 +92,6 @@ def main():
         print(f"Net starts training from scratch, and save at {hps.netPath}")
 
     writer = SummaryWriter(log_dir=hps.logDir)
-    net.hps = hps
 
     # train
     epochs = 1360000

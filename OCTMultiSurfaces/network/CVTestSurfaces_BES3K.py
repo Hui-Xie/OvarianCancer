@@ -71,8 +71,7 @@ def main():
         surfaceNames = ['ILM', 'RNFL-GCL', 'GCL-IPL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
 
     # construct network
-    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
-                            numSurfaces=hps.numSurfaces, N=hps.startFilters)
+    net = eval(hps.network)(hps=hps)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -86,8 +85,6 @@ def main():
     else:
         print(f"Can not find pretrained network for test!")
 
-    net.hps = hps
-
     GPUIndex = int(hps.GPUIndex)
 
     for k in range(GPUIndex, hps.K, hps.N_GPU):
@@ -95,9 +92,7 @@ def main():
         testLabelsPath = None
         testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_{k}.json")
 
-        testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=hps.device, sigma=hps.sigma,
-                          lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator,
-                          scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
+        testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, hps=hps)
 
         # test
         testStartTime = time.time()

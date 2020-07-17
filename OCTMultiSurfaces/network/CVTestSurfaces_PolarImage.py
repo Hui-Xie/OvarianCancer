@@ -95,8 +95,7 @@ def main():
 
 
     # construct network
-    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
-                            numSurfaces=hps.numSurfaces, N=hps.startFilters)
+    net = eval(hps.network)(hps=hps)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
@@ -110,8 +109,6 @@ def main():
     else:
         print(f"Can not find pretrained network for test!")
 
-    net.hps = hps
-
     # test
     net.eval()
     with torch.no_grad():
@@ -120,9 +117,7 @@ def main():
         nCountTTA = 0
         for TTADegree in range(0, 360, hps.TTA_StepDegree):
             nCountTTA += 1
-            testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=hps.device, sigma=hps.sigma,
-                                  lacingWidth=hps.lacingWidth, TTA=hps.TTA, TTA_Degree=TTADegree, scaleNumerator=hps.scaleNumerator,
-                                  scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
+            testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, hps=hps)
             testBatch = 0
             for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
                 testBatch += 1

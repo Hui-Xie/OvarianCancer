@@ -76,18 +76,14 @@ def main():
         testLabelsPath = os.path.join(hps.dataDir,"test", f"surfaces_CV{hps.k:d}.npy")
         testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
 
-    testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, device=hps.device, sigma=hps.sigma,
-                          lacingWidth=hps.lacingWidth, TTA=False, TTA_Degree=0, scaleNumerator=hps.scaleNumerator,
-                          scaleDenominator=hps.scaleDenominator, gradChannels=hps.gradChannels)
+    testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, hps=hps)
 
     # construct network
-    net = eval(hps.network)(hps.inputHight, hps.inputWidth, inputChannels=hps.inputChannels, nLayers=hps.nLayers,
-                        numSurfaces=hps.numSurfaces, N=hps.startFilters)
+    net = eval(hps.network)(hps=hps)
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
-
 
     # Load network
     if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
@@ -96,8 +92,6 @@ def main():
         print(f"Network load from  {hps.netPath}")
     else:
         print(f"Can not find pretrained network for test!")
-
-    net.hps = hps
 
     if "OCT_Tongren" in hps.dataDir:
         if hps.numSurfaces == 9:

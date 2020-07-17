@@ -10,31 +10,25 @@ from OCTAugmentation import *
 
 
 class OCTDataSet(data.Dataset):
-    def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, device=None, sigma=20.0, lacingWidth=0,
-                 TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1, gradChannels=0):
-        self.m_device = device
-        self.m_sigma = sigma
+    def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, hps=None):
+        # device=None, sigma=20.0, lacingWidth=0, TTA=False, TTA_Degree=0, scaleNumerator=1, scaleDenominator=1, gradChannels=0
+        self.hps = hps
 
         # image uses float32
-        images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, H, W
+        images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
         # normalize images for each slice
         std,mean = torch.std_mean(images, dim=(1,2))
         self.m_images = TF.Normalize(mean, std)(images)
 
         if labelPath is not None:
-            self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.m_device, dtype=torch.float)  # slice, num_surface, W
+            self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
         else:
             self.m_labels = None
 
         with open(IDPath) as f:
             self.m_IDs = json.load(f)
         self.m_transform = transform
-        self.m_lacingWidth = lacingWidth
-        self.m_TTA = TTA
-        self.m_TTA_Degree = TTA_Degree
-        self.m_scaleNumerator = scaleNumerator
-        self.m_scaleDenominator = scaleDenominator
-        self.m_gradChannels = gradChannels
+
 
     def __len__(self):
         return self.m_images.size()[0]
@@ -108,26 +102,26 @@ class OCTDataSet(data.Dataset):
         if self.m_transform:
             data, label = self.m_transform(data, label)
 
-        if self.m_TTA and 0 != self.m_TTA_Degree:
-            data, label = polarImageLabelRotate_Tensor(data, label, rotation=self.m_TTA_Degree)
+        if self.hps.TTA and 0 != self.hps.TTA_Degree:
+            data, label = polarImageLabelRotate_Tensor(data, label, rotation=self.hps.TTA_Degree)
 
-        if 0 != self.m_lacingWidth:
-            data, label = lacePolarImageLabel(data,label,self.m_lacingWidth)
+        if 0 != self.hps.lacingWidth:
+            data, label = lacePolarImageLabel(data,label,self.hps.lacingWidth)
 
-        if 1 != self.m_scaleNumerator or 1 != self.m_scaleDenominator:  # this will change the Height of polar image
-            data = scalePolarImage(data, self.m_scaleNumerator, self.m_scaleDenominator)
-            label = scalePolarLabel(label, self.m_scaleNumerator, self.m_scaleDenominator)
+        if 1 != self.hps.scaleNumerator or 1 != self.hps.scaleDenominator:  # this will change the Height of polar image
+            data = scalePolarImage(data, self.hps.scaleNumerator, self.hps.scaleDenominator)
+            label = scalePolarLabel(label, self.hps.scaleNumerator, self.hps.scaleDenominator)
 
         H, W = data.shape
         image = data.unsqueeze(dim=0)
-        if 0 != self.m_gradChannels:
-            grads = self.generateGradientImage(data, self.m_gradChannels)
+        if 0 != self.hps.gradChannels:
+            grads = self.generateGradientImage(data, self.hps.gradChannels)
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
 
         result = {"images": image,
                   "GTs": [] if label is None else label,
-                  "gaussianGTs": [] if 0 == self.m_sigma or label is None  else gaussianizeLabels(label, self.m_sigma, H),
+                  "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": self.m_IDs[str(index)],
                   "layers": [] if label is None else getLayerLabels(label,H) }
         return result

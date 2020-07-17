@@ -1,0 +1,151 @@
+# base on corrected and refined Ground truth with guarantee of surface separation constraint.
+# total 46 patient exclude ill patient images.
+# raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
+# convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_10Surface_20200509.py
+# numSurface = 10 as deleted inaccurate surface 8
+# training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
+
+
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/"
+existGTLabel: True
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K: 10  # Kfold cross validation
+k: 0   # the fold k test
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+
+# when do not use cross validation:
+# training data:  dataDir + training + images.npy
+#         label: dataDir + training + surfaces.npy
+#         IDs  : dataDir + training + patientID.json
+
+# validation data:  dataDir + validation + images.npy
+#           label: dataDir + validation + surfaces.npy
+#           IDs  : dataDir + validation + patientID.json
+
+# test data:  dataDir + test + images.npy
+#     label: dataDir + test + surfaces.npy
+#     IDs  : dataDir + test + patientID.json
+
+groundTruthInteger: True
+sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:0')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 4
+
+network: "SurfacesUnet"
+inputHight: 496   # original height
+inputWidth: 512   # rawImageWidth
+scaleNumerator: 1
+scaleDenominator: 1
+inputChannels: 5 # rawImage + gradChannels
+nLayers: 7
+numSurfaces: 10  # num of surfaces in an image
+startFilters: 24  # the num of filters in first layer of Unet
+gradChannels: 7   # the added gradient channels beside raw image channel
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+
+# some physical parameter of images
+slicesPerPatient: 31  # for test and validation set
+hPixelSize: 3.870  # unit: micrometer, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+useRiftWidth: True
+# data augmentation
+
+netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "" # reserve for pretrained network.
+outputDir: ""
+
+# do not use these loss function
+lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log probabilities
+lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
+lossFunc1: "nn.SmoothL1Loss().to(device)"
+lossFunc1Epochs: 500
+
+# Proximal IPM Optimization
+useProxialIPM: False
+learningStepIPM: 0.1
+maxIterationIPM: 100
+criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
+
+useDynamicProgramming: False
+usePrimalDualIPM: True
+useLayerDice: True
+useReferSurfaceFromLayer: True
+useLayerCE: False
+useCEReplaceKLDiv: False
+useSmoothSurface: True
+useWeightedDivLoss: True
+
+goodBscans: # notes: indention has 4 spaces. patientID: [LeftRange, RightRange] in 1-31 index value.
+    2639: [7, 26]
+    2700: [8, 25]
+    6049: [7, 30]
+    6071: [5, 27]
+    6418: [4, 31]
+    6757: [3, 27]
+    6783: [2, 27]
+    6813: [10, 31]
+    6830: [9, 26]
+    6890: [10, 25]
+    7044: [7, 29]
+    7059: [6, 31]
+    32048: [9, 31]
+    34087: [5, 27]
+    34127: [ 8, 26]
+    34169: [7, 28]
+    120006: [6, 29]
+    120030: [9, 29]
+    120201: [4, 31]
+    140009: [5, 31]
+    440: [8, 29]
+    489: [6, 30]
+    660: [10, 31]
+    1062: [11, 26]
+    1296: [8, 28]
+    1411: [1, 27]
+    1437: [4, 30]
+    1472: [7, 27]
+    2044: [4, 30]
+    2074: [5, 27]
+    2579: [6, 30]
+    2592: [6, 28]
+    2626: [9, 26]
+    2627: [7, 28]
+    2806: [7, 29]
+    4013: [5, 27]
+    4162: [11, 29]
+    4173: [7, 30]
+    4338: [3, 31]
+    4464: [5, 29]
+    4511: [13, 25]
+    4616: [6, 27]
+    4959: [11, 27]
+    5097: [6, 30]
+    5363: [9, 21]
+    5370: [11, 29]
+    5926: [9, 27]
+    5938: [10, 29]
+    5951: [11, 25]
+
+
+#End of good Bscans.
