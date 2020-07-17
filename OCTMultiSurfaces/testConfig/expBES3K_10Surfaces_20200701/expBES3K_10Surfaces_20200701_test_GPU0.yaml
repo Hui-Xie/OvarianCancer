@@ -48,6 +48,7 @@ inputChannels: 5 # rawImage + gradChannels
 nLayers: 7
 numSurfaces: 10  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
+# at most 7 grad channels: gradH, gradW, grad45, grad135, gradMagnitudeHW, gradDirectionHW, gradDirection135_45
 gradChannels: 4   # the added gradient channels beside raw image channel
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
