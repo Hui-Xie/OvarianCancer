@@ -123,32 +123,33 @@ class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
     def backward(ctx, dL):
         dH = db = dA = dd = dS0 = dLambda = dbeta3 = depsilon = None
-        if torch.is_grad_enabled():
-            device = dL.device
-            S = ctx.S
-            J_Inv = ctx.J_Inv
-            Lambda = ctx.Lambda
 
-            assert dL.dim() == 3
-            B, W, N = dL.shape
-            B1,W1,M,One = Lambda.shape
-            assert B==B1 and W==W1 and One==1
-            assert J_Inv.shape[2] == M+N
-            dL = dL.unsqueeze(dim=-1)
-            dL_sLambda = torch.cat((dL, torch.zeros(B, W, M, 1, device=device) ), dim=-2)  # size: B,W,N+M,1
-            d_sLambda = -torch.matmul(torch.transpose(J_Inv, -1, -2), dL_sLambda)  # size: B,W,N+M,1
-            ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
-            dlambda = d_sLambda[:, :, N:, :]  # in size: B,W,M,1
-            if ctx.needs_input_grad[0]:
-                dH = 0.5*(torch.matmul(S, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(ds, S.transpose(dim0=-1,dim1=-2)))  # size: B,W,N,N
-            if ctx.needs_input_grad[1]:
-                db = ds  # size: B,W, N,1
-            if ctx.needs_input_grad[2]:
-                DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
-                dA = torch.matmul(Lambda, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(DLambda, torch.matmul(dlambda, S.transpose(dim0=-1,dim1=-2)))
-            if ctx.needs_input_grad[3]:
-                DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
-                dd = torch.matmul(DLambda,dlambda)
+        # in backward, all torch.is_grad_enabled() is false by autograd mechanism
+        device = dL.device
+        S = ctx.S
+        J_Inv = ctx.J_Inv
+        Lambda = ctx.Lambda
+
+        assert dL.dim() == 3
+        B, W, N = dL.shape
+        B1,W1,M,One = Lambda.shape
+        assert B==B1 and W==W1 and One==1
+        assert J_Inv.shape[2] == M+N
+        dL = dL.unsqueeze(dim=-1)
+        dL_sLambda = torch.cat((dL, torch.zeros(B, W, M, 1, device=device) ), dim=-2)  # size: B,W,N+M,1
+        d_sLambda = -torch.matmul(torch.transpose(J_Inv, -1, -2), dL_sLambda)  # size: B,W,N+M,1
+        ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
+        dlambda = d_sLambda[:, :, N:, :]  # in size: B,W,M,1
+        if ctx.needs_input_grad[0]:
+            dH = 0.5*(torch.matmul(S, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(ds, S.transpose(dim0=-1,dim1=-2)))  # size: B,W,N,N
+        if ctx.needs_input_grad[1]:
+            db = ds  # size: B,W, N,1
+        if ctx.needs_input_grad[2]:
+            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+            dA = torch.matmul(Lambda, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(DLambda, torch.matmul(dlambda, S.transpose(dim0=-1,dim1=-2)))
+        if ctx.needs_input_grad[3]:
+            DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+            dd = torch.matmul(DLambda,dlambda)
 
         return dH, db, dA, dd, dS0, dLambda, dbeta3, depsilon
 

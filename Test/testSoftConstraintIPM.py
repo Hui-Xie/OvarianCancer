@@ -5,27 +5,38 @@ import sys
 sys.path.append("../OCTMultiSurfaces/network")
 from QuadraticIPMOpt import *
 
+from torch.autograd import gradcheck
+
 device =torch.device("cuda:0")
+dtype = torch.float
 B = 2
 W = 3
 N = 5
 
 
-Mu = 10*torch.rand(B,N,W, device=device, requires_grad=True)
+Mu = 10.0*torch.rand(B,N,W, dtype=dtype, device=device, requires_grad=True)
 Mu.retain_grad()
-sigma2= 2*torch.rand(B,N,W, device=device, requires_grad=True)
+sigma2= 2.0*torch.rand(B,N,W, dtype=dtype, device=device, requires_grad=True)
 sigma2.retain_grad()
 R = (torch.rand(B,N,W, device=device)+0.5) * torch.cat((Mu[:,0,:].unsqueeze(dim=1), Mu[:,1:,:]- Mu[:,0:-1,:]), dim=1)
 R.retain_grad()
 c_lambda = 4*torch.max(sigma2)
 
-G = torch.tensor([[1,1,1],[3,3,3], [4,4,4], [6,6,6], [8,9,7]], device= device)
+
+G = torch.tensor([[1,1,1],[3,3,3], [4,4,4], [6,6,6], [8,9,7]], dtype=dtype, device= device)
 G = G.unsqueeze(dim=0)
 G = torch.cat((G,G),dim=0)  # size:(B,N,W)
 
+print(f"torch.is_grad_enabled() = {torch.is_grad_enabled()}")
+
 softConstrainedIPM = SoftConstrainedIPMModule()
 S = softConstrainedIPM(c_lambda, Mu,sigma2,R)
-#S = Mu +3
+#S = Mu/sigma2 - R
+
+#test= gradcheck(softConstrainedIPM, [c_lambda, Mu,sigma2,R], eps=1e-6, atol=1e-4)
+#print(f"gradcheck test=\n {test}")
+
+
 loss = torch.pow(G-S,2).sum()
 
 print(f"Before loss.backward: Mu.grad = {Mu.grad}")
