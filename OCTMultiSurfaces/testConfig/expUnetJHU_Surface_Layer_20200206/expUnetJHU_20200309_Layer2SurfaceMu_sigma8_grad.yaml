@@ -58,7 +58,7 @@ inputChannels: 4 # rawImage + gradChannels
 nLayers: 7
 numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 3   # the adde gradient channels beside raw image channel
+gradChannels: 3   # the added gradient channels beside raw image channel
 
 # some physical parameter of images
 slicesPerPatient: 49

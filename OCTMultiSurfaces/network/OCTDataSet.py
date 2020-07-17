@@ -45,32 +45,55 @@ class OCTDataSet(data.Dataset):
         image0H = image[0:-1,:]  # size: H-1,W
         image1H = image[1:,  :]
         gradH   = image1H-image0H
-        gradH = torch.cat((gradH, torch.zeros((1, W), device=device)), dim=0)  # size: H,W
+        gradH = torch.cat((gradH, torch.zeros((1, W), device=device)), dim=0)  # size: H,W; grad90
 
         image0W = image[:,0:-1]  # size: H,W-1
         image1W = image[:,1:  ]
         gradW = image1W - image0W
-        gradW = torch.cat((gradW, torch.zeros((H, 1), device=device)), dim=1)  # size: H,W
+        gradW = torch.cat((gradW, torch.zeros((H, 1), device=device)), dim=1)  # size: H,W; grad0
 
-        gradMagnitude = torch.sqrt(torch.pow(gradH,2)+torch.pow(gradW,2))
+        gradMagnitudeHW = torch.sqrt(torch.pow(gradH,2)+torch.pow(gradW,2))
 
         if gradChannels>=3:
-            onesHW = torch.ones_like(image)
-            negOnesHW = -onesHW
-            signHW = torch.where(gradH * gradW >= 0, onesHW, negOnesHW)
+            onesImage = torch.ones_like(image)
+            negOnesImage = -onesImage
+            signHW = torch.where(gradH * gradW >= 0, onesImage, negOnesImage)
             e = 1e-8
-            gradDirection = torch.atan(signHW * torch.abs(gradH) / (torch.abs(gradW) + e))
+            gradDirectionHW = torch.atan(signHW * torch.abs(gradH) / (torch.abs(gradW) + e))
+
+        if gradChannels >= 5:
+            image45_0 = image[0:-1,1:]  # size: H-1,W-1
+            image45_1 = image[1:,0:-1]  # size: H-1,W-1
+            grad45 = image45_1 - image45_0 # size: H-1,W-1
+            grad45 = torch.cat((torch.zeros((H-1,1), device=device), grad45), dim=1)
+            grad45 = torch.cat((grad45, torch.zeros((1, W), device=device)), dim=0)
+
+            image135_0 = image[0:-1, 0:-1]  # size: H-1,W-1
+            image135_1 = image[1:, 1:]  # size: H-1,W-1
+            grad135 = image135_1 - image135_0  # size: H-1,W-1
+            grad135 = torch.cat((grad135, torch.zeros((H - 1, 1), device=device)), dim=1)
+            grad135 = torch.cat((grad135, torch.zeros((1, W), device=device)), dim=0)
+
+        if gradChannels >= 7:
+            sign135_45 = torch.where(grad135 * grad45 >= 0, onesImage, negOnesImage)
+            gradDirection135_45 = torch.atan(sign135_45 * torch.abs(grad135) / (torch.abs(grad45) + e))
 
         if 1 == gradChannels:
-            return gradMagnitude
+            return gradMagnitudeHW
         elif 2 == gradChannels:
             return gradH, gradW,
         elif 3 == gradChannels:
-             return gradH, gradW, gradDirection
+             return gradH, gradW, gradDirectionHW
         elif 4 == gradChannels:
-            return gradH, gradW, gradMagnitude, gradDirection
+            return gradH, gradW, gradMagnitudeHW, gradDirectionHW
+        elif 5 == gradChannels:
+            return gradH, gradW, grad45, grad135, gradDirectionHW
+        elif 6 == gradChannels:
+            return gradH, gradW, grad45, grad135, gradMagnitudeHW, gradDirectionHW
+        elif 7 == gradChannels:
+            return gradH, gradW, grad45, grad135, gradMagnitudeHW, gradDirectionHW, gradDirection135_45
         else:
-            print(f"Currently do not support gradChannels >4")
+            print(f"Currently do not support gradChannels >7")
             assert False
             return None
 
