@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, H, b, A, d, S0, Lambda0, beta3, epsilon):
+    def forward(ctx, H, b, A, d, S0, Lambda0, beta3, epsilon, nMaxIteration=7):
         '''
         the forward of constrained quadratic optimization using Primal-Dual Interior Point Method.
 
@@ -106,7 +106,9 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
             nIPMIterations +=1
-            if R2Norm.max() < epsilon or nIPMIterations >7: # IPM generally iterates 6-7 iterations.
+            if R2Norm.max() < epsilon or nIPMIterations >nMaxIteration: # IPM generally iterates 6-7 iterations.
+                #debug
+                print(f"IPM forward iterations = {nIPMIterations}")
                 break
 
         # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
