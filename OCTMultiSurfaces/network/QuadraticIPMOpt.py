@@ -108,7 +108,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             nIPMIterations +=1
             if R2Norm.max() < epsilon or nIPMIterations >nMaxIteration: # IPM generally iterates 6-7 iterations.
                 #debug
-                print(f"IPM forward iterations = {nIPMIterations}")
+                print(f"IPM forward iterations = {nIPMIterations}, and R2Norm.max = {R2Norm.max()}")
                 break
 
         # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
