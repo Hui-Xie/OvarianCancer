@@ -142,12 +142,20 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
         dlambda = d_sLambda[:, :, N:, :]  # in size: B,W,M,1
         if ctx.needs_input_grad[0]:
-            dH = 0.5*(torch.matmul(S, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(ds, S.transpose(dim0=-1,dim1=-2)))  # size: B,W,N,N
+            # amos solution:
+            # dH = 0.5*(torch.matmul(S, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(ds, S.transpose(dim0=-1,dim1=-2)))  # size: B,W,N,N
+            dH = torch.matmul(torch.diag_embed(ds.squeeze(dim=-1)),S.transpose(dim0=-1,dim1=-2).expand(B,W,N,N))
         if ctx.needs_input_grad[1]:
             db = ds  # size: B,W, N,1
         if ctx.needs_input_grad[2]:
-            DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
-            dA = torch.matmul(Lambda, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(DLambda, torch.matmul(dlambda, S.transpose(dim0=-1,dim1=-2)))
+            DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+            Ddlambda = torch.diag_embed(dlambda.squeeze(dim=-1))
+            dA = torch.matmul(DLambda,
+                              (ds.transpose(dim0=-1,dim1=-2).expand(B,W,M,N)- torch.matmul(Ddlambda, S.transpose(dim0=-1,dim1=-2).expand(B,W,M,N))))
+            # amos solution
+            # DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
+            # dA = torch.matmul(Lambda, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(DLambda, torch.matmul(dlambda, S.transpose(dim0=-1,dim1=-2)))
+
         if ctx.needs_input_grad[3]:
             DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
             dd = torch.matmul(DLambda,dlambda)
