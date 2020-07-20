@@ -251,12 +251,10 @@ class SurfacesUnet(BasicModel):
         if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
             self.m_riftConv= nn.Sequential(
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # input and output has same size.
                 nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
                 )  # output size:numSurfaces*H*W
-
+            #todo: R and sigma2 in Optimization do not need gradient backward(detached.)
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):
         # compute outputs

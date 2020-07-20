@@ -61,7 +61,10 @@ for i in range(nEpic):
     sigma2.grad.zero_()
     R.grad.zero_()
 
+    # softSeparation
     S = seperationIPM(c_lambda, Mu, sigma2, R)
+    # hardSeperation
+    #S = seperationIPM(Mu,sigma2)
     loss = torch.pow(G - S, 2).sum()
     print(f"epic:{i}, loss = {loss.item()}")
     loss.backward(gradient=torch.ones(loss.shape).to(device), retain_graph=True)
