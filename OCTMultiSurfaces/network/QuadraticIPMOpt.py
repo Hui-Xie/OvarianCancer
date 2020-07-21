@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, H, b, A, d, S0, Lambda0, beta3, epsilon, nMaxIteration=7):
+    def forward(ctx, H, b, A, d, S0, Lambda0, beta3, epsilon, nMaxIteration):
         '''
         the forward of constrained quadratic optimization using Primal-Dual Interior Point Method.
 
@@ -17,6 +17,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         :param d: size(B,W,M,1)
         :param S0: the initial feasible solution, in (B,W, N, 1) size
         :param Lambda0: the initial Lagragian dual variable, in (B,W,M,1) size
+                        A bigger lambda may increase IPM step(alpha), reduces iterative number.
         :param beta3: IPM iteration t enlarge variable, in (B,W, 1, 1) size, beta3 >1
         :param epsilon: float scalar, error tolerance
 
@@ -124,7 +125,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, dL):
-        dH = db = dA = dd = dS0 = dLambda = dbeta3 = depsilon = None
+        dH = db = dA = dd = dS0 = dLambda = dbeta3 = depsilon = dMaxIterations=None
 
         # in backward, all torch.is_grad_enabled() is false by autograd mechanism
         device = dL.device
@@ -160,7 +161,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
             dd = torch.matmul(DLambda,dlambda)
 
-        return dH, db, dA, dd, dS0, dLambda, dbeta3, depsilon
+        return dH, db, dA, dd, dS0, dLambda, dbeta3, depsilon, dMaxIterations
 
 
 
@@ -231,11 +232,14 @@ class SoftConstrainedIPMModule(nn.Module):
         A = A.expand(B, W, M, N)
         d = torch.zeros((B,W,M, 1),device=device)
 
-        Lambda0 = torch.rand(B, W, M, 1, device=device) # size: (B,W,M,1)
+        # a bigger lambda may increase IPM step(alpha)
+        Lambda0 = 20*torch.rand(B, W, M, 1, device=device) # size: (B,W,M,1)
         beta3 = 10 + torch.rand(B, W, 1, 1, device=device)  # enlarge factor for t, size:(B,W,1,1)
         epsilon = 0.01  # 0.001 is too small.
 
-        S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, beta3, epsilon) # in size: B,W,N,1
+        MaxIterations = 100
+
+        S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, beta3, epsilon, MaxIterations) # in size: B,W,N,1
 
         # switch H and W axis order back
         S = S.squeeze(dim=-1)
