@@ -131,3 +131,6 @@ dmypy.json
 *.gz
 *.log
 *#
+
+# matlab process files
+*.m~
