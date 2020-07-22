@@ -43,6 +43,10 @@ S = ConstrainedIPMFunction.forward(ctx, H, b, A, d, S0, Lambda0, beta3, epsilon,
 Lambda = ctx.Lambda
 R = ctx.R
 
+print(f"H = \n{H}")
+print(f"b = \n{b}")
+print(f"A = \n{A}")
+print(f"d = \n{d}")
 print(f"S = \n{S}")
 print(f"Lambda= \n{Lambda}")
 print(f"R = \n{R}")
