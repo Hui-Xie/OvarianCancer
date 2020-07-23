@@ -188,7 +188,10 @@ class HardSeparationIPMModule(nn.Module):
         
         B,N,W = Mu.shape
         device = Mu.device
-        
+
+        # Optimization will not optimize sigma
+        # sigma2 = sigma2.detach()
+
         # compute S0 here
         with torch.no_grad():
             batchLIS = getBatchLIS_gpu(Mu)

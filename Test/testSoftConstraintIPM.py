@@ -56,9 +56,10 @@ print(f"epic:{-1}, loss = {loss.item()}")
 for i in range(nEpic):
     Mu -= lr* Mu.grad
     sigma2 -= lr*sigma2.grad
-    R -= lr* R.grad
+    R -= lr * R.grad
     Mu.grad.zero_()
     sigma2.grad.zero_()
+    #if R.grad is not None:
     R.grad.zero_()
 
     # softSeparation

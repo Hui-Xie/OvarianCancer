@@ -109,7 +109,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             nIPMIterations +=1
             if R2Norm.max() < epsilon or nIPMIterations >nMaxIteration: # IPM generally iterates 6-7 iterations.
                 #debug
-                print(f"IPM forward iterations = {nIPMIterations}, and R2Norm.max = {R2Norm.max()}")
+                #print(f"IPM forward iterations = {nIPMIterations}, and R2Norm.max = {R2Norm.max()}")
                 break
 
         # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
@@ -204,7 +204,11 @@ class SoftSeparationIPMModule(nn.Module):
         B,N,W = Mu.shape
         device = Mu.device
 
-        c_lambda = (4*sigma2.max()).item()
+        # Optimization will not optimize sigma and R.
+        # sigma2 = sigma2.detach()
+        # R = RR.clone().detach()
+
+        c_lambda = (4*sigma2.max()).detach().item()
 
         # compute initial feasible point of the optimization variable
         with torch.no_grad():

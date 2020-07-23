@@ -252,10 +252,11 @@ class SurfacesUnet(BasicModel):
 
         #tensors need switch H and W dimension to feed into self.m_rifts
         #The output of self.m_rifts need to squeeze the final dimension
-        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
+        if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
             self.m_rifts= nn.Sequential(
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: BxNxWxH
+                nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0),  # conv 1*1
                 nn.Linear(self.hps.inputHeight, 1)
                 )  # output size:numSurfaces*W*1
             #todo: R and sigma2 in Optimization do not need gradient backward(detached.)
@@ -307,7 +308,9 @@ class SurfacesUnet(BasicModel):
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
         if self.hps.useLayerDice:
             xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
-        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
+        if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
+            # tensors need switch H and W dimension to feed into self.m_rifts
+            # The output of self.m_rifts need to squeeze the final dimension
             R = self.m_rifts(x.transpose(dim0=-1,dim1=-2))  # size: B*NumSurface*W*1
             R = R.squeeze(dim=-1) # size: B*N*W
 
@@ -320,17 +323,14 @@ class SurfacesUnet(BasicModel):
         if self.hps.useLayerDice:
             layerProb = logits2Prob(xl, dim=1)
 
+        layerWeight = None
+        surfaceWeight = None
         _, C, _, _ = inputs.shape
         if C >= 4: # at least 3 gradient channels.
-            imageGradMagnitude = inputs[:, C-1, :, :]  # image gradient magnitude is at final channel  since July 23th, 2020
+            imageGradMagnitude = inputs[:, C-1, :, :]  # image gradient magnitude is at final channel since July 23th, 2020
             if self.hps.useLayerCE:
                 layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
-            else:
-                layerWeight = None
             surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=self.hps.gradWeight)
-        else:
-            layerWeight = None
-            surfaceWeight = None
 
         loss_layer = 0.0
         if self.hps.useLayerDice:
