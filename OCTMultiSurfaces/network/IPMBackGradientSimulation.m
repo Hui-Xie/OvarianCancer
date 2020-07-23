@@ -65,20 +65,6 @@ s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4, d1,d2) = (1/((h1-lambda(1)*a1)*(h4-lambda(2)*
 s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4, d1,d2) = (1/((h1-lambda(1)*a1)*(h4-lambda(2)*a4)-(h2-lambda(1)*a2)*(h3-lambda(2)*a3)))...
 *((-h3+lambda(2)*a3)*(r(1)+r(3)+1/t-b1-lambda(1)*d1-a1*lambda(1)-a3*lambda(2))+(h1-lambda(1)*a1)*(r(2)+r(4)+1/t-b2-lambda(2)*d2-a2*lambda(1)-a4*lambda(2)));
 
-
-for notGoHere = []
-    % stationary condition
-    %   s= H^(-1)*(r-b-A'*lambda)
-    %   H = [h1,h2; h3,h4]
-    %   A = [a1,a2; a3,a4]
-    
-    syms s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4);
-    s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4) = (h4*(r(1)-b1-a1*lambda(1)-a3*lambda(2))-h2*(r(2)-b2-a2*lambda(1)-a4*lambda(2)))/(h1*h4-h2*h3);
-    
-    syms s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4);
-    s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4) = (-h3*(r(1)-b1-a1*lambda(1)-a3*lambda(2))+h1*(r(2)-b2-a2*lambda(1)-a4*lambda(2)))/(h1*h4-h2*h3);
-end
-
 ds1_dh1 = diff(s1,h1);
 ds1_dh2 = diff(s1,h2);
 ds1_dh3 = diff(s1,h3);
