@@ -71,20 +71,21 @@ class OCTDataSet(data.Dataset):
             sign135_45 = torch.where(grad135 * grad45 >= 0, onesImage, negOnesImage)
             gradDirection135_45 = torch.atan(sign135_45 * torch.abs(grad135) / (torch.abs(grad45) + e))
 
+        # since July 23th, 2020, gradMagnitudeHW are put into the final channel
         if 1 == gradChannels:
             return gradMagnitudeHW
         elif 2 == gradChannels:
             return gradH, gradW,
         elif 3 == gradChannels:
-             return gradH, gradW, gradDirectionHW
+             return gradH, gradW, gradMagnitudeHW
         elif 4 == gradChannels:
-            return gradH, gradW, gradMagnitudeHW, gradDirectionHW
+            return gradH, gradW, gradDirectionHW, gradMagnitudeHW
         elif 5 == gradChannels:
-            return gradH, gradW, grad45, grad135, gradDirectionHW
+            return gradH, gradW, grad45, grad135, gradMagnitudeHW
         elif 6 == gradChannels:
-            return gradH, gradW, grad45, grad135, gradMagnitudeHW, gradDirectionHW
+            return gradH, gradW, grad45, grad135, gradDirectionHW, gradMagnitudeHW
         elif 7 == gradChannels:
-            return gradH, gradW, grad45, grad135, gradMagnitudeHW, gradDirectionHW, gradDirection135_45
+            return gradH, gradW, grad45, grad135, gradDirectionHW, gradDirection135_45, gradMagnitudeHW
         else:
             print(f"Currently do not support gradChannels >7")
             assert False

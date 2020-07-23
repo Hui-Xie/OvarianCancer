@@ -69,20 +69,19 @@ rotation: False
 lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
-useRiftWidth: True
 # data augmentation
 
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: "" # reserve for pretrained network.
 outputDir: ""
 
-# do not use these loss function
+# discard: do not use these loss function
 lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log probabilities
 lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
 lossFunc1: "nn.SmoothL1Loss().to(device)"
 lossFunc1Epochs: 500
 
-# Proximal IPM Optimization
+# Proximal IPM Optimization, discarded.
 useProxialIPM: False
 learningStepIPM: 0.1
 maxIterationIPM: 100
@@ -90,12 +89,17 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 
 useDynamicProgramming: False
 usePrimalDualIPM: True
-useLayerDice: True
-useReferSurfaceFromLayer: True
+useLayerDice: False
+useReferSurfaceFromLayer: False
 useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
+useRiftWidth: True
+
+# constrained model
+hardSeperation: False
+softSeparation: True
 
 goodBscans: # notes: indention has 4 spaces. patientID: [LeftRange, RightRange] in 1-31 index value.
     2639: [7, 26]

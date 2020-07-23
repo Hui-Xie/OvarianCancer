@@ -25,7 +25,7 @@ R = (torch.rand(B,N,W, device=device)+0.5) * torch.cat((Mu[:,0,:].unsqueeze(dim=
 R.retain_grad()
 #c_lambda = (4*torch.max(sigma2)).clone() # error: one of the variables needed for gradient computation has been modified by an inplace operation:
 #c_lambda.detach()
-c_lambda = 10.0
+# c_lambda = 10.0
 
 G = torch.tensor([[1,1,1],[3,3,3], [4,4,4], [6,6,6], [8,9,7]], dtype=dtype, device= device)
 G = G.unsqueeze(dim=0)
@@ -33,8 +33,8 @@ G = torch.cat((G,G),dim=0)  # size:(B,N,W)
 
 # first run IPMModule to get gradient of Input variables.
 # test softConstrainedIPM
-seperationIPM = SoftConstrainedIPMModule()
-S = seperationIPM(c_lambda, Mu,sigma2,R)
+seperationIPM = SoftSeparationIPMModule()
+S = seperationIPM(Mu,sigma2,R)
 
 # test HardSeparationIPMModule
 #seperationIPM = HardSeparationIPMModule()
@@ -62,7 +62,7 @@ for i in range(nEpic):
     R.grad.zero_()
 
     # softSeparation
-    S = seperationIPM(c_lambda, Mu, sigma2, R)
+    S = seperationIPM(Mu, sigma2, R)
     # hardSeperation
     #S = seperationIPM(Mu,sigma2)
     loss = torch.pow(G - S, 2).sum()

@@ -180,7 +180,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
 
 
 # below is an application of IPM optimization function.
-class SoftConstrainedIPMModule(nn.Module):
+class SoftSeparationIPMModule(nn.Module):
     def __init__(self ):
         '''
         An application layer for soft constrained quadratic IPM optimization.
@@ -189,7 +189,7 @@ class SoftConstrainedIPMModule(nn.Module):
         super().__init__()
 
 
-    def forward(self, c_lambda, Mu, sigma2, R):
+    def forward(self, Mu, sigma2, R):
         '''
         s^* = argmin \sum_{i\in[0,N)}\{\lambda \frac{(s_{i}-\mu_{i})^2}{2\sigma_{i}^2} + (s_{i}-s_{i-1} -r_{i})^2 \}
 
@@ -203,6 +203,8 @@ class SoftConstrainedIPMModule(nn.Module):
 
         B,N,W = Mu.shape
         device = Mu.device
+
+        c_lambda = (4*sigma2.max()).item()
 
         # compute initial feasible point of the optimization variable
         with torch.no_grad():

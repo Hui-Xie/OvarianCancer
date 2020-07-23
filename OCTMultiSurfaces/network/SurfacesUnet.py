@@ -7,6 +7,7 @@ import math
 sys.path.append(".")
 from OCTOptimization import *
 from OCTPrimalDualIPM import *
+from QuadraticIPMOpt import *
 from OCTAugmentation import *
 
 sys.path.append("../..")
@@ -233,30 +234,33 @@ class SurfacesUnet(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )
+        )# output size: BxNxHxW
 
-        # 2 branches:
+        # maybe 3 branches:
         self.m_surfaces = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:numSurfaces*H*W
 
-        self.m_layers = nn.Sequential(
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                        useLeakyReLU=self.m_useLeakyReLU),
-            nn.Conv2d(N, self.hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:(numSurfaces+1)*H*W
-
-        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
-            self.m_riftConv= nn.Sequential(
+        if self.hps.useLayerDice:
+            self.m_layers = nn.Sequential(
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # input and output has same size.
-                nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
-                )  # output size:numSurfaces*H*W
+                            useLeakyReLU=self.m_useLeakyReLU),
+                nn.Conv2d(N, self.hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
+            )  # output size:(numSurfaces+1)*H*W
+
+        #tensors need switch H and W dimension to feed into self.m_rifts
+        #The output of self.m_rifts need to squeeze the final dimension
+        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
+            self.m_rifts= nn.Sequential(
+                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: BxNxWxH
+                nn.Linear(self.hps.inputHeight, 1)
+                )  # output size:numSurfaces*W*1
             #todo: R and sigma2 in Optimization do not need gradient backward(detached.)
 
-    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):
+    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # compute outputs
         device = inputs.device
 
@@ -301,24 +305,34 @@ class SurfacesUnet(BasicModel):
         x = self.m_up1(x) + x
 
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
-        xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
+        if self.hps.useLayerDice:
+            xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
+        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
+            R = self.m_rifts(x.transpose(dim0=-1,dim1=-2))  # size: B*NumSurface*W*1
+            R = R.squeeze(dim=-1) # size: B*N*W
 
         B,N,H,W = xs.shape
 
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
         surfaceProb = logits2Prob(xs, dim=-2)
-        layerProb = logits2Prob(xl, dim=1)
+        layerProb = None
+        if self.hps.useLayerDice:
+            layerProb = logits2Prob(xl, dim=1)
 
         _, C, _, _ = inputs.shape
-        if C == 5:
-            imageGradMagnitude = inputs[:, 3, :, :]
-            layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
+        if C >= 4: # at least 3 gradient channels.
+            imageGradMagnitude = inputs[:, C-1, :, :]  # image gradient magnitude is at final channel  since July 23th, 2020
+            if self.hps.useLayerCE:
+                layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
+            else:
+                layerWeight = None
             surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=self.hps.gradWeight)
         else:
             layerWeight = None
             surfaceWeight = None
 
+        loss_layer = 0.0
         if self.hps.useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             loss_layer = generalizedDiceLoss(layerProb, layerGTs) if self.hps.existGTLabel else 0.0
@@ -329,11 +343,12 @@ class SurfacesUnet(BasicModel):
 
             if self.hps.useReferSurfaceFromLayer:
                 layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
-        else:
-            loss_layer = 0.0
 
+        # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
+        loss_surface = 0.0
+        loss_smooth = 0.0
         if self.hps.existGTLabel:
             if self.hps.useCEReplaceKLDiv:
                 multiSufaceCE = MultiSurfaceCrossEntropyLoss(weight=surfaceWeight)
@@ -351,29 +366,36 @@ class SurfacesUnet(BasicModel):
                 if 0 == len(gaussianGTs):  # sigma ==0 case
                     gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
                 loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-        else:
-            loss_surface =0.0
 
-        if self.hps.useSmoothSurface and self.hps.existGTLabel:
-            smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-            loss_smooth = smoothSurfaceLoss(mu, GTs)
-        else:
-            loss_smooth = 0.0
-
-        if self.hps.usePrimalDualIPM:
-            separationIPM = HardSeparationIPMModule()
-            S = separationIPM(mu, sigma2)
-        else:
-            S = mu
+            if self.hps.useSmoothSurface:
+                smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+                loss_smooth = smoothSurfaceLoss(mu, GTs)
 
         weightL1 = 10.0
-        if self.hps.existGTLabel:
-            l1Loss = nn.SmoothL1Loss().to(device)
-            loss_L1 = l1Loss(S, GTs)
-        else:
-            loss_L1 = 0.0
+        l1Loss = nn.SmoothL1Loss().to(device)
 
-        loss = loss_layer + loss_surface + loss_smooth+ loss_L1 * weightL1
+        # rift L1 loss
+        loss_riftL1 = 0.0
+        if self.hps.existGTLabel and hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
+            loss_riftL1 = l1Loss(R,riftGTs)
+
+        S = mu
+        if self.hps.usePrimalDualIPM:
+            if self.hps.hardSeparation:
+                separationIPM = HardSeparationIPMModule()
+                S = separationIPM(mu, sigma2)
+            elif self.hps.softSeparation:
+                separationIPM = SoftSeparationIPMModule()
+                S = separationIPM(mu, sigma2, R)
+            else:
+                print("Error: model parameter errs.")
+                assert(False)
+
+        loss_surfaceL1 = 0.0
+        if self.hps.existGTLabel:
+            loss_surfaceL1 = l1Loss(S, GTs)
+
+        loss = loss_layer + loss_surface + loss_smooth+ (loss_surfaceL1 +loss_riftL1)* weightL1
 
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 
