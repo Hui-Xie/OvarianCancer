@@ -118,6 +118,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         ctx.J_Inv = J_Inv
         ctx.Lambda = Lambda
         ctx.R = R2
+        ctx.t = t
         # S.requires_grad_(requires_grad=torch.is_grad_enabled())
         return S
 
