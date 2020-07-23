@@ -1,281 +1,317 @@
+***********************************************
 IPM backward gradient simulation experiment
+For symmetric H case
 optimization problem parameters:
+
 H =
+
+     2     5
+     5    11
+
+
+b =
+
+     3
+     5
+
+
+A =
+
+     5     2
+     3     4
+
+
+d =
+
+     2
+     3
+
+
+s =
+
+    0.6744
+   -0.6859
+
+
+lambda =
+
+    0.0000
+    0.0020
+
+
+r =
+
+    0.9250
+    0.8345
+   -0.0003
+    0.0070
+
+
+t =
+
+   2.9920e+03
+
+
+dL_ds =
+
+     3
+    15
+
+====================================
+dL_dH: the backward gradient on quadratic matrix:
+
+manual_dL_dH =
+
+   -9.4702    9.6325
+    3.3875   -3.4455
+
+
+hui_dL_dH =
+
+   -8.3946    8.5377
+    2.8857   -2.9349
+
+
+amos_dL_dH =
+
+   -8.3946    5.7117
+    5.7117   -2.9349
+
+====================================
+dL_dA: the backward gradient on constraint matrix:
+
+manual_dL_dA =
+
+   -0.0000   -0.0000
+   -0.0344    0.0167
+
+
+hui_dL_dA =
+
+    0.0719   -0.0731
+   -0.0318    0.0158
+
+
+amos_dL_dA =
+
+   -0.0719    0.0731
+    0.0072   -0.0073
+
+====================================
+>>
+IPM backward gradient simulation experiment
+For un-symmetric H case
+optimization problem parameters:
+
+H =
+
+     2     5
+     3    11
+
+
+b =
+
+     3
+     5
+
+
+A =
+
+     5     2
+     3     4
+
+
+d =
+
+     2
+     3
+
+
+s =
+
+   -1.1428
+   -0.1429
+
+
+lambda =
+
+   1.0e-06 *
+
+    0.0263
+    0.1554
+
+
+r =
+
+   1.0e-04 *
+
+    0.7403
+    0.5980
+   -0.0103
+   -0.0015
+
+
+t =
+
+   8.6188e+05
+
+
+dL_ds =
+
+     3
+    15
+
+====================================
+dL_dH: the backward gradient on quadratic matrix:
+
+manual_dL_dH =
+
+   -1.9591   -0.2449
+    2.4488    0.3062
+
+
+hui_dL_dH =
+
+   -1.9591   -0.2450
+    2.4489    0.3062
+
+
+amos_dL_dH =
+
+   -1.9591    1.1019
+    1.1019    0.3062
+
+====================================
+dL_dA: the backward gradient on constraint matrix:
+
+manual_dL_dA =
+
+   1.0e-06 *
+
+    0.0965   -0.0499
+   -0.1142   -0.3806
+
+
+hui_dL_dA =
+
+   1.0e-06 *
+
+    0.0290   -0.0583
+    0.3534   -0.3222
+
+
+amos_dL_dA =
+
+   1.0e-07 *
+
+    0.1609    0.0201
+   -0.8699   -0.1088
+
+====================================
+>>
+
+IPM backward gradient simulation experiment
+For perfect s* case:
+optimization problem parameters:
+
+H =
+
      1     2
      3     5
 
+
 b =
+
    -1.0000
    -2.6000
 
+
 A =
+
     -1     0
      0    -1
 
+
 d =
+
      0
      0
+
+
 s =
+
     0.2000
     0.4000
 
+
 lambda =
+
    1.0e-03 *
+
     0.1332
     0.0295
 
+
 r =
+
    1.0e-04 *
+
    -0.2825
     0.1607
     0.1485
     0.0007
 
 
-dL_ds =
-     3
-     7
-
-====================================
-dL_dH: the backward gradient on quadratic matrix:
-
-manual_dL_dH =
-   -1.1974   -2.4016
-    0.1996    0.4003
-
-hui_dL_dH =
-   -1.2041   -2.4081
-    0.2016    0.4032
-
-amos_dL_dH =
-   -1.2041   -1.1032
-   -1.1032    0.4032
-
-====================================
-dL_dA: the backward gradient on constraint matrix:
-manual_dL_dA =
-   1.0e-03 *
-   -0.7990    0.1332
-   -0.1768    0.0295
-
-hui_dL_dA =
-         0    0.0017
-   -0.0002         0
-
-amos_dL_dA =
-   -0.0008   -0.0016
-    0.0000    0.0000
-
-====================================
-
-IPM backward gradient simulation experiment
-optimization problem parameters:
-
-H =
-     2     5
-     3    11
-
-b =
-     3
-     5
-A =
-     5     2
-     3     4
-
-d =
-     2
-     3
-
-s =
-   -1.1428
-   -0.1429
-
-
-lambda =
-   1.0e-06 *
-    0.0263
-    0.1554
-
-r =
-   1.0e-04 *
-    0.7403
-    0.5980
-   -0.0103
-   -0.0015
-
-dL_ds =
-     3
-     7
-
-====================================
-dL_dH: the backward gradient on quadratic matrix:
-manual_dL_dH =
-    1.9591    0.2449
-   -0.1633   -0.0204
-
-hui_dL_dH =
-    1.9591    0.2450
-   -0.1633   -0.0204
-
-amos_dL_dH =
-    1.9591    0.0409
-    0.0409   -0.0204
-
-====================================
-dL_dA: the backward gradient on constraint matrix:
-manual_dL_dA =
-   1.0e-06 *
-   -0.0451    0.0038
-   -0.2664    0.0222
-
-hui_dL_dA =
-   1.0e-06 *
-   -0.0139    0.0076
-   -0.1504    0.0367
-
-amos_dL_dA =
-   1.0e-06 *
-   -0.0311   -0.0039
-   -0.1160   -0.0145
-
-====================================
->>  for symetric matrix.
-
-IPM backward gradient simulation experiment
-optimization problem parameters:
-
-H =
-     2     5
-     5    11
-
-b =
-     3
-     5
-
-A =
-     5     2
-     3     4
-
-d =
-     2
-     3
-
-s =
-    0.6744
-   -0.6859
-
-lambda =
-    0.0000
-    0.0020
-
-r =
-    0.9250
-    0.8345
-   -0.0003
-    0.0070
-
 t =
-   2.9920e+03
+
+      861875
+
 
 dL_ds =
+
      3
-     7
+    15
 
 ====================================
 dL_dH: the backward gradient on quadratic matrix:
+
 manual_dL_dH =
-   -0.4496    0.4573
-   -0.2248    0.2286
+
+   -5.9921  -12.0158
+    1.7980    3.6055
+
 
 hui_dL_dH =
-   -0.3824    0.3889
-   -0.2558    0.2602
+
+   -6.0204  -12.0409
+    1.8082    3.6163
+
 
 amos_dL_dH =
-   -0.3824    0.0666
-    0.0666    0.2602
+
+   -6.0204   -5.1164
+   -5.1164    3.6163
 
 ====================================
 dL_dA: the backward gradient on constraint matrix:
+
 manual_dL_dA =
-    0.4335   -0.4409
-   -1.3982    1.4202
+
+   -0.0032    0.0028
+   -0.0009    0.0002
+
 
 hui_dL_dA =
-    0.0048   -0.0049
-   -0.0023    0.0004
+
+   -0.0000    0.0092
+   -0.0010    0.0000
+
 
 amos_dL_dA =
-   -0.0048    0.0049
-    0.0011   -0.0012
+
+   -0.0040   -0.0080
+    0.0001    0.0003
 
 ====================================
->> For dL_ds1 ==  dL_ds2 and symmetric H.
+>>
 
-IPM backward gradient simulation experiment
-optimization problem parameters:
-
-H =
-     2     5
-     5    11
-
-b =
-     3
-     5
-
-A =
-     5     2
-     3     4
-
-d =
-     2
-     3
-
-s =
-    0.6744
-   -0.6859
-
-lambda =
-    0.0000
-    0.0020
-
-r =
-    0.9250
-    0.8345
-   -0.0003
-    0.0070
-
-t =
-   2.9920e+03
-
-dL_ds =
-     7
-     7
-
-====================================
-dL_dH: the backward gradient on quadratic matrix:
-manual_dL_dH =
-    9.4413   -9.6031
-   -4.7206    4.8016
-
-hui_dL_dH =
-    8.4553   -8.5995
-   -4.2619    4.3346
-
-amos_dL_dH =
-    8.4553   -6.4307
-   -6.4307    4.3346
-
-====================================
-dL_dA: the backward gradient on constraint matrix:
-
-manual_dL_dA =
-
-   -0.3372    0.3430
-   -0.9839    1.0151
-
-
-hui_dL_dA =
-
-   -0.0670    0.0682
-    0.0292   -0.0170

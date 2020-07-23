@@ -6,8 +6,9 @@ clear all;
 clc;
 disp('IPM backward gradient simulation experiment')
 
-for donotGoHere=[]  %case 1:
+%for notGoHere=[]  %case 1:
 %quadratic equation parameters
+disp("For perfect s* case:")
 H = [1,2;3,5];
 b = [-1,-2.6]';
 A = -[1,0; 0,1];
@@ -18,10 +19,11 @@ s = [0.2,0.4]'; % s*,
 lambda = [1.3316e-04, 2.9466e-05]';
 r =[-2.8254e-05, 1.6072e-05, 1.4850e-05, 6.9906e-08]';  %resiudal vector
 t = 861875;
-end 
+%end 
 
-for donotGohere=[] % case 2:
+for notGohere=[] % case 2:
 % quadratic equation parameters
+disp("For un-symmetric H case")
 H = [2,5;3,11];
 b = [3,5]';
 A = [5,2; 3,4];
@@ -34,8 +36,9 @@ r =[7.4031e-05, 5.9802e-05, -1.0317e-06, -1.5407e-07]';  %resiudal vector
 t = 861875.0625;
 end
 
-% case 3:
+for notGoHere=[] % case 3:
 % quadratic equation parameters
+disp("For symmetric H case")
 H = [2,5;5,11];
 b = [3,5]';
 A = [5,2; 3,4];
@@ -46,25 +49,35 @@ s = [0.6744,-0.6859]'; % s*,
 lambda = [3.9717e-07,1.9743e-03]';
 r =[9.2500e-01, 8.3449e-01, -3.3422e-04, 7.0113e-03]';  %resiudal vector
 t = 2992.0208;
+end
 
 % =============================
-
-
-dL_ds = [7,7]';
+dL_ds = [3,15]';
 assert(all([2,2] == size(H)))
 
 %===========Manual Computation of dL/dH===============
-%== by residula equataion==========:
+%== by residula equataion system==========:
+syms s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4, d1,d2)
+syms s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4, d1,d2)
+s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4, d1,d2) = (1/((h1-lambda(1)*a1)*(h4-lambda(2)*a4)-(h2-lambda(1)*a2)*(h3-lambda(2)*a3)))...
+*((h4-lambda(2)*a4)*(r(1)+r(3)+1/t-b1-lambda(1)*d1-a1*lambda(1)-a3*lambda(2))+(-h2+lambda(1)*a2)*(r(2)+r(4)+1/t-b2-lambda(2)*d2-a2*lambda(1)-a4*lambda(2)));
 
-% stationary condition 
-%   s= H^(-1)*(r-b-A'*lambda)
-%   H = [h1,h2; h3,h4]
-%   A = [a1,a2; a3,a4]
-syms s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4);
-s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4) = (h4*(r(1)-b1-a1*lambda(1)-a3*lambda(2))-h2*(r(2)-b2-a2*lambda(1)-a4*lambda(2)))/(h1*h4-h2*h3);
+s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4, d1,d2) = (1/((h1-lambda(1)*a1)*(h4-lambda(2)*a4)-(h2-lambda(1)*a2)*(h3-lambda(2)*a3)))...
+*((-h3+lambda(2)*a3)*(r(1)+r(3)+1/t-b1-lambda(1)*d1-a1*lambda(1)-a3*lambda(2))+(h1-lambda(1)*a1)*(r(2)+r(4)+1/t-b2-lambda(2)*d2-a2*lambda(1)-a4*lambda(2)));
 
-syms s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4);
-s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4) = (-h3*(r(1)-b1-a1*lambda(1)-a3*lambda(2))+h1*(r(2)-b2-a2*lambda(1)-a4*lambda(2)))/(h1*h4-h2*h3);
+
+for notGoHere = []
+    % stationary condition
+    %   s= H^(-1)*(r-b-A'*lambda)
+    %   H = [h1,h2; h3,h4]
+    %   A = [a1,a2; a3,a4]
+    
+    syms s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4);
+    s1(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4) = (h4*(r(1)-b1-a1*lambda(1)-a3*lambda(2))-h2*(r(2)-b2-a2*lambda(1)-a4*lambda(2)))/(h1*h4-h2*h3);
+    
+    syms s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4);
+    s2(h1,h2,h3,h4,b1,b2, a1,a2,a3,a4) = (-h3*(r(1)-b1-a1*lambda(1)-a3*lambda(2))+h1*(r(2)-b2-a2*lambda(1)-a4*lambda(2)))/(h1*h4-h2*h3);
+end
 
 ds1_dh1 = diff(s1,h1);
 ds1_dh2 = diff(s1,h2);
@@ -92,34 +105,11 @@ ds2_da3 = diff(s2,a3);
 ds2_da4 = diff(s2,a4);
 ds2_dA = [ds2_da1, ds2_da2; ds2_da3, ds2_da4];
 
-% slackness condition
-%  s = A^(-1)*(d-1/t-diag(1./lambda)*r34) with assumption that A is square matrix psd.
-%  getting s = f(A) is not a trivial work.
-disp('Getting s = f(A) is not a trivial work, so it ignore the dL_dA result now.')
-rhs = d - diag(1/lambda)*([r(3),r(4)]' +1/t);
-syms slacks1(a1,a2,a3,a4);
-slacks1(a1,a2,a3,a4) = (a4*rhs(1)-a2*rhs(2))/(a1*a4-a2*a3);
-syms slacks2(a1,a2,a3,a4);
-slacks2(a1,a2,a3,a4) = (-a3*rhs(1)+a1*rhs(2))/(a1*a4-a2*a3);
-
-dslacks1_da1 = diff(slacks1,a1);
-dslacks1_da2 = diff(slacks1,a2);
-dslacks1_da3 = diff(slacks1,a3);
-dslacks1_da4 = diff(slacks1,a4);
-dslacks1_dA = [dslacks1_da1, dslacks1_da2; dslacks1_da3, dslacks1_da4];
-
-dslacks2_da1 = diff(slacks2,a1);
-dslacks2_da2 = diff(slacks2,a2);
-dslacks2_da3 = diff(slacks2,a3);
-dslacks2_da4 = diff(slacks2,a4);
-dslacks2_dA = [dslacks2_da1, dslacks2_da2; dslacks2_da3, dslacks2_da4];
-
-dL_dA1 = dL_ds(1)* ds1_dA + dL_ds(2)*ds2_dA;   % stationary gradient
-dL_dA2 = dL_ds(1)* dslacks1_dA + dL_ds(2)*dslacks2_dA; % slackness gradient
+dL_dA = dL_ds(1)* ds1_dA + dL_ds(2)*ds2_dA;  
 
 %disp("dL_dH in manual computation:")
-manual_dL_dH = double(dL_dH(H(1,1),H(1,2),H(2,1),H(2,2),b(1),b(2), A(1,1),A(1,2),A(2,1),A(2,2)));
-manual_dL_dA = double(dL_dA1(H(1,1),H(1,2),H(2,1),H(2,2),b(1),b(2), A(1,1),A(1,2),A(2,1),A(2,2)) + dL_dA2(A(1,1),A(1,2),A(2,1),A(2,2)));
+manual_dL_dH = double(dL_dH(H(1,1),H(1,2),H(2,1),H(2,2),b(1),b(2), A(1,1),A(1,2),A(2,1),A(2,2),d(1),d(2)));
+manual_dL_dA = double(dL_dA(H(1,1),H(1,2),H(2,1),H(2,2),b(1),b(2), A(1,1),A(1,2),A(2,1),A(2,2),d(1),d(2)));
 
 
 %===========Compute J, ds,dlambda================================
