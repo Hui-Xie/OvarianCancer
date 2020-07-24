@@ -94,10 +94,10 @@ class OCTDataSet(data.Dataset):
 
     def __getitem__(self, index):
         data = self.m_images[index,]
+
+        label = None
         if self.m_labels is not None:
             label = self.m_labels[index,] # size: N,W
-        else:
-            label = None
 
         if self.m_transform:
             data, label = self.m_transform(data, label)
@@ -121,6 +121,10 @@ class OCTDataSet(data.Dataset):
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
 
+        layerGT = []
+        if self.hps.useLayerDice and label is not None:
+            layerGT = getLayerLabels(label,H)
+
         riftWidthGT = []
         if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
             riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
@@ -129,7 +133,7 @@ class OCTDataSet(data.Dataset):
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": self.m_IDs[str(index)],
-                  "layers": [] if label is None else getLayerLabels(label,H),
+                  "layers": layerGT,
                   "riftWidth": riftWidthGT}
         return result
 
