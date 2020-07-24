@@ -11,6 +11,8 @@ B = 1
 W = 1
 N = 2  # for 2x2 matrix
 
+print(f"Note: Use this program: you need save R and t in IPM forward program")
+
 # construct H and b matrix
 '''
 case 1:
