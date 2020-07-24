@@ -162,6 +162,14 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
             dd = torch.matmul(DLambda,dlambda)
 
+        # free self added ctx fields
+        ctx.S = None
+        ctx.J_Inv = None
+        ctx.Lambda = None
+        # for verify IPM forward use
+        # ctx.R = None
+        # ctx.t = None
+
         return dH, db, dA, dd, dS0, dLambda, dbeta3, depsilon, dMaxIterations
 
 
