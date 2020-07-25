@@ -1,7 +1,7 @@
 
 import torch
 
-configDir = "/home/hxie1/data/IVUS/polarNumpy/netParameters/IVUSUnet/expUnetIVUS_20200214"
+configDir = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV0"
 configFile = configDir + "/ConfigParameters.pt"
 
 configDict = torch.load(configFile)

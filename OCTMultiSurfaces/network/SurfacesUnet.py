@@ -397,6 +397,11 @@ class SurfacesUnet(BasicModel):
 
         loss = loss_layer + loss_surface + loss_smooth+ (loss_surfaceL1 +loss_riftL1)* weightL1
 
+        if loss != loss: # detect NaN
+            print(f"Error find NaN in loss")
+            assert False
+
+
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 
 
