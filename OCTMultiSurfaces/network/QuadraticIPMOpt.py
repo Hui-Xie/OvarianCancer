@@ -67,6 +67,10 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 else:
                     raise RuntimeError(err)
 
+            # Inverse using the SVD can create nan problems when the singular values are not unique.
+            if torch.isnan(J_Inv.sum()):
+                J_Inv = torch.pinverse(J)
+
             PD = -torch.matmul(J_Inv, R)  # primal dual improve direction, in size: B,W,N+M,1
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
             PD_Lambda = PD[:, :, N:, :]  # in size: B,W,M,1
@@ -83,6 +87,10 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
             alphaExpandM = alpha.expand_as(PD_Lambda) # in size: B,W,M,1
             S = S0 + alphaExpandN * PD_S
+
+            if not torch.all(S==S):
+                print("S has nan")
+
             AS = torch.matmul(A, S)  # AS update
             while torch.any(AS > d):
                 alpha = torch.where(AS > d, alphaExpandM * beta1, alphaExpandM)
@@ -90,6 +98,10 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
                 alphaExpandM = alpha.expand_as(PD_Lambda)  # in size: B,W,M,1
                 S = S0 + alphaExpandN * PD_S
+
+                if not torch.all(S == S):
+                    print("S has nan")
+
                 AS = torch.matmul(A, S)  # AS update
 
             # make sure the norm2 of R reduce
@@ -102,6 +114,10 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
                 alphaExpandM = alpha.expand_as(PD_Lambda) # in size: B,W,M,1
                 S = S0 + alphaExpandN * PD_S
+
+                if not torch.all(S == S):
+                    print("S has nan")
+
                 Lambda = Lambda0 + alphaExpandM * PD_Lambda
                 R2 = ConstrainedIPMFunction.getResidualMatrix(H, b, A, d, S, Lambda, t)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
@@ -221,7 +237,7 @@ class SoftSeparationIPMModule(nn.Module):
 
         # compute initial feasible point of the optimization variable
         # directly use Mu as initial value as external Mu has guaranteed order
-        S0 = Mu.clone().detach()  # size: B,N,W,
+        S0 = Mu.clone() # size: B,N,W. Here detach is unnecessary, as operation in autograd_function does not compute gradient
         S0 = S0.transpose(dim0=-1, dim1=-2)  # in size: B,W,N
         S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
         #with torch.no_grad():
