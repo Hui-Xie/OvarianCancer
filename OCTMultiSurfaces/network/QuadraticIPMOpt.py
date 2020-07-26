@@ -228,7 +228,6 @@ class SoftSeparationIPMModule(nn.Module):
             S0 = Mu.clone()
             for i in range(1, N):
                 S0[:, i, :] = torch.where(S0[:, i, :] < S0[:, i - 1, :], S0[:, i - 1, :], S0[:, i, :])
-            S0, _ = torch.sort(Mu,dim=1)
             S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
             S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
 
