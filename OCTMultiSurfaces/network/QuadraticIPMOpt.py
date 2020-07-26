@@ -35,6 +35,8 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         beta1 = 0.5  # alpha shrink coefficient
         beta2 = 0.055
 
+        device = H.device
+
         S = S0
         Lambda = Lambda0
 
@@ -70,7 +72,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             # Inverse using the SVD can create nan problems(not converge)
             # when the singular values are not unique or very close each other.
             if torch.isnan(J_Inv.sum()):
-                turbulence = (1e-4*J.mean().abs()*torch.eye(N+M)).unsqueeze(dim=0).unsqueeze(dim=0).expand(B,W,N+M, N+M) # size: BxWx(N+M)x(N+M)
+                turbulence = (1e-4*J.mean().abs()*torch.eye(N+M, device=device)).unsqueeze(dim=0).unsqueeze(dim=0).expand(B,W,N+M, N+M) # size: BxWx(N+M)x(N+M)
                 J += turbulence
                 J_Inv = torch.inverse(J)
                 if torch.isnan(J_Inv.sum()):
