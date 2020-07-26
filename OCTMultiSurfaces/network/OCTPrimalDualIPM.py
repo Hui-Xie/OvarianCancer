@@ -72,8 +72,7 @@ class MuQIPMFunction(torch.autograd.Function):
 
             # linear search to determine a feasible alpha which will guarantee constraints
             # make sure updated Lambda >=0
-            negPDLambda = (PD_Lambda < 0).int() * PD_Lambda + (PD_Lambda >= 0).int() * (
-                -1) * Lambda  # in size: B,W, N-1,1
+            negPDLambda = (PD_Lambda < 0).int() * PD_Lambda + (PD_Lambda >= 0).int() * (-1) * Lambda  # in size: B,W, N-1,1
             alpha = -(Lambda / negPDLambda)   # in torch.tensor 0/0 = nan, and -0/(-2) = -0, and -(0/(-2)) = 0
             alpha = torch.where(alpha != alpha, torch.ones_like(alpha), alpha)  # replace nan as 1
             alpha, _ = alpha.min(dim=-2, keepdim=True)
@@ -81,29 +80,29 @@ class MuQIPMFunction(torch.autograd.Function):
             # assert (alpha == alpha).all().item()  # detect nan because of nan!=nan
 
             # make sure AS<0
-            stepExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
-            stepExpandN_1 = alpha.expand_as(PD_Lambda) # in size: B,W,N-1,1
-            S = S0 + stepExpandN * PD_S
+            alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
+            alphaExpandN_1 = alpha.expand_as(PD_Lambda) # in size: B,W,N-1,1
+            S = S0 + alphaExpandN * PD_S
             AS = torch.matmul(A, S)  # AS update
             while torch.any(AS > 0):
-                alpha = torch.where(AS > 0, stepExpandN_1 * beta1, stepExpandN_1)
+                alpha = torch.where(AS > 0, alphaExpandN_1 * beta1, alphaExpandN_1)
                 alpha, _ = alpha.min(dim=-2, keepdim=True)  # in size: B,W,1,1
-                stepExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
-                stepExpandN_1 = alpha.expand_as(PD_Lambda)  # in size: B,W,N-1,1
-                S = S0 + stepExpandN * PD_S
+                alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
+                alphaExpandN_1 = alpha.expand_as(PD_Lambda)  # in size: B,W,N-1,1
+                S = S0 + alphaExpandN * PD_S
                 AS = torch.matmul(A, S)  # AS update
 
             # make sure norm2 of R reduce
             RNorm = torch.norm(R, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
-            Lambda = Lambda0 + stepExpandN_1 * PD_Lambda
+            Lambda = Lambda0 + alphaExpandN_1 * PD_Lambda
             R2 = MuQIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t)
             R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
             while torch.any(R2Norm > (1 - beta2 * alpha) * RNorm):
                 alpha = torch.where(R2Norm > (1 - beta2 * alpha) * RNorm, alpha * beta1, alpha)
-                stepExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
-                stepExpandN_1 = alpha.expand_as(PD_Lambda) # in size: B,W,N-1,1
-                S = S0 + stepExpandN * PD_S
-                Lambda = Lambda0 + stepExpandN_1 * PD_Lambda
+                alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
+                alphaExpandN_1 = alpha.expand_as(PD_Lambda) # in size: B,W,N-1,1
+                S = S0 + alphaExpandN * PD_S
+                Lambda = Lambda0 + alphaExpandN_1 * PD_Lambda
                 R2 = MuQIPMFunction.getResidualMatrix(Q, S, Mu, A, Lambda, t)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1
 
@@ -146,6 +145,13 @@ class MuQIPMFunction(torch.autograd.Function):
             # SDiffMu = S - Mu
             # dQ = 0.5*(torch.matmul(ds, torch.transpose(SDiffMu, -1, -2))+ torch.matmul(SDiffMu, torch.transpose(ds, -1, -2))) # size: B,W, N,N
         dMu = -torch.matmul(Q.transpose(dim0=-1, dim1=-2), ds) # size: B,W,N,1
+
+        # free stash variables.
+        ctx.Mu = None
+        ctx.Q = None
+        ctx.S = None
+        ctx.J_Inv = None
+
         return dMu, dQ, dA, dS0, dLambda, dalpha, depsilon
 
 
