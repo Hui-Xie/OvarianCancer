@@ -256,8 +256,10 @@ class SurfacesUnet(BasicModel):
             self.m_rifts= nn.Sequential(
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: BxNxWxH
-                nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0),  # conv 1*1
-                nn.Linear(self.hps.inputHeight, 1)
+                Conv2dBlock(N, self.hps.numSurfaces, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=False, kernelSize=1, padding=0, dilation=1),   # conv 1*1, output size: BxNumSurfacexWxH
+                nn.Linear(self.hps.inputHeight, 1),
+                nn.ReLU()   # RiftWidth >=0
                 )  # output size:numSurfaces*W*1
             #todo: R and sigma2 in Optimization do not need gradient backward(detached.)
 
@@ -266,8 +268,7 @@ class SurfacesUnet(BasicModel):
         device = inputs.device
 
         x0 = self.m_down0Pooling(inputs)
-        x0 = self.m_down0(x0) + x0    # this residual link may hurts dice performance.
-        x0 = self.m_down0(x0)
+        x0 = self.m_down0(x0) + x0
 
         x1 = self.m_down1Pooling(x0)
         x1 = self.m_down1(x1) + x1
@@ -397,6 +398,7 @@ class SurfacesUnet(BasicModel):
 
         loss = loss_layer + loss_surface + loss_smooth+ (loss_surfaceL1 +loss_riftL1)* weightL1
 
+        print(f"epoch: {self.m_epoch}; loss: {loss}")
         if loss != loss: # detect NaN
             print(f"Error find NaN in loss")
             assert False
