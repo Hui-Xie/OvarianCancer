@@ -220,10 +220,14 @@ class SoftSeparationIPMModule(nn.Module):
         c_lambda = (4*sigma2.max()).detach().item()
 
         # compute initial feasible point of the optimization variable
-        with torch.no_grad():
-            S0, _ = torch.sort(Mu,dim=1)
-            S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
-            S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
+        # directly use Mu as initial value as external Mu has guaranteed order
+        S0 = Mu.clone().detach()  # size: B,N,W,
+        S0 = S0.transpose(dim0=-1, dim1=-2)  # in size: B,W,N
+        S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
+        #with torch.no_grad():
+        #    S0, _ = torch.sort(Mu,dim=1)
+        #    S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
+        #    S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
 
         # construct H and b matrix
         H = torch.zeros((B,W,N,N), device=device)

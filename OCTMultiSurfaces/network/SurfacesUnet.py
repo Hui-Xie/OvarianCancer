@@ -3,6 +3,7 @@
 
 import sys
 import math
+import torch
 
 sys.path.append(".")
 from OCTOptimization import *
@@ -345,6 +346,10 @@ class SurfacesUnet(BasicModel):
 
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
+
+        # ReLU to guarantee layer order without cross each other
+        for i in range(1, N):
+            mu[:, i, :] = torch.where(mu[:, i, :] < mu[:, i - 1, :], mu[:, i - 1, :], mu[:, i, :])
 
         loss_surface = 0.0
         loss_smooth = 0.0

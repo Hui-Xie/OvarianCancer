@@ -113,7 +113,7 @@ class MuQIPMFunction(torch.autograd.Function):
         # print(f"Primal-dual IPM nIterations = {nIPMIterations}")
         # ctx.save_for_backward(Mu, Q, S, J_Inv) # save_for_backward is just for input and outputs
 
-        # these stach variables need free in the backward
+        # these stash variables need free in the backward
         ctx.Mu = Mu
         ctx.Q = Q
         ctx.S = S
