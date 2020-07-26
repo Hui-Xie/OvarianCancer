@@ -254,10 +254,8 @@ class SurfacesUnet(BasicModel):
         #The output of self.m_rifts need to squeeze the final dimension
         if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
             self.m_rifts= nn.Sequential(
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: BxNxWxH
                 Conv2dBlock(N, self.hps.numSurfaces, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=False, kernelSize=1, padding=0, dilation=1),   # conv 1*1, output size: BxNumSurfacexWxH
+                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: BxNumSurfacesxWxH
                 nn.Linear(self.hps.inputHeight, 1),
                 nn.ReLU()   # RiftWidth >=0
                 )  # output size:numSurfaces*W*1
@@ -398,11 +396,9 @@ class SurfacesUnet(BasicModel):
 
         loss = loss_layer + loss_surface + loss_smooth+ (loss_surfaceL1 +loss_riftL1)* weightL1
 
-        print(f"epoch: {self.m_epoch}; loss: {loss}")
         if loss != loss: # detect NaN
-            print(f"Error find NaN in loss")
+            print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
-
 
         return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
 

@@ -126,7 +126,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
 
     @staticmethod
     def backward(ctx, dL):
-        dH = db = dA = dd = dS0 = dLambda = dbeta3 = depsilon = dMaxIterations=None
+        dH = db = dA = dd = dS0 = dLambda0 = dbeta3 = depsilon = dMaxIterations=None
 
         # in backward, all torch.is_grad_enabled() is false by autograd mechanism
         device = dL.device
@@ -137,7 +137,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         assert dL.dim() == 4
         B, W, N,One = dL.shape
         B1,W1,M,One1 = Lambda.shape
-        assert B==B1 and W==W1 and One==One1 and One==1
+        assert B==B1 and W==W1 and One==One1==1
         assert J_Inv.shape[2] == M+N
         dL_sLambda = torch.cat((dL, torch.zeros(B, W, M, 1, device=device) ), dim=-2)  # size: B,W,N+M,1
         d_sLambda = -torch.matmul(torch.transpose(J_Inv, -1, -2), dL_sLambda)  # size: B,W,N+M,1
@@ -170,7 +170,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         # ctx.R = None
         # ctx.t = None
 
-        return dH, db, dA, dd, dS0, dLambda, dbeta3, depsilon, dMaxIterations
+        return dH, db, dA, dd, dS0, dLambda0, dbeta3, depsilon, dMaxIterations
 
 
 
@@ -252,7 +252,7 @@ class SoftSeparationIPMModule(nn.Module):
         beta3 = 10 + torch.rand(B, W, 1, 1, device=device)  # enlarge factor for t, size:(B,W,1,1)
         epsilon = 0.01  # 0.001 is too small.
 
-        MaxIterations = 100
+        MaxIterations = 50
 
         S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, beta3, epsilon, MaxIterations) # in size: B,W,N,1
 
