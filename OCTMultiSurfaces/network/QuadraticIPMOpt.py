@@ -221,19 +221,26 @@ class SoftSeparationIPMModule(nn.Module):
         # sigma2 = sigma2.detach()
         # R = RR.clone().detach()
 
-        c_lambda = (4*sigma2.max()).detach().item()
+
 
         # compute initial feasible point of the optimization variable
-        # directly use Mu as initial value as external Mu has guaranteed order
-        S0 = Mu.clone() # size: B,N,W. Here detach is unnecessary, as operation in autograd_function does not compute gradient
-        S0 = S0.transpose(dim0=-1, dim1=-2)  # in size: B,W,N
-        S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
-        #with torch.no_grad():
-        #    S0, _ = torch.sort(Mu,dim=1)
-        #    S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
-        #    S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
+        # Here detach is unnecessary, as operation in autograd_function does not compute gradient
+        with torch.no_grad():
+            # ReLU to guarantee layer order not to cross each other
+            S0 = Mu.clone()
+            for i in range(1, N):
+                S0[:, i, :] = torch.where(S0[:, i, :] < S0[:, i - 1, :], S0[:, i - 1, :], S0[:, i, :])
+            S0, _ = torch.sort(Mu,dim=1)
+            S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
+            S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
 
         # construct H and b matrix
+
+        # c is the unary weight in the cost function
+        # c = (4.1*sigma2.max()).detach().item()
+        c,_ = torch.max(sigma2, dim=1, keepdim=False) # size: BxW
+        c = (4.5*c).detach() # size: BxW
+
         H = torch.zeros((B,W,N,N), device=device)
         b = torch.zeros((B,W,N,1), device=device)
 
@@ -241,8 +248,8 @@ class SoftSeparationIPMModule(nn.Module):
         sigma2 = sigma2.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         for i in range(N):
-            H[:,:,i,i] +=c_lambda/sigma2[:,:,i] +2.0
-            b[:,:,i,0] +=-c_lambda*Mu[:,:,i]/sigma2[:,:,i]-2*R[:,:,i]
+            H[:,:,i,i] +=c[:,:]/sigma2[:,:,i] +2.0
+            b[:,:,i,0] +=-c[:,:]*Mu[:,:,i]/sigma2[:,:,i]-2*R[:,:,i]
             if i > 0:
                 H[:,:,i-1,i-1] += 2.0
                 H[:, :, i , i - 1] += -4.0
