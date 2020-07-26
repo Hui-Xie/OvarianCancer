@@ -221,8 +221,6 @@ class SoftSeparationIPMModule(nn.Module):
         # sigma2 = sigma2.detach()
         # R = RR.clone().detach()
 
-
-
         # compute initial feasible point of the optimization variable
         # Here detach is unnecessary, as operation in autograd_function does not compute gradient
         with torch.no_grad():
