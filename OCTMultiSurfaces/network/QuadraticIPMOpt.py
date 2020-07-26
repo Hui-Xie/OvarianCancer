@@ -87,10 +87,6 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
             alphaExpandM = alpha.expand_as(PD_Lambda) # in size: B,W,M,1
             S = S0 + alphaExpandN * PD_S
-
-            if not torch.all(S==S):
-                print("S has nan")
-
             AS = torch.matmul(A, S)  # AS update
             while torch.any(AS > d):
                 alpha = torch.where(AS > d, alphaExpandM * beta1, alphaExpandM)
@@ -98,10 +94,6 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
                 alphaExpandM = alpha.expand_as(PD_Lambda)  # in size: B,W,M,1
                 S = S0 + alphaExpandN * PD_S
-
-                if not torch.all(S == S):
-                    print("S has nan")
-
                 AS = torch.matmul(A, S)  # AS update
 
             # make sure the norm2 of R reduce
@@ -114,10 +106,6 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 alphaExpandN = alpha.expand_as(PD_S)  # in size: B,W,N,1
                 alphaExpandM = alpha.expand_as(PD_Lambda) # in size: B,W,M,1
                 S = S0 + alphaExpandN * PD_S
-
-                if not torch.all(S == S):
-                    print("S has nan")
-
                 Lambda = Lambda0 + alphaExpandM * PD_Lambda
                 R2 = ConstrainedIPMFunction.getResidualMatrix(H, b, A, d, S, Lambda, t)
                 R2Norm = torch.norm(R2, p=2, dim=-2, keepdim=True)  # size: B,W,1,1

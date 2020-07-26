@@ -66,6 +66,10 @@ class MuQIPMFunction(torch.autograd.Function):
                 else:
                     raise RuntimeError(err)
 
+            # Inverse using the SVD can create nan problems when the singular values are not unique.
+            if torch.isnan(J_Inv.sum()):
+                J_Inv = torch.pinverse(J)
+
             PD = -torch.matmul(J_Inv, R)  # primal dual improve direction, in size: B,W,2N-1,1
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
             PD_Lambda = PD[:, :, N:, :]  # in size: B,W,N-1,1

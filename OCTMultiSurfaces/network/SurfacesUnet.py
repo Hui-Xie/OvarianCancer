@@ -401,7 +401,7 @@ class SurfacesUnet(BasicModel):
 
         loss = loss_layer + loss_surface + loss_smooth+ (loss_surfaceL1 +loss_riftL1)* weightL1
 
-        if loss != loss: # detect NaN
+        if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
