@@ -146,10 +146,12 @@ class MuQIPMFunction(torch.autograd.Function):
         ds = d_sLambda[:, :, 0:N, :]  # in size: B,W,N,1
         if ctx.needs_input_grad[1]:
             dQ = torch.matmul(torch.diag_embed(ds.squeeze(dim=-1)), (S-Mu).transpose(dim0=-1, dim1=-2).expand(B, W, N, N))
+            dQ = torch.where(dQ != dQ, torch.zeros_like(dQ), dQ)  # replace nan as 0
             # amos gradient formula:
             # SDiffMu = S - Mu
             # dQ = 0.5*(torch.matmul(ds, torch.transpose(SDiffMu, -1, -2))+ torch.matmul(SDiffMu, torch.transpose(ds, -1, -2))) # size: B,W, N,N
         dMu = -torch.matmul(Q.transpose(dim0=-1, dim1=-2), ds) # size: B,W,N,1
+        dMu = torch.where(dMu != dMu, torch.zeros_like(dMu), dMu)  # replace nan as 0
 
         # free stash variables.
         ctx.Mu = None

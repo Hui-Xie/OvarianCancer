@@ -166,13 +166,16 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             # amos solution:
             # dH = 0.5*(torch.matmul(S, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(ds, S.transpose(dim0=-1,dim1=-2)))  # size: B,W,N,N
             dH = torch.matmul(torch.diag_embed(ds.squeeze(dim=-1)),S.transpose(dim0=-1,dim1=-2).expand(B,W,N,N))
+            dH = torch.where(dH != dH, torch.zeros_like(dH), dH)  # replace nan as 0
         if ctx.needs_input_grad[1]:
             db = ds  # size: B,W, N,1
+            db = torch.where(db != db, torch.zeros_like(db), db)  # replace nan as 0
         if ctx.needs_input_grad[2]:
             DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
             Ddlambda = torch.diag_embed(dlambda.squeeze(dim=-1))
             dA = torch.matmul(DLambda,
                               (ds.transpose(dim0=-1,dim1=-2).expand(B,W,M,N)- torch.matmul(Ddlambda, S.transpose(dim0=-1,dim1=-2).expand(B,W,M,N))))
+            dA = torch.where(dA != dA, torch.zeros_like(dA), dA)  # replace nan as 0
             # amos solution
             # DLambda = -torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
             # dA = torch.matmul(Lambda, ds.transpose(dim0=-1,dim1=-2))+torch.matmul(DLambda, torch.matmul(dlambda, S.transpose(dim0=-1,dim1=-2)))
@@ -180,7 +183,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         if ctx.needs_input_grad[3]:
             DLambda = torch.diag_embed(Lambda.squeeze(dim=-1))  # negative diagonal Lambda in size:B,W,M,M
             dd = torch.matmul(DLambda,dlambda)
-
+            dd = torch.where(dd != dd, torch.zeros_like(dd), dd)  # replace nan as 0
         # free self added ctx fields
         ctx.S = None
         ctx.J_Inv = None
@@ -259,6 +262,7 @@ class SoftSeparationIPMModule(nn.Module):
 
         Mu = Mu.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         sigma2 = sigma2.transpose(dim0=-1,dim1=-2) # in size:B,W,N
+        sigma2 = sigma2 +1e-8  # avoid sigma2 ==0
         R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         for i in range(N):
             H[:,:,i,i] +=c[:,:]/sigma2[:,:,i] +2.0
