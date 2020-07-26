@@ -67,9 +67,17 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                 else:
                     raise RuntimeError(err)
 
-            # Inverse using the SVD can create nan problems when the singular values are not unique.
+            # Inverse using the SVD can create nan problems(not converge)
+            # when the singular values are not unique or very close each other.
             if torch.isnan(J_Inv.sum()):
-                J_Inv = torch.pinverse(J)
+                turbulence = (1e-4*J.mean().abs()*torch.eye(N+M)).unsqueeze(dim=0).unsqueeze(dim=0).expand(B,W,N+M, N+M) # size: BxWx(N+M)x(N+M)
+                J += turbulence
+                J_Inv = torch.inverse(J)
+                if torch.isnan(J_Inv.sum()):
+                    print(f"**Error**: in IPM forward, the inverse of Jacobian can not converge even adding small turbulence.")
+                    ctx.svdError = True
+                    return S  # return a trivial solution
+
 
             PD = -torch.matmul(J_Inv, R)  # primal dual improve direction, in size: B,W,N+M,1
             PD_S = PD[:, :, 0:N, :]  # in size: B,W,N,1
@@ -121,6 +129,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         ctx.S = S
         ctx.J_Inv = J_Inv
         ctx.Lambda = Lambda
+        ctx.svdError = False
         # for verify IPM forward use
         # ctx.R = R2
         # ctx.t = t
@@ -131,6 +140,10 @@ class ConstrainedIPMFunction(torch.autograd.Function):
     @staticmethod
     def backward(ctx, dL):
         dH = db = dA = dd = dS0 = dLambda0 = dbeta3 = depsilon = dMaxIterations=None
+
+        if ctx.svdError:
+            ctx.svdError = None
+            return dH, db, dA, dd, dS0, dLambda0, dbeta3, depsilon, dMaxIterations
 
         # in backward, all torch.is_grad_enabled() is false by autograd mechanism
         device = dL.device
@@ -170,6 +183,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
         ctx.S = None
         ctx.J_Inv = None
         ctx.Lambda = None
+        ctx.svdError = None
         # for verify IPM forward use
         # ctx.R = None
         # ctx.t = None
