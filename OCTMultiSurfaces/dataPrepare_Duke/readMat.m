@@ -5,7 +5,7 @@ clc
 amdFile = "/home/sheen/temp/Duke/Farsiu_Ophthalmology_2013_AMD_Subject_1174.mat";
 controlFile = "/home/sheen/temp/Duke/Farsiu_Ophthalmology_2013_Control_Subject_1056.mat";
 
-patient = load(controlFile)
+patient = load(amdFile)
 % patient:
 %        images: [512×1000×100 double]: Height*Width*Slice
 %     layerMaps: [100×1000×3 double]  : 
