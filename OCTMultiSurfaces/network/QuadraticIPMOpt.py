@@ -255,7 +255,7 @@ class SoftSeparationIPMModule(nn.Module):
         # c is the unary weight in the cost function
         # c = (4.1*sigma2.max()).detach().item()
         c,_ = torch.max(sigma2, dim=1, keepdim=False) # size: BxW
-        c = (4.5*c).detach() # size: BxW
+        c = (20.0*c).detach() # size: BxW  # 4c is 50% weight; while 16c is 80% weight, 20c is 83% weight;
 
         H = torch.zeros((B,W,N,N), device=device)
         b = torch.zeros((B,W,N,1), device=device)

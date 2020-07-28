@@ -7,11 +7,11 @@
 
 # for softConstraint Network
 
-dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/"
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 10  # Kfold cross validation
-k: 5   # the fold k test
+k: 9   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -50,7 +50,7 @@ scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
-numSurfaces: 10  # num of surfaces in an image
+numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
@@ -71,7 +71,7 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: "" # reserve for pretrained network.
 outputDir: ""
 
@@ -101,56 +101,4 @@ useRiftWidth: True
 hardSeparation: False
 softSeparation: True
 
-goodBscans: # notes: indention has 4 spaces. patientID: [LeftRange, RightRange] in 1-31 index value.
-    2639: [7, 26]
-    2700: [8, 25]
-    6049: [7, 30]
-    6071: [5, 27]
-    6418: [4, 31]
-    6757: [3, 27]
-    6783: [2, 27]
-    6813: [10, 31]
-    6830: [9, 26]
-    6890: [10, 25]
-    7044: [7, 29]
-    7059: [6, 31]
-    32048: [9, 31]
-    34087: [5, 27]
-    34127: [ 8, 26]
-    34169: [7, 28]
-    120006: [6, 29]
-    120030: [9, 29]
-    120201: [4, 31]
-    140009: [5, 31]
-    440: [8, 29]
-    489: [6, 30]
-    660: [10, 31]
-    1062: [11, 26]
-    1296: [8, 28]
-    1411: [1, 27]
-    1437: [4, 30]
-    1472: [7, 27]
-    2044: [4, 30]
-    2074: [5, 27]
-    2579: [6, 30]
-    2592: [6, 28]
-    2626: [9, 26]
-    2627: [7, 28]
-    2806: [7, 29]
-    4013: [5, 27]
-    4162: [11, 29]
-    4173: [7, 30]
-    4338: [3, 31]
-    4464: [5, 29]
-    4511: [13, 25]
-    4616: [6, 27]
-    4959: [11, 27]
-    5097: [6, 30]
-    5363: [9, 21]
-    5370: [11, 29]
-    5926: [9, 27]
-    5938: [10, 29]
-    5951: [11, 25]
-
-
-#End of good Bscans.
+goodBscans: []
