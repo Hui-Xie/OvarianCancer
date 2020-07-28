@@ -11,7 +11,7 @@ dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfac
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 10  # Kfold cross validation
-k: 0   # the fold k test
+k: 4   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -72,7 +72,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: ""  # reserve for pretrained network.
+loadNetPath: "" # reserve for pretrained network.
 outputDir: ""
 
 # discard: do not use these loss function

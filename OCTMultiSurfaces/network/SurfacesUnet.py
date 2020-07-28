@@ -379,6 +379,8 @@ class SurfacesUnet(BasicModel):
         if self.hps.existGTLabel and hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
             loss_riftL1 = l1Loss(R,riftGTs)
 
+        R_detach = R.clone().detach()
+
         S = mu
         if self.hps.usePrimalDualIPM:
             if self.hps.hardSeparation:
@@ -386,7 +388,7 @@ class SurfacesUnet(BasicModel):
                 S = separationIPM(mu, sigma2)
             elif self.hps.softSeparation:
                 separationIPM = SoftSeparationIPMModule()
-                S = separationIPM(mu, sigma2, R)
+                S = separationIPM(mu, sigma2, R_detach)
             else:
                 print("Error: model parameter errs.")
                 assert(False)

@@ -249,7 +249,7 @@ class SoftSeparationIPMModule(nn.Module):
                 S0[:, i, :] = torch.where(S0[:, i, :] < S0[:, i - 1, :], S0[:, i - 1, :], S0[:, i, :])
             S0 = S0.transpose(dim0=-1, dim1=-2) # in size: B,W,N
             S0 = S0.unsqueeze(dim=-1)  #in size: B,W,N,1
-
+        S0_detach = S0.clone().detach()
         # construct H and b matrix
 
         # c is the unary weight in the cost function
@@ -286,7 +286,7 @@ class SoftSeparationIPMModule(nn.Module):
 
         MaxIterations = 50
 
-        S = ConstrainedIPMFunction.apply(H, b, A, d, S0, Lambda0, beta3, epsilon, MaxIterations) # in size: B,W,N,1
+        S = ConstrainedIPMFunction.apply(H, b, A, d, S0_detach, Lambda0, beta3, epsilon, MaxIterations) # in size: B,W,N,1
 
         # switch H and W axis order back
         S = S.squeeze(dim=-1)

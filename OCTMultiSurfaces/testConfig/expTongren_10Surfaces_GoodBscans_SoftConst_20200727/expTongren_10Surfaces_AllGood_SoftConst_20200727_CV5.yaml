@@ -11,7 +11,7 @@ dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfac
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 10  # Kfold cross validation
-k: 0   # the fold k test
+k: 5   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -39,7 +39,7 @@ k: 0   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 
@@ -72,7 +72,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: ""  # reserve for pretrained network.
+loadNetPath: "" # reserve for pretrained network.
 outputDir: ""
 
 # discard: do not use these loss function
