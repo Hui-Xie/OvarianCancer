@@ -102,6 +102,8 @@ smoothRift: True
 smoothHalfWidth: 10
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 
+useCalibrate: True  # Calibrate mu according to r and sigma
+
 # constrained model
 hardSeparation: False
 softSeparation: True

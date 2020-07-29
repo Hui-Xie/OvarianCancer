@@ -237,7 +237,7 @@ class SurfacesUnet(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU)
         )# output size: BxNxHxW
 
-        # maybe 3 branches:
+        # 3 branches:
         self.m_surfaces = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
@@ -260,7 +260,19 @@ class SurfacesUnet(BasicModel):
                 nn.Linear(self.hps.inputHeight, 1),
                 nn.ReLU()   # RiftWidth >=0
                 )  # output size:numSurfaces*W*1
-            #todo: R and sigma2 in Optimization do not need gradient backward(detached.)
+
+        # mu and sigma need to unsqueeze dim=1 to feed in this layer
+        # and output of this layer needs squeeze dim=1
+        if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
+            self.m_calibrate = nn.Sequential(
+                Conv2dBlock(1, N, convStride=1,
+                            useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=self.m_useLeakyReLU),
+                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=self.m_useLeakyReLU),
+                nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1xNxW
+                )
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # compute outputs
@@ -345,7 +357,12 @@ class SurfacesUnet(BasicModel):
                 layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
 
         # compute surface mu and variance
-        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
+        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
+
+        if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
+            mu_sigma2 = mu * sigma2
+            mu_sigma2 = mu_sigma2.unqueeze(dim=1) # outputsize: Bx1xNxW
+            mu = mu + self.m_calibrate(mu_sigma2).squeeze(dim=1)
 
         loss_surface = 0.0
         loss_smooth = 0.0
