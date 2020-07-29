@@ -13,19 +13,22 @@ class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, hps=None):
         self.hps = hps
 
-        # image uses float32
-        images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
-        # normalize images for each slice
-        std,mean = torch.std_mean(images, dim=(1,2))
-        self.m_images = TF.Normalize(mean, std)(images)
+        self.m_images = None
+        if imagesPath is not None:
+            # image uses float32
+            images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
+            # normalize images for each slice
+            std,mean = torch.std_mean(images, dim=(1,2))
+            self.m_images = TF.Normalize(mean, std)(images)
 
+        self.m_labels = None
         if labelPath is not None:
             self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
-        else:
-            self.m_labels = None
 
-        with open(IDPath) as f:
-            self.m_IDs = json.load(f)
+        self.m_IDs = None
+        if IDPath is not None:
+            with open(IDPath) as f:
+                self.m_IDs = json.load(f)
         self.m_transform = transform
 
 
@@ -110,6 +113,46 @@ class OCTDataSet(data.Dataset):
             assert False
             return None
 
+    def smoothGT(self, rawGT, halfWidth, PadddingMode):
+        '''
+        Use Center Moving Average to smooth rawGT, with the halfWidth.
+        :param rawGT: in size NxW
+        :param halfWidth:
+        :param paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
+        :return: smoothedGT, in size NxW
+        '''
+        N,W = rawGT.shape
+        h = halfWidth
+
+        # pad
+        if PadddingMode == "constant":
+            paddingSize = (h, h)
+            paddedGT = torch.nn.functional.pad(rawGT, paddingSize, PadddingMode) # currently pytorch only support 2D constant padding
+        elif PadddingMode == "reflect":
+            paddedGT = rawGT
+            for i in range(1, h+1):
+                paddedGT = torch.cat((rawGT[:,i].unsqueeze(dim=1), paddedGT, rawGT[:,W-1-i].unsqueeze(dim=1)), dim=1,)
+        elif PadddingMode == "replicate":
+            paddedGT = rawGT
+            for i in range(1, h+1):
+                paddedGT = torch.cat((rawGT[:,0].unsqueeze(dim=1), paddedGT, rawGT[:,W-1].unsqueeze(dim=1)), dim=1,)
+        elif PadddingMode == "circular":
+            paddedGT = rawGT
+            for i in range(1, h+1):
+                paddedGT = torch.cat((rawGT[:,W-i].unsqueeze(dim=1), paddedGT, rawGT[:,i-1].unsqueeze(dim=1)), dim=1,)
+        else:
+            print(f"Error: smoothGT does not support padding mode:{PadddingMode}")
+            assert False
+
+        # smooth
+        smoothedGT = torch.zeros_like(rawGT)
+        movingSum = paddedGT[:,0:2*h+1].sum(dim=1,keepdim=False)
+        w = 2*h+1
+        for j in range(h,W+h):
+            smoothedGT[:,j-h]= movingSum/w
+            if j < W+h-1:
+                movingSum = movingSum-paddedGT[:,j-h]+ paddedGT[:,j+h+1]
+        return smoothedGT
 
     def __getitem__(self, index):
         data = self.m_images[index,]
@@ -145,8 +188,10 @@ class OCTDataSet(data.Dataset):
             layerGT = getLayerLabels(label,H)
 
         riftWidthGT = []
-        if hasattr(self.hps, 'useRiftWidth') and True == self.hps.useRiftWidth:
+        if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
             riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
+            if self.hps.smoothRift:
+                riftWidthGT = self.smoothGT(riftWidthGT,self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
 
         result = {"images": image,
                   "GTs": [] if label is None else label,

@@ -98,6 +98,9 @@ useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
 useRiftWidth: True
+smoothRift: True
+smoothHalfWidth: 10
+smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 
 # constrained model
 hardSeparation: False
