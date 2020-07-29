@@ -361,7 +361,7 @@ class SurfacesUnet(BasicModel):
 
         if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
             mu_sigma2 = mu * sigma2
-            mu_sigma2 = mu_sigma2.unqueeze(dim=1) # outputsize: Bx1xNxW
+            mu_sigma2 = mu_sigma2.unsqueeze(dim=1) # outputsize: Bx1xNxW
             mu = mu + self.m_calibrate(mu_sigma2).squeeze(dim=1)
 
         loss_surface = 0.0

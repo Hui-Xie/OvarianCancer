@@ -99,7 +99,7 @@ useSmoothSurface: True
 useWeightedDivLoss: True
 useRiftWidth: True
 smoothRift: True
-smoothHalfWidth: 10
+smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 
 useCalibrate: True  # Calibrate mu according to r and sigma
