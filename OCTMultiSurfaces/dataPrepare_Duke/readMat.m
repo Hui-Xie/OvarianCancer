@@ -2,8 +2,8 @@
 clear all
 clc
 
-amdFile = "/home/sheen/temp/Duke/Farsiu_Ophthalmology_2013_AMD_Subject_1174.mat";
-controlFile = "/home/sheen/temp/Duke/Farsiu_Ophthalmology_2013_Control_Subject_1056.mat";
+amdFile = "/home/hxie1/data/temp/Duke/Farsiu_Ophthalmology_2013_AMD_Subject_1218.mat";
+% controlFile = "/home/sheen/temp/Duke/Farsiu_Ophthalmology_2013_Control_Subject_1056.mat";
 
 patient = load(amdFile)
 % patient:

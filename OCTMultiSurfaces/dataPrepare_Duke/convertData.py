@@ -48,16 +48,37 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
 
         # crop
         # extract middle volume: 60x512x400: 60 slices, height 512, Width 400,
-        # slice index: 20-80, height index:0-512, width index: 298-698, index start from 0
-        images = rawImages[20:80, :, 298:698]
+        # slice index: 20-80, height index:0-512, width index: 300-700, index start from 0
+        images = rawImages[20:80, :, 300:700]  # size: 60x512x400
         S,H,W = images.shape
-        surfaces = rawSurfaces[20:80,:, 298:698]
+        surfaces = rawSurfaces[20:80,:, 300:700] # size: 60x3x400
+        N = surfaces.shape[1]
 
-        # check nan,
-        if np.isnan(np.sum(images)) or np.isnan(np.sum(surfaces)):
-            print(f"file {volumeFile} has a center volume with nan. discarded it")
+        # check nan
+        if np.isnan(np.sum(images)):
+            print(f"image {volumeFile} has a center volume with nan values. discarded it")
             discardedList.append(volumeFile)
             continue
+        # exterpolate nan
+        if np.isnan(np.sum(surfaces)):
+            for s in range(S):
+                for n in range(N):
+                    if not np.all(surfaces[s,n,:] == surfaces[s,n,:]):
+                        non_nanLocation = np.argwhere(surfaces[s,n,:] == surfaces[s,n,:])
+                        low = non_nanLocation[0]
+                        high = non_nanLocation[-1]
+                        for w in range(W):
+                            if np.isnan(surfaces[s,n,w]) and w < low:
+                                surfaces[s, n, w] = surfaces[s, n, low]
+                            if np.isnan(surfaces[s, n, w]) and w > high:
+                                surfaces[s, n, w] = surfaces[s, n, high]
+
+        if np.isnan(np.sum(surfaces)):
+            print(f"After exterploate of nan, {volumeFile} still nan labels. discarded it")
+            discardedList.append(volumeFile)
+            continue
+
+        assert  not np.isnan(np.sum(images)) and not np.isnan(np.sum(surfaces))
 
         # normalize image
         mean = np.mean(images,(1,2),keepdims=True)
