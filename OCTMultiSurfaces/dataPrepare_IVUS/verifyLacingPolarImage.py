@@ -42,7 +42,7 @@ plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # ver
 subplot1 = plt.subplot(rowSubplot,colSubplot, 1)
 subplot1.imshow(images[k], cmap='gray')
 for s in range(0, S):
-    subplot1.plot(range(0, W), surfaces[k, s, :], linewidth=0.4)
+    subplot1.plot(range(0, W), surfaces[k, s, :], linewidth=0.9)
 subplot1.axis('off')
 
 imagek = torch.from_numpy(images[k])
@@ -54,7 +54,7 @@ lacedImagek, lacedSurfacek = lacePolarImageLabel(imagek, surfacek, lacingWidth)
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(lacedImagek.numpy(), cmap='gray')
 for s in range(0, S):
-    subplot2.plot(range(0, lacedW), lacedSurfacek[s, :].numpy(), linewidth=0.4)
+    subplot2.plot(range(0, lacedW), lacedSurfacek[s, :].numpy(), linewidth=0.9)
 subplot2.axis('off')
 
 delacedImagek, delacedSurfacek = delacePolarImageLabel(lacedImagek, lacedSurfacek, lacingWidth)
@@ -62,7 +62,7 @@ delacedImagek, delacedSurfacek = delacePolarImageLabel(lacedImagek, lacedSurface
 subplot3 = plt.subplot(rowSubplot,colSubplot, 3)
 subplot3.imshow(delacedImagek.numpy(), cmap='gray')
 for s in range(0, S):
-    subplot3.plot(range(0, W), delacedSurfacek[s, :].numpy(), linewidth=0.4)
+    subplot3.plot(range(0, W), delacedSurfacek[s, :].numpy(), linewidth=0.9)
 subplot3.axis('off')
 
 

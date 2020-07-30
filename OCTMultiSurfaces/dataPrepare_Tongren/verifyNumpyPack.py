@@ -47,7 +47,7 @@ subplot1.axis('off')
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(images[k,], cmap='gray')
 for s in range(0, S):
-    subplot2.plot(range(0, W), surfaces[k, s, :], linewidth=0.4)
+    subplot2.plot(range(0, W), surfaces[k, s, :], linewidth=0.9)
 subplot2.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID_Index + "_Raw_GT.png"), dpi='figure', bbox_inches='tight', pad_inches=0)

@@ -216,13 +216,13 @@ def main():
                 subplot2 = plt.subplot(1, 3, 2)
                 subplot2.imshow(image, cmap='gray')
                 for surf in range(0, Num_Surfaces):
-                    subplot2.plot(range(0, W), surfacesArray[s, surf, :], linewidth=0.4)
+                    subplot2.plot(range(0, W), surfacesArray[s, surf, :], linewidth=0.9)
                 subplot2.axis('off')
 
                 subplot3 = plt.subplot(1, 3, 3)
                 subplot3.imshow(image, cmap='gray')
                 for surf in range(0, Num_Surfaces):
-                    subplot3.plot(range(0, W), correctedSurfacesArray[s, surf, :], linewidth=0.4)
+                    subplot3.plot(range(0, W), correctedSurfacesArray[s, surf, :], linewidth=0.9)
                 subplot3.axis('off')
 
                 titleName = patientName + f"_OCT{s + 1:02d}_ErrorMark_GT_Corrected"

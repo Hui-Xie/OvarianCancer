@@ -39,7 +39,7 @@ def main():
             f.set_size_inches(W/ float(DPI), H / float(DPI))
             plt.imshow(image, cmap='gray')
             for s in range(0, surface_num):
-                plt.plot(range(0,X), surfacesArray[z,s,:], linewidth=0.4)
+                plt.plot(range(0,X), surfacesArray[z,s,:], linewidth=0.9)
             titleName = patient + f"_OCT{z+1:02d}_surfaces"
             plt.axis('off')
 

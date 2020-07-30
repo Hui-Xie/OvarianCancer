@@ -51,8 +51,8 @@ subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(image, cmap='gray')
-subplot2.plot(lumenLabel[:,0], lumenLabel[:,1], linewidth=0.4)
-subplot2.plot(mediaLabel[:,0], mediaLabel[:,1], linewidth=0.4)
+subplot2.plot(lumenLabel[:,0], lumenLabel[:,1], linewidth=0.9)
+subplot2.plot(mediaLabel[:,0], mediaLabel[:,1], linewidth=0.9)
 subplot2.axis('off')
 
 # verify the ground truth order
@@ -90,8 +90,8 @@ subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(polarImage, cmap='gray')
-subplot2.plot(np.arange(N), polarLabel[0,:], linewidth=0.4)
-subplot2.plot(np.arange(N), polarLabel[1,:], linewidth=0.4)
+subplot2.plot(np.arange(N), polarLabel[0,:], linewidth=0.9)
+subplot2.plot(np.arange(N), polarLabel[1,:], linewidth=0.9)
 subplot2.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
@@ -119,8 +119,8 @@ subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(polarImage1, cmap='gray')
-subplot2.plot(np.arange(N), polarLabel1[0,:], linewidth=0.4)
-subplot2.plot(np.arange(N), polarLabel1[1,:], linewidth=0.4)
+subplot2.plot(np.arange(N), polarLabel1[0,:], linewidth=0.9)
+subplot2.plot(np.arange(N), polarLabel1[1,:], linewidth=0.9)
 subplot2.axis('off')
 
 subplot3 = plt.subplot(rowSubplot,colSubplot, 3)
@@ -129,8 +129,8 @@ subplot3.axis('off')
 
 subplot4 = plt.subplot(rowSubplot,colSubplot, 4)
 subplot4.imshow(polarImage2, cmap='gray')
-subplot4.plot(np.arange(N), polarLabel2[0,:], linewidth=0.4)
-subplot4.plot(np.arange(N), polarLabel2[1,:], linewidth=0.4)
+subplot4.plot(np.arange(N), polarLabel2[0,:], linewidth=0.9)
+subplot4.plot(np.arange(N), polarLabel2[1,:], linewidth=0.9)
 subplot4.axis('off')
 
 plt.savefig(os.path.join(outputDir, patientID + "_polar_rotation.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
@@ -155,8 +155,8 @@ subplot1.axis('off')
 
 subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(cartesianImage, cmap='gray')
-subplot2.plot(cartesianLabel[0,:,0], cartesianLabel[0,:,1], linewidth=0.4)
-subplot2.plot(cartesianLabel[1,:,0], cartesianLabel[1,:,1], linewidth=0.4)
+subplot2.plot(cartesianLabel[0,:,0], cartesianLabel[0,:,1], linewidth=0.9)
+subplot2.plot(cartesianLabel[1,:,0], cartesianLabel[1,:,1], linewidth=0.9)
 subplot2.axis('off')
 
 # verify the ground truth order

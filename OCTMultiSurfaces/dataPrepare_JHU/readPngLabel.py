@@ -34,7 +34,7 @@ subplot1.axis('off')
 subplot2 = plt.subplot(2, 1, 2)
 subplot2.imshow(image, cmap='gray')
 for s in range(0, S):
-    subplot2.plot(range(0, W), surfaces[s, :], linewidth=0.4)
+    subplot2.plot(range(0, W), surfaces[s, :], linewidth=0.9)
 subplot2.axis('off')
 
 #plt.margins(0)

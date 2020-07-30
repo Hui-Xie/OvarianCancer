@@ -145,7 +145,7 @@ def main():
                 subplot2 = plt.subplot(1, 2, 2)
                 subplot2.imshow(image, cmap='gray')
                 for surf in range(0, Num_Surfaces):
-                    subplot2.plot(range(0, W), surfacesArray[s, surf, :], linewidth=0.4)
+                    subplot2.plot(range(0, W), surfacesArray[s, surf, :], linewidth=0.9)
                 subplot2.axis('off')
 
                 titleName = patientName + f"_OCT{s + 1:02d}_ErrorMark_GT"
