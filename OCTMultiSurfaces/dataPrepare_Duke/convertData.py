@@ -65,6 +65,7 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
                 for n in range(N):
                     if not np.all(surfaces[s,n,:] == surfaces[s,n,:]):
                         non_nanLocation = np.argwhere(surfaces[s,n,:] == surfaces[s,n,:])
+                        non_nanLocation = np.squeeze(non_nanLocation, axis=1)
                         low = non_nanLocation[0]
                         high = non_nanLocation[-1]
                         for w in range(W):
