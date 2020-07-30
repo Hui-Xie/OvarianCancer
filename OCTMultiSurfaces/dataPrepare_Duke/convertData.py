@@ -66,7 +66,10 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
                     if not np.all(surfaces[s,n,:] == surfaces[s,n,:]):
                         non_nanLocation = np.argwhere(surfaces[s,n,:] == surfaces[s,n,:])
                         non_nanLocation = np.squeeze(non_nanLocation, axis=1)
-                        print(non_nanLocation)
+                        if np.size(non_nanLocation)< 3*W/4:
+                            print(f"{volumeFile} has more than W/4  nan labels at s={s}, n={n} surface. discarded it")
+                            discardedList.append(volumeFile)
+                            continue
                         low = non_nanLocation[0]
                         high = non_nanLocation[-1]
                         for w in range(W):
