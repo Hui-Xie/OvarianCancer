@@ -30,7 +30,8 @@ ControlPath = "/home/hxie1/data/OCT_Duke/Control"
 outputPath = "/home/hxie1/data/OCT_Duke/numpy"
 
 # the size of center volume.
-S,H,W= 57,512,361
+S,H,W= 51,512,361
+N = 3
 
 def saveVolumeSurfaceToNumpy(volumesList, outputDir):
     if not os.path.exists(outputDir):
@@ -40,6 +41,7 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
 
     patientList=[]
     discardedList= []
+    extrapolateList = []
     for volumeFile in volumesList:
         # read mat, and convert it into numpy
         patient = loadmat(volumeFile)
@@ -51,12 +53,12 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
         # get center of all labeled surface
         C = center_of_mass((rawSurfaces==rawSurfaces).astype(np.int))
 
-        # crop around labelCenter: S,H,W= 59,512,361
+        # crop around labelCenter: S,H,W= 51,512,361
         halfS = S//2
         halfW = W//2
         surfaces = rawSurfaces[C[0]-halfS:C[0]+halfS+1, :, C[2]-halfW:C[2]+halfW+1] #size: Sx3xW
         images = rawImages[C[0]-halfS:C[0]+halfS+1, :, C[2]-halfW:C[2]+halfW+1]  # size: Sx512xW
-        N = surfaces.shape[1]
+        assert N == surfaces.shape[1]
 
 
         # fixed crop
@@ -72,29 +74,41 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
             print(f"image {volumeFile} has a center volume with nan values. discarded it")
             discardedList.append(volumeFile)
             continue
-        # exterpolate nan
+
+        # extrapolate nan
+        discardThisVolume = False
+        extrapolate  = False
         if np.isnan(np.sum(surfaces)):
             for s in range(S):
+                if discardThisVolume:
+                    break;
                 for n in range(N):
                     if not np.all(surfaces[s,n,:] == surfaces[s,n,:]):
                         non_nanLocation = np.argwhere(surfaces[s,n,:] == surfaces[s,n,:])
                         non_nanLocation = np.squeeze(non_nanLocation, axis=1)
-                        if np.size(non_nanLocation)< 3*W/4:
-                            print(f"{volumeFile} has more than W/4  nan labels at s={s}, n={n} surface. discarded it")
+                        if np.size(non_nanLocation)< 0.8*W:
+                            print(f"{volumeFile} has more than 0.2*W nan labels at s={s}, n={n} surface. discarded it")
                             discardedList.append(volumeFile)
-                            continue
+                            discardThisVolume = True
+                            break
                         low = non_nanLocation[0]
                         high = non_nanLocation[-1]
+                        extrapolate = True
                         for w in range(W):
                             if np.isnan(surfaces[s,n,w]) and w < low:
                                 surfaces[s, n, w] = surfaces[s, n, low]
                             if np.isnan(surfaces[s, n, w]) and w > high:
                                 surfaces[s, n, w] = surfaces[s, n, high]
-
+        if discardThisVolume:
+            continue
+     
         if np.isnan(np.sum(surfaces)):
             print(f"After exterploate of nan, {volumeFile} still nan labels. discarded it")
             discardedList.append(volumeFile)
             continue
+
+        if extrapolate:
+            extrapolateList.append(volumeFile)
 
         assert  not np.isnan(np.sum(images)) and not np.isnan(np.sum(surfaces))
 
@@ -130,8 +144,11 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
     with open(os.path.join(outputDir,"discardedList.txt"),'w') as f:
         for file in discardedList:
             f.write(file + "\n")
+    with open(os.path.join(outputDir,"extrapolateList.txt"),'w') as f:
+        for file in extrapolateList:
+            f.write(file + "\n")
 
-    print(f"Converted {len(patientList)} volumes, and discarded {len(discardedList)} volumes, in {outputDir}.")
+    print(f"Converted {len(patientList)} volumes, extrapolated {len(extrapolateList)} volumes, and discarded {len(discardedList)} volumes, in {outputDir}.")
 
 
 def main():
