@@ -398,7 +398,6 @@ class SurfacesUnet(BasicModel):
 
         R_detach = R.clone().detach()
 
-        S = mu
         if self.hps.usePrimalDualIPM:
             if self.hps.hardSeparation:
                 separationIPM = HardSeparationIPMModule()
@@ -409,6 +408,11 @@ class SurfacesUnet(BasicModel):
             else:
                 print("Error: model parameter errs.")
                 assert(False)
+        else:
+            # ReLU to guarantee layer order not to cross each other
+            S = mu.clone()
+            for i in range(1, N):
+                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
 
         loss_surfaceL1 = 0.0
         if self.hps.existGTLabel:
