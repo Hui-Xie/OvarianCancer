@@ -57,7 +57,7 @@ def main():
     #comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
     # GT uses red, while prediction uses green
 
-    OnlyOutputGoodBscans =True
+    OnlyOutputGoodBscans =False
     needLegend = True
 
 
