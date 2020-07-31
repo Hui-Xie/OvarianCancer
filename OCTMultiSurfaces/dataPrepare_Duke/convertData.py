@@ -51,8 +51,10 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
         rawSurfaces = np.transpose(rawSurfaces, [0,2,1]) # size: 100x3x1000, BxNxW
 
         # get center of all labeled surface
-        C = center_of_mass((rawSurfaces==rawSurfaces).astype(np.int))
-        C = (int(x) for x in C)
+        C_tuple = center_of_mass((rawSurfaces==rawSurfaces).astype(np.int))
+        C = []
+        for x in C_tuple:
+            C.append(int(x))
 
         # crop around labelCenter: S,H,W= 51,512,361
         halfS = S//2
