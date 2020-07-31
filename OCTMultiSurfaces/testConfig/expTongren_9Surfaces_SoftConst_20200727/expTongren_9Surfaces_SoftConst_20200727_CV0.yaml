@@ -74,7 +74,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: ""  # reserve for pretrained network.
+loadNetPath: "" #"/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/SurfacesUnet/expTongren_9Surfaces_SoftConst_20200727_CV0"  # reserve for pretrained network.
 outputDir: ""
 
 # discard: do not use these loss function
