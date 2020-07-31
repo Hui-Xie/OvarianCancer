@@ -52,6 +52,7 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
 
         # get center of all labeled surface
         C = center_of_mass((rawSurfaces==rawSurfaces).astype(np.int))
+        C = C.astype(np.int)
 
         # crop around labelCenter: S,H,W= 51,512,361
         halfS = S//2
@@ -101,7 +102,7 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
                                 surfaces[s, n, w] = surfaces[s, n, high]
         if discardThisVolume:
             continue
-     
+
         if np.isnan(np.sum(surfaces)):
             print(f"After exterploate of nan, {volumeFile} still nan labels. discarded it")
             discardedList.append(volumeFile)
