@@ -83,7 +83,7 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
         if np.isnan(np.sum(surfaces)):
             for s in range(S):
                 if discardThisVolume:
-                    break;
+                    break
                 for n in range(N):
                     if not np.all(surfaces[s,n,:] == surfaces[s,n,:]):
                         non_nanLocation = np.argwhere(surfaces[s,n,:] == surfaces[s,n,:])
