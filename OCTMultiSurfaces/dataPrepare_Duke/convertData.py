@@ -23,12 +23,14 @@ import os
 import random
 import numpy as np
 from scipy.io import loadmat
+from scipy.ndimage import center_of_mass
 
 AMDPath = "/home/hxie1/data/OCT_Duke/AMD"
 ControlPath = "/home/hxie1/data/OCT_Duke/Control"
 outputPath = "/home/hxie1/data/OCT_Duke/numpy"
 
-
+# the size of center volume.
+S,H,W= 57,512,361
 
 def saveVolumeSurfaceToNumpy(volumesList, outputDir):
     if not os.path.exists(outputDir):
@@ -46,13 +48,24 @@ def saveVolumeSurfaceToNumpy(volumesList, outputDir):
         rawSurfaces = patient['layerMaps'] #size: 100x1000x3
         rawSurfaces = np.transpose(rawSurfaces, [0,2,1]) # size: 100x3x1000, BxNxW
 
-        # crop
+        # get center of all labeled surface
+        C = center_of_mass((rawSurfaces==rawSurfaces).astype(np.int))
+
+        # crop around labelCenter: S,H,W= 59,512,361
+        halfS = S//2
+        halfW = W//2
+        surfaces = rawSurfaces[C[0]-halfS:C[0]+halfS+1, :, C[2]-halfW:C[2]+halfW+1] #size: Sx3xW
+        images = rawImages[C[0]-halfS:C[0]+halfS+1, :, C[2]-halfW:C[2]+halfW+1]  # size: Sx512xW
+        N = surfaces.shape[1]
+
+
+        # fixed crop
         # extract middle volume: 60x512x400: 60 slices, height 512, Width 400,
         # slice index: 20-80, height index:0-512, width index: 300-700, index start from 0
-        images = rawImages[20:80, :, 300:700]  # size: 60x512x400
-        S,H,W = images.shape
-        surfaces = rawSurfaces[20:80,:, 300:700] # size: 60x3x400
-        N = surfaces.shape[1]
+        # images = rawImages[20:80, :, 300:700]  # size: 60x512x400
+        # S,H,W = images.shape
+        #  surfaces = rawSurfaces[20:80,:, 300:700] # size: 60x3x400
+        #  N = surfaces.shape[1]
 
         # check nan
         if np.isnan(np.sum(images)):
