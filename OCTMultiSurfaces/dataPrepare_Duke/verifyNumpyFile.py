@@ -1,6 +1,6 @@
 
 
-imagesFile = "/home/hxie1/data/OCT_Duke/numpy/test/AMD_1031_images.npy"
+imagesFile = "/home/hxie1/data/OCT_Duke/numpy/test/AMD_1236_images.npy"
 surfacesFile = imagesFile.replace("_images.npy", "_surfaces.npy")
 outputDir = "/home/hxie1/data/temp"
 
@@ -20,7 +20,7 @@ assert W1==W2
 assert S ==3
 W = W1
 
-k= 45 # random test number
+k= 30 # random test number
 
 patientID_Index= imagesFile[0:imagesFile.rfind('.npy')]+f"_S{k}"
 patientID_Index = os.path.basename(patientID_Index)

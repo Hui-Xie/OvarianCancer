@@ -5,8 +5,7 @@
 #        images: [512×1000×100 double]: Height*Width*Slice
 #     layerMaps: [100×1000×3 double]  :
 #             Slice*Widht* NumSurface,
-# extract middle volume: 60 slices, height 512, Width 400,
-# width index: 299-698, slice index: 21-80, height index:1-512
+# extract middle volume: 51 slices, height 512, Width 361,
 
 # data division, similar with Leixin:
 # Control: 18 Test, 18 Validation, 79 training;  Total 115
