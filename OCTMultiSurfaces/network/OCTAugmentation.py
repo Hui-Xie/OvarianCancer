@@ -408,5 +408,59 @@ def scalePolarLabel(polarLabel, scaleNumerator, scaleDenominator):
     else:
         return None
 
+def smoothCMA_Batch(raw, halfWidth, PadddingMode):
+    '''
+    smooth Center Moving Averaget with batched 3D tensor.
+    :param raw:
+    :param halfWidth:
+    :param PadddingMode:
+    :return:
+    '''
+    assert raw.dim() == 3
+    smoothed = torch.zeros_like(raw)
+    B,N,W = raw.shape
+    for b in range(B):
+        smoothed[b,] = smoothCMA(raw[b,],halfWidth, PadddingMode)
+    return smoothed
 
+def smoothCMA(raw, halfWidth, PadddingMode):
+    '''
+    Use Center Moving Average to smooth 2D raw Tensor, with the halfWidth.
+    :param raw: in size NxW
+    :param halfWidth:
+    :param paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
+    :return: smoothed, in size NxW
+    '''
+    N,W = raw.shape
+    h = halfWidth
+
+    # pad
+    if PadddingMode == "constant":
+        paddingSize = (h, h)
+        paddedGT = torch.nn.functional.pad(raw, paddingSize, PadddingMode) # currently pytorch only support 2D constant padding
+    elif PadddingMode == "reflect":
+        paddedGT = raw
+        for i in range(1, h+1):
+            paddedGT = torch.cat((raw[:, i].unsqueeze(dim=1), paddedGT, raw[:, W - 1 - i].unsqueeze(dim=1)), dim=1, )
+    elif PadddingMode == "replicate":
+        paddedGT = raw
+        for i in range(1, h+1):
+            paddedGT = torch.cat((raw[:, 0].unsqueeze(dim=1), paddedGT, raw[:, W - 1].unsqueeze(dim=1)), dim=1, )
+    elif PadddingMode == "circular":
+        paddedGT = raw
+        for i in range(1, h+1):
+            paddedGT = torch.cat((raw[:, W - i].unsqueeze(dim=1), paddedGT, raw[:, i - 1].unsqueeze(dim=1)), dim=1, )
+    else:
+        print(f"Error: smoothGT does not support padding mode:{PadddingMode}")
+        assert False
+
+    # smooth
+    smoothed = torch.zeros_like(raw)
+    movingSum = paddedGT[:,0:2*h+1].sum(dim=1,keepdim=False)
+    w = 2*h+1
+    for j in range(h,W+h):
+        smoothed[:,j-h]= movingSum/w
+        if j < W+h-1:
+            movingSum = movingSum-paddedGT[:,j-h]+ paddedGT[:,j+h+1]
+    return smoothed
 

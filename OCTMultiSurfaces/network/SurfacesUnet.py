@@ -394,7 +394,11 @@ class SurfacesUnet(BasicModel):
         # rift L1 loss
         loss_riftL1 = 0.0
         if self.hps.existGTLabel and hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
-            loss_riftL1 = l1Loss(R,riftGTs)
+            if self.smoothRAfterPrediction:
+                RSmooth = smoothCMA_Batch(R, self.hps.halfWidth, self.hps.PadddingMode)
+                loss_riftL1 = l1Loss(RSmooth, riftGTs)
+            else:
+                loss_riftL1 = l1Loss(R,riftGTs)
 
         R_detach = R.clone().detach()
 
