@@ -13,7 +13,7 @@ dtype = torch.float
 B = 2
 W = 3
 N = 5
-lr = 0.001 # learning rate
+lr = 0.0001 # learning rate
 nEpic = 100
 
 
@@ -34,7 +34,7 @@ G = torch.cat((G,G),dim=0)  # size:(B,N,W)
 # first run IPMModule to get gradient of Input variables.
 # test softConstrainedIPM
 seperationIPM = SoftSeparationIPMModule()
-S = seperationIPM(Mu,sigma2,R)
+S = seperationIPM(Mu,sigma2,R, usePairwiseWeight=True)
 
 # test HardSeparationIPMModule
 #seperationIPM = HardSeparationIPMModule()

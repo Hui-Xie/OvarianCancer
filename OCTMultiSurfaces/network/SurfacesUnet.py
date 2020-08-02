@@ -408,7 +408,10 @@ class SurfacesUnet(BasicModel):
                 S = separationIPM(mu, sigma2)
             elif self.hps.softSeparation:
                 separationIPM = SoftSeparationIPMModule()
-                S = separationIPM(mu, sigma2, R_detach)
+                if hasattr(self.hps, 'usePairwiseWeight'):
+                    S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight= self.hps.usePairwiseWeight)
+                else:
+                    S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=False)
             else:
                 print("Error: model parameter errs.")
                 assert(False)
