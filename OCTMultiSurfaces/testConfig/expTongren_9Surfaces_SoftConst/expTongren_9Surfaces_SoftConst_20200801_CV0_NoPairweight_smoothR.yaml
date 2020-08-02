@@ -8,7 +8,7 @@
 # for softConstraint Network
 # R and S0 detached comparing with 0723 network
 # on July 28th, change to 9 surfaces.
-# Aug 1st, 2020: No pairweight, smooth R. 
+# Aug 1st, 2020: No pairweight, smooth R.
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
