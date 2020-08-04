@@ -106,6 +106,7 @@ def main():
     for epoch in range(initialEpoch, epochs):
         random.seed()
         net.m_epoch = epoch
+        net.setStatus("training")
 
         net.train()
         trBatch = 0
@@ -125,6 +126,7 @@ def main():
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
+            net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1

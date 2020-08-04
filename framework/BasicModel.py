@@ -20,9 +20,16 @@ class BasicModel(nn.Module):
         self.m_epoch = 0
         self.m_currentLossFunc = None
         self.m_runParametersDict={}  # it will arbitrary parameters of network including epoch, loss etc.
+        self.m_status = "training" # total 3 statuses: training, validation, test
 
     def forward(self, x):
         pass
+
+    def setStatus(self, status):
+        self.m_status = status
+
+    def getStatus(self):
+        return self.m_status
 
     def updateRunParameter(self, nameStr, value):
         self.m_runParametersDict[nameStr] = value

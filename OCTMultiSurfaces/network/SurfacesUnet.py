@@ -276,6 +276,21 @@ class SurfacesUnet(BasicModel):
                             useLeakyReLU=self.m_useLeakyReLU),
                 nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1x(N-1)xW
                 )
+    def useRift(self):
+        if hasattr(self.hps,'useRiftWidth') and self.hps.useRiftWidth:
+            status = self.getStatus()
+            if status == "training" or status == "validation":
+                if self.m_epoch > self.hps.epochsBeforeUsingRift:
+                    return True
+                else:
+                    return False
+            elif status == "test":
+                return True
+            else:
+                print(f"wrong status: {status}")
+                assert False
+        else:
+            return False
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # compute outputs
@@ -324,10 +339,11 @@ class SurfacesUnet(BasicModel):
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
         if self.hps.useLayerDice:
             xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
-        if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
+        if self.useRift():
             # tensors need switch H and W dimension to feed into self.m_rifts
             # The output of self.m_rifts need to squeeze the final dimension
-            R = self.m_rifts(x.transpose(dim0=-1,dim1=-2))  # size: B*(NumSurface-1)*W*1
+            xClone = x.clone().detach()  # the gradient of rift module do not go back to Unet.
+            R = self.m_rifts(xClone.transpose(dim0=-1,dim1=-2))  # size: B*(NumSurface-1)*W*1
             R = R.squeeze(dim=-1) # size: B*(N-1)*W
 
         B,N,H,W = xs.shape
@@ -363,7 +379,7 @@ class SurfacesUnet(BasicModel):
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
 
-        if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
+        if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate and self.useRift():
             R_sigma2 = R * sigma2[:,1:,:]  # size: Bx(N-1)xW
             R_sigma2 = R_sigma2.unsqueeze(dim=1) # outputsize: Bx1x(N-1)xW
             mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), mu[:,1:,:] + self.m_calibrate(R_sigma2).squeeze(dim=1)), dim=1) # size: BxNxW
@@ -397,28 +413,23 @@ class SurfacesUnet(BasicModel):
 
         # rift L1 loss
         loss_riftL1 = 0.0
-        if self.hps.existGTLabel and hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
+        if self.hps.existGTLabel and self.useRift():
             if self.hps.smoothRbeforeLoss:
                 RSmooth = smoothCMA_Batch(R, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
                 loss_riftL1 = l1Loss(RSmooth, riftGTs)
             else:
                 loss_riftL1 = l1Loss(R,riftGTs)
 
-        R_detach = R.clone().detach()
-
-        if self.hps.usePrimalDualIPM:
-            if self.hps.hardSeparation:
-                separationIPM = HardSeparationIPMModule()
-                S = separationIPM(mu, sigma2)
-            elif self.hps.softSeparation:
-                separationIPM = SoftSeparationIPMModule()
-                if hasattr(self.hps, 'usePairwiseWeight'):
-                    S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight= self.hps.usePairwiseWeight)
-                else:
-                    S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=False)
+        if self.useRift() and self.hps.softSeparation:
+            R_detach = R.clone().detach()
+            separationIPM = SoftSeparationIPMModule()
+            if hasattr(self.hps, 'usePairwiseWeight'):
+                S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=self.hps.usePairwiseWeight)
             else:
-                print("Error: model parameter errs.")
-                assert(False)
+                S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=False)
+        elif self.hps.hardSeparation:
+            separationIPM = HardSeparationIPMModule()
+            S = separationIPM(mu, sigma2)
         else:
             # ReLU to guarantee layer order not to cross each other
             S = mu.clone()
