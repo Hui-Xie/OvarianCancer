@@ -9,6 +9,7 @@
 # R and S0 detached comparing with 0723 network
 # on July 28th, change to 9 surfaces.
 # Aug 1,2020: pairwise weight, and smooth R before loss.
+# aug 3,2020: change to 4 gradient channels.
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
@@ -56,6 +57,7 @@ nLayers: 7
 numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
