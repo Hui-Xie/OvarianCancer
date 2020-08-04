@@ -52,7 +52,7 @@ class OCTDataSet(data.Dataset):
             image1H = image[2:, :]
             gradH = torch.cat(((image[1,:]- image[0,:]).view(1,W),
                                (image1H - image_1H)/2.0,
-                               (image[-1,:]-image[-2,:]).viw(1,W)), dim=0)  # size: H,W; grad90
+                               (image[-1,:]-image[-2,:]).view(1,W)), dim=0)  # size: H,W; grad90
 
             image_1W = image[:, 0:-2]  # size: H,W-2
             image1W = image[:, 2:]
@@ -88,8 +88,8 @@ class OCTDataSet(data.Dataset):
                                     (image45_1 - image45_0)/2.0,
                                     (image[1:-1,-2]-image[0:-2,-1]).view(H-2,1)), dim=1) # size: H-2, W
 
-                row0 = torch.cat((torch.tensor([0],device=device).view(1,1), (image[1,0:-1]-image[0,1:]).view(1,W-1)),dim=1)  # size: 1,W
-                row_1 = torch.cat(((image[-1,0:-1]-image[-2,1:]).view(1,W-1), torch.tensor([0],device=device).view(1,1)),dim=1) # size:1,W
+                row0 = torch.cat((torch.tensor([0.0],device=device).view(1,1), (image[1,0:-1]-image[0,1:]).view(1,W-1)),dim=1)  # size: 1,W
+                row_1 = torch.cat(((image[-1,0:-1]-image[-2,1:]).view(1,W-1), torch.tensor([0.0],device=device).view(1,1)),dim=1) # size:1,W
                 grad45 = torch.cat((row0,
                                     grad45,
                                     row_1), dim=0)
@@ -103,10 +103,10 @@ class OCTDataSet(data.Dataset):
                                     (image[1:-1, -1] - image[0:-2, -2]).view(H - 2, 1)), dim=1)  # size: H-2, W
 
                 row0 = torch.cat(
-                    ((image[1, 1:] - image[0, 0:-1]).view(1, W - 1), torch.tensor([0], device=device).view(1, 1)),
+                    ((image[1, 1:] - image[0, 0:-1]).view(1, W - 1), torch.tensor([0.0], device=device).view(1, 1)),
                     dim=1)  # size: 1,W
                 row_1 = torch.cat(
-                    (torch.tensor([0], device=device).view(1, 1), (image[-1, 1:] - image[-2, 0:-1]).view(1, W - 1)),
+                    (torch.tensor([0.0], device=device).view(1, 1), (image[-1, 1:] - image[-2, 0:-1]).view(1, W - 1)),
                     dim=1)  # size:1,W
                 grad135 = torch.cat((row0,
                                     grad135,
