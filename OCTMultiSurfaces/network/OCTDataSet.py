@@ -232,7 +232,10 @@ class OCTDataSet(data.Dataset):
 
         riftWidthGT = []
         if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
-            riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
+            # N rifts for N surfaces
+            #riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
+            # (N-1) rifts for N surfaces.
+            riftWidthGT = label[1:, :] - label[0:-1, :]
             if self.hps.smoothRift:
                 riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
 

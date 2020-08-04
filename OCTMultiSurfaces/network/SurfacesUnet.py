@@ -253,13 +253,16 @@ class SurfacesUnet(BasicModel):
 
         #tensors need switch H and W dimension to feed into self.m_rifts
         #The output of self.m_rifts need to squeeze the final dimension
+        #output (numSurfaces-1) rifts.
         if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
             self.m_rifts= nn.Sequential(
-                Conv2dBlock(N, self.hps.numSurfaces, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: BxNumSurfacesxWxH
+                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=self.m_useLeakyReLU),
+                Conv2dBlock(N, (self.hps.numSurfaces-1), convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: Bx(NumSurfaces-1)xWxH
                 nn.Linear(self.hps.inputHeight, 1),
                 nn.ReLU()   # RiftWidth >=0
-                )  # output size:numSurfaces*W*1
+                )  # output size:Bx(numSurfaces-1)*W*1
 
         # mu and sigma need to unsqueeze dim=1 to feed in this layer
         # and output of this layer needs squeeze dim=1
@@ -271,7 +274,7 @@ class SurfacesUnet(BasicModel):
                             useLeakyReLU=self.m_useLeakyReLU),
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
-                nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1xNxW
+                nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1x(N-1)xW
                 )
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
@@ -317,14 +320,15 @@ class SurfacesUnet(BasicModel):
         x = self.m_up1Pooling(x) + x0
         x = self.m_up1(x) + x
 
+        # N is numSurfaces
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
         if self.hps.useLayerDice:
             xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
         if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
             # tensors need switch H and W dimension to feed into self.m_rifts
             # The output of self.m_rifts need to squeeze the final dimension
-            R = self.m_rifts(x.transpose(dim0=-1,dim1=-2))  # size: B*NumSurface*W*1
-            R = R.squeeze(dim=-1) # size: B*N*W
+            R = self.m_rifts(x.transpose(dim0=-1,dim1=-2))  # size: B*(NumSurface-1)*W*1
+            R = R.squeeze(dim=-1) # size: B*(N-1)*W
 
         B,N,H,W = xs.shape
 
@@ -360,9 +364,9 @@ class SurfacesUnet(BasicModel):
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
 
         if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
-            mu_sigma2 = mu * sigma2
-            mu_sigma2 = mu_sigma2.unsqueeze(dim=1) # outputsize: Bx1xNxW
-            mu = mu + self.m_calibrate(mu_sigma2).squeeze(dim=1)
+            R_sigma2 = R * sigma2[:,1:,:]  # size: Bx(N-1)xW
+            R_sigma2 = R_sigma2.unsqueeze(dim=1) # outputsize: Bx1x(N-1)xW
+            mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), mu[:,1:,:] + self.m_calibrate(R_sigma2).squeeze(dim=1)), dim=1) # size: BxNxW
 
         loss_surface = 0.0
         loss_smooth = 0.0

@@ -228,7 +228,7 @@ class SoftSeparationIPMModule(nn.Module):
         :param c_lambda > 0: the balance weight of unary terms;
         :param Mu: mean of size (B,N,W), where N is the number of surfaces
         :param Sigma2: variance of size (B,N,W), where N is number of surfaces
-        :param R: learned rift of adjacent surfaces, in size (B,N,W)
+        :param R: learned rift of adjacent surfaces, in size (B,N-1,W)
         :usePairwiseWeight: True or False
         :return:
                 S: the optimized surface location in (B,N,W) size
@@ -255,7 +255,7 @@ class SoftSeparationIPMModule(nn.Module):
 
         # c is the unary weight in the cost function
         # c = (4.1*sigma2.max()).detach().item()
-        c,_ = torch.max(sigma2, dim=1, keepdim=False) # size: BxW
+        c,_ = torch.max(sigma2, dim=1, keepdim=False) # lambda, size: BxW
         c = (20.0*c).detach() # size: BxW  # 4c is 50% weight; while 16c is 80% weight, 20c is 83% weight;
 
         H = torch.zeros((B,W,N,N), device=device)
@@ -264,28 +264,23 @@ class SoftSeparationIPMModule(nn.Module):
         Mu = Mu.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         sigma2 = sigma2.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         sigma2 = sigma2 +1e-8  # avoid sigma2 ==0
-        R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N
-        if usePairwiseWeight:
-            for i in range(N):
-                if 0==i:
-                    H[:,:,i,i] +=c[:,:]/sigma2[:,:,i] +2.0
-                    b[:, :, i, 0] += -c[:, :] * Mu[:, :, i] / sigma2[:, :, i] - 2 * R[:, :, i]
+        R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1
+        # with (N-1) rifts for N surfaces
+        for i in range(N):
+            if 0==i:
+                H[:,:,i,i] +=c[:,:]/sigma2[:,:,i]  # H_0
+                b[:, :, i, 0] += -c[:, :] * Mu[:, :, i] / sigma2[:, :, i]  #b_0
+            else:
+                if usePairwiseWeight:
+                    pairwiceC = sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
                 else:
-                    H[:, :, i, i] += c[:, :] / sigma2[:, :, i] + 2.0*sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
-                    b[:, :, i, 0] += -c[:, :] * Mu[:, :, i] / sigma2[:, :, i] - 2 * R[:, :, i]*sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
+                    pairwiceC = 1
+                H[:, :, i, i] += c[:, :] / sigma2[:, :, i] + 2.0*pairwiceC
+                H[:, :, i - 1, i - 1] += 2.0 * pairwiceC
+                H[:, :, i, i - 1] += -4.0 * pairwiceC
 
-                if i > 0:
-                    H[:,:,i-1,i-1] += 2.0*sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
-                    H[:, :, i , i - 1] += -4.0*sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
-                    b[:, :, i-1, 0] += 2*R[:,:,i]*sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
-        else:
-            for i in range(N):
-                H[:,:,i,i] +=c[:,:]/sigma2[:,:,i] +2.0
-                b[:,:,i,0] +=-c[:,:]*Mu[:,:,i]/sigma2[:,:,i]-2*R[:,:,i]
-                if i > 0:
-                    H[:,:,i-1,i-1] += 2.0
-                    H[:, :, i , i - 1] += -4.0
-                    b[:, :, i-1, 0] += 2*R[:,:,i]
+                b[:, :, i, 0] += -c[:, :] * Mu[:, :, i] / sigma2[:, :, i] - 2 * R[:, :, i-1]*pairwiceC
+                b[:, :, i-1, 0] += 2*R[:,:,i-1]*pairwiceC
 
         # according to different application, define A, Lambda, beta3, epsilon here which are non-learning parameter
         M = N-1  # number of constraints
