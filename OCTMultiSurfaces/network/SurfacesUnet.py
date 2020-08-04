@@ -280,7 +280,7 @@ class SurfacesUnet(BasicModel):
         if hasattr(self.hps,'useRiftWidth') and self.hps.useRiftWidth:
             status = self.getStatus()
             if status == "training" or status == "validation":
-                if self.m_epoch > self.hps.epochsBeforeUsingRift:
+                if self.m_epoch > self.hps.epochsBeforeUsingRift:  # for unary item pretrain
                     return True
                 else:
                     return False
@@ -423,10 +423,7 @@ class SurfacesUnet(BasicModel):
         if self.useRift() and self.hps.softSeparation:
             R_detach = R.clone().detach()
             separationIPM = SoftSeparationIPMModule()
-            if hasattr(self.hps, 'usePairwiseWeight'):
-                S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=self.hps.usePairwiseWeight)
-            else:
-                S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=False)
+            S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=self.hps.usePairwiseWeight)
         elif self.hps.hardSeparation:
             separationIPM = HardSeparationIPMModule()
             S = separationIPM(mu, sigma2)
