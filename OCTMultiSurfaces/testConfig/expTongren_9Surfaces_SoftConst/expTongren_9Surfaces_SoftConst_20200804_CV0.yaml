@@ -110,7 +110,7 @@ usePairWeight: True  # in soft constraint, pairwise terms add weight $\sigma_i^2
 
 useCalibrate: True  # Calibrate mu according to r and sigma
 
-epochsBeforeUsingRift: 100  #
+epochsBeforeUsingRift: 1  #
 
 # constrained model
 hardSeparation: False

@@ -280,7 +280,7 @@ class SurfacesUnet(BasicModel):
         if hasattr(self.hps,'useRiftWidth') and self.hps.useRiftWidth:
             status = self.getStatus()
             if status == "training" or status == "validation":
-                if self.m_epoch > self.hps.epochsBeforeUsingRift:  # for unary item pretrain
+                if self.m_epoch >= self.hps.epochsBeforeUsingRift:  # for unary item pretrain
                     return True
                 else:
                     return False
