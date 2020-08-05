@@ -34,7 +34,7 @@ G = torch.cat((G,G),dim=0)  # size:(B,N,W)
 # first run IPMModule to get gradient of Input variables.
 # test softConstrainedIPM
 seperationIPM = SoftSeparationIPMModule()
-S = seperationIPM(Mu,sigma2,R, usePairwiseWeight=True)
+S = seperationIPM(Mu,sigma2,R=R, usePairwiseWeight=True)
 
 # test HardSeparationIPMModule
 #seperationIPM = HardSeparationIPMModule()

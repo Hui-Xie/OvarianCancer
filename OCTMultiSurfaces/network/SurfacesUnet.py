@@ -431,13 +431,14 @@ class SurfacesUnet(BasicModel):
             else:
                 loss_riftL1 = l1Loss(R,riftGTs)
 
-        if self.useRift() and self.hps.softSeparation:
-            R_detach = R.clone().detach()
+        if self.useRift() and (self.hps.softSeparation or self.hps.hardSeparation):
             separationIPM = SoftSeparationIPMModule()
-            S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=self.hps.usePairWeight)
-        elif self.hps.hardSeparation:
-            separationIPM = HardSeparationIPMModule()
-            S = separationIPM(mu, sigma2)
+            assert (self.hps.softSeparation and self.hps.hardSeparation == False)
+            if self.hps.softSeparation:
+                R_detach = R.clone().detach()
+                S = separationIPM(mu, sigma2, R=R_detach, usePairwiseWeight=self.hps.usePairWeight)
+            if self.hps.hardSeparation:
+                S = separationIPM(mu, sigma2)
         else:
             # ReLU to guarantee layer order not to cross each other
             S = mu.clone()
