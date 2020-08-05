@@ -1,4 +1,5 @@
 
+# all below experiments with calibrate module have error on R_sigma2. it is a typo logic error.
 # 4 experiments of 20200801, 9 surfaces
 
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean, 
