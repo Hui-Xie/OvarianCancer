@@ -285,7 +285,10 @@ class SurfacesUnet(BasicModel):
                 else:
                     return False
             elif status == "test":
-                return True
+                if self.m_runParametersDict['epoch'] >= self.hps.epochsBeforeUsingRift:
+                    return True
+                else:
+                    return False
             else:
                 print(f"wrong status: {status}")
                 assert False
