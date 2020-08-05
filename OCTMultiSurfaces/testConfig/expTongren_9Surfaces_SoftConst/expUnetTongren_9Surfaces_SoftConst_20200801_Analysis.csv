@@ -1,4 +1,13 @@
 
+# experiment 20200804  with pretrain Unet 100 epochs, Not finished all trianing.
+# Stop continue to training, as I found 100 epochs is not enough for pretrain.
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
+20200804_CV0_4Grad_Calibrate,   CV0, 2.1203, 3.7660, 4.0184, 3.8653, 3.9619, 2.5890, 3.1513, 2.3209, 2.1960, 1.089045524597168, 3.1098978519439697, 145,
+20200804_CV0_4Grad_NoCalibrate, CV0, 1.0987, 3.3781, 3.7961, 3.3487, 3.8930, 2.6478, 3.0714, 2.6476, 2.2043, 1.1317063570022583, 2.8984198570251465, 99,
+20200804_CV0_8Grad_Calibrate,   CV0, 1.0767, 3.2357, 3.5840, 3.3257, 3.6338, 1.8984, 2.8446, 2.1110, 1.7174, 1.1122558116912842, 2.6030385494232178,  99,
+20200804_CV0_8Grad_NoCalibrate, CV0, 1.3719, 3.7417, 3.6301, 3.1433, 3.1354, 1.9387, 3.1761, 2.5851, 2.2167, 1.0072109699249268, 2.7710072994232178,  84,
+
+
 # all below experiments with calibrate module have error on R_sigma2. it is a typo logic error.
 # 4 experiments of 20200801, 9 surfaces
 
