@@ -121,7 +121,7 @@ def main():
 
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
-        #print(f"epoch:{epoch}; trLoss ={trLoss}\n")
+        # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
 
         net.eval()
         with torch.no_grad():
@@ -141,7 +141,7 @@ def main():
             validLoss = validLoss / validBatch
             if hps.groundTruthInteger:
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
-            #print(f"epoch:{epoch}; validLoss ={validLoss}\n")
+            # print(f"epoch:{epoch}; validLoss ={validLoss}\n")
 
             goodBScansInGtOrder =None
             if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
