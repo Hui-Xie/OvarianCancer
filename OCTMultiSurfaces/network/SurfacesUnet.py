@@ -297,6 +297,7 @@ class SurfacesUnet(BasicModel):
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # compute outputs
+        e = 1e-8
         device = inputs.device
 
         x0 = self.m_down0Pooling(inputs)
@@ -382,10 +383,17 @@ class SurfacesUnet(BasicModel):
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
 
-        if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate and self.useRift():
-            R_sigma2 = R * sigma2[:,1:,:]  # size: Bx(N-1)xW
-            R_sigma2 = R_sigma2.unsqueeze(dim=1) # outputsize: Bx1x(N-1)xW
-            mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), mu[:,1:,:] + self.m_calibrate(R_sigma2).squeeze(dim=1)), dim=1) # size: BxNxW
+        if self.useRift():
+            assert ((self.hps.useCalibrate and self.hps.useMergeMuRift) == False)
+            if self.hps.useCalibrate:
+                R_sigma2 = R * sigma2[:,1:,:]  # size: Bx(N-1)xW
+                R_sigma2 = R_sigma2.unsqueeze(dim=1) # outputsize: Bx1x(N-1)xW
+                mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), mu[:,1:,:] + self.m_calibrate(R_sigma2).squeeze(dim=1)), dim=1) # size: BxNxW
+            if self.hps.useMergeMuRift:
+                mu_R = mu[:,0:-1,:]+R #size: Bx(N-1)xW
+                sigma2_i = 1.0/(sigma2[:,1:,:]+e) # reciprocal, size: Bx(N-1)xW
+                sigma2_i_1 = 1.0/(sigma2[:,0:-1,:]+e) # reciprocal, size: Bx(N-1)xW
+                mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), (sigma2_i*mu[:,1:,:]+sigma2_i_1*mu_R)/(sigma2_i+ sigma2_i_1)), dim=1) # size: BxNxW
 
         loss_surface = 0.0
         loss_smooth = 0.0
