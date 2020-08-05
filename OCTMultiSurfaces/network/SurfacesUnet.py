@@ -423,7 +423,7 @@ class SurfacesUnet(BasicModel):
         if self.useRift() and self.hps.softSeparation:
             R_detach = R.clone().detach()
             separationIPM = SoftSeparationIPMModule()
-            S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=self.hps.usePairwiseWeight)
+            S = separationIPM(mu, sigma2, R_detach, usePairwiseWeight=self.hps.usePairWeight)
         elif self.hps.hardSeparation:
             separationIPM = HardSeparationIPMModule()
             S = separationIPM(mu, sigma2)
