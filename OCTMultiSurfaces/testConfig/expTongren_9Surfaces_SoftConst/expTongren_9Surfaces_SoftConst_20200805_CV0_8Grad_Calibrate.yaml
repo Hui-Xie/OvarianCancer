@@ -1,0 +1,119 @@
+# base on corrected and refined Ground truth with guarantee of surface separation constraint.
+# total 46 patient exclude ill patient images.
+# raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
+# convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_10Surface_20200509.py
+# numSurface = 10 as deleted inaccurate surface 8
+# training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
+
+# for softConstraint Network
+# R and S0 detached comparing with 0723 network
+# on July 28th, change to 9 surfaces.
+# Aug 1,2020: pairwise weight, and smooth R before loss.
+# aug 3,2020: change to 4 gradient channels.
+
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+existGTLabel: True
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K: 10  # Kfold cross validation
+k: 0   # the fold k test
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+
+# when do not use cross validation:
+# training data:  dataDir + training + images.npy
+#         label: dataDir + training + surfaces.npy
+#         IDs  : dataDir + training + patientID.json
+
+# validation data:  dataDir + validation + images.npy
+#           label: dataDir + validation + surfaces.npy
+#           IDs  : dataDir + validation + patientID.json
+
+# test data:  dataDir + test + images.npy
+#     label: dataDir + test + surfaces.npy
+#     IDs  : dataDir + test + patientID.json
+
+groundTruthInteger: True
+sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:3')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 4
+
+network: "SurfacesUnet"
+inputHeight: 496   # original height
+inputWidth: 512   # rawImageWidth
+scaleNumerator: 1
+scaleDenominator: 1
+inputChannels: 8 # rawImage + gradChannels
+nLayers: 7
+numSurfaces: 9  # num of surfaces in an image
+startFilters: 24  # the num of filters in first layer of Unet
+gradChannels: 7   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+
+# some physical parameter of images
+slicesPerPatient: 31  # for test and validation set
+hPixelSize: 3.870  # unit: micrometer, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+# data augmentation
+
+netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "" #"/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/SurfacesUnet/expTongren_9Surfaces_SoftConst_20200727_CV0"  # reserve for pretrained network.
+outputDir: ""
+
+# discard: do not use these loss function
+lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log probabilities
+lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
+lossFunc1: "nn.SmoothL1Loss().to(device)"
+lossFunc1Epochs: 500
+
+# Proximal IPM Optimization, discarded.
+useProxialIPM: False
+learningStepIPM: 0.1
+maxIterationIPM: 100
+criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
+
+useDynamicProgramming: False
+usePrimalDualIPM: True
+useLayerDice: False
+useReferSurfaceFromLayer: False
+useLayerCE: False
+useCEReplaceKLDiv: False
+useSmoothSurface: True
+useWeightedDivLoss: True
+useRiftWidth: True
+smoothRift: True
+smoothHalfWidth: 15  # 5% of image width
+smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
+smoothRbeforeLoss: True  # use smooth predicted R to compare loss with smooth ground truth R
+
+usePairWeight: True  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
+
+useCalibrate: True  # Calibrate mu according to r and sigma
+
+epochsBeforeUsingRift: 230  #
+
+# constrained model
+hardSeparation: False
+softSeparation: True
+
+goodBscans: []
