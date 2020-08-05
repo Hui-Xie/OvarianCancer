@@ -109,6 +109,7 @@ smoothRbeforeLoss: True  # use smooth predicted R to compare loss with smooth gr
 usePairWeight: True  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
 
 useCalibrate: False  # Calibrate mu according to r and sigma
+useMergeMuRift: False #  update mu according to r and sigma2
 
 epochsBeforeUsingRift: 100  #
 
