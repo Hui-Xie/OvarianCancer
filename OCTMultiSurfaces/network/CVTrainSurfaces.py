@@ -169,6 +169,9 @@ def main():
 
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
                                                                                                  slicesPerPatient=hps.slicesPerPatient,
+                                                                                                 hPixelSize=hps.hPixelSize,
+                                                                                                 goodBScansInGtOrder=goodBScansInGtOrder)
+
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
