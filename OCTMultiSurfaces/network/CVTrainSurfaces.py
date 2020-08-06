@@ -162,6 +162,8 @@ def main():
                                                                                                  hPixelSize=hps.hPixelSize, goodBScansInGtOrder=goodBScansInGtOrder)
         if epoch == hps.epochsBeforeUsingRift:  # for pretrain epochs.
             lrScheduler._reset()
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = hps.learningRate
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
