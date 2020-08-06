@@ -103,7 +103,7 @@ def main():
     else:
         initialEpoch = 0
 
-    if initialEpoch >= hps.epochsBeforeUsingRift:  # for pretrain epochs.
+    if initialEpoch > hps.epochsBeforeUsingRift:  # for pretrain epochs.
         lrScheduler._reset()
         for param_group in optimizer.param_groups:
             param_group['lr'] = hps.learningRate2
@@ -112,6 +112,11 @@ def main():
         random.seed()
         net.m_epoch = epoch
         net.setStatus("training")
+
+        if epoch == hps.epochsBeforeUsingRift:  # for pretrain epochs.
+            lrScheduler._reset()
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = hps.learningRate2
 
         net.train()
         trBatch = 0
@@ -164,11 +169,6 @@ def main():
 
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
                                                                                                  slicesPerPatient=hps.slicesPerPatient,
-                                                                                                 hPixelSize=hps.hPixelSize, goodBScansInGtOrder=goodBScansInGtOrder)
-        if epoch == hps.epochsBeforeUsingRift:  # for pretrain epochs.
-            lrScheduler._reset()
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = hps.learningRate2
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
