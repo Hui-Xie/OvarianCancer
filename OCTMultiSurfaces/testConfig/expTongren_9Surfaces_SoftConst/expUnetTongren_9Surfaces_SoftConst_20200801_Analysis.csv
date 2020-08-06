@@ -8,9 +8,10 @@ Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surfa
 
 Summary:
 1 After using bothside gradient aproximated formula, the error on surface 4 reduced; 20200317 experiment also showed surfacce 4 in CV0 has biggest error;
-  please refer the attachment for same OCT-9 example.
+  please refer 2 volume  result as attachments.
+  4511-OD in CV0 test set actually is a disease case, which is rare in our whole health data set.
 2 Now the best error result is at about 2.7, about 0.7 pixel;
-3 Further improvement:
+3 Further improvement to match 2020317 accuracy:
   A  increase learning rate to 0.01 in pretraining network; bigger learning rate may cross over some small local minima;
      current our initial learning rate is 0.0001 as our Rift Module has a linear layer, while our 20300317 experiment used an initial learning rate 0.01;
 
@@ -100,7 +101,7 @@ CV8,0.9259, 3.0914, 2.4603, 2.2445, 2.4688, 1.2057, 2.6317, 1.4208, 1.1207, 0.77
 CV9,0.9199, 3.0723, 2.5827, 2.3841, 2.4552, 1.2489, 3.0223, 1.6287, 1.1552, 0.8183929920196533, 2.0521445274353027,
 Avg,0.98521,2.9892,2.59162,2.38658,2.70549,1.43823,2.8208, 1.53462,1.21267,0.913330966234207,2.07382342815399,
 
-# May 12th, BES 3K test result:
+# May 12th, All good scan test result:
 Mean,,,,,,,,,,,,,
 Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, Surface9, totalStdDeviation, TotalMean,
 CV0,0.965,2.5134,4.2586,2.3608,2.148,2.7457,1.3134,2.5419,1.5718,1.2211,1.02833092212677,2.16396355628967,
