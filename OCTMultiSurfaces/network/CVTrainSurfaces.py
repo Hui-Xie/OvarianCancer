@@ -78,7 +78,7 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
 
-    optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+    optimizer = optim.Adam(net.parameters(), lr=hps.learningRate1, weight_decay=0)
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
@@ -102,6 +102,11 @@ def main():
         initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:
         initialEpoch = 0
+
+    if initialEpoch >= hps.epochsBeforeUsingRift:  # for pretrain epochs.
+        lrScheduler._reset()
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = hps.learningRate2
 
     for epoch in range(initialEpoch, epochs):
         random.seed()
@@ -163,7 +168,7 @@ def main():
         if epoch == hps.epochsBeforeUsingRift:  # for pretrain epochs.
             lrScheduler._reset()
             for param_group in optimizer.param_groups:
-                param_group['lr'] = hps.learningRate
+                param_group['lr'] = hps.learningRate2
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
