@@ -1,4 +1,22 @@
 
+#experiment on 20200805 and 2020806:
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
+20200805_CV0_8Grad_NoCalibrate,      CV0, 1.2319, 3.7467, 4.6088, 3.8662, 4.2378, 2.5786, 3.3929, 2.7176, 2.3010, 1.2838613986968994, 3.186833143234253, 117,
+20200805_CV0_8Grad_Calibrate,        CV0, 1.0082, 3.3101, 3.8892, 3.6267, 4.1405, 1.8832, 2.6409, 1.7958, 1.7094, 1.2928392887115479, 2.6671106815338135,  115,
+20200806_CV0_8Grad_MergeMuR_SoftIPM, CV0, 1.0005, 3.4731, 3.9608, 3.7947, 4.3676, 2.0261, 3.0408, 1.9843, 1.3892, 1.3145209550857544, 2.7819037437438965, 128,
+20200806_CV0_8Grad_MergeMuR_ReLU,    CV0, 2.1571, 4.3067, 4.7070, 3.8894, 4.5863, 2.6521, 3.3053, 2.4307, 1.9068, 1.3382095098495483, 3.326826810836792, 131,
+
+Summary:
+1 After using bothside gradient aproximated formula, the error on surface 4 reduced; 20200317 experiment also showed surfacce 4 in CV0 has biggest error;
+  please refer the attachment for same OCT-9 example.
+2 Now the best error result is at about 2.7, about 0.7 pixel;
+3 Further improvement:
+  A  increase learning rate to 0.01 in pretraining network; bigger learning rate may cross over some small local minima;
+     current our initial learning rate is 0.0001 as our Rift Module has a linear layer, while our 20300317 experiment used an initial learning rate 0.01;
+
+
+
+
 # experiment 20200804  with pretrain Unet 100 epochs, Not finished all trianing.
 # Stop continue to training, as I found 100 epochs is not enough for pretrain.
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
