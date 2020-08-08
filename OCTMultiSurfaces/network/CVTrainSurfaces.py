@@ -192,8 +192,8 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        if trLoss < preTrainingLoss:
-            preTrainingLoss = trLoss
+        if  muError < preErrorMean:
+            preErrorMean = muError
             netMgr.saveRealTimeNet(hps.netPath)
 
 
