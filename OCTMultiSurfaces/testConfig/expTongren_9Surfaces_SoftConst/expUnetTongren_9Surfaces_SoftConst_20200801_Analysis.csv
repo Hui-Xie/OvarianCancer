@@ -10,10 +10,10 @@ Summary:
    surface 4 error is also in same level with 0317 experiment;
 2  In above experiments, ReLU means use ReLU to replace IPM module;
    Calibrate is using learning Conv to merge surface and separation(rift) branches,
-   while MergeMuR is using directly virance weighted formula to merge surface and rift branches;
-3  mean errors 2.10-2.22 have no essential difference, their differences are decided by different conv parameter initialization;
+   while MergeMuR is using directly variance weighted formula to merge surface and rift branches;
+3  mean errors 2.10-2.22 have no essential difference, I think their differences are decided by random conv parameter initialization;
 4  Further improvement:
-   A  Learning pairwise terms weight is a good idea, which is a better selling point.
+   A  Learning pairwise terms weight is a good idea, which is a better selling point than directly variance formula.
    B  Use learning pairwise terms weight to replace above MergeMuR and Calibrate module;
 
 

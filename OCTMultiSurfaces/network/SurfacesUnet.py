@@ -276,6 +276,20 @@ class SurfacesUnet(BasicModel):
                             useLeakyReLU=self.m_useLeakyReLU),
                 nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1x(N-1)xW
                 )
+
+        # learningPairWise weight
+        # input to this module: superpose mu, sigma, and r in feature channels, Bx3x(N-1)xW
+        # output of this module: Bx1x(N-1)xW, need squeeze for further use.
+        if hasattr(self.hps, 'useLearningPairWeight') and self.hps.useLearningPairWeight:
+            self.m_calibrate = nn.Sequential(
+                Conv2dBlock(3, N, convStride=1,
+                            useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=self.m_useLeakyReLU),
+                Conv2dBlock(N, 1, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                            useLeakyReLU=False, normAffine=True)
+            ) # output:Bx1x(N-1)xW
+
     def useRift(self):
         if hasattr(self.hps,'useRiftWidth') and self.hps.useRiftWidth:
             status = self.getStatus()
