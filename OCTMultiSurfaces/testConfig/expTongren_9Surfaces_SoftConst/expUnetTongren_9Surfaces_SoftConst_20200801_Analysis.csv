@@ -1,3 +1,24 @@
+# experiment 20200806B experiments on test fold 0:
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
+20200806B_CV0_8Grad_Calibrate,                CV0, 1.0285, 3.0024, 2.6635, 2.4130, 3.1927, 1.4863, 2.8564, 1.6278, 1.2272, 0.9899391531944275, 2.166411876678467,  150,
+20200806B_CV0_8Grad_MergeMuR,                 CV0, 1.0074, 3.2170, 2.7835, 2.5455, 3.0714, 1.4552, 3.0687, 1.6066, 1.2720, 1.058144450187683,  2.2252607345581055, 144,
+20200806B_CV0_8Grad_MergeMuR_NoPretrain_ReLU, CV0, 1.1218, 3.4047, 2.9818, 2.9162, 3.2488, 1.5357, 2.8776, 1.9314, 1.5722, 0.9876338839530945, 2.398918628692627,  167,
+20200806B_CV0_8Grad_MergeMuR_ReLU,            CV0, 1.0151, 2.9194, 2.6627, 2.4457, 3.0521, 1.3989, 2.5869, 1.6352, 1.2256, 0.9155402779579163, 2.104637622833252,  121,
+
+Summary:
+1  After using learning rate=0.01, mean error got similar result with 20200317 9-surface experiment on CV0; 2.16 micrometer = 0.56 pixel error;
+   surface 4 error is also in same level with 0317 experiment;
+2  In above experiments, ReLU means use ReLU to replace IPM module;
+   Calibrate is using learning Conv to merge surface and separation(rift) branch, while MergeMuR is using directly virance weighted formula to merge surface and rift branch;
+3  mean errors 2.10-2.22 have no essential difference, their differences are decided by different conv parameter initialization;
+4  Further improvement:
+   A  Learning pairwise terms weight is a good idea, which is a better selling point.
+   B  Use learning pairwise terms weight to replace above MergeMuR and Calibrate module;
+
+
+
+
+
 
 #experiment on 20200805 and 2020806:
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
