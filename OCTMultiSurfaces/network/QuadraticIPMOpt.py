@@ -221,7 +221,7 @@ class SoftSeparationIPMModule(nn.Module):
         super().__init__()
 
 
-    def forward(self, Mu, sigma2, R=None, usePairwiseWeight=False):
+    def forward(self, Mu, sigma2, R=None, fixedPairWeight=False, learningPairWeight=None):
         '''
         s^* = argmin \sum_{i\in[0,N)}\{\lambda \frac{(s_{i}-\mu_{i})^2}{2\sigma_{i}^2} + (s_{i}-s_{i-1} -r_{i})^2 \}
 
@@ -230,13 +230,17 @@ class SoftSeparationIPMModule(nn.Module):
         :param Sigma2: variance of size (B,N,W), where N is number of surfaces
         :param R: learned rift of adjacent surfaces, in size (B,N-1,W)
                   if R==None, means it is pure unary terms cost function.
-        :usePairwiseWeight: True or False
+        :param fixedPairWeight: True or False
+        :param learningPairWeight:  in size Bx(N-1)xW
         :return:
                 S: the optimized surface location in (B,N,W) size
         '''
 
         B,N,W = Mu.shape
         device = Mu.device
+        if fixedPairWeight:
+            print("if use fixedPairWeight, learningPairWeight should be None.")
+            assert (learningPairWeight is None)
 
         # Optimization will not optimize sigma and R.
         # sigma2 = sigma2.detach()
@@ -256,9 +260,12 @@ class SoftSeparationIPMModule(nn.Module):
 
         # c is the unary weight in the cost function
         # c = (4.1*sigma2.max()).detach().item()
-        if R is not None:
-            c,_ = torch.max(sigma2, dim=1, keepdim=False) # lambda, size: BxW
-            c = (20.0*c).detach() # size: BxW  # 4c is 50% weight; while 16c is 80% weight, 20c is 83% weight;
+        if (R is not None):
+            if (learningPairWeight is not None):
+                c = torch.ones((B,W),device=device)
+            else:
+                c,_ = torch.max(sigma2, dim=1, keepdim=False) # lambda, size: BxW
+                c = (20.0*c).detach() # size: BxW  # 4c is 50% weight; while 16c is 80% weight, 20c is 83% weight;
 
         H = torch.zeros((B,W,N,N), device=device)
         b = torch.zeros((B,W,N,1), device=device)
@@ -266,6 +273,9 @@ class SoftSeparationIPMModule(nn.Module):
         Mu = Mu.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         sigma2 = sigma2.transpose(dim0=-1,dim1=-2) # in size:B,W,N
         sigma2 = sigma2 +1e-8  # avoid sigma2 ==0
+
+        if learningPairWeight is not None:
+            learningPairWeight = learningPairWeight.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1
 
         if R is not None:  # soft separation constraint
             R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1
@@ -275,10 +285,12 @@ class SoftSeparationIPMModule(nn.Module):
                     H[:,:,i,i] +=c[:,:]/sigma2[:,:,i]  # H_0
                     b[:, :, i, 0] += -c[:, :] * Mu[:, :, i] / sigma2[:, :, i]  #b_0
                 else:
-                    if usePairwiseWeight:
+                    if fixedPairWeight:
                         pairwiceC = sigma2[:, :, i]/(sigma2[:, :, i] + sigma2[:, :, i-1])
+                    elif (learningPairWeight is not None):
+                        pairwiceC = learningPairWeight[:,:,i-1]
                     else:
-                        pairwiceC = 1
+                        pairwiceC = 1  # for pairwise weight = 1 case
                     H[:, :, i, i] += c[:, :] / sigma2[:, :, i] + 2.0*pairwiceC
                     H[:, :, i - 1, i - 1] += 2.0 * pairwiceC
                     H[:, :, i, i - 1] += -4.0 * pairwiceC

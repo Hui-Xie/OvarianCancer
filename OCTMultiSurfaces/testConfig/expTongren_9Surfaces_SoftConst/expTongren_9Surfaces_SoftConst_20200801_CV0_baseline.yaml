@@ -104,7 +104,7 @@ smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: True  # use smooth predicted R to compare loss with smooth ground truth R
 
-usePairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
+fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
 
 useCalibrate: True  # Calibrate mu according to r and sigma
 
