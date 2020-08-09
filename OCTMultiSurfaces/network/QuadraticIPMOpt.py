@@ -275,7 +275,7 @@ class SoftSeparationIPMModule(nn.Module):
         sigma2 = sigma2 +1e-8  # avoid sigma2 ==0
 
         if learningPairWeight is not None:
-            learningPairWeight = learningPairWeight.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1
+            learningPairWeight = learningPairWeight.transpose(dim0=-1,dim1=-2)+1e-8 # in size:B,W,N-1, avoid H singular
 
         if R is not None:  # soft separation constraint
             R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1
@@ -307,7 +307,7 @@ class SoftSeparationIPMModule(nn.Module):
         A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(M, device=device) * -1, 1))[0:-1]  # for s_i - s_{i+1} <= 0 constraint
         A = A.unsqueeze(dim=0).unsqueeze(dim=0)
         A = A.expand(B, W, M, N)
-        d = torch.zeros((B,W,M, 1),device=device) + 1e-4  # relax
+        d = torch.zeros((B,W,M, 1),device=device) # relax
 
         # a bigger lambda may increase IPM step(alpha)
         Lambda0 = 20*torch.rand(B, W, M, 1, device=device) # size: (B,W,M,1)
