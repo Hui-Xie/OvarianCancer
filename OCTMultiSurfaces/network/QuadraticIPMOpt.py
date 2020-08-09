@@ -307,7 +307,7 @@ class SoftSeparationIPMModule(nn.Module):
         A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(M, device=device) * -1, 1))[0:-1]  # for s_i - s_{i+1} <= 0 constraint
         A = A.unsqueeze(dim=0).unsqueeze(dim=0)
         A = A.expand(B, W, M, N)
-        d = torch.zeros((B,W,M, 1),device=device)
+        d = torch.zeros((B,W,M, 1),device=device) + 1e-4  # relax
 
         # a bigger lambda may increase IPM step(alpha)
         Lambda0 = 20*torch.rand(B, W, M, 1, device=device) # size: (B,W,M,1)

@@ -44,11 +44,11 @@ k: 0   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 learningRate1: 0.01    # the initial optimizer learning rate
-learningRate2: 0.0001  # the learning rate after pretrain
+learningRate2: 0.001  # the learning rate after pretrain
 
 network: "SurfacesUnet"
 inputHeight: 496   # original height
@@ -114,7 +114,7 @@ useMergeMuRift: False #  update mu according to r and sigma2
 useLearningPairWeight: True  # learning pairwise weight
 fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
 
-epochsBeforeUsingRift: 0  #
+epochsBeforeUsingRift: 160  #
 
 # constrained model, both False meaning RelU
 hardSeparation: False
