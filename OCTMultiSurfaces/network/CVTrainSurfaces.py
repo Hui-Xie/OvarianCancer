@@ -192,9 +192,8 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        if  muError < preErrorMean:
-            preErrorMean = muError
-            netMgr.saveRealTimeNet(hps.netPath)
+        # save realtime network parameter
+        netMgr.saveRealTimeNet(hps.netPath)
 
 
 
