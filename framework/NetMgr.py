@@ -38,10 +38,10 @@ class NetMgr:
         # Save on GPU, Load on GPU
         self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device))
         if os.path.exists(os.path.join(self.m_netPath, "ConfigParameters.pt")):
-            self.m_net.m_runParametersDict = torch.load(os.path.join(self.m_netPath, "ConfigParameters.pt"))
+            self.m_net.m_runParametersDict = torch.load(os.path.join(self.m_netPath, "ConfigParameters.pt"), map_location=self.m_device)
         if mode == "train":
             # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
-            self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt")))
+            self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt"), map_location=self.m_device))
             self.m_net.train()
         elif mode == "test":   # eval
             self.m_net.eval()
