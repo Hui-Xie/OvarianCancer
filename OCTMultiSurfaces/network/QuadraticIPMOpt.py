@@ -239,7 +239,7 @@ class SoftSeparationIPMModule(nn.Module):
         B,N,W = Mu.shape
         device = Mu.device
         if fixedPairWeight:
-            print("if use fixedPairWeight, learningPairWeight should be None.")
+            # if use fixedPairWeight, learningPairWeight should be None
             assert (learningPairWeight is None)
 
         # Optimization will not optimize sigma and R.
