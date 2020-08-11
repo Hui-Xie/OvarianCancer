@@ -130,9 +130,15 @@ def main():
                 testR =  torch.cat((testR, R)) if testBatch != 1 else R
 
         if hps.debug and net.useRift():
-            
+            testR = testR.cpu().numpy()
+            testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
+            np.save(testRFilePath, testR)
 
-
+        #output testID
+        with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
+            for id in testIDs:
+                file.write(f"{id}\n")
+        
         # Error Std and mean
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
