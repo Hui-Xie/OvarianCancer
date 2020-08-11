@@ -12,6 +12,8 @@
 # Aug 3,2020: change to 8 gradient channels.
 # Aug 8, 2020: learning pairwise weight.
 
+debug: True # debug mark
+
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName

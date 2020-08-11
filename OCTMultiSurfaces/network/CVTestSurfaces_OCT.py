@@ -110,7 +110,11 @@ def main():
         for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            if hps.debug and net.useRift():
+                S, _loss, R = forwardOutput
+            else:
+                S, _loss = forwardOutput
 
             batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
             images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages # for output result
@@ -121,6 +125,12 @@ def main():
                 testGts = None
 
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
+
+            if hps.debug and net.useRift():
+                testR =  torch.cat((testR, R)) if testBatch != 1 else R
+
+        if hps.debug and net.useRift():
+            
 
 
         # Error Std and mean
