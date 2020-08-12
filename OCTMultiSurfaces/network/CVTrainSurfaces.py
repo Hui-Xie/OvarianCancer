@@ -123,7 +123,12 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            _S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            if hps.debug and net.useRift():
+                _S, loss, R = forwardOutput
+            else:
+                _S, loss = forwardOutput
+
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
@@ -142,7 +147,12 @@ def main():
                                                               num_workers=0):
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
-                S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                if hps.debug and net.useRift():
+                    S, loss, R = forwardOutput
+                else:
+                    S, loss = forwardOutput
+
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs

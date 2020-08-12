@@ -477,7 +477,7 @@ class SurfacesUnet(BasicModel):
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        if self.hps.debug:
+        if self.hps.debug and self.useRift():
             return S, loss, R
         else:
             return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
