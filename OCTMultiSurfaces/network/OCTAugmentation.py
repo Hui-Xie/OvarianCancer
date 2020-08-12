@@ -455,9 +455,9 @@ def smoothCMA(raw, halfWidth, PadddingMode):
         assert False
 
     # smooth
-    smoothed = torch.zeros_like(raw)
+    smoothed = torch.zeros(raw.shape, dtype=torch.float32, device=raw.device)
     movingSum = paddedGT[:,0:2*h+1].sum(dim=1,keepdim=False)
-    w = 2*h+1
+    w = float(2*h+1)
     for j in range(h,W+h):
         smoothed[:,j-h]= movingSum/w
         if j < W+h-1:
