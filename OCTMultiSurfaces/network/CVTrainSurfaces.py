@@ -203,7 +203,12 @@ def main():
             netMgr.saveNet(hps.netPath)
 
         # save realtime network parameter
+        bestRunParametersDict = net.m_runParametersDict.copy()
+        net.updateRunParameter("validationLoss", validLoss)
+        net.updateRunParameter("epoch", net.m_epoch)
+        net.updateRunParameter("errorMean", muError)
         netMgr.saveRealTimeNet(hps.netPath)
+        net.m_runParametersDict = bestRunParametersDict
 
 
 
