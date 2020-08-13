@@ -97,11 +97,14 @@ def main():
     epochs = 1360000
     preTrainingLoss = 999999.0
     preValidLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 2041  # float 16 has maxvalue: 2048
-    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 3.3
+    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 4.3
     if net.training:
         initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:
         initialEpoch = 0
+
+    pre2ndValidLoss = 2041  # save the after pertrain epoch with best loss
+    pre2ndErrorMean = 4.3
 
     if initialEpoch > hps.epochsPretrain:  # for pretrain epochs.
         lrScheduler._reset()
@@ -202,13 +205,17 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        # save realtime network parameter
-        bestRunParametersDict = net.m_runParametersDict.copy()
-        net.updateRunParameter("validationLoss", validLoss)
-        net.updateRunParameter("epoch", net.m_epoch)
-        net.updateRunParameter("errorMean", muError)
-        netMgr.saveRealTimeNet(hps.netPath)
-        net.m_runParametersDict = bestRunParametersDict
+        # save the after pertrain epoch with best loss
+        if (epoch >= hps.epochsPretrain) and (validLoss < pre2ndValidLoss or muError < pre2ndErrorMean):
+            # save realtime network parameter
+            bestRunParametersDict = net.m_runParametersDict.copy()
+            net.updateRunParameter("validationLoss", validLoss)
+            net.updateRunParameter("epoch", net.m_epoch)
+            net.updateRunParameter("errorMean", muError)
+            pre2ndValidLoss = validLoss
+            pre2ndErrorMean = muError
+            netMgr.saveRealTimeNet(hps.netPath)
+            net.m_runParametersDict = bestRunParametersDict
 
 
 
