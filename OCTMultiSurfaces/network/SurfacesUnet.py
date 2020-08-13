@@ -254,7 +254,7 @@ class SurfacesUnet(BasicModel):
         #tensors need switch H and W dimension to feed into self.m_rifts
         #The output of self.m_rifts need to squeeze the final dimension
         #output (numSurfaces-1) rifts.
-        if hasattr(self.hps, 'useRiftWidth') and self.hps.useRiftWidth:
+        if hasattr(self.hps, 'useRiftInPretrain') and self.hps.useRiftInPretrain:
             self.m_rifts= nn.Sequential(
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
@@ -290,24 +290,21 @@ class SurfacesUnet(BasicModel):
                             useLeakyReLU=False, normAffine=True)
             ) # output:Bx1x(N-1)xW
 
-    def useRift(self):
-        if hasattr(self.hps,'useRiftWidth') and self.hps.useRiftWidth:
-            status = self.getStatus()
-            if status == "training" or status == "validation":
-                if self.m_epoch >= self.hps.epochsPretrain:  # for unary item pretrain
-                    return True
-                else:
-                    return False
-            elif status == "test":
-                if self.m_runParametersDict['epoch'] >= self.hps.epochsPretrain:
-                    return True
-                else:
-                    return False
+    def inPretrain(self):
+        status = self.getStatus()
+        if status == "training" or status == "validation":
+            if self.m_epoch >= self.hps.epochsPretrain:  # for unary item pretrain
+                return False
             else:
-                print(f"wrong status: {status}")
-                assert False
+                return True
+        elif status == "test":
+            if self.m_runParametersDict['epoch'] >= self.hps.epochsPretrain:
+                return False
+            else:
+                return True
         else:
-            return False
+            print(f"wrong status: {status}")
+            assert False
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # compute outputs
@@ -357,7 +354,9 @@ class SurfacesUnet(BasicModel):
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
         if self.hps.useLayerDice:
             xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
-        if self.useRift():
+
+        R = None
+        if self.hps.useRiftInPretrain or (not self.inPretrain()):
             # tensors need switch H and W dimension to feed into self.m_rifts
             # The output of self.m_rifts need to squeeze the final dimension
             if self.hps.gradientRiftConvGoBack:
@@ -400,7 +399,7 @@ class SurfacesUnet(BasicModel):
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
 
-        if self.useRift():
+        if self.hps.useRiftInPretrain or (not self.inPretrain()):
             assert ((self.hps.useCalibrate and self.hps.useMergeMuRift and self.hps.useLearningPairWeight) == False)
             if self.hps.useCalibrate:
                 R_sigma2 = R * sigma2[:,1:,:]  # size: Bx(N-1)xW
@@ -453,26 +452,27 @@ class SurfacesUnet(BasicModel):
 
         # rift L1 loss
         loss_riftL1 = 0.0
-        if self.hps.existGTLabel and self.useRift():
+        if self.hps.existGTLabel and (self.hps.useRiftInPretrain or (not self.inPretrain())):
             if self.hps.smoothRbeforeLoss:
                 RSmooth = smoothCMA_Batch(R, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
                 loss_riftL1 = l1Loss(RSmooth, riftGTs)
             else:
                 loss_riftL1 = l1Loss(R,riftGTs)
 
-        if self.useRift() and (self.hps.softSeparation or self.hps.hardSeparation):
-            separationIPM = SoftSeparationIPMModule()
-            assert ((self.hps.softSeparation and self.hps.hardSeparation) == False)
-            if self.hps.softSeparation:
-                R_detach = R.clone().detach()
-                S = separationIPM(mu, sigma2, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight, learningPairWeight=pairWeight)
-            if self.hps.hardSeparation:
-                S = separationIPM(mu, sigma2)
-        else:
+        if self.inPretrain() and self.hps.useReLUInPretrain:
             # ReLU to guarantee layer order not to cross each other
             S = mu.clone()
             for i in range(1, N):
                 S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        else:
+            separationIPM = SoftSeparationIPMModule()
+            assert ((self.hps.softSeparation and self.hps.hardSeparation) == False)
+            if self.hps.softSeparation:
+                R_detach = R.clone().detach()
+                S = separationIPM(mu, sigma2, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
+                                  learningPairWeight=pairWeight)
+            if self.hps.hardSeparation:
+                S = separationIPM(mu, sigma2)
 
         loss_surfaceL1 = 0.0
         if self.hps.existGTLabel:
@@ -484,7 +484,7 @@ class SurfacesUnet(BasicModel):
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        if self.hps.debug and self.useRift():
+        if self.hps.debug and (self.hps.useRiftInPretrain or (not self.inPretrain())):
             return S, loss, R
         else:
             return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss

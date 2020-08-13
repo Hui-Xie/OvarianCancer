@@ -95,7 +95,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
-useRiftWidth: True
+useRiftInPretrain: True
 
 # constrained model
 hardSeparation: False

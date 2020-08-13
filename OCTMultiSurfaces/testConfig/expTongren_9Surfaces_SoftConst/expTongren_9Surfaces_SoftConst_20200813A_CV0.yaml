@@ -20,7 +20,7 @@
 #   C  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv does not go backward, and then use IPM to train;
 #   D  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv goes back to Unet, and then use IPM to train;
 
-debug: True # debug mark
+debug: False # debug mark
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
@@ -113,7 +113,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
-useRiftWidth: True
+useRiftInPretrain: False
 smoothRift: True
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
@@ -131,5 +131,6 @@ epochsPretrain: 160  #
 # constrained model, both False meaning RelU
 hardSeparation: False
 softSeparation: True
+useReLUInPretrain: True
 
 goodBscans: []

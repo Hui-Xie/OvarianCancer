@@ -111,7 +111,7 @@ def main():
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
             forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-            if hps.debug and net.useRift():
+            if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
                 S, _loss, R = forwardOutput
             else:
                 S, _loss = forwardOutput
@@ -126,10 +126,10 @@ def main():
 
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
-            if hps.debug and net.useRift():
+            if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
                 testR =  torch.cat((testR, R)) if testBatch != 1 else R
 
-        if hps.debug and net.useRift():
+        if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
             testR = testR.cpu().numpy()
             testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
             np.save(testRFilePath, testR)

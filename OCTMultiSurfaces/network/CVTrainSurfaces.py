@@ -124,7 +124,7 @@ def main():
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
             forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-            if hps.debug and net.useRift():
+            if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
                 _S, loss, R = forwardOutput
             else:
                 _S, loss = forwardOutput
@@ -148,7 +148,7 @@ def main():
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
                 forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-                if hps.debug and net.useRift():
+                if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
                     S, loss, R = forwardOutput
                 else:
                     S, loss = forwardOutput
