@@ -116,7 +116,7 @@ useMergeMuRift: False #  update mu according to r and sigma2
 useLearningPairWeight: True  # learning pairwise weight
 fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
 
-epochsBeforeUsingRift: 160  #
+epochsPretrain: 160  #
 
 # constrained model, both False meaning RelU
 hardSeparation: False

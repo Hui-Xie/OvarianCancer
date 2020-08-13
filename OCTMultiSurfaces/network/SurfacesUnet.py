@@ -294,12 +294,12 @@ class SurfacesUnet(BasicModel):
         if hasattr(self.hps,'useRiftWidth') and self.hps.useRiftWidth:
             status = self.getStatus()
             if status == "training" or status == "validation":
-                if self.m_epoch >= self.hps.epochsBeforeUsingRift:  # for unary item pretrain
+                if self.m_epoch >= self.hps.epochsPretrain:  # for unary item pretrain
                     return True
                 else:
                     return False
             elif status == "test":
-                if self.m_runParametersDict['epoch'] >= self.hps.epochsBeforeUsingRift:
+                if self.m_runParametersDict['epoch'] >= self.hps.epochsPretrain:
                     return True
                 else:
                     return False
@@ -360,7 +360,10 @@ class SurfacesUnet(BasicModel):
         if self.useRift():
             # tensors need switch H and W dimension to feed into self.m_rifts
             # The output of self.m_rifts need to squeeze the final dimension
-            xClone = x.clone().detach()  # the gradient of rift module do not go back to Unet.
+            if self.hps.gradientRiftConvGoBack:
+                xClone = x
+            else:
+                xClone = x.clone().detach()  # the gradient of rift module do not go back to Unet.
             R = self.m_rifts(xClone.transpose(dim0=-1,dim1=-2))  # size: B*(NumSurface-1)*W*1
             R = R.squeeze(dim=-1) # size: B*(N-1)*W
 
@@ -416,6 +419,10 @@ class SurfacesUnet(BasicModel):
                 R_ = R.clone().unsqueeze(dim=1) # size: Bx1x(N-1)xW
                 muSigma2R = torch.cat((mu_,sigma2_,R_), dim=1)  # size: Bx3x(N-1)xW
                 pairWeight = self.m_learnPairWeight(muSigma2R).squeeze(dim=1)   # size: Bx(N-1)xW
+                #  Clamp on the learning lambda into range [0.1, 0.9], to avoid it is zero or  too big;
+                #  This will solve the problem of the high condition number of matrix H;(Higher condition number, more close to singular.)
+                pairWeight = torch.clamp(pairWeight, min=0.1, max=0.9)
+
 
         loss_surface = 0.0
         loss_smooth = 0.0

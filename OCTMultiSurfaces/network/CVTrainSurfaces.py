@@ -103,7 +103,7 @@ def main():
     else:
         initialEpoch = 0
 
-    if initialEpoch > hps.epochsBeforeUsingRift:  # for pretrain epochs.
+    if initialEpoch > hps.epochsPretrain:  # for pretrain epochs.
         lrScheduler._reset()
         for param_group in optimizer.param_groups:
             param_group['lr'] = hps.learningRate2
@@ -113,7 +113,7 @@ def main():
         net.m_epoch = epoch
         net.setStatus("training")
 
-        if epoch == hps.epochsBeforeUsingRift:  # for pretrain epochs.
+        if epoch == hps.epochsPretrain:  # for pretrain epochs.
             lrScheduler._reset()
             for param_group in optimizer.param_groups:
                 param_group['lr'] = hps.learningRate2

@@ -9,7 +9,18 @@
 # R and S0 detached comparing with 0723 network
 # on July 28th, change to 9 surfaces.
 # Aug 1,2020: pairwise weight, and smooth R before loss.
-# aug 3,2020: change to 4 gradient channels.
+# Aug 3,2020: change to 8 gradient channels.
+# Aug 8, 2020: learning pairwise weight.
+# Aug 13th, 2020, below 3 parallel experiments A,B,C
+# 1   Cancel the smooth operation after the predicted R, which will be consistent with Leixin's method;
+# 2   Clamp on the learning lambda into range [0.1, 0.9], to avoid it is zero or  too big;  This will solve the problem of the high condition number of matrix H;(Higher condition number, more close to singular. )
+# 3   Consider 4 parallel experiments to test which is better:
+#   A  Pretrain Unet+ SurfaceConv,  and  then  add RiftConv to train, but the gradient of RiftConv does not go backward;
+#   B  Pretrain Unet+ SurfaceConv,  and then  add RiftConv to train, the gradient of RiftConv goes back to Unet;  which may increase the accuracy of learning R, but reduce the accuracy of surfaceConv;
+#   C  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv does not go backward, and then use IPM to train;
+#   D  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv goes back to Unet, and then use IPM to train;
+
+debug: True # debug mark
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
@@ -43,20 +54,22 @@ k: 0   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
+learningRate1: 0.01    # the initial optimizer learning rate
+learningRate2: 0.001  # the learning rate after pretrain
 
 network: "SurfacesUnet"
 inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 5 # rawImage + gradChannels
+inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
 numSurfaces: 9  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 4   # the added gradient channels beside raw image channel
+gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
@@ -76,8 +89,8 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: "" #"/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/SurfacesUnet/expTongren_9Surfaces_SoftConst_20200727_CV0"  # reserve for pretrained network.
+netPath: "" #"/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/SurfacesUnet/expTongren_9Surfaces_SoftConst_20200808_CV0_8Grad_LearnPair_Pretrain_LR1"  # reserve for pretrained network.
 outputDir: ""
 
 # discard: do not use these loss function
@@ -104,16 +117,18 @@ useRiftWidth: True
 smoothRift: True
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
-smoothRbeforeLoss: True  # use smooth predicted R to compare loss with smooth ground truth R
+smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
 
-fixedPairWeight: True  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
+gradientRiftConvGoBack: False
 
-useCalibrate: True  # Calibrate mu according to r and sigma
+useCalibrate: False  # Calibrate mu according to r and sigma2
 useMergeMuRift: False #  update mu according to r and sigma2
+useLearningPairWeight: True  # learning pairwise weight
+fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
 
-epochsPretrain: 100  #
+epochsPretrain: 160  #
 
-# constrained model
+# constrained model, both False meaning RelU
 hardSeparation: False
 softSeparation: True
 
