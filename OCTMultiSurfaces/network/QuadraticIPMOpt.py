@@ -275,7 +275,7 @@ class SoftSeparationIPMModule(nn.Module):
         sigma2 = sigma2 +1e-8  # avoid sigma2 ==0
 
         if learningPairWeight is not None:
-            learningPairWeight = learningPairWeight.transpose(dim0=-1,dim1=-2)+1e-8 # in size:B,W,N-1, avoid H singular
+            learningPairWeight = learningPairWeight.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1, avoid H singular
 
         if R is not None:  # soft separation constraint
             R = R.transpose(dim0=-1,dim1=-2) # in size:B,W,N-1
