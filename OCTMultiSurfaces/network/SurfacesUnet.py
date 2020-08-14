@@ -254,7 +254,7 @@ class SurfacesUnet(BasicModel):
         #tensors need switch H and W dimension to feed into self.m_rifts
         #The output of self.m_rifts need to squeeze the final dimension
         #output (numSurfaces-1) rifts.
-        if hasattr(self.hps, 'useRiftInPretrain') and self.hps.useRiftInPretrain:
+        if hasattr(self.hps, 'useRiftInPretrain'):
             self.m_rifts= nn.Sequential(
                 Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
