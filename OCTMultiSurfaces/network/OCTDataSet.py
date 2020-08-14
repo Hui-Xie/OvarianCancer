@@ -230,7 +230,7 @@ class OCTDataSet(data.Dataset):
             labels = torch.from_numpy(np.load(self.m_labels[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
             label = labels[offset,]
 
-            imageID = self.m_IDs[volumeIndex]+f".OCT{offset}"
+            imageID = self.m_IDs[volumeIndex]+f".OCT{offset:2d}"
 
         if self.m_transform:
             data, label = self.m_transform(data, label)

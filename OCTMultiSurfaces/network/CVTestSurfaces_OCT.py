@@ -78,9 +78,9 @@ def main():
             testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
     else:
         if -1==hps.k and 0==hps.K:  # do not use cross validation
-            trainImagesPath = os.path.join(hps.dataDir, "test", f"patientList.txt")
-            trainLabelsPath = None
-            trainIDPath = None
+            testImagesPath = os.path.join(hps.dataDir, "test", f"patientList.txt")
+            testLabelsPath = None
+            testIDPath = None
         else:
             print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
             assert(False)
@@ -109,6 +109,10 @@ def main():
             surfaceNames = ['ILM', 'RNFL-GCL', 'GCL-IPL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
     if "OCT_JHU" in hps.dataDir:
         surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-ONL', 'ELM', 'IS-OS', 'OS-RPE', 'BM']
+
+    if "OCT_Duke" in hps.dataDir:
+        if hps.numSurfaces == 3:  # for Duke data
+            surfaceNames = ['ILM', 'InterRPEDC', 'OBM']
 
     # test
     testStartTime = time.time()
@@ -213,6 +217,11 @@ def main():
             if "_s1_R_19" in patientID_Index and patient not in patientIDList:
                 patientIDList.append(patient)
 
+        if "OCT_Duke" in hps.dataDir:
+            # testIDs[0] = /home/hxie1/data/OCT_Duke/numpy/training/AMD_1089_images.npy.OCT39
+            a = testIDs[b]
+            #patientVolumePath = a[0:-6]
+            patientID_Index = a[0:a.rfind("_images.npy")] +"_"+a[a.rfind(".")+1:]
 
 
 
@@ -222,10 +231,8 @@ def main():
         f = plt.figure(frameon=False)
         DPI = f.dpi
 
-
-
         if OutputNumImages==2:
-            if "OCT_Tongren" in hps.dataDir:
+            if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
                 subplotRow = 1
                 subplotCol = 2
             else:
@@ -281,7 +288,7 @@ def main():
             for s in range(0, S):
                 subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
             if needLegend:
-                if "OCT_Tongren" in hps.dataDir:
+                if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
                     subplot2.legend(surfaceNames, loc='lower center', ncol=4)
                 else:
                     subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
@@ -315,7 +322,7 @@ def main():
             for s in range(0, S):
                 subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
             if needLegend:
-                if "OCT_Tongren" in hps.dataDir:
+                if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
                     subplot3.legend(surfaceNames, loc='lower center', ncol=4)
                 else:
                     subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
