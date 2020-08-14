@@ -25,7 +25,7 @@ dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
 
-dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+dataDir: "/home/hxie1/data/OCT_Duke/numpy"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 1  # Kfold cross validation
@@ -92,7 +92,7 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_Duke/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
 
