@@ -47,22 +47,35 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    if -1==hps.k and 0==hps.K:  # do not use cross validation
-        trainImagesPath = os.path.join(hps.dataDir, "training", f"images.npy")
-        trainLabelsPath = os.path.join(hps.dataDir, "training", f"surfaces.npy")
-        trainIDPath = os.path.join(hps.dataDir, "training", f"patientID.json")
+    if hps.dataIn1Parcel:
+        if -1==hps.k and 0==hps.K:  # do not use cross validation
+            trainImagesPath = os.path.join(hps.dataDir, "training", f"images.npy")
+            trainLabelsPath = os.path.join(hps.dataDir, "training", f"surfaces.npy")
+            trainIDPath = os.path.join(hps.dataDir, "training", f"patientID.json")
 
-        validationImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
-        validationLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
-        validationIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
-    else:  # use cross validation
-        trainImagesPath = os.path.join(hps.dataDir,"training", f"images_CV{hps.k:d}.npy")
-        trainLabelsPath  = os.path.join(hps.dataDir,"training", f"surfaces_CV{hps.k:d}.npy")
-        trainIDPath     = os.path.join(hps.dataDir,"training", f"patientID_CV{hps.k:d}.json")
+            validationImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
+            validationLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
+            validationIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
+        else:  # use cross validation
+            trainImagesPath = os.path.join(hps.dataDir,"training", f"images_CV{hps.k:d}.npy")
+            trainLabelsPath  = os.path.join(hps.dataDir,"training", f"surfaces_CV{hps.k:d}.npy")
+            trainIDPath     = os.path.join(hps.dataDir,"training", f"patientID_CV{hps.k:d}.json")
 
-        validationImagesPath = os.path.join(hps.dataDir,"validation", f"images_CV{hps.k:d}.npy")
-        validationLabelsPath = os.path.join(hps.dataDir,"validation", f"surfaces_CV{hps.k:d}.npy")
-        validationIDPath    = os.path.join(hps.dataDir,"validation", f"patientID_CV{hps.k:d}.json")
+            validationImagesPath = os.path.join(hps.dataDir,"validation", f"images_CV{hps.k:d}.npy")
+            validationLabelsPath = os.path.join(hps.dataDir,"validation", f"surfaces_CV{hps.k:d}.npy")
+            validationIDPath    = os.path.join(hps.dataDir,"validation", f"patientID_CV{hps.k:d}.json")
+    else:
+        if -1==hps.k and 0==hps.K:  # do not use cross validation
+            trainImagesPath = os.path.join(hps.dataDir, "training", f"patientList.txt")
+            trainLabelsPath = None
+            trainIDPath = None
+
+            validationImagesPath = os.path.join(hps.dataDir, "validation", f"patientList.txt")
+            validationLabelsPath = None
+            validationIDPath = None
+        else:
+            print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
+            assert(False)
 
     tainTransform = OCTDataTransform(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation)
     validationTransform = tainTransform

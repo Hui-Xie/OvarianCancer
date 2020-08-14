@@ -21,6 +21,9 @@
 #   D  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv goes back to Unet, and then use IPM to train;
 
 debug: False # debug mark
+dataIn1Parcel: True
+# Duke data is not in one parcel, while Tongren, JHU are in one parcel.
+# dataIn1Parcel means each patient has a volume file.
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True

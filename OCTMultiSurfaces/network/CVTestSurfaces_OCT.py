@@ -67,14 +67,23 @@ def main():
     print(f"Experiment: {hps.experimentName}")
     assert "IVUS" not in hps.experimentName
 
-    if -1==hps.k and 0==hps.K:  # do not use cross validation
-        testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
-        testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy") if hps.existGTLabel else None
-        testIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
-    else:  # use cross validation
-        testImagesPath = os.path.join(hps.dataDir,"test", f"images_CV{hps.k:d}.npy")
-        testLabelsPath = os.path.join(hps.dataDir,"test", f"surfaces_CV{hps.k:d}.npy")
-        testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
+    if hps.dataIn1Parcle:
+        if -1==hps.k and 0==hps.K:  # do not use cross validation
+            testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
+            testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy") if hps.existGTLabel else None
+            testIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
+        else:  # use cross validation
+            testImagesPath = os.path.join(hps.dataDir,"test", f"images_CV{hps.k:d}.npy")
+            testLabelsPath = os.path.join(hps.dataDir,"test", f"surfaces_CV{hps.k:d}.npy")
+            testIDPath    = os.path.join(hps.dataDir,"test", f"patientID_CV{hps.k:d}.json")
+    else:
+        if -1==hps.k and 0==hps.K:  # do not use cross validation
+            trainImagesPath = os.path.join(hps.dataDir, "test", f"patientList.txt")
+            trainLabelsPath = None
+            trainIDPath = None
+        else:
+            print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
+            assert(False)
 
     testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, hps=hps)
 

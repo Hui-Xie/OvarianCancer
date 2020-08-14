@@ -21,15 +21,15 @@
 #   D  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv goes back to Unet, and then use IPM to train;
 
 debug: False # debug mark
-dataIn1Parcel: True
+dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K: 10  # Kfold cross validation
-k: 0   # the fold k test
+K: 1  # Kfold cross validation
+k: -1   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -57,15 +57,15 @@ k: 0   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 learningRate1: 0.01    # the initial optimizer learning rate
 learningRate2: 0.001  # the learning rate after pretrain
 
 network: "SurfacesUnet"
-inputHeight: 496   # original height
-inputWidth: 512   # rawImageWidth
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
@@ -77,7 +77,7 @@ bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
-slicesPerPatient: 31  # for test and validation set
+slicesPerPatient: 51  # for test and validation set
 hPixelSize: 3.870  # unit: micrometer, in y/height direction
 
 # data augmentation
@@ -116,7 +116,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
-useRiftInPretrain: False
+useRiftInPretrain: True
 smoothRift: True
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.

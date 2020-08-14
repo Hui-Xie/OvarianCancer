@@ -14,18 +14,26 @@ class OCTDataSet(data.Dataset):
         self.hps = hps
 
         self.m_images = None
-        if imagesPath is not None:
-            # image uses float32
-            images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
-            # normalize images for each slice
-            std,mean = torch.std_mean(images, dim=(1,2))
-            self.m_images = TF.Normalize(mean, std)(images)
-
         self.m_labels = None
+        self.m_IDs = None
+
+        if imagesPath is not None:
+            if self.hps.dataIn1Parcel:
+                # image uses float32
+                images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
+                # normalize images for each slice
+                std,mean = torch.std_mean(images, dim=(1,2))
+                self.m_images = TF.Normalize(mean, std)(images)
+            else:
+                assert ((labelPath is None) and (IDPath is None))
+                with open(imagesPath, 'r') as f:
+                    self.m_IDs = f.readlines()
+                self.m_images = self.m_IDs.copy()
+                self.m_labels = [item.replace("_images.npy", "_surfaces.npy") for item in self.m_images]
+
         if labelPath is not None:
             self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
 
-        self.m_IDs = None
         if IDPath is not None:
             with open(IDPath) as f:
                 self.m_IDs = json.load(f)
@@ -33,7 +41,10 @@ class OCTDataSet(data.Dataset):
 
 
     def __len__(self):
-        return self.m_images.size()[0]
+        if self.hps.dataIn1Parcel:
+            return self.m_images.size()[0]
+        else:
+            return len(self.m_IDs)*self.hps.slicesPerPatient
 
     def generateGradientImage(self, image, gradChannels):
         '''
@@ -198,11 +209,27 @@ class OCTDataSet(data.Dataset):
 
 
     def __getitem__(self, index):
-        data = self.m_images[index,]
+        if self.hps.dataIn1Parcel:
+            data = self.m_images[index,]
 
-        label = None
-        if self.m_labels is not None:
-            label = self.m_labels[index,] # size: N,W
+            label = None
+            if self.m_labels is not None:
+                label = self.m_labels[index,] # size: N,W
+            imageID = self.m_IDs[str(index)]
+        else:
+            volumeIndex = index//self.slicesPerPatient
+            offset = index%self.slicesPerPatient
+            # image uses float32
+            images = torch.from_numpy(np.load(self.m_images[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
+            # normalize images for each slice
+            std, mean = torch.std_mean(images, dim=(1, 2))
+            images = TF.Normalize(mean, std)(images)
+            data = images[offset,]
+
+            labels = torch.from_numpy(np.load(self.m_labels[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
+            label = labels[offset,]
+
+            imageID = self.m_IDs[volumeIndex]+f".OCT{offset}"
 
         if self.m_transform:
             data, label = self.m_transform(data, label)
@@ -242,7 +269,7 @@ class OCTDataSet(data.Dataset):
         result = {"images": image,
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
-                  "IDs": self.m_IDs[str(index)],
+                  "IDs": imageID,
                   "layers": layerGT,
                   "riftWidth": riftWidthGT}
         return result
