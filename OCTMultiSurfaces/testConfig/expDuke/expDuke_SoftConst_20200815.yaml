@@ -78,7 +78,7 @@ gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
 slicesPerPatient: 51  # for test and validation set
-hPixelSize: 3.870  # unit: micrometer, in y/height direction
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate
