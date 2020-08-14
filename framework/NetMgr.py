@@ -36,7 +36,7 @@ class NetMgr:
 
     def loadNet(self, mode):
         # Save on GPU, Load on GPU
-        self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device), strict=False)
+        self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device), strict=True)
         if os.path.exists(os.path.join(self.m_netPath, "ConfigParameters.pt")):
             self.m_net.m_runParametersDict = torch.load(os.path.join(self.m_netPath, "ConfigParameters.pt"), map_location=self.m_device)
         if mode == "train":
