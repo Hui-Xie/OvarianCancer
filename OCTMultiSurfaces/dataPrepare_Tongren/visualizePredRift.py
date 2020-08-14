@@ -39,6 +39,7 @@ from TongrenFileUtilities import getSurfacesArray
 # find file
 with open(testIDPath, 'r') as f:
     IDList = f.readlines()
+IDList = [item[0:-1] for item in IDList]  #erase tail "\n"
 
 images = np.load(imagesPath)  # BxHxW
 B,H,W = images.shape

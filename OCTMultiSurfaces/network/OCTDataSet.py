@@ -28,6 +28,7 @@ class OCTDataSet(data.Dataset):
                 assert ((labelPath is None) and (IDPath is None))
                 with open(imagesPath, 'r') as f:
                     self.m_IDs = f.readlines()
+                self.m_IDs = [item[0:-1] for item in self.m_IDs]
                 self.m_images = self.m_IDs.copy()
                 self.m_labels = [item.replace("_images.npy", "_surfaces.npy") for item in self.m_images]
 
@@ -217,8 +218,8 @@ class OCTDataSet(data.Dataset):
                 label = self.m_labels[index,] # size: N,W
             imageID = self.m_IDs[str(index)]
         else:
-            volumeIndex = index//self.slicesPerPatient
-            offset = index%self.slicesPerPatient
+            volumeIndex = index//self.hps.slicesPerPatient
+            offset = index%self.hps.slicesPerPatient
             # image uses float32
             images = torch.from_numpy(np.load(self.m_images[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
             # normalize images for each slice

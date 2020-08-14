@@ -28,7 +28,7 @@ dataIn1Parcel: False
 dataDir: "/home/hxie1/data/OCT_Duke/numpy"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K: 1  # Kfold cross validation
+K: 0  # Kfold cross validation
 k: -1   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
@@ -70,7 +70,7 @@ scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
-numSurfaces: 9  # num of surfaces in an image
+numSurfaces: 3  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
