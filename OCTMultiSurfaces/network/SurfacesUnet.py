@@ -413,9 +413,10 @@ class SurfacesUnet(BasicModel):
 
             pairWeight = None
             if self.hps.useLearningPairWeight:
-                mu_ = mu[:,1:,:].clone().unsqueeze(dim=1) # size: Bx1x(N-1)xW
-                sigma2_ = sigma2[:,1:,:].clone().unsqueeze(dim=1) # size: Bx1x(N-1)xW
-                R_ = R.clone().unsqueeze(dim=1) # size: Bx1x(N-1)xW
+                # the gradient of mu,sigma2, and R do not go back
+                mu_ = mu[:,1:,:].clone().detach().unsqueeze(dim=1) # size: Bx1x(N-1)xW
+                sigma2_ = sigma2[:,1:,:].clone().detach().unsqueeze(dim=1) # size: Bx1x(N-1)xW
+                R_ = R.clone().detach().unsqueeze(dim=1) # size: Bx1x(N-1)xW
                 muSigma2R = torch.cat((mu_,sigma2_,R_), dim=1)  # size: Bx3x(N-1)xW
                 pairWeight = self.m_learnPairWeight(muSigma2R).squeeze(dim=1)   # size: Bx(N-1)xW
                 #  Clamp on the learning lambda into range [0.1, 0.9], to avoid it is zero or  too big;
