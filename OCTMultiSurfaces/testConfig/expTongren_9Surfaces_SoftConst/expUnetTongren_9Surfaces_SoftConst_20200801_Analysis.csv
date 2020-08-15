@@ -4,6 +4,16 @@ Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surfa
 20200813C_CV0, CV0, 1.0738, 3.0038, 2.5419, 2.4632, 3.1692, 1.4311, 2.5503, 1.5731, 1.2229, 0.9549962878227234, 2.1143689155578613,  148(pretrain),
 20200813C_CV0, CV0, 1.5937, 3.1403, 2.8097, 2.5230, 3.6935, 1.7414, 2.9564, 1.7157, 1.9480, 0.9750833511352539, 2.45796799659729,    199(IPM)
 
+Analysis:
+1   The accuracy of pretrained network is better than the previous best 0317 CV0 result, in both error and variance;
+2   After pretraining, adding  IPM reduces accuracy, which reason may be that  the not good predicted R affected accuracy;
+3   Please refer to randomly chosen 6 slices from 5 patients in test CV0 for visual R, in pretrain and IPM 2 network results, as attachment;
+     A Even for the pretrained network with a good accuracy, its predicted R is not very accurate; which mean there are  some space to further improve accuracy;
+     B The R's in both networks capture big pattern, but the detail is not enough;
+     C Notes: our current network didn't apply smooth onto predicted R;
+4  further improvements:
+    A  Build a separate Unet for a better R prediction;
+    B  add the number of layers of RiftConv module to further raise R's accuracy;
 
 
 # experiment 20200806B experiments on test fold 0:
