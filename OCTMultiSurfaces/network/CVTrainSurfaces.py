@@ -94,6 +94,7 @@ def main():
     optimizer = optim.Adam(net.parameters(), lr=hps.learningRate1, weight_decay=0)
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    net.setLrScheduler(lrScheduler)
 
     # Load network
     if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
@@ -120,9 +121,7 @@ def main():
     pre2ndErrorMean = 4.3
 
     if initialEpoch > hps.epochsPretrain:  # for pretrain epochs.
-        lrScheduler._reset()
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = hps.learningRate2
+        net.resetLrScheduler(hps.learningRate2)
 
     for epoch in range(initialEpoch, epochs):
         random.seed()
@@ -130,9 +129,7 @@ def main():
         net.setStatus("training")
 
         if epoch == hps.epochsPretrain:  # for pretrain epochs.
-            lrScheduler._reset()
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = hps.learningRate2
+            net.resetLrScheduler(hps.learningRate2)
 
         net.train()
         trBatch = 0

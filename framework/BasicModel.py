@@ -13,6 +13,7 @@ class BasicModel(nn.Module):
         # self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
         # self.m_dropout1d = nn.Dropout(p=self.m_dropoutProb)
         self.m_optimizer = None
+        self.m_lrScheduler = None
         self.m_lossFuncList = []
         self.m_lossWeightList = []
         self.m_consistencyLoss = None
@@ -42,6 +43,14 @@ class BasicModel(nn.Module):
 
     def setOptimizer(self, optimizer):
         self.m_optimizer = optimizer
+
+    def setLrScheduler(self, lrScheduler):
+        self.m_lrScheduler = lrScheduler
+
+    def resetLrScheduler(self, lr):
+        self.m_lrScheduler._reset()
+        for param_group in self.m_optimizer.param_groups:
+            param_group['lr'] = lr
 
     def appendLossFunc(self, lossFunc, weight=1.0, epochs=1000):
         self.m_lossFuncList.append(lossFunc)

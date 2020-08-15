@@ -38,7 +38,7 @@ def computeLayerSizeUsingMaxPool2D(H, W, nLayers, kernelSize=2, stride=2, paddin
         layerSizeList.append((H, W))
     return  layerSizeList
 
-class SurfacesUnet(BasicModel):
+class SurfacesUnet_Phase(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: inputChaneels*H*W
@@ -244,69 +244,57 @@ class SurfacesUnet(BasicModel):
             nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:numSurfaces*H*W
 
-        if self.hps.useLayerDice:
-            self.m_layers = nn.Sequential(
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU),
-                nn.Conv2d(N, self.hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
-            )  # output size:(numSurfaces+1)*H*W
 
         #tensors need switch H and W dimension to feed into self.m_rifts
         #The output of self.m_rifts need to squeeze the final dimension
         #output (numSurfaces-1) rifts.
-        if hasattr(self.hps, 'useRiftInPretrain'):
-            self.m_rifts= nn.Sequential(
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, (self.hps.numSurfaces-1), convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: Bx(NumSurfaces-1)xWxH
-                nn.Linear(self.hps.inputHeight, 1),
-                nn.ReLU()   # RiftWidth >=0
-                )  # output size:Bx(numSurfaces-1)*W*1
+        self.m_rifts1 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )
+        self.m_rifts2 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            )
+        self.m_rifts3 = nn.Sequential(
+            Conv2dBlock(N, (self.hps.numSurfaces-1), convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU), # output size: Bx(NumSurfaces-1)xWxH
+            nn.Linear(self.hps.inputHeight, 1),
+            nn.ReLU()   # RiftWidth >=0
+            )  # output size:Bx(numSurfaces-1)*W*1
 
-        # mu and sigma need to unsqueeze dim=1 to feed in this layer
-        # and output of this layer needs squeeze dim=1
-        if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
-            self.m_calibrate = nn.Sequential(
-                Conv2dBlock(1, N, convStride=1,
-                            useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU),
-                nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1x(N-1)xW
-                )
 
         # learningPairWise weight module
         # input to this module: superpose mu, sigma, and r in feature channels, Bx3x(N-1)xW
         # output of this module: Bx1x(N-1)xW, need squeeze for further use.
-        if hasattr(self.hps, 'useLearningPairWeight') and self.hps.useLearningPairWeight:
-            self.m_learnPairWeight = nn.Sequential(
-                Conv2dBlock(3, N, convStride=1,
-                            useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, 1, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                            useLeakyReLU=False, normAffine=True)
-            ) # output:Bx1x(N-1)xW
-
-    def inPretrain(self):
-        status = self.getStatus()
-        if status == "training" or status == "validation":
-            if self.m_epoch >= self.hps.epochsPretrain:  # for unary item pretrain
-                return False
-            else:
-                return True
-        elif status == "test":
-            if self.m_runParametersDict['epoch'] >= self.hps.epochsPretrain:
-                return False
-            else:
-                return True
-        else:
-            print(f"wrong status: {status}")
-            assert False
+        self.m_learnPairWeight = nn.Sequential(
+            Conv2dBlock(3, N, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, 1, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=False, normAffine=True)
+        ) # output:Bx1x(N-1)xW
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
+        # reset learningRate
+        if "training" == self.getStatus():
+            if self.hps.epochs0 == self.m_epoch:
+                self.resetLrScheduler(self.hps.lr0)
+            elif self.hps.epochs1 == self.m_epoch:
+                self.resetLrScheduler(self.hps.lr1)
+            elif self.hps.epochs2 == self.m_epoch:
+                self.resetLrScheduler(self.hps.lr2)
+            else:
+                pass
+
+
         # compute outputs
         e = 1e-8
         device = inputs.device
@@ -352,141 +340,86 @@ class SurfacesUnet(BasicModel):
 
         # N is numSurfaces
         xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
-        if self.hps.useLayerDice:
-            xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
-
-        R = None
-        if self.hps.useRiftInPretrain or (not self.inPretrain()):
-            # tensors need switch H and W dimension to feed into self.m_rifts
-            # The output of self.m_rifts need to squeeze the final dimension
-            if self.hps.gradientRiftConvGoBack:
-                xClone = x
-            else:
-                xClone = x.clone().detach()  # the gradient of rift module do not go back to Unet.
-            R = self.m_rifts(xClone.transpose(dim0=-1,dim1=-2))  # size: B*(NumSurface-1)*W*1
-            R = R.squeeze(dim=-1) # size: B*(N-1)*W
-
-        B,N,H,W = xs.shape
-
-        layerMu = None # referred surface mu computed by layer segmentation.
-        layerConf = None
         surfaceProb = logits2Prob(xs, dim=-2)
-        layerProb = None
-        if self.hps.useLayerDice:
-            layerProb = logits2Prob(xl, dim=1)
 
-        layerWeight = None
-        surfaceWeight = None
+        B, N, H, W = xs.shape
         _, C, _, _ = inputs.shape
-        if C >= 4: # at least 3 gradient channels.
-            imageGradMagnitude = inputs[:, C-1, :, :]  # image gradient magnitude is at final channel since July 23th, 2020
-            if self.hps.useLayerCE:
-                layerWeight = getLayerWeightFromImageGradient(imageGradMagnitude, GTs, N + 1)
+
+        surfaceWeight = None
+        if C >= 4:  # at least 3 gradient channels.
+            imageGradMagnitude = inputs[:, C - 1, :, :]  # image gradient magnitude is at final channel since July 23th, 2020
             surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=self.hps.gradWeight)
 
-        loss_layer = 0.0
-        if self.hps.useLayerDice:
-            generalizedDiceLoss = GeneralizedDiceLoss()
-            loss_layer = generalizedDiceLoss(layerProb, layerGTs) if self.hps.existGTLabel else 0.0
-
-            if self.hps.useLayerCE and self.hps.existGTLabel:
-                multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
-                loss_layer += multiLayerCE(layerProb, layerGTs)
-
-            if self.hps.useReferSurfaceFromLayer:
-                layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
-
         # compute surface mu and variance
-        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
+        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
 
-        if self.hps.useRiftInPretrain or (not self.inPretrain()):
-            assert ((self.hps.useCalibrate and self.hps.useMergeMuRift and self.hps.useLearningPairWeight) == False)
-            # todo: R and sigma2 need detach
-            if self.hps.useCalibrate:
-                R_sigma2 = R * sigma2[:,1:,:]  # size: Bx(N-1)xW
-                R_sigma2 = R_sigma2.unsqueeze(dim=1) # outputsize: Bx1x(N-1)xW
-                mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), mu[:,1:,:] + self.m_calibrate(R_sigma2).squeeze(dim=1)), dim=1) # size: BxNxW
-            if self.hps.useMergeMuRift:
-                mu_R = mu[:,0:-1,:]+R #size: Bx(N-1)xW
-                sigma2_i = 1.0/(sigma2[:,1:,:]+e) # reciprocal, size: Bx(N-1)xW
-                sigma2_i_1 = 1.0/(sigma2[:,0:-1,:]+e) # reciprocal, size: Bx(N-1)xW
-                mu = torch.cat((mu[:,0,:].unsqueeze(dim=1), (sigma2_i*mu[:,1:,:]+sigma2_i_1*mu_R)/(sigma2_i+ sigma2_i_1)), dim=1) # size: BxNxW
-
-            pairWeight = None
-            if self.hps.useLearningPairWeight:
-                # the gradient of mu,sigma2, and R do not go back
-                mu_ = mu[:,1:,:].clone().detach().unsqueeze(dim=1) # size: Bx1x(N-1)xW
-                sigma2_ = sigma2[:,1:,:].clone().detach().unsqueeze(dim=1) # size: Bx1x(N-1)xW
-                R_ = R.clone().detach().unsqueeze(dim=1) # size: Bx1x(N-1)xW
-                muSigma2R = torch.cat((mu_,sigma2_,R_), dim=1)  # size: Bx3x(N-1)xW
-                pairWeight = self.m_learnPairWeight(muSigma2R).squeeze(dim=1)   # size: Bx(N-1)xW
-                #  Clamp on the learning lambda into range [0.1, 0.9], to avoid it is zero or  too big;
-                #  This will solve the problem of the high condition number of matrix H;(Higher condition number, more close to singular.)
-                pairWeight = torch.clamp(pairWeight, min=0.1, max=0.9)
-
-
+        # all loss
         loss_surface = 0.0
         loss_smooth = 0.0
-        if self.hps.existGTLabel:
-            if self.hps.useCEReplaceKLDiv:
-                multiSufaceCE = MultiSurfaceCrossEntropyLoss(weight=surfaceWeight)
-                loss_surface = multiSufaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
-
-            elif self.hps.useWeightedDivLoss:
-                weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
-                if 0 == len(gaussianGTs):  # sigma ==0 case
-                    gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-                loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-
-            else:
-                klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
-                # the input given is expected to contain log-probabilities
-                if 0 == len(gaussianGTs):  # sigma ==0 case
-                    gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-                loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-
-            if self.hps.useSmoothSurface:
-                smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-                loss_smooth = smoothSurfaceLoss(mu, GTs)
-
+        loss_riftL1 = 0.0
+        loss_surfaceL1 = 0.0
         weightL1 = 10.0
         l1Loss = nn.SmoothL1Loss().to(device)
+        R = None
 
-        # rift L1 loss
-        loss_riftL1 = 0.0
-        if self.hps.existGTLabel and (self.hps.useRiftInPretrain or (not self.inPretrain())):
-            if self.hps.smoothRbeforeLoss:
-                RSmooth = smoothCMA_Batch(R, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
-                loss_riftL1 = l1Loss(RSmooth, riftGTs)
-            else:
-                loss_riftL1 = l1Loss(R,riftGTs)
+        # useWeightedDivLoss:
+        weightedDivLoss = WeightedDivLoss(weight=surfaceWeight)  # the input given is expected to contain log-probabilities
+        if 0 == len(gaussianGTs):  # sigma ==0 case
+            gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
+        loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
-        if self.inPretrain() and self.hps.useReLUInPretrain:
-            # ReLU to guarantee layer order not to cross each other
-            S = mu.clone()
-            for i in range(1, N):
-                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-        else:
+        # useSmoothSurface:
+        smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+        loss_smooth = smoothSurfaceLoss(mu, GTs)
+
+        if self.m_epoch >= self.hps.epochs1:
+            # self.m_epoch >= self.hps.epochs1:
+            # the gradient of rift module do not go back to Unet.
+            # tensors need switch H and W dimension to feed into self.m_rifts
+            xRift = x.clone().detach().transpose(dim0=-1, dim1=-2)
+            xRift = self.m_rifts1(xRift)
+            xRift = xRift + self.m_rifts2(xRift)
+            R = self.m_rifts3(xRift)  # size: B*(NumSurface-1)*W*1
+            # The output of self.m_rifts need to squeeze the final dimension
+            R = R.squeeze(dim=-1)  # size: B*(N-1)*W
+            loss_riftL1 = l1Loss(R, riftGTs)
+
+        if self.m_epoch >= self.hps.epochs2:
+            # the gradient of mu,sigma2, and R do not go back
+            mu_ = mu[:, 1:, :].clone().detach().unsqueeze(dim=1)  # size: Bx1x(N-1)xW
+            sigma2_ = sigma2[:, 1:, :].clone().detach().unsqueeze(dim=1)  # size: Bx1x(N-1)xW
+            R_ = R.clone().detach().unsqueeze(dim=1)  # size: Bx1x(N-1)xW
+            muSigma2R = torch.cat((mu_, sigma2_, R_), dim=1)  # size: Bx3x(N-1)xW
+            pairWeight = self.m_learnPairWeight(muSigma2R).squeeze(dim=1)  # size: Bx(N-1)xW
+            #  Clamp on the learning lambda into range [0.1, 0.9], to avoid it is zero or  too big;
+            #  This will solve the problem of the high condition number of matrix H;(Higher condition number, more close to singular.)
+            pairWeight = torch.clamp(pairWeight, min=0.1, max=0.9)
+
             separationIPM = SoftSeparationIPMModule()
-            assert ((self.hps.softSeparation and self.hps.hardSeparation) == False)
-            if self.hps.softSeparation:
-                R_detach = R.clone().detach()
-                S = separationIPM(mu, sigma2, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
-                                  learningPairWeight=pairWeight)
-            if self.hps.hardSeparation:
-                S = separationIPM(mu, sigma2)
+            R_detach = R.clone().detach()
+            S = separationIPM(mu, sigma2, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight, learningPairWeight=pairWeight)
 
-        loss_surfaceL1 = 0.0
-        if self.hps.existGTLabel:
-            loss_surfaceL1 = l1Loss(S, GTs)
+        else:
+            if self.hps.epoch1 <= self.m_epoch < self.hps.epochs2:
+                S = torch.zeros_like(mu)
+                S[:,0,:] = mu[:,0,:].clone().detach() # size:Bx1xW
+                for i in range(1,N):
+                    S[:, i, :] = S[:, i-1, :] + R[:,i-1,:]  # because R>=0, it can guarantee order.
 
-        loss = loss_layer + loss_surface + loss_smooth+ (loss_surfaceL1 +loss_riftL1)* weightL1
+            else:
+                # ReLU to guarantee layer order not to cross each other
+                S = mu.clone()
+                for i in range(1, N):
+                    S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+
+        loss_surfaceL1 = l1Loss(S, GTs)
+        loss = loss_surface + loss_smooth + (loss_surfaceL1 + loss_riftL1) * weightL1
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        if self.hps.debug and (self.hps.useRiftInPretrain or (not self.inPretrain())):
+        if self.hps.debug and (R is not None):
             return S, loss, R
         else:
             return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss
