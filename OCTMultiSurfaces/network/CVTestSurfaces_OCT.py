@@ -67,7 +67,7 @@ def main():
     print(f"Experiment: {hps.experimentName}")
     assert "IVUS" not in hps.experimentName
 
-    if hps.dataIn1Parcle:
+    if hps.dataIn1Parcel:
         if -1==hps.k and 0==hps.K:  # do not use cross validation
             testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
             testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy") if hps.existGTLabel else None
