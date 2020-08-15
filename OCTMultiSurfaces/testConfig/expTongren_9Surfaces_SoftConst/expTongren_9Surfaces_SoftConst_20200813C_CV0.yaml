@@ -20,7 +20,7 @@
 #   C  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv does not go backward, and then use IPM to train;
 #   D  Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv goes back to Unet, and then use IPM to train;
 
-debug: False # debug mark
+debug: True # debug mark
 dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
@@ -93,7 +93,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
 netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: ""
+loadNetPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters/SurfacesUnet/expTongren_9Surfaces_SoftConst_20200813C_CV0"
 outputDir: ""
 
 # discard: do not use these loss function
