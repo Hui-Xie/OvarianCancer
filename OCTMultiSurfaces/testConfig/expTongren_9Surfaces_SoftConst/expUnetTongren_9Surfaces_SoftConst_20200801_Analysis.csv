@@ -1,3 +1,11 @@
+# experiment 20200813C on CV0
+# config: Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv does not go backward, and then use IPM to train;
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
+20200813C_CV0, CV0, 1.0738, 3.0038, 2.5419, 2.4632, 3.1692, 1.4311, 2.5503, 1.5731, 1.2229, 0.9549962878227234, 2.1143689155578613,  148(pretrain),
+20200813C_CV0, CV0, 1.5937, 3.1403, 2.8097, 2.5230, 3.6935, 1.7414, 2.9564, 1.7157, 1.9480, 0.9750833511352539, 2.45796799659729,    199(IPM)
+
+
+
 # experiment 20200806B experiments on test fold 0:
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
 20200806B_CV0_8Grad_Calibrate,                CV0, 1.0285, 3.0024, 2.6635, 2.4130, 3.1927, 1.4863, 2.8564, 1.6278, 1.2272, 0.9899391531944275, 2.166411876678467,  150,
