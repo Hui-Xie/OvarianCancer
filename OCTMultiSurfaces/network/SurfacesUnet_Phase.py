@@ -397,7 +397,11 @@ class SurfacesUnet_Phase(BasicModel):
 
             separationIPM = SoftSeparationIPMModule()
             R_detach = R.clone().detach()
-            S = separationIPM(mu, sigma2, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight, learningPairWeight=pairWeight)
+            mu_detach = mu.clone().detach()
+            sigma2_detach = sigma2.clone().detach()
+            S = separationIPM(mu_detach, sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight, learningPairWeight=pairWeight)
+            loss_surfaceL1 = l1Loss(S, GTs)
+            loss = loss_surfaceL1 * weightL1
 
         else:
             if self.hps.epoch1 <= self.m_epoch < self.hps.epochs2:
@@ -405,15 +409,16 @@ class SurfacesUnet_Phase(BasicModel):
                 S[:,0,:] = mu[:,0,:].clone().detach() # size:Bx1xW
                 for i in range(1,N):
                     S[:, i, :] = S[:, i-1, :] + R[:,i-1,:]  # because R>=0, it can guarantee order.
+                loss_surfaceL1 = l1Loss(S, GTs)
+                loss = (loss_surfaceL1 + loss_riftL1) * weightL1
 
             else:
                 # ReLU to guarantee layer order not to cross each other
                 S = mu.clone()
                 for i in range(1, N):
                     S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-
-        loss_surfaceL1 = l1Loss(S, GTs)
-        loss = loss_surface + loss_smooth + (loss_surfaceL1 + loss_riftL1) * weightL1
+                loss_surfaceL1 = l1Loss(S, GTs)
+                loss = loss_surface + loss_smooth + loss_surfaceL1 * weightL1
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
