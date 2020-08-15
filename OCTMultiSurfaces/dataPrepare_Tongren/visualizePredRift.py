@@ -49,9 +49,9 @@ for index in indexList:
 
     a = IDList[index] # srcImagePath
     volume = a[a.find("control/")+8: a.rfind("/")]
-    sliceID = a[-10: -5]
-    sliceIndex = int(sliceID[-2:])-1
-    outputVisaulRPath = predictOutputDir +f"/{volume}_{sliceID}_GT_R_Predict.png"
+    sliceID = a[a.rfind("_OCT")+4: a.rfind(".")]
+    sliceIndex = int(sliceID)-1
+    outputVisaulRPath = predictOutputDir +f"/{volume}_OCT{sliceID}_GT_R_Predict.png"
     xmlFilePath = predictOutputDir +"/xml"+ f"/{volume}_Sequence_Surfaces_Prediction.xml"
     predictS = getSurfacesArray(xmlFilePath)
 
