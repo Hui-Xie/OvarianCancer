@@ -51,9 +51,7 @@ sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
-learningRate1: 0.01    # the initial optimizer learning rate
-learningRate2: 0.001  # the learning rate after pretrain
-# inherit initial learning rate
+# phased training with different learning rate
 epochs0: 0
 lr0: 0.01
 epochs1: 160  #
@@ -62,8 +60,7 @@ epochs2: 320  # accumulative epochs
 lr2: 0.001
 
 
-
-network: "SurfacesUnet"
+network: "SurfacesUnet_Phase"
 inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 scaleNumerator: 1
@@ -96,19 +93,6 @@ netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParam
 loadNetPath: ""
 outputDir: ""
 
-# discard: do not use these loss function
-lossFunc0: "nn.KLDivLoss(reduction='batchmean').to(device)"   # the input given is expected to contain log probabilities
-lossFunc0Epochs: 1000   # the epoch number of using lossFunc0
-lossFunc1: "nn.SmoothL1Loss().to(device)"
-lossFunc1Epochs: 500
-
-# Proximal IPM Optimization, discarded.
-useProxialIPM: False
-learningStepIPM: 0.1
-maxIterationIPM: 100
-criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
-
-useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: False
 useReferSurfaceFromLayer: False
@@ -116,7 +100,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
-useRiftInPretrain: False
+useRift: True
 smoothRift: True  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
