@@ -118,6 +118,9 @@ def main():
         net.m_epoch = epoch
         net.setStatus("training")
 
+        # debug:
+        net.m_epoch = 320
+
         net.train()
         trBatch = 0
         trLoss = 0.0
@@ -135,7 +138,6 @@ def main():
             trLoss += loss
 
         trLoss = trLoss / trBatch
-        #lrScheduler.step(trLoss)
         # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
 
         net.eval()
@@ -194,11 +196,10 @@ def main():
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if muError < preErrorMean:
+        if muError <= preErrorMean:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
-            preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 

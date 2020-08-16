@@ -404,7 +404,7 @@ class SurfacesUnet_Phase(BasicModel):
             loss = loss_surfaceL1 * weightL1
 
         else:
-            if self.hps.epoch1 <= self.m_epoch < self.hps.epochs2:
+            if self.hps.epochs1 <= self.m_epoch < self.hps.epochs2:
                 S = torch.zeros_like(mu)
                 S[:,0,:] = mu[:,0,:].clone().detach() # size:Bx1xW
                 for i in range(1,N):
