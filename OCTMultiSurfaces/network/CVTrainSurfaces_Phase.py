@@ -118,9 +118,6 @@ def main():
         net.m_epoch = epoch
         net.setStatus("training")
 
-        # debug:
-        net.m_epoch = 320
-
         net.train()
         trBatch = 0
         trLoss = 0.0
