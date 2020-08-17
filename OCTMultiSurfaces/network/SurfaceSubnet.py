@@ -1,4 +1,4 @@
-# Surfaces Unet: support automatic input size.
+# Surface Subnet
 
 
 import sys
@@ -17,8 +17,7 @@ from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiLayerCrossEntropyLoss, MultiSurfaceCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
 
-
-class SurfacesUnet(BasicModel):
+class SurfaceSubnet(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: inputChaneels*H*W
