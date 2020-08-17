@@ -44,11 +44,11 @@ class SurfacesUnet(BasicModel):
         inputSize: inputChaneels*H*W
         outputSize: (Surface, H, W)
         :param numSurfaces:
-        :param N: startFilters
+        :param C: startFilters
         '''
         super().__init__()
         self.hps = hps
-        N = self.hps.startFilters
+        C = self.hps.startFilters
 
         self.m_layerSizeList = computeLayerSizeUsingMaxPool2D(self.hps.inputHeight, self.hps.inputWidth, self.hps.nLayers)
 
@@ -56,98 +56,98 @@ class SurfacesUnet(BasicModel):
         self.m_useLeakyReLU = True
         # downxPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
         self.m_down0Pooling = nn.Sequential(
-            Conv2dBlock(self.hps.inputChannels, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+            Conv2dBlock(self.hps.inputChannels, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         )
         self.m_down0 = nn.Sequential(
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down1Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
         self.m_down1 = nn.Sequential(
-            Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down2Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N * 2, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
         self.m_down2 = nn.Sequential(
-            Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down3Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N * 4, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
         self.m_down3 = nn.Sequential(
-            Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 8, C * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 8, C * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 8, C * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down4Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N * 8, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 8, C * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down4 = nn.Sequential(
-            Conv2dBlock(N * 16, N * 16, convStride=1,
+            Conv2dBlock(C * 16, C * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 16, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 16, C * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 16, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 16, C * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down5Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N * 16, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 16, C * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down5 = nn.Sequential(
-            Conv2dBlock(N * 32, N * 32, convStride=1,
+            Conv2dBlock(C * 32, C * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 32, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 32, C * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 32, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 32, C * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down6Pooling = nn.Sequential(
             nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N * 32, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 32, C * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_down6 = nn.Sequential(
-            Conv2dBlock(N * 64, N * 64, convStride=1,
+            Conv2dBlock(C * 64, C * 64, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 64, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 64, C * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 64, N * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 64, C * 64, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
@@ -155,100 +155,100 @@ class SurfacesUnet(BasicModel):
 
         self.m_up6Pooling = nn.Sequential(
             nn.Upsample(size=self.m_layerSizeList[5], mode='bilinear'),
-            Conv2dBlock(N * 64, N * 32, convStride=1,
+            Conv2dBlock(C * 64, C * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
         )
         self.m_up6 = nn.Sequential(
-            Conv2dBlock(N * 32, N * 32, convStride=1,
+            Conv2dBlock(C * 32, C * 32, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 32, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 32, C * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 32, N * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 32, C * 32, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up5Pooling = nn.Sequential(
             nn.Upsample(size=self.m_layerSizeList[4], mode='bilinear'),
-            Conv2dBlock(N * 32, N * 16, convStride=1,
+            Conv2dBlock(C * 32, C * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
         )
         self.m_up5 = nn.Sequential(
-            Conv2dBlock(N * 16, N * 16, convStride=1,
+            Conv2dBlock(C * 16, C * 16, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 16, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 16, C * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 16, N * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 16, C * 16, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up4Pooling = nn.Sequential(
             nn.Upsample(size=self.m_layerSizeList[3], mode='bilinear'),
-            Conv2dBlock(N * 16, N * 8, convStride=1,
+            Conv2dBlock(C * 16, C * 8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
         )
         self.m_up4 = nn.Sequential(
-            Conv2dBlock(N * 8, N * 8, convStride=1,
+            Conv2dBlock(C * 8, C * 8, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 8, C * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 8, N * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 8, C * 8, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up3Pooling = nn.Sequential(
             nn.Upsample(size=self.m_layerSizeList[2], mode='bilinear'),
-            Conv2dBlock(N * 8, N * 4, convStride=1,
+            Conv2dBlock(C * 8, C * 4, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
         )
         self.m_up3 = nn.Sequential(
-            Conv2dBlock(N * 4, N * 4, convStride=1,
+            Conv2dBlock(C * 4, C * 4, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 4, N * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 4, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up2Pooling = nn.Sequential(
             nn.Upsample(size=self.m_layerSizeList[1], mode='bilinear'),
-            Conv2dBlock(N * 4, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 4, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
         )
         self.m_up2 = nn.Sequential(
-            Conv2dBlock(N * 2, N * 2, convStride=1,
+            Conv2dBlock(C * 2, C * 2, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N * 2, N * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C * 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
 
         self.m_up1Pooling = nn.Sequential(
             nn.Upsample(size=self.m_layerSizeList[0], mode='bilinear'),
-            Conv2dBlock(N * 2, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C * 2, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )
         self.m_up1 = nn.Sequential(
-            Conv2dBlock(N, N, convStride=1,
+            Conv2dBlock(C, C, convStride=1,
                         useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
         )# output size: BxNxHxW
 
         # 3 branches:
         self.m_surfaces = nn.Sequential(
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            nn.Conv2d(N, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
+            nn.Conv2d(C, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:numSurfaces*H*W
 
         if self.hps.useLayerDice:
             self.m_layers = nn.Sequential(
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
-                nn.Conv2d(N, self.hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
+                nn.Conv2d(C, self.hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
             )  # output size:(numSurfaces+1)*H*W
 
         #tensors need switch H and W dimension to feed into self.m_rifts
@@ -256,9 +256,9 @@ class SurfacesUnet(BasicModel):
         #output (numSurfaces-1) rifts.
         if hasattr(self.hps, 'useRiftInPretrain'):
             self.m_rifts= nn.Sequential(
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, (self.hps.numSurfaces-1), convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, (self.hps.numSurfaces-1), convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU, kernelSize=3, padding=3, dilation=3), # output size: Bx(NumSurfaces-1)xWxH
                 nn.Linear(self.hps.inputHeight, 1),
                 nn.ReLU()   # RiftWidth >=0
@@ -268,13 +268,13 @@ class SurfacesUnet(BasicModel):
         # and output of this layer needs squeeze dim=1
         if hasattr(self.hps, 'useCalibrate') and self.hps.useCalibrate:
             self.m_calibrate = nn.Sequential(
-                Conv2dBlock(1, N, convStride=1,
+                Conv2dBlock(1, C, convStride=1,
                             useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
-                nn.Conv2d(N, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1x(N-1)xW
+                nn.Conv2d(C, 1, kernel_size=1, stride=1, padding=0)  # output:Bx1x(N-1)xW
                 )
 
         # learningPairWise weight module
@@ -282,11 +282,11 @@ class SurfacesUnet(BasicModel):
         # output of this module: Bx1x(N-1)xW, need squeeze for further use.
         if hasattr(self.hps, 'useLearningPairWeight') and self.hps.useLearningPairWeight:
             self.m_learnPairWeight = nn.Sequential(
-                Conv2dBlock(3, N, convStride=1,
+                Conv2dBlock(3, C, convStride=1,
                             useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=self.m_useLeakyReLU),
-                Conv2dBlock(N, 1, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                Conv2dBlock(C, 1, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                             useLeakyReLU=False, normAffine=True)
             ) # output:Bx1x(N-1)xW
 
