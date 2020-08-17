@@ -235,14 +235,14 @@ class SurfacesUnet(BasicModel):
                         useLeakyReLU=self.m_useLeakyReLU),
             Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU)
-        )# output size: BxNxHxW
+        )# output size: BxCxHxW
 
         # 3 branches:
         self.m_surfaces = nn.Sequential(
             Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
             nn.Conv2d(C, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:numSurfaces*H*W
+        )  # output size:BxNxHxW
 
         if self.hps.useLayerDice:
             self.m_layers = nn.Sequential(
