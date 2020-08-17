@@ -401,7 +401,7 @@ class SurfacesUnet_Phase(BasicModel):
             sigma2_detach = sigma2.clone().detach()
             S = separationIPM(mu_detach, sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight, learningPairWeight=pairWeight)
             loss_surfaceL1 = l1Loss(S, GTs)
-            loss = loss_surfaceL1 * weightL1
+            loss = loss_surfaceL1
 
         else:
             if self.hps.epochs1 <= self.m_epoch < self.hps.epochs2:
@@ -410,7 +410,7 @@ class SurfacesUnet_Phase(BasicModel):
                 for i in range(1,N):
                     S[:, i, :] = S[:, i-1, :] + R[:,i-1,:]  # because R>=0, it can guarantee order.
                 loss_surfaceL1 = l1Loss(S, GTs)
-                loss = (loss_surfaceL1 + loss_riftL1) * weightL1
+                loss = loss_surfaceL1 + loss_riftL1
 
             else:
                 # ReLU to guarantee layer order not to cross each other
