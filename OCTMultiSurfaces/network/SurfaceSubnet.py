@@ -31,8 +31,7 @@ class SurfaceSubnet(BasicModel):
 
         # Surface branch
         self.m_surfaces = nn.Sequential(
-            Conv2dBlock(C, C, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(C, C),
             nn.Conv2d(C, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:BxNxHxW
 

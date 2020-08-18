@@ -39,8 +39,8 @@ def constructUnet(inputChannels, H, W, C, nLayers):
     #  input to downPooling0: BxinputChannelsxHxW
     #  output of upSample0:  BxCxHxW
     for i in range(nLayers):
-        CPreLayer = pow(C, i) if 0 != i else C
-        CLayer = pow(C, i + 1)  # the channel number in the layer
+        CPreLayer = C*pow(2, i-1) if i >=1 else C
+        CLayer = C*pow(2, i)  # the channel number in the layer
         if 0 == i:
             downPoolings.append(Conv2dBlock(inputChannels, CLayer))
             upSamples.append(Conv2dBlock(CLayer, CPreLayer))

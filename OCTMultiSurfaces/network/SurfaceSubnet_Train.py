@@ -13,6 +13,7 @@ sys.path.append(".")
 from OCTDataSet import *
 from OCTOptimization import *
 from OCTTransform import *
+from SurfaceSubnet import SurfaceSubnet
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
