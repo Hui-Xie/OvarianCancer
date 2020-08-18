@@ -57,9 +57,9 @@ batchSize: 4
 epochs0: 0
 lr0: 0.01
 epochs1: 160  #
-lr1: 0.1
+lr1: 0.01
 epochs2: 320  # accumulative epochs
-lr2: 0.1
+lr2: 0.001  # too big learning will lead NaN is IPM
 
 
 network: "SurfacesUnet_Phase"

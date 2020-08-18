@@ -26,40 +26,8 @@ class SurfaceSubnet(BasicModel):
         self.hps = hps
         C = self.hps.startFilters
 
-        self.m_layerSizeList = computeLayerSizeUsingMaxPool2D(self.hps.inputHeight, self.hps.inputWidth, self.hps.nLayers)
-
-        self.m_useSpectralNorm = False
-        self.m_useLeakyReLU = True
-
-        self.m_downPoolings = nn.ModuleList()
-        self.m_downLayers  = nn.ModuleList()
-        self.m_upSamples = nn.ModuleList()
-        self.m_upLayers = nn.ModuleList()
-        # symmetric structure in each layer:
-        # downPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
-        #  Pooling->ChannelChange->downLayer    ==============     upLayer->UpperSample->ChannelChange
-        #  input to downPooling0: BxinputChannelsxHxW
-        #  output of upSample0:  BxCxHxW
-        for i in range(self.hps.nLayers):
-            CPreLayer = pow(C,i) if 0 != i else C
-            CLayer = pow(C,i+1)  # the channel number in the layer
-            if 0==i:
-                self.m_downPoolings.append(Conv2dBlock(self.hps.inputChannels, CLayer))
-                self.upSamples.append(Conv2dBlock(CLayer, CPreLayer))
-            else:
-                self.m_downPoolings.append(nn.Sequential(
-                    nn.MaxPool2d(2, stride=2, padding=0),
-                    Conv2dBlock(CPreLayer, CLayer)
-                    ))
-                self.upSamples.append(nn.Sequential(
-                    nn.Upsample(size=self.m_layerSizeList[i-1], mode='bilinear'),
-                    Conv2dBlock(CLayer, CPreLayer)
-                    ))
-            self.m_downLayers.append(nn.Sequential(
-                Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer),  Conv2dBlock(CLayer, CLayer)))
-
-            self.m_upLayers.append(nn.Sequential(
-                Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer),  Conv2dBlock(CLayer, CLayer)))
+        self.m_downPoolings, self.m_downLayers, self.m_upSamples, self.m_upLayers = \
+            constructUnet(self.hps.inputChannels, self.hps.inputHeight, self.hps.inputWidth, C, self.hps.nLayers)
 
         # 3 branches:
         self.m_surfaces = nn.Sequential(
