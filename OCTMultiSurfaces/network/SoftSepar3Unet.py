@@ -68,78 +68,54 @@ class SoftSepar3Unet(BasicModel):
             NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.hps.lambdaSubnetDevice))
         self.m_lambdaSubnet.m_netMgr.loadNet(self.hps.lambdaSubnetMode)
 
-
-
-
-
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
-        device = inputs.device
-        # compute outputs
-        skipxs = [None for _ in range(self.hps.nLayers)]  # skip link x
+        sDevice = self.hps.surfaceSubnetDevice
+        Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(sDevice),
+                                     gaussianGTs=gaussianGTs.to(sDevice),
+                                     GTs=GTs.to(sDevice))
 
-        # down path of Unet
-        for i in range(self.hps.nLayers):
-            if 0 == i:
-                x = inputs
-            else:
-                x = skipxs[i-1]
-            x = self.m_downPoolings[i](x)
-            skipxs[i] = self.m_downLayers[i](x) + x
+        rDevice = self.hps.riftSubnetDevice
+        R, riftLoss = self.m_riftSubnet.forward(inputs.to(rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
+                                                riftGTs= riftGTs.to(rDevice))
 
-        # up path of Unet
-        for i in range(self.hps.nLayers-1, -1, -1):
-            if self.hps.nLayers-1 == i:
-                x = skipxs[i]
-            else:
-                x = x+skipxs[i]
-            x = self.m_upLayers[i](x) + x
-            x = self.m_upSamples[i](x)
-        # output of Unet: BxCxHxW
+        lDevice = self.hps.lambdaSubnetDevice
+        Lambda = self.m_lambdaSubnet.forward(inputs.to(lDevice))
 
+        separationIPM = SoftSeparationIPMModule()
+        l1Loss = nn.SmoothL1Loss().to(lDevice)
+        
+        if self.hps.status == "trainLambda":
+            R_detach = R.clone().detach().to(lDevice)
+            Mu_detach = Mu.clone().detach().to(lDevice)
+            Sigma2_detach = Sigma2.clone().detach().to(lDevice)
+            S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
+                              learningPairWeight=Lambda)
+            surfaceL1Loss = l1Loss(S, GTs.to(lDevice))
+            loss = surfaceL1Loss
 
-        # N is numSurfaces
-        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*N*H*W
-        B,N,H,W = xs.shape
+        elif self.hps.status == "fineTuneSurfaceRift":
+            R = R.to(lDevice)
+            Mu = Mu.to(lDevice)
+            Sigma2 = Sigma2.to(lDevice)
+            Lambda_detach = Lambda.clone().detach().to(lDevice)
+            S = separationIPM(Mu, Sigma2, R=R, fixedPairWeight=self.hps.fixedPairWeight,
+                              learningPairWeight=Lambda_detach)
+            surfaceL1Loss = l1Loss(S, GTs.to(lDevice))
+            loss = surfaceLoss.to(lDevice) + riftLoss.to(lDevice) + surfaceL1Loss
 
-        layerMu = None # referred surface mu computed by layer segmentation.
-        layerConf = None
-        surfaceProb = logits2Prob(xs, dim=-2)
-
-        # compute surface mu and variance
-        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
-
-        # ReLU to guarantee layer order not to cross each other
-        S = mu.clone()
-        for i in range(1, N):
-            S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-
-        loss_surface = 0.0
-        loss_smooth = 0.0
-        if self.hps.existGTLabel:
-            # hps.useWeightedDivLoss:
-            surfaceWeight = None
-            _, C, _, _ = inputs.shape
-            if C >= 4:  # at least 3 gradient channels.
-                imageGradMagnitude = inputs[:, C - 1, :,
-                                     :]  # image gradient magnitude is at final channel since July 23th, 2020
-                surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=self.hps.gradWeight)
-
-            weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
-            if 0 == len(gaussianGTs):  # sigma ==0 case
-                gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
-
-            #hps.useSmoothSurface:
-            smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-            loss_smooth = smoothSurfaceLoss(S, GTs)
-
-        loss = loss_surface + loss_smooth
-
-        if torch.isnan(loss.sum()): # detect NaN
-            print(f"Error: find NaN loss at epoch {self.m_epoch}")
+        elif self.hps.status == "test":
+            R_detach = R.clone().detach().to(lDevice)
+            Mu_detach = Mu.clone().detach().to(lDevice)
+            Sigma2_detach = Sigma2.clone().detach().to(lDevice)
+            Lambda_detach = Lambda.clone().detach().to(lDevice)
+            S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
+                              learningPairWeight=Lambda_detach)
+            surfaceL1Loss = l1Loss(S, GTs.to(lDevice))
+            loss = surfaceL1Loss
+        else:
             assert False
 
-        return S, sigma2, loss  # return surfaceLocation S in (B,S,W) dimension, sigma2, and loss
+        return S, loss
 
 
 
