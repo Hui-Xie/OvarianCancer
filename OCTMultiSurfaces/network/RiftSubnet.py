@@ -16,7 +16,7 @@ class RiftSubnet(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: BxinputChaneels*H*W
-        outputSize: (B, N, H, W)
+        outputSize: (B, N-1, H, W)
         '''
         super().__init__()
         self.hps = hps
@@ -31,7 +31,7 @@ class RiftSubnet(BasicModel):
         self.m_rifts= nn.Sequential(
             Conv2dBlock(C, C),
             nn.Conv2d(C, self.hps.numSurfaces-1, kernel_size=1, stride=1, padding=0)  # conv 1*1
-            )  # output size:Bx(numSurfaces-1)xHxW
+            )  # output size:Bx(N-1)xHxW
 
 
 
@@ -59,12 +59,12 @@ class RiftSubnet(BasicModel):
             x = self.m_upSamples[i](x)
         # output of Unet: BxCxHxW
 
-        # N is numSurfaces-1
-        xr = self.m_rifts(x)  # output size: BxNxHxW
+        # N is numSurfaces
+        xr = self.m_rifts(x)  # output size: Bx(N-1)xHxW
         B,N,H,W = xr.shape
 
         riftProb = logits2Prob(xr, dim=-2)
-        R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: BxNxW
+        R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
 
         l1Loss = nn.SmoothL1Loss().to(device)
 
@@ -79,7 +79,7 @@ class RiftSubnet(BasicModel):
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        return R, loss  # return rift R in (B,N,W) dimension and loss
+        return R, loss  # return rift R in (B,N-1,W) dimension and loss
 
 
 
