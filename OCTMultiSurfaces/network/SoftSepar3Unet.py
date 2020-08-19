@@ -83,7 +83,7 @@ class SoftSepar3Unet(BasicModel):
 
         separationIPM = SoftSeparationIPMModule()
         l1Loss = nn.SmoothL1Loss().to(lDevice)
-        
+
         if self.hps.status == "trainLambda":
             R_detach = R.clone().detach().to(lDevice)
             Mu_detach = Mu.clone().detach().to(lDevice)
@@ -117,5 +117,48 @@ class SoftSepar3Unet(BasicModel):
 
         return S, loss
 
+    def zero_grad(self):
+        self.m_surfaceSubnet.m_optimizer.zero_grad()
+        self.m_riftSubnet.m_optimizer.zero_grad()
+        self.m_lambdaSubnet.m_optimizer.zero_grad()
 
+
+    def optimizerStep(self):
+        if self.hps.status == "trainLambda":
+            self.m_lambdaSubnet.m_optimizer.step()
+        elif self.hps.status == "fineTuneSurfaceRift":
+            self.m_surfaceSubnet.m_optimizer.step()
+            self.m_riftSubnet.m_optimizer.step()
+        else:
+            pass
+
+    def lrSchedulerStep(self, validLoss):
+        if self.hps.status == "trainLambda":
+            self.m_lambdaSubnet.m_lrScheduler.step(validLoss)
+        elif self.hps.status == "fineTuneSurfaceRift":
+            self.m_surfaceSubnet.m_lrScheduler.step(validLoss)
+            self.m_riftSubnet.m_lrScheduler.step(validLoss)
+        else:
+            pass
+
+    def saveNet(self):
+        if self.hps.status == "trainLambda":
+            self.m_lambdaSubnet.m_netMgr.saveNet()
+        elif self.hps.status == "fineTuneSurfaceRift":
+            self.m_surfaceSubnet.m_netMgr.saveNet()
+            self.m_riftSubnet.m_netMgr.saveNet()
+        else:
+            pass
+
+    def getLearningRate(self):
+        if self.hps.status == "trainLambda":
+            lr = self.m_lambdaSubnet.m_optimizer.param_groups[0]['lr']
+        elif self.hps.status == "fineTuneSurfaceRift":
+            sLr = self.m_surfaceSubnet.m_optimizer.param_groups[0]['lr']
+            rLr = self.m_riftSubnet.m_optimizer.param_groups[0]['lr']
+            lr = min(sLr, rLr)
+        else:
+            pass
+
+        return lr
 
