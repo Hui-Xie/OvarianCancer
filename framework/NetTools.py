@@ -1,6 +1,7 @@
 
 import math
 import torch.nn as nn
+import torch
 
 import sys
 from framework.ConvBlocks import *
@@ -60,3 +61,27 @@ def constructUnet(inputChannels, H, W, C, nLayers):
             Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
 
     return downPoolings, downLayers, upSamples, upLayers
+
+def argSoftmax(x):
+    '''
+
+    :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along the height dimension
+    :param dim:
+    :return:  mu in size: B,N,1,W
+    '''
+    device = x.device
+    B, N, H, W = x.shape
+
+    # compute mu
+    Y = torch.arange(H).view((1, 1, H, 1)).expand(x.size()).to(device=device, dtype=torch.int16)
+    # mu = torch.sum(x*Y, dim=-2, keepdim=True)
+    # use slice method to compute P*Y
+    for b in range(B):
+        if 0 == b:
+            PY = (x[b,] * Y[b,]).unsqueeze(dim=0)
+        else:
+            PY = torch.cat((PY, (x[b,] * Y[b,]).unsqueeze(dim=0)))
+    mu = torch.sum(PY, dim=-2, keepdim=False)  # size: B,N,W
+    del PY  # hope to free memory.
+
+    return mu

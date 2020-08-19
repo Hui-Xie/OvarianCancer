@@ -38,6 +38,7 @@ class SurfaceSubnet(BasicModel):
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
+        device = inputs.device
         # compute outputs
         skipxs = [None for _ in range(self.hps.nLayers)]  # skip link x
 
