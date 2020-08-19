@@ -89,13 +89,8 @@ def main():
     net.setLrScheduler(lrScheduler)
 
     # Load network
-    if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
-        netMgr = NetMgr(net, hps.netPath, hps.device)
-        netMgr.loadNet("train")
-        print(f"Network load from  {hps.netPath}")
-    else:
-        netMgr = NetMgr(net, hps.netPath, hps.device)
-        print(f"Net starts training from scratch, and save at {hps.netPath}")
+    netMgr = NetMgr(net, hps.netPath, hps.device)
+    netMgr.loadNet("train")
 
     writer = SummaryWriter(log_dir=hps.logDir)
 

@@ -86,12 +86,10 @@ def main():
         return
 
     # Load network
-    if os.path.exists(netPath) and 2 == len(getFilesList(netPath, ".pt")):
-        netMgr = NetMgr(net, netPath, device)
-        netMgr.loadNet("test")
-        print(f"Response Classifier load from  {netPath}")
-    else:
-        print(f"Error: program can not load network")
+
+    netMgr = NetMgr(net, netPath, device)
+    netMgr.loadNet("test")
+
 
     logDir = latentDir + "/log/"+ network+ "/" + experimentName
     if not os.path.exists(logDir):

@@ -12,6 +12,7 @@ class BasicModel(nn.Module):
         # self.m_dropout3d = nn.Dropout3d(p=self.m_dropoutProb)
         # self.m_dropout2d = nn.Dropout2d(p=self.m_dropoutProb)
         # self.m_dropout1d = nn.Dropout(p=self.m_dropoutProb)
+        self.m_netMgr = None
         self.m_optimizer = None
         self.m_lrScheduler = None
         self.m_lossFuncList = []
@@ -40,6 +41,8 @@ class BasicModel(nn.Module):
             return self.m_runParametersDict[nameStr]
         else:
             return False
+    def setNetMgr(self,netMgr):
+        self.m_netMgr = netMgr
 
     def setOptimizer(self, optimizer):
         self.m_optimizer = optimizer

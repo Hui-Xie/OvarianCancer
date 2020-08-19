@@ -95,12 +95,10 @@ def main():
     net.to(device=hps.device)
 
     # Load network
-    if os.path.exists(hps.netPath) and len(getFilesList(hps.netPath, ".pt")) >= 2 :
-        netMgr = NetMgr(net, hps.netPath, hps.device)
-        netMgr.loadNet("test")
-        print(f"Network load from  {hps.netPath}")
-    else:
-        print(f"Can not find pretrained network for test!")
+
+    netMgr = NetMgr(net, hps.netPath, hps.device)
+    netMgr.loadNet("test")
+
 
     if "OCT_Tongren" in hps.dataDir:
         if hps.numSurfaces == 9:
