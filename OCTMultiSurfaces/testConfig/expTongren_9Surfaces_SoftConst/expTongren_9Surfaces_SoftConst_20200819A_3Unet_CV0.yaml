@@ -20,19 +20,16 @@ surfaceSubnet: "SurfaceSubnet"
 surfaceSubnetYaml: "/home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
 surfaceSubnetLr: 0.001
-surfaceMode: "test"
 
 riftSubnet: "RiftSubnet"
 riftSubnetYaml: "/home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_RiftSubnet_CV0.yaml"
 riftSubnetDevice: torch.device('cuda:2')   #GPU ID
 riftSubenetLr: 0.001
-riftSubnetMode: "test"
 
 lambdaSubnet: "LambdaSubnet"
 lambdaSubnetYaml: "/home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0.yaml"
 lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID
 lambdaSubnetLr: 0.01
-lambdaSubnetMode: "train"
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True

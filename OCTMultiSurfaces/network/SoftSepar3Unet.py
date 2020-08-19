@@ -33,6 +33,8 @@ class SoftSepar3Unet(BasicModel):
         # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
         # Parameters of a model after .cuda() will be different objects with those before the call.
 
+        surfaceMode, riftMode, lambdaMode = self.getSubnetModes()
+
         # surface Subnet
         self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
         self.m_surfaceSubnet.to(device=self.hps.surfaceSubnetDevice)
@@ -40,7 +42,7 @@ class SoftSepar3Unet(BasicModel):
         self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
                                             mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
         self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.hps.surfaceSubnetDevice))
-        self.m_surfaceSubnet.m_netMgr.loadNet(self.hps.surfaceSubnetMode)
+        self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode)
 
         # rift Subnet
         self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
@@ -53,7 +55,7 @@ class SoftSepar3Unet(BasicModel):
                                                                                  threshold_mode='rel'))
         self.m_riftSubnet.setNetMgr(
             NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.hps.riftSubnetDevice))
-        self.m_riftSubnet.m_netMgr.loadNet(self.hps.riftSubnetMode)
+        self.m_riftSubnet.m_netMgr.loadNet(riftMode)
         
         # lambda Subnet
         self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
@@ -66,7 +68,24 @@ class SoftSepar3Unet(BasicModel):
                                                                               threshold_mode='rel'))
         self.m_lambdaSubnet.setNetMgr(
             NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.hps.lambdaSubnetDevice))
-        self.m_lambdaSubnet.m_netMgr.loadNet(self.hps.lambdaSubnetMode)
+        self.m_lambdaSubnet.m_netMgr.loadNet(lambdaMode)
+
+    def getSubnetModes(self):
+        if self.hps.status == "trainLambda":
+            surfaceMode = "test"
+            riftMode = "test"
+            lambdaMode = "train"
+        elif self.hps.status == "fineTuneSurfaceRift":
+            surfaceMode = "train"
+            riftMode = "train"
+            lambdaMode = "test"
+        else:
+            surfaceMode = "test"
+            riftMode = "test"
+            lambdaMode = "test"
+
+        return surfaceMode, riftMode, lambdaMode
+
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         sDevice = self.hps.surfaceSubnetDevice
@@ -158,7 +177,7 @@ class SoftSepar3Unet(BasicModel):
             rLr = self.m_riftSubnet.m_optimizer.param_groups[0]['lr']
             lr = min(sLr, rLr)
         else:
-            pass
+            lr = 0.0
 
         return lr
 
