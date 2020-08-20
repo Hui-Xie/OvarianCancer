@@ -24,7 +24,7 @@ surfaceSubnetLr: 0.005  # pretain at epoch 121
 riftSubnet: "RiftSubnet"
 riftSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_RiftSubnet_CV0.yaml"
 riftSubnetDevice: torch.device('cuda:2')   #GPU ID
-riftSubenetLr: 0.01  # pretrain at epoch 54
+riftSubnetLr: 0.01  # pretrain at epoch 54
 
 lambdaSubnet: "LambdaSubnet"
 lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0.yaml"

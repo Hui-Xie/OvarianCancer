@@ -40,16 +40,18 @@ class SoftSepar3Unet(BasicModel):
 
         # surface Subnet
         self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
-        self.m_surfaceSubnet.to(device=self.hps.surfaceSubnetDevice)
+        sDevice = eval(self.hps.surfaceSubnetDevice)
+        self.m_surfaceSubnet.to(sDevice)
         self.m_surfaceSubnet.setOptimizer(optim.Adam(self.m_surfaceSubnet.parameters(), lr=self.hps.surfaceSubnetLr, weight_decay=0))
         self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
                                             mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
-        self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.hps.surfaceSubnetDevice))
+        self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, sDevice))
         self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode)
 
         # rift Subnet
         self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
-        self.m_riftSubnet.to(device=self.hps.riftSubnetDevice)
+        rDevice = eval(self.hps.riftSubnetDevice)
+        self.m_riftSubnet.to(rDevice)
         self.m_riftSubnet.setOptimizer(
             optim.Adam(self.m_riftSubnet.parameters(), lr=self.hps.riftSubnetLr, weight_decay=0))
         self.m_riftSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_riftSubnet.m_optimizer, \
@@ -57,12 +59,13 @@ class SoftSepar3Unet(BasicModel):
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
         self.m_riftSubnet.setNetMgr(
-            NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.hps.riftSubnetDevice))
+            NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, rDevice))
         self.m_riftSubnet.m_netMgr.loadNet(riftMode)
         
         # lambda Subnet
         self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
-        self.m_lambdaSubnet.to(device=self.hps.lambdaSubnetDevice)
+        lDevice = eval(self.hps.lambdaSubnetDevice)
+        self.m_lambdaSubnet.to(lDevice)
         self.m_lambdaSubnet.setOptimizer(
             optim.Adam(self.m_lambdaSubnet.parameters(), lr=self.hps.lambdaSubnetLr, weight_decay=0))
         self.m_lambdaSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaSubnet.m_optimizer, \
@@ -70,7 +73,7 @@ class SoftSepar3Unet(BasicModel):
                                                                               min_lr=1e-8, threshold=0.02,
                                                                               threshold_mode='rel'))
         self.m_lambdaSubnet.setNetMgr(
-            NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.hps.lambdaSubnetDevice))
+            NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, lDevice))
         self.m_lambdaSubnet.m_netMgr.loadNet(lambdaMode)
 
     def getSubnetModes(self):
