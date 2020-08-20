@@ -95,7 +95,6 @@ def main():
     net.to(device=hps.device)
 
     # Load network
-
     netMgr = NetMgr(net, hps.netPath, hps.device)
     netMgr.loadNet("test")
 

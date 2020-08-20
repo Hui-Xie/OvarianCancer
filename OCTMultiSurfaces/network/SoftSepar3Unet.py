@@ -138,7 +138,7 @@ class SoftSepar3Unet(BasicModel):
             #surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
             loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
             loss = loss_smooth
-            
+
         else:
             assert False
 
