@@ -96,15 +96,6 @@ def main():
             testR = torch.cat((testR, R)) if testBatch != 1 else R
 
 
-        testR = testR.cpu().numpy()
-        testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
-        np.save(testRFilePath, testR)
-
-        # output testID
-        with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
-            for id in testIDs:
-                file.write(f"{id}\n")
-
         if hps.existGTLabel:
             goodBScansInGtOrder = None
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testR,
@@ -115,6 +106,15 @@ def main():
             testGts = testGts.cpu().numpy()
             testGtsFilePath = os.path.join(hps.outputDir, f"testRiftGts.npy")
             np.save(testGtsFilePath, testGts)
+
+        testR = testR.cpu().numpy()
+        testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
+        np.save(testRFilePath, testR)
+
+        # output testID
+        with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
+            for id in testIDs:
+                file.write(f"{id}\n")
 
         images = images.cpu().numpy().squeeze()
         
