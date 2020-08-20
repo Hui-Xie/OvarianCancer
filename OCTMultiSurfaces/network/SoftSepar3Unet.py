@@ -40,18 +40,18 @@ class SoftSepar3Unet(BasicModel):
 
         # surface Subnet
         self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
-        sDevice = eval(self.hps.surfaceSubnetDevice)
-        self.m_surfaceSubnet.to(sDevice)
+        self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
+        self.m_surfaceSubnet.to(self.m_sDevice)
         self.m_surfaceSubnet.setOptimizer(optim.Adam(self.m_surfaceSubnet.parameters(), lr=self.hps.surfaceSubnetLr, weight_decay=0))
         self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
                                             mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
-        self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, sDevice))
+        self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.m_sDevice))
         self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode)
 
         # rift Subnet
         self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
-        rDevice = eval(self.hps.riftSubnetDevice)
-        self.m_riftSubnet.to(rDevice)
+        self.m_rDevice = eval(self.hps.riftSubnetDevice)
+        self.m_riftSubnet.to(self.m_rDevice)
         self.m_riftSubnet.setOptimizer(
             optim.Adam(self.m_riftSubnet.parameters(), lr=self.hps.riftSubnetLr, weight_decay=0))
         self.m_riftSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_riftSubnet.m_optimizer, \
@@ -59,13 +59,13 @@ class SoftSepar3Unet(BasicModel):
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
         self.m_riftSubnet.setNetMgr(
-            NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, rDevice))
+            NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.m_rDevice))
         self.m_riftSubnet.m_netMgr.loadNet(riftMode)
         
         # lambda Subnet
         self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
-        lDevice = eval(self.hps.lambdaSubnetDevice)
-        self.m_lambdaSubnet.to(lDevice)
+        self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
+        self.m_lambdaSubnet.to(self.m_lDevice)
         self.m_lambdaSubnet.setOptimizer(
             optim.Adam(self.m_lambdaSubnet.parameters(), lr=self.hps.lambdaSubnetLr, weight_decay=0))
         self.m_lambdaSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaSubnet.m_optimizer, \
@@ -73,7 +73,7 @@ class SoftSepar3Unet(BasicModel):
                                                                               min_lr=1e-8, threshold=0.02,
                                                                               threshold_mode='rel'))
         self.m_lambdaSubnet.setNetMgr(
-            NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, lDevice))
+            NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.m_lDevice))
         self.m_lambdaSubnet.m_netMgr.loadNet(lambdaMode)
 
     def getSubnetModes(self):
@@ -94,48 +94,45 @@ class SoftSepar3Unet(BasicModel):
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
-        sDevice = self.hps.surfaceSubnetDevice
-        Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(sDevice),
-                                     gaussianGTs=gaussianGTs.to(sDevice),
-                                     GTs=GTs.to(sDevice))
+        Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
+                                     gaussianGTs=gaussianGTs.to(self.m_sDevice),
+                                     GTs=GTs.to(self.m_sDevice))
 
-        rDevice = self.hps.riftSubnetDevice
-        R, riftLoss = self.m_riftSubnet.forward(inputs.to(rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
-                                                riftGTs= riftGTs.to(rDevice))
+        R, riftLoss = self.m_riftSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
+                                                riftGTs= riftGTs.to(self.m_rDevice))
 
-        lDevice = self.hps.lambdaSubnetDevice
-        Lambda = self.m_lambdaSubnet.forward(inputs.to(lDevice))
+        Lambda = self.m_lambdaSubnet.forward(inputs.to(self.m_lDevice))
 
         separationIPM = SoftSeparationIPMModule()
-        l1Loss = nn.SmoothL1Loss().to(lDevice)
+        l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
 
         if self.hps.status == "trainLambda":
-            R_detach = R.clone().detach().to(lDevice)
-            Mu_detach = Mu.clone().detach().to(lDevice)
-            Sigma2_detach = Sigma2.clone().detach().to(lDevice)
+            R_detach = R.clone().detach().to(self.m_lDevice)
+            Mu_detach = Mu.clone().detach().to(self.m_lDevice)
+            Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
             S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda)
-            surfaceL1Loss = l1Loss(S, GTs.to(lDevice))
+            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
             loss = surfaceL1Loss
 
         elif self.hps.status == "fineTuneSurfaceRift":
-            R = R.to(lDevice)
-            Mu = Mu.to(lDevice)
-            Sigma2 = Sigma2.to(lDevice)
-            Lambda_detach = Lambda.clone().detach().to(lDevice)
+            R = R.to(self.m_lDevice)
+            Mu = Mu.to(self.m_lDevice)
+            Sigma2 = Sigma2.to(self.m_lDevice)
+            Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
             S = separationIPM(Mu, Sigma2, R=R, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda_detach)
-            surfaceL1Loss = l1Loss(S, GTs.to(lDevice))
-            loss = surfaceLoss.to(lDevice) + riftLoss.to(lDevice) + surfaceL1Loss
+            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
+            loss = surfaceLoss.to(self.m_lDevice) + riftLoss.to(self.m_lDevice) + surfaceL1Loss
 
         elif self.hps.status == "test":
-            R_detach = R.clone().detach().to(lDevice)
-            Mu_detach = Mu.clone().detach().to(lDevice)
-            Sigma2_detach = Sigma2.clone().detach().to(lDevice)
-            Lambda_detach = Lambda.clone().detach().to(lDevice)
+            R_detach = R.clone().detach().to(self.m_lDevice)
+            Mu_detach = Mu.clone().detach().to(self.m_lDevice)
+            Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
+            Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
             S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda_detach)
-            surfaceL1Loss = l1Loss(S, GTs.to(lDevice))
+            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
             loss = surfaceL1Loss
         else:
             assert False

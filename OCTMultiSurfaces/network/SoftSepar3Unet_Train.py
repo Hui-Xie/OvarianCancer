@@ -107,7 +107,7 @@ def main():
             S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
             net.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(loss.device))
-            net.OptimizerStep()
+            net.optimizerStep()
             trLoss += loss
 
         trLoss = trLoss / trBatch
