@@ -76,17 +76,17 @@ class RiftSubnet(BasicModel):
         #    l1Loss = nn.SmoothL1Loss().to(device)
         #    loss_riftL1 = l1Loss(R,riftGTs)
 
+        # use smoothLoss and KLDivLoss for rift
         loss_smooth = 0.0
         loss_div = 0.0
         if self.hps.existGTLabel:
-            # use smoothLoss and KLDivLoss for rift
             smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothRiftLoss(R, riftGTs)
 
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
             # the input given is expected to contain log-probabilities
             sigma2 = self.hps.sigma**2
-            sigma2 = sigma2*torch.ones_as(riftGTs)
+            sigma2 = torch.float(sigma2)*torch.ones_like(riftGTs)
             gaussianRiftGTs = batchGaussianizeLabels(riftGTs, sigma2, H)
             loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
 
