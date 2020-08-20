@@ -70,18 +70,21 @@ class RiftSubnet(BasicModel):
         riftProb = logits2Prob(xr, dim=-2)
         R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
 
-        # rift L1 loss
-        #loss_riftL1 = 0.0
-        #if self.hps.existGTLabel:
-        #    l1Loss = nn.SmoothL1Loss().to(device)
-        #    loss_riftL1 = l1Loss(R,riftGTs)
+
+
+
 
         # use smoothLoss and KLDivLoss for rift
-        loss_smooth = 0.0
+        loss_riftL1 = 0.0
+        # loss_smooth = 0.0
         loss_div = 0.0
         if self.hps.existGTLabel:
-            smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-            loss_smooth = smoothRiftLoss(R, riftGTs)
+            # rift L1 loss
+            l1Loss = nn.SmoothL1Loss().to(device)
+            loss_riftL1 = l1Loss(R,riftGTs)
+
+            # smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+            # loss_smooth = smoothRiftLoss(R, riftGTs)
 
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
             # the input given is expected to contain log-probabilities
@@ -90,7 +93,7 @@ class RiftSubnet(BasicModel):
             gaussianRiftGTs = batchGaussianizeLabels(riftGTs, sigma2, H)
             loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
 
-        loss = loss_smooth + loss_div
+        loss = loss_riftL1 + loss_div
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
