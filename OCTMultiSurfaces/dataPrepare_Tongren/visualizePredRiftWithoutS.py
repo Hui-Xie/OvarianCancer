@@ -71,20 +71,22 @@ for index in indexList:
     # draw image
     f = plt.figure(frameon=False)
     DPI = f.dpi
-    subplotRow = Rs.shape[1]
+    subplotRow = N-1
     subplotCol = 1
     f.set_size_inches(W * subplotCol / float(DPI), Height * subplotRow / float(DPI))
     plt.margins(0)
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
     for s in range(0, N-1):
-        subplots = plt.subplot(subplotRow, subplotCol, s+1)
-        subplots.plot(range(0, W), Rgt[s, :].squeeze(), 'tab:blue', linewidth=1)
-        subplots.plot(range(0, W), RgtSmooth[s, :].squeeze(), 'tab:green', linewidth=1)
-        subplots.plot(range(0, W), RPredict[s, :].squeeze(), 'tab:red', linewidth=1)
+        subplots = plt.subplot(subplotRow, subplotCol, s+1, facecolor='w')
+        subplots.plot(range(0, W), Rgt[s, :].squeeze(), 'tab:blue', linewidth=0.5)
+        subplots.plot(range(0, W), RgtSmooth[s, :].squeeze(), 'tab:green', linewidth=0.5)
+        subplots.plot(range(0, W), RPredict[s, :].squeeze(), 'tab:red', linewidth=0.5)
+        subplots.set_xlim([0, W])
+        subplots.set_ylim([0, Height])
         subplots.axis('off')
-
-    plt.savefig(outputVisaulRPath, dpi='figure', bbox_inches='tight', pad_inches=0)
+  
+    plt.savefig(outputVisaulRPath, dpi='figure', bbox_inches='tight', pad_inches=0, facecolor='w', edgecolor='w')
     plt.close()
 
 
