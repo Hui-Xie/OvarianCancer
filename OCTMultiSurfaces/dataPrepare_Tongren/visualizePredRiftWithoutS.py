@@ -74,6 +74,7 @@ for index in indexList:
     subplotRow = N-1
     subplotCol = 1
     f.set_size_inches(W * subplotCol / float(DPI), Height * subplotRow / float(DPI))
+    f.set_facecolor('w')
     plt.margins(0)
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
@@ -84,9 +85,10 @@ for index in indexList:
         subplots.plot(range(0, W), RPredict[s, :].squeeze(), 'tab:red', linewidth=0.5)
         subplots.set_xlim([0, W])
         subplots.set_ylim([0, Height])
+        subplots.set_facecolor('w')
         subplots.axis('off')
 
-    plt.savefig(outputVisaulRPath, dpi='figure', bbox_inches='tight', pad_inches=0, facecolor='w', edgecolor='w')
+    plt.savefig(outputVisaulRPath, dpi='figure', bbox_inches='tight', pad_inches=0, facecolor='w', edgecolor='w', transparent=True)
     plt.close()
 
 
