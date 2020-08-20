@@ -115,3 +115,8 @@ softSeparation: True
 useReLUInPretrain: True
 
 goodBscans: []
+
+# in rift loss
+useL1Loss: False
+useSmoothLoss: True
+useKLDivLoss: True

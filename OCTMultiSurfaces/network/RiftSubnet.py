@@ -72,24 +72,26 @@ class RiftSubnet(BasicModel):
 
         # use smoothLoss and KLDivLoss for rift
         loss_riftL1 = 0.0
-        # loss_smooth = 0.0
+        loss_smooth = 0.0
         loss_div = 0.0
         if self.hps.existGTLabel:
-            # rift L1 loss
-            l1Loss = nn.SmoothL1Loss().to(device)
-            loss_riftL1 = l1Loss(R,riftGTs)
+            if self.hps.useL1Loss:
+                l1Loss = nn.SmoothL1Loss().to(device)
+                loss_riftL1 = l1Loss(R,riftGTs)
 
-            # smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-            # loss_smooth = smoothRiftLoss(R, riftGTs)
+            if self.hps.useSmoothLoss:
+                smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+                loss_smooth = smoothRiftLoss(R, riftGTs)
 
-            klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
-            # the input given is expected to contain log-probabilities
-            sigma2 = self.hps.sigma**2
-            sigma2 = float(sigma2)*torch.ones_like(riftGTs)
-            gaussianRiftGTs = batchGaussianizeLabels(riftGTs, sigma2, H)
-            loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
+            if self.hps.useKLDivLoss:
+                klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
+                # the input given is expected to contain log-probabilities
+                sigma2 = self.hps.sigma**2
+                sigma2 = float(sigma2)*torch.ones_like(riftGTs)
+                gaussianRiftGTs = batchGaussianizeLabels(riftGTs*H/self.hps.maxRift, sigma2, H)  # very important conversion
+                loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
 
-        loss = loss_riftL1 + loss_div
+        loss = loss_riftL1 + loss_smooth + loss_div
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
