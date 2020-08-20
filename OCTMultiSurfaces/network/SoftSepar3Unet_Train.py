@@ -150,9 +150,9 @@ def main():
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        writer.add_scalar('learningRateSurface', net.getLearningRate("surfaceSubset"), epoch)
-        writer.add_scalar('learningRateRift', net.getLearningRate("riftSubset"), epoch)
-        writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubset"), epoch)
+        writer.add_scalar('learningRateSurface', net.getLearningRate("surfaceSubnet"), epoch)
+        writer.add_scalar('learningRateRift', net.getLearningRate("riftSubnet"), epoch)
+        writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubnet"), epoch)
 
         if  muError <= preErrorMean:
             net.updateRunParameter("validationLoss", validLoss)
@@ -161,7 +161,6 @@ def main():
             preValidLoss = validLoss
             preErrorMean = muError
             net.saveNet()
-        print ("test")
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
