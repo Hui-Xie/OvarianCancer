@@ -13,6 +13,7 @@ from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
+from framework.ConfigReader import ConfigReader
 
 class SurfaceSubnet(BasicModel):
     def __init__(self, hps=None):
@@ -21,6 +22,8 @@ class SurfaceSubnet(BasicModel):
         outputSize: (B, N, H, W)
         '''
         super().__init__()
+        if isinstance(hps, str):
+            hps = ConfigReader(hps)
         self.hps = hps
         C = self.hps.startFilters
 

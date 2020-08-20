@@ -161,6 +161,7 @@ def main():
             preValidLoss = validLoss
             preErrorMean = muError
             net.saveNet()
+        print ("test")
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

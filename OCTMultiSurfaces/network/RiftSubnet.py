@@ -11,6 +11,7 @@ from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import logits2Prob
+from framework.ConfigReader import ConfigReader
 
 class RiftSubnet(BasicModel):
     def __init__(self, hps=None):
@@ -19,6 +20,8 @@ class RiftSubnet(BasicModel):
         outputSize: (B, N-1, H, W)
         '''
         super().__init__()
+        if isinstance(hps, str):
+            hps = ConfigReader(hps)
         self.hps = hps
         C = self.hps.startFilters
 

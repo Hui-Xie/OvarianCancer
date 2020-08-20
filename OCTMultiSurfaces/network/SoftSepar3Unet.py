@@ -19,6 +19,7 @@ from framework.BasicModel import BasicModel
 from framework.NetMgr import NetMgr
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
+from framework.ConfigReader import ConfigReader
 
 class SoftSepar3Unet(BasicModel):
     def __init__(self, hps=None):
@@ -27,6 +28,8 @@ class SoftSepar3Unet(BasicModel):
         outputSize: (B, N, W) surfaces
         '''
         super().__init__()
+        if isinstance(hps, str):
+            hps = ConfigReader(hps)
         self.hps = hps
 
         # Important:
