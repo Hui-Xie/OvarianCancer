@@ -63,6 +63,7 @@ for index in indexList:
     Rgt = surface[1:, :] - surface[0:-1, :] # (N-1)xW
     RgtSmooth = smoothCMA(torch.from_numpy(Rgt), halfWidth, PadddingMode).numpy()
     RPredict = Rs[index,]
+    Height = max(np.amax(Rgt), np.amax(RgtSmooth), np.amax(RPredict))
     # RPredictSmooth = smoothCMA(torch.from_numpy(RPredict), halfWidth, PadddingMode).numpy()
     # compute prediction
 
@@ -71,7 +72,7 @@ for index in indexList:
     DPI = f.dpi
     subplotRow = Rs.shape[1]
     subplotCol = 1
-    f.set_size_inches(W * subplotCol / float(DPI), H * subplotRow / float(DPI))
+    f.set_size_inches(W * subplotCol / float(DPI), Height * subplotRow / float(DPI))
     plt.margins(0)
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
