@@ -1,6 +1,7 @@
 # Rift  Subnet
 
 import sys
+import torch.nn as nn
 
 sys.path.append(".")
 from OCTOptimization import *
@@ -10,7 +11,7 @@ sys.path.append("../..")
 from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import logits2Prob
+from framework.CustomizedLoss import logits2Prob, SmoothSurfaceLoss
 from framework.ConfigReader import ConfigReader
 
 class RiftSubnet(BasicModel):
@@ -69,14 +70,27 @@ class RiftSubnet(BasicModel):
         riftProb = logits2Prob(xr, dim=-2)
         R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
 
-        l1Loss = nn.SmoothL1Loss().to(device)
-
         # rift L1 loss
-        loss_riftL1 = 0.0
-        if self.hps.existGTLabel:
-            loss_riftL1 = l1Loss(R,riftGTs)
+        #loss_riftL1 = 0.0
+        #if self.hps.existGTLabel:
+        #    l1Loss = nn.SmoothL1Loss().to(device)
+        #    loss_riftL1 = l1Loss(R,riftGTs)
 
-        loss = loss_riftL1
+        loss_smooth = 0.0
+        loss_div = 0.0
+        if self.hps.existGTLabel:
+            # use smoothLoss and KLDivLoss for rift
+            smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+            loss_smooth = smoothRiftLoss(R, riftGTs)
+
+            klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
+            # the input given is expected to contain log-probabilities
+            sigma2 = self.hps.sigma**2
+            sigma2 = sigma2*torch.ones_as(riftGTs)
+            gaussianRiftGTs = batchGaussianizeLabels(riftGTs, sigma2, H)
+            loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
+
+        loss = loss_smooth + loss_div
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")

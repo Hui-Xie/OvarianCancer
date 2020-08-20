@@ -414,14 +414,14 @@ class SurfacesUnet(BasicModel):
 
             elif self.hps.useWeightedDivLoss:
                 weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
-                if 0 == len(gaussianGTs):  # sigma ==0 case
+                if 0 == len(gaussianGTs):  # sigma ==0 case, dynamic gausssian
                     gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
                 loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
             else:
                 klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
                 # the input given is expected to contain log-probabilities
-                if 0 == len(gaussianGTs):  # sigma ==0 case
+                if 0 == len(gaussianGTs):  # sigma ==0 case, dynamic gausssian
                     gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
                 loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
