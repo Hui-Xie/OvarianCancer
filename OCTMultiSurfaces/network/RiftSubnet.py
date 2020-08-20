@@ -70,10 +70,6 @@ class RiftSubnet(BasicModel):
         riftProb = logits2Prob(xr, dim=-2)
         R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
 
-
-
-
-
         # use smoothLoss and KLDivLoss for rift
         loss_riftL1 = 0.0
         # loss_smooth = 0.0
