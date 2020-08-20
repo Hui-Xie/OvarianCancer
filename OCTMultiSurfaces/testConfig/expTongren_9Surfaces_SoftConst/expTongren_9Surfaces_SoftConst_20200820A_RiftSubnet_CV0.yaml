@@ -6,6 +6,7 @@
 # training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
 
 # 3 Unets train Surface, Rift, and Lambda
+# use smoothLoss and DivLoss for rift
 
 
 debug: False # debug mark

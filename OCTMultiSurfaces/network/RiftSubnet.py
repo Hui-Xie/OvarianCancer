@@ -86,7 +86,7 @@ class RiftSubnet(BasicModel):
             klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
             # the input given is expected to contain log-probabilities
             sigma2 = self.hps.sigma**2
-            sigma2 = torch.float(sigma2)*torch.ones_like(riftGTs)
+            sigma2 = float(sigma2)*torch.ones_like(riftGTs)
             gaussianRiftGTs = batchGaussianizeLabels(riftGTs, sigma2, H)
             loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
 
