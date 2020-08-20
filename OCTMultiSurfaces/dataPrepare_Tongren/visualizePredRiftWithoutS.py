@@ -29,7 +29,8 @@ import torch
 sys.path.append(".")
 from TongrenFileUtilities import getSurfacesArray
 
-os.makedirs(visualRPath)
+if not os.path.exists(visualRPath):
+    os.makedirs(visualRPath)
 
 # index = 39 # /home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT09.jpg\n
 indexList= [15,39, 46, 77, 108, 139] #15, 39, 46, 77, 108, 139 for compare.
