@@ -169,15 +169,15 @@ class SoftSepar3Unet(BasicModel):
         else:
             pass
 
-    def getLearningRate(self):
-        if self.hps.status == "trainLambda":
+    def getLearningRate(self, subnetName):
+        if subnetName == "lambdaSubnet":
             lr = self.m_lambdaSubnet.m_optimizer.param_groups[0]['lr']
-        elif self.hps.status == "fineTuneSurfaceRift":
-            sLr = self.m_surfaceSubnet.m_optimizer.param_groups[0]['lr']
-            rLr = self.m_riftSubnet.m_optimizer.param_groups[0]['lr']
-            lr = min(sLr, rLr)
+        elif subnetName == "surfaceSubnet":
+            lr = self.m_surfaceSubnet.m_optimizer.param_groups[0]['lr']
+        elif subnetName == "riftSubnet":
+            lr = self.m_riftSubnet.m_optimizer.param_groups[0]['lr']
         else:
-            lr = 0.0
+            assert False
 
         return lr
 

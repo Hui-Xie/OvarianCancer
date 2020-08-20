@@ -5,7 +5,6 @@
 import sys
 import random
 
-import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
@@ -151,7 +150,9 @@ def main():
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        writer.add_scalar('learningRate', net.getLearningRate(), epoch)
+        writer.add_scalar('learningRateSurface', net.getLearningRate("surfaceSubset"), epoch)
+        writer.add_scalar('learningRateRift', net.getLearningRate("riftSubset"), epoch)
+        writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubset"), epoch)
 
         if  muError <= preErrorMean:
             net.updateRunParameter("validationLoss", validLoss)
