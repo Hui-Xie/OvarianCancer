@@ -81,7 +81,7 @@ class SurfaceSubnet(BasicModel):
         for i in range(1, N):
             S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
 
-        loss_surface = 0.0
+        loss_div = 0.0
         loss_smooth = 0.0
         if self.hps.existGTLabel:
             # hps.useWeightedDivLoss:
@@ -95,13 +95,13 @@ class SurfaceSubnet(BasicModel):
             weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities
             if 0 == len(gaussianGTs):  # sigma ==0 case
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
-            loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
+            loss_div = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
             #hps.useSmoothSurface:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(S, GTs)
 
-        loss = loss_surface + loss_smooth
+        loss = loss_div + loss_smooth
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
