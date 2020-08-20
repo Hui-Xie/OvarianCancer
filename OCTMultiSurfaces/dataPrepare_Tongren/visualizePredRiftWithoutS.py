@@ -85,7 +85,7 @@ for index in indexList:
         subplots.set_xlim([0, W])
         subplots.set_ylim([0, Height])
         subplots.axis('off')
-  
+
     plt.savefig(outputVisaulRPath, dpi='figure', bbox_inches='tight', pad_inches=0, facecolor='w', edgecolor='w')
     plt.close()
 
