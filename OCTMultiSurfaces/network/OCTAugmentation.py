@@ -72,11 +72,22 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
 
     :param rawLables: in (B,N,W)
     :param Simga2:  in(B,N,W)
-    :param H: a scalar
+    :param H: a scalar or a list [H1,H2]
     :return:
            a tensor: (B,N,H,W)
     '''
     assert rawLabels is not None
+
+    if isinstance(H,float) or isinstance(H, int):
+        H0 = 0
+        H1 = H
+    elif isinstance(H,list) and 2 == len(H):
+        H0 = H[0]
+        H1 = H[1]
+        H  = int(H1-H0)
+    else:
+        print("H paramert is incorrect in batchGaussianizeLabels")
+        assert False
 
     device = rawLabels.device
     Mu = rawLabels
@@ -86,7 +97,7 @@ def batchGaussianizeLabels(rawLabels, Sigma2, H):
     Sigma2 = Sigma2.unsqueeze(dim=-2)
     Sigma2 = Sigma2.expand_as(Mu)
 
-    X = torch.arange(start=0.0, end=H, step=1.0).view((1, 1, H, 1)).to(device, dtype=torch.float32)
+    X = torch.arange(start=H0, end=H1, step=1.0).view((1, 1, H, 1)).to(device, dtype=torch.float32)
     X = X.expand_as(Mu)
     pi = math.pi
     G = torch.exp(-(X - Mu) ** 2 / (2 * Sigma2)) / torch.sqrt(2 * pi*Sigma2)

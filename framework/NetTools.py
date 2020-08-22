@@ -62,18 +62,25 @@ def constructUnet(inputChannels, H, W, C, nLayers):
 
     return downPoolings, downLayers, upSamples, upLayers
 
-def argSoftmax(x):
+def argSoftmax(x, range=None):
     '''
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along the height dimension
-    :param dim:
+    :Param range: [H0, H1]
     :return:  mu in size: B,N,1,W
     '''
     device = x.device
     B, N, H, W = x.shape
+    if range is None:
+        H0 = 0
+        H1 = H
+    else:
+        H0 = range[0]
+        H1 = range[1]
+        assert (H == int(H1-H0))
 
     # compute mu
-    Y = torch.arange(H).view((1, 1, H, 1)).expand(x.size()).to(device=device, dtype=torch.int16)
+    Y = torch.arange(start=H0, end=H1, step=1.0).view((1, 1, H, 1)).expand(x.size()).to(device=device, dtype=torch.int16)
     # mu = torch.sum(x*Y, dim=-2, keepdim=True)
     # use slice method to compute P*Y
     for b in range(B):

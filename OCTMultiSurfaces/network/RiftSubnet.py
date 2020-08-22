@@ -4,8 +4,7 @@ import sys
 import torch.nn as nn
 
 sys.path.append(".")
-from OCTOptimization import *
-from OCTAugmentation import *
+from OCTAugmentation import batchGaussianizeLabels
 
 sys.path.append("../..")
 from framework.NetTools import *
@@ -68,7 +67,11 @@ class RiftSubnet(BasicModel):
         B,N,H,W = xr.shape
 
         riftProb = logits2Prob(xr, dim=-2)
-        R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
+        if self.hps.useBetterRiftGaussian:
+            R = argSoftmax(riftProb, range=[-H/2.0, H/2.0]) *4.0* self.hps.maxRift / H  # size: Bx(N-1)xW
+            R = nn.functional.relu(R)  # make sure R>=0
+        else:
+            R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
 
         # use smoothLoss and KLDivLoss for rift
         loss_riftL1 = 0.0
@@ -88,7 +91,10 @@ class RiftSubnet(BasicModel):
                 # the input given is expected to contain log-probabilities
                 sigma2 = self.hps.sigma**2
                 sigma2 = float(sigma2)*torch.ones_like(riftGTs)
-                gaussianRiftGTs = batchGaussianizeLabels(riftGTs*H/self.hps.maxRift, sigma2, H)  # very important conversion
+                if self.hps.useBetterRiftGaussian:
+                    gaussianRiftGTs = batchGaussianizeLabels(riftGTs*H/(4.0*self.hps.maxRift), sigma2, [-H/2.0, H/2.0])
+                else:
+                    gaussianRiftGTs = batchGaussianizeLabels(riftGTs*H/self.hps.maxRift, sigma2, H)  # very important conversion
                 loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
 
         loss = loss_riftL1 + loss_smooth + loss_div
