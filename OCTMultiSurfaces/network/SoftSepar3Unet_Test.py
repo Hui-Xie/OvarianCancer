@@ -24,6 +24,9 @@ import numpy as np
 import datetime
 import time
 
+sys.path.append("../dataPrepare_Tongren")
+from TongrenFileUtilities import batchPrediciton2OCTExplorerXML
+
 def printUsage(argv):
     print("============ Cross Validation Train OCT MultiSurface Network =============")
     print("Usage:")
