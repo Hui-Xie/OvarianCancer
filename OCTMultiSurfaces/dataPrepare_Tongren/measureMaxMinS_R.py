@@ -9,11 +9,16 @@ labelFiles=["/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/train
 
 for i, labelFile in enumerate(labelFiles):
     surfaces = np.load(labelFile)  # BxNxW
+    S = np.concatenate((S,surfaces), axis=0) if 0 !=i else S
     R = surfaces[:,1:,:] - surfaces[:,0:-1,:]  # size: Bx(N-1)xW
     Rs = np.concatenate((Rs,R), axis=0) if 0 !=i else R
 
+print(f"S.shape= {S.shape}")
 print(f"Rs.shape= {Rs.shape}")
 maxRift = np.amax(Rs)
+maxS = np.amax(S)
+minS = np.amin(S)
 
+print(f"minS = {minS}, maxS = {maxS}")
 print(f"maxRift= {maxRift}")
 
