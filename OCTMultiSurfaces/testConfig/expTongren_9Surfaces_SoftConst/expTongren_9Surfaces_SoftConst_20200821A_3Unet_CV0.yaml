@@ -13,7 +13,7 @@ dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
 
-status: "fineTuneSurfaceRift" # "trainLambda"  "test"
+status: "test" # "fineTuneSurfaceRift" # "trainLambda"
 
 # for 3 Unets
 surfaceSubnet: "SurfaceSubnet"
