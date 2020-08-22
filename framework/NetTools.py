@@ -62,7 +62,7 @@ def constructUnet(inputChannels, H, W, C, nLayers):
 
     return downPoolings, downLayers, upSamples, upLayers
 
-def argSoftmax(x, range=None):
+def argSoftmax(x, rangeH=None):
     '''
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along the height dimension
@@ -71,12 +71,12 @@ def argSoftmax(x, range=None):
     '''
     device = x.device
     B, N, H, W = x.shape
-    if range is None:
+    if rangeH is None:
         H0 = 0
         H1 = H
     else:
-        H0 = range[0]
-        H1 = range[1]
+        H0 = rangeH[0]
+        H1 = rangeH[1]
         assert (H == int(H1-H0))
 
     # compute mu

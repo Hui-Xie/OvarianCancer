@@ -68,7 +68,7 @@ class RiftSubnet(BasicModel):
 
         riftProb = logits2Prob(xr, dim=-2)
         if self.hps.useBetterRiftGaussian:
-            R = argSoftmax(riftProb, range=[-H/2.0, H/2.0]) *4.0* self.hps.maxRift / H  # size: Bx(N-1)xW
+            R = argSoftmax(riftProb, rangeH=[-H / 2.0, H / 2.0]) * 4.0 * self.hps.maxRift / H  # size: Bx(N-1)xW
             R = nn.functional.relu(R)  # make sure R>=0
         else:
             R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
