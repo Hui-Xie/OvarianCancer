@@ -150,9 +150,13 @@ def main():
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        writer.add_scalar('learningRateSurface', net.getLearningRate("surfaceSubnet"), epoch)
-        writer.add_scalar('learningRateRift', net.getLearningRate("riftSubnet"), epoch)
-        writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubnet"), epoch)
+        if hps.status == "trainLambda":
+            writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubnet"), epoch)
+        elif hps.status == "fineTuneSurfaceRift":
+            writer.add_scalar('learningRateSurface', net.getLearningRate("surfaceSubnet"), epoch)
+            writer.add_scalar('learningRateRift', net.getLearningRate("riftSubnet"), epoch)
+        else:
+            pass
 
         if  muError <= preErrorMean:
             net.updateRunParameter("validationLoss", validLoss)
