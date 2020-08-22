@@ -58,6 +58,7 @@ inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 maxRift:  60 # general H/N, in pixel
 useBetterRiftGaussian: False
+imageVerticalShift: 0
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels

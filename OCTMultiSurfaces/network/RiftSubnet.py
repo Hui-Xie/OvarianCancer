@@ -49,6 +49,11 @@ class RiftSubnet(BasicModel):
         # compute outputs
         skipxs = [None for _ in range(self.hps.nLayers)]  # skip link x
 
+        if 0 != self.hps.imageVerticalShift:
+            a = self.hps.imageVerticalShift
+            inputsShift = torch.cat((inputs[:,:,a:,:], inputs[:,:,0:a,:]), dim=-2)  #BxCxHxW
+            inputs = torch.cat((inputs, inputsShift),dim=1)   # Bx2CxHxW
+
         # down path of Unet
         for i in range(self.hps.nLayers):
             if 0 == i:

@@ -33,6 +33,6 @@ print(f"maxRift= {maxRift}, meanRift={meanRift}, minRift={minRift}, medianRift={
 S.shape= (1457, 9, 512)
 Rs.shape= (1457, 8, 512)
 minS = 89, maxS = 406
-maxRift= 49
+maxRift= 49, meanRift=9.296583271222975, minRift=0, medianRift=7.0
 
 '''
