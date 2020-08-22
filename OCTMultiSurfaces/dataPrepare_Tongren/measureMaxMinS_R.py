@@ -22,3 +22,10 @@ minS = np.amin(S)
 print(f"minS = {minS}, maxS = {maxS}")
 print(f"maxRift= {maxRift}")
 
+''' Tongren measurement result
+S.shape= (1457, 9, 512)
+Rs.shape= (1457, 8, 512)
+minS = 89, maxS = 406
+maxRift= 49
+
+'''
