@@ -1,3 +1,28 @@
+# experiment: expTongren_9Surfaces_SoftConst_20200821A_3Unet_CV0
+# experiment config:
+  A  3 Unets;
+  B  Pretraind SurfaceSubnet with validation error 2.0, and prtrained SeparationSubnet with validation error 3.0;
+  C  Pretrain LambdaSubnet on validation data with validation error 1.845 with IPM module;
+  D  fine tune SurfaeSubnet and SeparationSubnet with IPM module, while fixing LambdaSubset, getting vadlidation error 1.9;
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
+20200821A_3Unet_CV0, CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
+
+Analysis:
+1  This result with IPM module is in same level of 0317 result;
+2  It means the lambda learning on validation also can generalize; while a possible problem is that validation set is too small with only 5 patients;
+3  learning a Lambdda with a (N-1)xW size does not overkill this problem, as its trainging loss is about 6, while its validation loss is about 16 at the stable stage;
+4  Lambda learning on the training data may be also a good idea, which is worth to try; Training data is 8 times of validation data, which should get better representation and learning;
+5  Further improving the SeparationSubnet is also needed:
+   A  refined Gaussian yesterday improved error stability without jump up at tail;
+   B  SurfaceSubnet has gradient signal at its surface; While separationSubnet learns the separation between 2 surfaces, which has no directly gradient guide;
+   C  Proper network architecture adjustment:
+       C1. reduce layers of Unet as network has some overfiiting (training loss 6 vs validation loss 68);
+       C2. add size of the after Unet module to grasp the relations among adjacent surfaces;
+
+
+
+
+
 # experiment 20200813C on CV0
 # config: Pretain Unet+ SurfaceConv+RiftConv with ReLU instead of IPM, the gradient of RiftConv does not go backward, and then use IPM to train;
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,  epochs of saved network,
