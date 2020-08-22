@@ -15,12 +15,19 @@ for i, labelFile in enumerate(labelFiles):
 
 print(f"S.shape= {S.shape}")
 print(f"Rs.shape= {Rs.shape}")
-maxRift = np.amax(Rs)
+
 maxS = np.amax(S)
 minS = np.amin(S)
 
+maxRift    = np.amax(Rs)
+meanRift   = np.mean(Rs)
+minRift    = np.amin(Rs)
+medianRift = np.median(Rs)
+
+
+
 print(f"minS = {minS}, maxS = {maxS}")
-print(f"maxRift= {maxRift}")
+print(f"maxRift= {maxRift}, meanRift={meanRift}, minRift={minRift}, medianRift={medianRift}")
 
 ''' Tongren measurement result
 S.shape= (1457, 9, 512)
