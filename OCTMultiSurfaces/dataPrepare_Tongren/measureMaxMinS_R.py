@@ -9,7 +9,7 @@ labelFiles=["/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/train
 
 for i, labelFile in enumerate(labelFiles):
     surfaces = np.load(labelFile)  # BxNxW
-    S = np.concatenate((S,surfaces), axis=0) if 0 !=i else S
+    S = np.concatenate((S,surfaces), axis=0) if 0 !=i else surfaces
     R = surfaces[:,1:,:] - surfaces[:,0:-1,:]  # size: Bx(N-1)xW
     Rs = np.concatenate((Rs,R), axis=0) if 0 !=i else R
 
