@@ -13,6 +13,22 @@ from framework.ConvBlocks import *
 from framework.CustomizedLoss import logits2Prob, SmoothSurfaceLoss
 from framework.ConfigReader import ConfigReader
 
+'''
+In deep learning, smoothNet tries to learn the distance of adjacent pixels along their surface direction, 
+here the adjacent pixels  are in 3x3 neighborhoods where 3x3 convolution and gradient information 
+along the surface  will be helpful to get some information. 
+
+While sepNet tries to learn the distance of adjacent surfaces along column direction. 
+here the adjacent surfaces are most not in 3x3 or 5x5 neighborhoods. 
+In Tongren data, the average distance of adjacent surfaces is 9 pixels, and maximal distance is 49 pixels.  
+Learning R requires network to learn 2 information intuitively : 
+A . the next computing point of distance is the adjacent surface, instead of a middle or next region point;  
+B. what is the distance to his next adjacent surface.  
+In this context, a simple 3x3 convolution is not enough to help solve this problem.  
+If Deep learning is learning in a similar mode of human brain thinking, 
+learning S (surface position) is a basis for learning R(separation). 
+'''
+
 class RiftSubnet(BasicModel):
     def __init__(self, hps=None):
         '''
