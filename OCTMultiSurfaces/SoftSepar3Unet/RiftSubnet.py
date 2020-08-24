@@ -3,8 +3,8 @@
 import sys
 import torch.nn as nn
 
-sys.path.append(".")
-from OCTAugmentation import batchGaussianizeLabels
+sys.path.append("..")
+from network.OCTAugmentation import batchGaussianizeLabels
 
 sys.path.append("../..")
 from framework.NetTools import *

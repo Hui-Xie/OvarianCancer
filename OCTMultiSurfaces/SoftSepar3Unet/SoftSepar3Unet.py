@@ -5,10 +5,12 @@ import sys
 import torch
 import torch.optim as optim
 
+sys.path.append("..")
+from network.OCTOptimization import *
+from network.QuadraticIPMOpt import *
+from network.OCTAugmentation import *
+
 sys.path.append(".")
-from OCTOptimization import *
-from QuadraticIPMOpt import *
-from OCTAugmentation import *
 from SurfaceSubnet import SurfaceSubnet
 from RiftSubnet import RiftSubnet
 from LambdaSubnet import LambdaSubnet

@@ -5,14 +5,17 @@
 import sys
 import random
 
+import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
+sys.path.append("..")
+from network.OCTDataSet import *
+from network.OCTOptimization import *
+from network.OCTTransform import *
+
 sys.path.append(".")
-from OCTDataSet import *
-from OCTOptimization import *
-from OCTTransform import *
-from SoftSepar3Unet import SoftSepar3Unet
+from SurfaceSubnet import SurfaceSubnet
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
@@ -55,11 +58,6 @@ def main():
             validationImagesPath = os.path.join(hps.dataDir,"validation", f"images_CV{hps.k:d}.npy")
             validationLabelsPath = os.path.join(hps.dataDir,"validation", f"surfaces_CV{hps.k:d}.npy")
             validationIDPath    = os.path.join(hps.dataDir,"validation", f"patientID_CV{hps.k:d}.json")
-
-            if hps.status == "trainLambda":
-                trainImagesPath = validationImagesPath
-                trainLabelsPath = validationLabelsPath
-                trainIDPath     = validationIDPath
     else:
         if -1==hps.k and 0==hps.K:  # do not use cross validation
             trainImagesPath = os.path.join(hps.dataDir, "training", f"patientList.txt")
@@ -82,6 +80,22 @@ def main():
 
     # construct network
     net = eval(hps.network)(hps=hps)
+    # Important:
+    # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
+    # Parameters of a model after .cuda() will be different objects with those before the call.
+    net.to(device=hps.device)
+
+    optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+    net.setOptimizer(optimizer)
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    net.setLrScheduler(lrScheduler)
+
+    # Load network
+
+    netMgr = NetMgr(net, hps.netPath, hps.device)
+    netMgr.loadNet("train")
+
+
     writer = SummaryWriter(log_dir=hps.logDir)
 
     # train
@@ -104,10 +118,10 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            S, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-            net.zero_grad()
-            loss.backward(gradient=torch.ones(loss.shape).to(loss.device))
-            net.optimizerStep()
+            S, sigma2, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            optimizer.zero_grad()
+            loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
+            optimizer.step()
             trLoss += loss
 
         trLoss = trLoss / trBatch
@@ -123,7 +137,7 @@ def main():
                                                               num_workers=0):
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
-                S, loss  = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                S, sigma2, loss  = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
@@ -135,12 +149,25 @@ def main():
             # print(f"epoch:{epoch}; validLoss ={validLoss}\n")
 
             goodBScansInGtOrder =None
+            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
+                # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+                goodBScansInGtOrder = []
+                b = 0
+                while b < len(validIDs):
+                    patientPath, filename = os.path.split(validIDs[b])
+                    patientIDVolumeName = os.path.basename(patientPath)
+                    patientID = int(patientIDVolumeName[0:patientIDVolumeName.find("_OD_")])
+                    lowB = hps.goodBscans[patientID][0]-1
+                    highB = hps.goodBscans[patientID][1]
+                    goodBScansInGtOrder.append([lowB,highB])
+                    b += hps.slicesPerPatient #validation data and test data both have 31 Bscans per patient
+
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
                                                                                                  slicesPerPatient=hps.slicesPerPatient,
                                                                                                  hPixelSize=hps.hPixelSize,
                                                                                                  goodBScansInGtOrder=goodBScansInGtOrder)
 
-        net.lrSchedulerStep(validLoss)
+        lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
@@ -150,21 +177,15 @@ def main():
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        if hps.status == "trainLambda":
-            writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubnet"), epoch)
-        elif hps.status == "fineTuneSurfaceRift":
-            writer.add_scalar('learningRateSurface', net.getLearningRate("surfaceSubnet"), epoch)
-            writer.add_scalar('learningRateRift', net.getLearningRate("riftSubnet"), epoch)
-        else:
-            pass
+        writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if  muError <= preErrorMean:
+        if validLoss < preValidLoss or muError < preErrorMean:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
             preValidLoss = validLoss
             preErrorMean = muError
-            net.saveNet()
+            netMgr.saveNet(hps.netPath)
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

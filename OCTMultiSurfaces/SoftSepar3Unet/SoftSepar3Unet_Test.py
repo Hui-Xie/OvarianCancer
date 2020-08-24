@@ -7,10 +7,12 @@ import random
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
+sys.path.append("..")
+from network.OCTDataSet import OCTDataSet
+from network.OCTOptimization import *
+from network.OCTTransform import *
+
 sys.path.append(".")
-from OCTDataSet import OCTDataSet
-from OCTOptimization import *
-from OCTTransform import *
 from SoftSepar3Unet import SoftSepar3Unet
 
 sys.path.append("../..")

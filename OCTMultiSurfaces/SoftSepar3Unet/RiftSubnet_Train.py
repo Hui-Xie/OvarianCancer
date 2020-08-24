@@ -9,10 +9,12 @@ import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
+sys.path.append("..")
+from network.OCTDataSet import *
+from network.OCTOptimization import *
+from network.OCTTransform import *
+
 sys.path.append(".")
-from OCTDataSet import *
-from OCTOptimization import *
-from OCTTransform import *
 from RiftSubnet import RiftSubnet
 
 sys.path.append("../..")

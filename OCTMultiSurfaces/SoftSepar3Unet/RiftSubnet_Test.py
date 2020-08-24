@@ -9,11 +9,14 @@ import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
+sys.path.append("..")
+from network.OCTDataSet import OCTDataSet
+from network.OCTOptimization import *
+from network.OCTTransform import *
+
 sys.path.append(".")
-from OCTDataSet import OCTDataSet
-from OCTOptimization import *
-from OCTTransform import *
 from RiftSubnet import RiftSubnet
+
 import time
 import numpy as np
 import datetime

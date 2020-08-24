@@ -4,9 +4,9 @@
 import sys
 import torch
 
-sys.path.append(".")
-from OCTOptimization import *
-from OCTAugmentation import *
+sys.path.append("..")
+from network.OCTOptimization import *
+from network.OCTAugmentation import *
 
 sys.path.append("../..")
 from framework.NetTools import *
