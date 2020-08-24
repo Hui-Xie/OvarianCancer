@@ -5,7 +5,9 @@ import torch
 import torchvision.transforms as TF
 
 import sys
+import os
 sys.path.append(".")
+print(f"cwd= {os.getcwd()}")
 from OCTAugmentation import *
 
 
