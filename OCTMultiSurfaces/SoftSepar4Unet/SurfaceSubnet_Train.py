@@ -124,7 +124,7 @@ def main():
             trBatch += 1
 
             batchData['gaussianGTs'] = batchData['gaussianGTs'][:, sIndex0:sIndex1, :, :]
-            batchData['GTs'] = batchData['GTs'][:, sIndex0:sIndex1, :, :]
+            batchData['GTs'] = batchData['GTs'][:, sIndex0:sIndex1, :]
 
 
             S, sigma2, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
@@ -147,7 +147,7 @@ def main():
                 validBatch += 1
 
                 batchData['gaussianGTs'] = batchData['gaussianGTs'][:, sIndex0:sIndex1, :, :]
-                batchData['GTs'] = batchData['GTs'][:, sIndex0:sIndex1, :, :]
+                batchData['GTs'] = batchData['GTs'][:, sIndex0:sIndex1, :]
 
                 # S is surface location in (B,S,W) dimension, the predicted Mu
                 S, sigma2, loss  = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
