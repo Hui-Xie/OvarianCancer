@@ -1,26 +1,21 @@
 # experiment: use ground truth of R to replace predicted R:
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
-20200821A_3Unet_CV0,                  CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
-20200821A_3Unet_CV0_RUseSmoothedGT,   CV0, 1.0627, 3.1763, 2.8555, 2.5546, 3.1697, 1.3900, 2.9056, 1.5939, 1.2182, 1.0365197658538818, 2.2140555381774902
-20200821A_3Unet_CV0_RUseNoSmoothedGT, CV0, 1.0623, 3.1761, 2.8482, 2.5502, 3.1691, 1.3877, 2.8932, 1.5866, 1.2175, 1.0357218980789185, 2.210094928741455
+20200821A_3Unet_CV0,                  CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,  3Unet Network, with learning R;
+20200821A_3Unet_CV0_RUseSmoothedGT,   CV0, 1.0627, 3.1763, 2.8555, 2.5546, 3.1697, 1.3900, 2.9056, 1.5939, 1.2182, 1.0365197658538818, 2.2140555381774902, 3Unet, Use SmoothedGT to replace R;
+20200821A_3Unet_CV0_RUseNoSmoothedGT, CV0, 1.0623, 3.1761, 2.8482, 2.5502, 3.1691, 1.3877, 2.8932, 1.5866, 1.2175, 1.0357218980789185, 2.210094928741455,  3Unet, use UnsmoothedGT to replace R;
+SoftConst_20200819A_SurfaceSubnet,    CV0, 1.0055, 3.1687, 2.8236, 2.5908, 3.1875, 1.3984, 2.9978, 1.5677, 1.2584, 1.0588494539260864, 2.2220582962036133, 1Unet, only unary item
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Analysis:
+1  The above 4 results have no essential difference as network computes pixel locations;
+   A physical error 0.01 micrometer equals 0.00258 pixel by (pixel resolution 3.870 micrometer);
+   The error 0.01 micrometer is inside 1% of their one standard deviation;
+2  Even using ground truth to directly get R, the whole accuracy does not explicitly improve;
+   Leixin told me before that smooth constraint does not explictly improve the whole accuracy;
+   In order to sell your method, maybe it needs to choose some special cases from a special data set.
+   Today's experiment verified Leixin's words from a separation constraint dimension.
+3  In intuition, Learning R(Separation) may get lower accuracy than learning S(surface Locations) as S involve local regions only  while R involves cross regions.
+   Our cost function f(S) + \lambda * f(R) tries to use R's information to adjust S, which looks that using lower accuracy information calibrates a higher accruacy information.
+   Tomorrow, I am planning to try to use mathematic formulas derived from our cost function to verify above statement.
 
 
 # experiment: expTongren_9Surfaces_SoftConst_20200821A_3Unet_CV0

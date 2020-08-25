@@ -133,7 +133,7 @@ def main():
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
 
-       
+
         #output testID
         with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
             for id in testIDs:
