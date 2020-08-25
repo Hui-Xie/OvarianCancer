@@ -10,7 +10,7 @@ Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surfa
 Analysis:
 1  This result with IPM module is in same level of 0317 result;
 2  It means the lambda learning on validation also can generalize; while a possible problem is that validation set is too small with only 5 patients;
-3  learning a Lambdda with a (N-1)xW size does not overkill this problem, as its trainging loss is about 6, while its validation loss is about 16 at the stable stage;
+3  learning a Lambdda with a (N-1)xW size does not overkill this problem, as its training loss is about 6, while its validation loss is about 16 at the stable stage;
 4  Lambda learning on the training data may be also a good idea, which is worth to try; Training data is 8 times of validation data, which should get better representation and learning;
 5  Further improving the SeparationSubnet is also needed:
    A  refined Gaussian yesterday improved error stability without jump up at tail;
