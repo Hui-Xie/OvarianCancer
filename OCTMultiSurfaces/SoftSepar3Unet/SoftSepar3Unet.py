@@ -134,7 +134,16 @@ class SoftSepar3Unet(BasicModel):
             loss = surfaceLoss.to(self.m_lDevice) + riftLoss.to(self.m_lDevice) + loss_smooth
 
         elif self.hps.status == "test":
-            R_detach = R.clone().detach().to(self.m_lDevice)
+            if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
+                R_detach = R.clone().detach().to(self.m_lDevice)
+            elif 1 == self.hps.replaceRwithGT: #1: use riftGT without smoothness;
+                R_detach = (GTs[:,1:, :] - GTs[:,0:-1, :]).detach().to(self.m_lDevice)
+            elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed riftGT;
+                R_detach = riftGTs.clone().detach().to(self.m_lDevice)
+            else:
+                print(f"Wrong value of self.hps.replaceRwithGT")
+                assert False
+
             Mu_detach = Mu.clone().detach().to(self.m_lDevice)
             Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
             Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)

@@ -31,7 +31,7 @@ lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testCon
 lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID
 lambdaSubnetLr: 0.01
 
-replaceRwithGT: 0 # 0: use predicted R; 1: use riftGT without smoothness; 2: use smoothed riftGT;
+replaceRwithGT: 2 # 0: use predicted R; 1: use riftGT without smoothness; 2: use smoothed riftGT;
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
