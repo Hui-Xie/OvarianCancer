@@ -2,8 +2,7 @@
 import torch
 import torch.nn as nn
 import sys
-sys.path.append(".")
-from OCTOptimization import *
+from network.OCTOptimization import *
 
 class MuQIPMFunction(torch.autograd.Function):
     @staticmethod
