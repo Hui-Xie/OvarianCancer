@@ -17,17 +17,17 @@ status: "trainLambda" # "fineTuneSurfaceRift"  "test"
 
 # for 3 Unets
 surfaceSubnet: "SurfaceSubnet"
-surfaceSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0.yaml"
+surfaceSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
 surfaceSubnetLr: 0.005  # pretain at epoch 121
 
 riftSubnet: "RiftSubnet"
-riftSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_RiftSubnet_CV0.yaml"
+riftSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_RiftSubnet_CV0.yaml"
 riftSubnetDevice: torch.device('cuda:2')   #GPU ID
 riftSubnetLr: 0.01  # pretrain at epoch 54
 
 lambdaSubnet: "LambdaSubnet"
-lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_9Surfaces_SoftConst/expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0.yaml"
+lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0.yaml"
 lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID
 lambdaSubnetLr: 0.01
 
