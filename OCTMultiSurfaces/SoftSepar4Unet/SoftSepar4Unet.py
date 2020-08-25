@@ -1,4 +1,4 @@
-# The main network for 3 unet for soft separation
+# The main network for 4 unet for soft separation
 
 
 import sys
@@ -12,7 +12,6 @@ from network.OCTAugmentation import *
 
 sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
-from RiftSubnet import RiftSubnet
 from LambdaSubnet import LambdaSubnet
 
 sys.path.append("../..")
@@ -38,34 +37,52 @@ class SoftSepar4Unet(BasicModel):
         # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
         # Parameters of a model after .cuda() will be different objects with those before the call.
 
-        surfaceMode, riftMode, lambdaMode = self.getSubnetModes()
+        NSurfaceMode, N_1Surface0Mode, N_1Surface1Mode, lambdaMode = self.getSubnetModes()
 
-        # surface Subnet
-        self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
-        self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
-        self.m_surfaceSubnet.to(self.m_sDevice)
-        if "test" != surfaceMode:
-            self.m_surfaceSubnet.setOptimizer(optim.Adam(self.m_surfaceSubnet.parameters(), lr=self.hps.surfaceSubnetLr, weight_decay=0))
-            self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
-                                            mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
-        self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.m_sDevice))
-        self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode)
+        # N-surface Subnet
+        self.m_NSurfaceSubnet = eval(self.hps.NSurfaceSubnet)(hps=self.hps.NSurfaceSubnetYaml)
+        self.m_NSurfaceDevice = eval(self.hps.NSurfaceSubnetDevice)
+        self.m_NSurfaceSubnet.to(self.m_NSurfaceDevice)
+        if "test" != NSurfaceMode:
+            self.m_NSurfaceSubnet.setOptimizer(optim.Adam(self.m_NSurfaceSubnet.parameters(), lr=self.hps.NSurfaceSubnetLr, weight_decay=0))
+            self.m_NSurfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_NSurfaceSubnet.m_optimizer, \
+                                                                                      mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
+        self.m_NSurfaceSubnet.setNetMgr(NetMgr(self.m_NSurfaceSubnet, self.m_NSurfaceSubnet.hps.netPath, self.m_NSurfaceDevice))
+        self.m_NSurfaceSubnet.m_netMgr.loadNet(NSurfaceMode)
 
-        # rift Subnet
-        self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
-        self.m_rDevice = eval(self.hps.riftSubnetDevice)
-        self.m_riftSubnet.to(self.m_rDevice)
-        if "test" != riftMode:
-            self.m_riftSubnet.setOptimizer(
-                optim.Adam(self.m_riftSubnet.parameters(), lr=self.hps.riftSubnetLr, weight_decay=0))
-            self.m_riftSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_riftSubnet.m_optimizer, \
-                                                                                 mode="min", factor=0.5, patience=20,
-                                                                                 min_lr=1e-8, threshold=0.02,
-                                                                                 threshold_mode='rel'))
-        self.m_riftSubnet.setNetMgr(
-            NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.m_rDevice))
-        self.m_riftSubnet.m_netMgr.loadNet(riftMode)
-        
+        # (N-1)-surface0 Subnet
+        self.m_N_1Surface0Subnet = eval(self.hps.N_1Surface0Subnet)(hps=self.hps.N_1Surface0SubnetYaml)
+        self.m_N_1Surface0Device = eval(self.hps.N_1Surface0SubnetDevice)
+        self.m_N_1Surface0Subnet.to(self.m_N_1Surface0Device)
+        if "test" != N_1Surface0Mode:
+            self.m_N_1Surface0Subnet.setOptimizer(
+                optim.Adam(self.m_N_1Surface0Subnet.parameters(), lr=self.hps.N_1Surface0SubnetLr, weight_decay=0))
+            self.m_N_1Surface0Subnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_N_1Surface0Subnet.m_optimizer, \
+                                                                                      mode="min", factor=0.5,
+                                                                                      patience=20, min_lr=1e-8,
+                                                                                      threshold=0.02,
+                                                                                      threshold_mode='rel'))
+        self.m_N_1Surface0Subnet.setNetMgr(
+            NetMgr(self.m_N_1Surface0Subnet, self.m_N_1Surface0Subnet.hps.netPath, self.m_N_1Surface0Device))
+        self.m_N_1Surface0Subnet.m_netMgr.loadNet(N_1Surface0Mode)
+
+        # (N-1)-surface1 Subnet
+        self.m_N_1Surface1Subnet = eval(self.hps.N_1Surface1Subnet)(hps=self.hps.N_1Surface1SubnetYaml)
+        self.m_N_1Surface1Device = eval(self.hps.N_1Surface1SubnetDevice)
+        self.m_N_1Surface1Subnet.to(self.m_N_1Surface1Device)
+        if "test" != N_1Surface1Mode:
+            self.m_N_1Surface1Subnet.setOptimizer(
+                optim.Adam(self.m_N_1Surface1Subnet.parameters(), lr=self.hps.N_1Surface1SubnetLr, weight_decay=0))
+            self.m_N_1Surface1Subnet.setLrScheduler(
+                optim.lr_scheduler.ReduceLROnPlateau(self.m_N_1Surface1Subnet.m_optimizer, \
+                                                     mode="min", factor=0.5,
+                                                     patience=20, min_lr=1e-8,
+                                                     threshold=0.02,
+                                                     threshold_mode='rel'))
+        self.m_N_1Surface1Subnet.setNetMgr(
+            NetMgr(self.m_N_1Surface1Subnet, self.m_N_1Surface1Subnet.hps.netPath, self.m_N_1Surface1Device))
+        self.m_N_1Surface1Subnet.m_netMgr.loadNet(N_1Surface1Mode)
+
         # lambda Subnet
         self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
         self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
@@ -83,25 +100,28 @@ class SoftSepar4Unet(BasicModel):
 
     def getSubnetModes(self):
         if self.hps.status == "trainLambda":
-            surfaceMode = "test"
-            riftMode = "test"
+            NSurfaceMode = "test"
+            N_1Surface0Mode = "test"
+            N_1Surface1Mode = "test"
             lambdaMode = "train"
-        elif self.hps.status == "fineTuneSurfaceRift":
-            surfaceMode = "train"
-            riftMode = "train"
+        elif self.hps.status == "fineTuneSurfaces":
+            NSurfaceMode = "train"
+            N_1Surface0Mode = "train"
+            N_1Surface1Mode = "train"
             lambdaMode = "test"
         else:
-            surfaceMode = "test"
-            riftMode = "test"
+            NSurfaceMode = "test"
+            N_1Surface0Mode = "test"
+            N_1Surface1Mode = "test"
             lambdaMode = "test"
 
-        return surfaceMode, riftMode, lambdaMode
+        return NSurfaceMode, N_1Surface0Mode, N_1Surface1Mode, lambdaMode
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
-        Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
-                                     gaussianGTs=gaussianGTs.to(self.m_sDevice),
-                                     GTs=GTs.to(self.m_sDevice))
+        Mu, Sigma2, surfaceLoss = self.m_NSurfaceSubnet.forward(inputs.to(self.m_NSurfaceDevice),
+                                                                gaussianGTs=gaussianGTs.to(self.m_NSurfaceDevice),
+                                                                GTs=GTs.to(self.m_NSurfaceDevice))
 
         R, riftLoss = self.m_riftSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
                                                 riftGTs= riftGTs.to(self.m_rDevice))
@@ -150,8 +170,8 @@ class SoftSepar4Unet(BasicModel):
         return S, loss
 
     def zero_grad(self):
-        if None != self.m_surfaceSubnet.m_optimizer:
-            self.m_surfaceSubnet.m_optimizer.zero_grad()
+        if None != self.m_NSurfaceSubnet.m_optimizer:
+            self.m_NSurfaceSubnet.m_optimizer.zero_grad()
         if None != self.m_riftSubnet.m_optimizer:
             self.m_riftSubnet.m_optimizer.zero_grad()
         if None != self.m_lambdaSubnet.m_optimizer:
@@ -162,7 +182,7 @@ class SoftSepar4Unet(BasicModel):
         if self.hps.status == "trainLambda":
             self.m_lambdaSubnet.m_optimizer.step()
         elif self.hps.status == "fineTuneSurfaceRift":
-            self.m_surfaceSubnet.m_optimizer.step()
+            self.m_NSurfaceSubnet.m_optimizer.step()
             self.m_riftSubnet.m_optimizer.step()
         else:
             pass
@@ -171,7 +191,7 @@ class SoftSepar4Unet(BasicModel):
         if self.hps.status == "trainLambda":
             self.m_lambdaSubnet.m_lrScheduler.step(validLoss)
         elif self.hps.status == "fineTuneSurfaceRift":
-            self.m_surfaceSubnet.m_lrScheduler.step(validLoss)
+            self.m_NSurfaceSubnet.m_lrScheduler.step(validLoss)
             self.m_riftSubnet.m_lrScheduler.step(validLoss)
         else:
             pass
@@ -180,7 +200,7 @@ class SoftSepar4Unet(BasicModel):
         if self.hps.status == "trainLambda":
             self.m_lambdaSubnet.m_netMgr.saveNet()
         elif self.hps.status == "fineTuneSurfaceRift":
-            self.m_surfaceSubnet.m_netMgr.saveNet()
+            self.m_NSurfaceSubnet.m_netMgr.saveNet()
             self.m_riftSubnet.m_netMgr.saveNet()
         else:
             pass
@@ -189,7 +209,7 @@ class SoftSepar4Unet(BasicModel):
         if subnetName == "lambdaSubnet":
             lr = self.m_lambdaSubnet.m_optimizer.param_groups[0]['lr']
         elif subnetName == "surfaceSubnet":
-            lr = self.m_surfaceSubnet.m_optimizer.param_groups[0]['lr']
+            lr = self.m_NSurfaceSubnet.m_optimizer.param_groups[0]['lr']
         elif subnetName == "riftSubnet":
             lr = self.m_riftSubnet.m_optimizer.param_groups[0]['lr']
         else:
