@@ -51,8 +51,8 @@ class RiftSubnet(BasicModel):
             Conv2dBlock(C, C),
 
             # 20200822 added 2 conv blocks
-            Conv2dBlock(C, C),
-            Conv2dBlock(C, C),
+            # Conv2dBlock(C, C),
+            # Conv2dBlock(C, C),
             # 20200822 added 2 conv blocks
 
             nn.Conv2d(C, self.hps.numSurfaces-1, kernel_size=1, stride=1, padding=0)  # conv 1*1
