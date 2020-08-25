@@ -1,3 +1,28 @@
+# experiment: use ground truth of R to replace predicted R:
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
+20200821A_3Unet_CV0,                  CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
+20200821A_3Unet_CV0_RUseSmoothedGT,   CV0, 1.0627, 3.1763, 2.8555, 2.5546, 3.1697, 1.3900, 2.9056, 1.5939, 1.2182, 1.0365197658538818, 2.2140555381774902
+20200821A_3Unet_CV0_RUseNoSmoothedGT, CV0, 1.0623, 3.1761, 2.8482, 2.5502, 3.1691, 1.3877, 2.8932, 1.5866, 1.2175, 1.0357218980789185, 2.210094928741455
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # experiment: expTongren_9Surfaces_SoftConst_20200821A_3Unet_CV0
 # experiment config:
   A  3 Unets;
