@@ -300,13 +300,13 @@ class SurfacesUnet(BasicModel):
 
         B,N,H,W = xs.shape
 
-        useLayerDice = self.getConfigParameter("useLayerDice")
-        useReferSurfaceFromLayer = self.getConfigParameter("useReferSurfaceFromLayer")
-        useCEReplaceKLDiv = self.getConfigParameter("useCEReplaceKLDiv")
-        useWeightedDivLoss = self.getConfigParameter("useWeightedDivLoss")
-        gradWeight = self.getConfigParameter("gradWeight")
-        useLayerCE = self.getConfigParameter("useLayerCE")
-        useSmoothSurface = self.getConfigParameter("useSmoothSurface")
+        useLayerDice = self.getRunParameter("useLayerDice")
+        useReferSurfaceFromLayer = self.getRunParameter("useReferSurfaceFromLayer")
+        useCEReplaceKLDiv = self.getRunParameter("useCEReplaceKLDiv")
+        useWeightedDivLoss = self.getRunParameter("useWeightedDivLoss")
+        gradWeight = self.getRunParameter("gradWeight")
+        useLayerCE = self.getRunParameter("useLayerCE")
+        useSmoothSurface = self.getRunParameter("useSmoothSurface")
 
 
         layerMu = None # referred surface mu computed by layer segmentation.

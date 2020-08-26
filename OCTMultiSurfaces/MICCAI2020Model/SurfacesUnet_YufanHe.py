@@ -307,7 +307,7 @@ class SurfacesUnet_YufanHe(BasicModel):
 
 
         B,N,H,W = xs.shape
-        useLayerDice = self.getConfigParameter("useLayerDice")
+        useLayerDice = self.getRunParameter("useLayerDice")
         layerMu = None # referred surface mu computed by layer segmentation.
         layerConf = None
         surfaceProb = logits2Prob(xs, dim=-2)
