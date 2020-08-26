@@ -132,15 +132,15 @@ def main():
         print(f"Can not find pretrained network for test!")
 
     # according config file to update config parameter
-    net.updateConfigParameter('useProxialIPM', useProxialIPM)
+    net.updateRunParameter('useProxialIPM', useProxialIPM)
     if useProxialIPM:
-        net.updateConfigParameter("learningStepIPM", learningStepIPM)
-        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
-        net.updateConfigParameter("criterion", criterionIPM)
+        net.updateRunParameter("learningStepIPM", learningStepIPM)
+        net.updateRunParameter("maxIterationIPM", maxIterationIPM)
+        net.updateRunParameter("criterion", criterionIPM)
 
-    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
-    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
-    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
+    net.updateRunParameter("useDynamicProgramming", useDynamicProgramming)
+    net.updateRunParameter("usePrimalDualIPM", usePrimalDualIPM)
+    net.updateRunParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
 
     if outputDir=="":
         outputDir = dataDir + "/log/" + network + "/" + experimentName +"/testResult"

@@ -167,21 +167,21 @@ def main():
         print(f"Net starts training from scratch, and save at {netPath}")
 
     # according config file to update config parameter
-    net.updateConfigParameter('useProxialIPM', useProxialIPM)
+    net.updateRunParameter('useProxialIPM', useProxialIPM)
     if useProxialIPM:
-        net.updateConfigParameter("learningStepIPM", learningStepIPM)
-        net.updateConfigParameter("maxIterationIPM", maxIterationIPM)
-        net.updateConfigParameter("criterion", criterionIPM)
+        net.updateRunParameter("learningStepIPM", learningStepIPM)
+        net.updateRunParameter("maxIterationIPM", maxIterationIPM)
+        net.updateRunParameter("criterion", criterionIPM)
 
-    net.updateConfigParameter("useDynamicProgramming", useDynamicProgramming)
-    net.updateConfigParameter("usePrimalDualIPM", usePrimalDualIPM)
-    net.updateConfigParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
-    net.updateConfigParameter("useLayerDice", useLayerDice)
-    net.updateConfigParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
-    net.updateConfigParameter("useSmoothSurface", useSmoothSurface)
-    net.updateConfigParameter("gradWeight", gradWeight)
-    net.updateConfigParameter("useWeightedDivLoss", useWeightedDivLoss)
-    net.updateConfigParameter("useLayerCE", useLayerCE)
+    net.updateRunParameter("useDynamicProgramming", useDynamicProgramming)
+    net.updateRunParameter("usePrimalDualIPM", usePrimalDualIPM)
+    net.updateRunParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
+    net.updateRunParameter("useLayerDice", useLayerDice)
+    net.updateRunParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
+    net.updateRunParameter("useSmoothSurface", useSmoothSurface)
+    net.updateRunParameter("gradWeight", gradWeight)
+    net.updateRunParameter("useWeightedDivLoss", useWeightedDivLoss)
+    net.updateRunParameter("useLayerCE", useLayerCE)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):
@@ -250,9 +250,9 @@ def main():
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss or muError < preErrorMean:
-            net.updateConfigParameter("validationLoss", validLoss)
-            net.updateConfigParameter("epoch", net.m_epoch)
-            net.updateConfigParameter("errorMean", muError)
+            net.updateRunParameter("validationLoss", validLoss)
+            net.updateRunParameter("epoch", net.m_epoch)
+            net.updateRunParameter("errorMean", muError)
             preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(netPath)
