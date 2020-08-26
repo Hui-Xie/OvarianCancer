@@ -1,3 +1,22 @@
+
+# measure Hausdorff distance of all 9 surface in different network result:
+
+ 3Unet Network, with learning R;
+ 3Unet, Use SmoothedGT to replace R;
+ 3Unet, use UnsmoothedGT to replace R;
+ 1Unet, only unary item
+     1UnetUnary,
+surf0,     [ 4.]
+surf1,     [12.]
+surf2,     [11.]
+surf3,     [ 8.]
+surf4,     [10.]
+surf5,     [ 9.]
+surf6,     [ 7.]
+surf7,     [ 4.]
+surf8,     [ 5.]
+
+
 # experiment: use ground truth of R to replace predicted R:
 Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
 20200821A_3Unet_CV0,                  CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,  3Unet Network, with learning R;

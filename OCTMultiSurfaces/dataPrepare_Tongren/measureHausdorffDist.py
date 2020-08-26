@@ -24,6 +24,7 @@ nSlices = len(IDs)
 slicesPerVolume = 31
 
 allGT = np.load(gtLabelFile)
+B,N,W = allGT.shape
 
 for i in range(0,nSlices, slicesPerVolume):
     # ID: "/home/hxie1/data/OCT_Tongren/control/140009_OD_2602_Volume/20110427064946_OCT01.jpg"
@@ -34,7 +35,7 @@ for i in range(0,nSlices, slicesPerVolume):
 
 assert allGT.shape == predictS.shape
 
-columnHausdorffD = columnHausdorffDist(allGT, predictS)
+columnHausdorffD = columnHausdorffDist(allGT, predictS).reshape((1,N))
 
 print(f"predictedXmlDir =\n{predictedXmlDir}")
 
