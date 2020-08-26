@@ -12,7 +12,7 @@ sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
 
 
-predictedXmlDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/SurfaceSubnet/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0/testResult/xml"
+predictedXmlDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/SoftSepar3Unet/expTongren_9Surfaces_20200821A_3Unet_CV0_RUseSmoothedGT/testResult/xml"
 gtLabelFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/test/surfaces_CV0.npy"
 gtIDFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/test/patientID_CV0.json"
 

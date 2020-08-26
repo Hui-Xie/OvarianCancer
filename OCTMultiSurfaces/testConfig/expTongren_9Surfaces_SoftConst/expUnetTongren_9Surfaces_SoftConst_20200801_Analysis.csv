@@ -1,20 +1,10 @@
 
 # measure Hausdorff distance of all 9 surface in different network result:
-
- 3Unet Network, with learning R;
- 3Unet, Use SmoothedGT to replace R;
- 3Unet, use UnsmoothedGT to replace R;
- 1Unet, only unary item
-     1UnetUnary,
-surf0,     [ 4.]
-surf1,     [12.]
-surf2,     [11.]
-surf3,     [ 8.]
-surf4,     [10.]
-surf5,     [ 9.]
-surf6,     [ 7.]
-surf7,     [ 4.]
-surf8,     [ 5.]
+ Surface Index,                         0,  1,  2,  3,  4,  5,  6,  7,  8,
+ 3Unet_Network_with_learning_R,
+ 3Unet_Use_SmoothedGT_to_replace_R,
+ 3Unet_Use_UnsmoothedGT_to_replace_R,
+ 1Unet_Only_unary_term,                 4. 12. 11.  8. 10.  9.  7.  4.  5.
 
 
 # experiment: use ground truth of R to replace predicted R:
