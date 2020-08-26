@@ -135,8 +135,8 @@ def main():
 
         print(f"sigma2.shape = {sigma2.shape}")
         print(f"mean of sigma2 = {torch.mean(sigma2, dim=[0,2])}")
-        print(f"min of sigma2  = {torch.min(torch.min(sigma2, dim=0), dim=-1)}")
-        print(f"max of sigma2  = {torch.max(torch.max(sigma2, dim=0), dim=-1)}")
+        print(f"min of sigma2  = {torch.min(torch.min(sigma2, dim=0)[0], dim=-1)}")
+        print(f"max of sigma2  = {torch.max(torch.max(sigma2, dim=0)[0], dim=-1)}")
 
         #output testID
         with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
