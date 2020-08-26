@@ -1,10 +1,18 @@
 
-# measure Hausdorff distance of all 9 surface in different network result:
- Surface Index,                         0,  1,  2,  3,  4,  5,  6,  7,  8,
- 3Unet_Network_with_learning_R,
- 3Unet_Use_SmoothedGT_to_replace_R,     7. 13. 10.  8. 10.  9.  8.  7. 12.
- 3Unet_Use_UnsmoothedGT_to_replace_R,   7. 13. 10.  8. 10.  9.  8.  8. 12.
- 1Unet_Only_unary_term,                 4. 12. 11.  8. 10.  9.  7.  4.  5.
+# Measure Hausdorff distance of all 9 surface for different network results: On August 26th, 2020
+ Surface Index,                         0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
+ 3Unet_Network_with_learning_R,         7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
+ 3Unet_Use_SmoothedGT_to_replace_R,     7, 13, 10,  8, 10,  9,  8,  7, 12,  13,
+ 3Unet_Use_UnsmoothedGT_to_replace_R,   7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
+ 1Unet_Only_unary_term,                 4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
+
+ Analysis:
+ 1  This Hausdorff distance measures the max absolute segmentation deviation between ground truth and prediction for all 5 test volumes in CV0;
+ 2  Hauddorff distantan is in pixel unit above;
+ 3  Introducing R increases Hausdorff distance overall;
+ 4  Introducing R increases the Hausdorff distance of surface 0 and surface 8 which are the most easy segmented surfaces,
+    which means R acts as a disturbation to the original unary prediction mu in worse cases;
+ 4  It will be really helpful to further analyze reason behind this from the cost function form;
 
 
 # experiment: use ground truth of R to replace predicted R:
