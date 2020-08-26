@@ -67,6 +67,6 @@ class LambdaSubnet(BasicModel):
         B, N, H, W = xLambda.shape
 
         lambdaProb = logits2Prob(xLambda, dim=-2)
-        lambdas = argSoftmax(lambdaProb) / H  # size: Bx(N-1)xW, and lambda \in [0,1)
+        lambdas = argSoftmax(lambdaProb)*200.0/ H  # size: Bx(N-1)xW, and lambda \in [0,200)
 
         return lambdas  # return lambdas  in (B,N-1,W) dimension

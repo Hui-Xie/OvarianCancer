@@ -6,34 +6,14 @@
 # training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
 
 # 3 Unets train Surface, Rift, and Lambda
+# Lambda subnet, train on  the validation data.
+
 
 
 debug: False # debug mark
 dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
-
-status: "trainLambda" # "fineTuneSurfaceRift"  "test"
-
-# for 3 Unets
-surfaceSubnet: "SurfaceSubnet"
-surfaceSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0.yaml"
-surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
-surfaceSubnetLr: 0.005  # pretain at epoch 121
-
-riftSubnet: "RiftSubnet"
-riftSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_RiftSubnet_CV0.yaml"
-riftSubnetDevice: torch.device('cuda:2')   #GPU ID
-riftSubnetLr: 0.01  # pretrain at epoch 54
-
-lambdaSubnet: "LambdaSubnet"
-lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0.yaml"
-lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID
-lambdaSubnetLr: 0.01
-
-trainLambdaUsingValidation: True
-
-replaceRwithGT: 0 # 0: use predicted R; 1: use riftGT without smoothness; 2: use smoothed riftGT;
 
 dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
 existGTLabel: True
@@ -67,18 +47,22 @@ k: 0   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:0')   #GPU ID
-batchSize: 4
+device: torch.device('cuda:2')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 2
+# phased training with different learning rate
+learningRate: 0.01
 
 
-network: "SoftSepar3Unet"
+network: "LambdaSubnet"
 inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
+maxRift:  60 # general H/N, in pixel
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
-numSurfaces: 9  # num of surfaces in an image
+numSurfaces: 8  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad

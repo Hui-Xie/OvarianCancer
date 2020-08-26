@@ -13,7 +13,7 @@ dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
 
-status: "trainLambda" # "fineTuneSurfaceRift"  "test"
+status: "trainLambda" #"test" # "fineTuneSurfaceRift" #
 
 # for 3 Unets
 surfaceSubnet: "SurfaceSubnet"
@@ -27,11 +27,11 @@ riftSubnetDevice: torch.device('cuda:2')   #GPU ID
 riftSubnetLr: 0.01  # pretrain at epoch 54
 
 lambdaSubnet: "LambdaSubnet"
-lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0.yaml"
+lambdaSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig/expTongren_9Surfaces_SoftConst_20200826A_LambdaSubnet_CV0.yaml"
 lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID
 lambdaSubnetLr: 0.01
 
-trainLambdaUsingValidation: True
+trainLambdaUsingValidation: False
 
 replaceRwithGT: 0 # 0: use predicted R; 1: use riftGT without smoothness; 2: use smoothed riftGT;
 

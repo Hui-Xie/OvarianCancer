@@ -1,4 +1,27 @@
 
+# sigma2 analysis along different surfaces on August 26th, 2020
+python3.7 ./SurfaceSubnet_Test.py ./testConfig/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0.yaml
+
+sigma2.shape = torch.Size([155, 9, 512])
+mean of sigma2 = tensor([0.1589, 0.2499, 2.3791, 2.1644, 0.4526, 0.3018, 5.4519, 1.6994, 0.1721],  device='cuda:1')
+1.0/mean = [6.2933, 4.0016, 0.4203, 0.4620, 2.2095, 3.3135, 0.1834, 0.5884, 5.8106]
+
+min of sigma2  = torch.return_types.min(
+values=tensor([0.0129, 0.0618, 0.7259, 0.7362, 0.0833, 0.1022, 0.7014, 0.6878, 0.0182], device='cuda:1'),
+indices=tensor([187, 193, 131,  85,  58, 223,  44, 108,  15], device='cuda:1'))
+1.0/min = [77.5194, 16.1812,  1.3776,  1.3583, 12.0048,  9.7847,  1.4257,  1.4539, 54.9451]
+
+max of sigma2  = torch.return_types.max(
+values=tensor([ 42.1497, 177.9110,  37.7500,  35.5107,  33.8680,  63.1024,  71.3775, 47.5299,  17.0574], device='cuda:1'),
+indices=tensor([  0,   0,   0,   0,   0, 511, 481, 205, 208], device='cuda:1'))
+1/max = [0.0237, 0.0056, 0.0265, 0.0282, 0.0295, 0.0158, 0.0140, 0.0210, 0.0586]
+
+Analysis:
+1   1/sigma2 is range [0, 200]
+
+===========================================================
+
+
 # Measure Hausdorff distance of all 9 surface for different network results: On August 26th, 2020
  Surface Index,                         0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
  3Unet_Network_with_learning_R,         7, 13, 10,  8, 10,  9,  8,  8, 12,  13,

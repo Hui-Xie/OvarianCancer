@@ -58,7 +58,7 @@ def main():
             validationLabelsPath = os.path.join(hps.dataDir,"validation", f"surfaces_CV{hps.k:d}.npy")
             validationIDPath    = os.path.join(hps.dataDir,"validation", f"patientID_CV{hps.k:d}.json")
 
-            if hps.status == "trainLambda":
+            if hps.status == "trainLambda" and hps.trainLambdaUsingValidation:
                 trainImagesPath = validationImagesPath
                 trainLabelsPath = validationLabelsPath
                 trainIDPath     = validationIDPath
