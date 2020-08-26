@@ -36,7 +36,7 @@ assert allGT.shape == predictS.shape
 
 columnHausdorffD = columnHausdorffDist(allGT, predictS)
 
-print(f"columnHausdorffD = {columnHausdorffD}")
+print(f"columnHausdorffD = \n{columnHausdorffD}")
 
 
 print(f"=====End of measure of Hausdorff Distance============")
