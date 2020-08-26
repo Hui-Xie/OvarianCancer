@@ -6,7 +6,7 @@ import os
 
 import sys
 sys.path.append(".")
-from TongrenFileUtilitis import getSurfacesArray
+from TongrenFileUtilities import getSurfacesArray
 
 sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
@@ -37,6 +37,6 @@ assert allGT.shape == predictS.shape
 columnHausdorffD = columnHausdorffDist(allGT, predictS)
 
 print(f"columnHausdorffD = {columnHausdorffD}")
-    
+
 
 print(f"=====End of measure of Hausdorff Distance============")
