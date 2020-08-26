@@ -279,8 +279,8 @@ def main():
         file.write(f"loadNetPath: {netPath}\n")
         file.write(f"config file: {configFile}\n")
         file.write(f"B,S,H,W = {B,S,H, W}\n")
-        file.write(f"net.m_configParametersDict:\n")
-        [file.write(f"\t{key}:{value}\n") for key, value in net.m_configParametersDict.items()]
+        file.write(f"net.m_runParametersDict:\n")
+        [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
         file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
