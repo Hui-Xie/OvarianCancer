@@ -47,9 +47,9 @@ def main():
     MarkGTDisorder = False
     MarkPredictDisorder = False
 
-    outputXmlSegFiles = True
+    outputXmlSegFiles = False
 
-    OutputNumImages = 2
+    OutputNumImages = 0
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
@@ -125,6 +125,7 @@ def main():
             batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
             images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
+            sigma2 = torch.cat((sigma2, _sigma2)) if testBatch != 1 else _sigma2
             if hps.existGTLabel:
                 testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs']
             else:
@@ -132,7 +133,10 @@ def main():
 
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
-
+        print(f"sigma2.shape = {sigma2.shape}")
+        print(f"mean of sigma2 = {torch.mean(sigma2, dim=[0,2])}")
+        print(f"min of sigma2  = {torch.min(sigma2, dim=[0,2])}")
+        print(f"max of sigma2  = {torch.max(sigma2, dim=[0, 2])}")
 
         #output testID
         with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
