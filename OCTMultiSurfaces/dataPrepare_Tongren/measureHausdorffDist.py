@@ -36,6 +36,8 @@ assert allGT.shape == predictS.shape
 
 columnHausdorffD = columnHausdorffDist(allGT, predictS)
 
+print(f"predictedXmlDir =\n{predictedXmlDir}")
+
 print(f"columnHausdorffD = \n{columnHausdorffD}")
 
 
