@@ -1,0 +1,69 @@
+
+example:
+qsub -b y -cwd -N jobname -q queueName  -pe smp numSlots -e ~/temp_qsub/Error_jobName.txt -o ~/temp_qsub/StdOutput_jobName.txt  cmdPath cmdPara
+
+
+ssh compute_node_name from Argon login node will take you to the compute node on which your job is running.
+
+qstat -F -q INFORMATICS-GPU
+
+This results in a lot of information being printed which looks like the following:
+
+5763423 0.50246 TRCV3      hxie1        r     03/15/2020 19:13:34     4
+---------------------------------------------------------------------------------
+INFORMATICS-GPU@argon-itf-ca38 BIPC  0/4/40         1.07     lx-amd64
+        hl:arch=lx-amd64
+        hl:num_proc=40
+        hl:mem_total=187.581G
+.
+.
+.
+.
+.
+.
+.
+.
+.
+        qf:s_vmem=infinity
+        qf:h_vmem=infinity
+        qf:min_cpu_interval=00:05:00
+        qc:ngpus=2
+
+The last part which says qc:ngpus=2 tells you that there are two available GPUS on this particular node. If you like the XML format better you can add -xml at the end of the command above and it will convert the information into XML format.
+
+
+=================================================================
+# run at network dir:
+
+# Tongren CV0 test 20200315
+qsub -b y -cwd -N TRCV0 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV0.txt -o ~/temp_qsub/StdOutput_TRCV0.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV0_Sigma20_argon.yaml
+
+# Tongren CV3 test 20200315
+qsub -b y -cwd -N TRCV3 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV3.txt -o ~/temp_qsub/StdOutput_TRCV3.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV3_Sigma20_argon.yaml
+
+# Tongren CV4 test 20200315
+qsub -b y -cwd -N TRCV4 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV4.txt -o ~/temp_qsub/StdOutput_TRCV4.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV4_Sigma20_argon.yaml
+
+# Tongren CV7 test 20200315
+qsub -b y -cwd -N TRCV7 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV7.txt -o ~/temp_qsub/StdOutput_TRCV7.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV7_Sigma20_argon.yaml
+
+# Tongren CV9 test 20200315
+qsub -b y -cwd -N TRCV9 -q COE-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV9.txt -o ~/temp_qsub/StdOutput_TRCV9.txt  python3.7 ./CVTrainSurfaces.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV9_Sigma20_argon.yaml
+
+===================================================================
+# test at network dir:
+
+# Tongren CV0 test 20200315
+qsub -b y -cwd -N TRCV0 -q INFORMATICS-HM-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV0.txt -o ~/temp_qsub/StdOutput_TRCV0.txt  python3.7 ./CVTestSurfaces_OCT.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV0_Sigma20_argon.yaml
+
+# Tongren CV3 test 20200315
+qsub -b y -cwd -N TRCV3 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV3.txt -o ~/temp_qsub/StdOutput_TRCV3.txt  python3.7 ./CVTestSurfaces_OCT.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV3_Sigma20_argon.yaml
+
+# Tongren CV4 test 20200315
+qsub -b y -cwd -N TRCV4 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV4.txt -o ~/temp_qsub/StdOutput_TRCV4.txt  python3.7 ./CVTestSurfaces_OCT.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV4_Sigma20_argon.yaml
+
+# Tongren CV7 test 20200315
+qsub -b y -cwd -N TRCV7 -q INFORMATICS-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV7.txt -o ~/temp_qsub/StdOutput_TRCV7.txt  python3.7 ./CVTestSurfaces_OCT.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV7_Sigma20_argon.yaml
+
+# Tongren CV9 test 20200315
+qsub -b y -cwd -N TRCV9 -q COE-GPU  -pe smp 4 -e ~/temp_qsub/Error_TRCV9.txt -o ~/temp_qsub/StdOutput_TRCV9.txt  python3.7 ./CVTestSurfaces_OCT.py ../testConfig/expUnetTongren_9Surfaces_20200215/expUnetTongren_20200315_9Surfaces_CV9_Sigma20_argon.yaml
