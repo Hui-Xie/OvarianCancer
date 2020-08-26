@@ -2,6 +2,7 @@
 import math
 import torch.nn as nn
 import torch
+import numpy as np
 
 import sys
 from framework.ConvBlocks import *
@@ -92,3 +93,15 @@ def argSoftmax(x, rangeH=None):
     del PY  # hope to free memory.
 
     return mu
+
+def columnHausdorffDist(data1, data2):
+    '''
+
+    :param data1: In BxNxW size in numpy
+    :param data2: In BxNxW size in numpy
+    :return:  a vector of size N in numpy
+    '''
+    B,N,W = data1.shape
+    return np.amax(np.abs(data1-data2), axis=(0,2)).reshape((N,1))
+
+

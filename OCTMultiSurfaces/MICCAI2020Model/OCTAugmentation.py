@@ -244,6 +244,7 @@ def layerProb2SurfaceMu(layerProb):
     layerMap = torch.where(layerMap >N, N*torch.ones_like(layerMap), layerMap)
 
     # compute mu's confidence
+    # in pytorch 1.3 torch.tensor([3,4,5])/5 = [0,0,1], in pytorch 1.6, it is a error
     surfaceConf = (layerMap == oldLayerMap).sum(dim=1, keepdim=True)/(H*1.0)  # size: B,1, W
     surfaceConf = surfaceConf.expand((B,N,W))
 
