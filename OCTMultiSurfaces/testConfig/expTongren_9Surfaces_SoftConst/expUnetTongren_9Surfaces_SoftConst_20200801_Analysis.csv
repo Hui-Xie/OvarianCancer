@@ -8,11 +8,11 @@
 
  Analysis:
  1  This Hausdorff distance measures the max absolute segmentation deviation between ground truth and prediction for all 5 test volumes in CV0;
- 2  Hauddorff distantan is in pixel unit above;
+ 2  Hausdorff distance is in pixel unit above;
  3  Introducing R increases Hausdorff distance overall;
  4  Introducing R increases the Hausdorff distance of surface 0 and surface 8 which are the most easy segmented surfaces,
-    which means R acts as a disturbation to the original unary prediction mu in worse cases;
- 4  It will be really helpful to further analyze reason behind this from the cost function form;
+    which means R acts as a disturbance to the original unary prediction mu in worse cases;
+ 5  It will be really helpful to further analyze reason behind this from the cost function form;
 
 
 # experiment: use ground truth of R to replace predicted R:
