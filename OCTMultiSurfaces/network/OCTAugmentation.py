@@ -272,7 +272,7 @@ def layerProb2SurfaceMu(layerProb):
     layerMap = torch.where(layerMap >N, N*torch.ones_like(layerMap), layerMap)
 
     # compute mu's confidence
-    surfaceConf = (layerMap == oldLayerMap).sum(dim=1, keepdim=True)/H  # size: B,1, W
+    surfaceConf = (layerMap == oldLayerMap).sum(dim=1, keepdim=True)/(H*1.0)  # size: B,1, W
     surfaceConf = surfaceConf.expand((B,N,W))
 
     layerMap0 = layerMap[:,0:-1,:]
