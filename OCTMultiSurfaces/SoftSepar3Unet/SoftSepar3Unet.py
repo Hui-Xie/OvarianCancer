@@ -131,7 +131,8 @@ class SoftSepar3Unet(BasicModel):
                               learningPairWeight=Lambda_detach)
             # surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
             loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
-            loss = surfaceLoss.to(self.m_lDevice) + riftLoss.to(self.m_lDevice) + loss_smooth
+            # at final finetune stage, accurate R and Mu does not give benefits.
+            loss = loss_smooth
 
         elif self.hps.status == "test":
             if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
