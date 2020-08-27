@@ -137,10 +137,13 @@ class SoftSepar3Unet(BasicModel):
         elif self.hps.status == "test":
             if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
                 R_detach = R.clone().detach().to(self.m_lDevice)
+                print("use predicted R")
             elif 1 == self.hps.replaceRwithGT: #1: use riftGT without smoothness;
                 R_detach = (GTs[:,1:, :] - GTs[:,0:-1, :]).detach().to(self.m_lDevice)
+                print("use No-smooth ground truth R")
             elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed riftGT;
                 R_detach = riftGTs.clone().detach().to(self.m_lDevice)
+                print("use smooth ground truth R")
             else:
                 print(f"Wrong value of self.hps.replaceRwithGT")
                 assert False
@@ -148,6 +151,13 @@ class SoftSepar3Unet(BasicModel):
             Mu_detach = Mu.clone().detach().to(self.m_lDevice)
             Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
             Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
+            
+            if self.hps.debug== True:
+                print(f"Lambda_detach.shape = {Lambda_detach.shape}")
+                print(f"mean of Lambda_detach = {torch.mean(Lambda_detach, dim=[0, 2])}")
+                print(f"min of Lambda_detach  = {torch.min(torch.min(Lambda_detach, dim=0)[0], dim=-1)}")
+                print(f"max of Lambda_detach  = {torch.max(torch.max(Lambda_detach, dim=0)[0], dim=-1)}")
+            
             S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda_detach)
             #surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))

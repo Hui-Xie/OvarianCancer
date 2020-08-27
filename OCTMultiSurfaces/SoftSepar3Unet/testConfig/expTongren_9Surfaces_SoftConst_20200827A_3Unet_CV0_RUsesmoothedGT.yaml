@@ -8,7 +8,7 @@
 # 3 Unets train Surface, Rift, and Lambda
 
 
-debug: False # debug mark
+debug: True # debug mark
 dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
