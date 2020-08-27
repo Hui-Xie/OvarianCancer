@@ -1,26 +1,45 @@
 # experiment expTongren_9Surfaces_SoftConst_20200827A_3Unet_CV0
 # config:
   1  add lambda into (0, 200) range from previous (0,1)
+  2  lambda training from training data.
 experiment_Name, Error(micrometer),        Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
 20200821A_3Unet_CV0,                  CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,  lambda \in (0,1), learning R;
 20200827A_3Unet_CV0,                  CV0, 0.9885, 3.2768, 2.9824, 2.6563, 3.3461, 1.4610, 3.0790, 1.6235, 1.2132, 1.1312294006347656, 2.291862964630127,  lambda \in (0,200), learning R;
 20200827A_3Unet_CV0_RUseNoSmoothedGT, CV0, 0.9885, 3.2768, 2.9825, 2.6563, 3.3462, 1.4610, 3.0789, 1.6235, 1.2132, 1.1312602758407593, 2.291879415512085, lambda \in (0,200), NoSmoothedGTasR;
 20200827A_3Unet_CV0_RUsesmoothedGT,   CV0, 0.9885, 3.2766, 2.9825, 2.6563, 3.3461, 1.4610, 3.0791, 1.6235, 1.2132, 1.1312209367752075, 2.2918736934661865, lambda \in (0,200), SmoothedGTasR;
 
-use smooth ground truth R, Lambda:
-Lambda_detach.shape = torch.Size([4, 8, 512])
-mean of Lambda_detach = tensor([5.3633e-13, 1.8366e-11, 1.6293e-12, 4.7611e-12, 4.3157e-13, 1.8917e-15, 1.4091e-14, 4.7292e-15], device='cuda:0')
-min of Lambda_detach  = torch.return_types.min(values=tensor([3.7836e-28, 3.0569e-25, 1.8783e-27, 1.6938e-26, 1.3853e-28, 8.1868e-35, 5.6909e-32, 2.2120e-33], device='cuda:0'),
-indices=tensor([507, 506, 507, 507, 506, 507, 507, 507], device='cuda:0'))
-max of Lambda_detach  = torch.return_types.max(values=tensor([5.9784e-10, 2.0028e-08, 1.8652e-09, 5.4581e-09, 5.0479e-10, 2.4779e-12,1.7332e-11, 5.7836e-12], device='cuda:0'),
-indices=tensor([511, 511, 511, 511, 511, 511, 511, 511], device='cuda:0'))
+Experiment: expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0  : train from validatioin data
+
+Lambda.shape = torch.Size([155, 8, 512])
+mean of Lambda = tensor([0.5024, 0.5228, 0.4447, 0.4136, 0.4132, 0.4184, 0.4025, 0.4049], device='cuda:2')
+min of Lambda  =
+torch.return_types.min(values=tensor([8.2744e-12, 4.9735e-04, 4.4535e-05, 1.2592e-04, 1.8332e-04, 6.7064e-04, 9.8122e-05, 1.0106e-04], device='cuda:2'),
+indices=tensor([0, 0, 0, 0, 0, 0, 0, 0], device='cuda:2'))
+max of Lambda  =
+torch.return_types.max(values=tensor([2.4330, 0.7542, 0.5618, 0.4781, 0.8484, 0.5469, 0.4056, 0.4998],  device='cuda:2'),
+indices=tensor([452, 443, 432, 163,  57, 120, 110, 163], device='cuda:2'))
+
+Experiment: expTongren_9Surfaces_SoftConst_20200826A_LambdaSubnet_CV0 : train from training data
+Lambda.shape = torch.Size([155, 8, 512])
+mean of Lambda = tensor([1.0461e-12, 3.2994e-11, 2.9176e-12, 9.1121e-12, 8.9318e-13, 4.6553e-15, 3.4685e-14, 1.1694e-14], device='cuda:2')
+min of Lambda  =
+torch.return_types.min(values=tensor([4.1818e-30, 5.0134e-27, 2.5970e-29, 2.6495e-28, 1.3683e-30, 4.6286e-37, 4.0834e-34, 1.2803e-35], device='cuda:2'),
+indices=tensor([  4, 505, 506,   4, 505, 506, 505, 505], device='cuda:2'))
+max of Lambda  =
+torch.return_types.max(values=tensor([1.0036e-08, 2.3132e-07, 2.5180e-08, 7.8057e-08, 8.1684e-09, 5.9064e-11, 4.1676e-10, 1.5237e-10], device='cuda:2'),
+indices=tensor([511, 511, 511, 511, 511, 511, 511, 511], device='cuda:2'))
+
 
 Analysis:
 1   Learning lambda is at 1e-13 level, which leads R almost ineffectively.
     As our learning lambda is basing on training data while fixed surface and separaition branches,
     Network thinks the surface branch has 100% weight to match with gound truth, so it let sepration branch weight equal to zero;
     This verified that we can not use training data to learning lambda;
-2
+2   Further plan:
+    A  change Lambda into [0, 50];
+    B  retrain Lambda in validation data;
+    C  test its improvement on some worse case;
+
 
 
 
