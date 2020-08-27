@@ -8,18 +8,18 @@ experiment_Name, Error(micrometer),        Surface0, Surface1, Surface2, Surface
 20200827A_3Unet_CV0_RUseNoSmoothedGT, CV0, 0.9885, 3.2768, 2.9825, 2.6563, 3.3462, 1.4610, 3.0789, 1.6235, 1.2132, 1.1312602758407593, 2.291879415512085, lambda \in (0,200), NoSmoothedGTasR;
 20200827A_3Unet_CV0_RUsesmoothedGT,   CV0, 0.9885, 3.2766, 2.9825, 2.6563, 3.3461, 1.4610, 3.0791, 1.6235, 1.2132, 1.1312209367752075, 2.2918736934661865, lambda \in (0,200), SmoothedGTasR;
 
-Experiment: expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0  : train from validatioin data
-
+Experiment: expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0  : train from validatioin data, and lambda limit in (0,1)
 Lambda.shape = torch.Size([155, 8, 512])
-mean of Lambda = tensor([0.5024, 0.5228, 0.4447, 0.4136, 0.4132, 0.4184, 0.4025, 0.4049], device='cuda:2')
+mean of Lambda = tensor([0.0025, 0.0026, 0.0022, 0.0021, 0.0021, 0.0021, 0.0020, 0.0020], device='cuda:2')
 min of Lambda  =
-torch.return_types.min(values=tensor([8.2744e-12, 4.9735e-04, 4.4535e-05, 1.2592e-04, 1.8332e-04, 6.7064e-04, 9.8122e-05, 1.0106e-04], device='cuda:2'),
+torch.return_types.min(values=tensor([4.1372e-14, 2.4867e-06, 2.2267e-07, 6.2960e-07, 9.1657e-07, 3.3532e-06,  4.9061e-07, 5.0531e-07], device='cuda:2'),
 indices=tensor([0, 0, 0, 0, 0, 0, 0, 0], device='cuda:2'))
 max of Lambda  =
-torch.return_types.max(values=tensor([2.4330, 0.7542, 0.5618, 0.4781, 0.8484, 0.5469, 0.4056, 0.4998],  device='cuda:2'),
+torch.return_types.max(values=tensor([0.0122, 0.0038, 0.0028, 0.0024, 0.0042, 0.0027, 0.0020, 0.0025], device='cuda:2'),
 indices=tensor([452, 443, 432, 163,  57, 120, 110, 163], device='cuda:2'))
 
-Experiment: expTongren_9Surfaces_SoftConst_20200826A_LambdaSubnet_CV0 : train from training data
+
+Experiment: expTongren_9Surfaces_SoftConst_20200826A_LambdaSubnet_CV0 : train from training data, and lambda limit in (0,200)
 Lambda.shape = torch.Size([155, 8, 512])
 mean of Lambda = tensor([1.0461e-12, 3.2994e-11, 2.9176e-12, 9.1121e-12, 8.9318e-13, 4.6553e-15, 3.4685e-14, 1.1694e-14], device='cuda:2')
 min of Lambda  =
@@ -31,11 +31,12 @@ indices=tensor([511, 511, 511, 511, 511, 511, 511, 511], device='cuda:2'))
 
 
 Analysis:
-1   Learning lambda is at 1e-13 level, which leads R almost ineffectively.
+1   Learning lambda  in training data is at 1e-13 level, which leads R almost ineffectively.
     As our learning lambda is basing on training data while fixed surface and separaition branches,
     Network thinks the surface branch has 100% weight to match with gound truth, so it let sepration branch weight equal to zero;
     This verified that we can not use training data to learning lambda;
-2   Further plan:
+2   Network trends to let lambda very small;
+3   Further plan:
     A  change Lambda into [0, 50];
     B  retrain Lambda in validation data;
     C  test its improvement on some worse case;
