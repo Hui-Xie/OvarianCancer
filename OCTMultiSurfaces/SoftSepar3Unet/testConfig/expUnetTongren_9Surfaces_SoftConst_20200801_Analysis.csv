@@ -8,7 +8,7 @@ experiment_Name, Error(micrometer),        Surface0, Surface1, Surface2, Surface
 20200827A_3Unet_CV0_RUseNoSmoothedGT, CV0, 0.9885, 3.2768, 2.9825, 2.6563, 3.3462, 1.4610, 3.0789, 1.6235, 1.2132, 1.1312602758407593, 2.291879415512085, lambda \in (0,200), NoSmoothedGTasR;
 20200827A_3Unet_CV0_RUsesmoothedGT,   CV0, 0.9885, 3.2766, 2.9825, 2.6563, 3.3461, 1.4610, 3.0791, 1.6235, 1.2132, 1.1312209367752075, 2.2918736934661865, lambda \in (0,200), SmoothedGTasR;
 
-Experiment: expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0  : train from validatioin data, and lambda limit in (0,1)
+Experiment: expTongren_9Surfaces_SoftConst_20200819A_LambdaSubnet_CV0  : train from validatioin data, and lambda limits in (0,1)
 Lambda.shape = torch.Size([155, 8, 512])
 mean of Lambda = tensor([0.0025, 0.0026, 0.0022, 0.0021, 0.0021, 0.0021, 0.0020, 0.0020], device='cuda:2')
 min of Lambda  =
@@ -31,18 +31,15 @@ indices=tensor([511, 511, 511, 511, 511, 511, 511, 511], device='cuda:2'))
 
 
 Analysis:
-1   Learning lambda  in training data is at 1e-13 level, which leads R almost ineffectively.
+1   Learning lambda from training data make lambda at 1e-13 level, which leads R almost ineffectively.
     As our learning lambda is basing on training data while fixed surface and separaition branches,
-    Network thinks the surface branch has 100% weight to match with gound truth, so it let sepration branch weight equal to zero;
+    Network thinks the surface branch has 0.99+ weight to match with ground truth, so it let separation branch weight equal to zero;
     This verified that we can not use training data to learning lambda;
-2   Network trends to let lambda very small;
+2   learning lambda from validation data still make lambda at 2e-3 level; Nework still give surface branch 0.99+ weight;
 3   Further plan:
-    A  change Lambda into [0, 50];
-    B  retrain Lambda in validation data;
-    C  test its improvement on some worse case;
-
-
-
+    A  change Lambda into [0, 50] range;
+    B  learn Lambda from validation data with R directly adapted from ground truth;
+       risk: our learning R may can not achieve this level;
 
 
 # sigma2 analysis along different surfaces on August 26th, 2020
