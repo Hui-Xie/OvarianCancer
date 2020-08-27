@@ -1,10 +1,11 @@
 # experiment expTongren_9Surfaces_SoftConst_20200827A_3Unet_CV0
 # config:
   1  add lambda into (0, 200) range from previous (0,1)
-experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
-20200821A_3Unet_CV0,           CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,  lambda \in (0,1);
-20200827A_3Unet_CV0,            CV0, 0.9885, 3.2768, 2.9824, 2.6563, 3.3461, 1.4610, 3.0790, 1.6235, 1.2132, 1.1312294006347656, 2.291862964630127,  lambda \in (0,200);
-
+experiment_Name, Error(micrometer),        Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
+20200821A_3Unet_CV0,                  CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,  lambda \in (0,1), learning R;
+20200827A_3Unet_CV0,                  CV0, 0.9885, 3.2768, 2.9824, 2.6563, 3.3461, 1.4610, 3.0790, 1.6235, 1.2132, 1.1312294006347656, 2.291862964630127,  lambda \in (0,200), learning R;
+20200827A_3Unet_CV0_RUseNoSmoothedGT, CV0, 0.9885, 3.2768, 2.9825, 2.6563, 3.3462, 1.4610, 3.0789, 1.6235, 1.2132, 1.1312602758407593, 2.291879415512085, lambda \in (0,200), NoSmoothedGTasR;
+20200827A_3Unet_CV0_RUsesmoothedGT,   CV0, 0.9885, 3.2766, 2.9825, 2.6563, 3.3461, 1.4610, 3.0791, 1.6235, 1.2132, 1.1312209367752075, 2.2918736934661865, lambda \in (0,200), SmoothedGTasR;
 Analysis:
 1
 
