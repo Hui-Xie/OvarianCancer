@@ -6,8 +6,24 @@ experiment_Name, Error(micrometer),        Surface0, Surface1, Surface2, Surface
 20200827A_3Unet_CV0,                  CV0, 0.9885, 3.2768, 2.9824, 2.6563, 3.3461, 1.4610, 3.0790, 1.6235, 1.2132, 1.1312294006347656, 2.291862964630127,  lambda \in (0,200), learning R;
 20200827A_3Unet_CV0_RUseNoSmoothedGT, CV0, 0.9885, 3.2768, 2.9825, 2.6563, 3.3462, 1.4610, 3.0789, 1.6235, 1.2132, 1.1312602758407593, 2.291879415512085, lambda \in (0,200), NoSmoothedGTasR;
 20200827A_3Unet_CV0_RUsesmoothedGT,   CV0, 0.9885, 3.2766, 2.9825, 2.6563, 3.3461, 1.4610, 3.0791, 1.6235, 1.2132, 1.1312209367752075, 2.2918736934661865, lambda \in (0,200), SmoothedGTasR;
+
+use smooth ground truth R, Lambda:
+Lambda_detach.shape = torch.Size([4, 8, 512])
+mean of Lambda_detach = tensor([5.3633e-13, 1.8366e-11, 1.6293e-12, 4.7611e-12, 4.3157e-13, 1.8917e-15, 1.4091e-14, 4.7292e-15], device='cuda:0')
+min of Lambda_detach  = torch.return_types.min(values=tensor([3.7836e-28, 3.0569e-25, 1.8783e-27, 1.6938e-26, 1.3853e-28, 8.1868e-35, 5.6909e-32, 2.2120e-33], device='cuda:0'),
+indices=tensor([507, 506, 507, 507, 506, 507, 507, 507], device='cuda:0'))
+max of Lambda_detach  = torch.return_types.max(values=tensor([5.9784e-10, 2.0028e-08, 1.8652e-09, 5.4581e-09, 5.0479e-10, 2.4779e-12,1.7332e-11, 5.7836e-12], device='cuda:0'),
+indices=tensor([511, 511, 511, 511, 511, 511, 511, 511], device='cuda:0'))
+
 Analysis:
-1
+1   Learning lambda is at 1e-13 level, which leads R almost ineffectively.
+    As our learning lambda is basing on training data while fixed surface and separaition branches,
+    Network thinks the surface branch has 100% weight to match with gound truth, so it let sepration branch weight equal to zero;
+    This verified that we can not use training data to learning lambda;
+2
+
+
+
 
 # sigma2 analysis along different surfaces on August 26th, 2020
 python3.7 ./SurfaceSubnet_Test.py ./testConfig/expTongren_9Surfaces_SoftConst_20200819A_SurfaceSubnet_CV0.yaml
