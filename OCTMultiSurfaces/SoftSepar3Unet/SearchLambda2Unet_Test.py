@@ -104,7 +104,7 @@ def main():
     net.eval()
     net.setStatus("test")
     # debug
-    maxNSearch = 3 #35 # 200/2^n = 1e-8
+    maxNSearch = 35 # 200/2^n = 1e-8
     N = hps.numSurfaces
     with torch.no_grad():
 
@@ -213,10 +213,6 @@ def main():
     testEndTime = time.time()
 
     # only generate final converge image.
-
-    return # test
-
-
 
     # generate predicted images
     B, H, W = images.shape
