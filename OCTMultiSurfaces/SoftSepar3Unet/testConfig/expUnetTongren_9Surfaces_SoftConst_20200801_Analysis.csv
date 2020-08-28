@@ -1,3 +1,37 @@
+# experiment 20200828: Brute Force Search Best Lambda
+# expereiment Name: expTongren_9Surfaces_SoftConst_20200828A_SearchLambda2Unet_CV0
+# config:
+  A use binary search to search best lambda to make muError smallest;
+  B lambda is 8 scalars for 8 separations in 9 surfaces context;
+  C data: validation data, 5 patients, total 155 slices;
+  D Lambda intial value set as 200 for all;
+
+Experiment_Name, Error(micrometer),  Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
+Use_Predicted_R,                CV0, 1.0938, 2.7808, 2.5530, 2.2972, 2.5502, 1.3062, 2.5774, 1.7242, 1.2709, 0.6771336793899536, 2.0170607566833496,
+Use_UnsmoothedGTasR,            CV0, 1.0939, 2.7808, 2.5546, 2.2967, 2.5508, 1.3088, 2.5777, 1.7243, 1.2708, 0.6769289374351501, 2.0176026821136475,
+Use_SmoothedGTasR,              CV0, 1.0939, 2.7808, 2.5546, 2.2995, 2.5507, 1.3088, 2.5781, 1.7242, 1.2708, 0.6771811842918396, 2.017927646636963
+
+It corresponded Lambda after binary search iterations:
+                                lambda0,   lambda1,    lambda2,    lambda3,    lambda4,    lambda5,    lambda6,    lambda7,
+Use_Predicted_R,               7.9563e-07, 9.8225e-09, 4.5475e-08, 1.0914e-07, 3.0013e-07, 2.4556e-07, 1.8008e-07, 8.8403e-08,
+Use_UnsmoothedGTasR,           9.4296e-07, 1.0477e-07, 2.9104e-07, 2.9104e-07, 6.1118e-06, 5.2387e-07, 3.8417e-07, 3.1432e-07,
+Use_SmoothedGTasR,             9.4296e-07, 1.0477e-07, 2.9104e-07, 8.7311e-07, 6.1118e-06, 5.2387e-07, 3.8417e-07, 3.1432e-07
+
+Analysis:
+1  After 35 binary search iterations, 3 networks all achieved about 2.017 micrometer mean surface error with subtle difference, and all lambda are at 1e-7 level value, very very small;
+2  This experiment shows that even perfect predicted R has very small weight to help improve final surface segmentation accuracy;
+   When mu is Not at high accuracy, a good R may help; In our case, the mu is really good.
+   Some theoretical analysis is below:
+
+
+3  Brute force search method and yesterday learning method  both get similar lambda result, as their optimization essences are same which is to reduce muError;
+   Brute force used 35 iteration. If we use more iterations, lambda will be smaller;
+4  Detailed binary search record and its each surface error and standard deviation are in attachments. You may use Excel to read them.
+   *_0.csv: Use_Predicted_R,
+   *_1.csf: Use_UnsmoothedGTasR,
+   *_2.csv: Use_SmoothedGTasR
+
+
 # experiment expTongren_9Surfaces_SoftConst_20200827A_3Unet_CV0
 # config:
   1  add lambda into (0, 200) range from previous (0,1)
