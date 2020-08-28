@@ -109,7 +109,7 @@ def main():
     with torch.no_grad():
 
         lambdaVecList = []
-        lambdaVecList.append(200.0*torch.ones((N-1, 1), dtype=torch.float32, device=hps.lambdaSubnetDevice))
+        lambdaVecList.append(200.0*torch.ones((N-1, 1), dtype=torch.float32, device=eval(hps.lambdaSubnetDevice)))
         meanErrorList = []
         surfErrorList = []
         meanStdList = []
