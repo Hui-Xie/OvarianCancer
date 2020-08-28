@@ -102,61 +102,119 @@ def main():
     # test
     testStartTime = time.time()
     net.eval()
+    net.setStatus("test")
+    # debug
+    maxNSearch = 3 #35 # 200/2^n = 1e-8
+    N = hps.numSurfaces
     with torch.no_grad():
-        testBatch = 0
-        net.setStatus("test")
-        for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
-            testBatch += 1
-            # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs=batchData['GTs'],
-                                        layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
 
-            batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
-            images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages  # for output result
-            testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
+        lambdaVecList = []
+        lambdaVecList.append(200.0*torch.ones((N-1, 1), dtype=torch.float32, device=hps.lambdaSubnetDevice))
+        meanErrorList = []
+        surfErrorList = []
+        meanStdList = []
+        surfStdList = []
+
+        for n in range(maxNSearch):
+            testBatch = 0
+            lambdaVec= lambdaVecList[n]
+            for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
+                testBatch += 1
+                # S is surface location in (B,S,W) dimension, the predicted Mu
+                S, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs=batchData['GTs'],
+                                            layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'], lambdaVec=lambdaVec)
+
+                batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
+                images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages  # for output result
+                testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
+                if hps.existGTLabel:
+                    testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs']
+                else:
+                    testGts = None
+
+                testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
+            # Error Std and mean
+            if hps.groundTruthInteger:
+                testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
+
             if hps.existGTLabel:
-                testGts = torch.cat((testGts, batchData['GTs'])) if testBatch != 1 else batchData['GTs']
+                goodBScansInGtOrder = None
+                stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs,
+                                                                                                         testGts,
+                                                                                                         slicesPerPatient=hps.slicesPerPatient,
+                                                                                                         hPixelSize=hps.hPixelSize,
+                                                                                                         goodBScansInGtOrder=goodBScansInGtOrder)
+            # save result
+            meanErrorList.append(muError)
+            surfErrorList.append(muSurfaceError)
+            meanStdList.append(stdError)
+            surfStdList.append(stdSurfaceError)
+            print(f"nSearch={n}, meanError={muError.item()}, meanStd={stdError.item()}, lambda={lambdaVec.view((1,N-1))}")
+
+            if 0 == n:
+                newLambdaVec = 0.5*lambdaVecList[n]
+                lambdaVecList.append(newLambdaVec)
+                continue
             else:
-                testGts = None
+                # update Lambda with a binary search
+                # lambda_i will affect s_i and s_{i+1}
+                # lambda in [0, 200]
+                preSurfError = surfErrorList[n - 1]
+                curSurfError = muSurfaceError
+                curLambdaVec = lambdaVec
+                preLambdaVec = lambdaVecList[n-1]
+                newLambdaVec = curLambdaVec.clone()
+                for i in range(N-1):
+                    if (preSurfError[i] + preSurfError[i+1]) > (curSurfError[i] + curSurfError[i+1]):
+                        newLambdaVec[i] = curLambdaVec[i]/2.0
+                    elif (preSurfError[i] + preSurfError[i+1]) < (curSurfError[i] + curSurfError[i+1]):
+                        newLambdaVec[i] = (curLambdaVec[i] + preLambdaVec[i])/ 2.0
+                    else:
+                        newLambdaVec[i] = curLambdaVec[i]
+                lambdaVecList.append(newLambdaVec)
 
-            testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData[
-                'IDs']  # for future output predict images
+        # save lambda and error into a file
+        with open(os.path.join(hps.outputDir, f"searchLambda_replaceRwithGT_{hps.replaceRwithGT}.csv"), "w") as file:
+            lambdaTitle = ""
+            for i in range(N-1):
+                lambdaTitle +=f"lambda_{i},"
+            surfErrorTitle =""
+            surfStdTitle =""
+            for i in range(N):
+                surfErrorTitle +=f"surfErr_{i},"
+                surfStdTitle +=f"surfStd_{i},"
 
+            file.write(f"nSearch,meanError,meanStd, {lambdaTitle} {surfErrorTitle} {surfStdTitle}\n")
+            NSearch = len(lambdaVecList)
+            for n in range(NSearch):
+                lambdaValues = ""
+                for i in range(N - 1):
+                    lambdaValues += f"{lambdaVecList[n][i].item()},"
+                surfErrorValues = ""
+                surfStdValues = ""
+                for i in range(N):
+                    surfErrorValues += f"{surfErrorList[n][i].item()},"
+                    surfStdValues += f"{surfStdList[n][i].item()},"
+                file.write(f"{n},{meanErrorList[n].item()},{meanStdList[n].item()},{lambdaValues} {surfErrorValues} {surfStdValues}\n")
+
+
+        if hps.existGTLabel:
+            testGts = testGts.cpu().numpy()
+        images = images.cpu().numpy().squeeze()
+        testOutputs = testOutputs.cpu().numpy()
 
         # output testID
         with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
-
-        # Error Std and mean
-        if hps.groundTruthInteger:
-            testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
-
-        if hps.existGTLabel:
-            goodBScansInGtOrder = None
-            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs,
-                                                                                                     testGts,
-                                                                                                     slicesPerPatient=hps.slicesPerPatient,
-                                                                                                     hPixelSize=hps.hPixelSize,
-                                                                                                     goodBScansInGtOrder=goodBScansInGtOrder)
-            if comparisonSurfaceIndex is not None:
-                specificSurfError = computeSpecificSurfaceErrorForEachPatient(comparisonSurfaceIndex, testOutputs,
-                                                                              testGts,
-                                                                              slicesPerPatient=hps.slicesPerPatient,
-                                                                              hPixelSize=hps.hPixelSize,
-                                                                              goodBScansInGtOrder=goodBScansInGtOrder)
-
-            testGts = testGts.cpu().numpy()
-
-        images = images.cpu().numpy().squeeze()
-        testOutputs = testOutputs.cpu().numpy()
-
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir)
 
     testEndTime = time.time()
 
-        
+    # only generate final converge image.
+
+    return # test
 
 
 
@@ -336,9 +394,6 @@ def main():
             file.write(f"muError = {muError}\n")
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
-        if comparisonSurfaceIndex is not None:
-            file.write(f"comparisonSurfaceIndex = {comparisonSurfaceIndex}\n")
-            file.write(f"specificSurfError = {specificSurfError}\n")
 
         if 0 != len(violateConstraintErrors[0]):
             violateConstraintSlices = set(violateConstraintErrors[0])

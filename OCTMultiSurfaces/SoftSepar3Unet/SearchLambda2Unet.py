@@ -85,7 +85,7 @@ class SearchLambda2Unet(BasicModel):
         return surfaceMode, riftMode, lambdaMode
 
 
-    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None, LambdaVec=None):
+    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None, lambdaVec=None):
         Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
                                      gaussianGTs=gaussianGTs.to(self.m_sDevice),
                                      GTs=GTs.to(self.m_sDevice))
@@ -96,7 +96,7 @@ class SearchLambda2Unet(BasicModel):
 
         B,N,W = Mu.shape
         # expand Lambda into Bx(N-1)xW dimension
-        Lambda = LambdaVec.view((1, (N-1), 1)).expand((B,(N-1),W)).to(self.m_lDevice)
+        Lambda = lambdaVec.view((1, (N-1), 1)).expand((B,(N-1),W)).to(self.m_lDevice)
 
         separationIPM = SoftSeparationIPMModule()
         # l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
