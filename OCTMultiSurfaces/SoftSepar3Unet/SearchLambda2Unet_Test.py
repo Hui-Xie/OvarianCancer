@@ -185,7 +185,7 @@ def main():
                 surfStdTitle +=f"surfStd_{i},"
 
             file.write(f"nSearch,meanError,meanStd, {lambdaTitle} {surfErrorTitle} {surfStdTitle}\n")
-            NSearch = len(lambdaVecList)
+            NSearch = len(surfErrorList)
             for n in range(NSearch):
                 lambdaValues = ""
                 for i in range(N - 1):

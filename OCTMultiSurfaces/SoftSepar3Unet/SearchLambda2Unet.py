@@ -106,13 +106,13 @@ class SearchLambda2Unet(BasicModel):
 
         if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
             R_detach = R.clone().detach().to(self.m_lDevice)
-            print("use predicted R")
+            #print("use predicted R")
         elif 1 == self.hps.replaceRwithGT: #1: use riftGT without smoothness;
             R_detach = (GTs[:,1:, :] - GTs[:,0:-1, :]).detach().to(self.m_lDevice)
-            print("use No-smooth ground truth R")
+            #print("use No-smooth ground truth R")
         elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed riftGT;
             R_detach = riftGTs.clone().detach().to(self.m_lDevice)
-            print("use smooth ground truth R")
+            #print("use smooth ground truth R")
         else:
             print(f"Wrong value of self.hps.replaceRwithGT")
             assert False
