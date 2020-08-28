@@ -104,7 +104,7 @@ def main():
     net.eval()
     net.setStatus("test")
     # debug
-    maxNSearch = 35 # 200/2^n = 1e-8
+    maxNSearch = 40 # 200/2^n = 1e-8
     N = hps.numSurfaces
     with torch.no_grad():
 
