@@ -70,7 +70,7 @@ device: torch.device('cuda:0')   #GPU ID
 batchSize: 4
 
 
-network: "SearchLambda2net"
+network: "SearchLambda2Unet"
 inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 scaleNumerator: 1

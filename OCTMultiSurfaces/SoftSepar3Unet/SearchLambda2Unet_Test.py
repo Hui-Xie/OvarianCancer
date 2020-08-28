@@ -402,7 +402,7 @@ def main():
             for s in violateConstraintSlices:
                 file.write(f"\t{testIDs[s]}\n")
 
-    print(f"============ End of Cross valiation test for OCT Multisurface Network: {hps.experimentName} ===========")
+    print(f"============ End of Searching Lambda: {hps.experimentName} ===========")
 
 
 if __name__ == "__main__":
