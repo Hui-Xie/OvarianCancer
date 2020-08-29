@@ -7,6 +7,7 @@ import torch
 sys.path.append("..")
 from network.OCTOptimization import *
 from network.OCTAugmentation import *
+from network.QuadraticIPMOpt import SoftSeparationIPMModule
 
 sys.path.append("../..")
 from framework.NetTools import *
@@ -77,9 +78,15 @@ class SurfaceSubnet(BasicModel):
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
 
         # ReLU to guarantee layer order not to cross each other
-        S = mu.clone()
-        for i in range(1, N):
-            S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        if self.hps.hardSeparation:
+            separationIPM = SoftSeparationIPMModule()
+            S = separationIPM(mu, sigma2, R=None, fixedPairWeight=self.hps.fixedPairWeight,
+                              learningPairWeight=None) # only use unary item
+        else:
+            S = mu.clone()
+            for i in range(1, N):
+                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+
 
         loss_div = 0.0
         loss_smooth = 0.0

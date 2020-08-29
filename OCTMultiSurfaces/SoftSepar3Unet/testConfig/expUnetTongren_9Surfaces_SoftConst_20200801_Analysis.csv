@@ -2,7 +2,7 @@
 
 Model Description:
 Model_1: unary without hard separation: SoftConst_20200819A_SurfaceSubnet
-Model_2: unary + hard separation: may need new do;
+Model_2: unary + hard separation:
 Model_3: unary + pairwise + fixed lambda +learned R:  20200829A_FixLambda2Unet_CV0
 Model_4: unary + pairwise + fixed lambda + ground truth R: 20200829A_FixLambda2Unet_UseGTReplaceR
 Model_5: unary + pairwise + learned lambda + learned R:  20200821A_3Unet_CV0
@@ -19,8 +19,8 @@ Model_5,    20200821A_3Unet_CV0,                    CV0,    1.0622, 3.1820, 2.87
 Model,      Experiment_Name,                        fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,      CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
 Model_2,
-Model_3,    20200829A_FixLambda2Unet_CV0,           CV0,     6. 15. 10.  7.  9.  9.  7.  8.  9,  15,
-Model_4,    20200829A_FixLambda2Unet_UseGTReplaceR, CV0,
+Model_3,    20200829A_FixLambda2Unet_CV0,           CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15,
+Model_4,    20200829A_FixLambda2Unet_UseGTReplaceR, CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15,   
 Model_5,    20200821A_3Unet_CV0,                    CV0,     7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
 
 
@@ -40,7 +40,7 @@ SoftConst_20200819A_SurfaceSubnet,  CV0, 1.0055, 3.1687, 2.8236, 2.5908, 3.1875,
 
 # Measure Hausdorff distance of all 9 surface for different network results: (Unit:pixel)
 Surface Index,                      0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,   Notes
-20200829A_FixLambda2Unet_CV0,       6. 15. 10.  7.  9.  9.  7.  8.  9,  15,    On test data, with predicted R, fixed Lambda;
+20200829A_FixLambda2Unet_CV0,       6, 15, 10,  7,  9,  9,  7,  8,  9,  15,    On test data, with predicted R, fixed Lambda;
 20200821A_3Unet_CV0,                7, 13, 10,  8, 10,  9,  8,  8, 12,  13,    On test data, with predicted R, learning lambda;
 SoftConst_20200819A_SurfaceSubnet,  4, 12, 11,  8, 10,  9,  7,  4,  5,  12,    On test data, with only 1 Unet, without Lambda, without R;
 
