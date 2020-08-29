@@ -29,13 +29,13 @@ max of Lambda_detach  = [7.9563e-07, 9.8225e-09, 4.5475e-08, 1.0914e-07, 3.0013e
 
 
 Analysis:
-1  Yesterday(20200828) resutl is on validation data just for searching Lambda on validation data;
+1  Yesterday(20200828) result is on validation data just for searching Lambda on validation data;
 2  Today(20200829) result is on untouched test data CV), which represents a real generalization result;
 3  A fixed Lambda searched from binary search on validation data, or a various Lambda learning from a Unet, both get very small lambda value, and both does not improve test result in segmentation and HD,
    comparing with our pure SurfaceSubnet;
-4  Comparng coefficients of unary terms and pairwise terms, unary terms has 0.7116 mean magnitude, while pairwise terms has 2.2178e-07 mean magnitude.
+4  Comparing coefficients of unary terms and pairwise terms, unary terms has 0.7116 mean magnitude, while pairwise terms has 2.2178e-07 mean magnitude.
    Their magnitude rate is 3208434 times, which shows pairwise term has very very tiny effect on whole optimization of IPM.
-5  Intial theoretical analysis can support above epperiment result;
+5  Initial theoretical analysis can support above experiment result;
 
 
 # experiment 20200828: Brute Force Search Best Lambda on validation CV0
