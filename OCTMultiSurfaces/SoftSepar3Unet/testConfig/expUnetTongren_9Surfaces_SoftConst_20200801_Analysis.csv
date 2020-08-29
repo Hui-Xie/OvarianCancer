@@ -4,24 +4,24 @@ Model Description:
 Model_1: unary without hard separation: SoftConst_20200819A_SurfaceSubnet
 Model_2: unary + hard separation: may need new do;
 Model_3: unary + pairwise + fixed lambda +learned R:  20200829A_FixLambda2Unet_CV0
-Model_4: unary + pairwise + fixed lambda + ground truth R: need to do.
+Model_4: unary + pairwise + fixed lambda + ground truth R: 20200829A_FixLambda2Unet_UseGTReplaceR
 Model_5: unary + pairwise + learned lambda + learned R:  20200821A_3Unet_CV0
 
 # Surface Location Error:(micrometer)
-Model,      Experiment_Name,                    fold,   Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
-Model_1,    SoftConst_20200819A_SurfaceSubnet,  CV0,    1.0055, 3.1687, 2.8236, 2.5908, 3.1875, 1.3984, 2.9978, 1.5677, 1.2584, 1.0588494539260864, 2.2220582962036133,
+Model,      Experiment_Name,                        fold,   Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
+Model_1,    SoftConst_20200819A_SurfaceSubnet,      CV0,    1.0055, 3.1687, 2.8236, 2.5908, 3.1875, 1.3984, 2.9978, 1.5677, 1.2584, 1.0588494539260864, 2.2220582962036133,
 Model_2,
-Model_3,    20200829A_FixLambda2Unet_CV0,       CV0,    1.1040, 3.2171, 2.8370, 2.5846, 3.1154, 1.4259, 2.6954, 1.7313, 1.3402, 0.9732388257980347, 2.227872371673584,
-Model_4,
-Model_5,    20200821A_3Unet_CV0,                CV0,    1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
+Model_3,    20200829A_FixLambda2Unet_CV0,           CV0,    1.1040, 3.2171, 2.8370, 2.5846, 3.1154, 1.4259, 2.6954, 1.7313, 1.3402, 0.9732388257980347, 2.227872371673584,
+Model_4,    20200829A_FixLambda2Unet_UseGTReplaceR, CV0,    1.1040, 3.2171, 2.8372, 2.5844, 3.1154, 1.4259, 2.6951, 1.7313, 1.3402, 0.9732391834259033, 2.2278451919555664
+Model_5,    20200821A_3Unet_CV0,                    CV0,    1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
 
 # Hausdorff Distance Error: (pixel)
-Model,      Experiment_Name,                    fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
-Model_1,    SoftConst_20200819A_SurfaceSubnet,  CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
+Model,      Experiment_Name,                        fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
+Model_1,    SoftConst_20200819A_SurfaceSubnet,      CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
 Model_2,
-Model_3,    20200829A_FixLambda2Unet_CV0,       CV0,     6. 15. 10.  7.  9.  9.  7.  8.  9,  15,
-Model_4,
-Model_5,    20200821A_3Unet_CV0,                CV0,     7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
+Model_3,    20200829A_FixLambda2Unet_CV0,           CV0,     6. 15. 10.  7.  9.  9.  7.  8.  9,  15,
+Model_4,    20200829A_FixLambda2Unet_UseGTReplaceR, CV0,
+Model_5,    20200821A_3Unet_CV0,                    CV0,     7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
 
 
 

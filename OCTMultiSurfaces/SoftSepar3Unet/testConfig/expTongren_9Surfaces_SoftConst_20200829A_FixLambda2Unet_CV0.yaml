@@ -8,7 +8,7 @@
 # 2 Unets train Surface, Rift;
 # fixed Lambda searched from validation data.
 
-debug: True # debug mark
+debug: False # debug mark
 dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
