@@ -117,7 +117,6 @@ def main():
     with torch.no_grad():
         testBatch = 0
         net.setStatus("test")
-        net.m_epoch = net.m_runParametersDict['epoch']
         for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
