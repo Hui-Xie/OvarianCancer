@@ -21,7 +21,7 @@ Analysis:
 1  After 35 binary search iterations, 3 networks all achieved about 2.017 micrometer mean surface error with subtle difference, and all lambda are at 1e-7 level value, very very small;
 2  This experiment shows that even perfect predicted R has very small weight to help improve final surface segmentation accuracy;
    When mu is Not at high accuracy, a good R may help; In our case, the mu is really good.
-   Some theoretical analysis is below:
+   Some updated theoretical analysis is below:
 
 
 3  Brute force search method and yesterday learning method  both get similar lambda result, as their optimization essences are same which is to reduce muError;

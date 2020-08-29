@@ -12,9 +12,9 @@ sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
 
 
-predictedXmlDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/SoftSepar3Unet/expTongren_9Surfaces_SoftConst_20200821A_3Unet_CV0/testResult/xml"
-gtLabelFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/test/surfaces_CV0.npy"
-gtIDFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/test/patientID_CV0.json"
+predictedXmlDir= "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/log/SearchLambda2Unet/expTongren_9Surfaces_SoftConst_20200828A_SearchLambda2Unet_CV0/testResult/xml_0"
+gtLabelFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/validation/surfaces_CV0.npy"
+gtIDFile = "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/validation/patientID_CV0.json"
 
 with open(gtIDFile) as f:
    IDs = json.load(f)
