@@ -47,9 +47,9 @@ def main():
     MarkGTDisorder = False
     MarkPredictDisorder = False
 
-    outputXmlSegFiles = False
+    outputXmlSegFiles = True
 
-    OutputNumImages = 0
+    OutputNumImages = 2
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
