@@ -163,6 +163,12 @@ class SoftSepar3Unet(BasicModel):
             Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
             
             if self.hps.debug== True:
+                reciprocalTwoSigma2 = 1.0/Sigma2_detach
+                print(f"reciprocalTwoSigma2.shape = {reciprocalTwoSigma2.shape}")
+                print(f"mean of reciprocalTwoSigma2 = {torch.mean(reciprocalTwoSigma2, dim=[0, 2])}")
+                print(f"min of reciprocalTwoSigma2  = {torch.min(torch.min(reciprocalTwoSigma2, dim=0)[0], dim=-1)}")
+                print(f"max of reciprocalTwoSigma2  = {torch.max(torch.max(reciprocalTwoSigma2, dim=0)[0], dim=-1)}")
+
                 print(f"Lambda_detach.shape = {Lambda_detach.shape}")
                 print(f"mean of Lambda_detach = {torch.mean(Lambda_detach, dim=[0, 2])}")
                 print(f"min of Lambda_detach  = {torch.min(torch.min(Lambda_detach, dim=0)[0], dim=-1)}")
