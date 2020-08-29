@@ -223,9 +223,8 @@ class SoftSeparationIPMModule(nn.Module):
 
     def forward(self, Mu, sigma2, R=None, fixedPairWeight=False, learningPairWeight=None):
         '''
-        s^* = argmin \sum_{i\in[0,N)}\{\lambda \frac{(s_{i}-\mu_{i})^2}{2\sigma_{i}^2} + (s_{i}-s_{i-1} -r_{i})^2 \}
+        s^* = argmin \sum_{i\in[0,N)}\{ \frac{(s_{i}-\mu_{i})^2}{2\sigma_{i}^2} + \lambda (s_{i}-s_{i-1} -r_{i})^2 \}
 
-        :param c_lambda > 0: the balance weight of unary terms;
         :param Mu: mean of size (B,N,W), where N is the number of surfaces
         :param Sigma2: variance of size (B,N,W), where N is number of surfaces
         :param R: learned rift of adjacent surfaces, in size (B,N-1,W)
