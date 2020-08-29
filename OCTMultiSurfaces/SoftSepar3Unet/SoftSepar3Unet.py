@@ -41,8 +41,8 @@ class SoftSepar3Unet(BasicModel):
         surfaceMode, riftMode, lambdaMode = self.getSubnetModes()
 
         # surface Subnet
-        self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
         self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
+        self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
         self.m_surfaceSubnet.to(self.m_sDevice)
         if "test" != surfaceMode:
             self.m_surfaceSubnet.setOptimizer(optim.Adam(self.m_surfaceSubnet.parameters(), lr=self.hps.surfaceSubnetLr, weight_decay=0))
@@ -52,8 +52,8 @@ class SoftSepar3Unet(BasicModel):
         self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode)
 
         # rift Subnet
-        self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
         self.m_rDevice = eval(self.hps.riftSubnetDevice)
+        self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
         self.m_riftSubnet.to(self.m_rDevice)
         if "test" != riftMode:
             self.m_riftSubnet.setOptimizer(
@@ -67,19 +67,28 @@ class SoftSepar3Unet(BasicModel):
         self.m_riftSubnet.m_netMgr.loadNet(riftMode)
         
         # lambda Subnet
-        self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
         self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
-        self.m_lambdaSubnet.to(self.m_lDevice)
-        if "test" != lambdaMode:
-            self.m_lambdaSubnet.setOptimizer(
-                optim.Adam(self.m_lambdaSubnet.parameters(), lr=self.hps.lambdaSubnetLr, weight_decay=0))
-            self.m_lambdaSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaSubnet.m_optimizer, \
-                                                                              mode="min", factor=0.5, patience=20,
-                                                                              min_lr=1e-8, threshold=0.02,
-                                                                              threshold_mode='rel'))
-        self.m_lambdaSubnet.setNetMgr(
-            NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.m_lDevice))
-        self.m_lambdaSubnet.m_netMgr.loadNet(lambdaMode)
+        if self.hps.useFixedLambda:
+            lambdaVec = torch.tensor(self.hps.fixedLambda, dtype=torch.float, device=self.m_lDevice)
+            B = self.hps.batchSize
+            N = self.hps.numSurfaces
+            W = self.hps.inputWidth
+            # expand Lambda into Bx(N-1)xW dimension
+            self.m_Lambda = lambdaVec.view((1, (N - 1), 1)).expand((B, (N - 1), W)).to(self.m_lDevice)
+        else:
+            self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
+            self.m_lambdaSubnet.to(self.m_lDevice)
+            if "test" != lambdaMode:
+                self.m_lambdaSubnet.setOptimizer(
+                    optim.Adam(self.m_lambdaSubnet.parameters(), lr=self.hps.lambdaSubnetLr, weight_decay=0))
+                self.m_lambdaSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaSubnet.m_optimizer, \
+                                                                                  mode="min", factor=0.5, patience=20,
+                                                                                  min_lr=1e-8, threshold=0.02,
+                                                                                  threshold_mode='rel'))
+            self.m_lambdaSubnet.setNetMgr(
+                NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.m_lDevice))
+            self.m_lambdaSubnet.m_netMgr.loadNet(lambdaMode)
+
 
     def getSubnetModes(self):
         if self.hps.status == "trainLambda":
@@ -103,10 +112,14 @@ class SoftSepar3Unet(BasicModel):
                                      gaussianGTs=gaussianGTs.to(self.m_sDevice),
                                      GTs=GTs.to(self.m_sDevice))
 
-        R, riftLoss = self.m_riftSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
+        if 0 == self.hps.replaceRwithGT:  # 0: use predicted R;
+            R, riftLoss = self.m_riftSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
-        Lambda = self.m_lambdaSubnet.forward(inputs.to(self.m_lDevice))
+        if self.hps.useFixedLambda:
+            Lambda = self.m_Lambda
+        else:
+            Lambda = self.m_lambdaSubnet.forward(inputs.to(self.m_lDevice))
 
         separationIPM = SoftSeparationIPMModule()
         # l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
@@ -137,13 +150,13 @@ class SoftSepar3Unet(BasicModel):
         elif self.hps.status == "test":
             if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
                 R_detach = R.clone().detach().to(self.m_lDevice)
-                print("use predicted R")
+                #print("use predicted R")
             elif 1 == self.hps.replaceRwithGT: #1: use riftGT without smoothness;
                 R_detach = (GTs[:,1:, :] - GTs[:,0:-1, :]).detach().to(self.m_lDevice)
-                print("use No-smooth ground truth R")
+                #print("use No-smooth ground truth R")
             elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed riftGT;
                 R_detach = riftGTs.clone().detach().to(self.m_lDevice)
-                print("use smooth ground truth R")
+                #print("use smooth ground truth R")
             else:
                 print(f"Wrong value of self.hps.replaceRwithGT")
                 assert False
