@@ -1,8 +1,9 @@
 # Experiments on all models: 20200829
+# Config: 5 models all on test data CVO.
 
 Model Description:
 Model_1: unary without hard separation: SoftConst_20200819A_SurfaceSubnet
-Model_2: unary + hard separation:
+Model_2: unary + hard separation:  20200829A_SurfaceSubnet_HardSeparation
 Model_3: unary + pairwise + fixed lambda +learned R:  20200829A_FixLambda2Unet_CV0
 Model_4: unary + pairwise + fixed lambda + ground truth R: 20200829A_FixLambda2Unet_UseGTReplaceR
 Model_5: unary + pairwise + learned lambda + learned R:  20200821A_3Unet_CV0
@@ -18,12 +19,17 @@ Model_5,    20200821A_3Unet_CV0,                    CV0,    1.0622, 3.1820, 2.87
 # Hausdorff Distance Error: (pixel)
 Model,      Experiment_Name,                        fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,      CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
-Model_2,    20200829A_SurfaceSubnet_HardSeparation, CV0,
+Model_2,    20200829A_SurfaceSubnet_HardSeparation, CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15   
 Model_3,    20200829A_FixLambda2Unet_CV0,           CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15,
 Model_4,    20200829A_FixLambda2Unet_UseGTReplaceR, CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15,   
 Model_5,    20200821A_3Unet_CV0,                    CV0,     7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
 
-
+Analysis:
+1   In order to save long IPM training time(2-3 days), model_2 just uses hardIPM to replace model_1's ReLU, and apply it on the test CV0, wthout retraining model;
+2   The surface location errors of 5 models are similar;
+3   All these result are in same level with 20200317 MICCAI model experiment, and subtle difference is from random conv initialization;
+4   As fixed Lambda is very small, replacing predicted R with ground truth R does not bring improvement;
+5   Binary search choosing Lambda and learning Lambda both achieve very small level value, showing that optimzation network expects R has minimum effect on its final loss;
 
 
 # experiment: expTongren_9Surfaces_SoftConst_20200829A_FixLambda2Unet_CV0 on Test CV0
