@@ -69,12 +69,7 @@ class SoftSepar3Unet(BasicModel):
         # lambda Subnet
         self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
         if self.hps.useFixedLambda:
-            lambdaVec = torch.tensor(self.hps.fixedLambda, dtype=torch.float, device=self.m_lDevice)
-            B = self.hps.batchSize
-            N = self.hps.numSurfaces
-            W = self.hps.inputWidth
-            # expand Lambda into Bx(N-1)xW dimension
-            self.m_Lambda = lambdaVec.view((1, (N - 1), 1)).expand((B, (N - 1), W)).to(self.m_lDevice)
+            self.m_lambdaVec = torch.tensor(self.hps.fixedLambda, dtype=torch.float, device=self.m_lDevice)
         else:
             self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
             self.m_lambdaSubnet.to(self.m_lDevice)
@@ -117,7 +112,9 @@ class SoftSepar3Unet(BasicModel):
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         if self.hps.useFixedLambda:
-            Lambda = self.m_Lambda
+            B, N, W = Mu.shape
+            # expand Lambda into Bx(N-1)xW dimension
+            Lambda = self.m_lambdaVec.view((1, (N - 1), 1)).expand((B, (N - 1), W)).to(self.m_lDevice)
         else:
             Lambda = self.m_lambdaSubnet.forward(inputs.to(self.m_lDevice))
 
