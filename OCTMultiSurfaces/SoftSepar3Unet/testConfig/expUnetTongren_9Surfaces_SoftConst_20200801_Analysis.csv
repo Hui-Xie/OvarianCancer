@@ -1,4 +1,17 @@
-# experiment 20200828: Brute Force Search Best Lambda
+# experiment: expTongren_9Surfaces_SoftConst_20200829A_FixLambda2Unet_CV0 on Test CV0
+# config:
+  A fix 8 scalars lambda values searched from validation data of CV0;
+  B Use 2 Unet: SurfaceSubnet, RiftSubset;
+  C R uses predicted result from RiftSubnet;
+  D test on test CV0 data, an untouched data;
+
+Experiment_Name, Error(micrometer), Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
+20200829A_FixLambda2Unet_CV0,  CV0, 1.1040, 3.2171, 2.8370, 2.5846, 3.1154, 1.4259, 2.6954, 1.7313, 1.3402, 0.9732388257980347, 2.227872371673584,  (latest)
+20200821A_3Unet_CV0,           CV0, 1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,  (8 days ago: learning lambda[0,1] on validaiton data and learning R
+
+
+
+# experiment 20200828: Brute Force Search Best Lambda on validation CV0
 # expereiment Name: expTongren_9Surfaces_SoftConst_20200828A_SearchLambda2Unet_CV0
 # config:
   A use binary search to search best lambda to make muError smallest;
