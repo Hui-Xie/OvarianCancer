@@ -7,7 +7,7 @@ Model_3: unary + pairwise + fixed lambda +learned R:  20200829A_FixLambda2Unet_C
 Model_4: unary + pairwise + fixed lambda + ground truth R: need to do.
 Model_5: unary + pairwise + learned lambda + learned R:  20200821A_3Unet_CV0
 
-# Surface Location Error:(micormeter)
+# Surface Location Error:(micrometer)
 Model,      Experiment_Name,                    fold,   Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,  CV0,    1.0055, 3.1687, 2.8236, 2.5908, 3.1875, 1.3984, 2.9978, 1.5677, 1.2584, 1.0588494539260864, 2.2220582962036133,
 Model_2,
