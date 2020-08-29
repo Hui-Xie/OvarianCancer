@@ -16,15 +16,26 @@ Surface Index,                      0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,   N
 20200821A_3Unet_CV0,                7, 13, 10,  8, 10,  9,  8,  8, 12,  13,    On test data, with predicted R, learning lambda;
 SoftConst_20200819A_SurfaceSubnet,  4, 12, 11,  8, 10,  9,  7,  4,  5,  12,    On test data, with only 1 Unet, without Lambda, without R;
 
+# compare 1/(2*sigma2) and lambda, which represent the magnitude of unary terms and pairwise terms in the cost function of IPM:
+reciprocalTwoSigma2.shape = torch.Size([5, 9, 512])
+mean of reciprocalTwoSigma2 = [1.7199, 0.8725, 0.0993, 0.2319, 0.9011, 0.5338, 0.0335, 0.2529, 1.7592]
+min of reciprocalTwoSigma2  = [0.0334, 0.0288, 0.0193, 0.0106, 0.0186, 0.0059, 0.0060, 0.0185, 0.0345]
+max of reciprocalTwoSigma2  = [2.7259, 1.6216, 0.1681, 0.4646, 1.3337, 1.1049, 0.0949, 0.3692, 3.4337]
+
+Lambda_detach.shape = torch.Size([5, 8, 512]), for a fixed lambda value.
+mean of Lambda_detach = [7.9563e-07, 9.8225e-09, 4.5475e-08, 1.0914e-07, 3.0013e-07, 2.4556e-07, 1.8008e-07, 8.8403e-08]
+min of Lambda_detach  = [7.9563e-07, 9.8225e-09, 4.5475e-08, 1.0914e-07, 3.0013e-07, 2.4556e-07,1.8008e-07, 8.8403e-08]
+max of Lambda_detach  = [7.9563e-07, 9.8225e-09, 4.5475e-08, 1.0914e-07, 3.0013e-07, 2.4556e-07,1.8008e-07, 8.8403e-08]
+
+
 Analysis:
 1  Yesterday(20200828) resutl is on validation data just for searching Lambda on validation data;
 2  Today(20200829) result is on untouched test data CV), which represents a real generalization result;
-3  A fixed Lambda gotten from binary search on validation data, or a various Lambda learning from a Unet, both get very small lambda value, and both does not improve test result in segmentation and HD,
-   comparing with our pure SurfaceNet;
-4  Theoretical analysis and experiment both displayed that R does not really help;
-
-
-
+3  A fixed Lambda searched from binary search on validation data, or a various Lambda learning from a Unet, both get very small lambda value, and both does not improve test result in segmentation and HD,
+   comparing with our pure SurfaceSubnet;
+4  Comparng coefficients of unary terms and pairwise terms, unary terms has 0.7116 mean magnitude, while pairwise terms has 2.2178e-07 mean magnitude.
+   Their magnitude rate is 3208434 times, which shows pairwise term has very very tiny effect on whole optimization of IPM.
+5  Intial theoretical analysis can support above epperiment result;
 
 
 # experiment 20200828: Brute Force Search Best Lambda on validation CV0
