@@ -1,3 +1,16 @@
+# Experiment on 20200831
+# Config: use binary search for one lambda scalar for all surface
+
+# Lambda value after 40 iteration of binary search:
+# Here, the meanError is validation data for Binary search.
+learned R:      meanError=2.0169577598571777, meanStd=0.6771263480186462, lambda=1.6371e-08;
+RUseNoSmoothGT: meanError=2.016946792602539, meanStd=0.6770985126495361, lambda=4.9113e-08;
+RUseSmoothGT:   meanError=2.0169360637664795, meanStd=0.677091658115387, lambda=9.8225e-09;
+
+# Now redo model_3 and model_4 with new one lambda.
+
+
+
 # Experiments on all models: 20200829
 # Config: 5 models all on test data CVO.
 
