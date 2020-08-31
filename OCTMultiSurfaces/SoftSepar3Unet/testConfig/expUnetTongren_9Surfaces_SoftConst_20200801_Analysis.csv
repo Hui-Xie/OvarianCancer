@@ -15,7 +15,7 @@ Model_3: unary + pairwise + fixed lambda +learned R:  20200831A_FixLambda2Unet_C
 Model_4: unary + pairwise + fixed lambda + ground truth R: 20200831A_FixLambda2Unet_UseGTReplaceR_CV0 (one lambda)
 Model_5: unary + pairwise + learned lambda + learned R:  20200821A_3Unet_CV0
 
-# Surface Location Error:(micrometer)
+# Surface Location Error:(micrometer) on test data
 Model,      Experiment_Name,                            fold,   Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,          CV0,    1.0055, 3.1687, 2.8236, 2.5908, 3.1875, 1.3984, 2.9978, 1.5677, 1.2584, 1.0588494539260864, 2.2220582962036133,
 Model_2,    20200829A_SurfaceSubnet_HardSeparation,     CV0,    1.1042, 3.2179, 2.8373, 2.5845, 3.1151, 1.4258, 2.6963, 1.7313, 1.3402, 0.9733524322509766, 2.2280783653259277,
@@ -23,13 +23,22 @@ Model_3,    20200831A_FixLambda2Unet_CV0,               CV0,    1.1042, 3.2179, 
 Model_4,    20200831A_FixLambda2Unet_UseGTReplaceR_CV0, CV0,    1.1041, 3.2179, 2.8373, 2.5846, 3.1151, 1.4258, 2.6969, 1.7313, 1.3402, 0.9734154939651489, 2.228121519088745,
 Model_5,    20200821A_3Unet_CV0,                        CV0,    1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
 
-# Hausdorff Distance Error: (pixel)
+# Hausdorff Distance Error: (pixel) on test data
 Model,      Experiment_Name,                            fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,          CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
 Model_2,    20200829A_SurfaceSubnet_HardSeparation,     CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15
-Model_3,    20200831A_FixLambda2Unet_CV0,               CV0,     6. 15. 10.  7.  9.  9.  7.  8.  9.  15
-Model_4,    20200831A_FixLambda2Unet_UseGTReplaceR_CV0, CV0,
+Model_3,    20200831A_FixLambda2Unet_CV0,               CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15
+Model_4,    20200831A_FixLambda2Unet_UseGTReplaceR_CV0, CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15
 Model_5,    20200821A_3Unet_CV0,                        CV0,     7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
+
+Analysis:
+1   Using binary search for one lambda scalar for all surfaces also gets a very small lambda at 1e-8 level;
+    It shows network optimization expects the separation branch has very small weight;
+2   I checked the binary search process records:
+    if lambda=0.012 which is a similar level with 1/(2*sigma2), the validation error of surface location is 13.0 micrometer, and mean std of error is 7.0 micrometer.
+3   Comparing A). one lambda for all surfaces,  and B). 8 lambda each for different surface:
+     A and B get same HD, and A gets a little(0.0003 micormeter) worse than B in surface location error;
+4   As lambda is so small ignorable value,  that fine tune network with fixed lambda equals further training surface branch, which will not bring improvement, instead of overfitting;
 
 
 # Experiments on all models: 20200829
@@ -42,7 +51,7 @@ Model_3: unary + pairwise + fixed lambda +learned R:  20200829A_FixLambda2Unet_C
 Model_4: unary + pairwise + fixed lambda + ground truth R: 20200829A_FixLambda2Unet_UseGTReplaceR (8 lamddas)
 Model_5: unary + pairwise + learned lambda + learned R:  20200821A_3Unet_CV0
 
-# Surface Location Error:(micrometer)
+# Surface Location Error:(micrometer) on test data
 Model,      Experiment_Name,                        fold,   Surface0, Surface1, Surface2, Surface3,Surface4, Surface5, Surface6, Surface7, Surface8, totalStdDeviation, TotalMean,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,      CV0,    1.0055, 3.1687, 2.8236, 2.5908, 3.1875, 1.3984, 2.9978, 1.5677, 1.2584, 1.0588494539260864, 2.2220582962036133,
 Model_2,    20200829A_SurfaceSubnet_HardSeparation, CV0,    1.1042, 3.2179, 2.8373, 2.5845, 3.1151, 1.4258, 2.6963, 1.7313, 1.3402, 0.9733524322509766, 2.2280783653259277,
@@ -50,7 +59,7 @@ Model_3,    20200829A_FixLambda2Unet_CV0,           CV0,    1.1040, 3.2171, 2.83
 Model_4,    20200829A_FixLambda2Unet_UseGTReplaceR, CV0,    1.1040, 3.2171, 2.8372, 2.5844, 3.1154, 1.4259, 2.6951, 1.7313, 1.3402, 0.9732391834259033, 2.2278451919555664
 Model_5,    20200821A_3Unet_CV0,                    CV0,    1.0622, 3.1820, 2.8789, 2.5810, 3.1813, 1.3911, 2.9961, 1.6142, 1.2184, 1.0553975105285645, 2.233919143676758,
 
-# Hausdorff Distance Error: (pixel)
+# Hausdorff Distance Error: (pixel)  on test data
 Model,      Experiment_Name,                        fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,      CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
 Model_2,    20200829A_SurfaceSubnet_HardSeparation, CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15   
