@@ -119,8 +119,8 @@ class SoftSepar3Unet(BasicModel):
             Lambda = self.m_lambdaSubnet.forward(inputs.to(self.m_lDevice))
 
         separationIPM = SoftSeparationIPMModule()
-        # l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
-        smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+        l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
+        # smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
 
         if self.hps.status == "trainLambda":
             R_detach = R.clone().detach().to(self.m_lDevice)
@@ -128,9 +128,9 @@ class SoftSepar3Unet(BasicModel):
             Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
             S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda)
-            # surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
-            loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
-            loss = loss_smooth
+            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
+            #loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
+            loss = surfaceL1Loss
 
         elif self.hps.status == "fineTuneSurfaceRift":
             R = R.to(self.m_lDevice)
@@ -139,10 +139,10 @@ class SoftSepar3Unet(BasicModel):
             Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
             S = separationIPM(Mu, Sigma2, R=R, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda_detach)
-            # surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
-            loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
+            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
+            # loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
             # at final finetune stage, accurate R and Mu does not give benefits.
-            loss = loss_smooth
+            loss = surfaceL1Loss
 
         elif self.hps.status == "test":
             if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
@@ -176,9 +176,9 @@ class SoftSepar3Unet(BasicModel):
             
             S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=Lambda_detach)
-            #surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
-            loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
-            loss = loss_smooth
+            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
+            #loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
+            loss = surfaceL1Loss
 
         else:
             assert False
