@@ -153,25 +153,32 @@ def main():
 
             if 0 == n:
                 newLambdaVec = 0.5*lambdaVecList[n]
-                lambdaVecList.append(newLambdaVec)
-                continue
             else:
                 # update Lambda with a binary search
                 # lambda_i will affect s_i and s_{i+1}
                 # lambda in [0, 200]
                 preSurfError = surfErrorList[n - 1]
                 curSurfError = muSurfaceError
+
+                preMeanError = meanErrorList[n-1]
+                curMeanError = muError
+
                 curLambdaVec = lambdaVec
                 preLambdaVec = lambdaVecList[n-1]
                 newLambdaVec = curLambdaVec.clone()
-                for i in range(N-1):
-                    if (preSurfError[i] + preSurfError[i+1]) > (curSurfError[i] + curSurfError[i+1]):
-                        newLambdaVec[i] = curLambdaVec[i]/2.0
-                    elif (preSurfError[i] + preSurfError[i+1]) < (curSurfError[i] + curSurfError[i+1]):
-                        newLambdaVec[i] = (curLambdaVec[i] + preLambdaVec[i])/ 2.0
+                if hps.oneLambdaForAllSurfaces:
+                    if preMeanError > curMeanError:
+                        newLambdaVec = curLambdaVec / 2.0
                     else:
-                        newLambdaVec[i] = curLambdaVec[i]
-                lambdaVecList.append(newLambdaVec)
+                        newLambdaVec = (curLambdaVec + preLambdaVec) / 2.0
+                else: # each surface has a lambda
+                    for i in range(N-1):
+                        if (preSurfError[i] + preSurfError[i+1]) > (curSurfError[i] + curSurfError[i+1]):
+                            newLambdaVec[i] = curLambdaVec[i]/2.0
+                        else:
+                            newLambdaVec[i] = (curLambdaVec[i] + preLambdaVec[i])/ 2.0
+
+            lambdaVecList.append(newLambdaVec)
 
         # save lambda and error into a file
         with open(os.path.join(hps.outputDir, f"searchLambda_replaceRwithGT_{hps.replaceRwithGT}.csv"), "w") as file:

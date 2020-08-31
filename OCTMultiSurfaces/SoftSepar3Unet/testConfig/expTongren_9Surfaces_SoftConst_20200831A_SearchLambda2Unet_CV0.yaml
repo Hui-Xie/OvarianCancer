@@ -5,7 +5,8 @@
 # numSurface = 10 as deleted inaccurate surface 8
 # training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
 
-# 3 Unets train Surface, Rift, and Lambda
+# 2 Unets train Surface, Rift
+# search one lambda for all surfaces.
 
 
 debug: False # debug mark
@@ -28,7 +29,7 @@ riftSubnetLr: 0.01  # pretrain at epoch 54
 
 
 lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID
-oneLambdaForAllSurfaces: False  # False: each surface has a lambda
+oneLambdaForAllSurfaces: True # False: each surface has a lambda
 
 
 trainLambdaUsingValidation: False
