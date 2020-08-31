@@ -27,7 +27,7 @@ Model_5,    20200821A_3Unet_CV0,                        CV0,    1.0622, 3.1820, 
 Model,      Experiment_Name,                            fold,    0,  1,  2,  3,  4,  5,  6,  7,  8,  Max,
 Model_1,    SoftConst_20200819A_SurfaceSubnet,          CV0,     4, 12, 11,  8, 10,  9,  7,  4,  5,  12,
 Model_2,    20200829A_SurfaceSubnet_HardSeparation,     CV0,     6, 15, 10,  7,  9,  9,  7,  8,  9,  15
-Model_3,    20200831A_FixLambda2Unet_CV0,               CV0,
+Model_3,    20200831A_FixLambda2Unet_CV0,               CV0,     6. 15. 10.  7.  9.  9.  7.  8.  9.  15
 Model_4,    20200831A_FixLambda2Unet_UseGTReplaceR_CV0, CV0,
 Model_5,    20200821A_3Unet_CV0,                        CV0,     7, 13, 10,  8, 10,  9,  8,  8, 12,  13,
 
