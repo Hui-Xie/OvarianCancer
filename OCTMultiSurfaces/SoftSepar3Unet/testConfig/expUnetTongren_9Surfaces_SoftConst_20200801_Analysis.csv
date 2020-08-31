@@ -39,6 +39,11 @@ Analysis:
 3   Comparing A). one lambda for all surfaces,  and B). 8 lambda each for different surface:
      A and B get same HD, and A gets a little(0.0003 micormeter) worse than B in surface location error;
 4   As lambda is so small ignorable value,  that fine tune network with fixed lambda equals further training surface branch, which will not bring improvement, instead of overfitting;
+5   You may refer the binary search record for one same lambda for all surface in attachment;
+    You may use Excel to read them.
+    *_0.csv: Use_Predicted_R,
+    *_1.csf: Use_UnsmoothedGTasR,
+    *_2.csv: Use_SmoothedGTasR
 
 
 # Experiments on all models: 20200829
