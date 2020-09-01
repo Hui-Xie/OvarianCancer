@@ -45,21 +45,21 @@ learningRate: 0.01
 
 
 network: "SurfaceSubnet"
-inputHeight: 496   # original height
-inputWidth: 512   # rawImageWidth
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
-numSurfaces: 9  # num of surfaces in an image
+numSurfaces: 3  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
-slicesPerPatient: 31  # for test and validation set
-hPixelSize: 3.870  # unit: micrometer, in y/height direction
+slicesPerPatient: 51  # for test and validation set
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate
@@ -73,7 +73,7 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_Duke/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
 
@@ -84,7 +84,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurface: True
 useWeightedDivLoss: True
-useRift: True
+useRift: False
 smoothRift: True  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
