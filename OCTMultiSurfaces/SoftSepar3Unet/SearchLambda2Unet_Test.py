@@ -44,9 +44,9 @@ def main():
     MarkGTDisorder = False
     MarkPredictDisorder = False
 
-    outputXmlSegFiles = True
+    outputXmlSegFiles = False
 
-    OutputNumImages = 2
+    OutputNumImages = 0
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
@@ -114,6 +114,12 @@ def main():
         surfErrorList = []
         meanStdList = []
         surfStdList = []
+        if hps.oneLambdaForAllSurfaces:
+            highIndex = 0
+            lowIndex = -1
+        else:
+            highIndex = torch.zeros((N-1, 1), dtype=torch.float32, device=eval(hps.lambdaSubnetDevice))
+            lowIndex = -1*torch.ones((N-1, 1), dtype=torch.int32, device=eval(hps.lambdaSubnetDevice))
 
         for n in range(maxNSearch):
             testBatch = 0
@@ -152,31 +158,34 @@ def main():
             print(f"nSearch={n}, meanError={muError.item()}, meanStd={stdError.item()}, lambda={lambdaVec.view((1,N-1))}")
 
             if 0 == n:
-                newLambdaVec = 0.5*lambdaVecList[n]
+                newLambdaVec = (lambdaVecList[n])/2.0
             else:
                 # update Lambda with a binary search
                 # lambda_i will affect s_i and s_{i+1}
                 # lambda in [0, 200]
-                preSurfError = surfErrorList[n - 1]
-                curSurfError = muSurfaceError
-
-                preMeanError = meanErrorList[n-1]
-                curMeanError = muError
-
-                curLambdaVec = lambdaVec
-                preLambdaVec = lambdaVecList[n-1]
-                newLambdaVec = curLambdaVec.clone()
                 if hps.oneLambdaForAllSurfaces:
-                    if preMeanError > curMeanError:
-                        newLambdaVec = curLambdaVec / 2.0
-                    else:
-                        newLambdaVec = (curLambdaVec + preLambdaVec) / 2.0
+                    curMeanError = muError
+                    if meanErrorList[highIndex] > curMeanError:
+                        highIndex = n
+                    else: # highMeanError <= curMeanError
+                        lowIndex = highIndex
+                        highIndex = n
+                    lambdaVecListLowIndex = lambdaVecList[lowIndex] if lowIndex != -1 else 0
+                    newLambdaVec = (lambdaVecList[highIndex] + lambdaVecListLowIndex) / 2.0
                 else: # each surface has a lambda
+                    # this is parallel binary search for N-1 lambdas
+                    # Todo: this code has error, need to reconstruct.
+                    assert False
+                    highSurfError = surfErrorList[highIndex]
+                    curSurfError = muSurfaceError
+                    highLambdaVec = lambdaVecList[highIndex]
+                    curLambdaVec = lambdaVec
+                    newLambdaVec = curLambdaVec.clone()
                     for i in range(N-1):
-                        if (preSurfError[i] + preSurfError[i+1]) > (curSurfError[i] + curSurfError[i+1]):
+                        if (highSurfError[i] + highSurfError[i+1]) > (curSurfError[i] + curSurfError[i+1]):
                             newLambdaVec[i] = curLambdaVec[i]/2.0
                         else:
-                            newLambdaVec[i] = (curLambdaVec[i] + preLambdaVec[i])/ 2.0
+                            newLambdaVec[i] = (curLambdaVec[i] + highLambdaVec[i])/ 2.0
 
             lambdaVecList.append(newLambdaVec)
 
