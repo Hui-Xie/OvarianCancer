@@ -1,24 +1,15 @@
-# base on corrected and refined Ground truth with guarantee of surface separation constraint.
-# total 46 patient exclude ill patient images.
-# raw segmentation xml file directory: /home/hxie1/data/OCT_Tongren/refinedGT_20200204
-# convert data script: /local/vol00/scratch/Users/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/dataPrepare_Tongren/convertRefineData_10Surface_20200509.py
-# numSurface = 10 as deleted inaccurate surface 8
-# training set uses all good bscans, while test and validation set use all 31 Bscans, but measure accuracy for good Bscans.
-
-# 3 Unets train Surface, Rift, and Lambda
-#  use L1loss for rift
-
+# Duke data
 
 debug: False # debug mark
-dataIn1Parcel: True
-# Duke data is not in one parcel, while Tongren, JHU are in one parcel.
-# dataIn1Parcel means each patient has a volume file.
+dataIn1Parcel: False
+# Duke data is not in one parcel, while Tongren and JHU are in one parcel.
+# Not dataIn1Parcel means each patient has a volume file.
 
-dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+dataDir: "/home/hxie1/data/OCT_Duke/numpy/"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K: 10  # Kfold cross validation
-k: 0   # the fold k test
+K: 0  # Kfold cross validation
+k: -1   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
@@ -45,6 +36,7 @@ k: 0   # the fold k test
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: True
+# 3xSigma < H/4 is  a good choice for Rift sigma
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
@@ -54,24 +46,23 @@ learningRate: 0.01
 
 
 network: "RiftSubnet"
-inputHeight: 496   # original height
-inputWidth: 512   # rawImageWidth
-maxRift:  60 # general H/N, in pixel
-useBetterRiftGaussian: False
-imageVerticalShift: 0
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
+maxRift:  150.0 # maxRift + 3*sigma < H/2
+useBetterRiftGaussian: True
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
 nLayers: 7
-numSurfaces: 9  # num of surfaces in an image
+numSurfaces: 3  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 
 # some physical parameter of images
-slicesPerPatient: 31  # for test and validation set
-hPixelSize: 3.870  # unit: micrometer, in y/height direction
+slicesPerPatient: 51  # for test and validation set
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate
@@ -85,7 +76,7 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_Duke/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
 
@@ -113,7 +104,7 @@ fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_
 
 # constrained model, both False meaning RelU
 hardSeparation: False
-softSeparation: True
+softSeparation: False
 useReLUInPretrain: True
 
 goodBscans: []
