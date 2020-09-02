@@ -1,5 +1,5 @@
 # divide volumes into slices
-volumesDir = "/home/hxie1/data/OCT_Duke/numpy/training"
+volumesDir = "/home/hxie1/data/OCT_Duke/numpy/validation"
 srcTag = "/numpy/"
 dstTag = "/numpy_slices/" # outputSlicesDir = "/home/hxie1/data/OCT_Duke/numpy_slices/****"
 
