@@ -1,0 +1,26 @@
+
+# Sep 2nd, 2020
+1 Duke data is training:
+  A   data set statistics:
+  training set: 266 volumes x 51 slices per volume, where 187 AMD + 79 control = 266 columes;
+  validation set: 59 volumes x 51 slice per volume, where 41 AMD + 18 contorl  =  59 volumes;
+  test set:  59 volumes x 51 slice per volume, where 41 AMD + 18 contorl  =  59 volumes;
+  B   Now SurfaceSubset and SeparationSubset are in training separately, very slow, about 33 min/epoch;
+      Duke data is about 12.7 times of Tongren data in the slices number: (266+59)*51/(42*31) = 12.7;
+  C   After 32 epochs, surfaceSubset got mean surface error 2.6 micrometer in resolution of 3.24 micrometer per pixel;
+      After 28 epochs, separationSubst got mean separation error 4.3 micrometer;
+      both networks are still in training;
+  D   At the moment, surface 0 get 1.4 micrometer, surface 1 gets 2.8 micrometer, surface 2 gets 3.7 micrometer errors;
+      It shows the surface0 is very easy, while surface2 is harder to segment, which is led by the difference of different surface information;
+
+2 Grid search-lambda script is ready, waiting the Duke network finishing pretraining;
+  An intuitional analyis from below A and B may predict that our further grid search may still get very small lambda.
+  A  learning lambda also gets very small lambda  of 1e-11 level;
+  B  Binaray search: when lambda =0.01, muError =13; when lambda=0.0001, muError = 2.07;
+  As search-lambda nework needs 3 GPUs in which SurfaceSubset and SeparationSubset run 2 GPUs, current GPU resource is busy on Duke.
+  We need to wait Duke to finish training, and then launch grid search lambda.
+
+Plan:
+1 As Duke data training is very slow, I plan to launch ovarian cancer project tomorrow;
+2 When Duke data training finish, I will come back to conintue Duke data work;
+
