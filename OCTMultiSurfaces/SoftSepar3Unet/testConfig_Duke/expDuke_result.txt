@@ -16,7 +16,7 @@
 2 Grid search-lambda script is ready, waiting the Duke network finishing pretraining;
   An intuitional analyis from below A and B may predict that our further grid search may still get very small lambda.
   A  learning lambda also gets very small lambda  of 1e-11 level;
-  B  Binaray search: when lambda =0.01, muError =13; when lambda=0.0001, muError = 2.07;
+  B  Binaray search: when lambda =0.01, muError =13; when lambda=0.0001, muError = 2.07 for Tongren data;
   As search-lambda nework needs 3 GPUs in which SurfaceSubset and SeparationSubset run 2 GPUs, current GPU resource is busy on Duke.
   We need to wait Duke to finish training, and then launch grid search lambda.
 
