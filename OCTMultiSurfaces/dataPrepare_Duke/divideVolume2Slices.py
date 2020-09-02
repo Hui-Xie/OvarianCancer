@@ -39,8 +39,8 @@ for n in range(nVolumes):
     labelRoot, labelExt = os.path.splitext(labelsList[n])
     labelRoot = labelRoot.replace(srcTag, dstTag)
     for s in range(S):
-        np.save(imagesRoot + f"_s{s:02d}"+imageExt, images[s])
-        np.save(labelRoot + f"_s{s:02d}"+ labelExt, labels[s])
+        np.save(imagesRoot + f"_s{s:02d}"+imageExt, images[s,])
+        np.save(labelRoot + f"_s{s:02d}"+ labelExt, labels[s,])
 
 
 outputSlicesDir = volumesDir.replace(srcTag, dstTag)
