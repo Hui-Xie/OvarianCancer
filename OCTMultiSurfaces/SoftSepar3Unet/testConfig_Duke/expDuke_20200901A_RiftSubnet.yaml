@@ -4,8 +4,9 @@ debug: False # debug mark
 dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren and JHU are in one parcel.
 # Not dataIn1Parcel means each patient has a volume file.
+dataInSlice: True
 
-dataDir: "/home/hxie1/data/OCT_Duke/numpy/"
+dataDir: "/home/hxie1/data/OCT_Duke/numpy_slices/"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
@@ -76,7 +77,7 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/home/hxie1/data/OCT_Duke/numpy/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
 

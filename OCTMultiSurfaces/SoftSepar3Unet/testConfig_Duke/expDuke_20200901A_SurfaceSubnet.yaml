@@ -4,6 +4,7 @@ debug: False # debug mark
 dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren and JHU are in one parcel.
 # Not dataIn1Parcel means each patient has a volume file.
+dataInSlice: True
 
 dataDir: "/home/hxie1/data/OCT_Duke/numpy/"
 existGTLabel: True
