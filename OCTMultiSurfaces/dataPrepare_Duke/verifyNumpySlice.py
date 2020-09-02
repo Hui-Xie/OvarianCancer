@@ -1,6 +1,6 @@
 
 
-imageFile = "/home/hxie1/data/OCT_Duke/numpy/test/AMD_1236_images_s26.npy"
+imageFile = "/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1236_images_s26.npy"
 surfaceFile = imageFile.replace("_images.npy", "_surfaces.npy")
 outputDir = "/home/hxie1/data/temp"
 
