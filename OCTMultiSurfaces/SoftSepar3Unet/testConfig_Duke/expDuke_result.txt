@@ -1,3 +1,13 @@
+# Sep 4th, Friday, 2020
+# on validation set with pixel resolution of 3.24 micrometer.
+expDuke_20200902A_SurfaceSubnet: meanMuerror = 2.196 micrometer, epoch=74, learningRate=5e-3,
+                                 surfaceMuError: surface0 = 1.017, surface1=2.45, surface2= 3.141
+                                 Now valiation loss is increasing.
+
+expDuke_20200902A_RiftSubnet:    meanSepartionerror = 3.881 micrometer, epoch=101, learningRate=1.25e-3,
+                                 riftError: rift0 = 3.089, rift1=4.673
+                                 Now validation loss is still decreasing.
+
 
 # Sep 2nd, 2020
 1 Duke data is training:
