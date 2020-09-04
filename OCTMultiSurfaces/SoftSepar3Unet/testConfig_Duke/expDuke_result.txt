@@ -1,5 +1,5 @@
 # Sep 4th, Friday, 2020
-# on validation set with pixel resolution of 3.24 micrometer.
+# on validation set with pixel resolution of 3.24 micrometer, at 11:30pm of Friday.
 expDuke_20200902A_SurfaceSubnet: meanMuerror = 2.196 micrometer, epoch=74, learningRate=5e-3,
                                  surfaceMuError: surface0 = 1.017, surface1=2.45, surface2= 3.141
                                  Now valiation loss is increasing.
