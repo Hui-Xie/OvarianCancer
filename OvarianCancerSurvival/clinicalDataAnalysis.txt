@@ -12,9 +12,9 @@ granulosa cell tumor
 mixed high grade serous and endometrioid
 
 TNM system:
-T: 0, 1,2,3,X
-N: 0, 1,2,3 X
-M: 0, 1,X
+T: X, 0, 1,2,3,
+N: X, 0, 1,2,3
+M: X, 0, 1,
 
 stage:
 Stage 0:
@@ -24,8 +24,10 @@ Stage I, Stage II, and Stage III:
 Stage IV:
 	The cancer has spread to distant parts of the body.
 
-0, I, II, III, IV, with A,B,C at substage.
+0, I, II, III, IV, with A,B,C as substage.
 
+http://ovarian.org/about-ovarian-cancer/what-is-ovarian-cancer/types-a-stages
+ovarian cancer stage.
 
 
 
