@@ -103,7 +103,7 @@ class MobileNetV3(nn.Module):
 
         self.m_conv2d_1 = nn.Sequential(
             nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm2d(inC),
+            nn.BatchNorm2d(960),
             nn.Hardswish()
         )
 
