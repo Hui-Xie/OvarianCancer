@@ -106,9 +106,9 @@ def main():
     # debug
 
     N = hps.numSurfaces
-    initialLambdaVec = 0.1*torch.ones((N-1, 1), dtype=torch.float32, device=eval(hps.lambdaSubnetDevice))
-    step = 0.001
-    maxNSearch = int(0.1/step)  # 200/2^n = 1e-8
+    initialLambdaVec = hps.lambdaInitialValue*torch.ones((N-1, 1), dtype=torch.float32, device=eval(hps.lambdaSubnetDevice))
+    step = hps.lambdaSearchStep
+    maxNSearch = int(hps.lambdaInitialValue/step)
 
     with torch.no_grad():
 
