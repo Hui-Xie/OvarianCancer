@@ -30,4 +30,15 @@ http://ovarian.org/about-ovarian-cancer/what-is-ovarian-cancer/types-a-stages
 ovarian cancer stage.
 
 
+optimal result:
+A  after surgery, tumor<2cm;
+B  survive for 90 days after surgery;
+C  chemical therapy reponse good;
+
+Current data:
+1  residual tumor size;
+2  survive months; (but it is not correspond with days)
+3  
+
+
 
