@@ -1,3 +1,21 @@
+# Sep 10th, Thursday, 2020
+# Duke data grid search result:
+Analysis:
+1  Please refer to csv data and its relation between lambda and meanError;
+2  Grid search uses un-smooth ground truth as r;
+3  Duke data is 12.7 times bigger than Tongren data, and grid search is very time-consuming;
+4  I searched 2 regions, each region needs about 16 hours with 3 GPUs;
+   Region A: from 0.1 to 0.001, with grid step 0.001;
+   Region B: from 0.001 to 1e-5, with grid step 1e-5;
+5  Both searches show that it is basically a linear relation between meanError and lambda;
+   Smaller lambda, better accuracy of IPM optimized surface location.
+6  Recall the stationary condition formula like below of IPM cost function,
+   it shows that the sum effect of mu and r uses lambda as weight to correct mu,
+   mu and r occupy 50% weight respectively before multiplying lambda, and mu generally is far bigger than r.
+   Therefore even perfect r from ground truth does not add benefit to correct mu,
+   as this correcting process is dominated by mu/s self.
+
+
 # Sep 4th, Friday, 2020
 # on validation set with pixel resolution of 3.24 micrometer, at 11:30pm of Friday.
 expDuke_20200902A_SurfaceSubnet: meanMuerror = 2.196 micrometer, epoch=74, learningRate=5e-3,
