@@ -23,7 +23,7 @@ class SqueezeExcite(nn.Module):
     def forward(self, x):
         y = self.globalAvgPool(x)
         y = self.fc2Layers(y)
-        return torch.mul(x, y)
+        return torch.mul(x, y) # broadcasted multiplication
 
 
 class V3Bottleneck(nn.Module):
