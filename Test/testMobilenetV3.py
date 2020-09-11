@@ -7,7 +7,7 @@ sys.path.append("..")
 from framework.MobileNetV3 import MobileNetV3
 
 net = MobileNetV3(3)
-head =  nn.Conv2d(1280, 3, kernel_size=1, stride=1, padding=0, bias=False)
+head = torch.nn.Conv2d(1280, 3, kernel_size=1, stride=1, padding=0, bias=False)
 
 gt =torch.tensor([1.0,2.0,3.0])
 
