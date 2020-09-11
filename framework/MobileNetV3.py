@@ -69,7 +69,14 @@ class V3Bottleneck(nn.Module):
 
 
 class MobileNetV3(nn.Module):
-    def __init__(self, inputC, outputK):
+    def __init__(self, inputC):
+        '''
+        This network does not has final FC layer as in original mobileNet v3 paper.
+        Applications need to ada specific application heads.
+
+        :param inputC: channel number of input image
+        :output: 1x1280x1x1 tensor.
+        '''
         super().__init__()
         inC = 16 # input Channel number for bottleneck
         self.m_inputConv = nn.Sequential(
@@ -107,14 +114,16 @@ class MobileNetV3(nn.Module):
             nn.Hardswish()
         )
 
+        # after m_conv2d_1, tensor need global mean on B,H and W dimension.
+
         self.m_conv2d_2 = nn.Sequential(
             nn.Conv2d(960, 1280, kernel_size=1, stride=1, padding=0, bias=False),
             nn.Hardswish()
         )
 
-        self.m_conv2d_3 = nn.Sequential(
-            nn.Conv2d(1280, outputK, kernel_size=1, stride=1, padding=0, bias=False)
-        )
+        #self.m_conv2d_3 = nn.Sequential(
+        #    nn.Conv2d(1280, outputK, kernel_size=1, stride=1, padding=0, bias=False)
+        #)
 
 
     def forward(self, x):
@@ -128,6 +137,5 @@ class MobileNetV3(nn.Module):
         x = x.mean(dim=(0,2,3), keepdim=True)
 
         x = self.m_conv2d_2(x)
-        x = self.m_conv2d_3(x)
         return x
 
