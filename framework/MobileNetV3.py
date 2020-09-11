@@ -1,4 +1,4 @@
-# refer paper:
+# refer to paper:
 # Andrew Howard and Mark Sandler and Grace Chu and Liang-Chieh Chen
 # and Bo Chen and Mingxing Tan and Weijun Wang and Yukun Zhu and
 # Ruoming Pang and Vijay Vasudevan and Quoc V. Le and Hartwig Adam.
