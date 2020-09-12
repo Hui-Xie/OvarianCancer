@@ -38,7 +38,24 @@ C  chemical therapy reponse good;
 Current data:
 1  residual tumor size;
 2  survive months; (but it is not correspond with days)
-3  
+3  months_FU: months_FollowUp
+
+# Sep 12th, 2020
+clinical_6Col_20200912 readme:
+for residualTumor:
+-1:microscopic
+0: 0-1cm
+1: 1-2cm
+2: > 2cm
+
+For chemoResponse:
+1: CR, complete response
+0: IR, incomplete response
+
+
+
+
+
 
 
 

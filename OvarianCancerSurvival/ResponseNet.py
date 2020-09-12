@@ -32,4 +32,6 @@ class ResponseNet(BasicModel):
         chemoResponseFeature = self.m_chemoResponseHead(x)
         ageFeature = self.m_ageHead(x)
 
+        #todo: implement Head and its loss computation.
+
         return None
