@@ -7,6 +7,7 @@ import os
 
 with open(dataSetTxtPath,'r') as f:
     MRNList = f.readlines()
+MRNList = [item[0:-1] for item in MRNList] # erase '\n'
 for MRN in MRNList:
     if len(MRN) == 7:
         MRN='0' + MRN
