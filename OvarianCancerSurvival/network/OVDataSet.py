@@ -1,56 +1,72 @@
 from torch.utils import data
 import numpy as np
-import json
 import os
 import torch
 import torchvision.transforms as TF
-
-from network.OCTAugmentation import *
-
+import csv
 
 class OVDataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None, ):
         '''
-
+        Ovarian Cancer data set Manager
         :param mode: training, validation, test
         :param hps:
         :param transform:
         '''
+        self.m_mode = mode
         self.hps = hps
 
-        self.m_images = None
-        self.m_labels = None
-        self.m_IDs = None
+        if mode == "training":
+            IDPath = hps.trainingDataPath
+            gtPath = hps.trainingGTPath
+        elif mode == "validation":
+            IDPath = hps.validationDataPath
+            gtPath = hps.validationGTPath
+        elif mode == "test":
+            IDPath = hps.testDataPath
+            gtPath = hps.testGTPath
+        else:
+            assert False
+            print(f"OVDataSet mode error")
 
-        if imagesPath is not None:
-            if self.hps.dataIn1Parcel:
-                # image uses float32
-                images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
-                # normalize images for each slice
-                std,mean = torch.std_mean(images, dim=(1,2))
-                self.m_images = TF.Normalize(mean, std)(images)
-            else:
-                assert ((labelPath is None) and (IDPath is None))
-                with open(imagesPath, 'r') as f:
-                    self.m_IDs = f.readlines()
-                self.m_IDs = [item[0:-1] for item in self.m_IDs]
-                self.m_images = self.m_IDs.copy()
-                self.m_labels = [item.replace("_images.npy", "_surfaces.npy") for item in self.m_images]
+        self.m_imagesPath = hps.dataDir+"/nrrd"
 
-        if labelPath is not None:
-            self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
+        with open(IDPath, 'r') as idFile:
+            MRNList = idFile.readlines()
+        MRNList = [item[0:-1] for item in MRNList]  # erase '\n'
+        MRNList = ['0'+item if (len(item) == 7) else item  for item in MRNList]
+        self.m_IDs = MRNList
 
-        if IDPath is not None:
-            with open(IDPath) as f:
-                self.m_IDs = json.load(f)
+        '''
+        csv data example:
+        MRN,Age,ResidualTumor,Censor,TimeSurgeryDeath(d),ChemoResponse
+        3818299,68,0,1,316,1
+        5723607,52,0,1,334,0
+        68145843,70,0,1,406,0
+        4653841,64,0,1,459,0
+        96776044,49,0,0,545,1
+
+        '''
+        gtDict = {}
+        with open(gtPath, newline='') as csvfile:
+            csvList = list(csv.reader(csvfile, delimiter=',', quotechar='|'))
+            csvList = csvList[1:]  # erase table head
+            for row in csvList:
+                lengthRow = len(row)
+                MRN = '0' + row[0] if 7 == len(row[0]) else row[0]
+                gtDict[MRN] = {}
+                gtDict[MRN]['Age'] = int(row[1])
+                gtDict[MRN]['ResidualTumor'] = int(row[2])
+                gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else None
+                gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else None
+                gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else None
+        self.m_labels = gtDict
+
         self.m_transform = transform
 
 
     def __len__(self):
-        if self.hps.dataIn1Parcel:
-            return self.m_images.size()[0]
-        else:
-            return len(self.m_IDs)*self.hps.slicesPerPatient
+        return len(self.m_IDs)
 
     def generateGradientImage(self, image, gradChannels):
         '''
