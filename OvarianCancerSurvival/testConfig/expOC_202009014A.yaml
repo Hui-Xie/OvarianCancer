@@ -23,8 +23,10 @@ inputChannels: 3 # rawImage + gradChannels(W,H)
 gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 widthResidualHead: 4
+residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
 widthSurvialHead: 100
 widthChemoHead: 2
+chemoClassPrecent: [0.266,0.734]
 widthAgeHead: 100
 
 
