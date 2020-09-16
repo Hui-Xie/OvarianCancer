@@ -2,10 +2,11 @@
 
 # train config
 device: torch.device('cuda:1')   #GPU ID
-batchSize: 1
+batchSize: 1  # 1 volume with various slices
 learningRate: 0.1
 
 #data source
+existGTLabel: True
 dataDir:  "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing"
 
 trainingDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/trainingSetMRN.txt"

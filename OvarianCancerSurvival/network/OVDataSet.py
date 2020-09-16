@@ -4,6 +4,7 @@ import os
 import torch
 import torchvision.transforms as TF
 import csv
+import SimpleITK as sitk
 
 class OVDataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None, ):
@@ -231,78 +232,30 @@ class OVDataSet(data.Dataset):
 
 
     def __getitem__(self, index):
-        if self.hps.dataIn1Parcel:
-            data = self.m_images[index,]
+        MRN = self.m_IDs[index]
 
-            label = None
-            if self.m_labels is not None:
-                label = self.m_labels[index,] # size: N,W
-            imageID = self.m_IDs[str(index)]
-        else:
-            volumeIndex = index // self.hps.slicesPerPatient
-            offset = index % self.hps.slicesPerPatient
+        labels= []
+        if self.hps.existGTLabel:
+            labels = self.m_labels[MRN]
 
-            if self.hps.dataInSlice:  # one slice saved as one file
-                imagesRoot, imageExt = os.path.splitext(self.m_IDs[volumeIndex])
-                imageID = imagesRoot + f"_s{offset:02d}" + imageExt
-                lableID = imageID.replace("_images_", "_surfaces_")
-                data = torch.from_numpy(np.load(imageID).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # H, W
-                label = torch.from_numpy(np.load(lableID).astype(np.float32)).to(self.hps.device, dtype=torch.float) # N, W
-
-            else:
-
-                # image uses float32
-                images = torch.from_numpy(np.load(self.m_images[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
-                # normalize images for each slice, which has done in converting from mat to numpy
-                # std, mean = torch.std_mean(images, dim=(1, 2))
-                # images = TF.Normalize(mean, std)(images)
-                data = images[offset,]
-
-                labels = torch.from_numpy(np.load(self.m_labels[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
-                label = labels[offset,]
-
-                imageID = self.m_IDs[volumeIndex]+f".OCT{offset:2d}"
+        volumePath = self.hps.dataDir+"/" +MRN+"_CT.nrrd"
+        itkImage = sitk.ReadImage(volumePath)
+        npVolume = sitk.GetArrayFromImage(itkImage)
+        _, H, W = npVolume.shape
 
         if self.m_transform:
-            data, label = self.m_transform(data, label)
+            data = self.m_transform(npVolume)
 
-        if self.hps.TTA and 0 != self.hps.TTA_Degree:
-            data, label = polarImageLabelRotate_Tensor(data, label, rotation=self.hps.TTA_Degree)
-
-        if 0 != self.hps.lacingWidth:
-            data, label = lacePolarImageLabel(data,label,self.hps.lacingWidth)
-
-        if 1 != self.hps.scaleNumerator or 1 != self.hps.scaleDenominator:  # this will change the Height of polar image
-            data = scalePolarImage(data, self.hps.scaleNumerator, self.hps.scaleDenominator)
-            label = scalePolarLabel(label, self.hps.scaleNumerator, self.hps.scaleDenominator)
-
-        H, W = data.shape
-        N, W1 = label.shape
-        assert W==W1
-        image = data.unsqueeze(dim=0)
+        image = data.unsqueeze(dim=1)
         if 0 != self.hps.gradChannels:
             grads = self.generateGradientImage(data, self.hps.gradChannels)
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
 
-        layerGT = []
-        if self.hps.useLayerDice and label is not None:
-            layerGT = getLayerLabels(label,H)
-
-        riftWidthGT = []
-        # N rifts for N surfaces
-        #riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
-        # (N-1) rifts for N surfaces.
-        riftWidthGT = label[1:, :] - label[0:-1, :]
-        if self.hps.smoothRift:
-            riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
-
-        result = {"images": image,
-                  "GTs": [] if label is None else label,
-                  "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
-                  "IDs": imageID,
-                  "layers": layerGT,
-                  "riftWidth": riftWidthGT}
+        result = {"images": images,
+                  "GTs": labels,
+                  "IDs": MRN
+                 }
         return result
 
 
