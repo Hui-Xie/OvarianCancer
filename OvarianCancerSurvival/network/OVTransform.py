@@ -2,17 +2,12 @@
 
 import random
 import torch
-import torchvision.transforms as TF
-import sys
-from network.OCTAugmentation import *
+import math
 
 class OVDataTransform(object):
     def __init__(self, hps):
-        self.m_prob = hps.augmentProb
-        self.m_noiseStd = hps.gaussianNoiseStd
-        self.m_filpProb = hps.flipProb
-        self.m_saltPepperRate = hps.saltPepperRate
-        self.m_saltRate = hps.saltRate
+        self.hps = hps
+        self.m_edgeCropRate = math.sqrt(hps.randomCropArea)
 
 
     def __call__(self, inputData):
@@ -22,48 +17,56 @@ class OVDataTransform(object):
         :return:
                 a normalized tensor of size: S,H,W
         '''
-        H,W = inputData.shape
+        e = 1e-8
         device = inputData.device
-        dirt =False
-        data = inputData.clone()
-        if inputLabel is not None:
-            label = inputLabel.clone()
-        else:
-            label = None
+        S,H,W = inputData.shape
+        newS = int(S* self.hps.randomSlicesRate)
+        newSList = random.sample(list(range(0,S)), newS)
+        newH = int(H * self.m_edgeCropRate)
+        newW = int(W * self.m_edgeCropRate)
+        gapH = H- newH
+        gapW = W -newW
 
-        # gaussian noise
-        if random.uniform(0, 1) < self.m_prob:
-            data = data + torch.normal(0.0, self.m_noiseStd, size=data.size()).to(device=device,dtype=torch.float)
-            dirt = True
+        # transformed data
+        tfData = torch.empty((newS,newH,newW), device=device,dtype=torch.float32)
 
-        # salt-pepper noise
-        if random.uniform(0, 1) < self.m_prob:
-            # salt: maxValue; pepper: minValue
-            mask = torch.empty(data.size(),dtype=torch.float,device=device).uniform_(0,1)
-            pepperMask = mask <= self.m_saltPepperRate
-            saltMask = mask <= self.m_saltPepperRate*self.m_saltRate
-            pepperMask ^= saltMask
-            max = data.max()
-            min = data.min()
-            data[torch.nonzero(pepperMask, as_tuple=True)] = min
-            data[torch.nonzero(saltMask,   as_tuple=True)] = max
-            dirt =True
+        for i, s in enumerate(newSList):
+            data = inputData[s,:,:]
 
-        # rotation
-        if self.m_rotation and inputLabel is not None:
-            rotation = random.randint(0,359)
-            data, label = polarImageLabelRotate_Tensor(data, label, rotation=rotation)
+            # random crop
+            startH = random.randrange(0,gapH)
+            startW = random.randrange(0,gapW)
+            data = data[startH:startH+newH, startW: startW+newW]
 
-        # normalize again
-        if dirt:
-            std, mean = torch.std_mean(data)
-            data = TF.Normalize([mean], [std])(data.unsqueeze(dim=0))
-            data = data.squeeze(dim=0)
+            # flip
+            if random.uniform(0, 1) < self.hps.flipProb:
+                data = torch.flip(data, [1])  # flip horizontal
+            if random.uniform(0, 1) < self.hps.flipProb:
+                data = torch.flip(data, [0])  # flip vertical
 
-        if inputLabel is None:
-            return data
-        else:
-            return data, label
+            # gaussian noise
+            if random.uniform(0, 1) < self.hps.augmentProb:
+                data = data + torch.normal(0.0, self.hps.gaussianNoiseStd, size=data.size()).to(device=device,dtype=torch.float)
+
+            # salt-pepper noise
+            if random.uniform(0, 1) < self.hps.augmentProb:
+                # salt: maxValue; pepper: minValue
+                mask = torch.empty(data.size(),dtype=torch.float,device=device).uniform_(0,1)
+                pepperMask = (mask <= self.hps.saltPepperRate)
+                saltMask = (mask <= self.hps.saltPepperRate*self.hps.saltRate)
+                pepperMask ^= saltMask  # xor
+                max = data.max()
+                min = data.min()
+                data[torch.nonzero(pepperMask, as_tuple=True)] = min
+                data[torch.nonzero(saltMask,   as_tuple=True)] = max
+
+            tfData[i, :, :] = data
+
+        # normalize data before return
+        std, mean = torch.std_mean(tfData, dim=(1, 2), keepdim=True).expand_as(tfData)
+        tfData = (tfData - mean) / (std + e)  # in range[-1,1]
+
+        return tfData
 
     def __repr__(self):
         return self.__class__.__name__

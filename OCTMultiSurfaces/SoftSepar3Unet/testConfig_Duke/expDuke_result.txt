@@ -1,3 +1,7 @@
+# Sep 14th, Tuesday, 2020
+Professor directed to use CVS for lambda search to verify IPM again at convenient time.
+
+
 # Sep 10th, Thursday, 2020
 # Duke data grid search result:
 Analysis:

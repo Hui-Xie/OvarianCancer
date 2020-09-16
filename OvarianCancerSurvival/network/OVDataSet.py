@@ -115,11 +115,11 @@ class OVDataSet(data.Dataset):
 
         volumePath = self.hps.dataDir+"/" +MRN+"_CT.nrrd"
         itkImage = sitk.ReadImage(volumePath)
-        npVolume = sitk.GetArrayFromImage(itkImage)
-        _, H, W = npVolume.shape
+        npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
+        data = torch.from_numpy(npVolume).to(self.hps.device)
 
         if self.m_transform:
-            data = self.m_transform(npVolume)
+            data = self.m_transform(data)
 
         if 0 != self.hps.gradChannels:
             data = self.addVolumeGradient(data)
