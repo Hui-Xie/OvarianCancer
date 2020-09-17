@@ -56,9 +56,10 @@ class OVDataSet(data.Dataset):
                 gtDict[MRN] = {}
                 gtDict[MRN]['Age'] = int(row[1])
                 gtDict[MRN]['ResidualTumor'] = int(row[2])
-                gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else None
-                gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else None
-                gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else None
+                # none data use -999 express
+                gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else -999
+                gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else -999
+                gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else -999
         self.m_labels = gtDict
 
         self.m_transform = transform
@@ -105,7 +106,7 @@ class OVDataSet(data.Dataset):
         if self.hps.existGTLabel:
             labels = self.m_labels[MRN]
 
-        volumePath = self.hps.dataDir+"/" +MRN+"_CT.nrrd"
+        volumePath = self.m_imagesPath+"/" +MRN+"_CT.nrrd"
         itkImage = sitk.ReadImage(volumePath)
         npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
         data = torch.from_numpy(npVolume).to(self.hps.device)
@@ -117,7 +118,9 @@ class OVDataSet(data.Dataset):
             data = self.addVolumeGradient(data)
 
         # normalization before output to dataloader
-        std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True).expand_as(data)
+        std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
+        std = std.expand_as(data)
+        mean = mean.expand_as(data)
         data = (data - mean) / (std + e)  # size: Bx3xHxW
 
         result = {"images": data,

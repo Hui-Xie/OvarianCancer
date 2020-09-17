@@ -80,7 +80,7 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            residualPredict, residualLoss = net.forward(batchData['images'], GTs = batchData['GTs'])
+            residualPredict, residualLoss = net.forward(batchData['images'].squeeze(dim=0), GTs = batchData['GTs'])
 
             loss = residualLoss
             optimizer.zero_grad()

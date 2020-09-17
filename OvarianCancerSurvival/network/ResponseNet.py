@@ -14,8 +14,8 @@ class ResponseNet(BasicModel):
         '''
         super().__init__()
         self.hps = hps
-        self.m_resdualClassWeight = torch.tenosr([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
-        self.m_chemoClassWeight = torch.tenosr([1.0/item for item in hps.chemoClassPercent]).to(hps.device)
+        self.m_resdualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
+        self.m_chemoClassWeight = torch.tensor([1.0/item for item in hps.chemoClassPercent]).to(hps.device)
 
         self.m_mobilenet = MobileNetV3(hps.inputChannels)
         self.m_residualSizeHead = nn.Conv2d(1280, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
