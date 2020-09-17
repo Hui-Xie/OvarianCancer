@@ -129,11 +129,11 @@ def main():
         validationLabelsPath = os.path.join(dataDir,"validation", f"surfaces_CV{k:d}.npy")
         validationIDPath    = os.path.join(dataDir,"validation", f"patientID_CV{k:d}.json")
 
-    tainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate, rotation=rotation)
-    validationTransform = tainTransform
+    trainTransform = OCTDataTransform(prob=augmentProb, noiseStd=gaussianNoiseStd, saltPepperRate=saltPepperRate, saltRate=saltRate, rotation=rotation)
+    validationTransform = trainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=tainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
+    trainData = OCTDataSet(trainImagesPath, trainLabelsPath, trainIDPath, transform=trainTransform, device=device, sigma=sigma, lacingWidth=lacingWidth,
                            TTA=False, TTA_Degree=0, scaleNumerator=scaleNumerator, scaleDenominator=scaleDenominator,
                            gradChannels=gradChannels)
     validationData = OCTDataSet(validationImagesPath, validationLabelsPath, validationIDPath, transform=validationTransform, device=device, sigma=sigma,

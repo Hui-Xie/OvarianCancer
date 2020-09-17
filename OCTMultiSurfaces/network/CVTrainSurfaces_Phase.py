@@ -73,11 +73,11 @@ def main():
             print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
             assert(False)
 
-    tainTransform = OCTDataTransform(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation)
-    validationTransform = tainTransform
+    trainTransform = OCTDataTransform(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation)
+    validationTransform = trainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=tainTransform, hps=hps)
+    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=trainTransform, hps=hps)
     validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform,  hps=hps)
 
     # construct network

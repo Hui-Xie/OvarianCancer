@@ -1,21 +1,20 @@
-# support various input size
+# Ovarian cancer training program
 
 # need python package:  pillow(6.2.1), opencv, pytorch, torchvision, tensorboard
 
 import sys
 import random
 
+import torch
+import torch.nn as nn
 import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
-sys.path.append("..")
-from network.OCTDataSet import *
-from network.OCTOptimization import *
-from network.OCTTransform import *
-
 sys.path.append(".")
-from SurfaceSubnet import SurfaceSubnet
+from OVDataSet import OVDataSet
+from OVDataTransform import OVDataTransform
+from ResponseNet import ResponseNet
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
@@ -25,7 +24,7 @@ from framework.ConfigReader import ConfigReader
 
 
 def printUsage(argv):
-    print("============ Cross Validation Train OCT MultiSurface Network =============")
+    print("============ Train Ovarian Cancer Response Network =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -41,42 +40,12 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    if hps.dataIn1Parcel:
-        if -1==hps.k and 0==hps.K:  # do not use cross validation
-            trainImagesPath = os.path.join(hps.dataDir, "training", f"images.npy")
-            trainLabelsPath = os.path.join(hps.dataDir, "training", f"surfaces.npy")
-            trainIDPath = os.path.join(hps.dataDir, "training", f"patientID.json")
-
-            validationImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
-            validationLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
-            validationIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
-        else:  # use cross validation
-            trainImagesPath = os.path.join(hps.dataDir,"training", f"images_CV{hps.k:d}.npy")
-            trainLabelsPath  = os.path.join(hps.dataDir,"training", f"surfaces_CV{hps.k:d}.npy")
-            trainIDPath     = os.path.join(hps.dataDir,"training", f"patientID_CV{hps.k:d}.json")
-
-            validationImagesPath = os.path.join(hps.dataDir,"validation", f"images_CV{hps.k:d}.npy")
-            validationLabelsPath = os.path.join(hps.dataDir,"validation", f"surfaces_CV{hps.k:d}.npy")
-            validationIDPath    = os.path.join(hps.dataDir,"validation", f"patientID_CV{hps.k:d}.json")
-    else:
-        if -1==hps.k and 0==hps.K:  # do not use cross validation
-            trainImagesPath = os.path.join(hps.dataDir, "training", f"patientList.txt")
-            trainLabelsPath = None
-            trainIDPath = None
-
-            validationImagesPath = os.path.join(hps.dataDir, "validation", f"patientList.txt")
-            validationLabelsPath = None
-            validationIDPath = None
-        else:
-            print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
-            assert(False)
-
-    trainTransform = OCTDataTransform(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation)
-    validationTransform = trainTransform
+    trainTransform = OVDataTransform(hps)
+    # validationTransform = trainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=trainTransform, hps=hps)
-    validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform,  hps=hps)
+    trainData = OVDataSet("training", hps=hps, transform=trainTransform)
+    validationData = OVDataSet("validation", hps=hps, transform=None) # only use data augmentation at training set
 
     # construct network
     net = eval(hps.network)(hps=hps)
@@ -87,30 +56,22 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
 
     # Load network
-
     netMgr = NetMgr(net, hps.netPath, hps.device)
     netMgr.loadNet("train")
-
 
     writer = SummaryWriter(log_dir=hps.logDir)
 
     # train
     epochs = 1360000
-    preTrainingLoss = 999999.0
     preValidLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 2041  # float 16 has maxvalue: 2048
-    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 4.3
     if net.training:
         initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:
         initialEpoch = 0
-
-    # for different surface index
-    sIndex0 = hps.surfaceIndex[0]
-    sIndex1 = hps.surfaceIndex[1]
 
     for epoch in range(initialEpoch, epochs):
         random.seed()
@@ -122,35 +83,30 @@ def main():
         trLoss = 0.0
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
+            residualPredict, residualLoss = net.forward(batchData['images'], GTs = batchData['GTs'])
 
-            batchData['gaussianGTs'] = batchData['gaussianGTs'][:, sIndex0:sIndex1, :, :]
-            batchData['GTs'] = batchData['GTs'][:, sIndex0:sIndex1, :]
-
-
-            S, sigma2, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            loss = residualLoss
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
             trLoss += loss
 
         trLoss = trLoss / trBatch
-        #lrScheduler.step(trLoss)
-        # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
 
         net.eval()
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
             net.setStatus("validation")
-            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False,
-                                                              num_workers=0):
+            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
                 validBatch += 1
-
-                batchData['gaussianGTs'] = batchData['gaussianGTs'][:, sIndex0:sIndex1, :, :]
-                batchData['GTs'] = batchData['GTs'][:, sIndex0:sIndex1, :]
-
                 # S is surface location in (B,S,W) dimension, the predicted Mu
-                S, sigma2, loss  = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
+                    S, loss, R = forwardOutput
+                else:
+                    S, loss = forwardOutput
+
                 validLoss += loss
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
@@ -199,6 +155,19 @@ def main():
             preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
+
+        # save the after pertrain epoch with best loss
+        if (epoch >= hps.epochsPretrain) and (validLoss < pre2ndValidLoss or muError < pre2ndErrorMean):
+            # save realtime network parameter
+            bestRunParametersDict = net.m_runParametersDict.copy()
+            net.updateRunParameter("validationLoss", validLoss)
+            net.updateRunParameter("epoch", net.m_epoch)
+            net.updateRunParameter("errorMean", muError)
+            pre2ndValidLoss = validLoss
+            pre2ndErrorMean = muError
+            netMgr.saveRealTimeNet(hps.netPath)
+            net.m_runParametersDict = bestRunParametersDict
+
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
