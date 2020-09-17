@@ -15,9 +15,9 @@ class OVDataTransform(object):
 
         :param inputData:  a Tensor of size(S, H,W),
         :return:
-                a normalized tensor of size: S,H,W
+                a unnormalized tensor of size: S,H,W
         '''
-        e = 1e-8
+
         device = inputData.device
         S,H,W = inputData.shape
         newS = int(S* self.hps.randomSlicesRate)
@@ -61,10 +61,6 @@ class OVDataTransform(object):
                 data[torch.nonzero(saltMask,   as_tuple=True)] = max
 
             tfData[i, :, :] = data
-
-        # normalize data before return
-        std, mean = torch.std_mean(tfData, dim=(1, 2), keepdim=True).expand_as(tfData)
-        tfData = (tfData - mean) / (std + e)  # in range[-1,1]
 
         return tfData
 

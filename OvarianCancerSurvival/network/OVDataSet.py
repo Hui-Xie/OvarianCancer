@@ -76,7 +76,7 @@ class OVDataSet(data.Dataset):
         :param volume: in size: SxHxW
         :param gradChannels:  integer
         :return:
-                Bx3xHxW, added gradient volume
+                Bx3xHxW, added gradient volume without normalization
         '''
         e = 1e-8
         S,H,W =volume.shape
@@ -93,13 +93,6 @@ class OVDataSet(data.Dataset):
                            (image1W - image_1W)/2,
                            (volume[:,:, -1] - volume[:,:, -2]).view(S, H, 1)), dim=2)  # size: S, H,W; grad0
 
-        # normalize
-        std, mean = torch.std_mean(gradH, dim=(1,2), keepdim=True).expand_as(gradH)
-        gradH = (gradH - mean) / (std + e)  # in range[-1,1]
-
-        std, mean = torch.std_mean(gradW, dim=(1,2), keepdim=True).expand_as(gradW)
-        gradW = (gradW - mean) / (std + e)
-
         # concatenate
         gradVolume = torch.cat((volume.unsqueeze(dim=1), gradH.unsqueeze(dim=1), gradW.unsqueeze(dim=1)), dim=1) # B,3,H,W
 
@@ -107,6 +100,7 @@ class OVDataSet(data.Dataset):
 
 
     def __getitem__(self, index):
+        e = 1e-8
         MRN = self.m_IDs[index]
 
         labels= []
@@ -119,10 +113,14 @@ class OVDataSet(data.Dataset):
         data = torch.from_numpy(npVolume).to(self.hps.device)
 
         if self.m_transform:
-            data = self.m_transform(data)
+            data = self.m_transform(data)  # size: BxHxW
 
         if 0 != self.hps.gradChannels:
             data = self.addVolumeGradient(data)
+
+        # normalization before output to dataloader
+        std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True).expand_as(data)
+        data = (data - mean) / (std + e)  # size: Bx3xHxW
 
         result = {"images": data,
                   "GTs": labels,
