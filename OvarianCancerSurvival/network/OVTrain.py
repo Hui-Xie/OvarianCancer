@@ -102,7 +102,7 @@ def main():
                 residualPredict, residualLoss = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
 
                 validLoss += residualLoss
-                MRN = batchData['IDs']
+                MRN = batchData['IDs'][0]  # [0] is for list to string
                 predictDict[MRN]={}
                 predictDict[MRN]['ResidualTumor'] = residualPredict.item()
 
