@@ -1,7 +1,7 @@
 # Ovarian Cancer Survival Prediction.
 
 # train config
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 1  # 1 volume with various slices
 learningRate: 0.1
 
@@ -9,13 +9,13 @@ learningRate: 0.1
 existGTLabel: True
 dataDir:  "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing"
 
-trainingDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/trainingSetMRN.txt"
-validationDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/validationSetMRN.txt"
-testDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/testSetMRN.txt"
+trainingDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/trainingSetMRN.txt"
+validationDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/validationSetMRN.txt"
+testDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/testSetMRN.txt"
 
-trainingGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/trainingSetGroundTruth.csv"
-validationGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/validationSetGroundTruth.csv"
-testGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/testSetGroundTruth.csv"
+trainingGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/trainingSetGroundTruth.csv"
+validationGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/validationSetGroundTruth.csv"
+testGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/testSetGroundTruth.csv"
 
 # Network config
 network: "ResponseNet"
@@ -41,8 +41,9 @@ saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
-netPath: "/home/hxie1/data/OvarianCancerCT/survivalPredit/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
+logDir: "/home/hxie1/data/OvarianCancerCT/survivalPredict/log"  # net is saved at logPath / network / self_filename
 
 # module config:
