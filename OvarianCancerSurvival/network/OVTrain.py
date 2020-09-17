@@ -17,8 +17,6 @@ from OVDataTransform import OVDataTransform
 from ResponseNet import ResponseNet
 
 sys.path.append("../..")
-from utilities.FilesUtilities import *
-from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 
@@ -100,77 +98,41 @@ def main():
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
                 validBatch += 1
-                # S is surface location in (B,S,W) dimension, the predicted Mu
-                forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-                if hps.debug and (hps.useRiftInPretrain or (not net.inPretrain())):
-                    S, loss, R = forwardOutput
-                else:
-                    S, loss = forwardOutput
+                residualPredict, residualLoss = net.forward(batchData['images'], GTs=batchData['GTs'])
 
-                validLoss += loss
-                validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
-                validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
-                validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
+                validLoss += residualLoss
+                validOutputs = torch.cat((validOutputs, residualPredict)) if validBatch != 1 else residualPredict
+                validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs']
+                validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']
 
             validLoss = validLoss / validBatch
-            if hps.groundTruthInteger:
-                validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
-            # print(f"epoch:{epoch}; validLoss ={validLoss}\n")
 
-            goodBScansInGtOrder =None
-            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
-                # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-                goodBScansInGtOrder = []
-                b = 0
-                while b < len(validIDs):
-                    patientPath, filename = os.path.split(validIDs[b])
-                    patientIDVolumeName = os.path.basename(patientPath)
-                    patientID = int(patientIDVolumeName[0:patientIDVolumeName.find("_OD_")])
-                    lowB = hps.goodBscans[patientID][0]-1
-                    highB = hps.goodBscans[patientID][1]
-                    goodBScansInGtOrder.append([lowB,highB])
-                    b += hps.slicesPerPatient #validation data and test data both have 31 Bscans per patient
+            # todo: compute predict error
 
-            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
-                                                                                                 slicesPerPatient=hps.slicesPerPatient,
-                                                                                                 hPixelSize=hps.hPixelSize,
-                                                                                                 goodBScansInGtOrder=goodBScansInGtOrder)
 
         lrScheduler.step(validLoss)
         # debug
-        # print(f"epoch {epoch} ends...")  # for smoke debug
+        print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
-        writer.add_scalar('ValidationError/mean', muError, epoch)
-        writer.add_scalar('ValidationError/std', stdError, epoch)
-        writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
-        writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
+        # todo: error on resiudalSize, survival time, chemoResponse
+
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validLoss < preValidLoss or muError < preErrorMean:
+        if validLoss < preValidLoss:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
-            net.updateRunParameter("errorMean", muError)
+            # todo: add error infor to drive
+            # net.updateRunParameter("errorMean", muError)
             preValidLoss = validLoss
-            preErrorMean = muError
+            # preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        # save the after pertrain epoch with best loss
-        if (epoch >= hps.epochsPretrain) and (validLoss < pre2ndValidLoss or muError < pre2ndErrorMean):
-            # save realtime network parameter
-            bestRunParametersDict = net.m_runParametersDict.copy()
-            net.updateRunParameter("validationLoss", validLoss)
-            net.updateRunParameter("epoch", net.m_epoch)
-            net.updateRunParameter("errorMean", muError)
-            pre2ndValidLoss = validLoss
-            pre2ndErrorMean = muError
-            netMgr.saveRealTimeNet(hps.netPath)
-            net.m_runParametersDict = bestRunParametersDict
 
 
 
-    print("============ End of Cross valiation training for OCT Multisurface Network ===========")
+    print("============ End of Training Ovarian Cancer  Network ===========")
 
 
 
