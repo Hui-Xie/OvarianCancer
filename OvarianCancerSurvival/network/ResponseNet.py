@@ -40,7 +40,7 @@ class ResponseNet(BasicModel):
         #todo: implement Head and its loss computation
         #residual tumor size
         residualFeature = residualFeature.view(1, self.hps.widthResidualHead)
-        residualGT = GTs['ResidualTumor']+1 # from [-1,0,1,2] to [0,1,2,3]
+        residualGT = torch.tensor(GTs['ResidualTumor']+1).to(device) # from [-1,0,1,2] to [0,1,2,3]
         residualPredict = torch.argmax(residualFeature)-1 # from [0,1,2,3] to [-1,0,1,2]
         residualCELossFunc = nn.CrossEntropyLoss(weight=self.m_resdualClassWeight)
         residualLoss = residualCELossFunc(residualFeature, residualGT)

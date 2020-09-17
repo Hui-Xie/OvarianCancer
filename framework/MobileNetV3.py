@@ -80,7 +80,12 @@ class MobileNetV3(nn.Module):
         super().__init__()
         inC = 16 # input Channel number for bottleneck
         self.m_inputConv = nn.Sequential(
-            nn.Conv2d(inputC, inC, kernel_size=3, stride=2, padding=1, bias=False),
+            # original network stride =2
+            # nn.Conv2d(inputC, inC, kernel_size=3, stride=2, padding=1, bias=False),
+
+            # in order to reduce memory
+            nn.Conv2d(inputC, inC, kernel_size=3, stride=3, padding=1, bias=False),
+
             nn.BatchNorm2d(inC),
             nn.Hardswish()
         )

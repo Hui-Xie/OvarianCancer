@@ -97,7 +97,7 @@ def main():
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
                 validBatch += 1
-                residualPredict, residualLoss = net.forward(batchData['images'], GTs=batchData['GTs'])
+                residualPredict, residualLoss = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
 
                 validLoss += residualLoss
                 validOutputs = torch.cat((validOutputs, residualPredict)) if validBatch != 1 else residualPredict
