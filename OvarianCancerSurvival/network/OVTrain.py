@@ -14,6 +14,7 @@ sys.path.append(".")
 from OVDataSet import OVDataSet
 from OVDataTransform import OVDataTransform
 from ResponseNet import ResponseNet
+from OVTools import *
 
 sys.path.append("../..")
 from framework.NetMgr import NetMgr
@@ -91,6 +92,7 @@ def main():
         trLoss = trLoss / trBatch
 
         net.eval()
+        predictDict= {}
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
@@ -100,30 +102,31 @@ def main():
                 residualPredict, residualLoss = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
 
                 validLoss += residualLoss
-                validOutputs = torch.cat((validOutputs, residualPredict)) if validBatch != 1 else residualPredict
-                validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs']
-                validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']
+                MRN = batchData['IDs']
+                predictDict[MRN]={}
+                predictDict[MRN]['ResidualTumor'] = residualPredict.item()
 
             validLoss = validLoss / validBatch
 
-            # todo: compute predict error
-
+        gtDict = validationData.getGTDict()
+        residualAcc = computeClassificationAccuracy(gtDict,predictDict, 'ResidualTumor')
+        # todo: add other accuracy computation
 
         lrScheduler.step(validLoss)
         # debug
-        print(f"epoch {epoch} ends...")  # for smoke debug
+        # print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalar('Loss/train', trLoss, epoch)
         writer.add_scalar('Loss/validation', validLoss, epoch)
         # todo: error on resiudalSize, survival time, chemoResponse
-
+        writer.add_scalar('ResiduaalTumorSizeAcc', residualAcc, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             # todo: add error infor to drive
-            # net.updateRunParameter("errorMean", muError)
+            net.updateRunParameter("ResiduaalTumorSizeAcc", residualAcc)
             preValidLoss = validLoss
             # preErrorMean = muError
             netMgr.saveNet(hps.netPath)

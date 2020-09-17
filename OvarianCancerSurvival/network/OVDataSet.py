@@ -4,6 +4,33 @@ import torch
 import csv
 import SimpleITK as sitk
 
+def readGTDict(gtPath):
+    '''
+            csv data example:
+            MRN,Age,ResidualTumor,Censor,TimeSurgeryDeath(d),ChemoResponse
+            3818299,68,0,1,316,1
+            5723607,52,0,1,334,0
+            68145843,70,0,1,406,0
+            4653841,64,0,1,459,0
+            96776044,49,0,0,545,1
+
+    '''
+    gtDict = {}
+    with open(gtPath, newline='') as csvfile:
+        csvList = list(csv.reader(csvfile, delimiter=',', quotechar='|'))
+        csvList = csvList[1:]  # erase table head
+        for row in csvList:
+            MRN = '0' + row[0] if 7 == len(row[0]) else row[0]
+            gtDict[MRN] = {}
+            gtDict[MRN]['Age'] = int(row[1])
+            gtDict[MRN]['ResidualTumor'] = int(row[2])
+            # none data use -999 express
+            gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else -999
+            gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else -999
+            gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else -999
+    return gtDict
+
+
 class OVDataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None, ):
         '''
@@ -36,37 +63,14 @@ class OVDataSet(data.Dataset):
         MRNList = ['0'+item if (len(item) == 7) else item  for item in MRNList]
         self.m_IDs = MRNList
 
-        '''
-        csv data example:
-        MRN,Age,ResidualTumor,Censor,TimeSurgeryDeath(d),ChemoResponse
-        3818299,68,0,1,316,1
-        5723607,52,0,1,334,0
-        68145843,70,0,1,406,0
-        4653841,64,0,1,459,0
-        96776044,49,0,0,545,1
-
-        '''
-        gtDict = {}
-        with open(gtPath, newline='') as csvfile:
-            csvList = list(csv.reader(csvfile, delimiter=',', quotechar='|'))
-            csvList = csvList[1:]  # erase table head
-            for row in csvList:
-                lengthRow = len(row)
-                MRN = '0' + row[0] if 7 == len(row[0]) else row[0]
-                gtDict[MRN] = {}
-                gtDict[MRN]['Age'] = int(row[1])
-                gtDict[MRN]['ResidualTumor'] = int(row[2])
-                # none data use -999 express
-                gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else -999
-                gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else -999
-                gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else -999
-        self.m_labels = gtDict
-
+        self.m_labels = readGTDict(gtPath)
         self.m_transform = transform
-
 
     def __len__(self):
         return len(self.m_IDs)
+
+    def getGTDict(self):
+        return self.m_labels
 
     def addVolumeGradient(self, volume):
         '''
