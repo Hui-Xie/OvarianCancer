@@ -79,56 +79,109 @@ def main():
         net.train()
         trBatch = 0
         trLoss = 0.0
+        trResidualLoss = 0.0
+        trChemoLoss = 0.0
+        trAgeLoss = 0.0
+        trSurvivalLoss = 0.0
+        
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             trBatch += 1
-            residualPredict, residualLoss = net.forward(batchData['images'].squeeze(dim=0), GTs = batchData['GTs'])
+            residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
+                = net.forward(batchData['images'].squeeze(dim=0), GTs = batchData['GTs'])
 
-            loss = residualLoss
+            loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
+            
             trLoss += loss
-
-        trLoss = trLoss / trBatch
+            trResidualLoss += residualLoss
+            trChemoLoss += chemoLoss
+            trAgeLoss += ageLoss
+            trSurvivalLoss += survivalLoss
+            
+        trLoss /=  trBatch
+        trResidualLoss /= trBatch
+        trChemoLoss /= trBatch
+        trAgeLoss /= trBatch
+        trSurvivalLoss /= trBatch
+        
 
         net.eval()
         predictDict= {}
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
+            validResidualLoss = 0.0
+            validChemoLoss = 0.0
+            validAgeLoss = 0.0
+            validSurvivalLoss = 0.0
+            
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
                 validBatch += 1
-                residualPredict, residualLoss = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
+                residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
+                    = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
 
-                validLoss += residualLoss
+                validLoss += hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
+                validResidualLoss += residualLoss
+                validChemoLoss += chemoLoss
+                validAgeLoss += ageLoss
+                validSurvivalLoss += survivalLoss
+                
                 MRN = batchData['IDs'][0]  # [0] is for list to string
                 predictDict[MRN]={}
                 predictDict[MRN]['ResidualTumor'] = residualPredict.item()
+                predictDict[MRN]['ChemoResponse'] = chemoPredict.item()
+                predictDict[MRN]['Age'] = agePredict.item()
+                predictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
 
-            validLoss = validLoss / validBatch
+            validLoss /= validBatch
+            validResidualLoss /= validBatch
+            validChemoLoss /= validBatch
+            validAgeLoss /= validBatch
+            validSurvivalLoss /= validBatch
 
         gtDict = validationData.getGTDict()
         residualAcc = computeClassificationAccuracy(gtDict,predictDict, 'ResidualTumor')
+        chemoAcc = computeClassificationAccuracy(gtDict,predictDict, 'ChemoResponse')
+        # todo:
+        ageSqrtMSE = 0
+        survivalMonthsSqrtMSE = 0
         # todo: add other accuracy computation
 
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
-        writer.add_scalar('Loss/train', trLoss, epoch)
-        writer.add_scalar('Loss/validation', validLoss, epoch)
-        # todo: error on resiudalSize, survival time, chemoResponse
-        writer.add_scalar('ResiduaalTumorSizeAcc', residualAcc, epoch)
+        writer.add_scalar('train/totalLoss', trLoss, epoch)
+        writer.add_scalar('train/ResidualLoss', trResidualLoss, epoch)
+        writer.add_scalar('train/ChemoLoss', trChemoLoss, epoch)
+        writer.add_scalar('train/AgeLoss', trAgeLoss, epoch)
+        writer.add_scalar('train/SurvivalLoss', trSurvivalLoss, epoch)
+
+        writer.add_scalar('validation/totalLoss', validLoss, epoch)
+        writer.add_scalar('validation/ResidualLoss', validResidualLoss, epoch)
+        writer.add_scalar('validation/ChemoLoss', validChemoLoss, epoch)
+        writer.add_scalar('validation/AgeLoss', validAgeLoss, epoch)
+        writer.add_scalar('validation/SurvivalLoss', validSurvivalLoss, epoch)
+
+        # error on resiudalSize, chemoResponse, Age, survival time
+        writer.add_scalar('Accuracy/ResiduaalTumorSizeAcc', residualAcc, epoch)
+        writer.add_scalar('Accuracy/ChemoResponseAcc', chemoAcc, epoch)
+        writer.add_scalar('Accuracy/AgeSqrtMSE', ageSqrtMSE, epoch)
+        writer.add_scalar('Accuracy/SurvivalMonthsSqrtMSE', survivalMonthsSqrtMSE, epoch)
+
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
-            # todo: add error infor to drive
             net.updateRunParameter("ResiduaalTumorSizeAcc", residualAcc)
+            net.updateRunParameter("ChemoResponseAcc", chemoAcc)
+            net.updateRunParameter("AgeSqrtMSE", ageSqrtMSE)
+            net.updateRunParameter("SurvivalMonthsSqrtMSE", survivalMonthsSqrtMSE)
             preValidLoss = validLoss
-            # preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
 

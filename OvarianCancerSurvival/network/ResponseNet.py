@@ -14,7 +14,7 @@ class ResponseNet(BasicModel):
         '''
         super().__init__()
         self.hps = hps
-        self.m_resdualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
+        self.m_residualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
         self.m_chemoClassWeight = torch.tensor([1.0/item for item in hps.chemoClassPercent]).to(hps.device)
 
         self.m_mobilenet = MobileNetV3(hps.inputChannels)
@@ -34,23 +34,35 @@ class ResponseNet(BasicModel):
         x = self.m_mobilenet(x)
         residualFeature = self.m_residualSizeHead(x) # size: 1x4x1x1
         survivalFeature = self.m_survivalHead(x)
-        chemoResponseFeature = self.m_chemoResponseHead(x)
+        chemoFeature = self.m_chemoResponseHead(x)
         ageFeature = self.m_ageHead(x)
 
         #todo: implement Head and its loss computation
         #residual tumor size
         residualFeature = residualFeature.view(1, self.hps.widthResidualHead)
-        residualGT = torch.tensor(GTs['ResidualTumor']+1).to(device) # from [-1,0,1,2] to [0,1,2,3]
         residualPredict = torch.argmax(residualFeature)-1 # from [0,1,2,3] to [-1,0,1,2]
-        residualCELossFunc = nn.CrossEntropyLoss(weight=self.m_resdualClassWeight)
+        residualGT = torch.tensor(GTs['ResidualTumor'] + 1).to(device)  # from [-1,0,1,2] to [0,1,2,3]
+        residualCELossFunc = nn.CrossEntropyLoss(weight=self.m_residualClassWeight)
         residualLoss = residualCELossFunc(residualFeature, residualGT)
 
+        #chemo response:
+        chemoFeature = chemoFeature.view(1, self.hps.widthChemoHead)
+        chemoPredict = torch.argmax(chemoFeature) # [0,1]
+        chemoLoss = 0.0
+        if GTs['ChemoResponse'] != -999:
+            chemoGT = torch.tensor(GTs['ChemoResponse']).to(device)  # [0,1]
+            chemoCELossFunc = nn.CrossEntropyLoss(weight=self.m_chemoClassWeight)
+            chemoLoss = chemoCELossFunc(chemoFeature, chemoGT)
+
+        # age prediction:
+        ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
+
+        agePredict = torch.tensor(0)
+        ageLoss = 0.0
+
+        # survival time:
+        survivalPredict = torch.tensor(0)
+        survivalLoss = 0.0
 
 
-
-
-
-
-
-
-        return residualPredict, residualLoss
+        return residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss
