@@ -6,7 +6,6 @@ import sys
 import random
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
