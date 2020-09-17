@@ -27,7 +27,7 @@ class ConfigReader(object):
         else:
             self.netPath = cfg["netPath"] + "/" + self.network + "/" + self.experimentName
 
-        if ("" == self.logDir) or ("logDir" not in self):
+        if ("logDir" not in self.__dict__) or ("" == self.logDir):
             self.logDir = self.dataDir + "/log/" + self.network + "/" + self.experimentName
         else:
             self.logDir = self.logDir + "/" + self.network + "/" + self.experimentName
