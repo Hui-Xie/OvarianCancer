@@ -145,10 +145,9 @@ def main():
         gtDict = validationData.getGTDict()
         residualAcc = computeClassificationAccuracy(gtDict,predictDict, 'ResidualTumor')
         chemoAcc = computeClassificationAccuracy(gtDict,predictDict, 'ChemoResponse')
-        # todo:
-        ageSqrtMSE = 0
-        survivalMonthsSqrtMSE = 0
-        # todo: add other accuracy computation
+        ageSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'Age')
+        survivalMonthsSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'SurvivalMonths')
+
 
         lrScheduler.step(validLoss)
         # debug

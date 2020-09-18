@@ -14,7 +14,7 @@ def computeClassificationAccuracy(gtDict, predictDict, key):
     countIgnore = 0
 
     for MRN in gtKeys:
-        if gtDict[MRN][key] == -999:
+        if gtDict[MRN][key] == -100:
             countIgnore +=1
         elif gtDict[MRN][key] == predictDict[MRN][key]:
             countSame +=1
@@ -39,7 +39,7 @@ def computeSqrtMSE(gtDict, predictDict, key):
     nCount = 0
 
     for MRN in gtKeys:
-        if gtDict[MRN][key] == -999:
+        if gtDict[MRN][key] == -100:
             continue
         else:
             mse += (gtDict[MRN][key] - predictDict[MRN][key])**2
