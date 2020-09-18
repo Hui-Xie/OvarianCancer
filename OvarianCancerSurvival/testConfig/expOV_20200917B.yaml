@@ -31,7 +31,7 @@ residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
 widthChemoHead: 2
 chemoClassPercent: [0.266,0.734]
 widthAgeHead: 100
-widthSurvialHead: 100
+widthSurvivalHead: 100
 lossWeights: [0.25, 0.25, 0.25, 0.25] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime
 
 
