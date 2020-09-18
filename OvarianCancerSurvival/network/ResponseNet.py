@@ -56,9 +56,13 @@ class ResponseNet(BasicModel):
 
         # age prediction:
         ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
-
-        agePredict = torch.tensor(0)
+        agePredict = torch.argmax(ageFeature)  # range [0,100)
         ageLoss = 0.0
+        if GTs['Age'] != -999:
+            ageGT = torch.tensor(GTs['Age']).to(device)  # range [0,100)
+            ageCELossFunc = nn.CrossEntropyLoss()
+            ageLoss = ageCELossFunc(ageFeature, ageGT)
+
 
         # survival time:
         survivalPredict = torch.tensor(0)

@@ -1,7 +1,7 @@
 # Ovarian Cancer Survival Prediction.
 
 # train config
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 1  # 1 volume with various slices
 learningRate: 0.1
 
@@ -24,10 +24,10 @@ gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 widthResidualHead: 4
 residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
-widthSurvialHead: 100
 widthChemoHead: 2
 chemoClassPercent: [0.266,0.734]
 widthAgeHead: 100
+widthSurvialHead: 100
 lossWeights: [0.25, 0.25, 0.25, 0.25] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime
 
 
