@@ -55,7 +55,11 @@ def main():
 
     optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+
+    # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+
+    # math.log(0.5,0.98) = 34, this scheduler equals scale 0.5 per 100 epochs.
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.98, patience=3, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
 
     # Load network

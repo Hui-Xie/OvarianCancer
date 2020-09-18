@@ -121,10 +121,10 @@ class MobileNetV3(nn.Module):
 
         # after m_conv2d_1, tensor need global mean on B,H and W dimension.
 
-        self.m_conv2d_2 = nn.Sequential(
-            nn.Conv2d(960, 1280, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.Hardswish()
-        )
+        #self.m_conv2d_2 = nn.Sequential(
+        #    nn.Conv2d(960, 1280, kernel_size=1, stride=1, padding=0, bias=False),
+        #    nn.Hardswish()
+        #)
 
         #self.m_conv2d_3 = nn.Sequential(
         #    nn.Conv2d(1280, outputK, kernel_size=1, stride=1, padding=0, bias=False)
@@ -141,6 +141,6 @@ class MobileNetV3(nn.Module):
         # global average on B,H,and W.
         x = x.mean(dim=(0,2,3), keepdim=True)
 
-        x = self.m_conv2d_2(x)
+        # x = self.m_conv2d_2(x)
         return x
 
