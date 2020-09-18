@@ -22,7 +22,10 @@ class ResponseNet(BasicModel):
         self.m_residualSizeHead = nn.Conv2d(1280, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
         self.m_chemoResponseHead = nn.Conv2d(1280, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False)
         self.m_ageHead = nn.Conv2d(1280, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False)
-        self.m_survivalHead = nn.Conv2d(1280, hps.widthSurvialHead, kernel_size=1, stride=1, padding=0, bias=False)
+        self.m_survivalHead = nn.Sequential(
+            nn.Conv2d(1280, hps.widthSurvialHead, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Tanh()
+            )
 
 
     def forward(self, inputs, GTs=None):
@@ -77,11 +80,11 @@ class ResponseNet(BasicModel):
                 # normalize expz_i and P[i]
                 R = self.hps.widthSurvialHead- z # expRange
                 z_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device)
-                expz_i = nn.functional.softmax(z_i) # make sure sum=1
+                expz_i = nn.functional.softmax(z_i, dim=0) # make sure sum=1
 
                 PCurve = survivalFeature[z:self.hps.widthSurvialHead].clone()
                 # While log_softmax is mathematically equivalent to log(softmax(x)), doing these two operations separately is slower, and numerically unstable.
-                survivalLoss += (expz_i*(nn.functional.log_softmax(PCurve)-z_i)).sum()
+                survivalLoss += (expz_i*(nn.functional.log_softmax(PCurve,dim=0)-z_i)).sum()
 
             else: # 0 == GTs['Censor']
                 PLive = survivalFeature[0:z+1].clone()
