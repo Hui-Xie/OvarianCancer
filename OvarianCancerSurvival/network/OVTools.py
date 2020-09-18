@@ -94,6 +94,6 @@ def outputPredictDict2Csv(predictDict, csvPath):
         daysPerMonth = 30.4368
         for key in predictDict:
             a = predictDict[key]
-            file.write(f"{key},{a['Age']},{a['ResidualTumor']},{a['Censor']},{int(a['SurvivalMonths']*daysPerMonth)},{a['ChemoResponse']},\n")
+            file.write(f"{key},{a['Age']},{a['ResidualTumor']},None,{int(a['SurvivalMonths']*daysPerMonth)},{a['ChemoResponse']},\n")
 
 
