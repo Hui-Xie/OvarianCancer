@@ -24,10 +24,10 @@ def readGTDict(gtPath):
             gtDict[MRN] = {}
             gtDict[MRN]['Age'] = int(row[1])
             gtDict[MRN]['ResidualTumor'] = int(row[2])
-            # none data use -999 express
-            gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else -999
-            gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else -999
-            gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else -999
+            # none data use -100 express
+            gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else -100
+            gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else -100
+            gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else -100
     return gtDict
 
 

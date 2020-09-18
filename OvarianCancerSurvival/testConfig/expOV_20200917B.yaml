@@ -1,4 +1,7 @@
 # Ovarian Cancer Survival Prediction.
+# simultaneously predict ResidualSize, ChemoResponse, Age, and Survival time
+# with all are 0.25 weight.
+
 
 # train config
 device: torch.device('cuda:2')   #GPU ID
