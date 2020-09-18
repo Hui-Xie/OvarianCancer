@@ -1,34 +1,8 @@
 from torch.utils import data
 import numpy as np
 import torch
-import csv
 import SimpleITK as sitk
-
-def readGTDict(gtPath):
-    '''
-            csv data example:
-            MRN,Age,ResidualTumor,Censor,TimeSurgeryDeath(d),ChemoResponse
-            3818299,68,0,1,316,1
-            5723607,52,0,1,334,0
-            68145843,70,0,1,406,0
-            4653841,64,0,1,459,0
-            96776044,49,0,0,545,1
-
-    '''
-    gtDict = {}
-    with open(gtPath, newline='') as csvfile:
-        csvList = list(csv.reader(csvfile, delimiter=',', quotechar='|'))
-        csvList = csvList[1:]  # erase table head
-        for row in csvList:
-            MRN = '0' + row[0] if 7 == len(row[0]) else row[0]
-            gtDict[MRN] = {}
-            gtDict[MRN]['Age'] = int(row[1])
-            gtDict[MRN]['ResidualTumor'] = int(row[2])
-            # none data use -100 express
-            gtDict[MRN]['Censor'] = int(row[3]) if 0 != len(row[3]) else -100
-            gtDict[MRN]['SurvivalMonths'] = int(row[4]) / 30.4368 if 0 != len(row[4]) else -100
-            gtDict[MRN]['ChemoResponse'] = int(row[5]) if 0 != len(row[5]) else -100
-    return gtDict
+from OVTools import readGTDict
 
 
 class OVDataSet(data.Dataset):

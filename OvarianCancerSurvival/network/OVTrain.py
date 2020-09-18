@@ -148,6 +148,10 @@ def main():
         ageSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'Age')
         survivalMonthsSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'SurvivalMonths')
 
+        # for debug
+        if hps.debug:
+            outputPredictDict2Csv(predictDict, hps.outputDir +"/validationSetPredict.csv")
+            print (f"validation prediction result has been output.")
 
         lrScheduler.step(validLoss)
         # debug
