@@ -4,6 +4,7 @@
 
 import sys
 import random
+import datetime
 
 import torch
 import torch.optim as optim
@@ -150,7 +151,9 @@ def main():
 
         # for debug
         if hps.debug:
-            outputPredictDict2Csv(predictDict, hps.outputDir +"/validationSetPredict.csv")
+            curTime = datetime.datetime.now()
+            timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+            outputPredictDict2Csv(predictDict, hps.outputDir +f"/validationSetPredict_{timeStr}.csv")
             print (f"validation prediction result has been output.")
 
         lrScheduler.step(validLoss)
