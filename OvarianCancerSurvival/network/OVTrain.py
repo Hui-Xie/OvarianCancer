@@ -151,7 +151,7 @@ def main():
 
         lrScheduler.step(validLoss)
         # debug
-        # print(f"epoch {epoch} ends...")  # for smoke debug
+        print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalar('train/totalLoss', trLoss, epoch)
         writer.add_scalar('train/ResidualLoss', trResidualLoss, epoch)

@@ -65,34 +65,34 @@ class ResponseNet(BasicModel):
 
         # survival time:
         survivalFeature = survivalFeature.view(self.hps.widthSurvialHead)
-        P = torch.sigmoid(survivalFeature)  # survival prob
-        survivalPredict = torch.argmax((P>= 0.5).int())  # argmax return the  position of the last maximum.
+        # survivalFeature >=0 means its sigmoid > 0.5
+        survivalPredict = torch.argmax((survivalFeature>= 0).int())  # argmax return the  position of the last maximum.
         survivalLoss = 0.0
         if (GTs['SurvivalMonths'] != -100) and (GTs['Censor'] != -100):
             z = int(GTs['SurvivalMonths']+0.5)
             if 1 == GTs['Censor']:
-                PLive = P[0:z].clone()
-                survivalLoss -= torch.log(PLive).sum()
+                PLive = survivalFeature[0:z].clone()
+                survivalLoss -= nn.functional.logsigmoid(PLive).sum()  # use logsigmoid to avoid nan
 
                 # normalize expz_i and P[i]
                 R = self.hps.widthSurvialHead- z # expRange
-                expz_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device)
-                expz_i = torch.exp(expz_i)
-                expSum = expz_i.sum()
-                expz_i = expz_i/expSum
+                z_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device)
+                expz_i = nn.functional.softmax(z_i) # make sure sum=1
 
-                PCurve = P[z:self.hps.widthSurvialHead].clone()
-                PCurveSum = PCurve.sum()
-                PCurve = PCurve/PCurveSum
-
-                survivalLoss += (expz_i*torch.log(PCurve/expz_i)).sum()
+                PCurve = survivalFeature[z:self.hps.widthSurvialHead].clone()
+                # While log_softmax is mathematically equivalent to log(softmax(x)), doing these two operations separately is slower, and numerically unstable.
+                survivalLoss += (expz_i*(nn.functional.log_softmax(PCurve)-z_i)).sum()
 
             else: # 0 == GTs['Censor']
-                PLive = P[0:z+1].clone()
-                survivalLoss -= torch.log(PLive).sum()
+                PLive = survivalFeature[0:z+1].clone()
+                survivalLoss -= nn.functional.logsigmoid(PLive).sum()
 
-                PCurve = P[z+1:self.hps.widthSurvialHead].clone()
-                survivalLoss -= torch.log(1.0-PCurve).sum()
+                PCurve = survivalFeature[z+1:self.hps.widthSurvialHead].clone()
+                survivalLoss += (PCurve + torch.log(1.0+torch.exp(-PCurve))).sum()
 
+        loss = residualLoss + chemoLoss + ageLoss+ survivalLoss
+        if torch.isnan(loss):  # detect NaN
+            print(f"Error: find NaN loss at epoch {self.m_epoch}")
+            assert False
 
         return residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss
