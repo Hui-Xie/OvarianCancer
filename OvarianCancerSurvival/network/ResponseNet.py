@@ -19,8 +19,18 @@ class ResponseNet(BasicModel):
         self.m_chemoClassWeight = torch.tensor([1.0/item for item in hps.chemoClassPercent]).to(hps.device)
 
         self.m_mobilenet = MobileNetV3(hps.inputChannels)
-        self.m_residualSizeHead = nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
-        self.m_chemoResponseHead = nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False)
+        self.m_layerNormAfterMean =  nn.Sequential(
+            nn.LayerNorm([hps.outputChannelsMobileNet, 1, 1]),
+            nn.Hardswish()
+            )
+        self.m_residualSizeHead = nn.Sequential(
+            nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.LayerNorm([hps.widthResidualHead, 1, 1])
+            )
+        self.m_chemoResponseHead = nn.Sequential(
+            nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.LayerNorm([hps.widthChemoHead, 1, 1])
+            )
         self.m_ageHead = nn.Sequential(
             nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False),
             nn.LayerNorm([hps.widthAgeHead, 1, 1])
@@ -38,6 +48,7 @@ class ResponseNet(BasicModel):
         x = inputs
 
         x = self.m_mobilenet(x)
+        x = self.m_layerNormAfterMean(x)
         residualFeature = self.m_residualSizeHead(x) # size: 1x4x1x1
         chemoFeature = self.m_chemoResponseHead(x)
         ageFeature = self.m_ageHead(x)
