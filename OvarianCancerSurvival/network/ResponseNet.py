@@ -72,7 +72,8 @@ class ResponseNet(BasicModel):
 
         # age prediction:
         ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
-        agePredict = torch.argmax(ageFeature)  # range [0,100)
+        ageRange = torch.tensor(list(range(0, self.hps.widthAgeHead)), dtype=torch.float32, device=device)
+        agePredict = (torch.sigmoid(ageFeature)*ageRange).sum()
         ageLoss = torch.tensor(0.0,device=device)
         if GTs['Age'] != -100:  # -100 ignore index
             ageGT = torch.tensor(GTs['Age']).to(device)  # range [0,100)
@@ -82,8 +83,11 @@ class ResponseNet(BasicModel):
 
         # survival time:
         survivalFeature = survivalFeature.view(self.hps.widthSurvivalHead)
+
+        survivalPredict = torch.sigmoid(survivalFeature).sum()  # this is a wonderful idea!!!
         # survivalFeature >=0 means its sigmoid > 0.5
-        survivalPredict = torch.argmax((survivalFeature>= 0).int())  # argmax return the  position of the last maximum.
+        # survivalPredict = torch.argmax((survivalFeature>= 0).int())  # argmax return the  position of the last maximum.
+
         survivalLoss = torch.tensor(0.0,device=device)
         if (GTs['SurvivalMonths'] != -100) and (GTs['Censor'] != -100):
             z = int(GTs['SurvivalMonths']+0.5)
