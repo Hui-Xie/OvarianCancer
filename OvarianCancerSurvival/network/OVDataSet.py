@@ -55,7 +55,6 @@ class OVDataSet(data.Dataset):
         :return:
                 Bx3xHxW, added gradient volume without normalization
         '''
-        e = 1e-8
         S,H,W =volume.shape
 
         image_1H = volume[:, 0:-2, :]  # size: S, H-2,W
@@ -77,7 +76,7 @@ class OVDataSet(data.Dataset):
 
 
     def __getitem__(self, index):
-        e = 1e-8
+        epsilon = 1e-8
         MRN = self.m_IDs[index]
 
         labels= []
@@ -99,7 +98,7 @@ class OVDataSet(data.Dataset):
         std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
         std = std.expand_as(data)
         mean = mean.expand_as(data)
-        data = (data - mean) / (std + e)  # size: Bx3xHxW
+        data = (data - mean) / (std + epsilon)  # size: Bx3xHxW
 
         result = {"images": data,
                   "GTs": labels,

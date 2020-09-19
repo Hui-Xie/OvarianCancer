@@ -43,7 +43,7 @@ class ResponseNet(BasicModel):
 
     def forward(self, inputs, GTs=None):
         # compute outputs
-        e = 1e-8
+        epsilon = 1e-8
         device = inputs.device
         x = inputs
 
@@ -64,7 +64,7 @@ class ResponseNet(BasicModel):
         #chemo response:
         chemoFeature = chemoFeature.view(1, self.hps.widthChemoHead)
         chemoPredict = torch.argmax(chemoFeature) # [0,1]
-        chemoLoss = 0.0
+        chemoLoss = torch.tensor(0.0,device=device)
         if GTs['ChemoResponse'] != -100: # -100 ignore index
             chemoGT = torch.tensor(GTs['ChemoResponse']).to(device)  # [0,1]
             chemoCELossFunc = nn.CrossEntropyLoss(weight=self.m_chemoClassWeight)
@@ -73,7 +73,7 @@ class ResponseNet(BasicModel):
         # age prediction:
         ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
         agePredict = torch.argmax(ageFeature)  # range [0,100)
-        ageLoss = 0.0
+        ageLoss = torch.tensor(0.0,device=device)
         if GTs['Age'] != -100:  # -100 ignore index
             ageGT = torch.tensor(GTs['Age']).to(device)  # range [0,100)
             ageCELossFunc = nn.CrossEntropyLoss()
@@ -84,28 +84,29 @@ class ResponseNet(BasicModel):
         survivalFeature = survivalFeature.view(self.hps.widthSurvivalHead)
         # survivalFeature >=0 means its sigmoid > 0.5
         survivalPredict = torch.argmax((survivalFeature>= 0).int())  # argmax return the  position of the last maximum.
-        survivalLoss = 0.0
+        survivalLoss = torch.tensor(0.0,device=device)
         if (GTs['SurvivalMonths'] != -100) and (GTs['Censor'] != -100):
             z = int(GTs['SurvivalMonths']+0.5)
             if 1 == GTs['Censor']:
-                PLive = survivalFeature[0:z].clone()
-                survivalLoss -= nn.functional.logsigmoid(PLive).sum()  # use logsigmoid to avoid nan
+                sfLive = survivalFeature[0:z].clone() # sf: survival feature
+                survivalLoss -= nn.functional.logsigmoid(sfLive).sum()  # use logsigmoid to avoid nan
 
                 # normalize expz_i and P[i]
                 R = self.hps.widthSurvivalHead- z # expRange
                 z_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device)
-                expz_i = nn.functional.softmax(z_i, dim=0) # make sure sum=1
+                Sz_i = nn.functional.softmax(z_i, dim=0) # make sure sum=1
+                # While log_softmax is mathematically equivalent to log(softmax(x)),
+                # doing these two operations separately is slower, and numerically unstable.
+                logSz_i = nn.functional.log_softmax(z_i,dim=0)  # logSoftmax
 
-                PCurve = survivalFeature[z:self.hps.widthSurvivalHead].clone()
-                # While log_softmax is mathematically equivalent to log(softmax(x)), doing these two operations separately is slower, and numerically unstable.
-                survivalLoss += (expz_i*(nn.functional.log_softmax(PCurve,dim=0)-z_i)).sum()
+                sfCurve = survivalFeature[z:self.hps.widthSurvivalHead].clone()
+
+                survivalLoss += (Sz_i*(logSz_i - nn.functional.logsigmoid(sfCurve,dim=0))\
+                                       + torch.log(torch.sigmoid(sfCurve).sum()+epsilon) ).sum()
 
             else: # 0 == GTs['Censor']
-                PLive = survivalFeature[0:z+1].clone()
-                survivalLoss -= nn.functional.logsigmoid(PLive).sum()
+                survivalLoss = survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum
 
-                PCurve = survivalFeature[z+1:self.hps.widthSurvivalHead].clone()
-                survivalLoss += (PCurve + torch.log(1.0+torch.exp(-PCurve))).sum()
 
         loss = residualLoss + chemoLoss + ageLoss+ survivalLoss
         if torch.isnan(loss):  # detect NaN
