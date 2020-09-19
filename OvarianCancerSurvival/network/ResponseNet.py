@@ -109,7 +109,7 @@ class ResponseNet(BasicModel):
                                        + torch.log(torch.sigmoid(sfCurve).sum()+epsilon) ).sum()
 
             else: # 0 == GTs['Censor']
-                survivalLoss = survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum
+                survivalLoss = survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum()
 
 
         loss = residualLoss + chemoLoss + ageLoss+ survivalLoss
