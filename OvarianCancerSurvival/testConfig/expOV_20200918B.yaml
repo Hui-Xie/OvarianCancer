@@ -1,0 +1,56 @@
+# Ovarian Cancer Survival Prediction.
+# simultaneously predict ResidualSize, ChemoResponse, Age, and Survival time
+# with all are 0.25 weight.
+# ageHead add learning LayerNorm.
+
+debug: False
+
+# train config
+device: torch.device('cuda:3')   #GPU ID
+batchSize: 1  # 1 volume with various slices
+learningRate: 0.1
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing"
+
+trainingDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/trainingSetMRN.txt"
+validationDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/validationSetMRN.txt"
+testDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/testSetMRN.txt"
+
+trainingGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/trainingSetGroundTruth.csv"
+validationGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/validationSetGroundTruth.csv"
+testGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/testSetGroundTruth.csv"
+
+# Network config
+network: "ResponseNet"
+inputChannels: 3 # rawImage + gradChannels(W,H)
+gradChannels: 2   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+outputChannelsMobileNet: 960
+widthResidualHead: 4
+residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
+widthChemoHead: 2
+chemoClassPercent: [0.266,0.734]
+widthAgeHead: 100
+widthSurvivalHead: 100
+lossWeights: [0.25, 0.25, 0.25, 0.25] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime
+
+
+# data augmentation
+augmentProb: 0.8  #  data augmentation rate
+flipProb: 0.5
+randomCropArea: 0.7 # 0.75
+randomSlicesRate: 0.6 #0.75
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+
+# save network
+netPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "" #"/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters/ResponseNet/expOV_20200917B"
+outputDir: ""
+logDir: "/home/hxie1/data/OvarianCancerCT/survivalPredict/log"  # net is saved at logPath / network / self_filename
+
+# module config:

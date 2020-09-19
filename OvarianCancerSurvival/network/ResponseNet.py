@@ -21,7 +21,10 @@ class ResponseNet(BasicModel):
         self.m_mobilenet = MobileNetV3(hps.inputChannels)
         self.m_residualSizeHead = nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
         self.m_chemoResponseHead = nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False)
-        self.m_ageHead = nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False)
+        self.m_ageHead = nn.Sequential(
+            nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.LayerNorm([hps.widthAgeHead, 1, 1])
+            )
         self.m_survivalHead = nn.Sequential(
             nn.Conv2d(hps.outputChannelsMobileNet, hps.widthSurvivalHead, kernel_size=1, stride=1, padding=0, bias=False),
             nn.LayerNorm([hps.widthSurvivalHead,1,1])
