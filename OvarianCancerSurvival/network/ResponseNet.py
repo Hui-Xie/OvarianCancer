@@ -72,8 +72,9 @@ class ResponseNet(BasicModel):
 
         # age prediction:
         ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
-        ageRange = torch.tensor(list(range(0, self.hps.widthAgeHead)), dtype=torch.float32, device=device)
-        agePredict = (torch.sigmoid(ageFeature)*ageRange).sum()
+        ageRange = torch.tensor(list(range(0, self.hps.widthAgeHead)), dtype=torch.float32, device=device).view(1, self.hps.widthAgeHead)
+        softmaxAge = nn.functional.softmax(ageFeature,dim=1)
+        agePredict = (softmaxAge*ageRange).sum()/(softmaxAge.sum())
         ageLoss = torch.tensor(0.0,device=device)
         if GTs['Age'] != -100:  # -100 ignore index
             ageGT = torch.tensor(GTs['Age']).to(device)  # range [0,100)
@@ -97,7 +98,7 @@ class ResponseNet(BasicModel):
 
                 # normalize expz_i and P[i]
                 R = self.hps.widthSurvivalHead- z # expRange
-                z_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device)
+                z_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device).view(R)
                 Sz_i = nn.functional.softmax(z_i, dim=0) # make sure sum=1
                 # While log_softmax is mathematically equivalent to log(softmax(x)),
                 # doing these two operations separately is slower, and numerically unstable.
