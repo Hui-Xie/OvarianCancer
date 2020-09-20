@@ -106,8 +106,8 @@ class ResponseNet(BasicModel):
 
                 sfCurve = survivalFeature[z:self.hps.widthSurvivalHead].clone()
 
-                survivalLoss += (Sz_i*(logSz_i - nn.functional.logsigmoid(sfCurve))\
-                                       + torch.log(torch.sigmoid(sfCurve).sum()+epsilon) ).sum()
+                survivalLoss += (Sz_i*(logSz_i - nn.functional.logsigmoid(sfCurve)
+                                       + torch.log(torch.sigmoid(sfCurve).sum()+epsilon) )).sum()
 
             else: # 0 == GTs['Censor']
                 survivalLoss = survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum()
