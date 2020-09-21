@@ -139,8 +139,20 @@ class MobileNetV3(nn.Module):
         x = self.m_conv2d_1(x)
 
         # global average on B,H,and W.
-        x = x.mean(dim=(0,2,3), keepdim=True)
-
-        # x = self.m_conv2d_2(x)
+        # x = x.mean(dim=(0,2,3), keepdim=True)
         return x
+
+
+        # introduce mu*sigma to enlarge feature
+        globalAvg  = x.mean(dim=(2,3), keepdim=True)  # size: B,C,1,1
+        batchStd = globalAvg.std(dim=(0,),keepdim=True)  # size: 1,C,1,1
+
+        # global average on B,H,and W.
+        x = x.mean(dim=(0, 2, 3), keepdim=True)
+
+        return x*batchStd  #size: 1,C,1,1
+
+
+
+
 
