@@ -140,7 +140,7 @@ class MobileNetV3(nn.Module):
 
         # global average on B,H,and W.
         # x = x.mean(dim=(0,2,3), keepdim=True)
-        return x
+        # return x
 
 
         # introduce mu*sigma to enlarge feature
