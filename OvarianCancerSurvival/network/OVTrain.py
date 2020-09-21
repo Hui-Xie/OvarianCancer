@@ -90,20 +90,23 @@ def main():
         trSurvivalLoss = 0.0
         
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
-            trBatch += 1
+
             residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
                 = net.forward(batchData['images'].squeeze(dim=0), GTs = batchData['GTs'])
 
             loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
-            optimizer.zero_grad()
-            loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
-            optimizer.step()
-            
-            trLoss += loss
-            trResidualLoss += residualLoss
-            trChemoLoss += chemoLoss
-            trAgeLoss += ageLoss
-            trSurvivalLoss += survivalLoss
+            if loss >= 1e-8:
+                optimizer.zero_grad()
+                loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
+                optimizer.step()
+
+                trLoss += loss
+                trResidualLoss += residualLoss
+                trChemoLoss += chemoLoss
+                trAgeLoss += ageLoss
+                trSurvivalLoss += survivalLoss
+                trBatch += 1
+
             
         trLoss /=  trBatch
         trResidualLoss /= trBatch
@@ -124,15 +127,18 @@ def main():
             
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
-                validBatch += 1
+
                 residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
                     = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
 
-                validLoss += hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
-                validResidualLoss += residualLoss
-                validChemoLoss += chemoLoss
-                validAgeLoss += ageLoss
-                validSurvivalLoss += survivalLoss
+                loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
+                if loss >= 1e-8:
+                    validLoss += loss
+                    validResidualLoss += residualLoss
+                    validChemoLoss += chemoLoss
+                    validAgeLoss += ageLoss
+                    validSurvivalLoss += survivalLoss
+                    validBatch += 1
                 
                 MRN = batchData['IDs'][0]  # [0] is for list to string
                 predictDict[MRN]={}
@@ -140,6 +146,7 @@ def main():
                 predictDict[MRN]['ChemoResponse'] = chemoPredict.item()
                 predictDict[MRN]['Age'] = agePredict.item()
                 predictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
+
 
             validLoss /= validBatch
             validResidualLoss /= validBatch
