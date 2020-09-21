@@ -33,7 +33,7 @@ widthChemoHead: 2
 chemoClassPercent: [0.266,0.734]
 widthAgeHead: 100
 widthSurvivalHead: 100
-lossWeights:[1.0, 1.0, 1.0, 1.0]  # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
+lossWeights: [1.0, 1.0, 1.0, 1.0]  # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
 predictHeads: [False, False, False, True] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
 
 
