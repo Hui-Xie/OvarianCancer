@@ -1,7 +1,7 @@
 # check whether the nrrd file exist
 
-dataSetTxtPath = "/home/hxie1/data/OvarianCancerCT/survivalPreditData/trainingSetMRN.txt"
-nrrdPath = "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing"
+dataSetTxtPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/MRN_179.txt"
+nrrdPath = "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing/nrrd"
 
 import os
 
