@@ -92,9 +92,9 @@ class ResponseNet(BasicModel):
             ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
             ageRange = torch.tensor(list(range(0, self.hps.widthAgeHead)), dtype=torch.float32, device=device).view(1, self.hps.widthAgeHead)
             softmaxAge = nn.functional.softmax(ageFeature,dim=1)
-            agePredict = (softmaxAge*ageRange).sum().view(1)
+            agePredict = (softmaxAge*ageRange).sum()
             if GTs['Age'] != -100:  # -100 ignore index
-                ageGT = torch.tensor(GTs['Age']).to(device)  # range [0,100)
+                ageGT = float(GTs['Age'])  # range [0,100)
                 # ageCELossFunc = nn.CrossEntropyLoss()
                 # ageLoss += ageCELossFunc(ageFeature, ageGT) # CE
                 ageLoss += torch.pow(agePredict-ageGT, 2)  # MSE
