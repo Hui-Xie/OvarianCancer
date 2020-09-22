@@ -1,5 +1,6 @@
 from torch.utils import data
 import numpy as np
+import random
 import torch
 import SimpleITK as sitk
 from OVTools import readGTDict
@@ -87,14 +88,24 @@ class OVDataSet(data.Dataset):
         itkImage = sitk.ReadImage(volumePath)
         npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
         data = torch.from_numpy(npVolume).to(self.hps.device)
+        S,H,W = data.shape
 
         # scale down 1/2 in H and W respectively
-        if self.hps.predictHeads[3]:
-            data = data[:,0:-1:3,0:-1:3]
-        else:
-            data = data[:, 0:-1:2, 0:-1:2]
+        data = data[:, 0:-1:2, 0:-1:2]
 
+        # random sample a fixed N slices
+        N = self.hps.sampleSlicesPerPatient
+        sectionLen = S//N
+        sampleSlices = []
+        for i in range(N):
+            start = i*sectionLen
+            end = (i+1)*sectionLen
+            if end > S:
+                end = S
+            sampleSlices.append(random.choice(list(range(start,end))))
+        data = data[sampleSlices,:,:]
 
+        # sample
         if self.m_transform:
             data = self.m_transform(data)  # size: BxHxW
 
