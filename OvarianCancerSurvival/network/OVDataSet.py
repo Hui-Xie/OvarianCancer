@@ -89,7 +89,7 @@ class OVDataSet(data.Dataset):
         data = torch.from_numpy(npVolume).to(self.hps.device)
 
         # scale down 1/2 in H and W respectively
-        if self.hps.hps.predictHeads[3]:
+        if self.hps.predictHeads[3]:
             data = data[:,0:-1:3,0:-1:3]
         else:
             data = data[:, 0:-1:2, 0:-1:2]
