@@ -82,7 +82,7 @@ class ResponseNet(BasicModel):
             chemoFeature = chemoFeature.view(1,self.hps.widthChemoHead)
             chemoPredict = (chemoFeature > 0).int().view(self.hps.widthChemoHead) # [0,1]
             if GTs['ChemoResponse'] != -100: # -100 ignore index
-                chemoGT = torch.tensor(GTs['ChemoResponse']).to(device=device, dtype=torch.long).view(1, self.hps.widthChemoHead)  # [0,1]
+                chemoGT = torch.tensor(GTs['ChemoResponse']).to(device=device, dtype=torch.float32).view(1, self.hps.widthChemoHead)  # [0,1]
                 chemoBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_chemoPosWeight)
                 chemoLoss = chemoBCEFunc(chemoFeature, chemoGT)
 
