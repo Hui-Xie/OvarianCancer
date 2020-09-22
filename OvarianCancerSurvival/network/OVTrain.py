@@ -134,7 +134,7 @@ def main():
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             outputPredictDict2Csv(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
-            print(f"Training prediction result has been output at {hps.outputDir}.")
+            # print(f"Training prediction result has been output at {hps.outputDir}.")
 
         net.eval()
         predictDict= {}
@@ -186,7 +186,7 @@ def main():
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             outputPredictDict2Csv(predictDict, hps.outputDir +f"/validationSetPredict_{timeStr}.csv")
-            print (f"Validation prediction result has been output at {hps.outputDir}.")
+            # print (f"Validation prediction result has been output at {hps.outputDir}.")
 
         lrScheduler.step(validLoss)
         # debug
