@@ -88,7 +88,8 @@ def main():
         trChemoLoss = 0.0
         trAgeLoss = 0.0
         trSurvivalLoss = 0.0
-        
+
+        trPredictDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
             residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
@@ -107,13 +108,33 @@ def main():
                 trSurvivalLoss += survivalLoss
                 trBatch += 1
 
+            if hps.debug:
+                MRN = batchData['IDs'][0]  # [0] is for list to string
+                trPredictDict[MRN] = {}
+                trPredictDict[MRN]['ResidualTumor'] = residualPredict.item()
+                trPredictDict[MRN]['ChemoResponse'] = chemoPredict.item()
+                trPredictDict[MRN]['Age'] = agePredict.item()
+                trPredictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
+
+
             
         trLoss /=  trBatch
         trResidualLoss /= trBatch
         trChemoLoss /= trBatch
         trAgeLoss /= trBatch
         trSurvivalLoss /= trBatch
-        
+
+        if hps.debug:
+            trGtDict = trainData.getGTDict()
+            trResidualAcc = computeClassificationAccuracy(trGtDict, trPredictDict, 'ResidualTumor')
+            trChemoAcc = computeClassificationAccuracy(trGtDict, trPredictDict, 'ChemoResponse')
+            trAgeSqrtMSE = computeSqrtMSE(trGtDict, trPredictDict, 'Age')
+            trSurvivalMonthsSqrtMSE = computeSqrtMSE(trGtDict, trPredictDict, 'SurvivalMonths')
+
+            curTime = datetime.datetime.now()
+            timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+            outputPredictDict2Csv(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
+            print(f"Training prediction result has been output at {hps.outputDir}.")
 
         net.eval()
         predictDict= {}
@@ -165,7 +186,7 @@ def main():
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             outputPredictDict2Csv(predictDict, hps.outputDir +f"/validationSetPredict_{timeStr}.csv")
-            print (f"validation prediction result has been output.")
+            print (f"Validation prediction result has been output at {hps.outputDir}.")
 
         lrScheduler.step(validLoss)
         # debug
@@ -184,10 +205,16 @@ def main():
         writer.add_scalar('validation/SurvivalLoss', validSurvivalLoss, epoch)
 
         # error on resiudalSize, chemoResponse, Age, survival time
-        writer.add_scalar('Accuracy/ResiduaalTumorSizeAcc', residualAcc, epoch)
-        writer.add_scalar('Accuracy/ChemoResponseAcc', chemoAcc, epoch)
-        writer.add_scalar('Accuracy/AgeSqrtMSE', ageSqrtMSE, epoch)
-        writer.add_scalar('Accuracy/SurvivalMonthsSqrtMSE', survivalMonthsSqrtMSE, epoch)
+        writer.add_scalar('ValidationAccuracy/ResiduaalTumorSizeAcc', residualAcc, epoch)
+        writer.add_scalar('ValidationAccuracy/ChemoResponseAcc', chemoAcc, epoch)
+        writer.add_scalar('ValidationAccuracy/AgeSqrtMSE', ageSqrtMSE, epoch)
+        writer.add_scalar('ValidationAccuracy/SurvivalMonthsSqrtMSE', survivalMonthsSqrtMSE, epoch)
+
+        if hps.debug:
+            writer.add_scalar('TrainingAccuracy/ResiduaalTumorSizeAcc', trResidualAcc, epoch)
+            writer.add_scalar('TrainingAccuracy/ChemoResponseAcc', trChemoAcc, epoch)
+            writer.add_scalar('TrainingnAccuracy/AgeSqrtMSE', trAgeSqrtMSE, epoch)
+            writer.add_scalar('TrainingnAccuracy/SurvivalMonthsSqrtMSE', trSurvivalMonthsSqrtMSE, epoch)
 
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
