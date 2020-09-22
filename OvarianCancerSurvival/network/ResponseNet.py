@@ -97,8 +97,9 @@ class ResponseNet(BasicModel):
             agePredict = (softmaxAge*ageRange).sum()
             if GTs['Age'] != -100:  # -100 ignore index
                 ageGT = torch.tensor(GTs['Age']).to(device)  # range [0,100)
-                ageCELossFunc = nn.CrossEntropyLoss()
-                ageLoss = ageCELossFunc(ageFeature, ageGT) + (agePredict-ageGT)**2  #CE + MSE
+                # ageCELossFunc = nn.CrossEntropyLoss()
+                # ageLoss += ageCELossFunc(ageFeature, ageGT) # CE
+                ageLoss += torch.pow(agePredict-ageGT, 2)  # MSE
 
         # survival time:
         if self.hps.predictHeads[3]:
@@ -108,7 +109,7 @@ class ResponseNet(BasicModel):
 
             if (GTs['SurvivalMonths'] != -100) and (GTs['Censor'] != -100):
                 z = int(GTs['SurvivalMonths']+0.5)
-                survivalLoss += (survivalPredict - z)**2  # MSE loss
+                survivalLoss += torch.pow(survivalPredict - z, 2)  # MSE loss
 
                 # survival curve fitting loss
                 if 1 == GTs['Censor']:

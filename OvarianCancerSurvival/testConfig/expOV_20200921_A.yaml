@@ -40,8 +40,8 @@ predictHeads: [False, False, True, False] # for ResidualTumorSize, ChemoResponse
 # data augmentation
 augmentProb: 0.8  #  data augmentation rate
 flipProb: 0.5
-randomCropArea: 0.7 # 0.75
-randomSlicesRate: 0.6 #0.75
+randomCropArea: 0.75 # 0.75
+randomSlicesRate: 0.8 #0.75
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 # for salt pepper noise
 saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels

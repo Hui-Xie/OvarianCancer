@@ -88,6 +88,9 @@ class OVDataSet(data.Dataset):
         npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
         data = torch.from_numpy(npVolume).to(self.hps.device)
 
+        # scale down 1/2 in H and W respectively
+        data = data[:,0:-1:2,0:-1:2]
+
         if self.m_transform:
             data = self.m_transform(data)  # size: BxHxW
 
