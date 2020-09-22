@@ -26,7 +26,7 @@ network: "ResponseNet"
 inputChannels: 3 # rawImage + gradChannels(W,H)
 gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
-outputChannelsMobileNet: 960
+outputChannelsMobileNet: 160
 widthResidualHead: 4
 residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
 widthChemoHead: 2
@@ -49,7 +49,7 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
 netPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath: "" #"/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters/ResponseNet/expOV_20200917B"
+loadNetPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters/ResponseNet/expOV_20200921_R"
 outputDir: ""
 logDir: "/home/hxie1/data/OvarianCancerCT/survivalPredict/log"  # net is saved at logPath / network / self_filename
 

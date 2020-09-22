@@ -69,12 +69,13 @@ class V3Bottleneck(nn.Module):
 
 
 class MobileNetV3(nn.Module):
-    def __init__(self, inputC):
+    def __init__(self, inputC, outputC):
         '''
         This network does not has final FC layer as in original mobileNet v3 paper.
         Applications need to ada specific application heads.
 
         :param inputC: channel number of input image
+               outputC: final number of output tensor
         :output: 1x1280x1x1 tensor.
         '''
         super().__init__()
@@ -114,8 +115,8 @@ class MobileNetV3(nn.Module):
             inC = outC
 
         self.m_conv2d_1 = nn.Sequential(
-            nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm2d(960),
+            nn.Conv2d(inC, outputC, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.BatchNorm2d(outputC),
             nn.Hardswish()
         )
 

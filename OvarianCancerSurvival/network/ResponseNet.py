@@ -18,34 +18,33 @@ class ResponseNet(BasicModel):
         self.m_residualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
         self.m_chemoClassWeight = torch.tensor([1.0/item for item in hps.chemoClassPercent]).to(hps.device)
 
-        self.m_mobilenet = MobileNetV3(hps.inputChannels)
+        self.m_mobilenet = MobileNetV3(hps.inputChannels, hps.outputChannelsMobileNet)
         self.m_layerNormAfterMean =  nn.Sequential(
-            nn.LayerNorm([hps.outputChannelsMobileNet, 1, 1]),
+            nn.LayerNorm([hps.outputChannelsMobileNet, 1, 1], elementwise_affine=False),
             nn.Hardswish()
             )
 
         if hps.predictHeads[0]:
             self.m_residualSizeHead = nn.Sequential(
                 nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthResidualHead, 1, 1])
+                nn.LayerNorm([hps.widthResidualHead, 1, 1], elementwise_affine=False)
                 )
 
         if hps.predictHeads[1]:
             self.m_chemoResponseHead = nn.Sequential(
                 nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthChemoHead, 1, 1])
+                nn.LayerNorm([hps.widthChemoHead, 1, 1], elementwise_affine=False)
                 )
 
         if hps.predictHeads[2]:
             self.m_ageHead = nn.Sequential(
                 nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthAgeHead, 1, 1])
+                nn.LayerNorm([hps.widthAgeHead, 1, 1], elementwise_affine=False)
                 )
 
         if hps.predictHeads[3]:
             self.m_survivalHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthSurvivalHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthSurvivalHead,1,1])
+                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthSurvivalHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
 
