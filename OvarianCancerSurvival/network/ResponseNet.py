@@ -16,7 +16,7 @@ class ResponseNet(BasicModel):
         super().__init__()
         self.hps = hps
         self.m_residualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
-        self.m_chemoClassWeight = torch.tensor([1.0/item for item in hps.chemoClassPercent]).to(hps.device)
+        self.m_chemoPosWeight = torch.tensor(hps.chemoClassPercent[0]/ hps.chemoClassPercent[1]).to(hps.device)
 
         self.m_mobilenet = MobileNetV3(hps.inputChannels, hps.outputChannelsMobileNet)
         self.m_layerNormAfterMean =  nn.Sequential(
@@ -32,8 +32,7 @@ class ResponseNet(BasicModel):
 
         if hps.predictHeads[1]:
             self.m_chemoResponseHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthChemoHead, 1, 1], elementwise_affine=False)
+                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[2]:
@@ -80,12 +79,12 @@ class ResponseNet(BasicModel):
         #chemo response:
         if self.hps.predictHeads[1]:
             chemoFeature = self.m_chemoResponseHead(x)
-            chemoFeature = chemoFeature.view(1, self.hps.widthChemoHead)
-            chemoPredict = torch.argmax(chemoFeature) # [0,1]
+            chemoFeature = chemoFeature.view(1,self.hps.widthChemoHead)
+            chemoPredict = (chemoFeature > 0).int().view(self.hps.widthChemoHead) # [0,1]
             if GTs['ChemoResponse'] != -100: # -100 ignore index
-                chemoGT = torch.tensor(GTs['ChemoResponse']).to(device)  # [0,1]
-                chemoCELossFunc = nn.CrossEntropyLoss(weight=self.m_chemoClassWeight)
-                chemoLoss = chemoCELossFunc(chemoFeature, chemoGT)
+                chemoGT = torch.tensor(GTs['ChemoResponse']).to(device).view(1, self.hps.widthChemoHead)  # [0,1]
+                chemoBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_chemoPosWeight)
+                chemoLoss = chemoBCEFunc(chemoFeature, chemoGT)
 
         # age prediction:
         if self.hps.predictHeads[2]:
