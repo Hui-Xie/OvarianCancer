@@ -1,6 +1,6 @@
 # statistics Nrrd files
 
-dataSetTxtPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/MRN_179.txt"
+dataSetTxtPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/6ColsGT/MRN_179.txt"
 nrrdPath = "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing/nrrd"
 
 import os
