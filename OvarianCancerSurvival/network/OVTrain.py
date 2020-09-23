@@ -115,6 +115,7 @@ def main():
                 for i in range(len(batchData['IDs'])):
                     MRN = batchData['IDs'][i]  # [0] is for list to string
                     trPredictDict[MRN] = {}
+                    trPredictDict[MRN]['OptimalSurgery'] = -100  # todo: in the future
                     trPredictDict[MRN]['ResidualTumor'] = residualPredict[i].item()
                     trPredictDict[MRN]['ChemoResponse'] = chemoPredict[i].item()
                     trPredictDict[MRN]['Age'] = agePredict[i].item()
@@ -177,6 +178,7 @@ def main():
                 for i in range(len(batchData['IDs'])):
                     MRN = batchData['IDs'][i]  # [0] is for list to string
                     predictDict[MRN]={}
+                    predictDict[MRN]['OptimalSurgery'] = -100  # todo: in the future
                     predictDict[MRN]['ResidualTumor'] = residualPredict[i].item()
                     predictDict[MRN]['ChemoResponse'] = chemoPredict[i].item()
                     predictDict[MRN]['Age'] = agePredict[i].item()

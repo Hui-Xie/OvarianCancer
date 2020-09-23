@@ -55,7 +55,6 @@ class ResponseNet(BasicModel):
         x = inputs
 
         x = self.m_mobilenet(x)
-        x = self.m_layerNormAfterMean(x)
 
         # initial values:
         residualLoss = torch.tensor(0.0,device=device)
@@ -135,14 +134,9 @@ class ResponseNet(BasicModel):
 
         if self.hps.predictHeads[4]:
             optimalFeature = self.m_optimalResultHead(x)
-            optimalFeature = optimalFeature.view(B, -1)
+            optimalFeature = optimalFeature.view(B)
             optimalPredict = (optimalFeature >= 0).int().view(B)  # a vector of [0,1]
-
-            optimalGT = torch.zeros(B, device=device, dtype=torch.float32)
-            for i in range(B):
-                if 1 == GTs[i]['OptimalResult']:
-                    optimalGT[i] = 1  # [0,1]
-
+            optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
             optimalBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_optimalPosWeight)
             optimalLoss = optimalBCEFunc(optimalFeature, optimalGT)
 
