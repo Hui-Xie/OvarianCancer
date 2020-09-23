@@ -67,7 +67,7 @@ class ResponseNet(BasicModel):
         chemoPredict = torch.tensor(0.0, device=device)
         agePredict = torch.tensor(0.0, device=device)
         survivalPredict = torch.tensor(0.0, device=device)
-        optimalPredict =
+        optimalPredict = torch.tensor(0.0, device=device)
 
         #residual tumor size
         if self.hps.predictHeads[0]:
