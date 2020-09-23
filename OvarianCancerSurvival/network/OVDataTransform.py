@@ -28,22 +28,22 @@ class OVDataTransform(object):
         gapH = H- newH
         gapW = W -newW
 
+        # random crop in volume form
+        startH = random.randrange(0, gapH)
+        startW = random.randrange(0, gapW)
+        inputData = inputData[:, startH:startH + newH, startW: startW + newW]
+
+        # random flip in volume form
+        if random.uniform(0, 1) < self.hps.flipProb:
+            inputData = torch.flip(inputData, [2])  # flip horizontal
+        if random.uniform(0, 1) < self.hps.flipProb:
+            inputData = torch.flip(inputData, [1])  # flip vertical
+
         # transformed data
         tfData = torch.empty((S,newH,newW), device=device,dtype=torch.float32)
 
-        for i in range(S):
+        for i in range(S):  # in each slice form
             data = inputData[i,:,:]
-
-            # random crop
-            startH = random.randrange(0,gapH)
-            startW = random.randrange(0,gapW)
-            data = data[startH:startH+newH, startW: startW+newW]
-
-            # flip
-            if random.uniform(0, 1) < self.hps.flipProb:
-                data = torch.flip(data, [1])  # flip horizontal
-            if random.uniform(0, 1) < self.hps.flipProb:
-                data = torch.flip(data, [0])  # flip vertical
 
             # gaussian noise
             if random.uniform(0, 1) < self.hps.augmentProb:
