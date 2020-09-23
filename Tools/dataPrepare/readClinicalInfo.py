@@ -25,7 +25,7 @@ for i in range(1, sheet.nrows):
     IDResponseDict[patientID] = optimalOutcome
 
 # output information
-print(f"Program discards {nDiscards} patients data as there are no optimialOutcome for them.")
+print(f"Program discards {nDiscards} patients data as there are no optimalOutcome for them.")
 print(f"Program get {len(IDResponseDict)} patients data for optimalOutcome.")
 
 # statistics

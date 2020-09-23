@@ -88,7 +88,7 @@ def main():
         trChemoLoss = 0.0
         trAgeLoss = 0.0
         trSurvivalLoss = 0.0
-        trOptimialLoss = 0.0
+        trOptimalLoss = 0.0
 
         trPredictDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
@@ -108,7 +108,7 @@ def main():
                 trChemoLoss += chemoLoss
                 trAgeLoss += ageLoss
                 trSurvivalLoss += survivalLoss
-                trOptimialLoss += optimalLoss
+                trOptimalLoss += optimalLoss
                 trBatch += 1
 
             if hps.debug:
@@ -127,7 +127,7 @@ def main():
         trChemoLoss /= trBatch
         trAgeLoss /= trBatch
         trSurvivalLoss /= trBatch
-        trOptimialLoss /= trBatch
+        trOptimalLoss /= trBatch
 
         if hps.debug:
             trGtDict = trainData.getGTDict()
@@ -235,7 +235,7 @@ def main():
             writer.add_scalar('TrainingnAccuracy/SurvivalMonthsSqrtMSE', trSurvivalMonthsSqrtMSE,epoch) if hps.debug else None
 
         if hps.predictHeads[4]:
-            writer.add_scalar('train/OptimalResultLoss', trOptimialLoss, epoch)
+            writer.add_scalar('train/OptimalResultLoss', trOptimalLoss, epoch)
             writer.add_scalar('validation/OptimalResultLoss', validOptimalLoss, epoch)
             writer.add_scalar('ValidationAccuracy/OptimalResultAcc', optimalAcc, epoch)
             writer.add_scalar('TrainingnAccuracy/OptimalResultAcc', trOptimalAcc, epoch) if hps.debug else None
