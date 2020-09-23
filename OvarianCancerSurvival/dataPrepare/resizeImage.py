@@ -16,7 +16,7 @@ nrrdList = glob.glob(nrrdPath + f"/*_CT.nrrd")
 for nrrdFile in nrrdList:
     itkImage = sitk.ReadImage(nrrdFile)
     npVolume = sitk.GetArrayFromImage(itkImage)
-    S,H,W = npVolume
+    S,H,W = npVolume.shape
 
     resultVolume = np.zeros((S,dH,dW),dtype=np.float32)
     for i in range(S):
