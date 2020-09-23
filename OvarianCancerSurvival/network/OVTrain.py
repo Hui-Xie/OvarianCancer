@@ -139,6 +139,7 @@ def main():
             trSurvivalMonthsSqrtMSE = computeSqrtMSE(trGtDict, trPredictDict, 'SurvivalMonths')
             trOptimalAcc = computeClassificationAccuracy(trGtDict, trPredictDict, 'OptimalResult')
 
+        if hps.debug and (epoch%100==0):
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             if 8 == hps.colsGT:
@@ -200,16 +201,6 @@ def main():
         survivalMonthsSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'SurvivalMonths')
         optimalAcc = computeClassificationAccuracy(gtDict, predictDict, 'OptimalResult')
 
-        # for debug
-        if hps.debug:
-            curTime = datetime.datetime.now()
-            timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-            if 8 == hps.colsGT:
-                outputPredictDict2Csv8Cols(predictDict, hps.outputDir +f"/validationSetPredict_{timeStr}.csv")
-            else:
-                outputPredictDict2Csv6Cols(predictDict, hps.outputDir + f"/validationSetPredict_{timeStr}.csv")
-            # print (f"Validation prediction result has been output at {hps.outputDir}.")
-
         lrScheduler.step(validLoss)
         # debug
         # print(f"epoch = {epoch}; trainLoss = {trLoss.item()};  validLoss = {validLoss.item()}")  # for smoke debug
@@ -258,6 +249,13 @@ def main():
             net.updateRunParameter("OptimalResultAcc", optimalAcc)
             preValidLoss = validLoss
             netMgr.saveNet(hps.netPath)
+
+            curTime = datetime.datetime.now()
+            timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+            if 8 == hps.colsGT:
+                outputPredictDict2Csv8Cols(predictDict, hps.outputDir + f"/validationSetPredict_{timeStr}.csv")
+            else:
+                outputPredictDict2Csv6Cols(predictDict, hps.outputDir + f"/validationSetPredict_{timeStr}.csv")
 
 
 
