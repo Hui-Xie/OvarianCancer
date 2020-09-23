@@ -72,65 +72,80 @@ class ResponseNet(BasicModel):
         #residual tumor size
         if self.hps.predictHeads[0]:
             residualFeature = self.m_residualSizeHead(x)  # size: 1x4x1x1
-            residualFeature = residualFeature.view(1, self.hps.widthResidualHead)
-            residualPredict = torch.argmax(residualFeature)-1 # from [0,1,2,3] to [-1,0,1,2]
-            residualGT = torch.tensor(GTs['ResidualTumor'] + 1).to(device)  # from [-1,0,1,2] to [0,1,2,3]
+            residualFeature = residualFeature.view(B, self.hps.widthResidualHead)
+            residualPredict = torch.argmax(residualFeature,dim=1)-1 # from [0,1,2,3] to [-1,0,1,2]
+            residualGT = (GTs['ResidualTumor'] + 1).to(device=device, dtype=torch.float32)  # from [-1,0,1,2] to [0,1,2,3]
             residualCELossFunc = nn.CrossEntropyLoss(weight=self.m_residualClassWeight)
             residualLoss = residualCELossFunc(residualFeature, residualGT)
 
         #chemo response:
         if self.hps.predictHeads[1]:
             chemoFeature = self.m_chemoResponseHead(x)
-            chemoFeature = chemoFeature.view(1,self.hps.widthChemoHead)
-            chemoPredict = (chemoFeature > 0).int().view(self.hps.widthChemoHead) # [0,1]
-            if GTs['ChemoResponse'] != -100: # -100 ignore index
-                chemoGT = torch.tensor(GTs['ChemoResponse']).to(device=device, dtype=torch.float32).view(1, self.hps.widthChemoHead)  # [0,1]
+            chemoFeature = chemoFeature.view(B)
+            chemoPredict = (chemoFeature >= 0).int().view(B) # [0,1]
+            existLabel = torch.nonzero( (GTs['ChemoResponse'] != -100).int(),as_tuple=True)
+            if len(existLabel) >0: # -100 ignore index
+                chemoFeature = chemoFeature[existLabel]
+                chemoGT = GTs['ChemoResponse'][existLabel].to(device=device, dtype=torch.float32)
                 chemoBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_chemoPosWeight)
                 chemoLoss = chemoBCEFunc(chemoFeature, chemoGT)
 
         # age prediction:
         if self.hps.predictHeads[2]:
             ageFeature = self.m_ageHead(x)
-            ageFeature = ageFeature.view(1, self.hps.widthAgeHead)
+            ageFeature = ageFeature.view(B, self.hps.widthAgeHead)
             ageRange = torch.tensor(list(range(0, self.hps.widthAgeHead)), dtype=torch.float32, device=device).view(1, self.hps.widthAgeHead)
             softmaxAge = nn.functional.softmax(ageFeature,dim=1)
-            agePredict = (softmaxAge*ageRange).sum()
-            if GTs['Age'] != -100:  # -100 ignore index
-                ageGT = float(GTs['Age'])  # range [0,100)
+            ageRange = ageRange.expand_as(softmaxAge)
+            agePredict = (softmaxAge*ageRange).sum(dim=1)
+            existLabel = torch.nonzero((GTs['Age'] != -100).int(), as_tuple=True)
+            if len(existLabel) > 0:  # -100 ignore index
+                existAgePrediction = agePredict[existLabel]
+                ageGT = GTs['Age'][existLabel].to(device=device, dtype=torch.float32)  # range [0,100)
                 # ageCELossFunc = nn.CrossEntropyLoss()
                 # ageLoss += ageCELossFunc(ageFeature, ageGT) # CE
-                ageLoss += torch.pow(agePredict-ageGT, 2)  # MSE
+                ageLoss += torch.pow(existAgePrediction-ageGT, 2).mean()  # MSE
 
         # survival time:
         if self.hps.predictHeads[3]:
             survivalFeature = self.m_survivalHead(x)
-            survivalFeature = survivalFeature.view(self.hps.widthSurvivalHead)
-            survivalPredict = torch.sigmoid(survivalFeature).sum()  # this is a wonderful idea!!!
+            survivalFeature = survivalFeature.view(B, self.hps.widthSurvivalHead)
+            survivalPredict = torch.sigmoid(survivalFeature).sum(dim=1)  # this is a wonderful idea!!!
 
-            if (GTs['SurvivalMonths'] != -100) and (GTs['Censor'] != -100):
-                z = int(GTs['SurvivalMonths']+0.5)
-                survivalLoss += torch.pow(survivalPredict - z, 2)  # MSE loss
+            existLabel = torch.nonzero((GTs['SurvivalMonths'] != -100).int(), as_tuple=True)
+            if len(existLabel) > 0:  # -100 ignore index
+                # all uses censor conditions
+                z = GTs['SurvivalMonths'][existLabel]
+                sFeature = survivalFeature[existLabel,:]
+                sPredict = survivalPredict[existLabel]
+                survivalLoss += torch.pow(sPredict - z, 2).mean()  # MSE loss
 
+                z = z.int()
                 # survival curve fitting loss
-                if 1 == GTs['Censor']:
-                    sfLive = survivalFeature[0:z].clone() # sf: survival feature
-                    survivalLoss -= nn.functional.logsigmoid(sfLive).sum()  # use logsigmoid to avoid nan
+                # if 1 == GTs['Censor']:
+                curveLoss = torch.tensor(0.0, device=device)
+                for i in range(len(z)):
+                    sfLive = sFeature[i,0:z].clone() # sf: survival feature
+                    curveLoss -= nn.functional.logsigmoid(sfLive).sum()  # use logsigmoid to avoid nan
 
                     # normalize expz_i and P[i]
-                    R = self.hps.widthSurvivalHead- z # expRange
+                    R = self.hps.widthSurvivalHead- z[i] # expRange
+
                     z_i = -torch.tensor(list(range(0,R)), dtype=torch.float32, device=device).view(R)
                     Sz_i = nn.functional.softmax(z_i, dim=0) # make sure sum=1
                     # While log_softmax is mathematically equivalent to log(softmax(x)),
                     # doing these two operations separately is slower, and numerically unstable.
                     logSz_i = nn.functional.log_softmax(z_i,dim=0)  # logSoftmax
 
-                    sfCurve = survivalFeature[z:self.hps.widthSurvivalHead].clone()
+                    sfCurve = sFeature[i, z[i]:self.hps.widthSurvivalHead].clone()
 
-                    survivalLoss += (Sz_i*(logSz_i - nn.functional.logsigmoid(sfCurve)
+                    curveLoss += (Sz_i*(logSz_i - nn.functional.logsigmoid(sfCurve)
                                            + torch.log(torch.sigmoid(sfCurve).sum()+epsilon) )).sum()
+                curveLoss /=len(z)
+                survivalLoss += curveLoss
 
-                else: # 0 == GTs['Censor']
-                    survivalLoss += survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum()
+                # for 0 == GTs['Censor']
+                #    survivalLoss += survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum()
 
         if self.hps.predictHeads[4]:
             optimalFeature = self.m_optimalResultHead(x)
