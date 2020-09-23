@@ -1,6 +1,6 @@
 # convert a csv file to 2D dictionary
 
-csvPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/trainingSetGroundTruth.csv"
+csvPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/validationSetGroundTruth.csv"
 
 import csv
 
