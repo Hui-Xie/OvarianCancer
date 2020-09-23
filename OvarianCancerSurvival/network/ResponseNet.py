@@ -17,17 +17,13 @@ class ResponseNet(BasicModel):
         self.hps = hps
         self.m_residualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
         self.m_chemoPosWeight = torch.tensor(hps.chemoClassPercent[0]/ hps.chemoClassPercent[1]).to(hps.device)
+        self.m_optimalPosWeight = torch.tensor(hps.optimalClassPercent[0] / hps.optimalClassPercent[1]).to(hps.device)
 
         self.m_mobilenet = MobileNetV3(hps.inputChannels, hps.outputChannelsMobileNet)
-        self.m_layerNormAfterMean =  nn.Sequential(
-            nn.LayerNorm([hps.outputChannelsMobileNet, 1, 1], elementwise_affine=False),
-            nn.Hardswish()
-            )
 
         if hps.predictHeads[0]:
             self.m_residualSizeHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthResidualHead, 1, 1], elementwise_affine=False)
+                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[1]:
@@ -37,14 +33,18 @@ class ResponseNet(BasicModel):
 
         if hps.predictHeads[2]:
             self.m_ageHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False),
-                nn.LayerNorm([hps.widthAgeHead, 1, 1], elementwise_affine=False)
+                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[3]:
             self.m_survivalHead = nn.Sequential(
                 nn.Conv2d(hps.outputChannelsMobileNet, hps.widthSurvivalHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
+
+        if hps.predictHeads[4]:
+            self.m_optimalResultHead = nn.Sequential(
+                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthOptimalResultHead, kernel_size=1, stride=1, padding=0, bias=False)
+            )
 
 
     def forward(self, inputs, GTs=None):
@@ -61,11 +61,13 @@ class ResponseNet(BasicModel):
         chemoLoss = torch.tensor(0.0, device=device)
         ageLoss = torch.tensor(0.0, device=device)
         survivalLoss = torch.tensor(0.0, device=device)
+        optimalLoss = torch.tensor(0.0, device=device)
 
         residualPredict = torch.tensor(0.0, device=device)
         chemoPredict = torch.tensor(0.0, device=device)
         agePredict = torch.tensor(0.0, device=device)
         survivalPredict = torch.tensor(0.0, device=device)
+        optimalPredict =
 
         #residual tumor size
         if self.hps.predictHeads[0]:
@@ -130,10 +132,23 @@ class ResponseNet(BasicModel):
                 else: # 0 == GTs['Censor']
                     survivalLoss += survivalFeature[z+1:].sum()- nn.functional.logsigmoid(survivalFeature).sum()
 
+        if self.hps.predictHeads[4]:
+            optimalFeature = self.m_optimalResultHead(x)
+            B,C,_,_ = optimalFeature.shape
+            optimalFeature = optimalFeature.view(B, C)
+            optimalPredict = (optimalFeature >= 0).int().view(B)  # a vector of [0,1]
 
-        loss = residualLoss + chemoLoss + ageLoss+ survivalLoss
+            optimalGT = torch.zeros(B, device=device, dtype=torch.float32)
+            for i in range(B):
+                if 1 == GTs[i]['OptimalResult']:
+                    optimalGT[i] = 1  # [0,1]
+
+            optimalBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_optimalPosWeight)
+            optimalLoss = optimalBCEFunc(optimalFeature, optimalGT)
+
+        loss = residualLoss + chemoLoss + ageLoss+ survivalLoss + optimalLoss
         if torch.isnan(loss):  # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        return residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss
+        return residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss

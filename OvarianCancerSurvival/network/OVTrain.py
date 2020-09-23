@@ -88,14 +88,16 @@ def main():
         trChemoLoss = 0.0
         trAgeLoss = 0.0
         trSurvivalLoss = 0.0
+        trOptimialLoss = 0.0
 
         trPredictDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
-            residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
+            residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss,optimalPredict, optimalLoss\
                 = net.forward(batchData['images'].squeeze(dim=0), GTs = batchData['GTs'])
 
-            loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
+            loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
+                                                + hps.lossWeights[3]*survivalLoss + hps.lossWeights[4]*optimalLoss
             if loss >= 1e-8:
                 optimizer.zero_grad()
                 loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
@@ -106,6 +108,7 @@ def main():
                 trChemoLoss += chemoLoss
                 trAgeLoss += ageLoss
                 trSurvivalLoss += survivalLoss
+                trOptimialLoss += optimalLoss
                 trBatch += 1
 
             if hps.debug:
@@ -115,6 +118,7 @@ def main():
                 trPredictDict[MRN]['ChemoResponse'] = chemoPredict.item()
                 trPredictDict[MRN]['Age'] = agePredict.item()
                 trPredictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
+                trPredictDict[MRN]['OptimalResult'] = optimalPredict.item()
 
 
             
@@ -123,6 +127,7 @@ def main():
         trChemoLoss /= trBatch
         trAgeLoss /= trBatch
         trSurvivalLoss /= trBatch
+        trOptimialLoss /= trBatch
 
         if hps.debug:
             trGtDict = trainData.getGTDict()
@@ -130,6 +135,7 @@ def main():
             trChemoAcc = computeClassificationAccuracy(trGtDict, trPredictDict, 'ChemoResponse')
             trAgeSqrtMSE = computeSqrtMSE(trGtDict, trPredictDict, 'Age')
             trSurvivalMonthsSqrtMSE = computeSqrtMSE(trGtDict, trPredictDict, 'SurvivalMonths')
+            trOptimalAcc = computeClassificationAccuracy(trGtDict, trPredictDict, 'OptimalResult')
 
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
@@ -148,20 +154,23 @@ def main():
             validChemoLoss = 0.0
             validAgeLoss = 0.0
             validSurvivalLoss = 0.0
+            validOptimalLoss = 0.0
             
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
 
-                residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss\
+                residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss\
                     = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
 
-                loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss + hps.lossWeights[3]*survivalLoss
+                loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
+                        + hps.lossWeights[3]*survivalLoss  + hps.lossWeights[4]*optimalLoss
                 if loss >= 1e-8:
                     validLoss += loss
                     validResidualLoss += residualLoss
                     validChemoLoss += chemoLoss
                     validAgeLoss += ageLoss
                     validSurvivalLoss += survivalLoss
+                    validOptimalLoss += optimalLoss
                     validBatch += 1
                 
                 MRN = batchData['IDs'][0]  # [0] is for list to string
@@ -170,6 +179,7 @@ def main():
                 predictDict[MRN]['ChemoResponse'] = chemoPredict.item()
                 predictDict[MRN]['Age'] = agePredict.item()
                 predictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
+                predictDict[MRN]['OptimalResult'] = optimalPredict.item()
 
 
             validLoss /= validBatch
@@ -177,12 +187,14 @@ def main():
             validChemoLoss /= validBatch
             validAgeLoss /= validBatch
             validSurvivalLoss /= validBatch
+            validOptimalLoss /= validBatch
 
         gtDict = validationData.getGTDict()
         residualAcc = computeClassificationAccuracy(gtDict,predictDict, 'ResidualTumor')
         chemoAcc = computeClassificationAccuracy(gtDict,predictDict, 'ChemoResponse')
         ageSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'Age')
         survivalMonthsSqrtMSE = computeSqrtMSE(gtDict,predictDict, 'SurvivalMonths')
+        optimalAcc = computeClassificationAccuracy(gtDict, predictDict, 'OptimalResult')
 
         # for debug
         if hps.debug:
@@ -198,30 +210,38 @@ def main():
         # debug
         # print(f"epoch = {epoch}; trainLoss = {trLoss.item()};  validLoss = {validLoss.item()}")  # for smoke debug
 
+        if hps.predictHeads[0]:
+            writer.add_scalar('train/ResidualLoss', trResidualLoss, epoch)
+            writer.add_scalar('validation/ResidualLoss', validResidualLoss, epoch)
+            writer.add_scalar('ValidationAccuracy/ResiduaalTumorSizeAcc', residualAcc, epoch)
+            writer.add_scalar('TrainingAccuracy/ResiduaalTumorSizeAcc', trResidualAcc, epoch) if hps.debug else None
+
+        if hps.predictHeads[1]:
+            writer.add_scalar('train/ChemoLoss', trChemoLoss, epoch)
+            writer.add_scalar('validation/ChemoLoss', validChemoLoss, epoch)
+            writer.add_scalar('ValidationAccuracy/ChemoResponseAcc', chemoAcc, epoch)
+            writer.add_scalar('TrainingAccuracy/ChemoResponseAcc', trChemoAcc, epoch) if hps.debug else None
+
+        if hps.predictHeads[2]:
+            writer.add_scalar('train/AgeLoss', trAgeLoss, epoch)
+            writer.add_scalar('validation/AgeLoss', validAgeLoss, epoch)
+            writer.add_scalar('ValidationAccuracy/AgeSqrtMSE', ageSqrtMSE, epoch)
+            writer.add_scalar('TrainingnAccuracy/AgeSqrtMSE', trAgeSqrtMSE, epoch) if hps.debug else None
+
+        if hps.predictHeads[3]:
+            writer.add_scalar('train/SurvivalLoss', trSurvivalLoss, epoch)
+            writer.add_scalar('validation/SurvivalLoss', validSurvivalLoss, epoch)
+            writer.add_scalar('ValidationAccuracy/SurvivalMonthsSqrtMSE', survivalMonthsSqrtMSE, epoch)
+            writer.add_scalar('TrainingnAccuracy/SurvivalMonthsSqrtMSE', trSurvivalMonthsSqrtMSE,epoch) if hps.debug else None
+
+        if hps.predictHeads[4]:
+            writer.add_scalar('train/OptimalResultLoss', trOptimialLoss, epoch)
+            writer.add_scalar('validation/OptimalResultLoss', validOptimalLoss, epoch)
+            writer.add_scalar('ValidationAccuracy/OptimalResultAcc', optimalAcc, epoch)
+            writer.add_scalar('TrainingnAccuracy/OptimalResultAcc', trOptimalAcc, epoch) if hps.debug else None
+
         writer.add_scalar('train/totalLoss', trLoss, epoch)
-        writer.add_scalar('train/ResidualLoss', trResidualLoss, epoch)
-        writer.add_scalar('train/ChemoLoss', trChemoLoss, epoch)
-        writer.add_scalar('train/AgeLoss', trAgeLoss, epoch)
-        writer.add_scalar('train/SurvivalLoss', trSurvivalLoss, epoch)
-
         writer.add_scalar('validation/totalLoss', validLoss, epoch)
-        writer.add_scalar('validation/ResidualLoss', validResidualLoss, epoch)
-        writer.add_scalar('validation/ChemoLoss', validChemoLoss, epoch)
-        writer.add_scalar('validation/AgeLoss', validAgeLoss, epoch)
-        writer.add_scalar('validation/SurvivalLoss', validSurvivalLoss, epoch)
-
-        # error on resiudalSize, chemoResponse, Age, survival time
-        writer.add_scalar('ValidationAccuracy/ResiduaalTumorSizeAcc', residualAcc, epoch)
-        writer.add_scalar('ValidationAccuracy/ChemoResponseAcc', chemoAcc, epoch)
-        writer.add_scalar('ValidationAccuracy/AgeSqrtMSE', ageSqrtMSE, epoch)
-        writer.add_scalar('ValidationAccuracy/SurvivalMonthsSqrtMSE', survivalMonthsSqrtMSE, epoch)
-
-        if hps.debug:
-            writer.add_scalar('TrainingAccuracy/ResiduaalTumorSizeAcc', trResidualAcc, epoch)
-            writer.add_scalar('TrainingAccuracy/ChemoResponseAcc', trChemoAcc, epoch)
-            writer.add_scalar('TrainingnAccuracy/AgeSqrtMSE', trAgeSqrtMSE, epoch)
-            writer.add_scalar('TrainingnAccuracy/SurvivalMonthsSqrtMSE', trSurvivalMonthsSqrtMSE, epoch)
-
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss:
@@ -231,6 +251,7 @@ def main():
             net.updateRunParameter("ChemoResponseAcc", chemoAcc)
             net.updateRunParameter("AgeSqrtMSE", ageSqrtMSE)
             net.updateRunParameter("SurvivalMonthsSqrtMSE", survivalMonthsSqrtMSE)
+            net.updateRunParameter("OptimalResultAcc", optimalAcc)
             preValidLoss = validLoss
             netMgr.saveNet(hps.netPath)
 

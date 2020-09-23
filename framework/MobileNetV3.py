@@ -115,21 +115,21 @@ class MobileNetV3(nn.Module):
             inC = outC
 
         self.m_conv2d_1 = nn.Sequential(
-            nn.Conv2d(inC, outputC, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm2d(outputC),
+            nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.BatchNorm2d(960),
             nn.Hardswish()
         )
 
-        # after m_conv2d_1, tensor need global mean on B,H and W dimension.
+        # after m_conv2d_1, tensor need global mean on H and W dimension.
 
-        #self.m_conv2d_2 = nn.Sequential(
-        #    nn.Conv2d(960, 1280, kernel_size=1, stride=1, padding=0, bias=False),
-        #    nn.Hardswish()
-        #)
+        self.m_conv2d_2 = nn.Sequential(
+            nn.Conv2d(960, outputC, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Hardswish()
+            )
 
-        #self.m_conv2d_3 = nn.Sequential(
-        #    nn.Conv2d(1280, outputK, kernel_size=1, stride=1, padding=0, bias=False)
-        #)
+        # application needs to implement classification head outside mobilenet
+
+
 
 
     def forward(self, x):
@@ -139,19 +139,11 @@ class MobileNetV3(nn.Module):
 
         x = self.m_conv2d_1(x)
 
-        # global average on B,H,and W.
-        # x = x.mean(dim=(0,2,3), keepdim=True)
-        # return x
+        # global average on H,and W dimension, each feature plane
+        x = x.mean(dim=(2,3), keepdim=True)  # size: B,960,1,1
 
-
-        # introduce mu*sigma to enlarge feature
-        globalAvg  = x.mean(dim=(2,3), keepdim=True)  # size: B,C,1,1
-        batchStd = globalAvg.std(dim=(0,),keepdim=True)  # size: 1,C,1,1
-
-        # global average on B,H,and W.
-        x = x.mean(dim=(0, 2, 3), keepdim=True)
-
-        return x*batchStd  #size: 1,C,1,1
+        x = self.m_conv2d_2(x)  # size: B,outputC,1,1
+        return x
 
 
 

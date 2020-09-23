@@ -30,7 +30,7 @@ class OVDataSet(data.Dataset):
             assert False
             print(f"OVDataSet mode error")
 
-        self.m_imagesPath = hps.dataDir+"/nrrd"
+        self.m_imagesPath = hps.dataDir
 
         with open(IDPath, 'r') as idFile:
             MRNList = idFile.readlines()
