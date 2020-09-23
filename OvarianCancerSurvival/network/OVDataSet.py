@@ -88,14 +88,19 @@ class OVDataSet(data.Dataset):
         if self.hps.existGTLabel:
             labels = self.m_labels[MRN]
 
-        volumePath = self.m_imagesPath+"/" +MRN+"_CT.nrrd"
-        itkImage = sitk.ReadImage(volumePath)
-        npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
+        # read nrrd image
+        #volumePath = self.m_imagesPath+"/" +MRN+"_CT.nrrd"
+        #itkImage = sitk.ReadImage(volumePath)
+        #npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
+
+        volumePath = self.m_imagesPath+"/" +MRN+"_CT.npy"
+        npVolume = np.load(volumePath)
+
         data = torch.from_numpy(npVolume).to(self.hps.device)
         S,H,W = data.shape
 
         # scale down 1/2 in H and W respectively
-        data = data[:, 0:-1:2, 0:-1:2]
+        # data = data[:, 0:-1:2, 0:-1:2]
 
         # random sample a fixed N slices
         N = self.hps.sampleSlicesPerPatient
