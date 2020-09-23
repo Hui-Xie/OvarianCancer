@@ -21,6 +21,7 @@ testDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/testSetMRN.txt"
 trainingGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/trainingSetGroundTruth.csv"
 validationGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/validationSetGroundTruth.csv"
 testGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/testSetGroundTruth.csv"
+colsGT: 8
 
 # Network config
 network: "ResponseNet"

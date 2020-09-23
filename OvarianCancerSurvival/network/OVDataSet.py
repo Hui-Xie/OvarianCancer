@@ -3,7 +3,7 @@ import numpy as np
 import random
 import torch
 import SimpleITK as sitk
-from OVTools import readGTDict
+from OVTools import readGTDict8Cols, readGTDict6Cols
 
 
 class OVDataSet(data.Dataset):
@@ -38,7 +38,11 @@ class OVDataSet(data.Dataset):
         MRNList = ['0'+item if (len(item) == 7) else item  for item in MRNList]
         self.m_IDs = MRNList
 
-        self.m_labels = readGTDict(gtPath)
+        if 8 == hps.colsGT:
+            self.m_labels = readGTDict8Cols(gtPath)
+        else:
+            self.m_labels = readGTDict6Cols(gtPath)
+
         self.m_transform = transform
 
     def __len__(self):

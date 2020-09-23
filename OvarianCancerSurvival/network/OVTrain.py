@@ -133,7 +133,10 @@ def main():
 
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-            outputPredictDict2Csv(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
+            if 8 == hps.colsGT:
+                outputPredictDict2Csv8Cols(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
+            else:
+                outputPredictDict2Csv6Cols(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
             # print(f"Training prediction result has been output at {hps.outputDir}.")
 
         net.eval()
@@ -185,7 +188,10 @@ def main():
         if hps.debug:
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-            outputPredictDict2Csv(predictDict, hps.outputDir +f"/validationSetPredict_{timeStr}.csv")
+            if 8 == hps.colsGT:
+                outputPredictDict2Csv8Cols(predictDict, hps.outputDir +f"/validationSetPredict_{timeStr}.csv")
+            else:
+                outputPredictDict2Csv6Cols(predictDict, hps.outputDir + f"/validationSetPredict_{timeStr}.csv")
             # print (f"Validation prediction result has been output at {hps.outputDir}.")
 
         lrScheduler.step(validLoss)

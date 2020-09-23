@@ -9,8 +9,8 @@ import sys
 sys.path.append("..")
 from network.OVTools import *
 
-gtDict = readGTDict(gtPath)
+gtDict = readGTDict8Cols(gtPath)
 
-outputPredictDict2Csv(gtDict, outputPredictPath)
+outputPredictDict2Csv8Cols(gtDict, outputPredictPath)
 
 print(f"============END=====================")
