@@ -94,7 +94,7 @@ def main():
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
             residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss,optimalPredict, optimalLoss\
-                = net.forward(batchData['images'].squeeze(dim=0), GTs = batchData['GTs'])
+                = net.forward(batchData['images'], GTs = batchData['GTs'])
 
             loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
                                                 + hps.lossWeights[3]*survivalLoss + hps.lossWeights[4]*optimalLoss
@@ -112,13 +112,14 @@ def main():
                 trBatch += 1
 
             if hps.debug:
-                MRN = batchData['IDs'][0]  # [0] is for list to string
-                trPredictDict[MRN] = {}
-                trPredictDict[MRN]['ResidualTumor'] = residualPredict.item()
-                trPredictDict[MRN]['ChemoResponse'] = chemoPredict.item()
-                trPredictDict[MRN]['Age'] = agePredict.item()
-                trPredictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
-                trPredictDict[MRN]['OptimalResult'] = optimalPredict.item()
+                for i in range(len(batchData['IDs'])):
+                    MRN = batchData['IDs'][i]  # [0] is for list to string
+                    trPredictDict[MRN] = {}
+                    trPredictDict[MRN]['ResidualTumor'] = residualPredict[i].item()
+                    trPredictDict[MRN]['ChemoResponse'] = chemoPredict[i].item()
+                    trPredictDict[MRN]['Age'] = agePredict[i].item()
+                    trPredictDict[MRN]['SurvivalMonths'] = survivalPredict[i].item()
+                    trPredictDict[MRN]['OptimalResult'] = optimalPredict[i].item()
 
 
             
@@ -160,7 +161,7 @@ def main():
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
 
                 residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss\
-                    = net.forward(batchData['images'].squeeze(dim=0), GTs=batchData['GTs'])
+                    = net.forward(batchData['images'], GTs=batchData['GTs'])
 
                 loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
                         + hps.lossWeights[3]*survivalLoss  + hps.lossWeights[4]*optimalLoss
@@ -173,13 +174,14 @@ def main():
                     validOptimalLoss += optimalLoss
                     validBatch += 1
                 
-                MRN = batchData['IDs'][0]  # [0] is for list to string
-                predictDict[MRN]={}
-                predictDict[MRN]['ResidualTumor'] = residualPredict.item()
-                predictDict[MRN]['ChemoResponse'] = chemoPredict.item()
-                predictDict[MRN]['Age'] = agePredict.item()
-                predictDict[MRN]['SurvivalMonths'] = survivalPredict.item()
-                predictDict[MRN]['OptimalResult'] = optimalPredict.item()
+                for i in range(len(batchData['IDs'])):
+                    MRN = batchData['IDs'][i]  # [0] is for list to string
+                    predictDict[MRN]={}
+                    predictDict[MRN]['ResidualTumor'] = residualPredict[i].item()
+                    predictDict[MRN]['ChemoResponse'] = chemoPredict[i].item()
+                    predictDict[MRN]['Age'] = agePredict[i].item()
+                    predictDict[MRN]['SurvivalMonths'] = survivalPredict[i].item()
+                    predictDict[MRN]['OptimalResult'] = optimalPredict[i].item()
 
 
             validLoss /= validBatch

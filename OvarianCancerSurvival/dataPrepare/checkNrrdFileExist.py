@@ -15,5 +15,6 @@ for MRN in MRNList:
     if not os.path.isfile(imagePath):
        print(f"MRN: {MRN} file in not in {nrrdPath}")
 
+
 print(f"==========Checked total {len(MRNList)} files.=============")
 

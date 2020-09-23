@@ -51,6 +51,7 @@ class ResponseNet(BasicModel):
         # compute outputs
         epsilon = 1e-8
         device = inputs.device
+        B,_,_,_ = inputs.shape
         x = inputs
 
         x = self.m_mobilenet(x)
@@ -63,11 +64,11 @@ class ResponseNet(BasicModel):
         survivalLoss = torch.tensor(0.0, device=device)
         optimalLoss = torch.tensor(0.0, device=device)
 
-        residualPredict = torch.tensor(0.0, device=device)
-        chemoPredict = torch.tensor(0.0, device=device)
-        agePredict = torch.tensor(0.0, device=device)
-        survivalPredict = torch.tensor(0.0, device=device)
-        optimalPredict = torch.tensor(0.0, device=device)
+        residualPredict = torch.zeros(B, device=device)
+        chemoPredict = torch.zeros(B, device=device)
+        agePredict = torch.zeros(B, device=device)
+        survivalPredict = torch.zeros(B, device=device)
+        optimalPredict = torch.zeros(B, device=device)
 
         #residual tumor size
         if self.hps.predictHeads[0]:
@@ -134,8 +135,7 @@ class ResponseNet(BasicModel):
 
         if self.hps.predictHeads[4]:
             optimalFeature = self.m_optimalResultHead(x)
-            B,C,_,_ = optimalFeature.shape
-            optimalFeature = optimalFeature.view(B, C)
+            optimalFeature = optimalFeature.view(B, -1)
             optimalPredict = (optimalFeature >= 0).int().view(B)  # a vector of [0,1]
 
             optimalGT = torch.zeros(B, device=device, dtype=torch.float32)
