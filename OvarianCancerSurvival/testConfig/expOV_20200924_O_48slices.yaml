@@ -47,7 +47,7 @@ predictHeads: [False, False, False, False, True] # for ResidualTumorSize, ChemoR
 # data augmentation
 augmentProb: 0.8  #  data augmentation rate
 flipProb: 0.5
-randomCropArea: 0.75 # 0.75
+randomCropArea: 0.765625 # refer to AlexNet idea: (224/256)**2
 # randomSlicesRate: 0.8 #0.75
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 # for salt pepper noise
@@ -61,3 +61,25 @@ outputDir: ""
 logDir: "/home/hxie1/data/OvarianCancerCT/survivalPredict/log"  # net is saved at logPath / network / self_filename
 
 # module config:
+# Test-time augmentation:
+# refer to AlexNet's idea,and ResNet also adapted this 10-crop TTA:
+#  "At test time, the network makes a prediction by extracting five 224×224 patches
+#  (the four corner patches and the center patch) as well as their horizontal reflections (hence ten patches in all),
+#  and averaging the predictions made by the network’s softmax layer on the ten patches."
+
+# GoogleNet 2014:
+#  "The softmax probabilities are averaged over multiple crops and
+#   over all the individual classifiers to obtain the final prediction."
+
+
+
+
+
+# VGG use pretrained network:
+#  One approach described involved first training a model with a fixed but smaller image size,
+#  retaining the model weights, then using them as a starting point for training a new model
+#  with a larger but still fixed-sized image. This approach was designed
+#  in an effort to speed up the training of the larger (second) model.
+
+
+

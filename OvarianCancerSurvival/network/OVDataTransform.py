@@ -28,6 +28,7 @@ class OVDataTransform(object):
         gapH = H- newH
         gapW = W -newW
 
+        # refer to AlexNet: resize all images to 256x256, then random crop to 224x224
         # random crop in volume form
         startH = random.randrange(0, gapH)
         startW = random.randrange(0, gapW)
@@ -36,8 +37,10 @@ class OVDataTransform(object):
         # random flip in volume form
         if random.uniform(0, 1) < self.hps.flipProb:
             inputData = torch.flip(inputData, [2])  # flip horizontal
-        if random.uniform(0, 1) < self.hps.flipProb:
-            inputData = torch.flip(inputData, [1])  # flip vertical
+
+        #AlexNet, GoogleNet, and VGG all didn't do vertical flip.
+        #if random.uniform(0, 1) < self.hps.flipProb:
+        #    inputData = torch.flip(inputData, [1])  # flip vertical
 
         # transformed data
         tfData = torch.empty((S,newH,newW), device=device,dtype=torch.float32)
