@@ -102,19 +102,22 @@ class OVDataSet(data.Dataset):
         # scale down 1/2 in H and W respectively
         # data = data[:, 0:-1:2, 0:-1:2]
 
-        # random sample a fixed N slices
+        # Sample a fixed N slices
         N = self.hps.sampleSlicesPerPatient
         sectionLen = S//N
         sampleSlices = []
         for i in range(N):
             start = i*sectionLen
             end = (i+1)*sectionLen
-            if end > S:
-                end = S
-            sampleSlices.append(random.choice(list(range(start,end))))
+            if end >= S:
+                end = S-1
+            if self.hps.randomSliceSample:
+                sampleSlices.append(random.choice(list(range(start,end))))
+            else:
+                sampleSlices.append((start+end)//2)  # fixed slice sample
         data = data[sampleSlices,:,:]
 
-        # sample
+        # transform for data augmentation
         if self.m_transform:
             data = self.m_transform(data)  # size: BxHxW
 
