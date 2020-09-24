@@ -53,7 +53,9 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
 
-    optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+    # optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+    # refer to mobileNet v3 paper, use RMSprop optimizer
+    optimizer = optim.RMSprop(net.parameters(), lr=hps.learningRate, weight_decay=0, momentum=0.9)
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')

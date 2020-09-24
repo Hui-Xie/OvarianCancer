@@ -22,13 +22,13 @@ class ResponseNet(BasicModel):
         # before the mobileNet, get some higher level feature for each slice, by channel-wise conv.
         inC  = hps.inputChannels
         self.m_sliceConv = nn.Sequential(
-            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=False),
+            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=True),
             nn.BatchNorm2d(inC),
             nn.Hardswish(),
-            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=False),
+            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=True),
             nn.BatchNorm2d(inC),
             nn.Hardswish(),
-            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=False),
+            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=True),
             nn.BatchNorm2d(inC),
             nn.Hardswish()
         )

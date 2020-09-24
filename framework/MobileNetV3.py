@@ -82,7 +82,7 @@ class MobileNetV3(nn.Module):
         inC = 16 # input Channel number for bottleneck
         self.m_inputConv = nn.Sequential(
             # original network stride =2
-            nn.Conv2d(inputC, inC, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.Conv2d(inputC, inC, kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm2d(inC),
             nn.Hardswish()
         )
@@ -113,8 +113,7 @@ class MobileNetV3(nn.Module):
         self.m_conv2d_1 = nn.Sequential(
             nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
             nn.BatchNorm2d(960),
-            # nn.Hardswish()  # hardswish is better for N>2 class classification
-            nn.Tanh()
+            nn.Hardswish()
         )
 
         # after m_conv2d_1, tensor need global mean on H and W dimension.
