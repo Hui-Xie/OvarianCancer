@@ -2,7 +2,7 @@
 # simultaneously predict ResidualSize, ChemoResponse, Age, and Survival time
 # with all are 0.25 weight.
 
-debug: False
+debug: True
 
 # train config
 device: torch.device('cuda:3')   #GPU ID
@@ -27,8 +27,8 @@ network: "ResponseNet"
 imageH: 281
 imageW: 281
 inputChannels: 48 # rawImage + gradChannels(W,H)
-gradChannels: 0   # the added gradient channels beside raw image channel
 sampleSlicesPerPatient: 48 # sample slice number for each patient
+gradChannels: 0   # the added gradient channels beside raw image channel
 randomSliceSample: False #
 bothSideGrad: True # False use singleSideGrad
 outputChannelsMobileNet: 160
