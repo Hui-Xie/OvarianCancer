@@ -83,10 +83,6 @@ class MobileNetV3(nn.Module):
         self.m_inputConv = nn.Sequential(
             # original network stride =2
             nn.Conv2d(inputC, inC, kernel_size=3, stride=2, padding=1, bias=False),
-
-            # in order to reduce memory
-            # nn.Conv2d(inputC, inC, kernel_size=3, stride=3, padding=1, bias=False),
-
             nn.BatchNorm2d(inC),
             nn.Hardswish()
         )

@@ -18,6 +18,20 @@ class ResponseNet(BasicModel):
         self.m_residualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
         self.m_chemoPosWeight = torch.tensor(hps.chemoClassPercent[0]/ hps.chemoClassPercent[1]).to(hps.device)
         self.m_optimalPosWeight = torch.tensor(hps.optimalClassPercent[0] / hps.optimalClassPercent[1]).to(hps.device)
+        
+        # before the mobileNet, get some higher level feature for each slice, by channel-wise conv.
+        inC  = hps.inputChannels
+        self.m_sliceConv = nn.Sequential(
+            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=False),
+            nn.BatchNorm2d(inC),
+            nn.Hardswish(),
+            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=False),
+            nn.BatchNorm2d(inC),
+            nn.Hardswish(),
+            nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=False),
+            nn.BatchNorm2d(inC),
+            nn.Hardswish()
+        )
 
         self.m_mobilenet = MobileNetV3(hps.inputChannels, hps.outputChannelsMobileNet)
 
@@ -54,6 +68,7 @@ class ResponseNet(BasicModel):
         B,_,_,_ = inputs.shape
         x = inputs
 
+        x = self.m_sliceConv(x)
         x = self.m_mobilenet(x)
 
         # initial values:
