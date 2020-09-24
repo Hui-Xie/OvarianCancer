@@ -113,14 +113,16 @@ class MobileNetV3(nn.Module):
         self.m_conv2d_1 = nn.Sequential(
             nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
             nn.BatchNorm2d(960),
-            nn.Hardswish()
+            # nn.Hardswish()  # hardswish is better for N>2 class classification
+            nn.Tanh()
         )
 
         # after m_conv2d_1, tensor need global mean on H and W dimension.
 
         self.m_conv2d_2 = nn.Sequential(
             nn.Conv2d(960, outputC, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.Hardswish()
+            # nn.Hardswish()  # hardswish is better for N>2 class classification
+            nn.Sigmoid()    # Sigmoid is better for binary 0,1 classification
             )
 
         # application needs to implement classification head outside mobilenet
