@@ -185,7 +185,7 @@ class ResponseNet(BasicModel):
             for i in range(B):
                 optimalBatchWeight[i] = self.m_optimalClassWeight[int(optimalGT[i])]
             optimalBCEFunc = nn.BCELoss(weight=optimalBatchWeight)
-            optimalLoss = optimalBCEFunc(optimalSoftmax, optimalGT)
+            optimalLoss = optimalBCEFunc(optimalSoftmax[:,1], optimalGT)
 
 
 
