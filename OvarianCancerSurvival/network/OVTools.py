@@ -168,9 +168,8 @@ def readProbDict(csvPath):
         for row in csvList:
             MRN = '0' + row[0] if 7 == len(row[0]) else row[0]
             probDict[MRN] = {}
-            probDict[MRN]['Prob0'] = float(row[1]) if 0 != len(row[1]) else -100
-            probDict[MRN]['Prob1'] = float(row[2]) if 0 != len(row[2]) else -100
-            probDict[MRN]['GT'] = int(row[3]) if 0 != len(row[3]) else -100
+            probDict[MRN]['Prob1'] = float(row[1]) if 0 != len(row[1]) else -100
+            probDict[MRN]['GT'] = int(row[2]) if 0 != len(row[2]) else -100
     return probDict
 
 
@@ -178,12 +177,12 @@ def readProbDict(csvPath):
 def outputPredictProbDict2Csv(predictProbDict, csvPath):
     '''
         csv data example:
-        MRN,Prob0, Prob1, GT,
+        MRN,Prob1,GT,
         6501461,0.3,0.7,0,
 
     '''
     with open(csvPath, "w") as file:
-        file.write("MRN,Prob0,Prob1,GT,\n")
+        file.write("MRN,Prob1,GT,\n")
         for key in predictProbDict:
             a = predictProbDict[key]
-            file.write(f"{key},{a['Prob0']},{a['Prob1']},{a['GT']},\n")
+            file.write(f"{key},{a['Prob1']},{a['GT']},\n")

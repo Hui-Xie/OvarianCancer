@@ -101,18 +101,18 @@ def main():
 
             loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
                                                 + hps.lossWeights[3]*survivalLoss + hps.lossWeights[4]*optimalLoss
-            if loss >= 1e-8:
-                optimizer.zero_grad()
-                loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
-                optimizer.step()
+            #if loss >= 1e-8:
+            optimizer.zero_grad()
+            loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
+            optimizer.step()
 
-                trLoss += loss
-                trResidualLoss += residualLoss
-                trChemoLoss += chemoLoss
-                trAgeLoss += ageLoss
-                trSurvivalLoss += survivalLoss
-                trOptimalLoss += optimalLoss
-                trBatch += 1
+            trLoss += loss
+            trResidualLoss += residualLoss
+            trChemoLoss += chemoLoss
+            trAgeLoss += ageLoss
+            trSurvivalLoss += survivalLoss
+            trOptimalLoss += optimalLoss
+            trBatch += 1
 
             if hps.debug:
                 for i in range(len(batchData['IDs'])):
@@ -126,8 +126,7 @@ def main():
                     trPredictDict[MRN]['OptimalResult'] = optimalPredict[i].item()
 
                     trPredictProbDict[MRN] = {}
-                    trPredictProbDict[MRN]['Prob0'] = predictProb[i,0]
-                    trPredictProbDict[MRN]['Prob1'] = predictProb[i,1]
+                    trPredictProbDict[MRN]['Prob1'] = predictProb[i]
                     trPredictProbDict[MRN]['GT']    = batchData['GTs']['OptimalResult'][i]
 
 
@@ -179,14 +178,14 @@ def main():
 
                 loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
                         + hps.lossWeights[3]*survivalLoss  + hps.lossWeights[4]*optimalLoss
-                if loss >= 1e-8:
-                    validLoss += loss
-                    validResidualLoss += residualLoss
-                    validChemoLoss += chemoLoss
-                    validAgeLoss += ageLoss
-                    validSurvivalLoss += survivalLoss
-                    validOptimalLoss += optimalLoss
-                    validBatch += 1
+                # if loss >= 1e-8:
+                validLoss += loss
+                validResidualLoss += residualLoss
+                validChemoLoss += chemoLoss
+                validAgeLoss += ageLoss
+                validSurvivalLoss += survivalLoss
+                validOptimalLoss += optimalLoss
+                validBatch += 1
                 
                 for i in range(len(batchData['IDs'])):
                     MRN = batchData['IDs'][i]  # [0] is for list to string
@@ -199,8 +198,7 @@ def main():
                     predictDict[MRN]['OptimalResult'] = optimalPredict[i].item()
 
                     predictProbDict[MRN] = {}
-                    predictProbDict[MRN]['Prob0'] = predictProb[i, 0]
-                    predictProbDict[MRN]['Prob1'] = predictProb[i, 1]
+                    predictProbDict[MRN]['Prob1'] = predictProb[i]
                     predictProbDict[MRN]['GT'] = batchData['GTs']['OptimalResult'][i]
 
             validLoss /= validBatch

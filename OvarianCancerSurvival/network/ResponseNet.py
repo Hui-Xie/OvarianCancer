@@ -169,31 +169,27 @@ class ResponseNet(BasicModel):
             optimalFeature = self.m_optimalResultHead(x)
 
             # for outputHeadWidth =1 and use sigmoid
-            '''
             optimalFeature = optimalFeature.view(B)
-            optimalPredict = (optimalFeature >= 0).int().view(B)  # a vector of [0,1]
+            predictProb = torch.sigmoid(optimalFeature)
+            optimalPredict = (predictProb >= 0.71).int().view(B)  # a vector of [0,1]
             optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
             optimalBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_optimalPosWeight)
             optimalLoss = optimalBCEFunc(optimalFeature, optimalGT)
-            predictProb = torch.sigmoid(optimalFeature)
-            
-            '''
 
+            
             #  for outputHeadWidth =2 and use softmax+ BCELoss
+            '''
             optimalFeature = optimalFeature.view(B, self.hps.widthOptimalResultHead)
             optimalSoftmax = nn.functional.softmax(optimalFeature, dim=1)
+            predictProb = optimalSoftmax[:, 1]
             optimalPredict = torch.argmax(optimalFeature,dim=1)
             optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
             optimalBatchWeight = torch.zeros_like(optimalGT)
             for i in range(B):
                 optimalBatchWeight[i] = self.m_optimalClassWeight[int(optimalGT[i])]
             optimalBCEFunc = nn.BCELoss(weight=optimalBatchWeight)
-            optimalLoss = optimalBCEFunc(optimalSoftmax[:,1], optimalGT)
-
-            predictProb = optimalSoftmax
-
-
-
+            optimalLoss = optimalBCEFunc(predictProb, optimalGT)
+            '''
 
 
         loss = residualLoss + chemoLoss + ageLoss+ survivalLoss + optimalLoss
