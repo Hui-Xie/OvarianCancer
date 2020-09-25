@@ -12,7 +12,7 @@ probDict = readProbDict(csvPath)
 
 epsilon =1e-8
 
-print("ProbThreshold,\tACC,\tTPR,\tTNR,")
+print("ProbThreshold,\tACC,\tTPR,\tTNR,\tSum(ACC_TPR_TNR),")
 for td in np.arange(0.05, 0.95, 0.05):  # td: threshlod
     keys = list(probDict.keys())
     nTotal = len(keys)
@@ -37,4 +37,4 @@ for td in np.arange(0.05, 0.95, 0.05):  # td: threshlod
     ACC = (TP+TN)*1.0/(TP+TN+FP+FN)
     TPR = TP*1.0/(TP+FN+epsilon)  # sensitivity
     TNR = TN*1.0/(TN+FP+epsilon)  # specificity
-    print(f"{td:.3f},\t{ACC:.2f},\t{TPR:.2f},\t{TNR:.2f},")
+    print(f"{td:.3f},\t{ACC:.2f},\t{TPR:.2f},\t{TNR:.2f},\t{ACC+TPR+TNR:.3f},")
