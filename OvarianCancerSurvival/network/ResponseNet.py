@@ -85,6 +85,8 @@ class ResponseNet(BasicModel):
         survivalPredict = torch.zeros(B, device=device)
         optimalPredict = torch.zeros(B, device=device)
 
+        predictProb = torch.zeros(B, device=device)
+
         #residual tumor size
         if self.hps.predictHeads[0]:
             residualFeature = self.m_residualSizeHead(x)  # size: 1x4x1x1
@@ -187,6 +189,8 @@ class ResponseNet(BasicModel):
             optimalBCEFunc = nn.BCELoss(weight=optimalBatchWeight)
             optimalLoss = optimalBCEFunc(optimalSoftmax[:,1], optimalGT)
 
+            predictProb = optimalSoftmax
+
 
 
 
@@ -196,4 +200,4 @@ class ResponseNet(BasicModel):
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        return residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss
+        return residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss, predictProb

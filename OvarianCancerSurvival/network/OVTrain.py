@@ -93,9 +93,10 @@ def main():
         trOptimalLoss = 0.0
 
         trPredictDict = {}
+        trPredictProbDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
-            residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss,optimalPredict, optimalLoss\
+            residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss,optimalPredict, optimalLoss, predictProb\
                 = net.forward(batchData['images'], GTs = batchData['GTs'])
 
             loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
@@ -124,6 +125,12 @@ def main():
                     trPredictDict[MRN]['SurvivalMonths'] = survivalPredict[i].item()
                     trPredictDict[MRN]['OptimalResult'] = optimalPredict[i].item()
 
+                    trPredictProbDict[MRN] = {}
+                    trPredictProbDict[MRN]['Prob0'] = predictProb[i,0]
+                    trPredictProbDict[MRN]['Prob1'] = predictProb[i,1]
+                    trPredictProbDict[MRN]['GT']    = batchData['GTs']['OptimalResult'][i]
+
+
 
             
         trLoss /=  trBatch
@@ -148,10 +155,13 @@ def main():
                 outputPredictDict2Csv8Cols(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
             else:
                 outputPredictDict2Csv6Cols(trPredictDict, hps.outputDir + f"/trainSetPredict_{timeStr}.csv")
+
+            outputPredictProbDict2Csv(trPredictProbDict, hps.outputDir + f"/trainSetPredictProb_{timeStr}.csv")
             # print(f"Training prediction result has been output at {hps.outputDir}.")
 
         net.eval()
         predictDict= {}
+        predictProbDict={}
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validLoss = 0.0
@@ -164,7 +174,7 @@ def main():
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
 
-                residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss\
+                residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss, predictProb\
                     = net.forward(batchData['images'], GTs=batchData['GTs'])
 
                 loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
@@ -188,6 +198,10 @@ def main():
                     predictDict[MRN]['SurvivalMonths'] = survivalPredict[i].item()
                     predictDict[MRN]['OptimalResult'] = optimalPredict[i].item()
 
+                    predictProbDict[MRN] = {}
+                    predictProbDict[MRN]['Prob0'] = predictProb[i, 0]
+                    predictProbDict[MRN]['Prob1'] = predictProb[i, 1]
+                    predictProbDict[MRN]['GT'] = batchData['GTs']['OptimalResult'][i]
 
             validLoss /= validBatch
             validResidualLoss /= validBatch
@@ -258,6 +272,8 @@ def main():
                 outputPredictDict2Csv8Cols(predictDict, hps.outputDir + f"/validationSetPredict_{timeStr}.csv")
             else:
                 outputPredictDict2Csv6Cols(predictDict, hps.outputDir + f"/validationSetPredict_{timeStr}.csv")
+
+            outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/validationSetPredictProb_{timeStr}.csv")
 
 
 
