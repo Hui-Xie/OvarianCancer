@@ -51,7 +51,7 @@ predictHeads: [False, False, False, False, True] # for ResidualTumorSize, ChemoR
 
 # data augmentation
 augmentation: True
-augmentProb: 0.8  #  data augmentation rate
+augmentProb: 0  #  data augmentation rate
 flipProb: 0.5
 randomCropArea: 0.765625 # refer to AlexNet idea: (224/256)**2
 # randomSlicesRate: 0.8 #0.75

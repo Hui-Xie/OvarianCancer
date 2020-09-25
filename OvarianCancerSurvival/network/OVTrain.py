@@ -39,7 +39,9 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    trainTransform = OVDataTransform(hps)
+    trainTransform = None
+    if hps.augmentation:
+        trainTransform = OVDataTransform(hps)
     # validationTransform = trainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
