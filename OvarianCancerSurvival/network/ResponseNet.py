@@ -18,6 +18,7 @@ class ResponseNet(BasicModel):
         self.m_residualClassWeight = torch.tensor([1.0/item for item in hps.residudalClassPercent]).to(hps.device)
         self.m_chemoPosWeight = torch.tensor(hps.chemoClassPercent[0]/ hps.chemoClassPercent[1]).to(hps.device)
         self.m_optimalPosWeight = torch.tensor(hps.optimalClassPercent[0] / hps.optimalClassPercent[1]).to(hps.device)
+        self.m_optimalClassWeight = torch.tensor([1.0/item for item in hps.optimalClassPercent]).to(hps.device)
         
         # before the mobileNet, get some higher level feature for each slice, by channel-wise conv.
         inC  = hps.inputChannels
@@ -164,11 +165,31 @@ class ResponseNet(BasicModel):
 
         if self.hps.predictHeads[4]:
             optimalFeature = self.m_optimalResultHead(x)
+
+            # for outputHeadWidth =1 and use sigmoid
+            '''
             optimalFeature = optimalFeature.view(B)
             optimalPredict = (optimalFeature >= 0).int().view(B)  # a vector of [0,1]
             optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
             optimalBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_optimalPosWeight)
             optimalLoss = optimalBCEFunc(optimalFeature, optimalGT)
+            
+            '''
+
+            #  for outputHeadWidth =2 and use softmax+ BCELoss
+            optimalFeature = optimalFeature.view(B, self.hps.widthOptimalResultHead)
+            optimalSoftmax = nn.functional.softmax(optimalFeature, dim=1)
+            optimalPredict = torch.argmax(optimalFeature,dim=1)
+            optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
+            optimalBatchWeight = torch.zeros_like(optimalGT)
+            for i in range(B):
+                optimalBatchWeight[i] = self.m_optimalClassWeight[int(optimalGT[i])]
+            optimalBCEFunc = nn.BCELoss(weight=optimalBatchWeight)
+            optimalLoss = optimalBCEFunc(optimalSoftmax, optimalGT)
+
+
+
+
 
         loss = residualLoss + chemoLoss + ageLoss+ survivalLoss + optimalLoss
         if torch.isnan(loss):  # detect NaN
