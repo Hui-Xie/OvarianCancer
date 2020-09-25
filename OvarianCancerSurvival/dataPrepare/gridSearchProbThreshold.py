@@ -10,6 +10,8 @@ from network.OVTools import readProbDict
 
 probDict = readProbDict(csvPath)
 
+epsilon =1e-8
+
 print("ProbThreshold,\tACC,\tTPR,\tTNR,")
 for td in np.arange(0.05, 0.95, 0.05):  # td: threshlod
     keys = list(probDict.keys())
@@ -31,6 +33,6 @@ for td in np.arange(0.05, 0.95, 0.05):  # td: threshlod
                 TP +=1
 
     ACC = (TP+TN)*1.0/(TP+TN+FP+FN)
-    TPR = TP*1.0/(TP+FN)  # sensitivity
-    TNR = TN*1.0/(TN+FP)  # specificity
+    TPR = TP*1.0/(TP+FN+epsilon)  # sensitivity
+    TNR = TN*1.0/(TN+FP+epsilon)  # specificity
     print(f"{td},\t{ACC},\t{TPR},\t{TNR},")
