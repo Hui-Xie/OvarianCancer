@@ -1,6 +1,6 @@
 # Grid search probability threshold
 
-csvPath = ""
+csvPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/log/ResponseNet/expOV_20200925_O_NoAugmentation/testResult/trainSetPredict_20200925_163534.csv"
 
 import numpy as np
 
