@@ -175,6 +175,7 @@ class ResponseNet(BasicModel):
             optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
             optimalBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_optimalPosWeight)
             optimalLoss = optimalBCEFunc(optimalFeature, optimalGT)
+            predictProb = torch.sigmoid(optimalFeature)
             
             '''
 
