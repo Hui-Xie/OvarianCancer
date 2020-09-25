@@ -4,8 +4,8 @@ csvPath = "/home/hxie1/data/OvarianCancerCT/survivalPredict/log/ResponseNet/expO
 
 import numpy as np
 
-import os
-os.path.append('..')
+import sys
+sys.path.append('..')
 from network.OVTools import readProbDict
 
 probDict = readProbDict(csvPath)
