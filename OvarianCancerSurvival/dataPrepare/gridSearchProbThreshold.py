@@ -15,6 +15,7 @@ epsilon =1e-8
 print("ProbThreshold,\tACC,\tTPR,\tTNR,")
 for td in np.arange(0.05, 0.95, 0.05):  # td: threshlod
     keys = list(probDict.keys())
+    nTotal = len(keys)
     TP = 0
     FP = 0
     FN = 0
@@ -32,7 +33,8 @@ for td in np.arange(0.05, 0.95, 0.05):  # td: threshlod
             else:
                 TP +=1
 
+    assert nTotal == TP+TN+FP+FN
     ACC = (TP+TN)*1.0/(TP+TN+FP+FN)
     TPR = TP*1.0/(TP+FN+epsilon)  # sensitivity
     TNR = TN*1.0/(TN+FP+epsilon)  # specificity
-    print(f"{td},\t{ACC},\t{TPR},\t{TNR},")
+    print(f"{td:.3f},\t{ACC:.2f},\t{TPR:.2f},\t{TNR:.2f},")
