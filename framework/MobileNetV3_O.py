@@ -113,14 +113,18 @@ class MobileNetV3_O(nn.Module):
             inC = outC
 
         self.m_conv2d_1 = nn.Sequential(
-            nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm2d(960),
+            nn.Conv2d(inC, outputC, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.BatchNorm2d(outputC),
             #nn.Hardswish()   # hardswish may produce value of 1e+21, which lead following std =inf
             nn.ReLU6(inplace=True)
         )
 
         # after m_conv2d_1, tensor need global mean on H and W dimension.
 
+
+
+        # this self.m_conv2d_2 kill all differentiating information.
+        '''
         self.m_conv2d_2 = nn.Sequential(
             nn.Conv2d(960, outputC, kernel_size=1, stride=1, padding=0, bias=False),
             nn.ReLU6(inplace=True)
@@ -130,6 +134,10 @@ class MobileNetV3_O(nn.Module):
             # but sigmoid lead all features to 0 or 1
             # nn.Sigmoid()
             )
+        '''
+
+        self.m_dropout = nn.Dropout(p=hps.dropoutRate, inplace=True)
+
 
         # application needs to implement classification head outside mobilenet
 
@@ -161,7 +169,9 @@ class MobileNetV3_O(nn.Module):
             IQR = (xSorted[:,:,Q3]-xSorted[:,:,Q1]).unsqueeze(dim=-1).unsqueeze(dim=-1)
             x = xStd + IQR
 
-        x = self.m_conv2d_2(x)  # size: B,outputC,1,1
+        # x = self.m_conv2d_2(x)  # size: B,outputC,1,1
+
+        x = self.m_dropout(x)
 
         if torch.isnan(x.sum()) or torch.isinf(x.sum()):  # detect NaN
             print(f"Error: find NaN of x at mobileNet v3 line 177 ")
