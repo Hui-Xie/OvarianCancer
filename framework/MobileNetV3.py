@@ -148,7 +148,7 @@ class MobileNetV3(nn.Module):
         # IQR+std measures the spread of feature values in each channel
         xStd = torch.std(x, dim=(2,3), keepdim=True)  #size: B,960, 1,1
         xFeatureFlat = x.view(B,960,-1)
-        xSorted = torch.sort(xFeatureFlat, dim=-1)
+        xSorted, _ = torch.sort(xFeatureFlat, dim=-1)
         B,C,N = xSorted.shape
         Q1 = N//4
         Q3 = N*3//4
