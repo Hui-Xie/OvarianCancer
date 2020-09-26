@@ -4,7 +4,7 @@
 # Ruoming Pang and Vijay Vasudevan and Quoc V. Le and Hartwig Adam.
 # “Searching for MobileNetV3”. 2019. https://arxiv.org/abs/1905.02244
 
-# global mean at B,H, and W dimension.
+# this is a version modified for Ovarian cancer project
 
 import torch
 import torch.nn as nn
@@ -15,9 +15,9 @@ class SqueezeExcite(nn.Module):
         self.globalAvgPool = nn.AdaptiveAvgPool2d(1)
         self.fc2Layers = nn.Sequential(
             nn.Conv2d(channel, channel // reduction, kernel_size=1, stride=1, padding=0, bias=True),
-            nn.ReLU(inplace=True),
+            nn.ReLU6(inplace=True),
             nn.Conv2d(channel // reduction, channel, kernel_size=1, stride=1, padding=0, bias=True),
-            nn.Hardsigmoid()
+            nn.ReLU6(inplace=True)
         )
 
     def forward(self, x):
@@ -68,7 +68,7 @@ class V3Bottleneck(nn.Module):
             return self.expandDepthwiseProject(x)
 
 
-class MobileNetV3(nn.Module):
+class MobileNetV3_O(nn.Module):
     def __init__(self, inputC, outputC):
         '''
         This network does not has final FC layer as in original mobileNet v3 paper.
@@ -84,26 +84,27 @@ class MobileNetV3(nn.Module):
             # original network stride =2
             nn.Conv2d(inputC, inC, kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm2d(inC),
-            nn.Hardswish()
+            nn.ReLU6(inplace=True)
         )
 
         bottleneckConfig = [
             # kernel, expandSize, outputChannel,  SE,   NL,  stride,
+            # modify all activations to ReLU6
             [3, 16, 16, False, 'RE', 1],
             [3, 64, 24, False, 'RE', 2],
             [3, 72, 24, False, 'RE', 1],
             [5, 72, 40, True, 'RE', 2],
             [5, 120, 40, True, 'RE', 1],
             [5, 120, 40, True, 'RE', 1],
-            [3, 240, 80, False, 'HS', 2],
-            [3, 200, 80, False, 'HS', 1],
-            [3, 184, 80, False, 'HS', 1],
-            [3, 184, 80, False, 'HS', 1],
-            [3, 480, 112, True, 'HS', 1],
-            [3, 672, 112, True, 'HS', 1],
-            [5, 672, 160, True, 'HS', 2],
-            [5, 960, 160, True, 'HS', 1],
-            [5, 960, 160, True, 'HS', 1],
+            [3, 240, 80, False, 'RE', 2],
+            [3, 200, 80, False, 'RE', 1],
+            [3, 184, 80, False, 'RE', 1],
+            [3, 184, 80, False, 'RE', 1],
+            [3, 480, 112, True, 'RE', 1],
+            [3, 672, 112, True, 'RE', 1],
+            [5, 672, 160, True, 'RE', 2],
+            [5, 960, 160, True, 'RE', 1],
+            [5, 960, 160, True, 'RE', 1],
         ] # for MobileNet V3 big model
         self.m_bottleneckList = nn.ModuleList()
         for kernel, expandSize, outC, SE, NL, stride in bottleneckConfig:

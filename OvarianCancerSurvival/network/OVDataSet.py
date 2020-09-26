@@ -126,15 +126,15 @@ class OVDataSet(data.Dataset):
 
         # normalization before output to dataloader
         # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
-        mean = torch.mean(data, dim=(-1, -2), keepdim=True)
-        mean = mean.expand_as(data)
-        data = data - mean
+        #mean = torch.mean(data, dim=(-1, -2), keepdim=True)
+        #mean = mean.expand_as(data)
+        #data = data - mean
 
         # Normalization
-        #std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
-        #std = std.expand_as(data)
-        #mean = mean.expand_as(data)
-        #data = (data - mean) / (std + epsilon)  # size: Bx3xHxW
+        std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
+        std = std.expand_as(data)
+        mean = mean.expand_as(data)
+        data = (data - mean) / (std + epsilon)  # size: Bx3xHxW
 
         result = {"images": data,
                   "GTs": labels,

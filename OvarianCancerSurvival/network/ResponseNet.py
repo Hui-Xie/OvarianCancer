@@ -6,7 +6,7 @@ import math
 import sys
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
-from framework.MobileNetV3 import MobileNetV3
+from framework.MobileNetV3_O import MobileNetV3_O
 
 class ResponseNet(BasicModel):
     def __init__(self, hps=None):
@@ -25,16 +25,16 @@ class ResponseNet(BasicModel):
         self.m_sliceConv = nn.Sequential(
             nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=True),
             nn.BatchNorm2d(inC),
-            nn.Hardswish(),
+            nn.ReLU6(inplace=True),
             nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=True),
             nn.BatchNorm2d(inC),
-            nn.Hardswish(),
+            nn.ReLU6(inplace=True),
             nn.Conv2d(inC, inC, kernel_size=3, stride=1, padding=1, groups=inC, bias=True),
             nn.BatchNorm2d(inC),
-            nn.Hardswish()
+            nn.ReLU6(inplace=True)
         )
 
-        self.m_mobilenet = MobileNetV3(hps.inputChannels, hps.outputChannelsMobileNet)
+        self.m_mobilenet = MobileNetV3_O(hps.inputChannels, hps.outputChannelsMobileNet)
 
         if hps.predictHeads[0]:
             self.m_residualSizeHead = nn.Sequential(
@@ -193,7 +193,7 @@ class ResponseNet(BasicModel):
 
 
         loss = residualLoss + chemoLoss + ageLoss+ survivalLoss + optimalLoss
-        if torch.isnan(loss):  # detect NaN
+        if torch.isnan(loss) or torch.isinf(loss):  # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
