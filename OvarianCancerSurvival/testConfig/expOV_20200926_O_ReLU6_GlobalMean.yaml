@@ -50,7 +50,7 @@ optimalClassPercent: [0.3125, 0.6875]  # 0,1 proportion
 lossWeights: [1.0, 1.0, 1.0, 1.0, 1.0]  # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
 predictHeads: [False, False, False, False, True] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order, OptimalResult
 
-useGlobalMean: False # True uses global mean, and False will use IQR+std
+useGlobalMean: True   # True uses global mean, and False will use IQR+std
 
 
 # data augmentation

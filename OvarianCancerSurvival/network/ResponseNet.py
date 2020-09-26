@@ -34,7 +34,7 @@ class ResponseNet(BasicModel):
             nn.ReLU6(inplace=True)
         )
 
-        self.m_mobilenet = MobileNetV3_O(hps.inputChannels, hps.outputChannelsMobileNet)
+        self.m_mobilenet = MobileNetV3_O(hps.inputChannels, hps.outputChannelsMobileNet, hps=hps)
 
         if hps.predictHeads[0]:
             self.m_residualSizeHead = nn.Sequential(

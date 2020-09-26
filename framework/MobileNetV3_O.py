@@ -69,7 +69,7 @@ class V3Bottleneck(nn.Module):
 
 
 class MobileNetV3_O(nn.Module):
-    def __init__(self, inputC, outputC):
+    def __init__(self, inputC, outputC, hps=None):
         '''
         This network does not has final FC layer as in original mobileNet v3 paper.
         Applications need to ada specific application heads.
@@ -79,6 +79,7 @@ class MobileNetV3_O(nn.Module):
         :output: 1x1280x1x1 tensor.
         '''
         super().__init__()
+        self.hps = hps
         inC = 16 # input Channel number for bottleneck
         self.m_inputConv = nn.Sequential(
             # original network stride =2
@@ -143,35 +144,22 @@ class MobileNetV3_O(nn.Module):
 
         x = self.m_conv2d_1(x)
 
-        if torch.isnan(x.sum()) or torch.isinf(x.sum()):  # detect NaN
-            print(f"Error: find NaN of x at mobileNet v3 line 144")
-            assert False
-
-        # Traditionally: global average on H,and W dimension, each feature plane
-        # global pooling measures the concentration of feature values in each channel
-        # x = x.mean(dim=(2,3), keepdim=True)  # size: B,960,1,1
-
-        # Non-traditionally: Use IQR+std on H,and W dimension, each feature plane
-        # IQR+std measures the spread of feature values in each channel
-        xStd = torch.std(x, dim=(2,3), keepdim=True)  #size: B,960, 1,1
-
-        if torch.isnan(xStd.sum()) or torch.isinf(xStd.sum()):  # detect NaN
-            print(f"Error: find NaN of xStd at mobileNet v3 line 156")
-            assert False
-
-
-        xFeatureFlat = x.view(B,960,-1)
-        xSorted, _ = torch.sort(xFeatureFlat, dim=-1)
-        B,C,N = xSorted.shape
-        Q1 = N//4
-        Q3 = N*3//4
-        # InterQuartile Range
-        IQR = (xSorted[:,:,Q3]-xSorted[:,:,Q1]).unsqueeze(dim=-1).unsqueeze(dim=-1)
-        x = xStd + IQR
-
-        if torch.isnan(x.sum()) or torch.isinf(x.sum()):  # detect NaN
-            print(f"Error: find NaN of x at mobileNet v3 line 170 ")
-            assert False
+        if self.hps.useGlobalMean:
+            # Traditionally: global average on H,and W dimension, each feature plane
+            # global pooling measures the concentration of feature values in each channel
+            x = x.mean(dim=(2,3), keepdim=True)  # size: B,960,1,1
+        else:
+            # Non-traditionally: Use IQR+std on H,and W dimension, each feature plane
+            # IQR+std measures the spread of feature values in each channel
+            xStd = torch.std(x, dim=(2,3), keepdim=True)  #size: B,960, 1,1
+            xFeatureFlat = x.view(B,960,-1)
+            xSorted, _ = torch.sort(xFeatureFlat, dim=-1)
+            B,C,N = xSorted.shape
+            Q1 = N//4
+            Q3 = N*3//4
+            # InterQuartile Range
+            IQR = (xSorted[:,:,Q3]-xSorted[:,:,Q1]).unsqueeze(dim=-1).unsqueeze(dim=-1)
+            x = xStd + IQR
 
         x = self.m_conv2d_2(x)  # size: B,outputC,1,1
 
