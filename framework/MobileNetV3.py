@@ -156,7 +156,12 @@ class MobileNetV3(nn.Module):
         IQR = (xSorted[:,:,Q3]-xSorted[:,:,Q1]).unsqueeze(dim=-1).unsqueeze(dim=-1)
         x = xStd + IQR
 
+        if torch.isnan(x.sum()):  # detect NaN
+            print(f"Error: find NaN of x at mobileNet v3")
+            assert False
+
         x = self.m_conv2d_2(x)  # size: B,outputC,1,1
+
         return x
 
 
