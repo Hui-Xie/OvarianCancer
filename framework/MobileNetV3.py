@@ -133,14 +133,28 @@ class MobileNetV3(nn.Module):
 
 
     def forward(self, x):
+        B,_,_,_ = x.shape
         x = self.m_inputConv(x)
         for bottle in self.m_bottleneckList:
             x = bottle(x)
 
         x = self.m_conv2d_1(x)
 
-        # global average on H,and W dimension, each feature plane
-        x = x.mean(dim=(2,3), keepdim=True)  # size: B,960,1,1
+        # Traditionally: global average on H,and W dimension, each feature plane
+        # global pooling measures the concentration of feature values in each channel
+        # x = x.mean(dim=(2,3), keepdim=True)  # size: B,960,1,1
+
+        # Non-traditionally: Use IQR+std on H,and W dimension, each feature plane
+        # IQR+std measures the spread of feature values in each channel
+        xStd = torch.std(x, dim=(2,3), keepdim=True)  #size: B,960, 1,1
+        xFeatureFlat = x.view(B,960,-1)
+        xSorted = torch.sort(xFeatureFlat, dim=-1)
+        B,C,N = xSorted.shape
+        Q1 = N//4
+        Q3 = N*3//4
+        # InterQuartile Range
+        IQR = (xSorted[:,:,Q3]-xSorted[:,:,Q1]).unsqueeze(dim=-1).unsqueeze(dim=-1)
+        x = xStd + IQR
 
         x = self.m_conv2d_2(x)  # size: B,outputC,1,1
         return x
