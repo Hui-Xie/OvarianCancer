@@ -173,7 +173,7 @@ def main():
             validOptimalLoss = 0.0
             
             net.setStatus("validation")
-            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
+            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
                 residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss, optimalPredict, optimalLoss, predictProb\
                     = net.forward(batchData['images'], GTs=batchData['GTs'])

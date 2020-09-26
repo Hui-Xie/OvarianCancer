@@ -120,8 +120,11 @@ class MobileNetV3(nn.Module):
 
         self.m_conv2d_2 = nn.Sequential(
             nn.Conv2d(960, outputC, kernel_size=1, stride=1, padding=0, bias=False),
-            # nn.Hardswish()  # hardswish is better for N>2 class classification
-            nn.Sigmoid()    # Sigmoid is better for binary 0,1 classification
+            nn.Hardswish()  # hardswish is better for N>2 class classification
+
+            # Some people says Sigmoid is better for binary 0,1 classification,
+            # but sigmoid lead all features to 0 or 1
+            # nn.Sigmoid()
             )
 
         # application needs to implement classification head outside mobilenet
