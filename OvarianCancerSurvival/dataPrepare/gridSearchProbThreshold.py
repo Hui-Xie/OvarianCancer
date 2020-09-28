@@ -15,7 +15,7 @@ def main():
     epsilon =1e-8
 
     print("ProbThreshold,\tACC,\tTPR,\tTNR,\tSum(ACC_TPR_TNR),")
-    for td in np.arange(0.05, 0.99, 0.01):  # td: threshlod
+    for td in np.arange(0.001, 0.999, 0.002):  # td: threshlod
         keys = list(probDict.keys())
         nTotal = len(keys)
         TP = 0
