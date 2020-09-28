@@ -153,7 +153,7 @@ class OVDataSet_TTA(data.Dataset):
             # replicate label
             B,_,_,_ = tenCrops.shape
             for k,v in labels.items():
-                labels[k] = [v,]*B
+                labels[k] = torch.tensor([v,]*B, device=device)
 
             result = {"images": tenCrops,
                       "GTs": labels,
