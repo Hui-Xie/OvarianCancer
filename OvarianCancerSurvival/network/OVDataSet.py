@@ -14,6 +14,7 @@ class OVDataSet(data.Dataset):
         :param hps:
         :param transform:
         '''
+        super().__init__()
         self.m_mode = mode
         self.hps = hps
 

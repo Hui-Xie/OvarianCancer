@@ -9,6 +9,7 @@ class OVDataTransform(object):
         '''
         without random slice.
         '''
+        super().__init__()
         self.hps = hps
         self.m_edgeCropRate = math.sqrt(hps.randomCropArea)
 

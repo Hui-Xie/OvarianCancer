@@ -8,6 +8,7 @@ from network.OCTAugmentation import *
 
 class OCTDataTransform(object):
     def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False):
+        super().__init__()
         self.m_prob = prob
         self.m_noiseStd = noiseStd
         self.m_saltPepperRate = saltPepperRate

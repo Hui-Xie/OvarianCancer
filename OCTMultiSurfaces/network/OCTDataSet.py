@@ -10,6 +10,7 @@ from network.OCTAugmentation import *
 
 class OCTDataSet(data.Dataset):
     def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, hps=None):
+        super().__init__()
         self.hps = hps
 
         self.m_images = None
