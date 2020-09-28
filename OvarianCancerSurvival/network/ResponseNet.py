@@ -7,6 +7,7 @@ import sys
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 from framework.MobileNetV3_O import MobileNetV3_O
+from framework.VGG_O import  import VGG_O
 
 class ResponseNet(BasicModel):
     def __init__(self, hps=None):
@@ -34,31 +35,31 @@ class ResponseNet(BasicModel):
             nn.ReLU6(inplace=True)
         )
 
-        self.m_mobilenet = MobileNetV3_O(hps.inputChannels, hps.outputChannelsMobileNet, hps=hps)
+        self.m_featureNet =  eval(hps.featureNet)(hps.inputChannels, hps.outputChannels, hps=hps)
 
         if hps.predictHeads[0]:
             self.m_residualSizeHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
+                nn.Conv2d(hps.outputChannels, hps.widthResidualHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[1]:
             self.m_chemoResponseHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False)
+                nn.Conv2d(hps.outputChannels, hps.widthChemoHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[2]:
             self.m_ageHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False)
+                nn.Conv2d(hps.outputChannels, hps.widthAgeHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[3]:
             self.m_survivalHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthSurvivalHead, kernel_size=1, stride=1, padding=0, bias=False)
+                nn.Conv2d(hps.outputChannels, hps.widthSurvivalHead, kernel_size=1, stride=1, padding=0, bias=False)
                 )
 
         if hps.predictHeads[4]:
             self.m_optimalResultHead = nn.Sequential(
-                nn.Conv2d(hps.outputChannelsMobileNet, hps.widthOptimalResultHead, kernel_size=1, stride=1, padding=0, bias=False)
+                nn.Conv2d(hps.outputChannels, hps.widthOptimalResultHead, kernel_size=1, stride=1, padding=0, bias=False)
             )
 
 
@@ -70,7 +71,7 @@ class ResponseNet(BasicModel):
         x = inputs
 
         x = self.m_sliceConv(x)
-        x = self.m_mobilenet(x)
+        x = self.m_featureNet(x)
 
         # initial values:
         residualLoss = torch.tensor(0.0,device=device)
@@ -171,7 +172,7 @@ class ResponseNet(BasicModel):
             # for outputHeadWidth =1 and use sigmoid
             optimalFeature = optimalFeature.view(B)
             predictProb = torch.sigmoid(optimalFeature)
-            optimalPredict = (predictProb >= 0.51).int().view(B)  # a vector of [0,1]
+            optimalPredict = (predictProb >= 0.50).int().view(B)  # a vector of [0,1]
             optimalGT = GTs['OptimalResult'].to(device=device, dtype=torch.float32)
             optimalBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_optimalPosWeight)
             optimalLoss = optimalBCEFunc(optimalFeature, optimalGT)

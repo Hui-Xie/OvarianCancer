@@ -30,7 +30,7 @@ imageW: 281
 inputChannels: 16 # rawImage + gradChannels(W,H)
 gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
-outputChannelsMobileNet: 160
+outputChannels: 160
 widthResidualHead: 4
 residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
 widthChemoHead: 1

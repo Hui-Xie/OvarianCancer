@@ -39,6 +39,11 @@ gradChannels: 0   # the added gradient channels beside raw image channel
 randomSliceSample: False #
 bothSideGrad: True # False use singleSideGrad
 
+featureNet: "VGG_O" # MobileNetV3_O
+outputChannels: 512  # for 512 VGG network, and 960 for mobileNet v3
+useGlobalMean: True   # True uses global mean, and False will use IQR+std
+dropoutRate: 0.8 # dropout after global average pooling.
+
 widthResidualHead: 4
 residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
 widthChemoHead: 1
@@ -50,10 +55,6 @@ optimalClassPercent: [0.3125, 0.6875]  # 0,1 proportion
 lossWeights: [1.0, 1.0, 1.0, 1.0, 1.0]  # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
 predictHeads: [False, False, False, False, True] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order, OptimalResult
 
-featureNet: "MobileNetV3_O" # MobileNetV3_O
-outputChannels: 960
-useGlobalMean: False # True uses global mean, and False will use IQR+std
-dropoutRate: 0.8 # dropout after global average pooling.
 
 
 # data augmentation
