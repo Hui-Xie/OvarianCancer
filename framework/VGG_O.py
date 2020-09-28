@@ -30,7 +30,7 @@ class VGG_O(nn.Module):
     def __init__(self, inputC, outputC, hps=None):
         super().__init__()
         self.hps = hps
-        self.m_features = gerateVGGFeatureLayers(VGGCfgs['A'], inputC, batch_norm=True)
+        self.m_features = gerateVGGFeatureLayers(VGGCfgs['E'], inputC, batch_norm=True)
 
         self.m_dropout = nn.Dropout(p=hps.dropoutRate, inplace=True)
 

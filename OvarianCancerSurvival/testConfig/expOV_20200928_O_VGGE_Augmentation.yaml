@@ -7,7 +7,7 @@
 # 20200925: use 1 head with softmax for optimal result
 # 20200926: use IQQ+std to replace global mean pooling
 #           whole network use ReLU6
-# 20200928: This VGG 'A' config
+# 20200928: this VGG 'E' config with data augmentation.
 
 
 debug: True
@@ -15,7 +15,7 @@ debug: True
 # train config
 device: torch.device('cuda:3')   #GPU ID
 batchSize: 8  # fixed batchsize, make sure at least 2 sample are negative.
-learningRate: 0.1
+learningRate: 0.01
 
 #data source
 existGTLabel: True
@@ -43,7 +43,7 @@ bothSideGrad: True # False use singleSideGrad
 featureNet: "VGG_O" # MobileNetV3_O
 outputChannels: 512  # for 512 VGG network, and 960 for mobileNet v3
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
-dropoutRate: 0.8 # dropout after global average pooling.
+dropoutRate: 0.5 # dropout after global average pooling.
 
 widthResidualHead: 4
 residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # proportion of calss
@@ -59,7 +59,7 @@ predictHeads: [False, False, False, False, True] # for ResidualTumorSize, ChemoR
 
 
 # data augmentation
-augmentation: False
+augmentation: True
 augmentProb: 0  #  data augmentation rate
 flipProb: 0.5
 randomCropArea: 0.765625 # refer to AlexNet idea: (224/256)**2
