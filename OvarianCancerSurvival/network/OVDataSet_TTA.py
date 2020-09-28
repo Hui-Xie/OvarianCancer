@@ -46,7 +46,7 @@ class OVDataSet_TTA(data.Dataset):
         else:
             self.m_labels = readGTDict6Cols(gtPath)
 
-        assert (self.m_transform == None)
+        assert (transform == None)
         self.m_edgeCropRate = math.sqrt(hps.randomCropArea)
 
 
