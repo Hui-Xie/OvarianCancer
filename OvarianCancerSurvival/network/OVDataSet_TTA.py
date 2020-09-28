@@ -9,7 +9,7 @@ from OVTools import readGTDict8Cols, readGTDict6Cols
 
 
 class OVDataSet_TTA(data.Dataset):
-    def __init__(self, mode, hps=None, transform=None, labelKey=None):
+    def __init__(self, mode, hps=None, transform=None):
         '''
         Ovarian Cancer data set Manager
         :param mode: training, validation, test
@@ -46,7 +46,7 @@ class OVDataSet_TTA(data.Dataset):
         else:
             self.m_labels = readGTDict6Cols(gtPath)
 
-        self.m_transform = None
+        assert (self.m_transform == None)
         self.m_edgeCropRate = math.sqrt(hps.randomCropArea)
 
 
