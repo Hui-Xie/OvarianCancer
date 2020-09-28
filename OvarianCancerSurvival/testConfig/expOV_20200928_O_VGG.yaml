@@ -7,7 +7,7 @@
 # 20200925: use 1 head with softmax for optimal result
 # 20200926: use IQQ+std to replace global mean pooling
 #           whole network use ReLU6
-# 20200928: This VGG 'A' config
+# 20200928: This VGG 'A' config, learningRate 0,1, dropoutRate 0.8, without data augmentation.
 
 
 debug: True
