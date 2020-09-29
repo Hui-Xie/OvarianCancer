@@ -2,6 +2,7 @@
 
 import math
 import csv
+import torch
 
 # for integer classification: residual tumor size, and chemo response
 def computeClassificationAccuracy(gtDict, predictDict, key):
@@ -186,3 +187,10 @@ def outputPredictProbDict2Csv(predictProbDict, csvPath):
         for key in predictProbDict:
             a = predictProbDict[key]
             file.write(f"{key},{a['Prob1']},{a['GT']},\n")
+
+
+
+def getPredictKeyFromHead(headList):
+    keys = ['ResidualTumor', 'ChemoResponse','Age', 'SurvivalMonths', 'OptimalResult']
+    headPos = torch.argmax(torch.tensor(headList).int())
+    return keys[headPos]

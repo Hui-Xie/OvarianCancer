@@ -27,11 +27,6 @@ def printUsage(argv):
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
-def getPredictKeyFromHead(headList):
-    keys = ['ResidualTumor', 'ChemoResponse','Age', 'SurvivalMonths', 'OptimalResult']
-    headPos = torch.argmax(torch.tensor(headList).int())
-    return keys[headPos]
-
 
 def main():
 

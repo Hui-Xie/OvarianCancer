@@ -32,6 +32,7 @@ def main():
     # parse config file
     configFile = sys.argv[1]
     hps = ConfigReader(configFile)
+    hps.predictKey = getPredictKeyFromHead(hps.predictHeads)
     print(f"TTA Test Experiment: {hps.experimentName}")
 
     testData = OVDataSet_TTA("test", hps=hps, transform=None) # only use data augmentation at training set
@@ -80,7 +81,7 @@ def main():
             B = len(batchData['IDs'])
             predictProbDict[MRN] = {}
             predictProbDict[MRN]['Prob1'] = predictProb.sum()/B
-            predictProbDict[MRN]['GT'] = batchData['GTs']['OptimalResult'][0]
+            predictProbDict[MRN]['GT'] = batchData['GTs'][hps.predictKey][0]
             print(f"MRN={MRN}; predictProb = {predictProb.view(B)}")
 
     curTime = datetime.datetime.now()
