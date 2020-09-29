@@ -44,13 +44,11 @@ class VGG_O(nn.Module):
             # global pooling measures the concentration of feature values in each channel
             x = x.mean(dim=(2, 3), keepdim=True)  # size: B,outputChannels,1,1
         else:
+            x = torch.nn.functional.relu6(x, inplace=True) # to solve the NaN problem
+
             # Non-traditionally: Use IQR+std on H,and W dimension, each feature plane
             # IQR+std measures the spread of feature values in each channel
             xStd = torch.std(x, dim=(2, 3), keepdim=True)  # size: B,hps.outputChannels, 1,1
-            # below 2 row is to solve the NaN probelm
-            xMean = torch.mean(x, dim=(2, 3), keepdim=True)  # size: B,hps.outputChannels, 1,1
-            xStd = torch.where(xStd > 1e+3, xMean, xStd)
-
             xFeatureFlat = x.view(B, self.hps.outputChannels, -1)
             xSorted, _ = torch.sort(xFeatureFlat, dim=-1)
             B, C, N = xSorted.shape
