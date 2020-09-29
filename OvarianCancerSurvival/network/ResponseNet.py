@@ -104,7 +104,7 @@ class ResponseNet(BasicModel):
             predictProb = torch.sigmoid(chemoFeature)
             chemoPredict = (predictProb >= 0.50).int().view(B)  # a vector of [0,1]
             existLabel = torch.nonzero( (GTs['ChemoResponse'] != -100).int(),as_tuple=True)
-            if len(existLabel) >0: # -100 ignore index
+            if (len(existLabel) >0) and (existLabel[0].nelement() >0): # -100 ignore index
                 chemoFeature = chemoFeature[existLabel]
                 chemoGT = GTs['ChemoResponse'][existLabel].to(device=device, dtype=torch.float32)
                 chemoBCEFunc = nn.BCEWithLogitsLoss(pos_weight=self.m_chemoPosWeight)
@@ -119,7 +119,7 @@ class ResponseNet(BasicModel):
             ageRange = ageRange.expand_as(softmaxAge)
             agePredict = (softmaxAge*ageRange).sum(dim=1)
             existLabel = torch.nonzero((GTs['Age'] != -100).int(), as_tuple=True)
-            if len(existLabel) > 0:  # -100 ignore index
+            if (len(existLabel) >0) and (existLabel[0].nelement() >0):  # -100 ignore index
                 existAgePrediction = agePredict[existLabel]
                 ageGT = GTs['Age'][existLabel].to(device=device, dtype=torch.float32)  # range [0,100)
                 # ageCELossFunc = nn.CrossEntropyLoss()
@@ -133,7 +133,7 @@ class ResponseNet(BasicModel):
             survivalPredict = torch.sigmoid(survivalFeature).sum(dim=1)  # this is a wonderful idea!!!
 
             existLabel = torch.nonzero((GTs['SurvivalMonths'] != -100).int(), as_tuple=True)
-            if len(existLabel) > 0:  # -100 ignore index
+            if (len(existLabel) >0) and (existLabel[0].nelement() >0):  # -100 ignore index
                 # all uses censor conditions
                 z = GTs['SurvivalMonths'][existLabel]
                 sFeature = survivalFeature[existLabel,:]
