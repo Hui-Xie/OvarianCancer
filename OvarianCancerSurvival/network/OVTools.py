@@ -25,7 +25,7 @@ def computeClassificationAccuracy(gtDict, predictDict, key):
     N = countSame + countDiff +countIgnore
     assert N == len(gtKeys)
 
-    acc = countSame*1.0/N
+    acc = countSame*1.0/(countSame + countDiff)
 
     return acc
 
