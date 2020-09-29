@@ -45,6 +45,7 @@ def main():
         TNR = TN*1.0/(TN+FP+epsilon)  # specificity
         print(f"{td:.3f},\t{ACC:.2f},\t{TPR:.2f},\t{TNR:.2f},\t{ACC+TPR+TNR:.3f},\t{nIgnore:02d},")
 
+    print(f"\n Total = {nTotal}")
 
 if __name__ == "__main__":
     main()
