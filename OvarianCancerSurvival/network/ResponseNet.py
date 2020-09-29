@@ -101,7 +101,8 @@ class ResponseNet(BasicModel):
         if self.hps.predictHeads[1]:
             chemoFeature = self.m_chemoResponseHead(x)
             chemoFeature = chemoFeature.view(B)
-            chemoPredict = (chemoFeature >= 0).int().view(B) # [0,1]
+            predictProb = torch.sigmoid(chemoFeature)
+            chemoPredict = (predictProb >= 0.50).int().view(B)  # a vector of [0,1]
             existLabel = torch.nonzero( (GTs['ChemoResponse'] != -100).int(),as_tuple=True)
             if len(existLabel) >0: # -100 ignore index
                 chemoFeature = chemoFeature[existLabel]

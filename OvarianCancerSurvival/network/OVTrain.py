@@ -27,6 +27,12 @@ def printUsage(argv):
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
+def getPredictKeyFromHead(headList):
+    keys = ['ResidualTumor', 'ChemoResponse','Age', 'SurvivalMonths', 'OptimalResult']
+    headPos = torch.argmax(torch.tensor(headList).int())
+    return keys[headPos]
+
+
 def main():
 
     if len(sys.argv) != 2:
@@ -37,6 +43,7 @@ def main():
     # parse config file
     configFile = sys.argv[1]
     hps = ConfigReader(configFile)
+    hps.predictKey = getPredictKeyFromHead(hps.predictHeads)
     print(f"Experiment: {hps.experimentName}")
 
     trainTransform = None
@@ -129,7 +136,7 @@ def main():
 
                     trPredictProbDict[MRN] = {}
                     trPredictProbDict[MRN]['Prob1'] = predictProb[i]
-                    trPredictProbDict[MRN]['GT']    = batchData['GTs']['OptimalResult'][i]
+                    trPredictProbDict[MRN]['GT']    = batchData['GTs'][hps.predictKey][i]
 
 
 
@@ -201,7 +208,7 @@ def main():
 
                     predictProbDict[MRN] = {}
                     predictProbDict[MRN]['Prob1'] = predictProb[i]
-                    predictProbDict[MRN]['GT'] = batchData['GTs']['OptimalResult'][i]
+                    predictProbDict[MRN]['GT'] = batchData['GTs'][hps.predictKey][i]
 
             validLoss /= validBatch
             validResidualLoss /= validBatch
