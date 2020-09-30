@@ -15,7 +15,7 @@ class SqueezeExcite(nn.Module):
         self.globalAvgPool = nn.AdaptiveAvgPool2d(1)
         self.fc2Layers = nn.Sequential(
             nn.Conv2d(channel, channel // reduction, kernel_size=1, stride=1, padding=0, bias=True),
-            nn.ReLU6(inplace=True),
+            nn.ReLU(inplace=True),
             nn.Conv2d(channel // reduction, channel, kernel_size=1, stride=1, padding=0, bias=True),
             nn.Hardsigmoid()  # this must be sigmoid, instead of RelU
         )
