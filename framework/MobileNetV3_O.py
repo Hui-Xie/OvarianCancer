@@ -17,7 +17,7 @@ class SqueezeExcite(nn.Module):
             nn.Conv2d(channel, channel // reduction, kernel_size=1, stride=1, padding=0, bias=True),
             nn.ReLU6(inplace=True),
             nn.Conv2d(channel // reduction, channel, kernel_size=1, stride=1, padding=0, bias=True),
-            nn.ReLU6(inplace=True)
+            nn.Hardsigmoid()  # this must be sigmoid, instead of RelU
         )
 
     def forward(self, x):
