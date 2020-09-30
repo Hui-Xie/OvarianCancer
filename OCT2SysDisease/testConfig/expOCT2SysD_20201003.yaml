@@ -1,0 +1,89 @@
+debug: True
+
+# train config
+device: torch.device('cuda:3')   #GPU ID
+batchSize: 8  # fixed batchsize, make sure at least 2 sample are negative.
+learningRate: 0.1
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_H281_W281"
+
+trainingDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/trainingSetMRN.txt"
+validationDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/validationSetMRN.txt"
+testDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/testSetMRN.txt"
+
+trainingGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/trainingSetGroundTruth.csv"
+validationGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/validationSetGroundTruth.csv"
+testGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/testSetGroundTruth.csv"
+colsGT: 8
+
+# Network config
+network: "OCT2SysDiseaseNet_A"
+imageH: 512
+imageW: 512
+slicesPerEye: 31
+bothEyes: True
+inputChannels: 1 # rawImage + gradChannels(W,H)
+gradChannels: 0   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+outputChannels: 960
+useGlobalMean: True   # True uses global mean, and False will use IQR+std
+dropoutRate: 0.5 # dropout after global average pooling
+
+classifierWidth: [1860, 620, 1] # [0] element is better is the times of 62
+
+widthResidualHead: 4
+residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # 6ColsGT proportion of calss
+widthChemoHead: 1
+chemoClassPercent: [0.2727, 0.7273] # for 8ColsGT    #[0.266,0.734] for 6ColsGT
+widthAgeHead: 100
+widthSurvivalHead: 100
+widthOptimalResultHead: 1
+optimalClassPercent: [0.3125, 0.6875]  # 8ColsGT  0,1 proportion
+lossWeights: [1.0, 1.0, 1.0, 1.0, 1.0]  # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
+predictHeads: [False, True, False, False, False] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order, OptimalResult
+
+.
+
+# data augmentation
+augmentation: True
+augmentProb: 0  #  data augmentation rate
+flipProb: 0.5
+randomCropArea: 0.765625 # refer to AlexNet idea: (224/256)**2
+# randomSlicesRate: 0.8 #0.75
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+
+# save network
+netPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: "" #"/home/hxie1/data/OvarianCancerCT/survivalPredict/netParameters/ResponseNet/expOV_20200921_S"
+outputDir: ""
+logDir: "/home/hxie1/data/OvarianCancerCT/survivalPredict/log"  # net is saved at logPath / network / self_filename
+
+# module config:
+# Test-time augmentation:
+# refer to AlexNet's idea,and ResNet also adapted this 10-crop TTA:
+#  "At test time, the network makes a prediction by extracting five 224×224 patches
+#  (the four corner patches and the center patch) as well as their horizontal reflections (hence ten patches in all),
+#  and averaging the predictions made by the network’s softmax layer on the ten patches."
+
+# GoogleNet 2014:
+#  "The softmax probabilities are averaged over multiple crops and
+#   over all the individual classifiers to obtain the final prediction."
+
+
+
+
+
+# VGG use pretrained network:
+#  One approach described involved first training a model with a fixed but smaller image size,
+#  retaining the model weights, then using them as a starting point for training a new model
+#  with a larger but still fixed-sized image. This approach was designed
+#  in an effort to speed up the training of the larger (second) model.
+
+
+# decision threshold is problem-dependent.
+
