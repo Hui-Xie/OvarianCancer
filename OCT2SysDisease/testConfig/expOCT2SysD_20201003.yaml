@@ -23,15 +23,15 @@ network: "OCT2SysDiseaseNet_A"
 imageH: 512
 imageW: 512
 slicesPerEye: 31
-bothEyes: True
+bothEyes: False  # choose all OD eyes
 inputChannels: 1 # rawImage + gradChannels(W,H)
 gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
-outputChannels: 960
+outputChannels: 1280  # output feature channels before the classifier
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
 
-classifierWidth: [1860, 620, 1] # [0] element is better is the times of 62
+classifierWidth: [960, 620, 1] # [0] element is better is the times of 62
 
 widthResidualHead: 4
 residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # 6ColsGT proportion of calss

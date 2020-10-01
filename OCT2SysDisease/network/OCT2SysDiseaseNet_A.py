@@ -49,17 +49,18 @@ class OCT2SysDiseaseNet_A(nn.Module):
         if hps.bothEyes:
             self.hps.spaceD = hps.slicesPerEye *2
 
-        outC = hps.classifierWidth[0]//self.hps.spaceD
         self.m_featureConv = nn.Sequential(
-            nn.Conv2d(inC, outC, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(inC, hps.outputChannels, kernel_size=1, stride=1, padding=0, bias=False),
             nn.BatchNorm2d(hps.outputChannels),
             nn.ReLU6(inplace=True)
         )
 
-        # after m_conv2d_1, tensor need global mean on H and W dimension.
-        # and shift the spaceD form B to channel.
+        # after m_conv2d_1, tensor need global mean on Slice and H and W dimension.
 
         self.m_classifier = nn.Sequential(
+            nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=hps.dropoutRate, inplace=True),
             nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=False),
             nn.ReLU(inplace=True),
             nn.Dropout(p=hps.dropoutRate, inplace=True),
@@ -72,9 +73,10 @@ class OCT2SysDiseaseNet_A(nn.Module):
             x = bottle(x)
         x = self.m_featureConv(x)
 
-        x = x.mean(dim=(2, 3), keepdim=True) # B,C,1,1
-        B,C,_,_ = x.shape
-        x = x.view(B//self.hps.spaceD, C*self.hps.spaceD, 1,1)
+        # mean at slice, H and W dimension
+        B, C, H, W = x.shape
+        x = x.view(B // self.hps.spaceD, self.hps.spaceD, C, H, W)
+        x = x.mean(dim=(1,3, 4), keepdim=True).squeeze(dim=1) # B,C,1,1
 
         x = self.m_classifier(x)
         return x
