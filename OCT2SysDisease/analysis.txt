@@ -2,3 +2,23 @@ Hypertension data: 1: 1915; 0: 1535
 input: 62-OCT
 output: {0,1}
 
+age range: [50,91], total 42 ranges
+
+
+plan data division:
+    training,   validation,    test,    sum
+0,    1075  ,        230,     230,    1535
+1,    1341  ,        287,     287,    1915
+sum,  2416  ,        517,     517,    3450
+
+Real data division according to hypertension:
+    training,   validation,    test,    sum
+0,    1007  ,        264,     264,    1535
+1,    1257  ,        329,     329,    1915
+sum,  2264  ,        593,     593,    3450
+
+perAgeRange choice:
+0,                    5-6       5-6
+1,                    6-7       6-7
+
+
