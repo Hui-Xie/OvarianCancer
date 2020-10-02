@@ -35,6 +35,7 @@ def main():
             N +=1
     print(f"find {N} corresponding volumes")
     print(f"NonExistIDList: {nonexistIDList}")
+    print(f"total {len(nonexistIDList)} ID nonexist")
 
 if __name__ == "__main__":
     main()
