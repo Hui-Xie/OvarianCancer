@@ -40,7 +40,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
 
     for ID in IDList:
         value = gtDict[int(ID)][key]
-        if -100 == value:
+        if -100 == float(value):
             continue
         N +=1
         if valueType=="binary":
@@ -89,6 +89,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
     else:
         print("valueType error")
         assert False
+    print("\n")
 
 def printUsage(argv):
     print("============ statistics specific key in a ID dataset  =============")
