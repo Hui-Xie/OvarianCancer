@@ -2,6 +2,16 @@
 
 gtPath= "/home/hxie1/data/BES_3K/GTs/BESClinicalGT.csv"
 
+
+keysList=[
+  "ID", "Eye", "gender", "Age$", "VA$", "Pres_VA$", "VA_Corr$", "IOP$", "Ref_Equa$", "AxialLength$", "Axiallength_26_ormore_exclude$", \
+  "Glaucoma_exclude$", "Retina_exclude$", "Height$", "Weight$", "Waist_Circum$", "Hip_Circum$", "BP_Sys$", "BP_Dia$", "hypertension_bp_plus_history$", \
+  "Diabetes$final", "Dyslipidemia_lab$", "Dyslipidemia_lab_plus_his$", "Hyperlipdemia_treat$_WithCompleteZero", "Pulse$", "Cognitive$", \
+  "Depression_Correct_wyx", "Drink_quanti_includ0$", "SmokePackYears$", "Glucose$_Corrected2015", "CRPL$_Corrected2015", \
+   "Choles$_Corrected2015", "HDL$_Corrected2015", "LDL$_Correcetd2015", "TG$_Corrected2015" ]
+
+
+
 import sys
 sys.path.append(".")
 from readClinicalGT import readBESClinicalCsv
@@ -29,7 +39,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
     N = 0
 
     for ID in IDList:
-        value = gtDict[ID][key]
+        value = gtDict[int(ID)][key]
         if -100 == value:
             continue
         N +=1
@@ -88,6 +98,7 @@ def main():
     if len(sys.argv) != 4:
         print("Error: input parameters error.")
         printUsage(sys.argv)
+        print(f"keys List = \n{keysList}")
         return -1
 
 
