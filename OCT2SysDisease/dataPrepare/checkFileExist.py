@@ -23,13 +23,14 @@ def main():
     print(f"total {len(volumeODList)} OD volumes in {rawPath}")
 
     N= 0
+    nonexistIDList = []
     for ID in IDList:
         resultList = fnmatch.filter(volumeODList, "*/"+ID+"_OD_*_Volume")
         length = len(resultList)
         if 0== length:
-            print(f"ID: {ID} not exist")
+            nonexistIDList.append(ID)
         elif length > 1:
-            print(f"Mulitple files: {resultList}")
+            print(f"Mulitple ID files: {resultList}")
         else:
             N +=1
     print(f"find {N} corresponding volumes")
