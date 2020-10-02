@@ -27,7 +27,7 @@ def main():
         resultList = fnmatch.filter(volumeODList, ID+"_OD_*_Volume")
         length = len(resultList)
         if 0== length:
-            print(f"ID {ID} not exist")
+            print(f"ID: {ID} not exist")
         elif length > 1:
             print(f"Mulitple files: {resultList}")
         else:
