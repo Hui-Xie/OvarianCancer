@@ -34,6 +34,7 @@ def main():
         else:
             N +=1
     print(f"find {N} corresponding volumes")
+    print(f"NonExistIDList: {nonexistIDList}")
 
 if __name__ == "__main__":
     main()
