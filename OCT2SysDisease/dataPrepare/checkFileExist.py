@@ -6,6 +6,7 @@ rawPath = "/home/hxie1/data/BES_3K/raw"
 import glob
 import fnmatch
 import sys
+import os
 
 
 def main():
@@ -16,7 +17,8 @@ def main():
     with open(dataSetIDPath,'r') as f:
         IDList = f.readlines()
     IDList = [item[0:-1] for item in IDList] # erase '\n'
-    print(f"total {len(IDList)} IDs in {dataSetIDPath}")
+    rawIDLen = len(IDList)
+    print(f"total {rawIDLen} IDs in {dataSetIDPath}")
 
     # get all volume List
     volumeODList = glob.glob(rawPath + f"/*_OD_*_Volume")
@@ -24,6 +26,7 @@ def main():
 
     N= 0
     nonexistIDList = []
+    existIDList = []
     for ID in IDList:
         resultList = fnmatch.filter(volumeODList, "*/"+ID+"_OD_*_Volume")
         length = len(resultList)
@@ -32,10 +35,20 @@ def main():
         elif length > 1:
             print(f"Mulitple ID files: {resultList}")
         else:
+            existIDList.append(ID)
             N +=1
-    print(f"find {N} corresponding volumes")
+    print(f"find {N} corresponding volumes with ID")
     print(f"NonExistIDList: {nonexistIDList}")
-    print(f"total {len(nonexistIDList)} ID nonexist")
+    print(f"total {len(nonexistIDList)} IDs nonexist")
+
+    # output updated existID list
+    if N < rawIDLen:
+        filepath, ext = os.path.splitext(dataSetIDPath)
+        updatedIDPath = filepath + "_delNonExist"+ ext
+        with open(updatedIDPath, "w") as file:
+            for ID in existIDList:
+                file.write(f"{ID}\n")
+        print(f"output {updatedIDPath}")
 
 if __name__ == "__main__":
     main()
