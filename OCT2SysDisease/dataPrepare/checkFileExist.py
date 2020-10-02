@@ -24,7 +24,7 @@ def main():
 
     N= 0
     for ID in IDList:
-        resultList = fnmatch.filter(volumeODList, ID+"_OD_*_Volume")
+        resultList = fnmatch.filter(volumeODList, "*/"+ID+"_OD_*_Volume")
         length = len(resultList)
         if 0== length:
             print(f"ID: {ID} not exist")
