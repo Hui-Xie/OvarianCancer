@@ -23,57 +23,60 @@ perAgeRange choice:
 
 ==========================================================================
 =============Check Volumes and Clinical ID correspondence================
-(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/trainID.csv
-total 2264 IDs in /home/hxie1/data/BES_3K/GTs/trainID.csv
-total 3288 OD volumes in /home/hxie1/data/BES_3K/raw
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/123_OD_25375_Volume', '/home/hxie1/data/BES_3K/raw/123_OD_1936_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1296_OD_9602_Volume', '/home/hxie1/data/BES_3K/raw/1296_OD_24884_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/600_OD_4409_Volume', '/home/hxie1/data/BES_3K/raw/600_OD_4480_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1947_OD_14086_Volume', '/home/hxie1/data/BES_3K/raw/1947_OD_13585_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1536_OD_11367_Volume', '/home/hxie1/data/BES_3K/raw/1536_OD_11364_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1690_OD_15989_Volume', '/home/hxie1/data/BES_3K/raw/1690_OD_15976_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32009_OD_9268_Volume', '/home/hxie1/data/BES_3K/raw/32009_OD_12398_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5152_OD_25166_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25157_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25171_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25169_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25167_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25168_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32132_OD_15813_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15817_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15812_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4973_OD_29833_Volume', '/home/hxie1/data/BES_3K/raw/4973_OD_29837_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/33019_OD_7226_Volume', '/home/hxie1/data/BES_3K/raw/33019_OD_7229_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/2293_OD_10524_Volume', '/home/hxie1/data/BES_3K/raw/2293_OD_10533_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34623_OD_28790_Volume', '/home/hxie1/data/BES_3K/raw/34623_OD_28817_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6253_OD_20370_Volume', '/home/hxie1/data/BES_3K/raw/6253_OD_20367_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6049_OD_19216_Volume', '/home/hxie1/data/BES_3K/raw/6049_OD_20607_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6963_OD_22638_Volume', '/home/hxie1/data/BES_3K/raw/6963_OD_22651_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/120090_OD_3733_Volume', '/home/hxie1/data/BES_3K/raw/120090_OD_8398_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1064_OD_8896_Volume', '/home/hxie1/data/BES_3K/raw/1064_OD_8892_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1070_OD_25149_Volume', '/home/hxie1/data/BES_3K/raw/1070_OD_16613_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/378_OD_954_Volume', '/home/hxie1/data/BES_3K/raw/378_OD_958_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34540_OD_27868_Volume', '/home/hxie1/data/BES_3K/raw/34540_OD_27872_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34174_OD_31686_Volume', '/home/hxie1/data/BES_3K/raw/34174_OD_31683_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/773_OD_5087_Volume', '/home/hxie1/data/BES_3K/raw/773_OD_5100_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4479_OD_31798_Volume', '/home/hxie1/data/BES_3K/raw/4479_OD_31794_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5834_OD_16804_Volume', '/home/hxie1/data/BES_3K/raw/5834_OD_16797_Volume']
-find 2033 corresponding volumes
-NonExistIDList: ['32148', '357', '1968', '120104', '1088', '2426', '530', '4152', '120112', '32106', '110074', '577', '1642', '1476', '34045', '2120', '2200', '1802', '2411', '34613', '4892', '170117', '910', '5024', '2157', '4049', '120155', '4114', '7019', '4241', '2100', '110009', '110062', '4145', '5835', '5830', '1675', '1353', '1482', '1587', '1616', '2392', '110002', '4318', '120245', '32123', '120116', '2112', '4945', '1794', '5047', '170097', '4221', '4453', '4994', '2243', '110128', '120007', '4941', '2864', '32161', '2450', '5200', '2753', '576', '4916', '1647', '170083', '170069', '32151', '170084', '911', '5546', '5110', '6679', '4895', '32152', '5728', '592', '1513', '120253', '120180', '34553', '2207', '1342', '2261', '315', '1763', '2045', '170098', '1354', '3604', '32160', '110010', '1676', '6093', '3609', '3606', '3621', '2455', '2011', '2128', '4948', '32102', '32115', '755', '2106', '120225', '31026', '4296', '2092', '2428', '120015', '2122', '4014', '6782', '1719', '4413', '900', '2035', '32133', '2698', '2574', '289', '2671', '6649', '120059', '4078', '120258', '110018', '2422', '31034', '34136', '140014', '5897', '120161', '4083', '6843', '6869', '6982', '2681', '120198', '1969', '2107', '32059', '719', '4372', '756', '1940', '60', '1213', '1340', '2121', '4811', '110115', '1532', '2775', '120004', '120146', '4523', '671', '4262', '5213', '2150', '328', '2123', '2466', '2014', '2036', '2061', '120153', '1720', '4857', '6300', '1724', '32154', '969', '34626', '120041', '120008', '4117', '1461', '1870', '341', '1217', '32056', '2573', '349', '290', '333', '4942', '4082', '2101', '4039', '696', '4174', '140015', '2057', '2743', '5984', '3603', '626', '31038', '2594', '31143', '32131']
-total 206 ID nonexist
-(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/validationID.csv
-total 593 IDs in /home/hxie1/data/BES_3K/GTs/validationID.csv
-total 3288 OD volumes in /home/hxie1/data/BES_3K/raw
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5191_OD_29751_Volume', '/home/hxie1/data/BES_3K/raw/5191_OD_29755_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1703_OD_16532_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16571_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16531_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16582_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16585_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34127_OD_24960_Volume', '/home/hxie1/data/BES_3K/raw/34127_OD_26784_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/82_OD_2614_Volume', '/home/hxie1/data/BES_3K/raw/82_OD_2791_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/179_OD_4915_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4914_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4907_Volume']
-find 548 corresponding volumes
-NonExistIDList: ['32153', '92', '170075', '5745', '4937', '34133', '170065', '4070', '203', '1962', '4801', '5542', '4783', '6966', '110015', '5470', '88', '120051', '120087', '4498', '4856', '4125', '4016', '4009', '33085', '2845', '4949', '120174', '1264', '5146', '1989', '4938', '120037', '4079', '34632', '6278', '284', '4030', '170222', '34168']
-total 40 ID nonexist
 (base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/testID.csv
 total 593 IDs in /home/hxie1/data/BES_3K/GTs/testID.csv
 total 3288 OD volumes in /home/hxie1/data/BES_3K/raw
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/563_OD_5953_Volume', '/home/hxie1/data/BES_3K/raw/563_OD_5957_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1426_OD_16481_Volume', '/home/hxie1/data/BES_3K/raw/1426_OD_16511_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6892_OD_22210_Volume', '/home/hxie1/data/BES_3K/raw/6892_OD_27754_Volume']
-find 559 corresponding volumes
-NonExistIDList: ['2449', '110177', '6304', '110186', '170079', '528', '4912', '294', '526', '170088', '110016', '4087', '34132', '110162', '6002', '110187', '2242', '1303', '1988', '365', '34176', '4149', '4943', '4092', '32085', '34030', '651', '120074', '6973', '5874', '3622']
-total 31 ID nonexist
+find 560 corresponding volumes with ID
+NonExistIDList: ['294', '365', '526', '528', '651', '1303', '1988', '2242', '2449', '3622', '4087', '4092', '4149', '4943', '5874', '6002', '6304', '6973', '32085', '34030', '34132', '34176', '110016', '110162', '110177', '110186', '110187', '120074', '170079', '170088']
+total 30 IDs nonexist
+output /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
+(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/validationID.csv
+total 593 IDs in /home/hxie1/data/BES_3K/GTs/validationID.csv
+total 3288 OD volumes in /home/hxie1/data/BES_3K/raw
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/82_OD_2614_Volume', '/home/hxie1/data/BES_3K/raw/82_OD_2791_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/179_OD_4915_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4914_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4907_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1703_OD_16532_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16571_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16531_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16582_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16585_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5191_OD_29751_Volume', '/home/hxie1/data/BES_3K/raw/5191_OD_29755_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34127_OD_24960_Volume', '/home/hxie1/data/BES_3K/raw/34127_OD_26784_Volume']
+find 548 corresponding volumes with ID
+NonExistIDList: ['88', '92', '203', '284', '1264', '1962', '1989', '2845', '4009', '4016', '4030', '4070', '4079', '4125', '4498', '4783', '4801', '4856', '4937', '4938', '4949', '5146', '5470', '5542', '5745', '6278', '6966', '32153', '33085', '34133', '34168', '34632', '110015', '120037', '120051', '120087', '120174', '170065', '170075', '170222']
+total 40 IDs nonexist
+output /home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv
+(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/trainID.csv
+total 2264 IDs in /home/hxie1/data/BES_3K/GTs/trainID.csv
+total 3288 OD volumes in /home/hxie1/data/BES_3K/raw
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/123_OD_25375_Volume', '/home/hxie1/data/BES_3K/raw/123_OD_1936_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/378_OD_954_Volume', '/home/hxie1/data/BES_3K/raw/378_OD_958_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/600_OD_4409_Volume', '/home/hxie1/data/BES_3K/raw/600_OD_4480_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/773_OD_5087_Volume', '/home/hxie1/data/BES_3K/raw/773_OD_5100_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1064_OD_8896_Volume', '/home/hxie1/data/BES_3K/raw/1064_OD_8892_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1070_OD_25149_Volume', '/home/hxie1/data/BES_3K/raw/1070_OD_16613_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1296_OD_9602_Volume', '/home/hxie1/data/BES_3K/raw/1296_OD_24884_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1536_OD_11367_Volume', '/home/hxie1/data/BES_3K/raw/1536_OD_11364_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1690_OD_15989_Volume', '/home/hxie1/data/BES_3K/raw/1690_OD_15976_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1947_OD_14086_Volume', '/home/hxie1/data/BES_3K/raw/1947_OD_13585_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/2293_OD_10524_Volume', '/home/hxie1/data/BES_3K/raw/2293_OD_10533_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4479_OD_31798_Volume', '/home/hxie1/data/BES_3K/raw/4479_OD_31794_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4973_OD_29833_Volume', '/home/hxie1/data/BES_3K/raw/4973_OD_29837_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5152_OD_25166_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25157_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25171_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25169_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25167_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25168_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5834_OD_16804_Volume', '/home/hxie1/data/BES_3K/raw/5834_OD_16797_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6049_OD_19216_Volume', '/home/hxie1/data/BES_3K/raw/6049_OD_20607_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6253_OD_20370_Volume', '/home/hxie1/data/BES_3K/raw/6253_OD_20367_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6963_OD_22638_Volume', '/home/hxie1/data/BES_3K/raw/6963_OD_22651_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32009_OD_9268_Volume', '/home/hxie1/data/BES_3K/raw/32009_OD_12398_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32132_OD_15813_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15817_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15812_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/33019_OD_7226_Volume', '/home/hxie1/data/BES_3K/raw/33019_OD_7229_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34174_OD_31686_Volume', '/home/hxie1/data/BES_3K/raw/34174_OD_31683_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34540_OD_27868_Volume', '/home/hxie1/data/BES_3K/raw/34540_OD_27872_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34623_OD_28790_Volume', '/home/hxie1/data/BES_3K/raw/34623_OD_28817_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/120090_OD_3733_Volume', '/home/hxie1/data/BES_3K/raw/120090_OD_8398_Volume']
+find 2034 corresponding volumes with ID
+NonExistIDList: ['60', '289', '290', '315', '328', '333', '341', '349', '357', '530', '576', '577', '592', '626', '671', '696', '719', '755', '756', '900', '910', '911', '969', '1088', '1213', '1217', '1340', '1342', '1353', '1354', '1461', '1476', '1482', '1513', '1532', '1587', '1616', '1642', '1647', '1675', '1676', '1719', '1720', '1724', '1763', '1794', '1802', '1870', '1940', '1968', '1969', '2011', '2014', '2035', '2036', '2045', '2057', '2061', '2092', '2100', '2101', '2106', '2107', '2112', '2120', '2121', '2122', '2123', '2128', '2150', '2157', '2200', '2207', '2243', '2261', '2392', '2411', '2422', '2426', '2428', '2450', '2455', '2466', '2573', '2574', '2594', '2671', '2681', '2698', '2743', '2753', '2775', '2864', '3603', '3604', '3606', '3609', '3621', '4014', '4039', '4049', '4078', '4082', '4083', '4114', '4117', '4145', '4152', '4174', '4221', '4241', '4262', '4296', '4318', '4372', '4413', '4523', '4811', '4857', '4892', '4895', '4916', '4941', '4942', '4945', '4948', '4994', '5024', '5047', '5110', '5200', '5213', '5546', '5728', '5830', '5835', '5897', '5984', '6093', '6300', '6649', '6679', '6782', '6843', '6869', '6982', '7019', '31026', '31034', '31038', '31143', '32056', '32059', '32102', '32106', '32115', '32123', '32131', '32133', '32148', '32151', '32152', '32154', '32160', '32161', '34045', '34136', '34553', '34613', '34626', '110002', '110009', '110010', '110018', '110062', '110074', '110115', '110128', '120004', '120007', '120008', '120015', '120041', '120059', '120104', '120112', '120116', '120146', '120153', '120155', '120161', '120180', '120198', '120225', '120245', '120253', '120258', '140014', '140015', '170069', '170083', '170084', '170097', '170098', '170117']
+total 205 IDs nonexist
+output /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv
 (base) [c-xwu000:dataPrepare]#
 
 ================================Tidy on Oct 2nd 2020===============
@@ -82,61 +85,71 @@ About the correspondence between clinical data and OD volume images.
 
 Summary:
 1  From the BES clinical excel file, there are 3450 IDs with hypertension ground truth {0,1};
-2  In above 3450 IDs, there are 277 IDs without corresponding OD volume images;
-3  In above 3350 IDs, there are 33 IDs with multiple different OD volume images;
-4  I am planning to use age information in the clinical excel file to manually cherry-pick correct OD volume from above 33 ID-repeated volume images; Is this a reliable method?
-   Another alternative is that I directly do not use 277+33= 310 IDs , which make total data set of 3140 IDs for training, validation and test.
-
+2  5 original IDs use ????.1 float ID, Other use integer ID; (as Notes for future)
+3  In above 3450 IDs, there are 275 IDs without corresponding OD volume images;
+4  In above 3450 IDs, there are 33 IDs with multiple different OD volume images;
+5  I directly do not use 275+33= 308 IDs , which make total data set of 3142 IDs for training, validation and test;
+6  In 3142 patients: training 2034; validation 548; test 560;
 
 ID list without OD volume images:
-['32148', '357', '1968', '120104', '1088', '2426', '530', '4152', '120112', '32106', '110074', '577', '1642', '1476', '34045', '2120', '2200', '1802', '2411', '34613',
-'4892', '170117', '910', '5024', '2157', '4049', '120155', '4114', '7019', '4241', '2100', '110009', '110062', '4145', '5835', '5830', '1675', '1353', '1482', '1587',
-'1616', '2392', '110002', '4318', '120245', '32123', '120116', '2112', '4945', '1794', '5047', '170097', '4221', '4453', '4994', '2243', '110128', '120007', '4941',
-'2864', '32161', '2450', '5200', '2753', '576', '4916', '1647', '170083', '170069', '32151', '170084', '911', '5546', '5110', '6679', '4895', '32152', '5728', '592',
-'1513', '120253', '120180', '34553', '2207', '1342', '2261', '315', '1763', '2045', '170098', '1354', '3604', '32160', '110010', '1676', '6093', '3609', '3606', '3621',
-'2455', '2011', '2128', '4948', '32102', '32115', '755', '2106', '120225', '31026', '4296', '2092', '2428', '120015', '2122', '4014', '6782', '1719', '4413', '900',
-'2035', '32133', '2698', '2574', '289', '2671', '6649', '120059', '4078', '120258', '110018', '2422', '31034', '34136', '140014', '5897', '120161', '4083', '6843',
-'6869', '6982', '2681', '120198', '1969', '2107', '32059', '719', '4372', '756', '1940', '60', '1213', '1340', '2121', '4811', '110115', '1532', '2775', '120004',
-'120146', '4523', '671', '4262', '5213', '2150', '328', '2123', '2466', '2014', '2036', '2061', '120153', '1720', '4857', '6300', '1724', '32154', '969', '34626',
-'120041', '120008', '4117', '1461', '1870', '341', '1217', '32056', '2573', '349', '290', '333', '4942', '4082', '2101', '4039', '696', '4174', '140015', '2057',
-'2743', '5984', '3603', '626', '31038', '2594', '31143', '32131', 32153', '92', '170075', '5745', '4937', '34133', '170065', '4070', '203', '1962', '4801', '5542',
-'4783', '6966', '110015', '5470', '88', '120051', '120087', '4498', '4856', '4125', '4016', '4009', '33085', '2845', '4949', '120174', '1264', '5146', '1989', '4938',
-'120037', '4079', '34632', '6278', '284', '4030', '170222', '34168',  '2449', '110177', '6304', '110186', '170079', '528', '4912', '294', '526', '170088', '110016',
-'4087', '34132', '110162', '6002', '110187', '2242', '1303', '1988', '365', '34176', '4149', '4943', '4092', '32085', '34030', '651', '120074', '6973', '5874', '3622']
+['60', '289', '290', '315', '328', '333', '341', '349', '357', '530', '576', '577', '592', '626', '671', '696', '719',
+'755', '756', '900', '910', '911', '969', '1088', '1213', '1217', '1340', '1342', '1353', '1354', '1461', '1476', '1482',
+'1513', '1532', '1587', '1616', '1642', '1647', '1675', '1676', '1719', '1720', '1724', '1763', '1794', '1802', '1870',
+'1940', '1968', '1969', '2011', '2014', '2035', '2036', '2045', '2057', '2061', '2092', '2100', '2101', '2106', '2107',
+'2112', '2120', '2121', '2122', '2123', '2128', '2150', '2157', '2200', '2207', '2243', '2261', '2392', '2411', '2422',
+'2426', '2428', '2450', '2455', '2466', '2573', '2574', '2594', '2671', '2681', '2698', '2743', '2753', '2775', '2864',
+'3603', '3604', '3606', '3609', '3621', '4014', '4039', '4049', '4078', '4082', '4083', '4114', '4117', '4145', '4152',
+'4174', '4221', '4241', '4262', '4296', '4318', '4372', '4413', '4523', '4811', '4857', '4892', '4895', '4916', '4941',
+'4942', '4945', '4948', '4994', '5024', '5047', '5110', '5200', '5213', '5546', '5728', '5830', '5835', '5897', '5984',
+'6093', '6300', '6649', '6679', '6782', '6843', '6869', '6982', '7019', '31026', '31034', '31038', '31143', '32056',
+'32059', '32102', '32106', '32115', '32123', '32131', '32133', '32148', '32151', '32152', '32154', '32160', '32161',
+'34045', '34136', '34553', '34613', '34626', '110002', '110009', '110010', '110018', '110062', '110074', '110115',
+'110128', '120004', '120007', '120008', '120015', '120041', '120059', '120104', '120112', '120116', '120146', '120153',
+'120155', '120161', '120180', '120198', '120225', '120245', '120253', '120258', '140014', '140015', '170069', '170083',
+'170084', '170097', '170098', '170117', '88', '92', '203', '284', '1264', '1962', '1989', '2845', '4009', '4016', '4030',
+ '4070', '4079', '4125', '4498', '4783', '4801', '4856', '4937', '4938', '4949', '5146', '5470', '5542', '5745', '6278',
+ '6966', '32153', '33085', '34133', '34168', '34632', '110015', '120037', '120051', '120087', '120174', '170065', '170075',
+ '170222', '294', '365', '526', '528', '651', '1303', '1988', '2242', '2449', '3622', '4087', '4092', '4149', '4943',
+ '5874', '6002', '6304', '6973', '32085', '34030', '34132', '34176', '110016', '110162', '110177', '110186', '110187',
+ '120074', '170079', '170088']
 
 Same ID has mulitple different OD volume images:
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/123_OD_25375_Volume', '/home/hxie1/data/BES_3K/raw/123_OD_1936_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1296_OD_9602_Volume', '/home/hxie1/data/BES_3K/raw/1296_OD_24884_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/378_OD_954_Volume', '/home/hxie1/data/BES_3K/raw/378_OD_958_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/600_OD_4409_Volume', '/home/hxie1/data/BES_3K/raw/600_OD_4480_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1947_OD_14086_Volume', '/home/hxie1/data/BES_3K/raw/1947_OD_13585_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1536_OD_11367_Volume', '/home/hxie1/data/BES_3K/raw/1536_OD_11364_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1690_OD_15989_Volume', '/home/hxie1/data/BES_3K/raw/1690_OD_15976_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32009_OD_9268_Volume', '/home/hxie1/data/BES_3K/raw/32009_OD_12398_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5152_OD_25166_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25157_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25171_Volume',
-                    '/home/hxie1/data/BES_3K/raw/5152_OD_25169_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25167_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25168_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32132_OD_15813_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15817_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15812_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4973_OD_29833_Volume', '/home/hxie1/data/BES_3K/raw/4973_OD_29837_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/33019_OD_7226_Volume', '/home/hxie1/data/BES_3K/raw/33019_OD_7229_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/2293_OD_10524_Volume', '/home/hxie1/data/BES_3K/raw/2293_OD_10533_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34623_OD_28790_Volume', '/home/hxie1/data/BES_3K/raw/34623_OD_28817_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6253_OD_20370_Volume', '/home/hxie1/data/BES_3K/raw/6253_OD_20367_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6049_OD_19216_Volume', '/home/hxie1/data/BES_3K/raw/6049_OD_20607_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6963_OD_22638_Volume', '/home/hxie1/data/BES_3K/raw/6963_OD_22651_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/120090_OD_3733_Volume', '/home/hxie1/data/BES_3K/raw/120090_OD_8398_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/773_OD_5087_Volume', '/home/hxie1/data/BES_3K/raw/773_OD_5100_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1064_OD_8896_Volume', '/home/hxie1/data/BES_3K/raw/1064_OD_8892_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1070_OD_25149_Volume', '/home/hxie1/data/BES_3K/raw/1070_OD_16613_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/378_OD_954_Volume', '/home/hxie1/data/BES_3K/raw/378_OD_958_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34540_OD_27868_Volume', '/home/hxie1/data/BES_3K/raw/34540_OD_27872_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34174_OD_31686_Volume', '/home/hxie1/data/BES_3K/raw/34174_OD_31683_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/773_OD_5087_Volume', '/home/hxie1/data/BES_3K/raw/773_OD_5100_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1296_OD_9602_Volume', '/home/hxie1/data/BES_3K/raw/1296_OD_24884_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1536_OD_11367_Volume', '/home/hxie1/data/BES_3K/raw/1536_OD_11364_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1690_OD_15989_Volume', '/home/hxie1/data/BES_3K/raw/1690_OD_15976_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1947_OD_14086_Volume', '/home/hxie1/data/BES_3K/raw/1947_OD_13585_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/2293_OD_10524_Volume', '/home/hxie1/data/BES_3K/raw/2293_OD_10533_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4479_OD_31798_Volume', '/home/hxie1/data/BES_3K/raw/4479_OD_31794_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/4973_OD_29833_Volume', '/home/hxie1/data/BES_3K/raw/4973_OD_29837_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5152_OD_25166_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25157_Volume',
+                    '/home/hxie1/data/BES_3K/raw/5152_OD_25171_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25169_Volume',
+                    '/home/hxie1/data/BES_3K/raw/5152_OD_25167_Volume', '/home/hxie1/data/BES_3K/raw/5152_OD_25168_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5834_OD_16804_Volume', '/home/hxie1/data/BES_3K/raw/5834_OD_16797_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5191_OD_29751_Volume', '/home/hxie1/data/BES_3K/raw/5191_OD_29755_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1703_OD_16532_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16571_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16531_Volume',
-                    '/home/hxie1/data/BES_3K/raw/1703_OD_16582_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16585_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34127_OD_24960_Volume', '/home/hxie1/data/BES_3K/raw/34127_OD_26784_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6049_OD_19216_Volume', '/home/hxie1/data/BES_3K/raw/6049_OD_20607_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6253_OD_20370_Volume', '/home/hxie1/data/BES_3K/raw/6253_OD_20367_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6963_OD_22638_Volume', '/home/hxie1/data/BES_3K/raw/6963_OD_22651_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32009_OD_9268_Volume', '/home/hxie1/data/BES_3K/raw/32009_OD_12398_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/32132_OD_15813_Volume', '/home/hxie1/data/BES_3K/raw/32132_OD_15817_Volume',
+                    '/home/hxie1/data/BES_3K/raw/32132_OD_15812_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/33019_OD_7226_Volume', '/home/hxie1/data/BES_3K/raw/33019_OD_7229_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34174_OD_31686_Volume', '/home/hxie1/data/BES_3K/raw/34174_OD_31683_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34540_OD_27868_Volume', '/home/hxie1/data/BES_3K/raw/34540_OD_27872_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34623_OD_28790_Volume', '/home/hxie1/data/BES_3K/raw/34623_OD_28817_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/120090_OD_3733_Volume', '/home/hxie1/data/BES_3K/raw/120090_OD_8398_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/82_OD_2614_Volume', '/home/hxie1/data/BES_3K/raw/82_OD_2791_Volume']
-Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/179_OD_4915_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4914_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4907_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/179_OD_4915_Volume', '/home/hxie1/data/BES_3K/raw/179_OD_4914_Volume',
+                    '/home/hxie1/data/BES_3K/raw/179_OD_4907_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1703_OD_16532_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16571_Volume',
+                   '/home/hxie1/data/BES_3K/raw/1703_OD_16531_Volume', '/home/hxie1/data/BES_3K/raw/1703_OD_16582_Volume',
+                   '/home/hxie1/data/BES_3K/raw/1703_OD_16585_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/5191_OD_29751_Volume', '/home/hxie1/data/BES_3K/raw/5191_OD_29755_Volume']
+Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/34127_OD_24960_Volume', '/home/hxie1/data/BES_3K/raw/34127_OD_26784_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/563_OD_5953_Volume', '/home/hxie1/data/BES_3K/raw/563_OD_5957_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1426_OD_16481_Volume', '/home/hxie1/data/BES_3K/raw/1426_OD_16511_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6892_OD_22210_Volume', '/home/hxie1/data/BES_3K/raw/6892_OD_27754_Volume']

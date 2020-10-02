@@ -1,6 +1,6 @@
 # statistics dataset
 
-gtPath= "/home/hxie1/data/BES_3K/GTs/BESClinicalGT.csv"
+gtPath= "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 
 
 keysList=[
