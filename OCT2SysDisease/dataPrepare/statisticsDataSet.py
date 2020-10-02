@@ -38,9 +38,11 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
     b1Count = 0
     N = 0
 
+    emptyValueIDList = []
     for ID in IDList:
         value = gtDict[int(ID)][key]
         if -100 == float(value):
+            emptyValueIDList.append(ID)
             continue
         N +=1
         if valueType=="binary":
@@ -89,6 +91,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
     else:
         print("valueType error")
         assert False
+    print(f"\n emptyValueIDList = \n{emptyValueIDList}")
     print("\n")
 
 def printUsage(argv):
