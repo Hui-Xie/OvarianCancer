@@ -141,5 +141,41 @@ Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/563_OD_5953_Volume', '/home/hxi
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/1426_OD_16481_Volume', '/home/hxie1/data/BES_3K/raw/1426_OD_16511_Volume']
 Mulitple ID files: ['/home/hxie1/data/BES_3K/raw/6892_OD_22210_Volume', '/home/hxie1/data/BES_3K/raw/6892_OD_27754_Volume']
 
+# ID name strange:
+ID: 5320, and 5320.1; 6084 and 6084.1 are different patients
+
+# original raw data contain .1 volume:
+ls -ld *.*_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:29 2697.1_OD_7130_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:27 2697.1_OS_7136_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:32 4453.1_OD_23184_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:31 4453.1_OS_23187_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:30 4912.1_OD_30008_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:34 4912.1_OS_30012_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:25 5320.1_OD_26315_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:27 5320.1_OS_26320_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:32 6084.1_OD_17542_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:33 6084.1_OS_17546_Volume
+
+As voluem image save in integer Id directory, all above *.1 ID change 9*1 ID, eg. 2697.1 -> 926971
+modify:
+1  modify clinincal data 5 rows in the BESClinicalGT_Analysis.xlsx
+2  modify 10 volume name,eg. 2697.1 -> 926971;
+
+below volumes are original *.1*_Volume:
+[c-xwu000:raw]#ls -ld 9????1_*_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:29 926971_OD_7130_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:27 926971_OS_7136_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:32 944531_OD_23184_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:31 944531_OS_23187_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:30 949121_OD_30008_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:34 949121_OS_30012_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:25 953201_OD_26315_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:27 953201_OS_26320_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:32 960841_OD_17542_Volume
+drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:33 960841_OS_17546_Volume
+
+
+
 
 
