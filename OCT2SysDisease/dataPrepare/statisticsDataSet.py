@@ -44,6 +44,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
             continue
         N +=1
         if valueType=="binary":
+            value = int(value)
             if 0 == value:
                 b0Count +=1
             elif 1 == value:
@@ -53,6 +54,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
                 assert False
 
         elif valueType == "number":
+            value = float(value)
             if 1 ==N:
                 minV = value
                 maxV = value
@@ -62,6 +64,7 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
                 maxV = value if value > maxV else maxV
                 avgV +=value
         elif valueType == "12binary":
+            value = int(value)
             if 1 == value:
                 b0Count += 1
             elif 2 == value:
