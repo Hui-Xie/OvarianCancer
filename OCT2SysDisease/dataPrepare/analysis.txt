@@ -190,7 +190,7 @@ drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:33 960841_OS_17546_V
 
 Oct 2nd, 2020
 Data division and basic statistics before coding:
-below branket() indicates patients number.
+below bracket() indicates patients number.
 
                     Training(2034)         Validation(548)     Test(560)
 value               0,       1 ,          0,        1,       0,      1
