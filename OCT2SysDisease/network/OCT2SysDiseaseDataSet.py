@@ -2,14 +2,18 @@ from torch.utils import data
 import numpy as np
 import random
 import torch
-import SimpleITK as sitk
-from OVTools import readGTDict8Cols, readGTDict6Cols
 
+import glob
+import fnmatch
 
-class OVDataSet(data.Dataset):
+import sys
+sys.path.append(".")
+from OCT2SysDiseaseTools import readBESClinicalCsv
+
+class OCT2SysDiseaseDataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None):
         '''
-        Ovarian Cancer data set Manager
+
         :param mode: training, validation, test
         :param hps:
         :param transform:
@@ -20,35 +24,47 @@ class OVDataSet(data.Dataset):
 
         if mode == "training":
             IDPath = hps.trainingDataPath
-            gtPath = hps.trainingGTPath
         elif mode == "validation":
             IDPath = hps.validationDataPath
-            gtPath = hps.validationGTPath
         elif mode == "test":
             IDPath = hps.testDataPath
-            gtPath = hps.testGTPath
         else:
-            print(f"OVDataSet mode error")
+            print(f"OCT2SysDiseaseDataSet mode error")
             assert False
 
-
-        self.m_imagesPath = hps.dataDir
+        # read GT
+        self.m_labels = readBESClinicalCsv(hps.GTPath)
 
         with open(IDPath, 'r') as idFile:
-            MRNList = idFile.readlines()
-        MRNList = [item[0:-1] for item in MRNList]  # erase '\n'
-        MRNList = ['0'+item if (len(item) == 7) else item  for item in MRNList]
-        self.m_IDs = MRNList
-
-        if 8 == hps.colsGT:
-            self.m_labels = readGTDict8Cols(gtPath)
-        else:
-            self.m_labels = readGTDict6Cols(gtPath)
+            IDList = idFile.readlines()
+        IDList = [item[0:-1] for item in IDList]  # erase '\n'
 
         self.m_transform = transform
 
+        # get all correct volume numpy path
+        volumeList = glob.glob(hps.dataDir + "/*_"+hps.ODOS+"_*_Volume.npy")
+        nonexistIDList = []
+
+        # make sure ID and volume has strict corresponding order
+        self.m_volumesPath = []
+        self.m_IDs = []
+        for ID in IDList:
+            resultList = fnmatch.filter(volumeList, "*/" + ID + "_" + hps.ODOS+"_*_Volume.npy")
+            length = len(resultList)
+            if 0 == length:
+                nonexistIDList.append(ID)
+            elif length > 1:
+                print(f"Mulitple ID files: {resultList}")
+            else:
+                self.m_volumesPath.append(resultList[0])
+                self.m_IDs.append[ID]
+        if len(nonexistIDList) > 0:
+            print(f"Error:  nonexistIDList:\n {nonexistIDList}")
+            assert False
+
+
     def __len__(self):
-        return len(self.m_IDs)
+        return len(self.m_volumesPath)
 
     def getGTDict(self):
         return self.m_labels
@@ -84,40 +100,17 @@ class OVDataSet(data.Dataset):
 
     def __getitem__(self, index):
         epsilon = 1e-8
-        MRN = self.m_IDs[index]
+        ID = self.m_IDs[index]
 
         labels= []
         if self.hps.existGTLabel:
-            labels = self.m_labels[MRN]
+            labels = self.m_labels[int(ID)]
 
-        # read nrrd image
-        #volumePath = self.m_imagesPath+"/" +MRN+"_CT.nrrd"
-        #itkImage = sitk.ReadImage(volumePath)
-        #npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
-
-        volumePath = self.m_imagesPath+"/" +MRN+"_CT.npy"
+        volumePath = self.m_volumesPath[index]
         npVolume = np.load(volumePath)
 
         data = torch.from_numpy(npVolume).to(device=self.hps.device, dtype=torch.float32)
         S,H,W = data.shape
-
-        # scale down 1/2 in H and W respectively
-        # data = data[:, 0:-1:2, 0:-1:2]
-
-        # Sample a fixed N slices
-        N = self.hps.sampleSlicesPerPatient
-        sectionLen = S//N
-        sampleSlices = []
-        for i in range(N):
-            start = i*sectionLen
-            end = (i+1)*sectionLen
-            if end >= S:
-                end = S-1
-            if self.hps.randomSliceSample:
-                sampleSlices.append(random.choice(list(range(start,end))))
-            else:
-                sampleSlices.append((start+end)//2)  # fixed slice sample
-        data = data[sampleSlices,:,:]
 
         # transform for data augmentation
         if self.m_transform:
@@ -140,7 +133,7 @@ class OVDataSet(data.Dataset):
 
         result = {"images": data,
                   "GTs": labels,
-                  "IDs": MRN
+                  "IDs": ID
                  }
         return result
 

@@ -31,8 +31,8 @@ class OVDataSet_TTA(data.Dataset):
             IDPath = hps.testDataPath
             gtPath = hps.testGTPath
         else:
-            assert False
             print(f"OVDataSet mode error")
+            assert False
 
         self.m_imagesPath = hps.dataDir
 
@@ -103,7 +103,7 @@ class OVDataSet_TTA(data.Dataset):
             volumePath = self.m_imagesPath+"/" +MRN+"_CT.npy"
             npVolume = np.load(volumePath)
 
-            data = torch.from_numpy(npVolume).to(device)
+            data = torch.from_numpy(npVolume).to(device=self.hps.device, dtype=torch.float32)
             S,_,_ = data.shape
 
             # Sample a fixed N slices

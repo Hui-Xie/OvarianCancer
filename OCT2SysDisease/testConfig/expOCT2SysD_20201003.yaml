@@ -7,7 +7,7 @@ learningRate: 0.1
 
 #data source
 existGTLabel: True
-dataDir:  "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_H281_W281"
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes"
 
 trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv"
 validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv"
@@ -15,6 +15,7 @@ testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv"
 
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+ODOS: "OD"  # right or left eye
 
 
 # Network config
@@ -23,8 +24,8 @@ imageH: 512
 imageW: 512
 slicesPerEye: 31
 bothEyes: False  # choose all OD eyes
-inputChannels: 1 # rawImage + gradChannels(W,H)
-gradChannels: 0   # the added gradient channels beside raw image channel
+inputChannels: 3 # rawImage + gradChannels(W,H)
+gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 outputChannels: 1280  # output feature channels before the classifier
 useGlobalMean: True   # True uses global mean, and False will use IQR+std

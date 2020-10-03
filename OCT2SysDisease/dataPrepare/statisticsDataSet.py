@@ -13,8 +13,8 @@ keysList=[
 
 
 import sys
-sys.path.append(".")
-from readClinicalGT import readBESClinicalCsv
+sys.path.append("..")
+from network.OCT2SysDiseaseTools import readBESClinicalCsv
 
 def statisticsData(dataSetIDPath, key="", valueType=None):
     '''

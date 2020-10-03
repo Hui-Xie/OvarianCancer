@@ -200,7 +200,7 @@ hypertension:       44.4%  55.6%         44.9%     55.1%    44.3%   55.7%
 gender:             42.8%,  57.2%,       45.6%    54.4%,    45.4%,  54.6%
 
 
-                      Training(2034)         Validation(548)         Test(560)
+                      Training(2034)         Validation(548)            Test(560)
 value               min,   avg,    max,      min,  avg,   max,         min, avg, max
 age                 50,    64.0,   93,       50,   60.6,  88,          50,  64.5, 87
 
