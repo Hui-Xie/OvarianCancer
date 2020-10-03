@@ -220,3 +220,30 @@ value               min,   avg,    max,      min,   avg,   max,         min,   a
 BP_Diastolic:       31,    69 ,    117       36,    69,    118          38,    70,   113
 
 
+# Oct 3rd, 2020:
+# check all volumes has 31 slices from the *_DelNonexist.csv list
+(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv
+total 2034 IDs in /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv
+total 3252 OD volumes in /home/hxie1/data/BES_3K/W512NumpyVolumes
+find 2031 corresponding volumes with ID
+NonExistIDList: ['574', '2750', '120035']
+total 3 IDs nonexist
+output /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final.csv
+(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv
+total 548 IDs in /home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv
+total 3252 OD volumes in /home/hxie1/data/BES_3K/W512NumpyVolumes
+find 546 corresponding volumes with ID
+NonExistIDList: ['358', '1207']
+total 2 IDs nonexist
+output /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final.csv
+(base) [c-xwu000:dataPrepare]#python3.7 checkFileExist.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
+total 560 IDs in /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
+total 3252 OD volumes in /home/hxie1/data/BES_3K/W512NumpyVolumes
+find 559 corresponding volumes with ID
+NonExistIDList: ['367']
+total 1 IDs nonexist
+output /home/hxie1/data/BES_3K/GTs/testID_delNonExist_final.csv
+
+Final dataset division in the *_final.csv
+train: 2031; validation: 546;  Test: 559;
+
