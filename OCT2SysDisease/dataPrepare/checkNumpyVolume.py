@@ -37,8 +37,8 @@ subplot2 = plt.subplot(rowSubplot,colSubplot, 2)
 subplot2.imshow(volume[s2], cmap='gray')
 subplot2.axis('off')
 
-outputFilename, ext = os.path.split(os.path.basename(volumePath))
-outputFilename +="_rand2slices.png"
+outputFilename, ext = os.path.splitext(os.path.basename(volumePath))
+outputFilename = outputFilename + "_rand2slices.png"
 
 plt.savefig(os.path.join(outputDir, outputFilename), dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
