@@ -1,7 +1,8 @@
 # check whether the OCT Volume exist
 
 # dataSetIDPath = "/home/hxie1/data/BES_3K/GTs/testID.csv"
-rawPath = "/home/hxie1/data/BES_3K/raw"
+# rawPath = "/home/hxie1/data/BES_3K/raw"  # volume diretories
+rawPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes"  # in numpy file format
 
 import glob
 import fnmatch
@@ -21,14 +22,14 @@ def main():
     print(f"total {rawIDLen} IDs in {dataSetIDPath}")
 
     # get all volume List
-    volumeODList = glob.glob(rawPath + f"/*_OD_*_Volume")
+    volumeODList = glob.glob(rawPath + f"/*_OD_*_Volume.npy")
     print(f"total {len(volumeODList)} OD volumes in {rawPath}")
 
     N= 0
     nonexistIDList = []
     existIDList = []
     for ID in IDList:
-        resultList = fnmatch.filter(volumeODList, "*/"+ID+"_OD_*_Volume")
+        resultList = fnmatch.filter(volumeODList, "*/"+ID+"_OD_*_Volume.npy")
         length = len(resultList)
         if 0== length:
             nonexistIDList.append(ID)
@@ -44,7 +45,7 @@ def main():
     # output updated existID list
     if N < rawIDLen:
         filepath, ext = os.path.splitext(dataSetIDPath)
-        updatedIDPath = filepath + "_delNonExist"+ ext
+        updatedIDPath = filepath + "_final"+ ext
         with open(updatedIDPath, "w") as file:
             for ID in existIDList:
                 file.write(f"{ID}\n")
