@@ -21,7 +21,7 @@ segsDir = "/home/hxie1/data/OCT_JHU/preprocessedData/correctedLabel"
 outputDir = "/home/hxie1/data/OCT_JHU/numpy"
 
 def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):
-    # image in slices, Heigh, Width axis order
+    # image in slices, Height, Width axis order
     # label in slices, NumSurfaces, Width axis order
     if len(imagesList) ==0:
         return

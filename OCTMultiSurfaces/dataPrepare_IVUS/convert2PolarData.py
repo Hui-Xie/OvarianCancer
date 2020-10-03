@@ -35,7 +35,7 @@ segsDir = "/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1"
 outputDir = "/home/hxie1/data/IVUS/polarNumpy"
 
 def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):
-    # polar image in (slices, Heigh, Width) axis order
+    # polar image in (slices, Height, Width) axis order
     # polar label in (slices, C, W) axis order, where N is 360 representing degree from 0 to 359
     if len(imagesList) ==0:
         return

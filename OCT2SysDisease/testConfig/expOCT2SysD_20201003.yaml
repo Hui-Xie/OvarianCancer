@@ -9,14 +9,13 @@ learningRate: 0.1
 existGTLabel: True
 dataDir:  "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_H281_W281"
 
-trainingDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/trainingSetMRN.txt"
-validationDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/validationSetMRN.txt"
-testDataPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/testSetMRN.txt"
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv"
 
-trainingGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/trainingSetGroundTruth.csv"
-validationGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/validationSetGroundTruth.csv"
-testGTPath: "/home/hxie1/data/OvarianCancerCT/survivalPredict/8ColsGT/testSetGroundTruth.csv"
-colsGT: 8
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+
 
 # Network config
 network: "OCT2SysDiseaseNet_A"

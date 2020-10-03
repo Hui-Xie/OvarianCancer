@@ -33,7 +33,7 @@ patientsListFile = os.path.join(outputDir, "patientsList.txt")
 device = torch.device("cuda:0")
 
 def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPatientsIDFile):
-    # image in slices, Heigh, Width axis order
+    # image in slices, Height, Width axis order
     # label in slices, NumSurfaces, Width axis order
     if len(volumesList) ==0:
         return

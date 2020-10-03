@@ -19,7 +19,7 @@ outputDir = "/home/hxie1/data/OCT_Tongren/numpy/glaucomaRaw_W512"
 patientsListFile = os.path.join(outputDir, "patientsList.txt")
 
 def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
-    # image in slices, Heigh, Width axis order
+    # image in slices, Height, Width axis order
     if len(volumesList) ==0:
         return
 

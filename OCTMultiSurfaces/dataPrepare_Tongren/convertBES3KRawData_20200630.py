@@ -21,7 +21,7 @@ outputDir = "/home/hxie1/data/BES_3K/numpy/W512"
 patientsListFile = os.path.join(outputDir, "patientsList.txt")
 
 def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
-    # image in slices, Heigh, Width axis order
+    # image in slices, Height, Width axis order
     if len(volumesList) ==0:
         return
 
@@ -55,7 +55,7 @@ def main():
         patientsList = glob.glob(volumesDir + f"/*_Volume")
         patientsList.sort()
 
-        # check each volume has same number of imagess
+        # check each volume has same number of images
         errorVolumesList= []
         errorVolumesNum = []
         correctVolumesList = []
