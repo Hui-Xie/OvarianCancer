@@ -188,7 +188,35 @@ drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:27 953201_OS_26320_V
 drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:32 960841_OD_17542_Volume
 drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:33 960841_OS_17546_Volume
 
+Oct 2nd, 2020
+Data division and basic statistics before coding:
+below branket() indicates patients number.
+
+                    Training(2034)         Validation(548)     Test(560)
+value               0,       1 ,          0,        1,       0,      1
+hypertension:       44.4%  55.6%         44.9%     55.1%    44.3%   55.7%
+
+                    1,       2 ,          1,        2,       1,       2
+gender:             42.8%,  57.2%,       45.6%    54.4%,    45.4%,  54.6%
 
 
+                      Training(2034)         Validation(548)         Test(560)
+value               min,   avg,    max,      min,  avg,   max,         min, avg, max
+age                 50,    64.0,   93,       50,   60.6,  88,          50,  64.5, 87
+
+
+                       Training(1853)           Validation(547)              Test(560)
+value               min,   avg,    max,      min,   avg,   max,         min,   avg,   max
+AxialLength         18.96, 23.22, 30.88      19.39, 23.25, 30.69        21.09, 23.25, 26.76
+
+
+                       Training(2033)           Validation(548)              Test(560)
+value               min,   avg,    max,      min,   avg,   max,         min,   avg,   max
+BP_Systolic:        78 ,   129 ,   217       74,    130,   216          70,    130,   205
+
+
+                       Training(2034)           Validation(548)              Test(560)
+value               min,   avg,    max,      min,   avg,   max,         min,   avg,   max
+BP_Diastolic:       31,    69 ,    117       36,    69,    118          38,    70,   113
 
 
