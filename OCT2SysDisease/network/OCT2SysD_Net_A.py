@@ -104,6 +104,11 @@ class OCT2SysD_Net_A(BasicModel):
         GT = GTs[GTKey].to(device=device, dtype=torch.float32)
         bceFunc = nn.BCEWithLogitsLoss(pos_weight=posWeight.to(device))
         loss = bceFunc(x, GT)
+
+        if torch.isnan(loss) or torch.isinf(loss):  # detect NaN
+            print(f"Error: find NaN loss at epoch {self.m_epoch}")
+            assert False
+
         return predict, predictProb, loss
 
 
