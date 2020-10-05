@@ -10,7 +10,7 @@ import sys
 sys.path.append("../..")
 from framework.SE_BottleNeck import  V3Bottleneck
 
-class OCT2SysDiseaseNet_A(nn.Module):
+class OCT2SysD_Net_A(nn.Module):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps
@@ -90,7 +90,7 @@ class OCT2SysDiseaseNet_A(nn.Module):
     def computeBinaryLoss(self, x, GTs=None, GTKey="", posWeight=None):
         '''
          For binary logits loss
-        :param x:
+        :param x: B,C,1,1
         :param GTs:
         :return:
         '''
@@ -103,7 +103,7 @@ class OCT2SysDiseaseNet_A(nn.Module):
         GT = GTs[GTKey].to(device=device, dtype=torch.float32)
         bceFunc = nn.BCEWithLogitsLoss(pos_weight=posWeight.to(device))
         loss = bceFunc(x, GT)
-        return predict, loss
+        return predict, predictProb, loss
 
 
 

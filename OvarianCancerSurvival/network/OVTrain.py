@@ -20,6 +20,8 @@ from OVTools import *
 sys.path.append("../..")
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
+from framework.measure import  *
+
 
 
 def printUsage(argv):

@@ -4,7 +4,7 @@ import random
 import torch
 import math
 
-class OCT2SysDiseaseDataTransform(object):
+class OCT2SysD_Transform(object):
     def __init__(self, hps):
         '''
         without random slice.

@@ -5,7 +5,7 @@ gtPath= "/home/hxie1/data/BES_3K/GTs/BESClinicalGT.csv"
 
 import sys
 sys.path.append("..")
-from network.OCT2SysDiseaseTools import readBESClinicalCsv
+from network.OCT2SysD_Tools import readBESClinicalCsv
 
 def main():
     gtDict = readBESClinicalCsv(gtPath)

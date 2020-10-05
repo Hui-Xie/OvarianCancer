@@ -2,7 +2,7 @@ debug: True
 
 # train config
 device: torch.device('cuda:3')   #GPU ID
-batchSize: 3  # fixed batchsize, make sure at least 2 sample are negative.
+batchSize: 4  # fixed batchsize, make sure at least 2 sample are negative.
 learningRate: 0.1
 
 #data source
@@ -20,7 +20,7 @@ ODOS: "OD"  # right(OD) or left(OS) eye
 
 
 # Network config
-network: "OCT2SysDiseaseNet_A"
+network: "OCT2SysD_Net_A"
 imageH: 512
 imageW: 512
 slicesPerEye: 31
@@ -33,19 +33,8 @@ useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
 
 classifierWidth: [960, 620, 1] # [0] element is better is the times of 62
+hypertensionClassPercent: [0.4441, 0.5559]
 
-widthResidualHead: 4
-residudalClassPercent: [0.1858, 0.5311, 0.0442, 0.2389]  # 6ColsGT proportion of calss
-widthChemoHead: 1
-chemoClassPercent: [0.2727, 0.7273] # for 8ColsGT    #[0.266,0.734] for 6ColsGT
-widthAgeHead: 100
-widthSurvivalHead: 100
-widthOptimalResultHead: 1
-optimalClassPercent: [0.3125, 0.6875]  # 8ColsGT  0,1 proportion
-lossWeights: [1.0, 1.0, 1.0, 1.0, 1.0]  # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order
-predictHeads: [False, True, False, False, False] # for ResidualTumorSize, ChemoResponse, Age, SurvivalTime in order, OptimalResult
-
-.
 
 # data augmentation
 augmentation: True

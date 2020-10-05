@@ -8,9 +8,9 @@ import fnmatch
 
 import sys
 sys.path.append(".")
-from OCT2SysDiseaseTools import readBESClinicalCsv
+from OCT2SysD_Tools import readBESClinicalCsv
 
-class OCT2SysDiseaseDataSet(data.Dataset):
+class OCT2SysD_DataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None):
         '''
 
