@@ -2,7 +2,7 @@ debug: True
 
 # train config
 device: torch.device('cuda:3')   #GPU ID
-batchSize: 1  # fixed batchsize, make sure at least 2 sample are negative.
+batchSize: 4  # fixed batchsize, make sure at least 2 sample are negative.
 learningRate: 0.1
 
 #data source
@@ -25,8 +25,8 @@ imageH: 512
 imageW: 512
 slicesPerEye: 31
 bothEyes: False  # choose all OD eyes
-inputChannels: 3 # rawImage + gradChannels(W,H)
-gradChannels: 2   # the added gradient channels beside raw image channel
+inputChannels: 1 # rawImage + gradChannels(W,H)
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 outputChannels: 1280  # output feature channels before the classifier
 useGlobalMean: True   # True uses global mean, and False will use IQR+std

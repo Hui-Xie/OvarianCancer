@@ -122,6 +122,9 @@ def main():
                     trPredictProbDict[ID]['Prob1'] = predictProb[i]
                     trPredictProbDict[ID]['GT']    = batchData['GTs'][appKey][i]
 
+            # debug
+            break
+
         trHyperTLoss /= trBatch
 
         if hps.debug:
@@ -164,6 +167,9 @@ def main():
                     predictProbDict[ID]['Prob1'] = predictProb[i]
                     predictProbDict[ID]['GT'] = batchData['GTs'][appKey][i]
 
+            # debug
+            break
+
             validHyperTLoss /= validBatch
 
         gtDict = validationData.getGTDict()
@@ -188,6 +194,7 @@ def main():
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/validationSetPredictProb_{timeStr}.csv")
+            print("debug  ===")
 
 
 

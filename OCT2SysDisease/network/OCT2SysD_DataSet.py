@@ -118,6 +118,8 @@ class OCT2SysD_DataSet(data.Dataset):
 
         if 0 != self.hps.gradChannels:
             data = self.addVolumeGradient(data)  # S,3,H,W
+        else:
+            data = data.unsqueeze(dim=1)  # S,1,H,W
 
         # normalization before output to dataloader
         # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
@@ -129,9 +131,9 @@ class OCT2SysD_DataSet(data.Dataset):
         std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
         std = std.expand_as(data)
         mean = mean.expand_as(data)
-        data = (data - mean) / (std + epsilon)  # size: Sx3xHxW
+        data = (data - mean) / (std + epsilon)  # size: Sx3xHxW, or S,1,H,W
 
-        result = {"images": data,  # S,3,H,W
+        result = {"images": data,  # S,3,H,W or S,1,H,W
                   "GTs": labels,
                   "IDs": ID
                  }
