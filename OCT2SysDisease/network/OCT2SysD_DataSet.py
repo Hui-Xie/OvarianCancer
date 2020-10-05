@@ -57,7 +57,7 @@ class OCT2SysD_DataSet(data.Dataset):
                 print(f"Mulitple ID files: {resultList}")
             else:
                 self.m_volumesPath.append(resultList[0])
-                self.m_IDs.append[ID]
+                self.m_IDs.append(ID)
         if len(nonexistIDList) > 0:
             print(f"Error:  nonexistIDList:\n {nonexistIDList}")
             assert False

@@ -9,8 +9,9 @@ import torch.nn as nn
 import sys
 sys.path.append("../..")
 from framework.SE_BottleNeck import  V3Bottleneck
+from framework.BasicModel import  BasicModel
 
-class OCT2SysD_Net_A(nn.Module):
+class OCT2SysD_Net_A(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps

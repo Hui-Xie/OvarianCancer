@@ -28,6 +28,12 @@ def readBESClinicalCsv(gtPath):
                 gtDict[ID] = {}
                 for c in range(1, nCols):
                     key = tableHead[c]
-                    value = row[c] if 0 != len(row[c]) else -100
+                    if 0 != len(row[c]):
+                        if '.' in row[c]:
+                            value = float(row[c])
+                        else:
+                            value = int(row[c])
+                    else:
+                        value = -100
                     gtDict[ID][key] = value
     return gtDict
