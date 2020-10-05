@@ -114,7 +114,7 @@ def main():
 
             if hps.debug:
                 for i in range(len(batchData['IDs'])):
-                    ID = batchData['IDs'][i]  # [0] is for list to string
+                    ID = int(batchData['IDs'][i])  # [0] is for list to string
                     trPredictDict[ID] = {}
                     trPredictDict[ID][appKey] = predict[i].item()
 
@@ -123,7 +123,7 @@ def main():
                     trPredictProbDict[ID]['GT']    = batchData['GTs'][appKey][i]
 
             # debug
-            break
+            # break
 
         trHyperTLoss /= trBatch
 
@@ -159,7 +159,7 @@ def main():
                 validBatch += 1
                 
                 for i in range(len(batchData['IDs'])):
-                    ID = batchData['IDs'][i]  # [0] is for list to string
+                    ID = int(batchData['IDs'][i])  # [0] is for list to string
                     predictDict[ID]={}
                     predictDict[ID][appKey] = predict[i].item()
 
@@ -167,8 +167,8 @@ def main():
                     predictProbDict[ID]['Prob1'] = predictProb[i]
                     predictProbDict[ID]['GT'] = batchData['GTs'][appKey][i]
 
-            # debug
-            break
+                # debug
+                # break
 
             validHyperTLoss /= validBatch
 
@@ -194,7 +194,7 @@ def main():
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/validationSetPredictProb_{timeStr}.csv")
-            print("debug  ===")
+            # print("debug  ===")
 
 
 
