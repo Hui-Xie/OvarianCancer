@@ -1,13 +1,15 @@
 
 import torch.nn as nn
 import torch
-import math
 
 import sys
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
-from framework.MobileNetV3_O import MobileNetV3_O
-from framework.VGG_O import VGG_O
+
+sys.path.append(".")
+from MobileNetV3_O import MobielNetV3_O
+from VGG_O import VGG_O
+
 
 class ResponseNet(BasicModel):
     def __init__(self, hps=None):
