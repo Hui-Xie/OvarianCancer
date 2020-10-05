@@ -1,9 +1,10 @@
 
 '''
 input: BxSlicePerEye, inputC, H, W
-output: B, SlicePerEyexC  to classification head
+output: B, outputC, 1,1  to classification head
 
 '''
+import torch
 import torch.nn as nn
 import sys
 sys.path.append("../..")
@@ -68,6 +69,11 @@ class OCT2SysDiseaseNet_A(nn.Module):
             )
 
     def forward(self, x):
+        '''
+
+        :param x:  B*S, 3,H,W
+        :return:   B,C, 1,1
+        '''
         x = self.m_inputConv(x)
         for bottle in self.m_bottleneckList:
             x = bottle(x)
@@ -81,8 +87,23 @@ class OCT2SysDiseaseNet_A(nn.Module):
         x = self.m_classifier(x)
         return x
 
-    def computeLoss(self, x, GTs=None):
-        pass
+    def computeBinaryLoss(self, x, GTs=None, GTKey="", posWeight=None):
+        '''
+         For binary logits loss
+        :param x:
+        :param GTs:
+        :return:
+        '''
+        B,C,H,W = x.shape
+        device = x.device
+
+        x = x.view(B)
+        predictProb = torch.sigmoid(x)
+        predict = (predictProb >= 0.50).int().view(B)  # a vector of [0,1]
+        GT = GTs[GTKey].to(device=device, dtype=torch.float32)
+        bceFunc = nn.BCEWithLogitsLoss(pos_weight=posWeight.to(device))
+        loss = bceFunc(x, GT)
+        return predict, loss
 
 
 

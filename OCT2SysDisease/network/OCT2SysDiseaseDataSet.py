@@ -114,10 +114,10 @@ class OCT2SysDiseaseDataSet(data.Dataset):
 
         # transform for data augmentation
         if self.m_transform:
-            data = self.m_transform(data)  # size: BxHxW
+            data = self.m_transform(data)  # size: SxHxW
 
         if 0 != self.hps.gradChannels:
-            data = self.addVolumeGradient(data)
+            data = self.addVolumeGradient(data)  # S,3,H,W
 
         # normalization before output to dataloader
         # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
@@ -129,13 +129,14 @@ class OCT2SysDiseaseDataSet(data.Dataset):
         std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
         std = std.expand_as(data)
         mean = mean.expand_as(data)
-        data = (data - mean) / (std + epsilon)  # size: Bx3xHxW
+        data = (data - mean) / (std + epsilon)  # size: Sx3xHxW
 
-        result = {"images": data,
+        result = {"images": data,  # S,3,H,W
                   "GTs": labels,
                   "IDs": ID
                  }
-        return result
+        return result  # B,S,3,H,W
+        # output need to merge th B,S dimension into one dimension.
 
 
 
