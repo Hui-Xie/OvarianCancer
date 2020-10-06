@@ -14,7 +14,7 @@ keysList=[
 
 import sys
 sys.path.append("..")
-from network.OCT2SysDiseaseTools import readBESClinicalCsv
+from network.OCT2SysD_Tools import readBESClinicalCsv
 
 def statisticsData(dataSetIDPath, key="", valueType=None):
     '''

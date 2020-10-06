@@ -253,4 +253,11 @@ total 2031 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final
 values for hypertension_bp_plus_history$ have 2031 records
 0 rate: 0.4441161989167898; 1 rate: 0.5558838010832102
 
+# Oct 6th, 2020
+tail a small dataset for pretrain
+train: 200, validation: 50
+which are extracted from the first 200, and first 50 from the final dataset.
+
+
+
 
