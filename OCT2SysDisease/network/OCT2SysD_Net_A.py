@@ -10,6 +10,7 @@ import sys
 sys.path.append("../..")
 from framework.SE_BottleNeck import  V3Bottleneck
 from framework.BasicModel import  BasicModel
+import math
 
 class OCT2SysD_Net_A(BasicModel):
     def __init__(self, hps=None):
@@ -69,6 +70,8 @@ class OCT2SysD_Net_A(BasicModel):
             nn.Conv2d(hps.classifierWidth[1], hps.classifierWidth[2], kernel_size=1, stride=1, padding=0, bias=False)
             )
 
+        self._initializeWeights()
+
     def forward(self, x):
         '''
 
@@ -110,6 +113,28 @@ class OCT2SysD_Net_A(BasicModel):
             assert False
 
         return predict, predictProb, loss
+
+    def _initializeWeights(self):
+        '''
+        refer to https://github.com/xiaomi-automl/MoGA/blob/master/models/MoGA_A.py
+
+        :return:
+        '''
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+                if m.bias is not None:
+                    m.bias.data.zero_()
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.Linear):
+                n = m.weight.size(0)  # fan-out
+                init_range = 1.0 / math.sqrt(n)
+                m.weight.data.uniform_(-init_range, init_range)
+                m.bias.data.zero_()
+
 
 
 
