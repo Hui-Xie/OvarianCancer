@@ -11,6 +11,9 @@ sys.path.append("../..")
 
 from framework.BasicModel import  BasicModel
 from framework.Conv2DFeatureNet import  Conv2DFeatureNet
+
+sys.path.append(".")
+from MobileNetV3_OCT2SysD import MobileNetV3_OCT2SysD
 import math
 
 class OCT2SysD_Net_A(BasicModel):

@@ -8,7 +8,7 @@
 debug: True
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 1  # fixed batchsize, make sure at least 2 sample are negative.
 learningRate: 0.1
 
@@ -39,14 +39,14 @@ bothSideGrad: True # False use singleSideGrad
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
 
-classifierWidth: [960, 620, 1] # [0] element is better is the times of 62
+classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
 hypertensionClassPercent: [0.4441, 0.5559]
 
-featureNet: "Conv2DFeatureNet" # MobileNetV3_OCT2SysD or Conv2DFeatureNet
+featureNet: "MobileNetV3_OCT2SysD" # or "Conv2DFeatureNet"
 nStartFilters: 16
-nLayers: 6
+nLayers: 7
 outputChannels: 1024  # output feature channels before the classifier for moibleNet v3
-                      # nStartFilter * (2**nLayers) = 16 *(2**6)= 1024
+                      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024
 
 # data augmentation
 augmentation: True
