@@ -63,6 +63,38 @@ def constructUnet(inputChannels, H, W, C, nLayers):
 
     return downPoolings, downLayers, upSamples, upLayers
 
+def construct2DFeatureNet(inputChannels, C, nLayers):
+    '''
+    # symmetric structure in each layer:
+    # downPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
+    #  Pooling->ChannelChange->downLayer
+    #  input to downPooling0: BxinputChannelsxHxW
+    #  output of upSample0:  BxCxHxW
+
+    :param inputChannels:
+    :param C:
+    :param nLayers:
+    :return:
+    '''
+    downPoolings = nn.ModuleList()
+    downLayers = nn.ModuleList()
+    for i in range(nLayers):
+        CPreLayer = C*pow(2, i-1) if i >=1 else C
+        CLayer = C*pow(2, i)  # the channel number in the layer
+        if 0 == i:
+            downPoolings.append(Conv2dBlock(inputChannels, CLayer))
+        else:
+            downPoolings.append(nn.Sequential(
+                nn.MaxPool2d(2, stride=2, padding=0),
+                Conv2dBlock(CPreLayer, CLayer)
+            ))
+
+        downLayers.append(nn.Sequential(
+            Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
+
+    return downPoolings, downLayers
+
+
 def argSoftmax(x, rangeH=None):
     '''
 
