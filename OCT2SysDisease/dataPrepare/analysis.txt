@@ -257,6 +257,15 @@ values for hypertension_bp_plus_history$ have 2031 records
 tail a small dataset for pretrain
 train: 200, validation: 50
 which are extracted from the first 200, and first 50 from the final dataset.
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final_small.csv hypertension_bp_plus_history$ binary
+total 200 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final_small.csv
+values for hypertension_bp_plus_history$ have 200 records
+0 rate: 0.36; 1 rate: 0.64
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final_small.csv hypertension_bp_plus_history$ binary
+total 50 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final_small.csv
+values for hypertension_bp_plus_history$ have 50 records
+0 rate: 0.28; 1 rate: 0.72
 
 
 

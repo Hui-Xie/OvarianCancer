@@ -19,8 +19,8 @@ dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes"
 
 # _delNonExist: delete ID nonexist, and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.
-trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final.csv"
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final.csv"
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final_small.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final_small.csv"
 testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_final.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
@@ -41,7 +41,8 @@ useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
 
 classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
-hypertensionClassPercent: [0.4441, 0.5559]
+# hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
+hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
 featureNet:  "Conv2DFeatureNet" # "MobileNetV3_OCT2SysD"
 nStartFilters: 16
