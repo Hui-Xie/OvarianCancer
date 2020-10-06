@@ -52,6 +52,14 @@ For chemoResponse:
 1: CR, complete response
 0: IR, incomplete response
 
+Oct 6th, 2020, 09:30 meeting.
+Pofessor Wu directed:
+1  For each patient, consider its specific cancer range to choose proper slice range;
+2  and then downsample and upsampel to get uniform image size;
+3  may consider 3D convolution to do this job;
+4  when the new server arrive, ralaunch this job;
+
+
 
 
 
