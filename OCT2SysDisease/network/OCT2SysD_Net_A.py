@@ -39,8 +39,8 @@ class OCT2SysD_Net_A(BasicModel):
             [3, 480, 112, True, 'RE', 1],
             [3, 672, 112, True, 'RE', 1],
             [5, 672, 160, True, 'RE', 2],
-            [5, 960, 160, True, 'RE', 1],
-            [5, 960, 160, True, 'RE', 1],
+            [5, 960, 160, True, 'HS', 1],
+            [5, 960, 160, True, 'HS', 1],
         ]  # for MobileNet V3 big model
         self.m_bottleneckList = nn.ModuleList()
         for kernel, expandSize, outC, SE, NL, stride in bottleneckConfig:

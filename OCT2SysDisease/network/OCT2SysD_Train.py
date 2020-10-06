@@ -132,7 +132,7 @@ def main():
             trHyperTAcc = computeClassificationAccuracy(trGtDict, trPredictDict, appKey)
 
 
-        if hps.debug and (epoch%100==0):
+        if hps.debug and (epoch%10==0):
             curTime = datetime.datetime.now()
             timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
             outputPredictProbDict2Csv(trPredictProbDict, hps.outputDir + f"/trainSetPredictProb_{timeStr}.csv")
