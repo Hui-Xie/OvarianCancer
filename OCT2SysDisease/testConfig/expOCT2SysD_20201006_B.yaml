@@ -42,7 +42,7 @@ dropoutRate: 0.5 # dropout after global average pooling
 classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
 hypertensionClassPercent: [0.4441, 0.5559]
 
-featureNet: "MobileNetV3_OCT2SysD" # or "Conv2DFeatureNet"
+featureNet:  "Conv2DFeatureNet" # "MobileNetV3_OCT2SysD"
 nStartFilters: 16
 nLayers: 7
 outputChannels: 1024  # output feature channels before the classifier for moibleNet v3

@@ -123,7 +123,7 @@ def main():
                     trPredictProbDict[ID]['GT']    = batchData['GTs'][appKey][i]
 
             # debug
-            break
+            # break
 
         trHyperTLoss /= trBatch
 
@@ -168,7 +168,7 @@ def main():
                     predictProbDict[ID]['GT'] = batchData['GTs'][appKey][i]
 
                 # debug
-                break
+                # break
 
             validHyperTLoss /= validBatch
 
