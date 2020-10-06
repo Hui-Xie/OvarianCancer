@@ -55,9 +55,9 @@ class MobileNetV3(nn.Module):
 
         self.m_conv2d_1 = nn.Sequential(
             nn.Conv2d(inC, 960, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm2d(960),
-            #nn.Hardswish()   # hardswish may produce value of 1e+21, which lead following std =inf
-            nn.ReLU6(inplace=True)
+            # nn.BatchNorm2d(960), # this norm will kill information; *** norm should not be before avgPooling ****
+            # nn.Hardswish()   # hardswish may produce value of 1e+21, which lead following std =inf
+            # nn.ReLU6(inplace=True)
         )
 
         # after m_conv2d_1, tensor need global mean on H and W dimension.

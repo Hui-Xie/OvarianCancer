@@ -1,3 +1,11 @@
+# Oct 6th, 2020
+# A  add mobileNet v3 weight initialization
+# B  replace ReLU6 with HS in last 2 layer of mobileNet v3
+# C  add conv2dFeatureNet architecture choice
+# D  use a small dataset for training and validation
+
+
+
 debug: True
 
 # train config
@@ -11,8 +19,8 @@ dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes"
 
 # _delNonExist: delete ID nonexist, and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.
-trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final.csv"
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final.csv"
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final_small.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final_small.csv"
 testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_final.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
@@ -28,13 +36,19 @@ bothEyes: False  # choose all OD eyes
 inputChannels: 3 # rawImage + gradChannels(W,H)
 gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
-outputChannels: 1280  # output feature channels before the classifier
+
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
 
-classifierWidth: [960, 620, 1] # [0] element is better is the times of 62
-hypertensionClassPercent: [0.4441, 0.5559]
+classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
+# hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
+hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
+featureNet:  "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet"
+nStartFilters: 16
+nLayers: 7
+outputChannels: 1024  # output feature channels before the classifier for moibleNet v3
+                      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024
 
 # data augmentation
 augmentation: True

@@ -39,10 +39,10 @@ class MobileNetV3_OCT2SysD(nn.Module):
                 V3Bottleneck(inC, outC, kernel=kernel, stride=stride, expandSize=expandSize, SE=SE, NL=NL))
             inC = outC
 
-        self.m_featureConv = nn.Sequential(
-            nn.Conv2d(inC, hps.outputChannels, kernel_size=1, stride=1, padding=0, bias=False),
-            nn.BatchNorm2d(hps.outputChannels),
-            nn.ReLU6(inplace=True)
+        self.m_outputConv = nn.Sequential(
+            nn.Conv2d(inC, hps.outputChannels, kernel_size=1, stride=1, padding=0, bias=False) #,
+            # nn.BatchNorm2d(hps.outputChannels), #*** norm should not be before avgPooling ****
+            # nn.Hardswish()
         )
 
         self._initializeWeights()
@@ -51,7 +51,7 @@ class MobileNetV3_OCT2SysD(nn.Module):
         x = self.m_inputConv(x)
         for bottle in self.m_bottleneckList:
             x = bottle(x)
-        x = self.m_featureConv(x)
+        x = self.m_outputConv(x)
         return x
 
     def _initializeWeights(self):

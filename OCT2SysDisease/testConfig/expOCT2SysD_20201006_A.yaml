@@ -27,7 +27,7 @@ ODOS: "OD"  # right(OD) or left(OS) eye
 
 # Network config
 network: "OCT2SysD_Net_A"
-imageH: 512
+imageH: 496
 imageW: 512
 slicesPerEye: 31
 bothEyes: False  # choose all OD eyes
