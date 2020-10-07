@@ -42,21 +42,21 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_transform = transform
 
         # get all correct volume numpy path
-        volumeList = glob.glob(hps.dataDir + "/*_"+hps.ODOS+"_*_Volume.npy")
+        sliceList = glob.glob(hps.dataDir + "/*_"+hps.ODOS+"_*_midSlice.npy")
         nonexistIDList = []
 
         # make sure ID and volume has strict corresponding order
-        self.m_volumesPath = []
+        self.m_slicesPath = []
         self.m_IDs = []
         for ID in IDList:
-            resultList = fnmatch.filter(volumeList, "*/" + ID + "_" + hps.ODOS+"_*_Volume.npy")
+            resultList = fnmatch.filter(sliceList, "*/" + ID + "_" + hps.ODOS+"_*_midSlice.npy")
             length = len(resultList)
             if 0 == length:
                 nonexistIDList.append(ID)
             elif length > 1:
                 print(f"Mulitple ID files: {resultList}")
             else:
-                self.m_volumesPath.append(resultList[0])
+                self.m_slicesPath.append(resultList[0])
                 self.m_IDs.append(ID)
         if len(nonexistIDList) > 0:
             print(f"Error:  nonexistIDList:\n {nonexistIDList}")
@@ -64,36 +64,35 @@ class OCT2SysD_DataSet(data.Dataset):
 
 
     def __len__(self):
-        return len(self.m_volumesPath)
+        return len(self.m_slicesPath)
 
     def getGTDict(self):
         return self.m_labels
 
-    def addVolumeGradient(self, volume):
+    def addSliceGradient(self, slice):
         '''
         gradient should use both-side gradient approximation formula: (f_{i+1}-f_{i-1})/2,
         and at boundaries of images, use single-side gradient approximation formula: (f_{i}- f_{i-1})/2
-        :param volume: in size: SxHxW
-        :param gradChannels:  integer
+        :param slice: in size: HxW
         :return:
-                Bx3xHxW, added gradient volume without normalization
+                3xHxW, added gradient volume without normalization
         '''
-        S,H,W =volume.shape
+        H,W =slice.shape
 
-        image_1H = volume[:, 0:-2, :]  # size: S, H-2,W
-        image1H = volume[:, 2:, :]
-        gradH = torch.cat(((volume[:, 1, :] - volume[:, 0, :]).view(S, 1, W),
+        image_1H = slice[0:-2, :]  # size: H-2,W
+        image1H = slice[2:, :]
+        gradH = torch.cat(((slice[1, :] - slice[0, :]).view(1, W),
                            (image1H - image_1H)/2.0,
-                           (volume[:, -1, :] - volume[:, -2, :]).view(S, 1, W)), dim=1)  # size: S, H,W; grad90
+                           (slice[-1, :] - slice[-2, :]).view(1, W)), dim=0)  # size: H,W; grad90
 
-        image_1W = volume[:,:, 0:-2]  # size: S, H,W-2
-        image1W = volume[:, :, 2:]
-        gradW = torch.cat(((volume[:,:, 1] - volume[:,:, 0]).view(S, H, 1),
+        image_1W = slice[:, 0:-2]  # size: H,W-2
+        image1W = slice[:, 2:]
+        gradW = torch.cat(((slice[:, 1] - slice[:, 0]).view(H, 1),
                            (image1W - image_1W)/2,
-                           (volume[:,:, -1] - volume[:,:, -2]).view(S, H, 1)), dim=2)  # size: S, H,W; grad0
+                           (slice[:, -1] - slice[:, -2]).view(H, 1)), dim=1)  # size: H,W; grad0
 
         # concatenate
-        gradVolume = torch.cat((volume.unsqueeze(dim=1), gradH.unsqueeze(dim=1), gradW.unsqueeze(dim=1)), dim=1) # B,3,H,W
+        gradVolume = torch.cat((slice.unsqueeze(dim=0), gradH.unsqueeze(dim=0), gradW.unsqueeze(dim=0)), dim=0) # 3,H,W
 
         return gradVolume
 
@@ -106,20 +105,20 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.hps.existGTLabel:
             labels = self.m_labels[int(ID)]
 
-        volumePath = self.m_volumesPath[index]
-        npVolume = np.load(volumePath)
+        slicePath = self.m_slicesPath[index]
+        npSlice = np.load(slicePath)
 
-        data = torch.from_numpy(npVolume).to(device=self.hps.device, dtype=torch.float32)
-        S,H,W = data.shape
+        data = torch.from_numpy(npSlice).to(device=self.hps.device, dtype=torch.float32)
+        H,W = data.shape
 
         # transform for data augmentation
         if self.m_transform:
-            data = self.m_transform(data)  # size: SxHxW
+            data = self.m_transform(data)  # size: HxW
 
         if 0 != self.hps.gradChannels:
-            data = self.addVolumeGradient(data)  # S,3,H,W
+            data = self.addSliceGradient(data)  # 3,H,W
         else:
-            data = data.unsqueeze(dim=1)  # S,1,H,W
+            data = data.unsqueeze(dim=0)  # 1,H,W
 
         # normalization before output to dataloader
         # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
@@ -133,12 +132,12 @@ class OCT2SysD_DataSet(data.Dataset):
         mean = mean.expand_as(data)
         data = (data - mean) / (std + epsilon)  # size: Sx3xHxW, or S,1,H,W
 
-        result = {"images": data,  # S,3,H,W or S,1,H,W
+        result = {"images": data,  # 3,H,W or 1,H,W
                   "GTs": labels,
                   "IDs": ID
                  }
-        return result  # B,S,3,H,W
-        # output need to merge th B,S dimension into one dimension.
+        return result  # B,3,H,W
+
 
 
 

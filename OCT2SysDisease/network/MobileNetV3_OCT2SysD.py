@@ -11,25 +11,24 @@ class MobileNetV3_OCT2SysD(nn.Module):
         self.m_inputConv = nn.Sequential(
             nn.Conv2d(hps.inputChannels, inC, kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm2d(inC),
-            nn.ReLU6(inplace=True)
+            nn.Hardswish()
         )
 
         bottleneckConfig = [
             # kernel, expandSize, outputChannel,  SE,   NL,  stride,
-            # modify all activations to ReLU6
             [3, 16, 16, False, 'RE', 1],
             [3, 64, 24, False, 'RE', 2],
             [3, 72, 24, False, 'RE', 1],
             [5, 72, 40, True, 'RE', 2],
             [5, 120, 40, True, 'RE', 1],
             [5, 120, 40, True, 'RE', 1],
-            [3, 240, 80, False, 'RE', 2],
-            [3, 200, 80, False, 'RE', 1],
-            [3, 184, 80, False, 'RE', 1],
-            [3, 184, 80, False, 'RE', 1],
-            [3, 480, 112, True, 'RE', 1],
-            [3, 672, 112, True, 'RE', 1],
-            [5, 672, 160, True, 'RE', 2],
+            [3, 240, 80, False, 'HS', 2],
+            [3, 200, 80, False, 'HS', 1],
+            [3, 184, 80, False, 'HS', 1],
+            [3, 184, 80, False, 'HS', 1],
+            [3, 480, 112, True, 'HS', 1],
+            [3, 672, 112, True, 'HS', 1],
+            [5, 672, 160, True, 'HS', 2],
             [5, 960, 160, True, 'HS', 1],
             [5, 960, 160, True, 'HS', 1],
         ]  # for MobileNet V3 big model

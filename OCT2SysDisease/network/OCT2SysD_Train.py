@@ -25,6 +25,7 @@ from framework.measure import  *
 
 def printUsage(argv):
     print("============ Training of OCT to Systemic Disease Network =============")
+    print("=======input data is single middle slice ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -99,9 +100,7 @@ def main():
         trPredictProbDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
-            # merge B and S dimenions:
-            B,S,C,H,W = batchData['images'].shape
-            inputs = batchData['images'].view(B*S, C,H,W)
+            inputs = batchData['images']# B,3,H,W
 
             x = net.forward(inputs)
             predict, predictProb, loss = net.computeBinaryLoss(x, GTs = batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)
@@ -149,8 +148,7 @@ def main():
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
 
                 # merge B and S dimenions:
-                B, S, C, H, W = batchData['images'].shape
-                inputs = batchData['images'].view(B * S, C, H, W)
+                inputs = batchData['images']
 
                 x = net.forward(inputs)
                 predict, predictProb, loss = net.computeBinaryLoss(x, GTs=batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)

@@ -21,10 +21,6 @@ class OCT2SysD_Net_A(BasicModel):
         super().__init__()
         self.hps = hps
 
-        self.hps.spaceD = hps.slicesPerEye
-        if hps.bothEyes:
-            self.hps.spaceD = hps.slicesPerEye * 2
-
         if hps.featureNet == "MobileNetV3_OCT2SysD":
             self.m_featureNet = eval(hps.featureNet)(hps=hps)
         elif hps.featureNet == "Conv2DFeatureNet":
@@ -34,7 +30,7 @@ class OCT2SysD_Net_A(BasicModel):
             assert False
 
 
-        # after m_conv2d_1, tensor need global mean on Slice and H and W dimension.
+        # after m_conv2d_1, tensor need global mean on H and W dimension.
 
         self.m_classifier = nn.Sequential(
             nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=False),
@@ -54,10 +50,9 @@ class OCT2SysD_Net_A(BasicModel):
         '''
         x = self.m_featureNet(x)
 
-        # mean at slice, H and W dimension
+        # mean at H and W dimension
         B, C, H, W = x.shape
-        x = x.view(B // self.hps.spaceD, self.hps.spaceD, C, H, W)
-        x = x.mean(dim=(1,3, 4), keepdim=True).squeeze(dim=1) # B,C,1,1
+        x = x.mean(dim=(-1, -2), keepdim=True) # B,C,1,1
 
         x = self.m_classifier(x)
         return x
