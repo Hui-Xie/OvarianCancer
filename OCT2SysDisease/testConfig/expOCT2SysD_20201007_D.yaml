@@ -6,7 +6,7 @@
 
 # Oct 7th, 2020
 # use single middle slice as input for each patient
-# dropout rate 0.2
+# dropout rate 0.7
 
 
 
@@ -42,7 +42,7 @@ gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
-dropoutRate: 0.2 # dropout after global average pooling
+dropoutRate: 0.8 # dropout after global average pooling
 
 classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
 hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
