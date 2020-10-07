@@ -23,7 +23,7 @@ def saveSliceToNumpy():
         # read image data and clip
         imagesList = glob.glob(volume + f"/*[0-9][0-9].jpg")
         imagesList.sort()
-        numSlices != len(imagesList)
+        numSlices = len(imagesList)
 
         mid = numSlices//2
         imageArray = imread(imagesList[mid])[:,128:640]
