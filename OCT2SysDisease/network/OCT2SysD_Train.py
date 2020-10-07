@@ -182,6 +182,7 @@ def main():
         writer.add_scalar('validation/HypertensionLoss', validHyperTLoss, epoch)
         writer.add_scalar('ValidationAccuracy/HypertensionAcc', hyperTAcc, epoch)
         writer.add_scalar('TrainingAccuracy/HypertensionAcc', trHyperTAcc, epoch) if hps.debug else None
+        writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validHyperTLoss < preValidLoss:
             net.updateRunParameter("validationLoss", validHyperTLoss)
