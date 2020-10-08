@@ -253,6 +253,17 @@ total 2031 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final
 values for hypertension_bp_plus_history$ have 2031 records
 0 rate: 0.4441161989167898; 1 rate: 0.5558838010832102
 
+total 546 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final.csv
+values for hypertension_bp_plus_history$ have 546 records
+0 rate: 0.45054945054945056; 1 rate: 0.5494505494505495
+
+(base) [c-xwu000:dataPrepare]#python3.7 statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist_final.csv hypertension_bp_plus_history$ binary
+total 559 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_final.csv
+values for hypertension_bp_plus_history$ have 559 records
+0 rate: 0.44364937388193204; 1 rate: 0.556350626118068
+
+
+
 # Oct 6th, 2020
 tail a small dataset for pretrain
 train: 200, validation: 50
@@ -266,6 +277,15 @@ values for hypertension_bp_plus_history$ have 200 records
 total 50 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final_small.csv
 values for hypertension_bp_plus_history$ have 50 records
 0 rate: 0.28; 1 rate: 0.72
+
+# Oct 8th, 2020
+delNonExist_final data:
+training: 2031;  0: 44.4%;  1: 55.6%;
+validation: 546; 0: 45.1%;  1: 54.9%;
+test:     559;   0: 44.4%;  1: 55.6%;
+
+
+
 
 
 
