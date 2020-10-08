@@ -7,6 +7,12 @@
 # Oct 7th, 2020
 # use single middle slice as input for each patient
 
+# OCT 8th, 2020
+# A use SGD, instead adaptive optimizer
+# B the input layer uses activation;
+
+
+
 
 
 debug: True
