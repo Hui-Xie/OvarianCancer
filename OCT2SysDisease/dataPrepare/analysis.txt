@@ -284,6 +284,30 @@ training: 2031;  0: 44.4%;  1: 55.6%;
 validation: 546; 0: 45.1%;  1: 54.9%;
 test:     559;   0: 44.4%;  1: 55.6%;
 
+A brief:
+1 It needs 40 mins training for one epoch with an input of 31 slices per patients; It is unrealistic for training;
+2 data set:
+  training: 2031;  0: 44.4%;  1: 55.6%;
+  validation: 546; 0: 45.1%;  1: 54.9%;
+   test:     559;   0: 44.4%;  1: 55.6%;
+3 Now I changed input as one middle slice of 31 slices of OD eye,
+  it need one minute per epoch for VGG network; and 0.5 min per peoch for mobileNetV3;
+4 Using mobileNet V3, it can get training accuracy 100% in about 400 epochs; but validation accuracy get stuck at 60%;
+5 It shows nework at training, but overfiting, which is difefrent from Ovarian cancer project;
+6 In future 2 days, I will spent time to reduce its overfitting;
+
+If you are available, you may tell me your time when I can show some training result to you.
+
+# Oct 8th, 2020
+Experiment Analysis:
+            Network                 InputActivation LR     dropout  trainAccGet70%  trainAccGet100%  validation
+20201008_A: Conv2DFeatureNet        True            0.1    0.5      96              166             57% first big oscillaltion, plane
+20201008_B: MobileNetV3_OCT2SysD    True            0.001  0.5      272             418             56% small oscillation
+20201008_C: MobileNetV3_OCT2SysD    False           0.01   0.5      29              160             57% later stable
+20201008_D: Conv2DFeatureNet        False           0.1    0.5      107             160             56% oscillation
+
+
+
 
 
 
