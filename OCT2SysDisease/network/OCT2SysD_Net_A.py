@@ -33,13 +33,13 @@ class OCT2SysD_Net_A(BasicModel):
         # after m_conv2d_1, tensor need global mean on H and W dimension.
 
         self.m_classifier = nn.Sequential(
-            nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=hps.dropoutRate, inplace=False),
-            nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=True),
             nn.ReLU(inplace=True),
             nn.Dropout(p=hps.dropoutRate, inplace=False),
-            nn.Conv2d(hps.classifierWidth[1], hps.classifierWidth[2], kernel_size=1, stride=1, padding=0, bias=False)
+            nn.Conv2d(hps.classifierWidth[1], hps.classifierWidth[2], kernel_size=1, stride=1, padding=0, bias=True)
             )
 
     def forward(self, x):
