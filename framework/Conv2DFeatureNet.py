@@ -14,7 +14,7 @@ class Conv2DFeatureNet(nn.Module):
 
         C = nStartFilters * pow(2, nLayers-1)
         self.m_outputConv = nn.Sequential(
-            nn.Conv2d(C, outputChannels, kernel_size=1, stride=1, padding=0, bias=False) #,
+            nn.Conv2d(C, outputChannels, kernel_size=1, stride=1, padding=0, bias=True)
             # nn.BatchNorm2d(hps.outputChannels), #*** norm should not be before avgPooling ****
             # nn.Hardswish()
         )

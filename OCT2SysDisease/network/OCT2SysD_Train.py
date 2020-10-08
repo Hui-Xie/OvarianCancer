@@ -59,8 +59,25 @@ def main():
     net.to(device=hps.device)
 
     # optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+
     # refer to mobileNet v3 paper, use RMSprop optimizer
-    optimizer = optim.RMSprop(net.parameters(), lr=hps.learningRate, weight_decay=0, momentum=0.9)
+    # optimizer = optim.RMSprop(net.parameters(), lr=hps.learningRate, weight_decay=0, momentum=0.9)
+
+    # adaptive optimizers sometime are worse than SGD
+    '''
+    https://arxiv.org/abs/1705.08292
+    The Marginal Value of Adaptive Gradient Methods in Machine Learning
+    Adaptive optimization methods, which perform local optimization with a metric constructed from the history of iterates, 
+    are becoming increasingly popular for training deep neural networks. Examples include AdaGrad, RMSProp, and Adam. 
+    We show that for simple overparameterized problems, adaptive methods often find drastically different solutions 
+    than gradient descent (GD) or stochastic gradient descent (SGD). We construct an illustrative binary classification 
+    problem where the data is linearly separable, GD and SGD achieve zero test error, and AdaGrad, Adam, and RMSProp attain 
+    test errors arbitrarily close to half. We additionally study the empirical generalization capability of adaptive methods
+    on several state-of-the-art deep learning models. We observe that the solutions found by adaptive methods generalize 
+    worse (often significantly worse) than SGD, even when these solutions have better training performance. 
+    These results suggest that practitioners should reconsider the use of adaptive methods to train neural networks.
+    '''
+    optimizer = optim.SGD(net.parameters(), lr=hps.learningRate, weight_decay=1.0e-5, momentum=0)
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
