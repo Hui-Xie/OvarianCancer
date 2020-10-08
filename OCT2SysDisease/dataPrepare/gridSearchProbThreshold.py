@@ -3,8 +3,8 @@
 import numpy as np
 
 import sys
-sys.path.append('..')
-from network.OVTools import readProbDict
+sys.path.append('../..')
+from framework.measure import readProbDict
 
 def main():
     # get csv file name
