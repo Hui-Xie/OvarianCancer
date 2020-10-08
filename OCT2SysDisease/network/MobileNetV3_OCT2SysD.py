@@ -8,11 +8,18 @@ class MobileNetV3_OCT2SysD(nn.Module):
         super().__init__()
         self.hps = hps
         inC = 16  # input Channel number for bottleneck
-        self.m_inputConv = nn.Sequential(
-            nn.Conv2d(hps.inputChannels, inC, kernel_size=3, stride=2, padding=1, bias=True),
-            nn.BatchNorm2d(inC),
-            nn.Hardswish()
-        )
+
+        if hps.inputActivation:
+            self.m_inputConv = nn.Sequential(
+                nn.Conv2d(hps.inputChannels, inC, kernel_size=3, stride=2, padding=1, bias=True),
+                nn.BatchNorm2d(inC),
+                nn.Hardswish()
+            )
+        else:
+            self.m_inputConv = nn.Sequential(
+                nn.Conv2d(hps.inputChannels, inC, kernel_size=3, stride=2, padding=1, bias=True),
+                nn.BatchNorm2d(inC)
+            )
 
         bottleneckConfig = [
             # kernel, expandSize, outputChannel,  SE,   NL,  stride,

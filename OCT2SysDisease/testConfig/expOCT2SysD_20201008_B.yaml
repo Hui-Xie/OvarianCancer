@@ -40,6 +40,7 @@ inputChannels: 3 # rawImage + gradChannels(W,H)
 gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 
+inputActivation: True # input conv has  activation
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
 
