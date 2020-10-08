@@ -69,10 +69,11 @@ class Conv2dBlock(nn.Module):
     """
 
     def __init__(self, inChannels, outChannels, convStride=1, useSpectralNorm=False,
-                 useLeakyReLU=False, kernelSize=3, padding=1, dilation=1, normAffine=False):
+                 useLeakyReLU=False, kernelSize=3, padding=1, dilation=1, normAffine=False, activation=True):
         super().__init__()
 
         self.m_useLeakyReLU = useLeakyReLU
+        self.m_activation = activation
 
         self.m_conv = nn.Conv2d(inChannels, outChannels, kernel_size=kernelSize, stride=convStride, padding=padding, dilation=dilation, bias=True)
         if useSpectralNorm:
@@ -86,12 +87,18 @@ class Conv2dBlock(nn.Module):
         featureMapSize = np.prod(y.shape[-2:])
         if featureMapSize > 4:
             # with Normalization
-            y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
-                else F.leaky_relu(self.m_norm(y), inplace=True)
+            if self.m_activation:
+                y = F.relu(self.m_norm(y), inplace=True) if not self.m_useLeakyReLU \
+                    else F.leaky_relu(self.m_norm(y), inplace=True)
+            else:
+                y = self.m_norm(y)
         else:
             # without Normalization
-            y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
-                else F.leaky_relu(y, inplace=True)
+            if self.m_activation:
+                y = F.relu(y, inplace=True) if not self.m_useLeakyReLU \
+                    else F.leaky_relu(y, inplace=True)
+            else:
+                y = y    # redundancy, but keep it  for logic.
 
         return y
 

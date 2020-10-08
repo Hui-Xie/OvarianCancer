@@ -24,7 +24,7 @@ class OCT2SysD_Net_A(BasicModel):
         if hps.featureNet == "MobileNetV3_OCT2SysD":
             self.m_featureNet = eval(hps.featureNet)(hps=hps)
         elif hps.featureNet == "Conv2DFeatureNet":
-            self.m_featureNet = eval(hps.featureNet)(hps.inputChannels, hps.nStartFilters, hps.nLayers, hps.outputChannels)
+            self.m_featureNet = eval(hps.featureNet)(hps.inputChannels, hps.nStartFilters, hps.nLayers, hps.outputChannels, hps.inputActivation)
         else:
             print("featureNet parameter error")
             assert False
