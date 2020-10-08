@@ -38,7 +38,7 @@ class OCT2SysD_Net_A(BasicModel):
             nn.Dropout(p=hps.dropoutRate, inplace=False),
             nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=True),
             nn.ReLU(inplace=True),
-            nn.Dropout(p=hps.dropoutRate, inplace=False),
+            # nn.Dropout(p=hps.dropoutRate, inplace=False),
             nn.Conv2d(hps.classifierWidth[1], hps.classifierWidth[2], kernel_size=1, stride=1, padding=0, bias=True)
             )
 

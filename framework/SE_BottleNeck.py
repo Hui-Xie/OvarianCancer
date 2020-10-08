@@ -41,16 +41,16 @@ class V3Bottleneck(nn.Module):
             SELayer = nn.Identity
 
         self.expandDepthwiseProject = nn.Sequential(
-            nn.Conv2d(inC, expandSize, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(inC, expandSize, kernel_size=1, stride=1, padding=0, bias=True),
             nn.BatchNorm2d(expandSize),
             nonlinearLayer(),
 
-            nn.Conv2d(expandSize, expandSize, kernel_size=kernel, stride=stride, padding=padding, groups=expandSize, bias=False),
+            nn.Conv2d(expandSize, expandSize, kernel_size=kernel, stride=stride, padding=padding, groups=expandSize, bias=True),
             nn.BatchNorm2d(expandSize),
             nonlinearLayer(),
             SELayer(expandSize),
 
-            nn.Conv2d(expandSize, outC, kernel_size=1, stride=1, padding=0,  bias=False),
+            nn.Conv2d(expandSize, outC, kernel_size=1, stride=1, padding=0,  bias=True),
             nn.BatchNorm2d(outC)
         )
 

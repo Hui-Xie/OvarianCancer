@@ -39,7 +39,7 @@ class MobileNetV3_OCT2SysD(nn.Module):
             inC = outC
 
         self.m_outputConv = nn.Sequential(
-            nn.Conv2d(inC, hps.outputChannels, kernel_size=1, stride=1, padding=0, bias=False) #,
+            nn.Conv2d(inC, hps.outputChannels, kernel_size=1, stride=1, padding=0, bias=True) #,
             # nn.BatchNorm2d(hps.outputChannels), #*** norm should not be before avgPooling ****
             # nn.Hardswish()
         )
