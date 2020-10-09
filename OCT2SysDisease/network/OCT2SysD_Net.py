@@ -50,7 +50,25 @@ class OCT2SysD_Net(BasicModel):
 
         # mean at H and W dimension
         B, C, H, W = x.shape
-        x = x.mean(dim=(-1, -2), keepdim=True) # B,C,1,1
+        if self.hps.globalPooling == "average":
+            x = x.mean(dim=(-1, -2), keepdim=True) # B,C,1,1
+        elif self.hps.globalPooling == "max":
+            x = nn.AdaptiveMaxPool2d((1,1))(x)  # B,C, 1,1
+        elif self.hps.globalPooling == "IQR_std":
+            # Non-traditionally: Use IQR+std on H,and W dimension, each feature plane
+            # IQR+std measures the spread of feature values in each channel
+            xStd = torch.std(x, dim=(2, 3), keepdim=True)  # size: B,hps.outputChannels, 1,1
+            xFeatureFlat = x.view(B, self.hps.outputChannels, -1)
+            xSorted, _ = torch.sort(xFeatureFlat, dim=-1)
+            B, C, N = xSorted.shape
+            Q1 = N // 4
+            Q3 = N * 3 // 4
+            # InterQuartile Range
+            IQR = (xSorted[:, :, Q3] - xSorted[:, :, Q1]).unsqueeze(dim=-1).unsqueeze(dim=-1)
+            x = xStd + IQR
+        else:
+            print(f"Current do not support pooling: {self.hps.globalPooling}")
+            assert  False
 
         x = self.m_classifier(x)
         return x
