@@ -77,7 +77,7 @@ def main():
     worse (often significantly worse) than SGD, even when these solutions have better training performance. 
     These results suggest that practitioners should reconsider the use of adaptive methods to train neural networks.
     '''
-    optimizer = optim.SGD(net.parameters(), lr=hps.learningRate, weight_decay=1.0e-5, momentum=0)
+    optimizer = optim.SGD(net.parameters(), lr=hps.learningRate, weight_decay=hps.weightDecay, momentum=0)
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')

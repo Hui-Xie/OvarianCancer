@@ -10,7 +10,10 @@
 # OCT 8th, 2020
 # A use SGD, instead adaptive optimizer
 # B the input layer do not need activation;
-# C add learning rate to 0.01
+# C change learning rate to 0.01
+# D add SGD's weightDecay to 1.0e-4;
+# E add a dropout in the final FC;
+
 
 
 
@@ -18,7 +21,7 @@
 debug: True
 
 # train config
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 31  # fixed batchsize, make sure at least 2 sample are negative.
 learningRate: 0.01
 
@@ -49,7 +52,7 @@ bothSideGrad: True # False use singleSideGrad
 inputActivation: False # input conv has no activation
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.5 # dropout after global average pooling
-weightDecay: 1.0e-5 # for SGD
+weightDecay: 1.0e-4 #
 
 classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
 hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
@@ -65,9 +68,9 @@ outputChannels: 1024  # output feature channels before the classifier for moible
 augmentation: True
 augmentProb: 0  #  data augmentation rate
 flipProb: 0.5
-gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+gaussianNoiseStd: 0.2 # gausssian nosie std with mean =0
 # for salt pepper noise
-saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
