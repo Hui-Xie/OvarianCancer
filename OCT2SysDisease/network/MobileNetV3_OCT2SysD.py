@@ -1,7 +1,7 @@
 
 import torch.nn as nn
 import math
-from framework.SE_BottleNeck import  V3Bottleneck
+from framework.SE_BottleNeck import *
 
 class MobileNetV3_OCT2SysD(nn.Module):
     def __init__(self, hps=None):
@@ -21,24 +21,11 @@ class MobileNetV3_OCT2SysD(nn.Module):
                 nn.BatchNorm2d(inC)
             )
 
-        bottleneckConfig = [
-            # kernel, expandSize, outputChannel,  SE,   NL,  stride,
-            [3, 16, 16, False, 'RE', 1],
-            [3, 64, 24, False, 'RE', 2],
-            [3, 72, 24, False, 'RE', 1],
-            [5, 72, 40, True, 'RE', 2],
-            [5, 120, 40, True, 'RE', 1],
-            [5, 120, 40, True, 'RE', 1],
-            [3, 240, 80, False, 'HS', 2],
-            [3, 200, 80, False, 'HS', 1],
-            [3, 184, 80, False, 'HS', 1],
-            [3, 184, 80, False, 'HS', 1],
-            [3, 480, 112, True, 'HS', 1],
-            [3, 672, 112, True, 'HS', 1],
-            [5, 672, 160, True, 'HS', 2],
-            [5, 960, 160, True, 'HS', 1],
-            [5, 960, 160, True, 'HS', 1],
-        ]  # for MobileNet V3 big model
+        if hps.mobileNetV3Cfg == "small":
+            bottleneckConfig = smallMobileNetV3Config
+        else:
+            bottleneckConfig = largeMobileNetV3Config
+
         self.m_bottleneckList = nn.ModuleList()
         for kernel, expandSize, outC, SE, NL, stride in bottleneckConfig:
             self.m_bottleneckList.append(

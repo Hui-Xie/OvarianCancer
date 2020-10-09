@@ -2,6 +2,40 @@
 import torch
 import torch.nn as nn
 
+largeMobileNetV3Config = [
+            # kernel, expandSize, outputChannel,  SE,   NL,  stride,
+            [3, 16, 16, False, 'RE', 1],
+            [3, 64, 24, False, 'RE', 2],
+            [3, 72, 24, False, 'RE', 1],
+            [5, 72, 40, True, 'RE', 2],
+            [5, 120, 40, True, 'RE', 1],
+            [5, 120, 40, True, 'RE', 1],
+            [3, 240, 80, False, 'HS', 2],
+            [3, 200, 80, False, 'HS', 1],
+            [3, 184, 80, False, 'HS', 1],
+            [3, 184, 80, False, 'HS', 1],
+            [3, 480, 112, True, 'HS', 1],
+            [3, 672, 112, True, 'HS', 1],
+            [5, 672, 160, True, 'HS', 2],
+            [5, 960, 160, True, 'HS', 1],
+            [5, 960, 160, True, 'HS', 1],
+        ]  # for MobileNet V3 big model
+
+smallMobileNetV3Config = [
+            # kernel, expandSize, outputChannel,  SE,   NL,  stride,
+            [3, 16, 16, True, 'RE', 2],
+            [3, 72, 24, False, 'RE', 2],
+            [3, 88, 24, False, 'RE', 1],
+            [5, 96, 40, True, 'HS', 2],
+            [5, 240, 40, True, 'HS', 1],
+            [5, 240, 40, True, 'HS', 1],
+            [5, 120, 48, True, 'HS', 1],
+            [5, 144, 48, True, 'HS', 1],
+            [5, 288, 96, True, 'HS', 2],
+            [5, 576, 96, True, 'HS', 1],
+            [5, 576, 96, True, 'HS', 1],
+        ]   # for MobileNet V3 small model
+
 class SqueezeExcite(nn.Module):
     def __init__(self, channel, reduction=4):
         super().__init__()

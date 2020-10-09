@@ -9,10 +9,10 @@
 import torch
 import torch.nn as nn
 import math
-from SE_BottleNeck import V3Bottleneck
+from SE_BottleNeck import *
 
 class MobileNetV3(nn.Module):
-    def __init__(self, inputC, outputC):
+    def __init__(self, inputC, outputC, v3Config="small"):
         '''
         This network does not has final FC layer as in original mobileNet v3 paper.
         Applications need to ada specific application heads.
@@ -30,24 +30,11 @@ class MobileNetV3(nn.Module):
             nn.Hardswish()
         )
 
-        bottleneckConfig = [
-            # kernel, expandSize, outputChannel,  SE,   NL,  stride,
-            [3, 16, 16, False, 'RE', 1],
-            [3, 64, 24, False, 'RE', 2],
-            [3, 72, 24, False, 'RE', 1],
-            [5, 72, 40, True, 'RE', 2],
-            [5, 120, 40, True, 'RE', 1],
-            [5, 120, 40, True, 'RE', 1],
-            [3, 240, 80, False, 'HS', 2],
-            [3, 200, 80, False, 'HS', 1],
-            [3, 184, 80, False, 'HS', 1],
-            [3, 184, 80, False, 'HS', 1],
-            [3, 480, 112, True, 'HS', 1],
-            [3, 672, 112, True, 'HS', 1],
-            [5, 672, 160, True, 'HS', 2],
-            [5, 960, 160, True, 'HS', 1],
-            [5, 960, 160, True, 'HS', 1],
-        ] # for MobileNet V3 big model
+        if v3Config=="small":
+            bottleneckConfig = smallMobileNetV3Config
+        else:
+            bottleneckConfig = largeMobileNetV3Config
+
         self.m_bottleneckList = nn.ModuleList()
         for kernel, expandSize, outC, SE, NL, stride in bottleneckConfig:
             self.m_bottleneckList.append(V3Bottleneck(inC, outC, kernel=kernel, stride=stride, expandSize=expandSize, SE=SE, NL=NL))
