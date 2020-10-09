@@ -300,20 +300,20 @@ If you are available, you may tell me your time when I can show some training re
 
 # Oct 8th, 2020
 Experiment Analysis:
-            Network                 InputActivation LR     dropout  trainAccGet70%  trainAccGet100%  validation
-20201008_A: Conv2DFeatureNet        True            0.1    0.5      96              166             57% first big oscillaltion, plane
-20201008_B: MobileNetV3_OCT2SysD    True            0.001  0.5      272             418             56% small oscillation
-20201008_C: MobileNetV3_OCT2SysD    False           0.01   0.5      29              160             57% later stable
-20201008_D: Conv2DFeatureNet        False           0.1    0.5      107             176             56% oscillation
-20201008_G: MobileNetV3_OCT2SysD    False           0.01   0.5*2    29              121             55% oscillation ;  this is improved version of _C.
-20201008_H: MobileNetV3_OCT2SysD    False           0.01   0.8      18              101             56% later stable;  reduce FC to 2 layers [512,1]
-20201009_A: moibleNetv3_small       False           0.01   0.5      8               40              55% oscillation;  FC layer[64,1],L2WeighDecay=1e-2
-20201009_B: mobileNetv3, maxpooling False           0.01   0.8                                      weightdecay=1e-1  (looks underfitting)
-20201009_B: mobileNetv3, maxpooling False           0.01   0.5                                      weightdecay=1e-2
-
-
-
-
+            Network                 Pooling     InputActivation LR     dropout  weighDecay    FC            OutputC     trainAccGet70%  trainAccGet100%  validation
+20201008_A: Conv2DFeatureNet        Avg         True            0.1    0.5      None        [512, 256, 1]   1024        96              166             57% first big oscillaltion, plane
+20201008_B: MobileNetV3_OCT2SysD    Avg         True            0.001  0.5      None        [512, 256, 1]   1024        272             418             56% small oscillation
+20201008_C: MobileNetV3_OCT2SysD    Avg         False           0.01   0.5      1e-5        [512, 256, 1]   1024        29              160             57% later stable
+20201008_D: Conv2DFeatureNet        Avg         False           0.1    0.5      None        [512, 256, 1]   1024        107             176             56% oscillation
+20201008_G: MobileNetV3_OCT2SysD    Avg         False           0.01   0.5*2    1e-4        [512, 256, 1]   1024        29              121             55% oscillation ;  this is improved version of _C.
+20201008_H: MobileNetV3_OCT2SysD    Avg         False           0.01   0.8      1e-3        [512,1]         1024        18              101             56% later stable;
+20201009_A: moibleNetv3_small       Avg         False           0.01   0.5      1e-2        [64,1]          128         8               40              55% oscillation;
+20201009_B: mobileNetv3_small       Max         False           0.01   0.8      1e-1        [64,1]          128         INF             INF             55%, (looks underfitting)
+20201009_C: mobileNetv3_small       Max         False           0.01   0.5      1e-2        [64,1]          128         18              134             52%
+20201009_D: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [64,1]          128
+20201009_E: mobileNetv3_small       Max         False           0.01   0.5      1e-1        [64,1]          128
+20201009_F: mobileNetv3_small       Avg         False           0.01   0.5      1e-1        [64,1]          128
+20201009_G: mobileNetv3_small       Max         False           0.01   0.2      1e-1        [64,1]          128
 
 
 Comparison:    OCT2SysD                OvarianCancer
