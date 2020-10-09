@@ -307,6 +307,12 @@ Experiment Analysis:
 20201008_D: Conv2DFeatureNet        False           0.1    0.5      107             160             56% oscillation
 
 
+Comparison:    OCT2SysD                OvarianCancer
+data Size:      3136                    168
+predict:        judge current status;   Predict future;
+Image model:    Similar;                Various, Each patient cancer is unique;
+Classification: Binary;                 Binary;
+Network:        MobileNetV3;            MobileNetV3;
 
 
 
