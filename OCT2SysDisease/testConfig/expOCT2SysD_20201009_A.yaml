@@ -59,9 +59,9 @@ bothSideGrad: True # False use singleSideGrad
 inputActivation: False # input conv has no activation
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.8 # dropout after global average pooling
-weightDecay: 1.0e-3 #
+weightDecay: 1.0e-2 #
 
-classifierWidth: [512, 1] # [0] element is better is the times of 62
+classifierWidth: [64, 1] # [0] element is better is the times of 62
 hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
@@ -69,8 +69,8 @@ featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
 mobileNetV3Cfg: "small" # "large"
 nStartFilters: 16
 nLayers: 7
-outputChannels: 1024  # output feature channels before the classifier for moibleNet v3
-                      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024
+outputChannels: 128  # output feature channels before the classifier for moibleNet v3
+                #1024      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024 for Conv2DFeatureNet
 
 # data augmentation
 augmentation: True
