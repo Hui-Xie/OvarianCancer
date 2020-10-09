@@ -304,7 +304,7 @@ Experiment Analysis:
 20201008_A: Conv2DFeatureNet        True            0.1    0.5      96              166             57% first big oscillaltion, plane
 20201008_B: MobileNetV3_OCT2SysD    True            0.001  0.5      272             418             56% small oscillation
 20201008_C: MobileNetV3_OCT2SysD    False           0.01   0.5      29              160             57% later stable
-20201008_D: Conv2DFeatureNet        False           0.1    0.5      107             160             56% oscillation
+20201008_D: Conv2DFeatureNet        False           0.1    0.5      107             176             56% oscillation
 
 
 Comparison:    OCT2SysD                OvarianCancer
