@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
-from OCT2SysD_Net_A import OCT2SysD_Net_A
+from OCT2SysD_Net import OCT2SysD_Net
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")

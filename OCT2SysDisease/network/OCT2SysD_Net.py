@@ -2,7 +2,6 @@
 '''
 input: BxSlicePerEye, inputC, H, W
 output: B, outputC, 1,1  to classification head
-this network is used by 20201008_G and its preceeding config.
 
 '''
 import torch
@@ -17,7 +16,7 @@ sys.path.append(".")
 from MobileNetV3_OCT2SysD import MobileNetV3_OCT2SysD
 import math
 
-class OCT2SysD_Net_A(BasicModel):
+class OCT2SysD_Net(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps
@@ -35,12 +34,9 @@ class OCT2SysD_Net_A(BasicModel):
 
         self.m_classifier = nn.Sequential(
             nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=True),
-            nn.ReLU(inplace=True),
+            nn.Hardswish(),
             nn.Dropout2d(p=hps.dropoutRate, inplace=False), # here it must use inplace =False
-            nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=True),
-            nn.ReLU(inplace=True),
-            nn.Dropout2d(p=hps.dropoutRate, inplace=False), # here it must use inplace =False
-            nn.Conv2d(hps.classifierWidth[1], hps.classifierWidth[2], kernel_size=1, stride=1, padding=0, bias=False)
+            nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=False)
             # if 1 == hps.classifierWidth[2], final linear layer does not need bias;
             )
 

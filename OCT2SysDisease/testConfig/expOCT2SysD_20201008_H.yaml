@@ -13,7 +13,9 @@
 # C change learning rate to 0.01
 # D add SGD's weightDecay to 1.0e-4;
 # E add a dropout in the final FC;
-# F this version evolve from _C;
+# F this version evolve from _C, and _G;
+# G weight decay +=1.0e-3
+# H reduce the final FC to 2 layers; dropout rate increase to 0.8
 
 
 
@@ -41,7 +43,7 @@ ODOS: "OD"  # right(OD) or left(OS) eye
 
 
 # Network config
-network: "OCT2SysD_Net_A"
+network: "OCT2SysD_Net"
 imageH: 496
 imageW: 512
 sliceSuffix: "_midSlice.npy"
@@ -52,10 +54,10 @@ bothSideGrad: True # False use singleSideGrad
 
 inputActivation: False # input conv has no activation
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
-dropoutRate: 0.5 # dropout after global average pooling
-weightDecay: 1.0e-4 #
+dropoutRate: 0.8 # dropout after global average pooling
+weightDecay: 1.0e-3 #
 
-classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
+classifierWidth: [512, 1] # [0] element is better is the times of 62
 hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 

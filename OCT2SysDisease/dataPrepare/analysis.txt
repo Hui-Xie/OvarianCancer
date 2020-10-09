@@ -305,7 +305,7 @@ Experiment Analysis:
 20201008_B: MobileNetV3_OCT2SysD    True            0.001  0.5      272             418             56% small oscillation
 20201008_C: MobileNetV3_OCT2SysD    False           0.01   0.5      29              160             57% later stable
 20201008_D: Conv2DFeatureNet        False           0.1    0.5      107             176             56% oscillation
-
+20201008_G: MobileNetV3_OCT2SysD    False           0.01   0.5*2    29              121             55% oscillation ;  this is improved version of _C.
 
 Comparison:    OCT2SysD                OvarianCancer
 data Size:      3136                    168
