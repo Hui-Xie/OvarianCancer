@@ -58,7 +58,7 @@ bothSideGrad: True # False use singleSideGrad
 
 inputActivation: False # input conv has no activation
 useGlobalMean: True   # True uses global mean, and False will use IQR+std
-dropoutRate: 0.8 # dropout after global average pooling
+dropoutRate: 0.5 # dropout after global average pooling
 weightDecay: 1.0e-2 #
 
 classifierWidth: [64, 1] # [0] element is better is the times of 62
