@@ -312,7 +312,7 @@ Experiment Analysis:
 20201009_C: mobileNetv3_small       Max         False           0.01   0.5      1e-2        [64,1]          128         18              134             52%
 20201009_D: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [64,1]          128
 20201009_E: mobileNetv3_small       Max         False           0.01   0.5      1e-1        [64,1]          128
-20201009_F: mobileNetv3_small       Avg         False           0.01   0.5      1e-1        [64,1]          128
+20201009_F: mobileNetv3_small       Avg         False           0.01   0.5      1e-1        [64,1]          128         17
 20201009_G: mobileNetv3_small       Max         False           0.01   0.2      1e-1        [64,1]          128
 
 
