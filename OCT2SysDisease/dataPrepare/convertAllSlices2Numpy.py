@@ -41,6 +41,8 @@ def saveAllSlicesToNumpy():
 
         for i in range(numSlices):
             imageArray = imread(imagesList[i])[:, 128:640]
+            if (H,W) != imageArray.shape:
+                break
             # save
             b = os.path.basename(volume)
             outputFilename = b[0:b.rfind("Volume")] + f"Slice{i:02d}.npy"
