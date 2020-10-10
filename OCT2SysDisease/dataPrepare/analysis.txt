@@ -320,8 +320,11 @@ Experiment Analysis:
 20201009_K: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [48,1]          96
 20201009_L: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [24,1]          48
 20201009_M: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [24,1]          48
-20201009_N: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [12,1]          24
+20201009_N: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [12,1]          24 (promising)
 20201009_O: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [12,1]          24
+20201009_P: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             48
+20201009_Q: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             24
+20201009_R: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [1]             12
 
 Comparison:    OCT2SysD                OvarianCancer
 data Size:      3136                    168
