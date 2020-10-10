@@ -53,4 +53,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("===End of prorgram=========")
+    print("===End of prorgram of convert all slices into numpy files. =========")
