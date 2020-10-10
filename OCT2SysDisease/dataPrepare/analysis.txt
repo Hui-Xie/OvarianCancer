@@ -310,10 +310,16 @@ Experiment Analysis:
 20201009_A: moibleNetv3_small       Avg         False           0.01   0.5      1e-2        [64,1]          128         8               40              55% oscillation;
 20201009_B: mobileNetv3_small       Max         False           0.01   0.8      1e-1        [64,1]          128         INF             INF             55%, (looks underfitting)
 20201009_C: mobileNetv3_small       Max         False           0.01   0.5      1e-2        [64,1]          128         18              134             52%
-20201009_D: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [64,1]          128
-20201009_E: mobileNetv3_small       Max         False           0.01   0.5      1e-1        [64,1]          128
-20201009_F: mobileNetv3_small       Avg         False           0.01   0.5      1e-1        [64,1]          128         17
-20201009_G: mobileNetv3_small       Max         False           0.01   0.2      1e-1        [64,1]          128
+*20201009_D: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [64,1]          128         27              130             57.69% (Good basis)
+20201009_E: mobileNetv3_small       Max         False           0.01   0.5      1e-1        [64,1]          128         INF             INF             55%, majority
+20201009_F: mobileNetv3_small       Avg         False           0.01   0.5      1e-1        [64,1]          128         17              INF             55%, majority
+20201009_G: mobileNetv3_small       Max         False           0.01   0.2      1e-1        [64,1]          128         INF             INF             55%, majority
+20201009_H: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [64,1]          128
+20201009_I: mobileNetv3_small       IQR         False           0.01   0.8      1e-2        [64,1]          128
+20201009_J: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [48,1]          96
+20201009_K: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [48,1]          96
+20201009_L: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [24,1]          48
+20201009_M: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [24,1]          48
 
 
 Comparison:    OCT2SysD                OvarianCancer
