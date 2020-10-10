@@ -1,2 +1,2 @@
-Use middle slice as input for each patient.
+Use random any slice as input for each patient.
 
