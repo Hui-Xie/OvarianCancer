@@ -334,7 +334,28 @@ Classification: Binary;                 Binary;
 Network:        MobileNetV3;            MobileNetV3;
 
 
+# Oct 10th, 2020
+Use randoom single slice as input to network:
 
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv hypertension_bp_plus_history$  binary
+total 2034 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv
+values for hypertension_bp_plus_history$ have 2034 records
+0 rate: 0.443952802359882; 1 rate: 0.556047197640118
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv hypertension_bp_plus_history$  binary
+total 548 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv
+values for hypertension_bp_plus_history$ have 548 records
+0 rate: 0.4489051094890511; 1 rate: 0.551094890510949
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv hypertension_bp_plus_history$  binary
+total 560 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
+values for hypertension_bp_plus_history$ have 560 records
+0 rate: 0.44285714285714284; 1 rate: 0.5571428571428572
+
+delNonExist data:
+training: 2034;  0: 44.4%;  1: 55.6%;
+validation: 548; 0: 44.9%;  1: 55.1%;
+test:     560;   0: 44.3%;  1: 55.7%;
 
 
 

@@ -25,7 +25,7 @@ from framework.measure import  *
 
 def printUsage(argv):
     print("============ Training of OCT to Systemic Disease Network =============")
-    print("=======input data is single middle slice ===========================")
+    print("=======input data is random single slice ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -162,19 +162,22 @@ def main():
             validHyperTLoss = 0.0
 
             net.setStatus("validation")
-            # batchSize=1 is for TTA test.
-            for batchData in data.DataLoader(validationData, batch_size=1, shuffle=True, num_workers=0):
+            batchSize = 1 if hps.TTA else hps.batchSize
 
-                # merge B and S dimenions:
-                inputs = batchData['images']
+            for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=True, num_workers=0):
+
+                # squeeze the extra dimension of data
+                inputs = batchData['images'].squeeze(dim=0)
+                batchData['IDs'] = [v[0] for v in batchData['IDs']] # erease tuple wrapper fot TTA
 
                 x = net.forward(inputs)
                 predict, predictProb, loss = net.computeBinaryLoss(x, GTs=batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)
 
                 validHyperTLoss +=loss
                 validBatch += 1
-                
-                for i in range(len(batchData['IDs'])):
+
+                B = predictProb.shape[0]
+                for i in range(B):
                     ID = int(batchData['IDs'][i])  # [0] is for list to string
                     predictDict[ID]={}
                     predictDict[ID][appKey] = predict[i].item()

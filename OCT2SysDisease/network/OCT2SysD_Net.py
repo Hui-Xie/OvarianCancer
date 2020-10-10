@@ -94,10 +94,13 @@ class OCT2SysD_Net(BasicModel):
 
         x = x.view(B)
         predictProb = torch.sigmoid(x)
+        if self.hps.TTA and ((self.m_status == "validation") or (self.m_status == "test")): # TTA
+            predictProb = torch.mean(predictProb, dim=0, keepdim=True)
+            B = 1
         predict = (predictProb >= 0.50).int().view(B)  # a vector of [0,1]
         GT = GTs[GTKey].to(device=device, dtype=torch.float32)
         bceFunc = nn.BCEWithLogitsLoss(pos_weight=posWeight.to(device))
-        loss = bceFunc(x, GT)
+        loss = bceFunc(x, GT.view_as(x))
 
         if torch.isnan(loss) or torch.isinf(loss):  # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")

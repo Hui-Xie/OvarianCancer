@@ -22,11 +22,15 @@
 # B use dropout 0.5, and GlobalMaxPooling, weightDecay = 0.01
 
 # Oct 10th, 2020
-# A. use random slice each patient as input,
+# A. use random slice each patient as input;
+#    TTA;
+#    use both OD and OS eyes;
+#    program need 4 mins tide slice path and IDs.
 
 
 debug: True
 debugOutputPeriod: 100
+TTA: True  # validation and test use Test-time augmentation
 
 # train config
 device: torch.device('cuda:0')   #GPU ID
@@ -44,15 +48,15 @@ validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv"
 testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
-ODOS: "OD"  # right(OD) or left(OS) eye
+# ODOS: "OD"  # right(OD) or left(OS) eye
 
 
 # Network config
 network: "OCT2SysD_Net"
 imageH: 496
 imageW: 512
-sliceSuffix: "_midSlice.npy"
-bothEyes: False  # choose all OD eyes
+sliceSuffix: "_Slice??.npy"
+# bothEyes: False  # choose all OD eyes
 inputChannels: 3 # rawImage + gradChannels(W,H)
 gradChannels: 2   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
@@ -63,7 +67,7 @@ dropoutRate: 0.2 # dropout after global average pooling
 weightDecay: 1.0e-2 #
 
 classifierWidth: [1] # [0] element is better is the times of 62
-hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
+hypertensionClassPercent: [ 0.443952802359882, 0.556047197640118] # for rainID_delNonExist.csv
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
 featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #

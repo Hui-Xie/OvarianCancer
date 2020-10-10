@@ -213,7 +213,7 @@ class OCT2SysD_DataSet(data.Dataset):
         data_B = [item.unsqueeze(dim=0) for item in data_B]
         catData = torch.cat(data_B, dim=0)  # Bx3xHxW
 
-        # concatenate dictionary
+        # concatenate dictionary's value into tensor
         catLabels ={}
         for line in labels_B:
             for key in line:
@@ -221,18 +221,12 @@ class OCT2SysD_DataSet(data.Dataset):
                     catLabels[key] += [line[key],]
                 else:
                     catLabels[key] = [line[key],]
-
-        catIDs = {}
-        for line in ID_B:
-            for key in line:
-                if key in catIDs:
-                    catIDs[key] += [line[key],]
-                else:
-                    catIDs[key] = [line[key],]
+        for key in catLabels:
+            catLabels[key] = torch.tensor(catLabels[key]).to(device=self.hps.device)
 
         result = {"images": catData,  # B,3,H,W or B,1,H,W
                   "GTs": catLabels,
-                  "IDs": catIDs
+                  "IDs": ID_B
                   }
         return result  # B,3,H,W, following process needs squeeze its extra batch dimension.
 
