@@ -1,7 +1,7 @@
 
 # check Numpy Slice
 
-slicePath = "/home/hxie1/data/BES_3K/W512AllSlices/1950_OS_12691_Slice07.npy"
+slicePath = "/home/hxie1/data/BES_3K/W512AllSlices/120035_OD_1279_Slice07.npy"
 outputDir = "/home/hxie1/data/temp"
 
 
