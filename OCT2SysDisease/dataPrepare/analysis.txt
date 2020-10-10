@@ -314,17 +314,17 @@ Experiment Analysis:
 20201009_E: mobileNetv3_small       Max         False           0.01   0.5      1e-1        [64,1]          128         INF             INF             55%, majority
 20201009_F: mobileNetv3_small       Avg         False           0.01   0.5      1e-1        [64,1]          128         17              INF             55%, majority
 20201009_G: mobileNetv3_small       Max         False           0.01   0.2      1e-1        [64,1]          128         INF             INF             55%, majority
-20201009_H: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [64,1]          128
-20201009_I: mobileNetv3_small       IQR         False           0.01   0.8      1e-2        [64,1]          128
-20201009_J: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [48,1]          96
-20201009_K: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [48,1]          96
-20201009_L: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [24,1]          48
-20201009_M: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [24,1]          48
-20201009_N: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [12,1]          24 (promising)
-20201009_O: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [12,1]          24
-20201009_P: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             48
-20201009_Q: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             24
-20201009_R: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [1]             12
+20201009_H: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [64,1]          128         10              64              58%
+20201009_I: mobileNetv3_small       IQR         False           0.01   0.8      1e-2        [64,1]          128         37              105             58%
+20201009_J: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [48,1]          96          29              127             53%
+20201009_K: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [48,1]          96          11              70              57%
+20201009_L: mobileNetv3_small       Avg         False           0.01   0.8      1e-2        [24,1]          48          9               135             56%
+20201009_M: mobileNetv3_small       Max         False           0.01   0.8      1e-2        [24,1]          48          44              600             56%
+20201009_N: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [12,1]          24          26              153             54%
+20201009_O: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [12,1]          24          8               74              57%
+20201009_P: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             48          18              100             57%
+20201009_Q: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             24          22              182             58% (Good result)
+20201009_R: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [1]             12          5               70%             57%
 
 Comparison:    OCT2SysD                OvarianCancer
 data Size:      3136                    168
