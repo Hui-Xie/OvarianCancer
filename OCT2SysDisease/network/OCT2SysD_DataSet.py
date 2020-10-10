@@ -135,6 +135,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
         data = torch.from_numpy(npSlice).to(device=self.hps.device, dtype=torch.float32)
         H, W = data.shape
+        assert (H == self.hps.imageH) and (W == self.hps.imageW)
 
         # transform for data augmentation
         if self.m_transform:
@@ -184,6 +185,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
             data = torch.from_numpy(npSlice).to(device=self.hps.device, dtype=torch.float32)
             H, W = data.shape
+            assert (H == self.hps.imageH) and (W == self.hps.imageW)
 
             # transform for data augmentation
             if self.m_transform:
