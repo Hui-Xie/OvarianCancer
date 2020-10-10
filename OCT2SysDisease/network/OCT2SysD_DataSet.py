@@ -42,29 +42,40 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_transform = transform
 
         # get all correct volume numpy path
-        sliceList = glob.glob(hps.dataDir + "/*_"+hps.ODOS+"_*_midSlice.npy")
+        sliceList = glob.glob(hps.dataDir + "/*_*_*_Slice??.npy")
         nonexistIDList = []
 
-        # make sure ID and volume has strict corresponding order
+        # make sure slice ID and slice has strict corresponding order
         self.m_slicesPath = []
-        self.m_IDs = []
-        for ID in IDList:
-            resultList = fnmatch.filter(sliceList, "*/" + ID + "_" + hps.ODOS+"_*_midSlice.npy")
-            length = len(resultList)
-            if 0 == length:
+        self.m_volumeIDs = []
+        self.m_sliceIDs = []  # slice IDs are repeated volume ID for many slice in a volume
+        self.m_volumeStartIndex = []
+        self.m_volumeNumSlices = []
+        # slices of [volumeStartIndex[i]:volumeStartIndex[i]+volumeNumSlices[i]) belong to a same volume.
+        for i,ID in enumerate(IDList):
+            resultList = fnmatch.filter(sliceList, "*/" + ID + "_*_*_Slice??.npy")
+            resultList.sort()
+            numSlices = len(resultList)
+            if 0 == numSlices:
                 nonexistIDList.append(ID)
-            elif length > 1:
-                print(f"Mulitple ID files: {resultList}")
             else:
-                self.m_slicesPath.append(resultList[0])
-                self.m_IDs.append(ID)
+                if 0 == i:
+                    self.m_volumeStartIndex.append(0)
+                else:
+                    self.m_volumeStartIndex.append(self.m_volumeStartIndex[i-1] + self.m_volumeNumSlices[i-1])
+                self.m_volumeNumSlices.append(numSlices)
+
+                self.m_volumeIDs.append(ID)
+                for n in range(numSlices):
+                    self.m_slicesPath.append(resultList[n])
+                    self.m_sliceIDs.append(ID)
+
         if len(nonexistIDList) > 0:
             print(f"Error:  nonexistIDList:\n {nonexistIDList}")
             assert False
 
-
     def __len__(self):
-        return len(self.m_slicesPath)
+        return len(self.m_volumeIDs)
 
     def getGTDict(self):
         return self.m_labels
@@ -98,18 +109,32 @@ class OCT2SysD_DataSet(data.Dataset):
 
 
     def __getitem__(self, index):
-        epsilon = 1e-8
-        ID = self.m_IDs[index]
+        if self.m_mode == "training":
+            return self.getSliceItem(index)
+        elif (self.m_mode == "validation") or (self.m_mode == "test"):
+            return self.getVolumeItem(index)
+        else:
+            print("dataset model error.")
+            assert False
 
-        labels= []
+
+    def getSliceItem(self, index):
+        startIndex = self.m_volumeStartIndex[index]
+        numSlices = self.m_volumeNumSlices[index]
+        sliceIndex = random.randrange(startIndex, startIndex + numSlices)
+
+        epsilon = 1e-8
+        ID = self.m_sliceIDs[sliceIndex]
+
+        labels = []
         if self.hps.existGTLabel:
             labels = self.m_labels[int(ID)]
 
-        slicePath = self.m_slicesPath[index]
+        slicePath = self.m_slicesPath[sliceIndex]
         npSlice = np.load(slicePath)
 
         data = torch.from_numpy(npSlice).to(device=self.hps.device, dtype=torch.float32)
-        H,W = data.shape
+        H, W = data.shape
 
         # transform for data augmentation
         if self.m_transform:
@@ -122,9 +147,9 @@ class OCT2SysD_DataSet(data.Dataset):
 
         # normalization before output to dataloader
         # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
-        #mean = torch.mean(data, dim=(-1, -2), keepdim=True)
-        #mean = mean.expand_as(data)
-        #data = data - mean
+        # mean = torch.mean(data, dim=(-1, -2), keepdim=True)
+        # mean = mean.expand_as(data)
+        # data = data - mean
 
         # Normalization
         std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
@@ -135,9 +160,81 @@ class OCT2SysD_DataSet(data.Dataset):
         result = {"images": data,  # 3,H,W or 1,H,W
                   "GTs": labels,
                   "IDs": ID
-                 }
+                  }
         return result  # B,3,H,W
 
+    def getVolumeItem(self,index):
+        startIndex = self.m_volumeStartIndex[index]
+        numSlices = self.m_volumeNumSlices[index]
+
+        epsilon = 1e-8
+        data_B = []
+        labels_B = []
+        ID_B = []
+
+        for sliceIndex in range(startIndex, startIndex + numSlices):
+            ID = self.m_sliceIDs[sliceIndex]
+
+            labels = []
+            if self.hps.existGTLabel:
+                labels = self.m_labels[int(ID)]
+
+            slicePath = self.m_slicesPath[sliceIndex]
+            npSlice = np.load(slicePath)
+
+            data = torch.from_numpy(npSlice).to(device=self.hps.device, dtype=torch.float32)
+            H, W = data.shape
+
+            # transform for data augmentation
+            if self.m_transform:
+                data = self.m_transform(data)  # size: HxW
+
+            if 0 != self.hps.gradChannels:
+                data = self.addSliceGradient(data)  # 3,H,W
+            else:
+                data = data.unsqueeze(dim=0)  # 1,H,W
+
+            # normalization before output to dataloader
+            # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
+            # mean = torch.mean(data, dim=(-1, -2), keepdim=True)
+            # mean = mean.expand_as(data)
+            # data = data - mean
+
+            # Normalization
+            std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
+            std = std.expand_as(data)
+            mean = mean.expand_as(data)
+            data = (data - mean) / (std + epsilon)  # size: 3xHxW, or 1,H,W
+
+            data_B.append(data)
+            labels_B.append(labels)
+            ID_B.append(ID)
+
+        data_B = [item.unsqueeze(dim=0) for item in data_B]
+        catData = torch.cat(data_B, dim=0)  # Bx3xHxW
+
+        # concatenate dictionary
+        catLabels ={}
+        for line in labels_B:
+            for key in line:
+                if key in catLabels:
+                    catLabels[key] += [line[key],]
+                else:
+                    catLabels[key] = [line[key],]
+
+        catIDs = {}
+        for line in ID_B:
+            for key in line:
+                if key in catIDs:
+                    catIDs[key] += [line[key],]
+                else:
+                    catIDs[key] = [line[key],]
+
+        result = {"images": catData,  # B,3,H,W or B,1,H,W
+                  "GTs": catLabels,
+                  "IDs": catIDs
+                  }
+        return result  # B,3,H,W, following process needs squeeze its extra batch dimension.
 
 
 

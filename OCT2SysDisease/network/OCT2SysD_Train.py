@@ -162,7 +162,8 @@ def main():
             validHyperTLoss = 0.0
 
             net.setStatus("validation")
-            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
+            # batchSize=1 is for TTA test.
+            for batchData in data.DataLoader(validationData, batch_size=1, shuffle=True, num_workers=0):
 
                 # merge B and S dimenions:
                 inputs = batchData['images']
