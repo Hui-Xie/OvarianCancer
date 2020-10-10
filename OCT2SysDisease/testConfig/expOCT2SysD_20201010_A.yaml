@@ -35,13 +35,13 @@ learningRate: 0.01
 
 #data source
 existGTLabel: True
-dataDir:  "/home/hxie1/data/BES_3K/W512MidSlices"
+dataDir:  "/home/hxie1/data/BES_3K/W512AllSlices"
 
 # _delNonExist: delete ID nonexist, and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.
-trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_final.csv"
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_final.csv"
-testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_final.csv"
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 ODOS: "OD"  # right(OD) or left(OS) eye
