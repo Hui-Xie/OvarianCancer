@@ -33,7 +33,7 @@ debugOutputPeriod: 100
 TTA: True  # validation and test use Test-time augmentation
 
 # train config
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 93
 learningRate: 0.01
 
