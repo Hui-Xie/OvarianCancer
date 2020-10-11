@@ -33,7 +33,7 @@ debugOutputPeriod: 100
 TTA: True  # validation and test use Test-time augmentation
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:0')   #GPU ID
 batchSize: 93
 learningRate: 0.01
 
@@ -64,11 +64,11 @@ bothSideGrad: True # False use singleSideGrad
 
 inputActivation: False # input conv has no activation
 globalPooling: "average" #"max" #  #  "IQR_std"
-dropoutRate: 0.2 # dropout after global average pooling
+dropoutRate: 0.8 # dropout after global average pooling
 weightDecay: 1.0e-2 #
-lrPatience: 3   # learning rate decay patience
+lrPatience: 30   # learning rate decay patience
 
-classifierWidth: [1] # [0] element is better is the times of 62
+classifierWidth: [64, 1]
 hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
@@ -76,7 +76,7 @@ featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
 mobileNetV3Cfg: "small" # "large"
 nStartFilters: 16
 nLayers: 7
-outputChannels: 12  # output feature channels before the classifier for moibleNet v3
+outputChannels: 128  # output feature channels before the classifier for moibleNet v3
                 #1024      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024 for Conv2DFeatureNet
 
 # data augmentation

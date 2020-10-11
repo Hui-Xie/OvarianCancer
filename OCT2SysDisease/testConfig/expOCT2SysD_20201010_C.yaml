@@ -33,7 +33,7 @@ debugOutputPeriod: 100
 TTA: True  # validation and test use Test-time augmentation
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
 batchSize: 93
 learningRate: 0.01
 
@@ -66,7 +66,7 @@ inputActivation: False # input conv has no activation
 globalPooling: "average" #"max" #  #  "IQR_std"
 dropoutRate: 0.2 # dropout after global average pooling
 weightDecay: 1.0e-2 #
-lrPatience: 3   # learning rate decay patience
+lrPatience: 30   # learning rate decay patience
 
 classifierWidth: [1] # [0] element is better is the times of 62
 hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
