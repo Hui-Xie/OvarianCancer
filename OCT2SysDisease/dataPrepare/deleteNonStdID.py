@@ -21,16 +21,21 @@ def main():
 
     # delete some IDs
     for errID in notStdImageID:
-        IDList.remove(errID)
+        if errID in IDList:
+            IDList.remove(errID)
     newLength  = len(IDList)
 
-    print(f"deleted {newLength - oldLength} IDs in {IDPath}")
+
     # write ID file
-    filename, ext = os.path.splitext(IDPath)
-    outputFilename = filename +"_delErrWID" + ext
-    with open(outputFilename, "w") as file:
-        for id in IDList:
-            file.write(f"{id}\n")
+    if oldLength - newLength > 0:
+        print(f"deleted {oldLength - newLength} IDs in {IDPath}")
+        filename, ext = os.path.splitext(IDPath)
+        outputFilename = filename +"_delErrWID" + ext
+        with open(outputFilename, "w") as file:
+            for id in IDList:
+                file.write(f"{id}\n")
+    else:
+        print("No ID deleted.")
 
 if __name__ == "__main__":
     main()
