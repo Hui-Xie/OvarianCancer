@@ -43,9 +43,10 @@ dataDir:  "/home/hxie1/data/BES_3K/W512AllSlices"
 
 # _delNonExist: delete ID nonexist, and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.
-trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv"
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv"
-testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv"
+# _delErrWID: delete W=384 image ID
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
@@ -67,7 +68,7 @@ dropoutRate: 0.2 # dropout after global average pooling
 weightDecay: 1.0e-2 #
 
 classifierWidth: [1] # [0] element is better is the times of 62
-hypertensionClassPercent: [ 0.443952802359882, 0.556047197640118] # for rainID_delNonExist.csv
+hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
 featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #

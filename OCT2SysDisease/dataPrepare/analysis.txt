@@ -357,6 +357,22 @@ training: 2034;  0: 44.4%;  1: 55.6%;
 validation: 548; 0: 44.9%;  1: 55.1%;
 test:     560;   0: 44.3%;  1: 55.7%;
 
+delete W=384 image ID:
+(base) [c-xwu000:dataPrepare]#python3.7 ./deleteNonStdID.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv
+deleted 1 IDs in /home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv
+(base) [c-xwu000:dataPrepare]#python3.7 ./deleteNonStdID.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv
+No ID deleted.
+(base) [c-xwu000:dataPrepare]#python3.7 ./deleteNonStdID.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
+deleted 1 IDs in /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
+(base) [c-xwu000:dataPrepare]#
+
+base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv hypertension_bp_plus_history$ binary
+total 2033 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv
+values for hypertension_bp_plus_history$ have 2033 records
+0 rate: 0.4441711756025578; 1 rate: 0.5558288243974422
+
+
+
 
 
 

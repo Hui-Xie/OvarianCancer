@@ -67,7 +67,7 @@ dropoutRate: 0.8 # dropout after global average pooling
 weightDecay: 1.0e-2 #
 
 classifierWidth: [64, 1]
-hypertensionClassPercent: [ 0.443952802359882, 0.556047197640118] # for rainID_delNonExist.csv
+hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
 featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
