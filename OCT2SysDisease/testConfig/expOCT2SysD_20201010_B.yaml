@@ -43,9 +43,10 @@ dataDir:  "/home/hxie1/data/BES_3K/W512AllSlices"
 
 # _delNonExist: delete ID nonexist, and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.
-trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist.csv"
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist.csv"
-testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv"
+# _delErrWID: delete W=384 image ID
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
