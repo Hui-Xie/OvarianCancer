@@ -73,7 +73,7 @@ dropoutRate: 0.8 # dropout after global average pooling
 weightDecay: 1.0e-2 #
 
 
-classifierWidth: [512,256,1]
+classifierWidth: [256,128,1]
 hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
@@ -81,7 +81,7 @@ featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
 mobileNetV3Cfg: "small" # "large"
 nStartFilters: 16
 nLayers: 7
-outputChannels: 1024  # output feature channels before the classifier for moibleNet v3
+outputChannels: 512  # output feature channels before the classifier for moibleNet v3
                 #1024      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024 for Conv2DFeatureNet
 
 # data augmentation
