@@ -325,12 +325,6 @@ Experiment Analysis: for center slice as Input==================================
 20201009_P: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             48          18              100             57%
 20201009_Q: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             24          22              182             58% (Good result)
 20201009_R: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [1]             12          5               70%             57%
-=================Use Random Slice as input to Network on Oct 10th, 2020================================================================================================
-            Network                 Pooling     InputActivation LR     LRPatience   dropout  weighDecay    FC            OutputC     trainAccGet70%  trainAccGet100%  validation
-20101010_A: mobileNetv3_small       Avg         False           0.01   3             0.2     1e-2          [1]           12
-20101010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128
-20101010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12
-20101010_D: mobileNetv3_small       Avg         False           0.01   30            0.8     1e-2          [64,1]        128
 
 Comparison:    OCT2SysD                OvarianCancer
 data Size:      3136                    168
@@ -372,10 +366,33 @@ No ID deleted.
 deleted 1 IDs in /home/hxie1/data/BES_3K/GTs/testID_delNonExist.csv
 (base) [c-xwu000:dataPrepare]#
 
-base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv hypertension_bp_plus_history$ binary
+20201010, statistics data distribution, with deleting error width ID
+training: 2033;  0: 44.4%;  1: 55.6%;
+validation: 548; 0: 44.9%;  1: 55.1%;
+test:     559;   0: 44.4%;  1: 55.6%;
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv hypertension_bp_plus_history$ binary
 total 2033 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv
 values for hypertension_bp_plus_history$ have 2033 records
 0 rate: 0.4441711756025578; 1 rate: 0.5558288243974422
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv hypertension_bp_plus_history$ binary
+total 548 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv
+values for hypertension_bp_plus_history$ have 548 records
+0 rate: 0.4489051094890511; 1 rate: 0.551094890510949
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv hypertension_bp_plus_history$ binary
+total 559 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv
+values for hypertension_bp_plus_history$ have 559 records
+0 rate: 0.44364937388193204; 1 rate: 0.556350626118068
+
+=================Use Random Slice as input to Network on Oct 10th, 2020================================================================================================
+            Network                 Pooling     InputActivation LR     LRPatience   dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
+20101010_A: mobileNetv3_small       Avg         False           0.01   3             0.2     1e-2          [1]           12          150                                                   max60%
+20101010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128         161                                                   max60%
+20101010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12          75                                                    max62%
+20101010_D: mobileNetv3_small       Avg         False           0.01   30            0.8     1e-2          [64,1]        128         100                                                   max62%
+
 
 
 

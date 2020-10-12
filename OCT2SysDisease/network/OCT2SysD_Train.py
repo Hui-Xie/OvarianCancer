@@ -139,7 +139,7 @@ def main():
                     trPredictProbDict[ID]['GT']    = batchData['GTs'][appKey][i]
 
             # debug
-            # break
+            break
 
         trHyperTLoss /= trBatch
 
@@ -168,7 +168,8 @@ def main():
 
                 # squeeze the extra dimension of data
                 inputs = batchData['images'].squeeze(dim=0)
-                batchData['IDs'] = [v[0] for v in batchData['IDs']] # erease tuple wrapper fot TTA
+                batchData["GTs"]= {key: batchData["GTs"][key].squeeze(dim=0) for key in batchData["GTs"]}
+                batchData['IDs'] = [v[0] for v in batchData['IDs']]  # erase tuple wrapper fot TTA
 
                 x = net.forward(inputs)
                 predict, predictProb, loss = net.computeBinaryLoss(x, GTs=batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)
@@ -187,7 +188,7 @@ def main():
                     predictProbDict[ID]['GT'] = batchData['GTs'][appKey][i]
 
                 # debug
-                # break
+                break
 
             validHyperTLoss /= validBatch
 

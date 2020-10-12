@@ -1,0 +1,123 @@
+# Oct 6th, 2020
+# A  add mobileNet v3 weight initialization
+# B  replace ReLU6 with HS in last 2 layer of mobileNet v3
+# C  add conv2dFeatureNet architecture choice
+# D  use a small dataset for training and validation
+
+# Oct 7th, 2020
+# use single middle slice as input for each patient
+
+# OCT 8th, 2020
+# A use SGD, instead adaptive optimizer
+# B the input layer do not need activation;
+# C change learning rate to 0.01
+# D add SGD's weightDecay to 1.0e-4;
+# E add a dropout in the final FC;
+# F this version evolve from _C, and _G;
+# G weight decay +=1.0e-3
+# H reduce the final FC to 2 layers; dropout rate increase to 0.8
+
+# Oct 9th, 2020
+# A use the small model of mobileNetV3
+# B use dropout 0.5, and GlobalMaxPooling, weightDecay = 0.01
+
+# Oct 10th, 2020
+# A. use random slice each patient as input;
+#    TTA;
+#    use both OD and OS eyes;
+#    program need 4 mins tide slice path and IDs.
+# Oct 12th, 2020
+# A:  increase network capacity
+
+
+
+debug: True
+debugOutputPeriod: 100
+TTA: True  # validation and test use Test-time augmentation
+
+# train config
+device: torch.device('cuda:0')   #GPU ID
+batchSize: 93
+learningRate: 0.01
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/BES_3K/W512AllSlices"
+
+# _delNonExist: delete ID nonexist, and repeated ID;
+# _final: delete the ID whose slice number does not equal to 31.
+# _delErrWID: delete W=384 image ID
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv"
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+# ODOS: "OD"  # right(OD) or left(OS) eye
+
+
+# Network config
+network: "OCT2SysD_Net"
+imageH: 496
+imageW: 512
+sliceSuffix: "_Slice??.npy"
+# bothEyes: False  # choose all OD eyes
+inputChannels: 3 # rawImage + gradChannels(W,H)
+gradChannels: 2   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+
+inputActivation: False # input conv has no activation
+globalPooling: "average" #"max" #  #  "IQR_std"
+dropoutRate: 0.8 # dropout after global average pooling
+weightDecay: 1.0e-2 #
+lrPatience: 30   # learning rate decay patience
+
+classifierWidth: [64, 1]
+hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
+#hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
+
+featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
+mobileNetV3Cfg: "small" # "large"
+nStartFilters: 16
+nLayers: 7
+outputChannels: 128  # output feature channels before the classifier for moibleNet v3
+                #1024      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024 for Conv2DFeatureNet
+
+# data augmentation
+augmentation: True
+augmentProb: 0  #  data augmentation rate
+flipProb: 0.5
+gaussianNoiseStd: 0.2 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+
+# save network
+netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
+
+# module config:
+# Test-time augmentation:
+# refer to AlexNet's idea,and ResNet also adapted this 10-crop TTA:
+#  "At test time, the network makes a prediction by extracting five 224×224 patches
+#  (the four corner patches and the center patch) as well as their horizontal reflections (hence ten patches in all),
+#  and averaging the predictions made by the network’s softmax layer on the ten patches."
+
+# GoogleNet 2014:
+#  "The softmax probabilities are averaged over multiple crops and
+#   over all the individual classifiers to obtain the final prediction."
+
+
+
+
+
+# VGG use pretrained network:
+#  One approach described involved first training a model with a fixed but smaller image size,
+#  retaining the model weights, then using them as a starting point for training a new model
+#  with a larger but still fixed-sized image. This approach was designed
+#  in an effort to speed up the training of the larger (second) model.
+
+
+# decision threshold is problem-dependent.
+

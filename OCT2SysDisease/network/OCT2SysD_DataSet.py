@@ -228,7 +228,9 @@ class OCT2SysD_DataSet(data.Dataset):
                 else:
                     catLabels[key] = [line[key],]
         for key in catLabels:
-            catLabels[key] = torch.tensor(catLabels[key]).to(device=self.hps.device)
+            value = torch.tensor(catLabels[key])
+            value = value.view(value.nelement())
+            catLabels[key] = value.to(device=self.hps.device)
 
         result = {"images": catData,  # B,3,H,W or B,1,H,W
                   "GTs": catLabels,
