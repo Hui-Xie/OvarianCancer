@@ -2,6 +2,7 @@ from torch.utils import data
 import numpy as np
 import random
 import torch
+import os
 
 import glob
 import fnmatch
@@ -51,28 +52,62 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_sliceIDs = []  # slice IDs are repeated volume ID for many slice in a volume
         self.m_volumeStartIndex = []
         self.m_volumeNumSlices = []
-        # slices of [volumeStartIndex[i]:volumeStartIndex[i]+volumeNumSlices[i]) belong to a same volume.
-        for i,ID in enumerate(IDList):
-            resultList = fnmatch.filter(sliceList, "*/" + ID + "_*_*_Slice??.npy")
-            resultList.sort()
-            numSlices = len(resultList)
-            if 0 == numSlices:
-                nonexistIDList.append(ID)
-            else:
-                if 0 == i:
-                    self.m_volumeStartIndex.append(0)
+
+        slicePathFile = os.path.join(hps.dataDir, self.m_mode+"_SlicePath.txt")
+        volumeIDsFile = os.path.join(hps.dataDir, self.m_mode+"_VolumeIDs.txt")
+        sliceIDsFile  =  os.path.join(hps.dataDir, self.m_mode+"_SliceIDs.txt")
+        volumeStartIndexFile = os.path.join(hps.dataDir, self.m_mode+"_VolumeStartIndex.txt")
+        volumeNumSlicesFile = os.path.join(hps.dataDir, self.m_mode+"_VolumeNumSlices.txt")
+
+        if (os.path.isfile(slicePathFile) and os.path.isfile(volumeIDsFile)  and os.path.isfile(sliceIDsFile)
+                and os.path.isfile(volumeStartIndexFile) and os.path.isfile(volumeNumSlicesFile)):
+            with open(slicePathFile, 'r') as file:
+                lines = file.readlines()
+            self.m_slicesPath = [item[0:-1] for item in lines]  # erase '\n'
+
+            with open(volumeIDsFile, 'r') as file:
+                lines = file.readlines()
+            self.m_volumeIDs = [item[0:-1] for item in lines]  # erase '\n'
+
+            with open(sliceIDsFile, 'r') as file:
+                lines = file.readlines()
+            self.m_sliceIDs = [item[0:-1] for item in lines]  # erase '\n'
+
+            with open(volumeStartIndexFile, 'r') as file:
+                lines = file.readlines()
+            self.m_volumeStartIndex = [int(item[0:-1]) for item in lines]  # erase '\n'
+
+            with open(volumeNumSlicesFile, 'r') as file:
+                lines = file.readlines()
+            self.m_volumeNumSlices = [int(item[0:-1]) for item in lines]  # erase '\n'
+
+        else:
+            # slices of [volumeStartIndex[i]:volumeStartIndex[i]+volumeNumSlices[i]) belong to a same volume.
+            for i,ID in enumerate(IDList):
+                resultList = fnmatch.filter(sliceList, "*/" + ID + "_*_*_Slice??.npy")
+                resultList.sort()
+                numSlices = len(resultList)
+                if 0 == numSlices:
+                    nonexistIDList.append(ID)
                 else:
-                    self.m_volumeStartIndex.append(self.m_volumeStartIndex[i-1] + self.m_volumeNumSlices[i-1])
-                self.m_volumeNumSlices.append(numSlices)
+                    if 0 == i:
+                        self.m_volumeStartIndex.append(0)
+                    else:
+                        self.m_volumeStartIndex.append(self.m_volumeStartIndex[i-1] + self.m_volumeNumSlices[i-1])
+                    self.m_volumeNumSlices.append(numSlices)
 
-                self.m_volumeIDs.append(ID)
-                for n in range(numSlices):
-                    self.m_slicesPath.append(resultList[n])
-                    self.m_sliceIDs.append(ID)
+                    self.m_volumeIDs.append(ID)
+                    for n in range(numSlices):
+                        self.m_slicesPath.append(resultList[n])
+                        self.m_sliceIDs.append(ID)
 
-        if len(nonexistIDList) > 0:
-            print(f"Error:  nonexistIDList:\n {nonexistIDList}")
-            assert False
+            if len(nonexistIDList) > 0:
+                print(f"Error:  nonexistIDList:\n {nonexistIDList}")
+                assert False
+
+            # save files
+
+
 
     def __len__(self):
         return len(self.m_volumeIDs)
