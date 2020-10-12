@@ -299,7 +299,7 @@ A brief:
 If you are available, you may tell me your time when I can show some training result to you.
 
 # Oct 8th, 2020
-Experiment Analysis:
+Experiment Analysis: for center slice as Input=====================================================================================
             Network                 Pooling     InputActivation LR     dropout  weighDecay    FC            OutputC     trainAccGet70%  trainAccGet100%  validation
 20201008_A: Conv2DFeatureNet        Avg         True            0.1    0.5      None        [512, 256, 1]   1024        96              166             57% first big oscillaltion, plane
 20201008_B: MobileNetV3_OCT2SysD    Avg         True            0.001  0.5      None        [512, 256, 1]   1024        272             418             56% small oscillation
@@ -325,6 +325,12 @@ Experiment Analysis:
 20201009_P: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             48          18              100             57%
 20201009_Q: mobileNetv3_small       Max         False           0.01   0.2      1e-2        [1]             24          22              182             58% (Good result)
 20201009_R: mobileNetv3_small       Avg         False           0.01   0.2      1e-2        [1]             12          5               70%             57%
+=================Use Random Slice as input to Network on Oct 10th, 2020================================================================================================
+            Network                 Pooling     InputActivation LR     LRPatience   dropout  weighDecay    FC            OutputC     trainAccGet70%  trainAccGet100%  validation
+20101010_A: mobileNetv3_small       Avg         False           0.01   3             0.2     1e-2          [1]           12
+20101010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128
+20101010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12
+20101010_D: mobileNetv3_small       Avg         False           0.01   30            0.8     1e-2          [64,1]        128
 
 Comparison:    OCT2SysD                OvarianCancer
 data Size:      3136                    168
