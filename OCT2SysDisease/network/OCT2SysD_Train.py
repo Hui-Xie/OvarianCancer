@@ -83,7 +83,7 @@ def main():
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
     # math.log(0.5,0.98) = 34, this scheduler equals scale 0.5 per 100 epochs.
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.98, patience=hps.lrPatience, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
 
     # Load network
@@ -95,6 +95,7 @@ def main():
     # train
     epochs = 1360000
     preValidLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 1e+8  # float 16 has maxvalue: 2048
+    preAccuracy = 0.5
     if net.training:
         initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:
@@ -206,10 +207,13 @@ def main():
         writer.add_scalar('TrainingAccuracy/HypertensionAcc', trHyperTAcc, epoch) if hps.debug else None
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validHyperTLoss < preValidLoss:
+        #if validHyperTLoss < preValidLoss:
+        if  hyperTAcc < preAccuracy:
             net.updateRunParameter("validationLoss", validHyperTLoss)
             net.updateRunParameter("epoch", net.m_epoch)
-            preValidLoss = validHyperTLoss
+            net.updateRunParameter("hyperTensionAccuracy", hyperTAcc)
+            #preValidLoss = validHyperTLoss
+            preAccuracy = hyperTAcc
             netMgr.saveNet(hps.netPath)
 
             curTime = datetime.datetime.now()

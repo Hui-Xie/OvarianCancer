@@ -31,8 +31,18 @@ class OCT2SysD_Net(BasicModel):
 
 
         # after m_conv2d_1, tensor need global mean on H and W dimension.
-
-        if 2 == len(hps.classifierWidth):
+        if 3 == len(hps.classifierWidth):
+            self.m_classifier = nn.Sequential(
+                nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=True),
+                nn.Hardswish(),
+                nn.Dropout2d(p=hps.dropoutRate, inplace=False),  # here it must use inplace =False
+                nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=True),
+                nn.Hardswish(),
+                nn.Dropout2d(p=hps.dropoutRate, inplace=False),  # here it must use inplace =False
+                nn.Conv2d(hps.classifierWidth[1], hps.classifierWidth[2], kernel_size=1, stride=1, padding=0, bias=False)
+                # if 1 == hps.classifierWidth[2], final linear layer does not need bias;
+            )
+        elif 2 == len(hps.classifierWidth):
             self.m_classifier = nn.Sequential(
                 nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=True),
                 nn.Hardswish(),
@@ -40,14 +50,17 @@ class OCT2SysD_Net(BasicModel):
                 nn.Conv2d(hps.classifierWidth[0], hps.classifierWidth[1], kernel_size=1, stride=1, padding=0, bias=False)
                 # if 1 == hps.classifierWidth[2], final linear layer does not need bias;
                 )
-        else: # 1 == len(hps.classifierWidth)
-            assert 1 == len(hps.classifierWidth)
+        elif 1 == len(hps.classifierWidth):
             self.m_classifier = nn.Sequential(
                 nn.Hardswish(),
                 nn.Dropout2d(p=hps.dropoutRate, inplace=False),  # here it must use inplace =False
                 nn.Conv2d(hps.outputChannels, hps.classifierWidth[0], kernel_size=1, stride=1, padding=0, bias=False)
                 # if 1 == hps.classifierWidth[0], final linear layer does not need bias;
             )
+        else:
+            print("Error: hps.classifierWidth length error.")
+            assert False
+
 
     def forward(self, x):
         '''
