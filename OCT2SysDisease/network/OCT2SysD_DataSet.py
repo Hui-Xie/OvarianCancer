@@ -59,6 +59,7 @@ class OCT2SysD_DataSet(data.Dataset):
         volumeStartIndexFile = os.path.join(hps.dataDir, self.m_mode+"_VolumeStartIndex.txt")
         volumeNumSlicesFile = os.path.join(hps.dataDir, self.m_mode+"_VolumeNumSlices.txt")
 
+        # save related file in order to speed up.
         if (os.path.isfile(slicePathFile) and os.path.isfile(volumeIDsFile)  and os.path.isfile(sliceIDsFile)
                 and os.path.isfile(volumeStartIndexFile) and os.path.isfile(volumeNumSlicesFile)):
             with open(slicePathFile, 'r') as file:
@@ -106,8 +107,21 @@ class OCT2SysD_DataSet(data.Dataset):
                 assert False
 
             # save files
-
-
+            with open(slicePathFile, "w") as file:
+                for v in self.m_slicesPath:
+                    file.write(f"{v}\n")
+            with open(volumeIDsFile, "w") as file:
+                for v in self.m_volumeIDs:
+                    file.write(f"{v}\n")
+            with open(sliceIDsFile, "w") as file:
+                for v in self.m_sliceIDs:
+                    file.write(f"{v}\n")
+            with open(volumeStartIndexFile, "w") as file:
+                for v in self.m_volumeStartIndex:
+                    file.write(f"{v}\n")
+            with open(volumeNumSlicesFile, "w") as file:
+                for v in self.m_volumeNumSlices:
+                    file.write(f"{v}\n")
 
     def __len__(self):
         return len(self.m_volumeIDs)
