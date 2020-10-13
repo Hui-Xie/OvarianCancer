@@ -7,7 +7,7 @@ sys.path.append("../..")
 from framework.BasicModel import BasicModel
 
 sys.path.append(".")
-from MobileNetV3_O import MobielNetV3_O
+from MobileNetV3_O import MobileNetV3_O
 from VGG_O import VGG_O
 
 
