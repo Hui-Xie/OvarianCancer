@@ -300,7 +300,7 @@ If you are available, you may tell me your time when I can show some training re
 
 # Oct 8th, 2020
 Experiment Analysis: for center slice as Input=====================================================================================
-            Network                 Pooling     InputActivation LR     dropout  weighDecay    FC            OutputC     trainAccGet70%  trainAccGet100%  validation
+            Network                 Pooling     InputActivation LR     dropout  weightDecay    FC            OutputC     trainAccGet70%  trainAccGet100%  validation
 20201008_A: Conv2DFeatureNet        Avg         True            0.1    0.5      None        [512, 256, 1]   1024        96              166             57% first big oscillaltion, plane
 20201008_B: MobileNetV3_OCT2SysD    Avg         True            0.001  0.5      None        [512, 256, 1]   1024        272             418             56% small oscillation
 20201008_C: MobileNetV3_OCT2SysD    Avg         False           0.01   0.5      1e-5        [512, 256, 1]   1024        29              160             57% later stable
@@ -392,6 +392,16 @@ values for hypertension_bp_plus_history$ have 559 records
 20101010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128         161                                                   max60%
 20101010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12          75                                                    max62%
 20101010_D: mobileNetv3_small       Avg         False           0.01   30            0.8     1e-2          [64,1]        128         100                                                   max62%
+
+Oct 13th, 2020 13:29
+Current running program:
+(base) [c-xwu000:network]#ps 941 938 615 642
+GPU   PID TTY      STAT   TIME COMMAND
+2     615 ?        Rl   9161:56 python3.7 ./OCT2SysD_Train.py ../testConfig/expOCT2SysD_20201012_A.yaml
+3     642 ?        Rl   8672:33 python3.7 ./OCT2SysD_Train.py ../testConfig/expOCT2SysD_20201012_B.yaml
+1     938 ?        Rl   29848:39 python3.7 ./OCT2SysD_Train.py ../testConfig/expOCT2SysD_20201010_C.yaml
+0     941 ?        Rl   29842:02 python3.7 ./OCT2SysD_Train.py ../testConfig/expOCT2SysD_20201010_D.yaml
+
 
 
 
