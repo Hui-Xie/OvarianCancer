@@ -15,6 +15,7 @@ debug: True
 device: torch.device('cuda:3')   #GPU ID
 batchSize: 8  # fixed batchsize, make sure at least 2 sample are negative.
 learningRate: 0.1
+weightDecay: 1.0e-3
 
 #data source
 existGTLabel: True
