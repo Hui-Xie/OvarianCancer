@@ -406,9 +406,9 @@ GPU   PID TTY      STAT   TIME COMMAND
             Network                 Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
 20201012_A: mobileNetv3_small       Avg         False           0.1    62         0.826          0.8     1e-2          [512,256,1]    1024        50                                                   max60%
 20201012_B: mobileNetv3_small       Avg         False           0.1    62         0.826          0.8     1e-2          [256,128,1]    512         36                                                   max61.68%
-20201015_A: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512
-
-
+20201015_A: mobile_small(pretrain)  Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512
+20201015_B: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512
+20201015_C: mobileNetv2_small       Avg         False           0.1    4          0.8            0.2     1e-4          [256,128,1]    512
 
 
 
