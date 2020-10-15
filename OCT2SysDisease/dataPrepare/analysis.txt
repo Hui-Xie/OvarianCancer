@@ -388,10 +388,10 @@ values for hypertension_bp_plus_history$ have 559 records
 
 =================Use Random Slice as input to Network on Oct 10th, 2020================================================================================================
             Network                 Pooling     InputActivation LR     LRPatience   dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
-20101010_A: mobileNetv3_small       Avg         False           0.01   3             0.2     1e-2          [1]           12          150                                                   max60%
-20101010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128         161                                                   max60%
-20101010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12          75                                                    max62%
-20101010_D: mobileNetv3_small       Avg         False           0.01   30            0.8     1e-2          [64,1]        128         100                                                   max62%
+20201010_A: mobileNetv3_small       Avg         False           0.01   3             0.2     1e-2          [1]           12          150                                                   max60%
+20201010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128         161                                                   max60%
+20201010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12          75               1.8K                                 max61.5%
+20201010_D: mobileNetv3_small       Avg         False           0.01   30            0.8     1e-2          [64,1]        128         100                                                   max62%
 
 Oct 13th, 2020 13:29
 Current running program:
@@ -402,7 +402,11 @@ GPU   PID TTY      STAT   TIME COMMAND
 1     938 ?        Rl   29848:39 python3.7 ./OCT2SysD_Train.py ../testConfig/expOCT2SysD_20201010_C.yaml
 0     941 ?        Rl   29842:02 python3.7 ./OCT2SysD_Train.py ../testConfig/expOCT2SysD_20201010_D.yaml
 
-
+=================Use Random Slice as input to Network on Oct 10th, 2020, with batch size 107 ========================================================================
+            Network                 Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
+20201012_A: mobileNetv3_small       Avg         False           0.1    62         0.826          0.8     1e-2          [512,256,1]    1024        50                                                   max60%
+20201012_B: mobileNetv3_small       Avg         False           0.1    62         0.826          0.8     1e-2          [256,128,1]    512         36                                                   max61.68%
+20201015_A: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512
 
 
 
