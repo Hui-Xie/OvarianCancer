@@ -163,7 +163,7 @@ def main():
             validHyperTLoss = 0.0
 
             net.setStatus("validation")
-            batchSize = 1 if hps.TTA else hps.batchSize
+            batchSize = 1 if hps.TTA else hps.batchSizeprint("ProbThreshold,\tACC,\tTPR,\tTNR,\tSum(ACC_TPR_TNR),\tnIgnore")
 
             for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=True, num_workers=0):
 
@@ -195,6 +195,7 @@ def main():
 
         gtDict = validationData.getGTDict()
         hyperTAcc = computeClassificationAccuracy(gtDict,predictDict, appKey)
+        Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumFromProbDict(predictProbDict)
 
 
         lrScheduler.step(validHyperTLoss)
@@ -204,16 +205,18 @@ def main():
         writer.add_scalar('train/HypertensionLoss', trHyperTLoss, epoch)
         writer.add_scalar('validation/HypertensionLoss', validHyperTLoss, epoch)
         writer.add_scalar('ValidationAccuracy/HypertensionAcc', hyperTAcc, epoch)
+        writer.add_scalars('ValidationAccuracy/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
         writer.add_scalar('TrainingAccuracy/HypertensionAcc', trHyperTAcc, epoch) if hps.debug else None
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         #if validHyperTLoss < preValidLoss:
-        if  hyperTAcc < preAccuracy:
+        # if  hyperTAcc > preAccuracy:
+        if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
             net.updateRunParameter("validationLoss", validHyperTLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("hyperTensionAccuracy", hyperTAcc)
             #preValidLoss = validHyperTLoss
-            preAccuracy = hyperTAcc
+            preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)
 
             curTime = datetime.datetime.now()
