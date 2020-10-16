@@ -79,7 +79,7 @@ def readProbDict(csvPath):
             probDict[MRN]['GT'] = int(row[2]) if 0 != len(row[2]) else -100
     return probDict
 
-def computeThresholdAccTPR_TNRSumFromProbDict(probDict)
+def computeThresholdAccTPR_TNRSumFromProbDict(probDict):
     '''
     probDict format: key, Prob1, GT  without table head.
     
