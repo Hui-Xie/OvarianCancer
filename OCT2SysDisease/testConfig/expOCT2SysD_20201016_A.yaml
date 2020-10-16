@@ -37,7 +37,7 @@ TTA: True  # validation and test use Test-time augmentation
 
 # train config
 device: torch.device('cuda:3')   #GPU ID
-batchSize: 55 # for 2033 training set, 2033= 19*107; 2033%55 =53
+batchSize: 40 # for 2033 training set, 2033= 19*107; 2033%55 =53; 2033%40 =33
 learningRate: 0.1  # 0.1 for small mobileNetv3
 lrPatience: 5   # learning rate decay patience
 lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
