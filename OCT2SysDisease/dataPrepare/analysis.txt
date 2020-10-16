@@ -387,7 +387,7 @@ values for hypertension_bp_plus_history$ have 559 records
 0 rate: 0.44364937388193204; 1 rate: 0.556350626118068
 
 =================Use Random Slice as input to Network on Oct 10th, 2020================================================================================================
-            Network                 Pooling     InputActivation LR     LRPatience   dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
+            Network                 Pooling     InputActivation LR     LRPatience   dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet70%     trainAccGet100%    validation
 20201010_A: mobileNetv3_small       Avg         False           0.01   3             0.2     1e-2          [1]           12          150                                                   max60%
 20201010_B: mobileNetv3_small       Avg         False           0.01   3             0.8     1e-2          [64,1]        128         161                                                   max60%
 20201010_C: mobileNetv3_small       Avg         False           0.01   30            0.2     1e-2          [1]           12          75               1.8K                                 max61.5%
@@ -406,10 +406,10 @@ GPU   PID TTY      STAT   TIME COMMAND
             Network                 Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
 20201012_A: mobileNetv3_small       Avg         False           0.1    62         0.826          0.8     1e-2          [512,256,1]    1024        50                                                   max60%
 20201012_B: mobileNetv3_small       Avg         False           0.1    62         0.826          0.8     1e-2          [256,128,1]    512         36                                                   max61.68%
-20201015_A: mobile_small(pretrain)  Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512
-20201015_B: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512
-20201015_C: mobileNetv2_small       Avg         False           0.1    4          0.8            0.2     1e-4          [256,128,1]    512
-
+20201015_A: mobile_small(pretrain)  Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512         Inf oscillation at 55%
+20201015_B: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512         28              INf                                  58%(max60%)
+20201015_C: mobileNetv2_small       Avg         False           0.1    4          0.8            0.2     1e-4          [256,128,1]    512         Inf             INf                                  55%
+20201016_A: large                   Avg         False           0.1    5          0.8            0.2     1e-4          [512,256,1]    1024
 
 
 
