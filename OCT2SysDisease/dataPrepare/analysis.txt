@@ -410,6 +410,6 @@ GPU   PID TTY      STAT   TIME COMMAND
 20201015_B: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512         28              INf                                  58%(max60%)
 20201015_C: mobileNetv2_small       Avg         False           0.1    4          0.8            0.2     1e-4          [256,128,1]    512         Inf             INf                                  55%
 20201016_A: large                   Avg         False           0.1    5          0.8            0.2     1e-4          [512,256,1]    1024
-
+20201016_A: large                   Avg         False           0.1    5          0.8            0.3     1e-5          [512,256,1]    1024
 
 
