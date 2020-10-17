@@ -409,7 +409,13 @@ GPU   PID TTY      STAT   TIME COMMAND
 20201015_A: mobile_small(pretrain)  Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512         Inf oscillation at 55%
 20201015_B: mobileNetv2_small       Avg         False           0.1    5          0.8            0.5     1e-3          [256,128,1]    512         28              INf                                  58%(max60%)
 20201015_C: mobileNetv2_small       Avg         False           0.1    4          0.8            0.2     1e-4          [256,128,1]    512         Inf             INf                                  55%
-20201016_A: large                   Avg         False           0.1    5          0.8            0.2     1e-4          [512,256,1]    1024
-20201016_A: large                   Avg         False           0.1    5          0.8            0.3     1e-5          [512,256,1]    1024
+20201016_A: large                   Avg         False           0.1    5          0.8            0.2     1e-4          [512,256,1]    1024        ===Stop===
+20201016_B: large                   Avg         False           0.1    5          0.8            0.3     1e-5          [512,256,1]    1024        40                                                   60%
+            Above: when validation ACC gets 60%, its TPR 61.5%, TNR 58.5%, threshold 0.5027
+20201017_A: Large                   Avg         False           0.1    5          0.8            0       1e-5          [512,256,1]    1024
+20201017_B: Large(No flip aug)      Avg         False           0.1    5          0.8            0       1e-5          [512,256,1]    1024
+
+# Oct 17th, 2020:
+for 20201016_B: 4min /epoch
 
 
