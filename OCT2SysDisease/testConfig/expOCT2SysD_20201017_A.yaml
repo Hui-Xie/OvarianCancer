@@ -86,7 +86,7 @@ outputChannels: 1024  # output feature channels before the classifier for moible
 
 # data augmentation
 augmentation: True
-augmentProb: 0  #  data augmentation rate
+augmentProb: 0.4  #  data augmentation rate
 flipProb: 0.5
 gaussianNoiseStd: 0.2 # gausssian nosie std with mean =0
 # for salt pepper noise

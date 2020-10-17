@@ -36,7 +36,7 @@ debugOutputPeriod: 100
 TTA: True  # validation and test use Test-time augmentation
 
 # train config
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 40 # for 2033 training set, 2033= 19*107; 2033%55 =53; 2033%40 =33
 learningRate: 0.1  # 0.1 for small mobileNetv3
 lrPatience: 5   # learning rate decay patience
@@ -69,7 +69,7 @@ bothSideGrad: True # False use singleSideGrad
 
 inputActivation: False # input conv has no activation
 globalPooling: "average" #"max" #  #  "IQR_std"
-dropoutRate: 0   # dropout after global average pooling
+dropoutRate: 0.3 # dropout after global average pooling
 weightDecay: 1.0e-5 #
 
 
@@ -87,7 +87,7 @@ outputChannels: 1024  # output feature channels before the classifier for moible
 # data augmentation
 augmentation: True
 augmentProb: 0.4  #  data augmentation rate
-flipProb: 0   # 0 means its does not use flip.
+flipProb: 0.5
 gaussianNoiseStd: 0.2 # gausssian nosie std with mean =0
 # for salt pepper noise
 saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
