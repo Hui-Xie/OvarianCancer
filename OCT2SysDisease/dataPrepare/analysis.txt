@@ -418,6 +418,8 @@ GPU   PID TTY      STAT   TIME COMMAND
 20201017_A: Large                   Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024
 20201017_B: Large(No flip aug)      Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024
 20201017_C: large                   Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
+20201017_D: Large                   Avg         False           0.1    6          0.8            0.5     1e-5          [512,256,1]    1024
+
 
 # Oct 17th, 2020:
 for 20201016_B: 4min /epoch
