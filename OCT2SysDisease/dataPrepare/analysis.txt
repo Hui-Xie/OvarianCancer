@@ -415,9 +415,9 @@ GPU   PID TTY      STAT   TIME COMMAND
 
 # below expeiment add gaussian and salt pepper noise:
             Network                 Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
-20201017_A: Large                   Avg         False           0.1    5          0.8            0       1e-5          [512,256,1]    1024
-20201017_B: Large(No flip aug)      Avg         False           0.1    5          0.8            0       1e-5          [512,256,1]    1024
-20201017_C: large                   Avg         False           0.1    5          0.8            0.3     1e-5          [512,256,1]    1024
+20201017_A: Large                   Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024
+20201017_B: Large(No flip aug)      Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024
+20201017_C: large                   Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
 
 # Oct 17th, 2020:
 for 20201016_B: 4min /epoch
