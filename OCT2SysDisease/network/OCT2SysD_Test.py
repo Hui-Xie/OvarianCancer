@@ -109,8 +109,8 @@ def main():
             file.write(f"net.m_runParametersDict:\n")
             [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
             file.write("\n=======Test Result=========\n")
-            print(f"threshold =0.5, hypertenson accuracy = {hyperTAcc}\n")
-            print("Best accuracy sum: \n")
+            file.write(f"threshold =0.5, hypertenson accuracy = {hyperTAcc}\n")
+            file.write("Best accuracy sum: \n")
             [file.write(f"\t{key}:{value}\n") for key, value in Td_Acc_TPR_TNR_Sum.items()]
 
 
