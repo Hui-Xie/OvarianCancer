@@ -43,13 +43,16 @@ def main():
     print(f"Experiment: {hps.experimentName}")
 
     trainTransform = None
-    if hps.augmentation:
+    if hps.trainAugmentation:
         trainTransform = OCT2SysD_Transform(hps)
-    # validationTransform = trainTransform
+
+    validationTransform = None
+    if hps.validationAugmentation:
+        validationTransform = OCT2SysD_Transform(hps)
     # some people think validation supporting data augmentation benefits both learning rate decaying and generalization.
 
     trainData = OCT2SysD_DataSet("training", hps=hps, transform=trainTransform)
-    validationData = OCT2SysD_DataSet("validation", hps=hps, transform=None) # only use data augmentation for training set
+    validationData = OCT2SysD_DataSet("validation", hps=hps, transform=validationTransform) # only use data augmentation for training set
 
     # construct network
     net = eval(hps.network)(hps=hps)

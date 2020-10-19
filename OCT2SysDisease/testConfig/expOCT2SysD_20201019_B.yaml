@@ -36,7 +36,7 @@ debugOutputPeriod: 100
 TTA: True  # validation and test use Test-time augmentation
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 20 # for 2033 training set, 2033= 19*107; 2033%55 =53; 2033%40 =33
 learningRate: 0.1  # 0.1 for small mobileNetv3
 lrPatience: 6   # learning rate decay patience
@@ -85,7 +85,7 @@ outputChannels: 1024  # output feature channels before the classifier for moible
                 #1024      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024 for Conv2DFeatureNet
 
 # data augmentation
-validationAugmentation: False
+validationAugmentation: True
 # some people think validation supporting data augmentation benefits both learning rate decaying and generalization.
 
 trainAugmentation: True

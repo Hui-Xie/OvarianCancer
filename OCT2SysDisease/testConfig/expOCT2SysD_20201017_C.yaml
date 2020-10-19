@@ -85,7 +85,10 @@ outputChannels: 1024  # output feature channels before the classifier for moible
                 #1024      # nStartFilter * (2**(nLayers-1)) = 16 *(2**(7-1))= 1024 for Conv2DFeatureNet
 
 # data augmentation
-augmentation: True
+validationAugmentation: False
+# some people think validation supporting data augmentation benefits both learning rate decaying and generalization.
+
+trainAugmentation: True
 augmentProb: 0.4  #  data augmentation rate
 flipProb: 0.5
 gaussianNoiseStd: 0.2 # gausssian nosie std with mean =0
