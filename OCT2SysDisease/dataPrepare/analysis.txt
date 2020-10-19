@@ -419,8 +419,7 @@ GPU   PID TTY      STAT   TIME COMMAND
 20201017_B: Large(No flip aug)      Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024        64%          ACC61%,TNR48%; TPR72%; Threshold0.48;
 20201017_C: large                   Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024        63.8%        ACC62%,TNR49%; TPR73%; Threshold0.44; (best)
 20201017_D: Large                   Avg         False           0.1    6          0.8            0.5     1e-5          [512,256,1]    1024        63%          ACC61%,TNR51%; TPR69%; Threshold0.45;
-
-
+20201019_A: Conv2DFeatureNet        Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
 # Oct 17th, 2020:
 for 20201016_B: 4min /epoch
 
