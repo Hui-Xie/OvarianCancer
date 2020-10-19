@@ -414,11 +414,11 @@ GPU   PID TTY      STAT   TIME COMMAND
             Above: when validation ACC gets 60%, its TPR 61.5%, TNR 58.5%, threshold 0.5027
 
 # below expeiment add gaussian and salt pepper noise:
-            Network                 Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainAccGet60%  trainAccGet80%     trainAccGet100%    validation
-20201017_A: Large                   Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024
-20201017_B: Large(No flip aug)      Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024
-20201017_C: large                   Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
-20201017_D: Large                   Avg         False           0.1    6          0.8            0.5     1e-5          [512,256,1]    1024
+            Network                 Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainingAcc  validation
+20201017_A: Large                   Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024        63%          ACC61%,TNR45%; TPR75%; Threshold0.44;
+20201017_B: Large(No flip aug)      Avg         False           0.1    6          0.8            0       1e-5          [512,256,1]    1024        64%          ACC61%,TNR48%; TPR72%; Threshold0.48;
+20201017_C: large                   Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024        63.8%        ACC62%,TNR49%; TPR73%; Threshold0.44; (best)
+20201017_D: Large                   Avg         False           0.1    6          0.8            0.5     1e-5          [512,256,1]    1024        63%          ACC61%,TNR51%; TPR69%; Threshold0.45;
 
 
 # Oct 17th, 2020:

@@ -163,9 +163,10 @@ def main():
             validHyperTLoss = 0.0
 
             net.setStatus("validation")
-            batchSize = 1 if hps.TTA else hps.batchSizeprint("ProbThreshold,\tACC,\tTPR,\tTNR,\tSum(ACC_TPR_TNR),\tnIgnore")
+            batchSize = 1 if hps.TTA else hps.batchSize
 
-            for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=True, num_workers=0):
+
+            for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=0):
 
                 # squeeze the extra dimension of data
                 inputs = batchData['images'].squeeze(dim=0)
