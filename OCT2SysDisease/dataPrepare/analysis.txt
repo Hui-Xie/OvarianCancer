@@ -460,5 +460,32 @@ total 502 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrW
 values for hypertension_bp_plus_history$ have 502 records
 0 rate: 0.4342629482071713; 1 rate: 0.5657370517928287
 
+after delete MGM cases: high myopia, Glaucoma, Macula/Retina disease cases:
+
+    dataset		&number &tag0  	&tag1 \\
+	training	&1807  	&45.66\% &54.34\%  \\
+	validation	&481  	&45.32\% &54.68\%  \\
+	test		&502  	&43.43\% &56.57\%  \\
+
+
+            Network            Notes     Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainingAcc  validation
+20201020_A: large                        Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
+            batchSize=40
+            Validation Augment
+            GPU=3
+
+20201020_B: Conv2DFeatureNet             Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
+            bathsize =20
+            Validation Augment
+            GPU=2
+20201020_C: large                        Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024
+            batchSize=40
+            Validation Augment
+            GPU=3
+
+20201020_D: Conv2DFeatureNet             Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024
+            bathsize =20
+            Validation Augment
+            GPU=2
 
 

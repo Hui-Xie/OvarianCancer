@@ -36,8 +36,8 @@ debugOutputPeriod: 50
 TTA: True  # validation and test use Test-time augmentation
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
-batchSize: 40 # for 2033 training set, 2033= 19*107; 2033%55 =53; 2033%40 =33
+device: torch.device('cuda:2')   #GPU ID
+batchSize: 20 # for 2033 training set, 2033= 19*107; 2033%55 =53; 2033%40 =33
 learningRate: 0.1  # 0.1 for small mobileNetv3
 lrPatience: 6   # learning rate decay patience
 lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
@@ -79,7 +79,7 @@ hypertensionClassPercent:  [0.4565578306585501, 0.54344216934145]  # for trainID
 # hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
-featureNet: "MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
+featureNet: "Conv2DFeatureNet" #"MobileNetV3_OCT2SysD" #"Conv2DFeatureNet" #
 mobileNetV3Cfg: "large" #"small" # "large"
 nStartFilters: 16
 nLayers: 7
