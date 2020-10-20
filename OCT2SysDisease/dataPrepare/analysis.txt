@@ -434,7 +434,31 @@ exclude some patients with disease like below:
 2. Glaucoma (Glaucoma_exclude$ =1)
 3. Macula or retinal diseases (Retina_exclude$=1)
 
-tag: excludeMGM
+tag: excludeMGM (Myopia, Glaucoma, Macula disease)
+(base) [c-xwu000:dataPrepare]#python3.7 ./excludeMyopiaGlaucomaMaculaD4.py  /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv
+deleted 57 IDs in /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID.csv
+(base) [c-xwu000:dataPrepare]#python3.7 ./excludeMyopiaGlaucomaMaculaD4.py  /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv
+deleted 67 IDs in /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID.csv
+(base) [c-xwu000:dataPrepare]#python3.7 ./excludeMyopiaGlaucomaMaculaD4.py  /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv
+deleted 226 IDs in /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID.csv
+(base) [c-xwu000:dataPrepare]#
+
+After deleting MGM,  statistic hypertension:
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv  hypertension_bp_plus_history$ binary
+total 1807 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
+values for hypertension_bp_plus_history$ have 1807 records
+0 rate: 0.4565578306585501; 1 rate: 0.54344216934145
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv  hypertension_bp_plus_history$ binary
+total 481 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv
+values for hypertension_bp_plus_history$ have 481 records
+0 rate: 0.45322245322245325; 1 rate: 0.5467775467775468
+
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv  hypertension_bp_plus_history$ binary
+total 502 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv
+values for hypertension_bp_plus_history$ have 502 records
+0 rate: 0.4342629482071713; 1 rate: 0.5657370517928287
 
 
 
