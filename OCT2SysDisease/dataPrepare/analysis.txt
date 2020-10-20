@@ -428,4 +428,13 @@ GPU   PID TTY      STAT   TIME COMMAND
 # Oct 17th, 2020:
 for 20201016_B: 4min /epoch
 
+# Oct 20th, 2020:
+exclude some patients with disease like below:
+1. High myopia (Axiallength_26_ormore_exclude$ =1)
+2. Glaucoma (Glaucoma_exclude$ =1)
+3. Macula or retinal diseases (Retina_exclude$=1)
+
+tag: excludeMGM
+
+
 
