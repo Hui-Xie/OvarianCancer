@@ -476,7 +476,7 @@ total: 2790 cases.
             Validation Augment
             GPU=3
 
-20201020_B: Conv2DFeatureNet             Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
+20201020_B: Conv2DFeatureNet             Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024        51%          55%(stop)
             bathsize =20
             Validation Augment
             GPU=2
@@ -485,13 +485,13 @@ total: 2790 cases.
             Validation Augment
             GPU=3
 
-20201020_D: Conv2DFeatureNet             Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024
+20201020_D: Conv2DFeatureNet             Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024        61%          57%(stop)
             bathsize =20
             Validation Augment
             GPU=2
 
-20201021_A: large                        Avg         False           1      6          0.8            0.2     1e-5          [512,256,1]    1024 (wait launch)
+20201021_A: large                        Avg         False           1      6          0.8            0.2     1e-5          [512,256,1]    1024
             batchSize=40
             Validation Augment
-            GPU=3
+            GPU=0
             LR=1
