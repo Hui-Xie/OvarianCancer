@@ -1,0 +1,31 @@
+Boykov-Kolmogorov-Maxflow-Mincut-in-Graph-Segmentation: by Jiaxu Zou
+https://github.com/zoujx96/Boykov-Kolmogorov-Maxflow-Mincut-in-Graph-Segmentation
+
+Opencv3 Maxflow/mincut algorithm:
+https://github.com/bvirxx/opencv3
+maxFlow()                                      48 s           grabcut()                63 s
+parallel maxFlow() (64 regions, 8 threads)     18 s           parallel grabcut()       34 s
+
+Cuda version: Graph Cut
+http://cvit.iiit.ac.in/research/resources
+
+GPU implement for MinCut
+https://github.com/JihoYang/maxFlowminCut
+
+GPU implementaton for maxflow:
+https://www.sciencedirect.com/science/article/pii/B9780123859631000058
+
+OpenCV GraphCut: (Good explanation)
+https://docs.opencv.org/3.4/d8/d83/tutorial_py_grabcut.html
+Source node and Sink node. Every foreground pixel is connected to Source node and every background pixel is connected to Sink node.
+
+grapCut in opencv:
+https://docs.opencv.org/3.4/d7/d1b/group__imgproc__misc.html#ga909c1dda50efcbeaa3ce126be862b37f
+
+graphCut openCV source code;
+https://github.com/opencv/opencv/blob/master/modules/imgproc/src/grabcut.cpp
+openCV maxflow code: it only return flow, instead of mincut.
+https://github.com/opencv/opencv/blob/master/modules/imgproc/include/opencv2/imgproc/detail/gcgraph.hpp
+
+paralle vs serial comaparison in maxflow.
+https://github.com/SumitPadhiyar/parallel_ford_fulkerson_gpu
