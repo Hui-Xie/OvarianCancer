@@ -480,7 +480,7 @@ total: 2790 cases.
             bathsize =20
             Validation Augment
             GPU=2
-20201020_C: large                        Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024
+20201020_C: large                        Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024 (best)
             batchSize=40
             Validation Augment
             GPU=3
@@ -490,4 +490,8 @@ total: 2790 cases.
             Validation Augment
             GPU=2
 
-
+20201021_A: large                        Avg         False           1      6          0.8            0.2     1e-5          [512,256,1]    1024 (wait launch)
+            batchSize=40
+            Validation Augment
+            GPU=3
+            LR=1
