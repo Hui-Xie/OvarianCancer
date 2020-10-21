@@ -467,6 +467,8 @@ after delete MGM cases: high myopia, Glaucoma, Macula/Retina disease cases:
 	validation	&481  	&45.32\% &54.68\%  \\
 	test		&502  	&43.43\% &56.57\%  \\
 
+total: 2790 cases.
+
 
             Network            Notes     Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainingAcc  validation
 20201020_A: large                        Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
