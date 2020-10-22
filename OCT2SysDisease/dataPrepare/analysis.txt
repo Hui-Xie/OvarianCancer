@@ -471,7 +471,7 @@ total: 2790 cases.
 
 
             Network            Notes     Pooling     InputActivation LR     LRPatience LrDecayFactor  dropout  weighDecay    FC            OutputC     trainingAcc  validation
-20201020_A: large                        Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024
+20201020_A: large                        Avg         False           0.1    6          0.8            0.2     1e-5          [512,256,1]    1024         61%(max)    ACC61%,TNR53%; TPR68%; Threshold0.48;
             batchSize=40
             Validation Augment
             GPU=3
@@ -480,7 +480,7 @@ total: 2790 cases.
             bathsize =20
             Validation Augment
             GPU=2
-20201020_C: large                        Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024 (best)
+20201020_C: large                        Avg         False           0.5    6          0.8            0.2     1e-5          [512,256,1]    1024        64%(max)     ACC61%,TNR51%; TPR69%; Threshold0.48;
             batchSize=40
             Validation Augment
             GPU=3
@@ -490,8 +490,22 @@ total: 2790 cases.
             Validation Augment
             GPU=2
 
-20201021_A: large                        Avg         False           1      6          0.8            0.2     1e-5          [512,256,1]    1024
+20201021_A: large                        Avg         False           1      6          0.8            0.2     1e-5          [512,256,1]    1024       65%(max)      ACC62%,TNR56%; TPR67%; Threshold0.49;  (Best)
             batchSize=40
             Validation Augment
             GPU=0
             LR=1
+
+20201022_A: large                        Avg         False           2      6           0.8            0.2     1e-5          [512,256,1]    1024
+            batchSize=40
+            Validation Augment
+            GPU=0
+            LR=2
+            LrSchedular uses sum.
+
+20201022_B: large                        Avg         False           1      6           0.8            0.2     1e-5          [512,256,1]    1024
+            batchSize=40
+            Validation Augment
+            GPU=0
+            LR=1
+            LrSchedular uses sum.

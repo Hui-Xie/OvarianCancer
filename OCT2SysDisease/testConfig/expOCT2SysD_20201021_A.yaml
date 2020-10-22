@@ -41,6 +41,7 @@ batchSize: 40 # for 2033 training set, 2033= 19*107; 2033%55 =53; 2033%40 =33
 learningRate: 1.0  #
 lrPatience: 6   # learning rate decay patience
 lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
+lrSchedulerMode: "min"  # "min" for loss, "max" for sum of Acc+TNR+TPR
 
 #data source
 existGTLabel: True

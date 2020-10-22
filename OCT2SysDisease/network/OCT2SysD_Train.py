@@ -86,7 +86,7 @@ def main():
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
     # math.log(0.5,0.98) = 34, this scheduler equals scale 0.5 per 100 epochs.
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=hps.lrSchedulerMode, factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-8, threshold=0.015, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
 
     # Load network
@@ -202,7 +202,10 @@ def main():
         Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumFromProbDict(predictProbDict)
 
 
-        lrScheduler.step(validHyperTLoss)
+        if "min" == hps.lrSchedulerMode:
+            lrScheduler.step(validHyperTLoss)
+        else: # "max"
+            lrScheduler.step(Td_Acc_TPR_TNR_Sum['Sum'])
         # debug
         # print(f"epoch = {epoch}; trainLoss = {trLoss.item()};  validLoss = {validLoss.item()}")  # for smoke debug
 
