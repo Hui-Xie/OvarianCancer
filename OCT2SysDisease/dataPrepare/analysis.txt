@@ -499,13 +499,13 @@ total: 2790 cases.
 20201022_A: large                        Avg         False           2      6           0.8            0.2     1e-5          [512,256,1]    1024
             batchSize=40
             Validation Augment
-            GPU=0
+            GPU=1
             LR=2
             LrSchedular uses sum.
 
 20201022_B: large                        Avg         False           1      6           0.8            0.2     1e-5          [512,256,1]    1024
             batchSize=40
             Validation Augment
-            GPU=0
+            GPU=2
             LR=1
             LrSchedular uses sum.
