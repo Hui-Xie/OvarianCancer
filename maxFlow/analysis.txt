@@ -29,3 +29,8 @@ https://github.com/opencv/opencv/blob/master/modules/imgproc/include/opencv2/img
 
 paralle vs serial comaparison in maxflow.
 https://github.com/SumitPadhiyar/parallel_ford_fulkerson_gpu
+
+Oct 22nd, 2020
+Professor Xu ask: how to detemine learning rate such that after some edge capacity changes,  predicted mincut is more close to ground truth mincut?
+
+
