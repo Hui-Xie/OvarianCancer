@@ -17,7 +17,7 @@ NumSlices = 31  # for each patient
 
 
 volumesDir = "/home/hxie1/data/BES_3K/raw"
-outputDir = "/home/hxie1/data/BES_3K/numpy/W512"
+outputDir = "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512"
 patientsListFile = os.path.join(outputDir, "patientsList.txt")
 
 def saveOneVolumeToNumpy(volumePath, goalImageFile):
