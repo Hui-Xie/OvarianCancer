@@ -67,11 +67,18 @@ def main():
 
     # split files in sublist, this is a better method than before.
     N = len(patientsList)
+    nSavedVolumes = 0
     for i in range(N):
         basename = os.path.basename(patientsList[i])
-        saveOneVolumeToNumpy(patientsList[i], os.path.join(outputDir, 'testVolume', f"{basename}.npy"))
+        saveVolumePath = os.path.join(outputDir, 'testVolume', f"{basename}.npy")
+        if os.path.exists(saveVolumePath):
+            continue
+        else:
+            saveOneVolumeToNumpy(patientsList[i], saveVolumePath)
+            nSavedVolumes += 1
 
     print(f"total: {len(patientsList)} patients in {volumesDir}")
+    print(f"save {nSavedVolumes} volumes")
     print("===End of prorgram=========")
 
 if __name__ == "__main__":
