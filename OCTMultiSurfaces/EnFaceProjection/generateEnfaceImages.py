@@ -59,10 +59,10 @@ for volumePath in volumesList:
 
 
     # output file
-    enFaceVolumePath = os.path.join(outputDirEnface, f"{basename}_retina{N-1}Layers_enface.npy")
+    enFaceVolumePath = os.path.join(outputDirEnface, f"{volumename}_retina{N-1}Layers_enface.npy")
     np.save(enFaceVolumePath, enfaceVolume)
 
-    layerWidthVolumePath = os.path.join(outputDirWidth, f"{basename}_retina{N - 1}Layers_width.npy")
+    layerWidthVolumePath = os.path.join(outputDirWidth, f"{volumename}_retina{N - 1}Layers_width.npy")
     np.save(layerWidthVolumePath, layerWidthVolume)
 
     break
