@@ -17,10 +17,11 @@ IDList = [item[0:-1] for item in IDList]  # erase '\n'
 
 '''
 
+hPixelSize =  3.870  # unit: micrometer, in y/height direction
 OCTVolumeDir = "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/testVolume"  # in npy, a file per volume
 segXmlDir ="/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/10SurfPredictionXml"
-outputDir ="/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/enfaceW512"
-
+outputDirEnface ="/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/enfaceW512"
+outputDirWidth ="/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/layerWidthW512"
 
 volumesList = glob.glob(OCTVolumeDir + f"/*_Volume.npy")
 for volumePath in volumesList:
@@ -33,25 +34,36 @@ for volumePath in volumesList:
     xmlSegName = volumename+ "_Sequence_Surfaces_Prediction.xml"
     xmlSegPath = os.path.join(segXmlDir, xmlSegName)
     # read xml segmentation into array
-    volumeSeg = getSurfacesArray(xmlSegPath) # BxNxW
+    volumeSeg = getSurfacesArray(xmlSegPath).astype(np.int) # BxNxW
     B1, N, W1 = volumeSeg.shape
-    assert (B == B1) and (H == W1)
+    assert (B == B1) and (W == W1)
 
     # define output emtpy array
     enfaceVolume = np.empty((N-1, B, W), dtype=np.float)
+    layerWidthVolume = np.empty((N-1, B, W), dtype=np.float)
     # fill the output array
     for i in range(N-1):
         surface0 = volumeSeg[:,i,:]  # BxW
         surface1 = volumeSeg[:,i+1,:]  # BxW
-        layerWith = surface1 - surface0  # BxW
+        width = surface1 - surface0  # BxW # maybe 0
         for b in range(B):
             for w in range(W):
-                enfaceVolume[i, b, w] = volume[b,surface0[b,w]: surface1[b,w], w].sum()/layerWith[b,w]  #BxW
+                if 0 == width[b,w]:
+                    enfaceVolume[i, b, w] = volume[b,surface0[b,w], w]
+                elif width[b,w] >= 1:
+                    enfaceVolume[i, b, w] = volume[b,surface0[b,w]: surface1[b,w], w].sum()/width[b,w]  #BxW
+                else:
+                    print(f"Error: layer width is negative at b={b} and w={w} in {volumePath}")
+
+        layerWidthVolume[i,:,:] = width *hPixelSize
+
 
     # output file
-    enFaceVolumePath = os.path.join(outputDir, f"{basename}_retina{N-1}Layers_enface.npy")
+    enFaceVolumePath = os.path.join(outputDirEnface, f"{basename}_retina{N-1}Layers_enface.npy")
     np.save(enFaceVolumePath, enfaceVolume)
 
+    layerWidthVolumePath = os.path.join(outputDirWidth, f"{basename}_retina{N - 1}Layers_width.npy")
+    np.save(layerWidthVolumePath, layerWidthVolume)
 
     break
 
