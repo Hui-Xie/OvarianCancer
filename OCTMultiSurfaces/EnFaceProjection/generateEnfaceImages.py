@@ -44,11 +44,12 @@ for volumePath in volumesList:
         surface0 = volumeSeg[:,i,:]  # BxW
         surface1 = volumeSeg[:,i+1,:]  # BxW
         layerWith = surface1 - surface0  # BxW
-        enfaceVolume[i,:,:] =   # BxW
-
+        for b in range(B):
+            for w in range(W):
+                enfaceVolume[i, b, w] = volume[b,surface0[b,w]: surface1[b,w], w].sum()/layerWith[b,w]  #BxW
 
     # output file
-    enFaceVolumePath = os.path.join(outputDir, f"{basename}_enface.npy")
+    enFaceVolumePath = os.path.join(outputDir, f"{basename}_retina{N-1}Layers_enface.npy")
     np.save(enFaceVolumePath, enfaceVolume)
 
 
