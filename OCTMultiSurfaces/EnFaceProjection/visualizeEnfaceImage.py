@@ -1,4 +1,4 @@
-# visulize en-face image
+# visualize en-face image
 
 import os
 import sys
