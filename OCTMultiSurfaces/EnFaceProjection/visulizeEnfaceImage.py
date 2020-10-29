@@ -37,9 +37,9 @@ def main():
 
     for i in range(N):
         subploti = plt.subplot(rowSubplot, colSubplot, i+1)
-        subploti.imshow(enfaceVolume[i], cmap='gray')
+        subploti.imshow(enfaceVolume[i,], cmap='gray')
         subploti.axis('off')
-        subploti.legend(layerNames[i], loc='lower center', ncol=1)
+        subploti.text(0.4, 0.1, layerNames[i], fontsize=12)
 
     outputFilePath = os.path.join(outputDir, volumename+ ".png")
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
