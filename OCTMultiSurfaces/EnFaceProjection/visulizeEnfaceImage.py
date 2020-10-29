@@ -36,7 +36,7 @@ def main():
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
     textLocx = int(W*0.5)
-    textLocy = int(B*1.0)
+    textLocy = int(B*0.95)
 
     for i in range(N):
         subploti = plt.subplot(rowSubplot, colSubplot, i+1)
