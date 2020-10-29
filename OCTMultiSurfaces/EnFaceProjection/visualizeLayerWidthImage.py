@@ -40,7 +40,7 @@ def main():
 
     for i in range(N):
         subploti = plt.subplot(rowSubplot, colSubplot, i+1)
-        subploti.imshow(layerWidthVolume[i,], cmap='hot')
+        subploti.imshow(layerWidthVolume[i,], cmap='viridis')  #'hot'
         subploti.axis('off')
         subploti.text(textLocx, textLocy, layerNames[i], fontsize=8)
 
