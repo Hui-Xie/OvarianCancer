@@ -28,8 +28,8 @@ def main():
 
     f = plt.figure(frameon=False)
     DPI = f.dpi
-    rowSubplot = 3
-    colSubplot = 3
+    rowSubplot = N
+    colSubplot = 1
     f.set_size_inches(W * colSubplot / float(DPI), B * rowSubplot / float(DPI))
 
     plt.margins(0)
