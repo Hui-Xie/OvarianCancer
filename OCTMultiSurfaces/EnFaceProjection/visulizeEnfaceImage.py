@@ -36,13 +36,13 @@ def main():
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
     textLocx = int(W*0.5)
-    textLocy = int(B*0.9)
+    textLocy = int(B*1.0)
 
     for i in range(N):
         subploti = plt.subplot(rowSubplot, colSubplot, i+1)
         subploti.imshow(enfaceVolume[i,], cmap='gray')
         subploti.axis('off')
-        subploti.text(textLocx, textLocy, layerNames[i], fontsize=10)
+        subploti.text(textLocx, textLocy, layerNames[i], fontsize=8)
 
     outputFilePath = os.path.join(outputDir, volumename+ ".png")
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
