@@ -28,6 +28,7 @@ for volumePath in volumesList:
         print(f"file not exist: {xmlSegPath}")
         continue
 
+    N = 10
     enFaceVolumePath = os.path.join(outputDirEnface, f"{volumename}_retina{N - 1}Layers_enface.npy")
     layerWidthVolumePath = os.path.join(outputDirWidth, f"{volumename}_retina{N - 1}Layers_width.npy")
     if os.path.exists(enFaceVolumePath) and os.path.exists(layerWidthVolumePath):
@@ -35,8 +36,8 @@ for volumePath in volumesList:
 
     # read xml segmentation into array
     volumeSeg = getSurfacesArray(xmlSegPath).astype(np.int) # BxNxW
-    B1, N, W1 = volumeSeg.shape
-    assert (B == B1) and (W == W1)
+    B1, N1, W1 = volumeSeg.shape
+    assert (B == B1) and (W == W1) and (N == N1)
 
     # define output emtpy array
     enfaceVolume = np.empty((N-1, B, W), dtype=np.float)
