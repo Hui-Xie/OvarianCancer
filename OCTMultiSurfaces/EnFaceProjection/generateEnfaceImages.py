@@ -8,15 +8,6 @@ sys.path.append("..")
 from dataPrepare_Tongren.TongrenFileUtilities import getSurfacesArray
 
 
-# imageIDPath = "/home/hxie1/data/BES_3K/GTs/allID_delNonExist_delErrWID_excludeMGM.csv"
-'''
-# read volumeID into list
-with open(imageIDPath, 'r') as idFile:
-    IDList = idFile.readlines()
-IDList = [item[0:-1] for item in IDList]  # erase '\n'
-
-'''
-
 hPixelSize =  3.870  # unit: micrometer, in y/height direction
 OCTVolumeDir = "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/testVolume"  # in npy, a file per volume
 segXmlDir ="/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/10SurfPredictionXml"
@@ -35,6 +26,11 @@ for volumePath in volumesList:
     xmlSegPath = os.path.join(segXmlDir, xmlSegName)
     if not os.path.exists(xmlSegPath):
         print(f"file not exist: {xmlSegPath}")
+        continue
+
+    enFaceVolumePath = os.path.join(outputDirEnface, f"{volumename}_retina{N - 1}Layers_enface.npy")
+    layerWidthVolumePath = os.path.join(outputDirWidth, f"{volumename}_retina{N - 1}Layers_width.npy")
+    if os.path.exists(enFaceVolumePath) and os.path.exists(layerWidthVolumePath):
         continue
 
     # read xml segmentation into array
@@ -62,13 +58,10 @@ for volumePath in volumesList:
         layerWidthVolume[i,:,:] = width *hPixelSize
 
 
-    # output file
-    enFaceVolumePath = os.path.join(outputDirEnface, f"{volumename}_retina{N-1}Layers_enface.npy")
+    # output files
     np.save(enFaceVolumePath, enfaceVolume)
-
-    layerWidthVolumePath = os.path.join(outputDirWidth, f"{volumename}_retina{N - 1}Layers_width.npy")
     np.save(layerWidthVolumePath, layerWidthVolume)
 
-print(f"=== Enf of program of generateEnfaceImages ===")
+print(f"=== Enf of program of generateEnface and layerWidth Images ===")
 
 
