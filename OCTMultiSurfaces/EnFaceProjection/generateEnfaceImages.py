@@ -1,4 +1,4 @@
-# generate en-face images from segmentation result and OCT volume
+# generate en-face images and layerWidth file from segmentation result and OCT volume
 
 import glob
 import numpy as np
@@ -33,6 +33,10 @@ for volumePath in volumesList:
     volumename, ext = os.path.splitext(basename)
     xmlSegName = volumename+ "_Sequence_Surfaces_Prediction.xml"
     xmlSegPath = os.path.join(segXmlDir, xmlSegName)
+    if not os.path.exists(xmlSegPath):
+        print(f"file not exist: {xmlSegPath}")
+        continue
+
     # read xml segmentation into array
     volumeSeg = getSurfacesArray(xmlSegPath).astype(np.int) # BxNxW
     B1, N, W1 = volumeSeg.shape
@@ -65,6 +69,6 @@ for volumePath in volumesList:
     layerWidthVolumePath = os.path.join(outputDirWidth, f"{volumename}_retina{N - 1}Layers_width.npy")
     np.save(layerWidthVolumePath, layerWidthVolume)
 
-    break
+print(f"=== Enf of program of generateEnfaceImages ===")
 
 
