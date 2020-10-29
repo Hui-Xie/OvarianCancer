@@ -173,7 +173,18 @@ drwxr-xr-x 2 hxie1 Graduate-College-Students 4096 Jun 30 13:33 6084.1_OS_17546_V
 As voluem image save in integer Id directory, all above *.1 ID change 9*1 ID, eg. 2697.1 -> 926971
 modify:
 1  modify clinincal data 5 rows in the BESClinicalGT_Analysis.xlsx
-2  modify 10 volume name,eg. 2697.1 -> 926971;
+2  modify 10 volume names below: eg. 2697.1 -> 926971;
+    /home/hxie1/data/BES_3K/raw/2697.1_OD_7130_Volume,
+    /home/hxie1/data/BES_3K/raw/2697.1_OS_7136_Volume,
+    /home/hxie1/data/BES_3K/raw/4453.1_OD_23184_Volume
+    /home/hxie1/data/BES_3K/raw/4453.1_OS_23187_Volume
+    /home/hxie1/data/BES_3K/raw/4912.1_OD_30008_Volume
+    /home/hxie1/data/BES_3K/raw/4912.1_OS_30012_Volume
+    /home/hxie1/data/BES_3K/raw/5320.1_OD_26315_Volume
+    /home/hxie1/data/BES_3K/raw/5320.1_OS_26320_Volume
+    /home/hxie1/data/BES_3K/raw/6084.1_OD_17542_Volume
+    /home/hxie1/data/BES_3K/raw/6084.1_OS_17546_Volume
+
 
 below volumes are original *.1*_Volume:
 [c-xwu000:raw]#ls -ld 9????1_*_Volume
