@@ -45,18 +45,6 @@ def main():
     MarkGTDisorder = False
     MarkPredictDisorder = False
 
-    outputXmlSegFiles = True
-
-
-    OutputNumImages = 0
-    # choose from 0, 1,2,3:----------
-    # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
-    # 4: Raw, GT, Prediction with GT superpose in one image
-    comparisonSurfaceIndex = None
-    #comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
-    # GT uses red, while prediction uses green
-
-    needLegend = True
 
     # parse config file
     configFile = sys.argv[1]
@@ -110,7 +98,7 @@ def main():
             predicition = predicition.cpu().numpy()
 
             outputXMLFilename = hps.xmlOutputDir2 + f"/{volumeID}_Sequence_Surfaces_Prediction.xml"
-            if outputXmlSegFiles and (not os.path.exists(outputXMLFilename)):
+            if hps.outputXmlSegFiles and (not os.path.exists(outputXMLFilename)):
                 saveNumpy2OCTExplorerXML(volumeID, predicition, surfaceNames, hps.xmlOutputDir2, hps.refXMLFile)
 
 
