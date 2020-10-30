@@ -39,7 +39,7 @@ volumeInput: True  # volumeInput=True, real batchSize is 31.
 
 
 # use network: May 14 16:38 expTongren_10Surfaces_AllGood_20200512_CV5
-network: "SurfacesUnet"
+network: "SurfacesUnet_BES3K0512" #"SurfacesUnet"
 inputHeight: 496   # original height
 inputWidth: 512   # rawImageWidth
 scaleNumerator: 1
@@ -73,6 +73,8 @@ loadNetPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Su
 # above reserve for pretrained network.
 
 outputLatent:  True  # output latext vector for a volume
+latentDir: "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/latentVector"
+
 outputXmlSegFiles: True
 refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 xmlOutputDir2: "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/10SurfPredictionXml"

@@ -11,7 +11,7 @@ from torch.utils import data
 
 sys.path.append(".")
 from OCTDataSetVolume import OCTDataSetVolume
-from SurfacesUnet import SurfacesUnet
+from SurfacesUnet_BES3K0512 import SurfacesUnet_BES3K0512
 from OCTOptimization import *
 from OCTTransform import *
 import time
@@ -88,7 +88,7 @@ def main():
             volumeID = batchData['IDs'][0]  # erase tuple wrapper
 
             # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, _loss = net.forward(inputs, gaussianGTs=None, GTs = None, layerGTs=None)
+            S, _loss, latentVector = net.forward(inputs, gaussianGTs=None, GTs = None, layerGTs=None)
 
             # Error Std and mean
             predicition = S
@@ -100,6 +100,10 @@ def main():
             outputXMLFilename = hps.xmlOutputDir2 + f"/{volumeID}_Sequence_Surfaces_Prediction.xml"
             if hps.outputXmlSegFiles and (not os.path.exists(outputXMLFilename)):
                 saveNumpy2OCTExplorerXML(volumeID, predicition, surfaceNames, hps.xmlOutputDir2, hps.refXMLFile)
+
+            outputLatentPath = hps.outputLatentDir + f"{volumeID}_latent.npy"
+            if hps.outputLatent and (not os.path.exists(outputLatentPath)):
+                np.save(outputLatentPath, latentVector.cpu().numpy())
 
 
     testEndTime = time.time()

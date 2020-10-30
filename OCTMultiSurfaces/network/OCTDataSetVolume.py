@@ -37,6 +37,47 @@ class OCTDataSetVolume(data.Dataset):
 
     def generateGradientImage(self, image, gradChannels):
         '''
+        This is version match with SurfacesUnet0512 version.
+        :param image:
+        :param gradChannels:
+        :return:
+        '''
+        H,W =image.shape
+        device = image.device
+        image0H = image[0:-1,:]  # size: H-1,W
+        image1H = image[1:,  :]
+        gradH   = image1H-image0H
+        gradH = torch.cat((gradH, torch.zeros((1, W), device=device)), dim=0)  # size: H,W
+
+        image0W = image[:,0:-1]  # size: H,W-1
+        image1W = image[:,1:  ]
+        gradW = image1W - image0W
+        gradW = torch.cat((gradW, torch.zeros((H, 1), device=device)), dim=1)  # size: H,W
+
+        gradMagnitude = torch.sqrt(torch.pow(gradH,2)+torch.pow(gradW,2))
+
+        if gradChannels>=3:
+            onesHW = torch.ones_like(image)
+            negOnesHW = -onesHW
+            signHW = torch.where(gradH * gradW >= 0, onesHW, negOnesHW)
+            e = 1e-8
+            gradDirection = torch.atan(signHW * torch.abs(gradH) / (torch.abs(gradW) + e))
+
+        if 1 == gradChannels:
+            return gradMagnitude
+        elif 2 == gradChannels:
+            return gradH, gradW,
+        elif 3 == gradChannels:
+             return gradH, gradW, gradDirection
+        elif 4 == gradChannels:
+            return gradH, gradW, gradMagnitude, gradDirection
+        else:
+            print(f"Currently do not support gradChannels >4")
+            assert False
+            return None
+
+    def generateGradientImage_new(self, image, gradChannels):
+        '''
         gradient should use both-side gradient approximation formula: (f_{i+1}-f_{i-1})/2,
         and at boundaries of images, use single-side gradient approximation formula: (f_{i}- f_{i-1})/2
         :param image: in size: HxW
