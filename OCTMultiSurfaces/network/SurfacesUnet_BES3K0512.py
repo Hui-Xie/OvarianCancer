@@ -48,7 +48,7 @@ class SurfacesUnet_BES3K0512(BasicModel):
         super().__init__()
         self.hps = hps
 
-        self.m_inputHeight = hps.inputHight
+        self.m_inputHeight = hps.inputHeight
         self.m_inputWidth = hps.inputWidth
         self.m_inputChannels = hps.inputChannels
         self.m_nLayers = hps.nLayers
@@ -364,7 +364,7 @@ class SurfacesUnet_BES3K0512(BasicModel):
             loss_smooth = 0.0
 
         if hps.usePrimalDualIPM:
-            separationPrimalDualIPM = SeparationPrimalDualIPM(B, W, N, device=device)
+            separationPrimalDualIPM = HardSeparationIPMModule()
             S = separationPrimalDualIPM(mu, sigma2)
         else:
             S = mu
@@ -379,6 +379,6 @@ class SurfacesUnet_BES3K0512(BasicModel):
         loss = loss_layer + loss_surface + loss_smooth+ loss_L1 * weightL1
 
         if self.hps.outputLatent:
-            S, loss, latentVector
+            return S, loss, latentVector
         else:
             return S, loss  # return surfaceLocation S in (B,S,W) dimension and loss

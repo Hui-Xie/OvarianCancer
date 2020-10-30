@@ -78,6 +78,7 @@ latentDir: "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/latentVector"
 outputXmlSegFiles: True
 refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 xmlOutputDir2: "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/10SurfPredictionXml"
+logDir:  "/home/hxie1/data/BES_3K/numpy_10SurfaceSeg/W512/log"
 outputDir: ""
 
 # Proximal IPM Optimization

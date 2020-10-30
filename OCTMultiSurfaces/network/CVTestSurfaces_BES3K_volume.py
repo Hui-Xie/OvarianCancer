@@ -16,6 +16,7 @@ from OCTOptimization import *
 from OCTTransform import *
 import time
 
+sys.path.append("..")
 sys.path.append("../..")
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
@@ -40,10 +41,6 @@ def main():
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
-
-    # output config
-    MarkGTDisorder = False
-    MarkPredictDisorder = False
 
 
     # parse config file
@@ -101,10 +98,9 @@ def main():
             if hps.outputXmlSegFiles and (not os.path.exists(outputXMLFilename)):
                 saveNumpy2OCTExplorerXML(volumeID, predicition, surfaceNames, hps.xmlOutputDir2, hps.refXMLFile)
 
-            outputLatentPath = hps.outputLatentDir + f"{volumeID}_latent.npy"
+            outputLatentPath = hps.latentDir + f"/{volumeID}_latent.npy"
             if hps.outputLatent and (not os.path.exists(outputLatentPath)):
                 np.save(outputLatentPath, latentVector.cpu().numpy())
-
 
     testEndTime = time.time()
 
