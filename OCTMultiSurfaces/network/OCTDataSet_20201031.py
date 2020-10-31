@@ -5,7 +5,7 @@ import os
 import torch
 import torchvision.transforms as TF
 
-from network.OCTAugmentation import *
+from OCTAugmentation import *
 
 
 class OCTDataSet_20201031(data.Dataset):
@@ -268,20 +268,11 @@ class OCTDataSet_20201031(data.Dataset):
         if self.hps.useLayerDice and label is not None:
             layerGT = getLayerLabels(label,H)
 
-        riftWidthGT = []
-        # N rifts for N surfaces
-        #riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
-        # (N-1) rifts for N surfaces.
-        riftWidthGT = label[1:, :] - label[0:-1, :]
-        if self.hps.smoothRift:
-            riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
-
         result = {"images": image,
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": imageID,
-                  "layers": layerGT,
-                  "riftWidth": riftWidthGT}
+                  "layers": layerGT}
         return result
 
 

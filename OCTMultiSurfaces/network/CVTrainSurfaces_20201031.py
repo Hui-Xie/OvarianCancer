@@ -133,6 +133,7 @@ def main():
             optimizer.step()
             trLoss += loss
 
+
         trLoss = trLoss / trBatch
 
         net.eval()
@@ -144,7 +145,7 @@ def main():
                                                               num_workers=0):
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
-                forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                forwardOutput = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'])
                 if hps.outputLatent:
                     S, loss, latentVector = forwardOutput
                 else:
@@ -154,6 +155,8 @@ def main():
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
+
+
 
             validLoss = validLoss / validBatch
             if hps.groundTruthInteger:
@@ -198,6 +201,8 @@ def main():
             preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
+
+
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
