@@ -90,8 +90,9 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
 
+    # optimizer and lr greatly affect result performance
     # optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
-    optimizer = optim.SGD(net.parameters(), lr=hps.learningRate, weight_decay=hps.weightDecay, momentum=0)
+    optimizer = eval(hps.optimizer)(net.parameters(), lr=hps.learningRate, weight_decay=hps.weightDecay)
     net.setOptimizer(optimizer)
     lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
