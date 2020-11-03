@@ -43,7 +43,8 @@ device: torch.device('cuda:0')   #GPU ID
 batchSize: 4
 optimizer: "optim.Adam"
 learningRate: 0.1
-weightDecay: 0   # this is same with 0512 version config
+weightDecay: 0
+patience: 20
 mode: "training"
 
 network: "SurfacesUnet_20201031"

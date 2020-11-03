@@ -1,0 +1,11 @@
+                                            Optimizer    Lr     weightDecay  patience  bestValidationError
+expTongren_10Surfaces_AllGood_20200512_CV5  Adam         0.01   0            100       2.4
+(Previous Good result)
+
+expTongren_10S_AllGood_20201102_CV5_A:      Adam         0.1    0            20        3.45
+expTongren_10S_AllGood_20201102_CV5_B:      Adam         0.5    0            20        6.1
+expTongren_10S_AllGood_20201102_CV5_C:      SGD          0.1    0            20        24.39
+expTongren_10S_AllGood_20201102_CV5_D:      SGD          0.5    0            20        5.2
+
+
+
