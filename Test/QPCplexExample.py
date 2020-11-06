@@ -72,14 +72,14 @@ def setproblemdata(p):
     p.objective.set_sense(p.objective.sense.maximize)
 
     # object func: 0.5 x^T Q x + c x
+    Q = [[[0, 1, 2], [-33.0, 6.0, 0]],
+         [[0, 1, 2], [6.0, -22.0, 11.5]],
+         [[0, 1, 2], [0, 11.5, -11.0]]]
     objCoef = [1.0, 2.0, 3.0]
-    Q =  [[[0, 1, 2], [-33.0, 6.0, 0 ]],
-          [[0, 1, 2], [6.0, -22.0, 11.5]],
-          [[0, 1, 2], [0, 11.5, -11.0]]]
     ub = [40.0, cplex.infinity, cplex.infinity]
     objName = ["x1", "x2", "x3"]
     p.variables.add(obj=objCoef, ub=ub, names=objName)
-    p.objective.set_quadratic(Q)
+    p.objective.set_quadratic(Q)  # this line must be place after p.variable.add()
 
     # constraint matrix in row mode
     constraintMatrix = [[[0,1,2], [-1, 1, 1]],
