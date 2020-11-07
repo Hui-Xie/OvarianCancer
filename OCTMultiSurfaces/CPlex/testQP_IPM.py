@@ -16,6 +16,7 @@ B = 155
 W = 512
 N = 12
 M = N-1  # number of constraint
+print(f"B={B},W={W},N={N},M={M}")
 
 A = (torch.eye(N, N, device=device) + torch.diag(torch.ones(M, device=device) * -1, 1))[0:-1]  # for s_i - s_{i+1} <= 0 constraint
 A = A.unsqueeze(dim=0).unsqueeze(dim=0)
