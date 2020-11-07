@@ -1,40 +1,46 @@
 
+
+Professor Wu, if you have convenient time, please let me know your time. I show real time this comparison experiment for you.
+
 Comparison Experiment of IPM and Cplex QP
-1  Experiment method:
-   In tensor space, random generate a martix H, and then H= HxH^T get a SPD matrix,
-   expand SPD matrices H into BxWxNxN dimension and generate related b, A, d,  to produce BxW convex optimization problems:
-   S^* = arg min_{S} {0.5*s^T*H*s+b^T*s+c}, such that AS <= d;
-   feed these tensors into IPM, directly paralell get its solution;
-   and convert these tenser into Cplex's list format, use BxW loop to sequentially get get its Cplex solution;
-   record their time respectively;
+1 Experiment method:
+ In tensor space, random generate a matrix H, and then H= HxH^T get a SPD matrix,
+ expand SPD matrices H into BxWxNxN dimension and generate related b, A, d, to produce BxW convex optimization problems:
+ S^* = arg min_{S} {0.5*s^T*H*s+b^T*s+c}, such that AS <= d;
+ feed these tensors into IPM, directly parallel get its solution;
+ and convert these tenser into Cplex's list format, use BxW loop to sequentially get get its Cplex solution;
+ record their time respectively;
 
-2  CPlex and IPM have exact same solutions for random generated SPD matrix QP problems, without many times random test;
-   Previously, Comparison experiment of backward gradient between manually compuation and our IPM also showed our IPM is correct;
-   Our IPM code also verified QP with manually computated solution, which also showed our IPM is correct;
-   Conclusion: Our IPM implementation is correct;
+2 CPlex and IPM have exact same solutions for random generated SPD matrix QP problems, without many times random test;
+ Previously, Comparison experiment of backward gradient between manually computation and our IPM also showed our IPM is correct;
+ Our IPM code also verified QP with manually computed solution, which also showed our IPM is correct;
+ Conclusion: Our IPM implementation is correct;
 
-3  For B=155, W =512 input context (Consider test set: 31 images/patient x 5 patient = 155 imags):
-        IPM spent 3.87 seconds, and CPlex spent 1636.43 seconds;
-        For one convex optimization problem, Cplex may spent 0.02 second per QP optimization instance;
-        IPM+ GPU automacically batchize them to run;
+3 For B=155, W =512 input context (Consider test set: 31 images/patient x 5 patient = 155 images):
+ IPM spent 3.87 seconds, and CPlex spent 1636.43 seconds;
+ For one convex optimization problem, Cplex may spent 0.02 second per QP optimization instance;
+ IPM+ GPU automatically batchize them to run;
 
-   For a B=4, W=512 input context (A GPU batch size):
-        IPM+GPU run one-time parallel instances,  so IPM spent 0.44s per parallel optimization instance;
-        CPlex spent 52 seconds for serial run.
+ For a B=4, W=512 input context (A GPU batch size):
+ IPM+GPU run one-time parallel instances, so IPM spent 0.44s per parallel optimization instance;
+ CPlex spent 52 seconds for serial run.
 
 
-4  Analysis: IPM is slower than CPlex for single instance, but IPM's GPU parallel speeds up hugely;
-   Reason: IPM is implemented by python outsidde-layer logic, but inside matrix computation uses GPU's C++ code;
-           Cplex uses pure C++ code for all implementation, with only a python feeding interface;
+4 Analysis: IPM is slower than CPlex for single instance, but IPM's GPU parallel speeds up hugely;
+ Reason: IPM is implemented by python outside-layer logic, but inside matrix computation uses GPU's C++ code;
+ Cplex uses pure C++ code for all implementation, with only a python feeding interface;
 
-5  Correct my error in Thursday,
-   For B =4, W =512 context:
-       I used IPM's 5min x 2000 to estimate Cplex test time. It is incorrect as 5 mins include read image file and Unet time which do not need scale up;
-       It should use only Cplex one instance time to estimate Cplex total test time: 0.02x4x512 = 41 seconds, which is similar  with above one batch experiment.
+5 Correct my error on Thursday,
+ For B =4, W =512 context:
+ I used IPM's 5min x 2000 to estimate Cplex test time. It is incorrect as 5 mins include read image file and Unet time which do not need scale up;
+ It should use only Cplex one instance time to estimate Cplex total test time: 0.02x4x512 = 41 seconds, which is similar with above one batch experiment.
 
-6  Further plan for your review:
-   A  Use Parallel IPM method to work on Duke data;
-   B  
+6 Further plan for your review:
+ A Use Parallel IPM method to work on Duke data;
+ B Using soft separation, the error of a surface is the average of errors of itself and its above/blow neighbor surface, like below.
+ Whether it is improving really depends on data. Some may improve, Some may worsen. I hope Duke data will give us good luck.
+
+
 
 
 
