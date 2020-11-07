@@ -1,0 +1,35 @@
+
+For B =4, W =512 case
+Current working dir:  /home/hxie1/tmp/pycharm_project_451/OCTMultiSurfaces/CPlex
+IPM running time: 0.4402904510498047 seconds
+IPM solution S[0,0]:
+ tensor([[-0.0442],
+        [-0.0442],
+        [-0.0442],
+        [-0.0442],
+        [-0.0442],
+        [-0.0442],
+        [-0.0442],
+        [-0.0113],
+        [-0.0113],
+        [ 0.0541],
+        [ 0.0541],
+        [ 0.0642]], device='cuda:0')
+
+Solution status =  1 : optimal
+Solution value  =  -0.0509972974651289
+Cplex running time: 0.05081439018249512 seconds
+Column  0 :   Value =  -0.044202  Reduced Cost =  -0.000000
+Column  1 :   Value =  -0.044202  Reduced Cost =  -0.000000
+Column  2 :   Value =  -0.044202  Reduced Cost =  -0.000000
+Column  3 :   Value =  -0.044202  Reduced Cost =   0.000000
+Column  4 :   Value =  -0.044202  Reduced Cost =   0.000000
+Column  5 :   Value =  -0.044202  Reduced Cost =   0.000000
+Column  6 :   Value =  -0.044202  Reduced Cost =   0.000000
+Column  7 :   Value =  -0.011345  Reduced Cost =   0.000000
+Column  8 :   Value =  -0.011345  Reduced Cost =   0.000000
+Column  9 :   Value =   0.054136  Reduced Cost =  -0.000000
+Column  10 :   Value =   0.054136  Reduced Cost =  -0.000000
+Column  11 :   Value =   0.064231  Reduced Cost =   0.000000
+CPlex running time: 52.48021149635315 seconds
+========================================================================

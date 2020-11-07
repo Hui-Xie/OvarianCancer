@@ -22,7 +22,7 @@ my_ub = [40.0, cplex.infinity, cplex.infinity]
 my_colnames = ["x1", "x2", "x3"]
 my_rhs = [20.0, 30.0]
 my_rownames = ["c1", "c2"]  # constraint
-my_sense = "LL"  # less and equal of constraint
+my_sense = "LL"  # less and equal of constraint  2 L.
 
 def populatebyrow_original(prob):
     prob.objective.set_sense(prob.objective.sense.maximize)
