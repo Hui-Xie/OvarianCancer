@@ -9,18 +9,18 @@ Comparison Experiment of IPM and Cplex QP
    record their time respectively;
 
 2  CPlex and IPM have exact same solutions for random generated SPD matrix QP problems, without many times random test;
-   Previous, I have done comparison experiment of backward gradient between manually compuation and our IPM, which also showed our IPM is correct;
+   Previously, Comparison experiment of backward gradient between manually compuation and our IPM also showed our IPM is correct;
    Our IPM code also verified QP with manually computated solution, which also showed our IPM is correct;
    Conclusion: Our IPM implementation is correct;
 
 3  For B=155, W =512 input context (Consider test set: 31 images/patient x 5 patient = 155 imags):
         IPM spent 3.87 seconds, and CPlex spent 1636.43 seconds;
         For one convex optimization problem, Cplex may spent 0.02 second per QP optimization instance;
-        IPM+ GPU will automacically batchize them to run;
+        IPM+ GPU automacically batchize them to run;
 
    For a B=4, W=512 input context (A GPU batch size):
         IPM+GPU run one-time parallel instances,  so IPM spent 0.44s per parallel optimization instance;
-        CPlex spent 52 seconds;
+        CPlex spent 52 seconds for serial run.
 
 
 4  Analysis: IPM is slower than CPlex for single instance, but IPM's GPU parallel speeds up hugely;
@@ -30,7 +30,12 @@ Comparison Experiment of IPM and Cplex QP
 5  Correct my error in Thursday,
    For B =4, W =512 context:
        I used IPM's 5min x 2000 to estimate Cplex test time. It is incorrect as 5 mins include read image file and Unet time which do not need scale up;
-       It should use only Cplex one instance time to estimate Cplex total test time: 0.02x4*512 = 41 seconds, which is similar  with above one batch experiment;
+       It should use only Cplex one instance time to estimate Cplex total test time: 0.02x4x512 = 41 seconds, which is similar  with above one batch experiment.
+
+6  Further plan for your review:
+   A  Use Parallel IPM method to work on Duke data;
+   B  
+
 
 
 
