@@ -4,7 +4,8 @@ import random
 import torch
 import torchvision.transforms as TF
 import sys
-from OCTAugmentation import *
+sys.path.append("..")
+from network.OCTAugmentation import *
 
 class OCTDataTransform(object):
     def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False):

@@ -5,6 +5,8 @@ import os
 import torch
 import torchvision.transforms as TF
 
+import sys
+sys.path.append("..")
 from network.OCTAugmentation import *
 
 
