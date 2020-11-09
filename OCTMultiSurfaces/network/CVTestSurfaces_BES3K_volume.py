@@ -96,7 +96,7 @@ def main():
 
             outputXMLFilename = hps.xmlOutputDir2 + f"/{volumeID}_Sequence_Surfaces_Prediction.xml"
             if hps.outputXmlSegFiles and (not os.path.exists(outputXMLFilename)):
-                saveNumpy2OCTExplorerXML(volumeID, predicition, surfaceNames, hps.xmlOutputDir2, hps.refXMLFile)
+                saveNumpy2OCTExplorerXML(volumeID, predicition, surfaceNames, hps.xmlOutputDir2, hps.refXMLFile, y=hps.inputHeight, voxelSizeY=hps.hPixelSize)
 
             outputLatentPath = hps.latentDir + f"/{volumeID}_latent.npy"
             if hps.outputLatent and (not os.path.exists(outputLatentPath)):

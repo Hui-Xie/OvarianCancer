@@ -9,7 +9,8 @@ Analyze previous experiment data:
    99	2.16719126701355	2.09991383552551	9.9994576885365E-06	9.9994576885365E-06	0.996140241622925	2.31729507446289	3.18813920021057	1.39484310150146	2.49415946006775	1.6541827917099
 
 Further work:
-1  test expDuke_20200902A_SurfaceSubnet.yaml experiment on test data;
+1  test expDuke_20200902A_SurfaceSubnet.yaml experiment on test data;: Done, wait to add result
+
 2  using predicted R, and expDuke_20200902A_SurfaceSubnet.yaml to search a better lambda, form 1e-5 downward;
 3  using fixed lambda to run Rift+SurfaceNet to get result on test data.
 

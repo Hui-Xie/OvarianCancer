@@ -91,7 +91,7 @@ def getPatientID_Slice(fileName):
     sliceID = s[s.rfind("_") + 1:s.rfind('.jpg')]
     return patientID, sliceID
 
-def savePatientsPrediction(referFileDir, patientsDict, outputDir):
+def savePatientsPrediction(referFileDir, patientsDict, outputDir, y=496, voxelSizeY=3.87):
     curTime = datetime.datetime.now()
     dateStr = f"{curTime.month:02d}/{curTime.day:02d}/{curTime.year}"
     timeStr = f"{curTime.hour:02d}:{curTime.minute:02d}:{curTime.second:02d}"
@@ -122,6 +122,7 @@ def savePatientsPrediction(referFileDir, patientsDict, outputDir):
         ET.SubElement(xmlTreeRoot.find('modification'), 'content', {}).text = "SurfOptNet 1.0"
 
         xmlTreeRoot.find('scan_characteristics/size/x').text = str(512)
+
         xmlTreeRoot.find('surface_size/x').text = str(512)
         numSurface = len(patientsDict[patientID].keys())
         xmlTreeRoot.find('surface_num').text= str(numSurface)
@@ -180,14 +181,14 @@ def savePatientsPrediction(referFileDir, patientsDict, outputDir):
         xmlTree.write(outputXMLFilename, pretty_print=True)
     print(f"{len(patientsDict)} prediction XML surface files are outpted at {outputDir}\n")
 
-def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile):
+def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile, y=496, voxelSizeY=3.87):
     curTime = datetime.datetime.now()
     dateStr = f"{curTime.month:02d}/{curTime.day:02d}/{curTime.year}"
     timeStr = f"{curTime.hour:02d}:{curTime.minute:02d}:{curTime.second:02d}"
 
     # some parameters:
     B, S, W = predicition.shape
-    assert W ==512 and B==31
+    # assert W ==512 and B==31
     assert S == len(surfaceNames)
 
     # make print pretty
@@ -210,7 +211,11 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
     ET.SubElement(xmlTreeRoot.find('modification'), 'content', {}).text = "SurfOptNet 1.0"
 
     xmlTreeRoot.find('scan_characteristics/size/x').text = str(W)
+    xmlTreeRoot.find('scan_characteristics/size/y').text = str(y)
+    xmlTreeRoot.find('scan_characteristics/size/z').text = str(B)
+    xmlTreeRoot.find('scan_characteristics/voxel_size/y').text = str(voxelSizeY/1000)
     xmlTreeRoot.find('surface_size/x').text = str(W)
+    xmlTreeRoot.find('surface_size/z').text = str(B)
     xmlTreeRoot.find('surface_num').text = str(S)
 
     for surface in xmlTreeRoot.findall('surface'):
@@ -267,7 +272,7 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
     outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
-def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir):
+def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir, y=496, voxelSizeY=3.87):
     B,S,W = testOutputs.shape
     assert B == len(testIDs)
     assert 0 == B%numBscan
@@ -283,5 +288,5 @@ def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames,
                 assert False
                 return
         patientID = os.path.basename(dirPath)
-        saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile)
+        saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile, y=y, voxelSizeY=voxelSizeY)
         i += numBscan

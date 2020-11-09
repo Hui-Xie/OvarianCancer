@@ -194,7 +194,7 @@ def main():
             for id in testIDs:
                 file.write(f"{id}\n")
         if outputXmlSegFiles:
-            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir)
+            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir, y=hps.inputHeight, voxelSizeY=hps.hPixelSize)
 
     testEndTime = time.time()
 
