@@ -14,9 +14,12 @@ Further work:
     muSurfaceError = tensor([1.1576, 1.8849, 2.9892], device='cuda:1')
     stdError = 1.9898078441619873
     muError = 2.0106043815612793
+
+2  output visual prediction result;
     
-2  using predicted R, and expDuke_20200902A_SurfaceSubnet.yaml to search a better lambda, form 1e-5 downward;
-3  using fixed lambda to run Rift+SurfaceNet to get result on test data.
+3  using predicted R, and expDuke_20200902A_SurfaceSubnet.yaml to search a better lambda, from 1e-5 downward;
+
+4  using fixed lambda to run Rift+SurfaceNet to get result on test data.
 
 
 
