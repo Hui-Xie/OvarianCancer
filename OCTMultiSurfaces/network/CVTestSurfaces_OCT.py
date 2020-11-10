@@ -182,7 +182,8 @@ def main():
         testOutputs = testOutputs.cpu().numpy()
 
         if outputXmlSegFiles:
-            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir, y=hps.inputHeight, voxelSizeY=hps.hPixelSize)
+            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir,
+                                           y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
 
     testEndTime = time.time()
 

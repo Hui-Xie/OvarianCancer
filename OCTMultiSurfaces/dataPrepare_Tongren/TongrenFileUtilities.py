@@ -272,7 +272,7 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
     outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
-def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir, y=496, voxelSizeY=3.87):
+def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir, y=496, voxelSizeY=3.87, dataInSlice=False):
     B,S,W = testOutputs.shape
     assert B == len(testIDs)
     assert 0 == B%numBscan
@@ -287,6 +287,9 @@ def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames,
                 print(f"Error: testID is not continous in {testIDs[j]} against {dirPath}")
                 assert False
                 return
-        patientID = os.path.basename(dirPath)
+        if dataInSlice:
+            patientID = fileName[0:fileName.find("_s00.npy")]
+        else: # data in volume
+            patientID = os.path.basename(dirPath)
         saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile, y=y, voxelSizeY=voxelSizeY)
         i += numBscan
