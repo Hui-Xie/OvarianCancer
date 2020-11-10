@@ -1,3 +1,6 @@
+# Nov 10th, Tuesday.
+Professor Wu point out: The duke data is from JHU's paper, it is not AMD data.  I need to find this data, may redo experiment.
+
 # Nov 9th, Monday, 2020
 Analyze previous experiment data:
 1  expDuke_20200902A_SurfaceSubnet.yaml experiment on validation data got:
