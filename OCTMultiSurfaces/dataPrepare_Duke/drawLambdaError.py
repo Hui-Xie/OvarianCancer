@@ -1,6 +1,6 @@
 # draw the relation between lambda and meanError
 
-csvPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SearchLambda2Unet/expDuke_20200904A_SearchLambda2Unet/testResult/searchLambda_replaceRwithGT_1.csv"
+csvPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SearchLambda2Unet/expDuke_20201109A_SearchLambda2Unet/testResult/searchLambda_replaceRwithGT_0.csv"
 
 import matplotlib.pyplot as plt
 import os
