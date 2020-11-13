@@ -1,3 +1,35 @@
+
+# Nov 13th, Friday, 2020
+1  test expDuke_20200902A_SurfaceSubnet.yaml experiment on test data:
+    stdSurfaceError = tensor([2.4572, 1.0611, 1.7664], device='cuda:1')
+    muSurfaceError = tensor([1.1576, 1.8849, 2.9892], device='cuda:1')
+    stdError = 1.9898078441619873
+    muError = 2.0106043815612793
+
+2  output visual prediction result;  Done.
+   all visul images at : /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images
+
+3  using predicted R, and expDuke_20200902A_SurfaceSubnet.yaml to search a better lambda, from 1e-5 downward, on validation data:
+   config file: /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201109A_SearchLambda2Unet.yaml
+   lambda search initial value: 1.0e-5, step: 1.0e-8; It search 1000 points.
+   Result: at the search iteration 971, it get its minimum error
+   nSearch,meanError,      meanStd,            lambda_0,               lambda_1,               surfErr_0,      surfErr_1,              surfErr_2,      surfStd_0,          surfStd_1,          surfStd_2,
+   971,2.166304588317871,2.102299451828003,2.900840172515018e-07,2.900840172515018e-07, 0.9951231479644775,2.3246231079101562,3.1791670322418213, 1.3870776891708374,2.5179460048675537,1.637975811958313,
+
+   the relation curve of meanError and Lambda: /home/hxie1/data/OCT_Duke/numpy_slices/log/SearchLambda2Unet/expDuke_20201109A_SearchLambda2Unet/testResult/searchLambda_replaceRwithGT_0_gridSearch_1e-5downward.png
+   Comparing with case without lambda on validation data:
+              meanError improve from 2.196 micrometer to 2.1663 micrometer;
+              meanStd   improve from 2.171 micorometer to 2.102 micrometer;
+   And lambda_0 = 2.900840172515018e-07, and lambda_1= 2.900840172515018e-07, very small.
+
+4  using fixed lambda to fine tune Rift+SurfaceNet network:
+
+
+
+5  use fixed lambda + fineTune network to get result on test data;
+
+
+
 # Nov 10th, Tuesday.
 Professor Wu point out: The duke data is from JHU's paper, it is not AMD data.  I need to find this data, may redo experiment.
 
@@ -11,18 +43,6 @@ Analyze previous experiment data:
    nSearch	meanError	    meanStd	            lambda_0	        lambda_1	        surfErr_0	        surfErr_1	        surfErr_2	        surfStd_0	        surfStd_1	        surfStd_2
    99	2.16719126701355	2.09991383552551	9.9994576885365E-06	9.9994576885365E-06	0.996140241622925	2.31729507446289	3.18813920021057	1.39484310150146	2.49415946006775	1.6541827917099
 
-Further work:
-1  test expDuke_20200902A_SurfaceSubnet.yaml experiment on test data:
-    stdSurfaceError = tensor([2.4572, 1.0611, 1.7664], device='cuda:1')
-    muSurfaceError = tensor([1.1576, 1.8849, 2.9892], device='cuda:1')
-    stdError = 1.9898078441619873
-    muError = 2.0106043815612793
-
-2  output visual prediction result;
-    
-3  using predicted R, and expDuke_20200902A_SurfaceSubnet.yaml to search a better lambda, from 1e-5 downward;
-
-4  using fixed lambda to run Rift+SurfaceNet to get result on test data.
 
 
 
