@@ -44,6 +44,7 @@ class SoftSepar3Unet(BasicModel):
         self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
         self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
         self.m_surfaceSubnet.to(self.m_sDevice)
+        self.m_surfaceSubnet.m_optimizer = None
         if "test" != surfaceMode:
             self.m_surfaceSubnet.setOptimizer(optim.Adam(self.m_surfaceSubnet.parameters(), lr=self.hps.surfaceSubnetLr, weight_decay=0))
             self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
@@ -55,6 +56,7 @@ class SoftSepar3Unet(BasicModel):
         self.m_rDevice = eval(self.hps.riftSubnetDevice)
         self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
         self.m_riftSubnet.to(self.m_rDevice)
+        self.m_riftSubnet.m_optimizer = None
         if "test" != riftMode:
             self.m_riftSubnet.setOptimizer(
                 optim.Adam(self.m_riftSubnet.parameters(), lr=self.hps.riftSubnetLr, weight_decay=0))
@@ -68,11 +70,13 @@ class SoftSepar3Unet(BasicModel):
         
         # lambda Subnet
         self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
+        self.m_lambdaSubnet = None
         if self.hps.useFixedLambda:
             self.m_lambdaVec = torch.tensor(self.hps.fixedLambda, dtype=torch.float, device=self.m_lDevice)
         else:
             self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
             self.m_lambdaSubnet.to(self.m_lDevice)
+            self.m_lambdaSubnet.m_optimizer = None
             if "test" != lambdaMode:
                 self.m_lambdaSubnet.setOptimizer(
                     optim.Adam(self.m_lambdaSubnet.parameters(), lr=self.hps.lambdaSubnetLr, weight_decay=0))
@@ -190,7 +194,7 @@ class SoftSepar3Unet(BasicModel):
             self.m_surfaceSubnet.m_optimizer.zero_grad()
         if None != self.m_riftSubnet.m_optimizer:
             self.m_riftSubnet.m_optimizer.zero_grad()
-        if None != self.m_lambdaSubnet.m_optimizer:
+        if (None != self.m_lambdaSubnet) and (None != self.m_lambdaSubnet.m_optimizer):
             self.m_lambdaSubnet.m_optimizer.zero_grad()
 
 
