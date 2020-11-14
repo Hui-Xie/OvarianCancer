@@ -1,4 +1,36 @@
 
+# Nov 13th, 2020
+Professor ask 3 questions on initial grid search Lambda result on Duke_AMD data:
+1) What is the method you used to get the error of 2.196 micrometer?
+    2.196 is from pure surfaceSubent network with ReLU,without seperation rift as below.
+    expDuke_20200902A_SurfaceSubnet.yaml experiment on validation data got:
+    meanMuerror = 2.196 micrometer, stdError=2.171, mciepoch=74, learningRate=5e-3,
+    surfaceMuError: surface0 = 1.017, surface1=2.45, surface2= 3.141
+
+ 2) Compared to your previous experiments, why this dataset takes such a long time?
+    1 Duke_AMD data is very big, 12.7 times bigger than Tongren data;
+    2 As Tongren data is small, I load all training and validation data in memory at beginning, and use them for each epoch without read disk again;
+      As Duke_AMD data is too big, we can not load all training and validation data in memory at beginning,therefore each epoch needs to read each file from disk;
+      And SATA harddisk reading speed in our GPU Server is about 1000 times slower than memory access speed.
+
+3) What are the relative magnitudes of the two terms in the objective function?
+   In my Aug 29 email report, I computed 1/(2sigma^2) for Tongren data like below. In other words, 1/(2sigma^2) is at 0.1 magnitude .
+    1/(2sigma^2) in different OCT data at about 0.1 magnitude should not change too much, as it is surface error variance against same Guassian GT with same sigma =20 in training.
+    While our grid search lambda is 2.9e-7, very small.
+    Its relative magnitude of 2 terms in the object function is 300K times.
+    Duke_AMD experiment is same with Tongren experiment, grid searched lambda is very small, which is consistant with leanring lambda result.
+    This result also is consist with our theoretical analysis: Lambda can not improve mu (maybe better, maybe worse), so a smaller lambda is the choice of the grid search, and also the choice of learning lambda.
+
+
+Attached 0829 email report:
+# compare 1/(2*sigma2) and lambda, which represent the magnitude of unary terms and pairwise terms in the cost function of IPM:
+reciprocalTwoSigma2.shape = torch.Size([5, 9, 512])
+mean of reciprocalTwoSigma2 = [1.7199, 0.8725, 0.0993, 0.2319, 0.9011, 0.5338, 0.0335, 0.2529, 1.7592]
+min of reciprocalTwoSigma2 = [0.0334, 0.0288, 0.0193, 0.0106, 0.0186, 0.0059, 0.0060, 0.0185, 0.0345]
+max of reciprocalTwoSigma2 = [2.7259, 1.6216, 0.1681, 0.4646, 1.3337, 1.1049, 0.0949, 0.3692, 3.4337]
+
+
+
 # Nov 13th, Friday, 2020
 1  test expDuke_20200902A_SurfaceSubnet.yaml experiment on test data:
     stdSurfaceError = tensor([2.4572, 1.0611, 1.7664], device='cuda:1')
@@ -23,6 +55,8 @@
    And lambda_0 = 2.900840172515018e-07, and lambda_1= 2.900840172515018e-07, very small.
 
 4  using fixed lambda to fine tune Rift+SurfaceNet network:
+   It has launched training, but very slow. 40 min per epoch.
+
 
 
 
