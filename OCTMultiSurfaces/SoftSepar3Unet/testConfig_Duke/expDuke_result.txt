@@ -3,8 +3,23 @@
 Fine Tune Surface and Rift Subnet with fixed Lambda:
 Exp config:  /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201113A_FixLambda2Unet.yaml
 Result:
-1   fine Tune didn't improve accuracy;
-2
+1   fine Tune training didn't improve accuracy in validation test; (when lambda is small, this is possible)
+2   result with fixed lambda on test data:
+    config file: /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201113A_FixLambda2Unet.yaml
+    stdSurfaceError = tensor([2.4533, 1.0671, 1.6763], device='cuda:0')
+    muSurfaceError = tensor([1.1122, 1.8906, 2.9410], device='cuda:0')
+    stdError = 1.9619948863983154
+    muError = 1.9812551736831665
+    pixel number of violating surface-separation constraints: 0
+3   compare with pure SurfaceSubnet result:
+    test expDuke_20200902A_SurfaceSubnet.yaml experiment on test data:
+    stdSurfaceError = tensor([2.4572, 1.0611, 1.7664], device='cuda:1')
+    muSurfaceError = tensor([1.1576, 1.8849, 2.9892], device='cuda:1')
+    stdError = 1.9898078441619873
+    muError = 2.0106043815612793
+4   use fixed small lambda, mu error improved 0.03 micrometer, whil stdError improved 0.028 micormeter;
+
+
 
 
 
