@@ -1,2 +1,47 @@
 # Nov 16th, 2020
 
+Professor Wang,
+
+These 4 paper you recommended are very good reference for our project.
+I try to use one sentense to capture their core medical conclusions. Their conclusions have some conflicts.
+Macular layer thickness may thin along aging, and macular layer thinning may predict hypertension;
+but mucular layer thickness may has no relationship with ischemic stroke which closely related with hypertension;
+macular lay thickness can only relate with CKD stage 3 and 4, but not on CKD stage 1 and 2, in the context CKD is a byproduct of hypertension.
+
+These 4 papers are very helpful to design our network architecture. We need this kind of medical knowledge to think our network architecture.
+In the fuure, more this kind papers are welcome.  Thank you very much, professor Wang.
+
+======================
+Pascual-Prieto, J., Burgos-Blasco, B., Ávila Sánchez-Torija, M., Fernández-Vigo, J. I., Arriola-Villalobos, P., Barbero Pedraz, M. A., … Martínez-de-la-Casa, J. M. (2020).
+Utility of optical coherence tomography angiography in detecting vascular retinal damage caused by arterial hypertension.
+European Journal of Ophthalmology, 30(3), 579–585. https://doi.org/10.1177/1120672119831159
+
+This paper used OCTA(Optical Coherence Tomograph Angiograph) to get rich blood vessel information 3D angiogram of retina images,
+and concluded that hypertension patients have thinner macular thickness and lower mucular perfusion density(blood vessel network area rate).
+
+========================================
+
+Lee, J. I., Gemerzki, L., Weise, M., Boerker, L., Graf, J., Jansen, L., … Albrecht, P. (2020).
+Retinal layers and visual conductivity changes in a case series of microangiopathic ischemic stroke patients.
+BMC Neurology, 20(1), 1–9. https://doi.org/10.1186/s12883-020-01894-y
+
+There is no significant retinal thickness change between ischemic stroke patients and control group.
+
+==========================================
+
+Viladés, E., Palomar, A. P. Del, Cegoñino, J., Obis, J., Satue, M., Orduna, E., … GarciaMartin, E. (2020).
+Physiological changes in retinal layers thicknesses measured with swept source optical coherence tomography.
+PLoS ONE, 15(10 October), 1–14. https://doi.org/10.1371/journal.pone.0240441
+
+This paper used swept-source OCT, which can get deeper choroid images, to show that all retina layers and choroid layer are progressively thinning along increasing age,
+especially after age 50.
+
+==========================================
+
+Paterson, E. N., Ravindran, M. L., Griffiths, K., Le Velly, C. A., Cardwell, C. C., McCarter, R. V., … McKay, G. J. (2020).
+Association of reduced inner retinal thicknesses with chronic kidney disease.
+BMC Nephrology, 21(1), 1–12. https://doi.org/10.1186/s12882-019-1679-1
+
+In the chronic kidney disease(CKD) stage 3 and 4, explicit macular thickness decrease. But in CKD stage 1 and 2, no macular thickness changes were detected.
+==========================================
+

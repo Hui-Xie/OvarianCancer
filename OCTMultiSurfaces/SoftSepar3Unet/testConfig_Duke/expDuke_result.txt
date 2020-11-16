@@ -1,5 +1,22 @@
 
 # Nov 16th, 2020
+Response to professor Wu:
+ "I'd suggest you to calculate the segmentation accuracy for the normal and AMD subjects separately. I am still puzzling on the tiny \lambda."
+ "We should compare to the model without any separation constraints. Also please compute the segmentation accuracy for the normal and AMD subjects separately.
+
+1  OK.  I will write a script to divide normal and AMD case, and statistics its accuracy separately in test set;
+2  "Compare model without any separation constraints" is a wonderful/insightful idea; Thank you,professor. ReLU is a hard constraint.
+    OK. I need to retrain a network to test it;
+3  I am totally not surprise this tiny lambda result:
+   A. Grid searching lambda and network learning lambda both got same tiny lambda result, which should not be an occasional result;
+   B. Grid Searching lambda on both Tongren and Duke_AMD data clearly demonstrated that muError is linear correlation with lambda; smaller lambda, smaller muError;
+   C. Our theoretical analysis clearly demonstrated that adding lambda in cost function may improve error, may worse error; In total effect, lambda acts 0 effect.
+      In other words, lambda may act as a positive or negative noise in different sample, therefore tiny lambda is network's natural choice;
+      We also can explain that in proper data set, lambda may act a good effect; In other data set, lambda may act a negative effect;
+   D. And we have used backward gradient, Cplex, manual computation 3 methods verifying that our IPM is correct;
+   All there results from different dataset, from different methods, and from theory and experiments, all point to a tiny lambda.
+
+# Nov 16th, 2020
 Fine Tune Surface and Rift Subnet with fixed Lambda:
 Exp config:  /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201113A_FixLambda2Unet.yaml
 Result:
@@ -17,7 +34,7 @@ Result:
     muSurfaceError = tensor([1.1576, 1.8849, 2.9892], device='cuda:1')
     stdError = 1.9898078441619873
     muError = 2.0106043815612793
-4   use fixed small lambda, mu error improved 0.03 micrometer, whil stdError improved 0.028 micormeter;
+4   use fixed small lambda, mu error improved 0.03 micrometer, while stdError improved 0.028 micrometer;
 
 
 

@@ -25,19 +25,19 @@ class ConfigReader(object):
         if "" != self.loadNetPath:
             self.netPath = self.loadNetPath
         else:
-            self.netPath = cfg["netPath"] + "/" + self.network + "/" + self.experimentName
+            self.netPath = os.path.join(cfg["netPath"], self.network,self.experimentName)
 
         if ("logDir" not in self.__dict__) or ("" == self.logDir):
-            self.logDir = self.dataDir + "/log/" + self.network + "/" + self.experimentName
+            self.logDir = os.path.join(self.dataDir, "log", self.network, self.experimentName)
         else:
-            self.logDir = self.logDir + "/" + self.network + "/" + self.experimentName
+            self.logDir = os.path.join(self.logDir, self.network,self.experimentName)
         if not os.path.exists(self.logDir):
             os.makedirs(self.logDir)  # recursive dir creation
 
         if self.outputDir == "":
-            self.outputDir = self.logDir + "/testResult"
-            self.imagesOutputDir = self.outputDir +"/images"
-            self.xmlOutputDir = self.outputDir + "/xml"
+            self.outputDir = os.path.join(self.logDir,"testResult")
+            self.imagesOutputDir = os.path.join(self.outputDir,"images")
+            self.xmlOutputDir = os.path.join(self.outputDir + "xml")
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
         if not os.path.exists(self.imagesOutputDir):

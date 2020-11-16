@@ -37,7 +37,7 @@ useFixedLambda: True # True: Lambda searched from validation data; False: use le
 # lambda is grid search from /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201109A_SearchLambda2Unet.yaml
 fixedLambda: [2.900840172515018e-07, 2.900840172515018e-07]
 
-dataDir: "/home/hxie1/data/OCT_Duke/numpy_slices/"
+dataDir: "/home/hxie1/data/OCT_Duke/numpy_slices"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation

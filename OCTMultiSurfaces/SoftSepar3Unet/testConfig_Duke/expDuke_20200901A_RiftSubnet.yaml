@@ -6,7 +6,7 @@ dataIn1Parcel: False
 # Not dataIn1Parcel means each patient has a volume file.
 dataInSlice: True
 
-dataDir: "/home/hxie1/data/OCT_Duke/numpy_slices/"
+dataDir: "/home/hxie1/data/OCT_Duke/numpy_slices"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation

@@ -34,7 +34,7 @@ replaceRwithGT: 0 # 0: use predicted R; 1: use riftGT without smoothness; 2: use
 useFixedLambda: True # True: Lambda searched from validation data; False: use learning Lambda
 fixedLambda: [1.6371e-08, 1.6371e-08, 1.6371e-08, 1.6371e-08, 1.6371e-08, 1.6371e-08,1.6371e-08, 1.6371e-08]
 
-dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet/"
+dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 10  # Kfold cross validation
