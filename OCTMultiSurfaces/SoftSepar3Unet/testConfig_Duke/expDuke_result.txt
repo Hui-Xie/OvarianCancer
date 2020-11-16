@@ -1,4 +1,13 @@
 
+# Nov 16th, 2020
+Fine Tune Surface and Rift Subnet with fixed Lambda:
+Exp config:  /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201113A_FixLambda2Unet.yaml
+Result:
+1   fine Tune didn't improve accuracy;
+2
+
+
+
 # Nov 13th, 2020
 Professor ask 3 questions on initial grid search Lambda result on Duke_AMD data:
 1) What is the method you used to get the error of 2.196 micrometer?

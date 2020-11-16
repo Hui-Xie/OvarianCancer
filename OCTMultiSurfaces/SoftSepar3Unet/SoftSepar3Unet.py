@@ -50,7 +50,7 @@ class SoftSepar3Unet(BasicModel):
             self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
                                             mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
         self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.m_sDevice))
-        self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode)
+        self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode) # loadNet will load saved learning rate
 
         # rift Subnet
         self.m_rDevice = eval(self.hps.riftSubnetDevice)
@@ -64,9 +64,8 @@ class SoftSepar3Unet(BasicModel):
                                                                                  mode="min", factor=0.5, patience=20,
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
-        self.m_riftSubnet.setNetMgr(
-            NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.m_rDevice))
-        self.m_riftSubnet.m_netMgr.loadNet(riftMode)
+        self.m_riftSubnet.setNetMgr(NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.m_rDevice))
+        self.m_riftSubnet.m_netMgr.loadNet(riftMode) # loadNet will load saved learning rate
         
         # lambda Subnet
         self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
