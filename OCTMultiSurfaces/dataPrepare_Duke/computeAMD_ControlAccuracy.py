@@ -1,6 +1,7 @@
 # compute AMD and control group accuracy separately
 
-predictDir ="/home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml"
+# predictDir ="/home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml"
+predictDir = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/xml"
 gtDir = "/home/hxie1/data/OCT_Duke/numpy_slices/test"
 
 N = 3
@@ -21,7 +22,7 @@ from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 AMDXmlList = glob.glob(predictDir + f"/AMD_*_images_Sequence_Surfaces_Prediction.xml")
 ControlXmlList = glob.glob(predictDir + f"/Control_*_images_Sequence_Surfaces_Prediction.xml")
 
-print("Compute performance in AMD and Control group")
+print("Compute performance in AMD and Control group separately")
 print(f"predictDir= {predictDir}")
 print(f"gtDir = {gtDir}")
 print("===============")
@@ -58,7 +59,7 @@ for groupName, xmlList in twoGroupDict.items():
     print(f"muSurfaceError = {muSurfaceError}")
     print(f"stdError = {stdError}")
     print(f"muError = {muError}")
-    print(f"===============\n")
+    print(f"===============")
 
 
 

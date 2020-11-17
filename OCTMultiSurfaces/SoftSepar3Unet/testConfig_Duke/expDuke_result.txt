@@ -1,4 +1,28 @@
 # Nov 17th, 2020
+Compute performance in AMD and Control group separately in expDuke_20201113A_FixLambda2Unet Network:
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([2.9144, 1.0877, 1.8948])
+muSurfaceError = tensor([1.3283, 1.9940, 3.2859])
+stdError = 2.239591121673584
+muError = 2.202744960784912
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.4251, 1.0081, 0.4460])
+muSurfaceError = tensor([0.6201, 1.6549, 2.1552])
+stdError = 0.9295611381530762
+muError = 1.4767508506774902
+===============
+
+
+
+
+
+# Nov 17th, 2020
 Meeting with professor:
 1  we need to use JHU method to test Duke_AMD data;
 2  make sure JHU method same with its paper, without using our gradient;
