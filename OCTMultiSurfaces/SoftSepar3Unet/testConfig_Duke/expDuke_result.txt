@@ -1,3 +1,13 @@
+# Nov 17th, 2020
+Meeting with professor:
+1  we need to use JHU method to test Duke_AMD data;
+2  make sure JHU method same with its paper, without using our gradient;
+3  JHU's method has a Journel verson;
+
+My think:
+1  Leixin's method is single surface optimization, so its lambda only fit its single surface;
+2  Our method is multi-surface paralllel optimization, so its final lambda is the balance of multi-surface;
+3  we may need a special disease for show our method;
 
 # Nov 16th, 2020
 Response to professor Wu:
@@ -35,10 +45,6 @@ Result:
     stdError = 1.9898078441619873
     muError = 2.0106043815612793
 4   use fixed small lambda, mu error improved 0.03 micrometer, while stdError improved 0.028 micrometer;
-
-
-
-
 
 # Nov 13th, 2020
 Professor ask 3 questions on initial grid search Lambda result on Duke_AMD data:
