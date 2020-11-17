@@ -21,6 +21,12 @@ from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 AMDXmlList = glob.glob(predictDir + f"/AMD_*_images_Sequence_Surfaces_Prediction.xml")
 ControlXmlList = glob.glob(predictDir + f"/Control_*_images_Sequence_Surfaces_Prediction.xml")
 
+print("Compute performance in AMD and Control group")
+print(f"predictDir= {predictDir}")
+print(f"gtDir = {gtDir}")
+print("===============")
+
+
 twoGroupDict = {"AMD":AMDXmlList, "Control":ControlXmlList}
 for groupName, xmlList in twoGroupDict.items():
     # for AMD
