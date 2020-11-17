@@ -46,7 +46,7 @@ for groupName, xmlList in twoGroupDict.items():
     gtAll = torch.from_numpy(gtAll)
     stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(predictAll, gtAll,
                                                           slicesPerPatient=B,  hPixelSize=hPixelSize, goodBScansInGtOrder=None)
-    print("GroupName: {groupName}")
+    print(f"GroupName: {groupName}")
     print(f"case number = {Num}")
     print(f"stdSurfaceError = {stdSurfaceError}")
     print(f"muSurfaceError = {muSurfaceError}")
