@@ -15,7 +15,7 @@ from network.OCTOptimization import *
 from network.OCTTransform import *
 
 sys.path.append(".")
-from SurfaceSubnet import SurfaceSubnet
+from SurfacesNet import SurfacesNet
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
@@ -124,7 +124,6 @@ def main():
             optimizer.step()
             trLoss += loss
 
-            break
 
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
@@ -147,7 +146,6 @@ def main():
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
-                break
 
             validLoss = validLoss / validBatch
             if hps.groundTruthInteger:

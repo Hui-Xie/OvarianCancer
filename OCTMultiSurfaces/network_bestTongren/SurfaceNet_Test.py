@@ -15,7 +15,7 @@ from network.OCTOptimization import *
 from network.OCTTransform import *
 import time
 
-from SurfaceSubnet import SurfaceSubnet
+from SurfacesNet import SurfacesNet
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
