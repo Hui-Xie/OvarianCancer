@@ -448,13 +448,20 @@ class SurfacesUnet(BasicModel):
                 S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
         else:
             separationIPM = SoftSeparationIPMModule()
-            assert ((self.hps.softSeparation and self.hps.hardSeparation) == False)
             if self.hps.softSeparation:
                 R_detach = R.clone().detach()
                 S = separationIPM(mu, sigma2, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
                                   learningPairWeight=pairWeight)
-            if self.hps.hardSeparation:
-                S = separationIPM(mu, sigma2)
+            else:
+                if 2 == self.hps.hardSeparation:
+                    S = separationIPM(mu, sigma2)
+                elif 1 == self.hpa.hardSeparation:
+                    S = mu.clone()
+                    for i in range(1, N):
+                        S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+                else:  # No ReLU
+                    S = mu.clone()
+
 
         loss_surfaceL1 = 0.0
         if self.hps.existGTLabel:

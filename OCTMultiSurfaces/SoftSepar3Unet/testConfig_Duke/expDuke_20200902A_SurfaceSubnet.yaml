@@ -101,7 +101,7 @@ fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_
 
 
 # constrained model, both False meaning RelU
-hardSeparation: False
+hardSeparation: 1
 softSeparation: False
 useReLUInPretrain: True
 

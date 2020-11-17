@@ -98,7 +98,7 @@ useWeightedDivLoss: True
 useRiftInPretrain: True
 
 # constrained model
-hardSeparation: False
+hardSeparation: 1 # 0: No ReLU; 1:ReLU; 2: hardSeparation
 softSeparation: True
 
 goodBscans: # notes: indention has 4 spaces. patientID: [LeftRange, RightRange] in 1-31 index value.

@@ -114,7 +114,7 @@ useMergeMuRift: False #  update mu according to r and sigma2
 epochsPretrain: 100  #
 
 # constrained model
-hardSeparation: False
+hardSeparation: 1 # 0: No ReLU; 1:ReLU; 2: hardSeparation
 softSeparation: True
 
 goodBscans: []

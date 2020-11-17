@@ -78,14 +78,18 @@ class SurfaceSubnet(BasicModel):
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)  # size: B,N W
 
         # ReLU to guarantee layer order not to cross each other
-        if self.hps.hardSeparation:
+        # 0: NoReLU; 1: ReLU;  2: hardSeparation;
+        if 2 == self.hps.hardSeparation:
             separationIPM = SoftSeparationIPMModule()
             S = separationIPM(mu, sigma2, R=None, fixedPairWeight=self.hps.fixedPairWeight,
                               learningPairWeight=None) # only use unary item
-        else:
+        elif 1 == self.hps.hardSeparation:
             S = mu.clone()
             for i in range(1, N):
                 S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        else:  #No ReLU
+            S = mu.clone()
+
 
 
         loss_div = 0.0
@@ -95,8 +99,7 @@ class SurfaceSubnet(BasicModel):
             surfaceWeight = None
             _, C, _, _ = inputs.shape
             if C >= 4:  # at least 3 gradient channels.
-                imageGradMagnitude = inputs[:, C - 1, :,
-                                     :]  # image gradient magnitude is at final channel since July 23th, 2020
+                imageGradMagnitude = inputs[:, C - 1, :, :]  # image gradient magnitude is at final channel since July 23th, 2020
                 surfaceWeight = getSurfaceWeightFromImageGradient(imageGradMagnitude, N, gradWeight=self.hps.gradWeight)
 
             weightedDivLoss = WeightedDivLoss(weight=surfaceWeight ) # the input given is expected to contain log-probabilities

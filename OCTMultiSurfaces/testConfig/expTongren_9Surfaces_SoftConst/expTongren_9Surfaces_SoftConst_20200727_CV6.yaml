@@ -104,7 +104,7 @@ smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' 
 useCalibrate: True  # Calibrate mu according to r and sigma
 
 # constrained model
-hardSeparation: False
+hardSeparation: 1 # 0: No ReLU; 1:ReLU; 2: hardSeparation
 softSeparation: True
 
 goodBscans: []

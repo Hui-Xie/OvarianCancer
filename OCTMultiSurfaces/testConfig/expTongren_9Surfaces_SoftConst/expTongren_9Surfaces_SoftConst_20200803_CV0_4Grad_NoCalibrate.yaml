@@ -111,7 +111,7 @@ fixedPairWeight: True  # in soft constraint, pairwise terms add weight $\sigma_i
 useCalibrate: False  # Calibrate mu according to r and sigma
 
 # constrained model
-hardSeparation: False
+hardSeparation: 1 # 0: No ReLU; 1:ReLU; 2: hardSeparation
 softSeparation: True
 
 goodBscans: []
