@@ -8,6 +8,7 @@ My think:
 1  Leixin's method is single surface optimization, so its lambda only fit its single surface;
 2  Our method is multi-surface paralllel optimization, so its final lambda is the balance of multi-surface;
 3  we may need a special disease for show our method;
+4  soft separation cost function does not consider the lambda for top and bottom surfaces.
 
 # Nov 16th, 2020
 Response to professor Wu:
