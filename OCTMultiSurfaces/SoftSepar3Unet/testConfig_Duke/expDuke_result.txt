@@ -1,4 +1,11 @@
 # Nov 17th, 2020
+Compute performance in AMD and Control in Duke_AMD data:
+Analysis:
+1  Comparing ReLU constraints with SoftSepartion constraints, control group accuracy improves more with SoftSeparation;
+2  Control group improves 0.04, while AMD group improves 0.02;
+   So I have some suspect that more disease data may will get better result.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Compute performance in AMD and Control group separately in expDuke_20201113A_FixLambda2Unet Network:
 predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml
 gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
@@ -17,10 +24,26 @@ muSurfaceError = tensor([0.6201, 1.6549, 2.1552])
 stdError = 0.9295611381530762
 muError = 1.4767508506774902
 ===============
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Compute performance in AMD and Control group separately in pure SurfaceSubnet with ReLU constraint without SoftSeparation:
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([2.9164, 1.0329, 2.0026])
+muSurfaceError = tensor([1.3764, 1.9611, 3.3444])
+stdError = 2.267122268676758
+muError = 2.2273151874542236
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.4579, 1.1336, 0.4604])
+muSurfaceError = tensor([0.6594, 1.7114, 2.1802])
+stdError = 0.9794862270355225
+muError = 1.516985535621643
+===============
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # Nov 17th, 2020
 Meeting with professor:
