@@ -3,7 +3,7 @@ Compute Accuracy separately in AMD and Control of Duke_AMD data:
 Analysis:
 1  Comparing ReLU constraints with SoftSepartion constraints, control group accuracy improves more with SoftSeparation;
 2  Control group improves 0.04, while AMD group improves 0.02;
-   So I have some suspect that more disease data may will get better result.
+   So I have some suspicion that more disease data may will get better result.
 3  Comparing our result with Leixin's result on the Table 1 of https://arxiv.org/pdf/2007.01217.pdf;
    our surface 3 corresponds with OBM, our surface 2 correpondis with IRPE. Our Control correspond its normal.
    Both our result in both control and AMD groups are better than Leixin's best result "W/".

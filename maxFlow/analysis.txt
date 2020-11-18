@@ -1,3 +1,10 @@
+# Nov 18th, 2020.
+Henzinger's "Shared memory exact minimum cuts"
+its code link: https://github.com/VieCut/VieCut
+VieCut with O(n+m) complexity.
+
+
+=======================
 Boykov-Kolmogorov-Maxflow-Mincut-in-Graph-Segmentation: by Jiaxu Zou
 https://github.com/zoujx96/Boykov-Kolmogorov-Maxflow-Mincut-in-Graph-Segmentation
 
