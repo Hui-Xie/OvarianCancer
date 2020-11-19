@@ -1,10 +1,42 @@
 # Nov 19th, 2020
+Exact slices with max hausdorff distance on Duke_AMD test data.
+
+Summary:
+1   These slices represent the worst error in the test data;
+    Note: Hausdorff distance is a measurement relating to specific cases.
+2   check error one by one:
+    AMD_1198_images_s24_GT_Predict:  a rare disease case that surface 0 broken in the fovea region;
+    AMD_1127_images_s23_GT_Predict:  surface 1 prediction error. By the way: the ground truth of surface 0 is not good;
+    AMD_1198_images_s17_GT_Predict:  surface 2 prediction error;
+    Control_1051_images_s16_GT_Predict: surface 0 signal is blurry, leading to prediction error;
+    Control_1005_images_s24_GT_Predict: surface 1 prediction error;
+    Control_1016_images_s08_GT_Predict: explicit ground truth error;
+3   Surface 0 has maximum Hausdorff distance because the AMD_11198 case in the test data is a rare ILM broken patient;
+4   Please refer to the attachments.
+
 Search the worst cases: the slices with max hausdorff distance.
 ######################################################
 Use softSeparation + fixed lambda network on Test data:
-
-
-
+Compute performance in AMD and Control group separately
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+HausdorffDistance in pixel = [[50. 33. 31.]]
+HausdorffDistance in physical size (micrometer) = [[162.   106.92 100.44]]
+surface 0: the location of hausdorff at w=179 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/images/AMD_1198_images_s24_GT_Predict.png
+surface 1: the location of hausdorff at w=126 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/images/AMD_1127_images_s23_GT_Predict.png
+surface 2: the location of hausdorff at w=341 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/images/AMD_1198_images_s17_GT_Predict.png
+===============
+GroupName: Control
+case number = 18
+HausdorffDistance in pixel = [[28.  8.  8.]]
+HausdorffDistance in physical size (micrometer) = [[90.72 25.92 25.92]]
+surface 0: the location of hausdorff at w=71 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/images/Control_1051_images_s16_GT_Predict.png
+surface 1: the location of hausdorff at w=171 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/images/Control_1005_images_s24_GT_Predict.png
+surface 2: the location of hausdorff at w=132 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/images/Control_1016_images_s08_GT_Predict.png
+===============
 ######################################################
 Use Unet + ReLU network on Test data
 python3.7 ./findMaxHausdorffPoint.py
@@ -29,8 +61,6 @@ surface 1: the location of hausdorff at w=171 of path: /home/hxie1/data/OCT_Duke
 surface 2: the location of hausdorff at w=132 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/Control_1016_images_s08_GT_Predict.png
 ===============
 ######################################################
-
-
 
 
 # Nov 19th, 2020
