@@ -1,4 +1,39 @@
 # Nov 19th, 2020
+Search the worst cases: the slices with max hausdorff distance.
+######################################################
+Use softSeparation + fixed lambda network on Test data:
+
+
+
+######################################################
+Use Unet + ReLU network on Test data
+python3.7 ./findMaxHausdorffPoint.py
+Compute performance in AMD and Control group separately
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+HausdorffDistance in pixel = [[50. 31. 44.]]
+HausdorffDistance in physical size (micrometer) = [[162.   100.44 142.56]]
+surface 0: the location of hausdorff at w=179 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/AMD_1198_images_s24_GT_Predict.png
+surface 1: the location of hausdorff at w=360 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/AMD_1100_images_s48_GT_Predict.png
+surface 2: the location of hausdorff at w=360 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/AMD_1100_images_s48_GT_Predict.png
+===============
+GroupName: Control
+case number = 18
+HausdorffDistance in pixel = [[33.  9.  8.]]
+HausdorffDistance in physical size (micrometer) = [[106.92  29.16  25.92]]
+surface 0: the location of hausdorff at w=48 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/Control_1051_images_s17_GT_Predict.png
+surface 1: the location of hausdorff at w=171 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/Control_1005_images_s24_GT_Predict.png
+surface 2: the location of hausdorff at w=132 of path: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/images/Control_1016_images_s08_GT_Predict.png
+===============
+######################################################
+
+
+
+
+# Nov 19th, 2020
 Compute Hausdorff distance and segmentation error computation on AMD and Control test data separately.
 Summary:
 Compare pure Unet+ReLu and SoftSeparation Network:
