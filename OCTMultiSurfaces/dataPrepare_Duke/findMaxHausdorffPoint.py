@@ -3,6 +3,7 @@
 #predictDir ="/home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml"
 predictDir = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/xml"
 gtDir = "/home/hxie1/data/OCT_Duke/numpy_slices/test"
+outputImageDir = predictDir.replace("/testResult/xml", "/testResult/images")
 
 N = 3
 W = 361
@@ -63,22 +64,13 @@ for groupName, xmlList in twoGroupDict.items():
         surfacenHausD = hausdorffD[:,n,:]
         indexMax = np.argmax(surfacenHausD)
         nSlice, w = indexMax
-        print(f"for surface {n}:")
         nVolume = nSlice//B
         slice_s = nSlice%B
         volumeXmlPath = xmlList[nVolume]
         _, stemname = os.path.split(volumeXmlPath)
         volumeName = stemname[0: stemname.find("_images_Sequence_Surfaces_Prediction.xml")]
-        
-
-
-
-
-
-
-
-
-
+        predictImagePath = outputImageDir + f"/{volumeName}_images_s{slice_s:02d}_GT_Predict.png"
+        print(f"surface {n}: the location of hausdorff at w={w} of path: {predictImagePath}")
 
     print(f"===============")
 
