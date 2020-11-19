@@ -17,7 +17,6 @@ import torch
 import sys
 sys.path.append("..")
 from dataPrepare_Tongren.TongrenFileUtilities import getSurfacesArray
-from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
 
@@ -62,7 +61,7 @@ for groupName, xmlList in twoGroupDict.items():
     hausdorffD = np.abs(predictAll - gtAll)  # in size: Num*B,N,W
     for n in range(N):
         surfacenHausD = hausdorffD[:,n,:]
-        indexMax = np.argmax(surfacenHausD)
+        indexMax = np.unravel_index(np.argmax(surfacenHausD), surfacenHausD.shape)
         nSlice, w = indexMax
         nVolume = nSlice//B
         slice_s = nSlice%B
