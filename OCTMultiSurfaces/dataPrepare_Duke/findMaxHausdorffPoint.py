@@ -32,6 +32,8 @@ print("===============")
 
 twoGroupDict = {"AMD":AMDXmlList, "Control":ControlXmlList}
 for groupName, xmlList in twoGroupDict.items():
+    print(f"GroupName: {groupName}")
+    print(f"case number = {Num}")
     Num = len(xmlList)
     predictAll = np.empty([Num*B,N,W])
     gtAll = np.empty([Num*B,N, W])
@@ -52,20 +54,32 @@ for groupName, xmlList in twoGroupDict.items():
     assert predictAll.shape == gtAll.shape
     # use numpy for computing Hausdorff distance
     columnHausdorffD = columnHausdorffDist(predictAll, gtAll).reshape((1, N))
-    # use torch.tensor for segmenation accuracy
-    predictAll = torch.from_numpy(predictAll)
-    gtAll = torch.from_numpy(gtAll)
-    stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(predictAll, gtAll,
-                                                          slicesPerPatient=B,  hPixelSize=hPixelSize, goodBScansInGtOrder=None)
-
-    print(f"GroupName: {groupName}")
-    print(f"case number = {Num}")
-    print(f"stdSurfaceError = {stdSurfaceError}")
-    print(f"muSurfaceError = {muSurfaceError}")
     print(f"HausdorffDistance in pixel = {columnHausdorffD}")
-    print(f"HausdorffDistance in physical size (micrometer) = {columnHausdorffD*hPixelSize}")
-    print(f"stdError = {stdError}")
-    print(f"muError = {muError}")
+    print(f"HausdorffDistance in physical size (micrometer) = {columnHausdorffD * hPixelSize}")
+
+    # find the exact location of max difference.
+    hausdorffD = np.abs(predictAll - gtAll)  # in size: Num*B,N,W
+    for n in range(N):
+        surfacenHausD = hausdorffD[:,n,:]
+        indexMax = np.argmax(surfacenHausD)
+        nSlice, w = indexMax
+        print(f"for surface {n}:")
+        nVolume = nSlice//B
+        slice_s = nSlice%B
+        volumeXmlPath = xmlList[nVolume]
+        _, stemname = os.path.split(volumeXmlPath)
+        volumeName = stemname[0: stemname.find("_images_Sequence_Surfaces_Prediction.xml")]
+        
+
+
+
+
+
+
+
+
+
+
     print(f"===============")
 
 
