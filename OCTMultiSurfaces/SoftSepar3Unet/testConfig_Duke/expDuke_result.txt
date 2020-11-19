@@ -17,7 +17,8 @@ GroupName: AMD
 case number = 41
 stdSurfaceError = tensor([2.9144, 1.0877, 1.8948])
 muSurfaceError = tensor([1.3283, 1.9940, 3.2859])
-HausdorffDistance = [[50. 33. 31.]]
+HausdorffDistance in pixel = [[50. 33. 31.]]
+HausdorffDistance in physical size (micrometer) = [[162.   106.92 100.44]]
 stdError = 2.239591121673584
 muError = 2.202744960784912
 ===============
@@ -25,7 +26,8 @@ GroupName: Control
 case number = 18
 stdSurfaceError = tensor([0.4251, 1.0081, 0.4460])
 muSurfaceError = tensor([0.6201, 1.6549, 2.1552])
-HauddorffDistance = [[28.  8.  8.]]
+HausdorffDistance in pixel = [[28.  8.  8.]]
+HausdorffDistance in physical size (micrometer) = [[90.72 25.92 25.92]]
 stdError = 0.9295611381530762
 muError = 1.4767508506774902
 ===============
