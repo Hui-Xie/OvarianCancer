@@ -1,11 +1,36 @@
 # Nov 19th, 2020
-Add Hausdorf distance compuation on test on AMD and Control data separately.
+Computate Hausdorf distance and segmentation error compuation on AMD and Control test data separately.
+Summary:
+Compare pure Unet+ReLu and SoftSepration Network:
+1  In AMD test data, surface 2 improves about 30% of Hausdorff distance; while surface 0 didn't improve, and surface 1 worsen a little;
+   We can use this surface 2 as an example for demonstration;
+2  In Control test data, surface 0 and surface 1 improve a little, while surface 3 didn't change.
+   The reason behind it maybe is that control test data already has a high accruacy; (High accuracy improves small);
+3  Hausdorff distance improves really depending on data. In total result, SoftSeparation improves Hausdorff distance;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+Compute performance in AMD and Control group separately in SoftSeparation Network + fixed Lambda
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([2.9144, 1.0877, 1.8948])
+muSurfaceError = tensor([1.3283, 1.9940, 3.2859])
+HausdorffDistance = [[50. 33. 31.]]
+stdError = 2.239591121673584
+muError = 2.202744960784912
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.4251, 1.0081, 0.4460])
+muSurfaceError = tensor([0.6201, 1.6549, 2.1552])
+HauddorffDistance = [[28.  8.  8.]]
+stdError = 0.9295611381530762
+muError = 1.4767508506774902
+===============
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Compute performance in AMD and Control group separately
+Compute performance in AMD and Control group separately in Unet + ReLU
 predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/xml
 gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
 ===============
@@ -13,7 +38,7 @@ GroupName: AMD
 case number = 41
 stdSurfaceError = tensor([2.9164, 1.0329, 2.0026])
 muSurfaceError = tensor([1.3764, 1.9611, 3.3444])
-HauddorffDistance = [[50. 31. 44.]]
+HausdorffDistance = [[50. 31. 44.]]
 stdError = 2.267122268676758
 muError = 2.2273151874542236
 ===============
