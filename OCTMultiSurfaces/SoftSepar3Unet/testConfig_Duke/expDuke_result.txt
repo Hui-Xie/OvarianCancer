@@ -1,3 +1,33 @@
+# Nov 19th, 2020
+Add Hausdorf distance compuation on test on AMD and Control data separately.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Compute performance in AMD and Control group separately
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([2.9164, 1.0329, 2.0026])
+muSurfaceError = tensor([1.3764, 1.9611, 3.3444])
+HauddorffDistance = [[50. 31. 44.]]
+stdError = 2.267122268676758
+muError = 2.2273151874542236
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.4579, 1.1336, 0.4604])
+muSurfaceError = tensor([0.6594, 1.7114, 2.1802])
+HauddorffDistance = [[33.  9.  8.]]
+stdError = 0.9794862270355225
+muError = 1.516985535621643
+===============
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 # Nov 17th, 2020
 Compute Accuracy separately in AMD and Control of Duke_AMD data:
 Analysis:
