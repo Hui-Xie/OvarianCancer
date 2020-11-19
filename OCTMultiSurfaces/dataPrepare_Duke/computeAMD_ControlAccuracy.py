@@ -17,6 +17,8 @@ import sys
 sys.path.append("..")
 from dataPrepare_Tongren.TongrenFileUtilities import getSurfacesArray
 from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
+sys.path.append("../..")
+from framework.NetTools import  columnHausdorffDist
 
 
 AMDXmlList = glob.glob(predictDir + f"/AMD_*_images_Sequence_Surfaces_Prediction.xml")
@@ -49,14 +51,19 @@ for groupName, xmlList in twoGroupDict.items():
             i = i+1
 
     assert predictAll.shape == gtAll.shape
+    # use numpy for computing Hausdorff distance
+    columnHausdorffD = columnHausdorffDist(predictAll, gtAll).reshape((1, N))
+    # use torch.tensor for segmenation accuracy
     predictAll = torch.from_numpy(predictAll)
     gtAll = torch.from_numpy(gtAll)
     stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(predictAll, gtAll,
                                                           slicesPerPatient=B,  hPixelSize=hPixelSize, goodBScansInGtOrder=None)
+
     print(f"GroupName: {groupName}")
     print(f"case number = {Num}")
     print(f"stdSurfaceError = {stdSurfaceError}")
     print(f"muSurfaceError = {muSurfaceError}")
+    print(f"HauddorffDistance = {columnHausdorffD}")
     print(f"stdError = {stdError}")
     print(f"muError = {muError}")
     print(f"===============")
