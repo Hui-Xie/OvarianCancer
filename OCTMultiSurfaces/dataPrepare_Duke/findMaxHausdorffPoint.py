@@ -33,9 +33,9 @@ print("===============")
 
 twoGroupDict = {"AMD":AMDXmlList, "Control":ControlXmlList}
 for groupName, xmlList in twoGroupDict.items():
+    Num = len(xmlList)
     print(f"GroupName: {groupName}")
     print(f"case number = {Num}")
-    Num = len(xmlList)
     predictAll = np.empty([Num*B,N,W])
     gtAll = np.empty([Num*B,N, W])
     i = 0
