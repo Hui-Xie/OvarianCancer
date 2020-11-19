@@ -1,12 +1,15 @@
 # Nov 19th, 2020
-Computate Hausdorf distance and segmentation error compuation on AMD and Control test data separately.
+Compute Hausdorff distance and segmentation error computation on AMD and Control test data separately.
 Summary:
-Compare pure Unet+ReLu and SoftSepration Network:
+Compare pure Unet+ReLu and SoftSeparation Network:
 1  In AMD test data, surface 2 improves about 30% of Hausdorff distance; while surface 0 didn't improve, and surface 1 worsen a little;
-   We can use this surface 2 as an example for demonstration;
+   We can use this surface 2 as an example for a demonstration;
 2  In Control test data, surface 0 and surface 1 improve a little, while surface 3 didn't change.
-   The reason behind it maybe is that control test data already has a high accruacy; (High accuracy improves small);
-3  Hausdorff distance improves really depending on data. In total result, SoftSeparation improves Hausdorff distance;
+   The reason behind it maybe is that control test data already has a high accuracy; (High accuracy improves small);
+3  Hausdorff distance improves really depending on data.
+4  In total result, SoftSeparation improves both Hausdorff distance, and mean accuracy;
+5  Unet without ReLU is still in training. After its training, we may further compare it with SoftSeparation network;
+   This comparison will be more explicit in our estimation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Compute performance in AMD and Control group separately in SoftSeparation Network + fixed Lambda
@@ -40,7 +43,8 @@ GroupName: AMD
 case number = 41
 stdSurfaceError = tensor([2.9164, 1.0329, 2.0026])
 muSurfaceError = tensor([1.3764, 1.9611, 3.3444])
-HausdorffDistance = [[50. 31. 44.]]
+HausdorffDistance in pixel = [[50. 31. 44.]]
+HausdorffDistance in physical size (micrometer) = [[162.   100.44 142.56]]
 stdError = 2.267122268676758
 muError = 2.2273151874542236
 ===============
@@ -48,7 +52,8 @@ GroupName: Control
 case number = 18
 stdSurfaceError = tensor([0.4579, 1.1336, 0.4604])
 muSurfaceError = tensor([0.6594, 1.7114, 2.1802])
-HauddorffDistance = [[33.  9.  8.]]
+HausdorffDistance in pixel = [[33.  9.  8.]]
+HausdorffDistance in physical size (micrometer) = [[106.92  29.16  25.92]]
 stdError = 0.9794862270355225
 muError = 1.516985535621643
 ===============
