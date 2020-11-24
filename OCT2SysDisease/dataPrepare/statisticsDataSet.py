@@ -16,7 +16,7 @@ import sys
 sys.path.append("..")
 from network.OCT2SysD_Tools import readBESClinicalCsv
 
-def statisticsData(dataSetIDPath, key="", valueType=None):
+def statisticsData(dataSetIDPath, key="", valueType=None, missingValue=None):
     '''
 
     :param dataSetIDPath:
@@ -47,33 +47,36 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
         N +=1
         if valueType=="binary":
             value = int(value)
-            if 0 == value:
-                b0Count +=1
-            elif 1 == value:
-                b1Count +=1
-            else:
-                print(f"value= {value} don't match binary type at ID {ID}")
-                assert False
+            if value != missingValue:
+                if 0 == value:
+                    b0Count +=1
+                elif 1 == value:
+                    b1Count +=1
+                else:
+                    print(f"value= {value} don't match binary type at ID {ID}")
+                    assert False
 
         elif valueType == "number":
             value = float(value)
-            if 1 ==N:
-                minV = value
-                maxV = value
-                avgV = value
-            else:
-                minV = value if value < minV else minV
-                maxV = value if value > maxV else maxV
-                avgV +=value
+            if value != missingValue:
+                if 1 ==N:
+                    minV = value
+                    maxV = value
+                    avgV = value
+                else:
+                    minV = value if value < minV else minV
+                    maxV = value if value > maxV else maxV
+                    avgV +=value
         elif valueType == "12binary":
             value = int(value)
-            if 1 == value:
-                b0Count += 1
-            elif 2 == value:
-                b1Count += 1
-            else:
-                print(f"value= {value} don't match 12binary type at ID {ID}")
-                assert False
+            if value != missingValue:
+                if 1 == value:
+                    b0Count += 1
+                elif 2 == value:
+                    b1Count += 1
+                else:
+                    print(f"value= {value} don't match 12binary type at ID {ID}")
+                    assert False
         else:
             print("valueType error")
             assert False
@@ -97,12 +100,13 @@ def statisticsData(dataSetIDPath, key="", valueType=None):
 def printUsage(argv):
     print("============ statistics specific key in a ID dataset  =============")
     print("Usage:")
-    print(argv[0], " ID_path  keyName  <binary : 12binary : number>")
+    print(argv[0], " ID_path  keyName  <binary : 12binary : number> missingValue")
+    print("missingValue: 99 or 999 or None")
 
 
 def main():
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print("Error: input parameters error.")
         printUsage(sys.argv)
         print(f"keys List = \n{keysList}")
@@ -112,7 +116,8 @@ def main():
     dataSetIDPath = sys.argv[1]
     key = sys.argv[2]
     valueType = sys.argv[3]
-    statisticsData(dataSetIDPath, key=key, valueType=valueType)
+    missingValue = eval(sys.argv[4])
+    statisticsData(dataSetIDPath, key=key, valueType=valueType, missingValue=missingValue)
 
 
 if __name__ == "__main__":
