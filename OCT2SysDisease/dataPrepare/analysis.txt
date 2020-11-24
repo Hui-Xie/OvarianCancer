@@ -1,3 +1,41 @@
+# Nov 24th, 2020
+Statistics on Congnitive$:
+
+Cognitive Tag on Dataset:
+                #cases    min  mean     max
+training:       1760      5    24.80    30
+validaiton:     473       4    26.11    30
+test:           490       6    26.46    30
+
+
+
+
+python3.7 statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv Cognitive$ number 99
+total 1807 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
+values for Cognitive$ have 1760 records
+min=5.0; mean=24.79659090909091; max=30.0
+ emptyValueIDList =
+['287', '828', '1527', '1696', '2311', '2596', '3502', '4170', '4188', '4192', '4231', '4239', '4266', '4287', '4290', '4387', '4388', '4417', '4528', '4550', '4627', '4683', '4696', '4714', '4717', '4756', '4794', '4795', '4816', '4819', '4961', '4981', '4995', '5033', '5034', '5175', '5529', '6985', '31066', '34162', '34164', '34165', '34166', '34167', '34169', '34173', '120032']
+
+python3.7 statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv Cognitive$ number 99
+total 481 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv
+values for Cognitive$ have 473 records
+min=4.0; mean=26.11416490486258; max=30.0
+ emptyValueIDList =
+['4184', '4253', '4549', '4822', '4969', '5239', '34065', '34170']
+
+python3.7 statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv Cognitive$ number 99
+total 502 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv
+values for Cognitive$ have 490 records
+min=6.0; mean=26.46734693877551; max=30.0
+ emptyValueIDList =
+['551', '1186', '4182', '4187', '4191', '4475', '4477', '4682', '4779', '4913', '5021', '5174']
+
+
+
+
+
+==================================
 Hypertension data: 1: 1915; 0: 1535
 input: 62-OCT
 output: {0,1}
