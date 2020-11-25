@@ -26,7 +26,7 @@ Search best Lambda on validation data:
    A generate Q,mu,r,g in validation data;
    B code the unconstrainted optimal funciton;
    C grid search lambda with generated Q,mu, r,g on validation data;
-   D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;
+   D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --runing,and  waiting result;
    F test fixed lambda with IPM finetune on validation data;
    E test fixed lmabda with IPM on test data;
 
