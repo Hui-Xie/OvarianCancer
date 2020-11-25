@@ -222,6 +222,7 @@ def main():
             net.updateRunParameter("validationLoss", validHyperTLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("hyperTensionAccuracy", hyperTAcc)
+            net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
             #preValidLoss = validHyperTLoss
             preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)

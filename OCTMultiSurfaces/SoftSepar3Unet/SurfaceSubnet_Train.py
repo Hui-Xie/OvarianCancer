@@ -183,6 +183,7 @@ def main():
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
+            net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
             preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)

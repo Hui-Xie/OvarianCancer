@@ -217,6 +217,7 @@ def main():
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
+            net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
             pre2ndValidLoss = validLoss
             pre2ndErrorMean = muError
             netMgr.saveRealTimeNet(hps.netPath)

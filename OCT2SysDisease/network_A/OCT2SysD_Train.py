@@ -189,6 +189,7 @@ def main():
         if validHyperTLoss < preValidLoss:
             net.updateRunParameter("validationLoss", validHyperTLoss)
             net.updateRunParameter("epoch", net.m_epoch)
+            net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
             preValidLoss = validHyperTLoss
             netMgr.saveNet(hps.netPath)
 
