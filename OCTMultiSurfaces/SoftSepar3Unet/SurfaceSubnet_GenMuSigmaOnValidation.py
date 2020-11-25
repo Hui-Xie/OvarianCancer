@@ -159,7 +159,7 @@ def main():
 
     B,S, W = testOutputs.shape
 
-    with open(os.path.join(validationOuputDir,f"ValidationOutput_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(validationOuputDir,f"validationOutput_surface_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,W = {B, S, W}\n")

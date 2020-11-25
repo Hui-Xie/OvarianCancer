@@ -29,7 +29,7 @@ from framework.ConfigReader import ConfigReader
 
 
 def printUsage(argv):
-    print("============ Cross Validation Test OCT MultiSurface Network =============")
+    print("============ Generate Rift on Validation data =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -45,18 +45,22 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
+    validationOuputDir = os.path.join(hps.outputDir, "validation")
+    if not os.path.exists(validationOuputDir):
+        os.makedirs(validationOuputDir)  # recursive dir creation
+
     if hps.dataIn1Parcel:
         if -1 == hps.k and 0 == hps.K:  # do not use cross validation
-            testImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
-            testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy") if hps.existGTLabel else None
-            testIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
+            testImagesPath = os.path.join(hps.dataDir, "validation", f"images.npy")
+            testLabelsPath = os.path.join(hps.dataDir, "validation", f"surfaces.npy") if hps.existGTLabel else None
+            testIDPath = os.path.join(hps.dataDir, "validation", f"patientID.json")
         else:  # use cross validation
-            testImagesPath = os.path.join(hps.dataDir, "test", f"images_CV{hps.k:d}.npy")
-            testLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces_CV{hps.k:d}.npy")
-            testIDPath = os.path.join(hps.dataDir, "test", f"patientID_CV{hps.k:d}.json")
+            testImagesPath = os.path.join(hps.dataDir, "validation", f"images_CV{hps.k:d}.npy")
+            testLabelsPath = os.path.join(hps.dataDir, "validation", f"surfaces_CV{hps.k:d}.npy")
+            testIDPath = os.path.join(hps.dataDir, "validation", f"patientID_CV{hps.k:d}.json")
     else:
         if -1 == hps.k and 0 == hps.K:  # do not use cross validation
-            testImagesPath = os.path.join(hps.dataDir, "test", f"patientList.txt")
+            testImagesPath = os.path.join(hps.dataDir, "validation", f"patientList.txt")
             testLabelsPath = None
             testIDPath = None
         else:
@@ -87,8 +91,6 @@ def main():
             testBatch += 1
             R, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs=batchData['GTs'],
                                         layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-            batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
-            images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages  # for output result
             if hps.existGTLabel:
                 testGts = torch.cat((testGts, batchData['riftWidth'])) if testBatch != 1 else batchData['riftWidth']
             else:
@@ -107,33 +109,31 @@ def main():
                                                                                                      hPixelSize=hps.hPixelSize,
                                                                                                      goodBScansInGtOrder=goodBScansInGtOrder)
             testGts = testGts.cpu().numpy()
-            testGtsFilePath = os.path.join(hps.outputDir, f"testRiftGts.npy")
+            testGtsFilePath = os.path.join(validationOuputDir, f"validation_RiftGts.npy")
             np.save(testGtsFilePath, testGts)
 
         testR = testR.cpu().numpy()
-        testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
+        testRFilePath = os.path.join(validationOuputDir, f"validation_Rift.npy")
         np.save(testRFilePath, testR)
 
         # output testID
-        with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
+        with open(os.path.join(validationOuputDir, f"validation_ID_Rift.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 
-        images = images.cpu().numpy().squeeze()
-        
+
 
     testEndTime = time.time()
     B,S,W = testR.shape
-    _,H,_ = images.shape
 
     # final output result:
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(hps.outputDir, f"output_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(validationOuputDir, f"validation_output_rift_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
-        file.write(f"B,S,H,W = {B, S, H, W}\n")
+        file.write(f"B,S,W = {B, S, W}\n")
         file.write(f"Test time: {testEndTime - testStartTime} seconds.\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
