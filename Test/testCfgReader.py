@@ -7,7 +7,7 @@ import os
 import torch
 
 
-cfgFilePath = "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/testConfig/expTongren_10Surfaces_20200509/expTongren_10Surfaces_20200509_CV0.yaml"
+cfgFilePath = "/home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201117A_SurfaceSubnet_NoReLU.yaml"
 
 hps = ConfigReader(cfgFilePath)
 

@@ -32,10 +32,30 @@ slice list of violating surface-separation constraints:
 	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1257_images_s42.npy
 	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1105_images_s44.npy
 ==================================================
-test on Divided AMd and Control Group:
-
-
-
+test on Divided AMd and Control Group without ReLU:
+python3.7 ./computeAMD_ControlAccuracy.py
+Compute performance in AMD and Control group separately
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.6814, 1.1590, 1.7918])
+muSurfaceError = tensor([1.4751, 2.0601, 3.3228])
+HausdorffDistance in pixel = [[ 65. 123.  54.]]
+HausdorffDistance in physical size (micrometer) = [[210.6  398.52 174.96]]
+stdError = 2.5565528869628906
+muError = 2.2859814167022705
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.3893, 0.9779, 0.4277])
+muSurfaceError = tensor([0.6097, 1.6466, 2.1740])
+HausdorffDistance in pixel = [[46. 13.  9.]]
+HausdorffDistance in physical size (micrometer) = [[149.04  42.12  29.16]]
+stdError = 0.9188244938850403
+muError = 1.4767508506774902
+===============
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
