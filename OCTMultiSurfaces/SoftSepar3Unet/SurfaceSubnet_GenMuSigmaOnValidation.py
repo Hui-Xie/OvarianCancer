@@ -128,23 +128,19 @@ def main():
                 file.write(f"{id}\n")
 
         if hps.existGTLabel:
+            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs,
+                                                                                                     testGts,
+                                                                                                     slicesPerPatient=hps.slicesPerPatient,
+                                                                                                     hPixelSize=hps.hPixelSize,
+                                                                                                     goodBScansInGtOrder=None)
             testGts = testGts.cpu().numpy()
+            np.save(os.path.join(validationOuputDir, "validation_gt.npy"), testGts)
 
         testOutputs = testOutputs.cpu().numpy()
         testSigma2 = testSigma2.cpu().numpy()
 
         np.save(os.path.join(validationOuputDir,"validation_mu.npy"), testOutputs)
         np.save(os.path.join(validationOuputDir,"validation_simga2.npy"), testSigma2)
-        if hps.existGTLabel:
-            np.save(os.path.join(validationOuputDir,"validation_gt.npy"), testGts)
-            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs,
-                                                                                                     testGts,
-                                                                                                     slicesPerPatient=hps.slicesPerPatient,
-                                                                                                     hPixelSize=hps.hPixelSize,
-                                                                                                     goodBScansInGtOrder=None)
-
-
-
 
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, validationXmlOuputDir,

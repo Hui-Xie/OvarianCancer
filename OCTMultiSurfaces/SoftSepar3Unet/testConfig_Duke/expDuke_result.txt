@@ -74,7 +74,7 @@ Search best Lambda on validation data:
      g: Bx51x3x361,
      where B is the number of OCT volumes of validation data;
 3  some subtasks:
-   A generate Q,mu,r,g in validation data;
+   A generate Q,mu,r,g in validation data; -- Q,mu,g are ok;
    B code the unconstrainted optimal funciton;
    C grid search lambda with generated Q,mu, r,g on validation data;
    D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --done, with average error 2.039 um.;
