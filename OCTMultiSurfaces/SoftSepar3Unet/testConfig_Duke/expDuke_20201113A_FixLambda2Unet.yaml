@@ -23,7 +23,7 @@ surfaceSubnetLr: 5.0e-3  # pretain at epoch 74  # it must have dot and +/- sige 
 riftSubnet: "RiftSubnet"
 riftSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_RiftSubnet.yaml"
 riftSubnetDevice: torch.device('cuda:2')   #GPU ID
-riftSubnetLr: 1.25e-3  # pretrain at epoch 101
+riftSubnetLr: 1.0e-2  # pretrain at epoch 42
 
 
 lambdaSubnetDevice: torch.device('cuda:0')   #GPU ID

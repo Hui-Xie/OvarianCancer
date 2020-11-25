@@ -17,6 +17,8 @@ net.m_runParametersDict:
 	validationLoss:40.726619720458984
 	epoch:76
 	errorMean:2.205378532409668
+	learningRate: 5.0e-3
+
 ===============Formal Output Result ===========
 patientIDList =[]
 stdSurfaceError = tensor([3.0907, 1.1151, 1.5977], device='cuda:3')
@@ -64,7 +66,9 @@ muSurfaceError = tensor([3.4042, 8.4392], device='cuda:2')
 stdError = 3.658905267715454
 muError = 5.921670913696289
 
-
+Lr = 1.0e-2
+epoch = 42  for training.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -84,7 +88,8 @@ Search best Lambda on validation data:
    A generate Q,mu,r,g in validation data; -- done;
       surfaceResult: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation
       riftResult: /home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation
-   B code the unconstrainted optimal funciton;
+      And checked its order are consisent.
+   B code the unconstrainted optimal function;
    C grid search lambda with generated Q,mu, r,g on validation data;
    D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --done, with average error 2.039 um.;
    F test fixed lambda with IPM finetune on validation data;
