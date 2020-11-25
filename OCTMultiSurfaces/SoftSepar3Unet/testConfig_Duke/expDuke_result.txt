@@ -1,3 +1,38 @@
+# Nov 25th, 2020
+expDuke_20201117A_SurfaceSubnet_NoReLU finished:
+1  trained 372 epochs in 7day 21hour 12min:
+   (7*24*60+21*60+12)/372 = 30.5 min / epoch;
+2  best validation error:
+   at epoch 85: with learning rate 5.0e-3
+   meanError: 2.207
+                Error      Std
+   surface 0:   0.9427     1.259
+   surface 1:   2.371      2.588
+   surface 2:   3.306      1.814
+
+Search best Lambda on validation data:
+1  use riftNet: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_RiftSubnet.yaml"
+   and SurfaceNet Without ReLU:expDuke_20201117A_SurfaceSubnet_NoReLU
+2  basic design:
+   A use unconstrained softSeparation and ReLU at the last to estimate Lambda;
+   B use unconstrained softSeparation optimal solution get S;
+   C use validation data, without augmentation, output all its Q, mu, r:
+     Q: Bx51x3x361
+     mu:Bx51x3x361
+     r: Bx51x2x361,
+     g: Bx51x3x361,
+     where B is the number of OCT volumes of validation data;
+3  some subtasks:
+   A generate Q,mu,r,g in validation data;
+   B code the unconstrainted optimal funciton;
+   C grid search lambda with generated Q,mu, r,g on validation data;
+   D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;
+   F test fixed lambda with IPM finetune on validation data;
+   E test fixed lmabda with IPM on test data;
+
+
+
+
 # Nov 19th, 2020
 Exact slices with max hausdorff distance on Duke_AMD test data.
 
