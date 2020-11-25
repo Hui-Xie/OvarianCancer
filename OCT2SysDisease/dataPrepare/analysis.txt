@@ -1,3 +1,28 @@
+# Nov 25th, Wednesday, 2020
+Meeting minute of OCT2SysDisease on Nov 24th, 2020
+Attendants: Prof. Wu, Prof. Wang, Hui
+Time: 20:00-21:30(Iowa Time) Nov 24th, 2020
+Minutes:
+1  It is better to choose big/major diseases:first hypertension, then diabetes;
+2  The core of this project is not at prediction self; it is at the backward retina manifestation or retina impairment of systemic diseases;
+3  Thickness map is the most important input, which can consider to use an average of 3x3 grid to alleviate segmentation error;
+   A  use thickness map to predict age;
+   B  use thickness map to predict hypertension;
+   C  use thickness map to predict the severity of hypertension (systolic blood level);
+4  Further design for next phase:
+   A  description of the surface curvature may act as an input;
+   B  axial length can be an input to judge its relation with hypertension;
+   C  use thickness map plus 3D layer texture as input;
+   D  use the OCT volume 5 years before strokes occur to predict stroke;
+   E  use retina layer while keeping its layer curvature without flatting;
+
+
+
+
+
+
+
+
 # Nov 24th, 2020
 Statistics on Congnitive$:
 
@@ -6,9 +31,6 @@ Cognitive Tag on Dataset:
 training:       1760      5    24.80    30
 validaiton:     473       4    26.11    30
 test:           490       6    26.46    30
-
-
-
 
 python3.7 statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv Cognitive$ number 99
 total 1807 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
