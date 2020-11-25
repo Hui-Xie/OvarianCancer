@@ -37,7 +37,7 @@ class ConfigReader(object):
         if self.outputDir == "":
             self.outputDir = os.path.join(self.logDir,"testResult")
             self.imagesOutputDir = os.path.join(self.outputDir,"images")
-            self.xmlOutputDir = os.path.join(self.outputDir + "xml")
+            self.xmlOutputDir = os.path.join(self.outputDir, "xml")
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
         if not os.path.exists(self.imagesOutputDir):

@@ -9,6 +9,37 @@ expDuke_20201117A_SurfaceSubnet_NoReLU finished:
    surface 0:   0.9427     1.259
    surface 1:   2.371      2.588
    surface 2:   3.306      1.814
+3  test on test data:
+=======net running parameters=========
+B,S,H,W = (3009, 3, 512, 361)
+Test time: 204.82324028015137 seconds.
+net.m_runParametersDict:
+	validationLoss:40.726619720458984
+	epoch:76
+	errorMean:2.205378532409668
+===============Formal Output Result ===========
+patientIDList =[]
+stdSurfaceError = tensor([3.0907, 1.1151, 1.5977], device='cuda:3')
+muSurfaceError = tensor([1.2110, 1.9339, 2.9723], device='cuda:3')
+stdError = 2.21911358833313
+muError = 2.039097547531128
+pixel number of violating surface-separation constraints: 67
+slice number of violating surface-separation constraints: 5
+slice list of violating surface-separation constraints:
+	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1134_images_s29.npy
+	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1257_images_s39.npy
+	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1257_images_s41.npy
+	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1257_images_s42.npy
+	/home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1105_images_s44.npy
+==================================================
+test on Divided AMd and Control Group:
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 Search best Lambda on validation data:
 1  use riftNet: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_RiftSubnet.yaml"
@@ -26,7 +57,7 @@ Search best Lambda on validation data:
    A generate Q,mu,r,g in validation data;
    B code the unconstrainted optimal funciton;
    C grid search lambda with generated Q,mu, r,g on validation data;
-   D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --runing,and  waiting result;
+   D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --done, with average error 2.039 um.;
    F test fixed lambda with IPM finetune on validation data;
    E test fixed lmabda with IPM on test data;
 
