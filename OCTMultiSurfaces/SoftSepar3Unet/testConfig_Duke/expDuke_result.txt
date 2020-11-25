@@ -58,6 +58,13 @@ muError = 1.4767508506774902
 ===============
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+experimentName:expDuke_20200902A_RiftSubnet: for Rift prediction:
+stdSurfaceError = tensor([2.7749, 2.5322], device='cuda:2')
+muSurfaceError = tensor([3.4042, 8.4392], device='cuda:2')
+stdError = 3.658905267715454
+muError = 5.921670913696289
+
+
 
 
 
@@ -74,7 +81,9 @@ Search best Lambda on validation data:
      g: Bx51x3x361,
      where B is the number of OCT volumes of validation data;
 3  some subtasks:
-   A generate Q,mu,r,g in validation data; -- Q,mu,g are ok;
+   A generate Q,mu,r,g in validation data; -- done;
+      surfaceResult: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation
+      riftResult: /home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation
    B code the unconstrainted optimal funciton;
    C grid search lambda with generated Q,mu, r,g on validation data;
    D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --done, with average error 2.039 um.;

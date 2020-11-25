@@ -123,7 +123,7 @@ def main():
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
         #output testID
-        with open(os.path.join(validationOuputDir, f"validationID.txt"), "w") as file:
+        with open(os.path.join(validationOuputDir, f"validation_surface_ID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 

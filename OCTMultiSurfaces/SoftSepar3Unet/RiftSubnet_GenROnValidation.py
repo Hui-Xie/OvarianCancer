@@ -117,7 +117,7 @@ def main():
         np.save(testRFilePath, testR)
 
         # output testID
-        with open(os.path.join(validationOuputDir, f"validation_ID_Rift.txt"), "w") as file:
+        with open(os.path.join(validationOuputDir, f"validation_Rift_ID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 
