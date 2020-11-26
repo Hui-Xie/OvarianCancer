@@ -101,7 +101,6 @@ def main():
             if outputXmlSegFiles:
                 saveNumpy2OCTExplorerXML(volumeID, testOutput, surfaceNames, hps.xmlOutputDir, hps.refXMLFile, y=hps.inputHeight,
                                          voxelSizeY=hps.hPixelSize)
-            break
 
     testEndTime = time.time()
 
