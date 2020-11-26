@@ -1,4 +1,5 @@
 # use the best Tongren network to generate BES_3K segmented xml files.
+# use new gradient channels combination mode
 
 debug: False # debug mark
 dataIn1Parcel: False
@@ -41,7 +42,7 @@ groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
-batchSize: 31  # for a volume
+batchSize: 1  # 1 for one volume = 31 slice
 # phased training with different learning rate
 learningRate: 0.01
 
@@ -78,6 +79,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 netPath: ""  # net is saved at netpath / network / self_filename
 loadNetPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesNet/expTongren_20201117B_SurfaceNet_CV5" # reserve for pretrained network.
 outputDir: ""
+refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 usePrimalDualIPM: False
 useLayerDice: False

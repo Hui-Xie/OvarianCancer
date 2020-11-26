@@ -32,7 +32,8 @@ class OCTDataSet(data.Dataset):
                     self.m_IDs = f.readlines()
                 self.m_IDs = [item[0:-1] for item in self.m_IDs]
                 self.m_images = self.m_IDs.copy()
-                self.m_labels = [item.replace("_images.npy", "_surfaces.npy") for item in self.m_images]
+                if hps.existGTLabel:
+                    self.m_labels = [item.replace("_images.npy", "_surfaces.npy") for item in self.m_images]
 
         if labelPath is not None:
             self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
@@ -47,7 +48,10 @@ class OCTDataSet(data.Dataset):
         if self.hps.dataIn1Parcel:
             return self.m_images.size()[0]
         else:
-            return len(self.m_IDs)*self.hps.slicesPerPatient
+            if self.hps.dataInSlice:
+                return len(self.m_IDs)*self.hps.slicesPerPatient
+            else:
+                return len(self.m_IDs)
 
     def generateGradientImage(self, image, gradChannels):
         '''

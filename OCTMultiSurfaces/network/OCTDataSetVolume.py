@@ -35,6 +35,7 @@ class OCTDataSetVolume(data.Dataset):
     def __len__(self):
         return len(self.m_imagesList)
 
+    # deprecated
     def generateGradientImage(self, image, gradChannels):
         '''
         This is version match with SurfacesUnet0512 version.
@@ -241,6 +242,11 @@ class OCTDataSetVolume(data.Dataset):
         data = torch.from_numpy(np.load(volumePath).astype(np.float32)).to(self.hps.device, dtype=torch.float)
         B,H,W = data.shape
 
+        # normalize images for each slice
+        # its trained network did this normalization at load parcel data.
+        std, mean = torch.std_mean(data, dim=(1, 2))
+        data = TF.Normalize(mean, std)(data)
+
         basename = os.path.basename(volumePath)
         volumeName, ext = os.path.splitext(basename)
         imageID = volumeName
@@ -252,7 +258,8 @@ class OCTDataSetVolume(data.Dataset):
         for b in range(B):
             image = data[b,]
             if 0 != self.hps.gradChannels:
-                grads = self.generateGradientImage(image, self.hps.gradChannels)
+                # for 20201125 best Tongren network
+                grads = self.generateGradientImage_new(image, self.hps.gradChannels)
                 image = image.unsqueeze(dim=0)
                 for grad in grads:
                     image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
