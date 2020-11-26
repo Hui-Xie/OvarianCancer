@@ -1,16 +1,17 @@
-# The best Tongren Network.
+# use the best Tongren network to generate BES_3K segmented xml files.
 
 debug: False # debug mark
-dataIn1Parcel: True
+dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren and JHU are in one parcel.
 # Not dataIn1Parcel means each patient has a volume file.
 dataInSlice: False
+dataInVolume: True
 
-dataDir: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/"
-existGTLabel: True
+dataDir: "/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
+existGTLabel: False
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
-K: 10  # Kfold cross validation
-k: 5   # the fold k test
+K: 0  # Kfold cross validation
+k: -1   # the fold k test
 # training data:  dataDir + training + images_CV{k}.npy
 #         label: dataDir + training + surfaces_CV{k}.npy
 #         IDs  : dataDir + training + patientID_CV{k}.json
