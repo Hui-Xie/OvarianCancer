@@ -9,9 +9,9 @@ from imageio import imread
 
 
 # Path for original OCT volume
-volumePath = "/home/hxie1/data/BES_3K/raw/1003_OD_9158_Volume"
+volumePath = "/home/hxie1/data/BES_3K/raw/91002_OD_4330_Volume"
 # Path for OCT-Explorer readable xml segmentation file
-xmlPath  = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/1003_OD_9158_Volume_Sequence_Surfaces_Prediction.xml"
+xmlPath  = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/91002_OD_4330_Volume_Sequence_Surfaces_Prediction.xml"
 # Path for output directory
 outputDir = "/home/hxie1/data/temp"
 # slice index starting from 0
