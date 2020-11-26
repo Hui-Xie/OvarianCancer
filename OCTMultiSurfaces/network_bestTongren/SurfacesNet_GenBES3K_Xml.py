@@ -10,7 +10,7 @@ from torch.utils import data
 
 
 sys.path.append("..")
-from network.OCTDataSet import *
+from network.OCTDataSetVolume import *
 from network.OCTOptimization import *
 from network.OCTTransform import *
 import time
