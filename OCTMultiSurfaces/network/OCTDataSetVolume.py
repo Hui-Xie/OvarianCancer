@@ -6,7 +6,7 @@ import torch
 import torchvision.transforms as TF
 import glob
 
-from OCTAugmentation import *
+from network.OCTAugmentation import *
 
 # input volume one by one.
 
