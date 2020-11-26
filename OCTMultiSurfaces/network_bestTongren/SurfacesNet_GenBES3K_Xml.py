@@ -52,7 +52,7 @@ def main():
     print(f"Experiment: {hps.experimentName}")
     assert "IVUS" not in hps.experimentName
 
-    testImagesPath =  hps.dataDir           # os.path.join(hps.dataDir, f"patientList.txt")
+    testImagesPath =  os.path.join(hps.dataDir, f"volumes")
     testLabelsPath = None
     testIDPath = None
 
