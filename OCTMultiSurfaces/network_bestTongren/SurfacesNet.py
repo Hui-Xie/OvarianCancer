@@ -94,6 +94,7 @@ class SurfacesNet(BasicModel):
 
         loss_div = 0.0
         loss_smooth = 0.0
+        loss = loss_div + loss_smooth
         if self.hps.existGTLabel:
             # hps.useWeightedDivLoss:
             surfaceWeight = None
@@ -111,11 +112,11 @@ class SurfacesNet(BasicModel):
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(S, GTs)
 
-        loss = loss_div + loss_smooth
+            loss = loss_div + loss_smooth
 
-        if torch.isnan(loss.sum()): # detect NaN
-            print(f"Error: find NaN loss at epoch {self.m_epoch}")
-            assert False
+            if torch.isnan(loss.sum()): # detect NaN
+                print(f"Error: find NaN loss at epoch {self.m_epoch}")
+                assert False
 
         return S, sigma2, loss  # return surfaceLocation S in (B,S,W) dimension, sigma2, and loss
 
