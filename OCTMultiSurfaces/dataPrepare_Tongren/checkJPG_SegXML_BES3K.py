@@ -3,7 +3,7 @@
 import os
 import glob
 import matplotlib.pyplot as plt
-from TongrenFileUtilies import getSurfacesArray
+from TongrenFileUtilities import getSurfacesArray
 from imageio import imread
 
 
