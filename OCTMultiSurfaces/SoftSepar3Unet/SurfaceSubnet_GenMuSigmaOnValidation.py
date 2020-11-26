@@ -91,7 +91,7 @@ def main():
     netMgr.loadNet("test")
 
 
-    if "OCT_Tongren" in hps.dataDir:
+    if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
         if hps.numSurfaces == 9:
             surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
         if hps.numSurfaces == 10:

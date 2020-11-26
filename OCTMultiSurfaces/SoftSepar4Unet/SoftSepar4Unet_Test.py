@@ -86,7 +86,7 @@ def main():
     # construct network
     net = eval(hps.network)(hps=hps)
 
-    if "OCT_Tongren" in hps.dataDir:
+    if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
         if hps.numSurfaces == 9:
             surfaceNames = ['ILM', 'RNFL-GCL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']
         if hps.numSurfaces == 10:
@@ -167,7 +167,7 @@ def main():
     assert S <= len(pltColors)
 
     for b in range(B):
-        if "OCT_Tongren" in hps.dataDir:
+        if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
             # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
             # example: "/home/hxie1/data/OCT_Tongren/Glaucoma/209_OD_1554_Volume/30.jpg"  for glaucoma
             patientPath, filename = os.path.split(testIDs[b])
@@ -300,7 +300,7 @@ def main():
                     subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
         subplot3.axis('off')
 
-        if "OCT_Tongren" in hps.dataDir:
+        if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
             plt.savefig(os.path.join(volumePath, imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         else:
             plt.savefig(os.path.join(hps.imagesOutputDir, imageFileName), dpi='figure', bbox_inches='tight',
