@@ -1,0 +1,25 @@
+# This is the best trained network for Tongren data:
+# Nov 25th, 2020
+=======net running parameters=========
+B,S,H,W = (155, 10, 496, 512)
+Test time: 13.715137004852295 seconds.
+net.m_runParametersDict:
+	validationLoss:11.004241943359375
+	epoch:140
+	errorMean:2.3762998580932617
+	learningRate:2.5e-3
+
+
+===============Formal Output Result ===========
+patientIDList =['6783_OD_17761_Volume', '6418_OD_20692_Volume', '2627_OD_7904_Volume', '440_OD_5194_Volume', '1437_OD_11147_Volume']
+stdSurfaceError = tensor([0.1231, 0.2644, 0.7765, 0.1290, 0.3949, 0.2266, 0.1202, 0.3366, 0.2119, 0.1742], device='cuda:2')
+muSurfaceError = tensor([0.9598, 2.4900, 3.7846, 2.1917, 2.1953, 2.2003, 1.2041, 2.3540, 1.3879,  1.1690], device='cuda:2')
+stdError = 0.8652907013893127
+muError = 1.993661880493164
+pixel number of violating surface-separation constraints: 0
+
+Network Path: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesNet/expTongren_20201117B_SurfaceNet_CV5
+cfg path: /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/network_bestTongren/testConfig_Tongren/expTongren_20201117B_SurfaceNet_CV5.yaml
+log path: /home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/log/SurfacesNet/expTongren_20201117B_SurfaceNet_CV5/testResult
+
+
