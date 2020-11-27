@@ -25,8 +25,8 @@ hPixelSize = 3.24
 rSource = "predictR"  # "GTR": use R ground truth
 
 # Lambda search range:
-lambda0_min, lambda0_max, lambda0_step = 0, 4.0, 0.0001
-lambda1_min, lambda1_max, lambda1_step = 0, 4.0, 0.0001
+lambda0_min, lambda0_max, lambda0_step = 0, 4.0, 1.0
+lambda1_min, lambda1_max, lambda1_step = 0, 4.0, 1.0
 
 lambda0List = list(np.arange(lambda0_min, lambda0_max, lambda0_step))
 lambda1List = list(np.arange(lambda1_min, lambda1_max, lambda1_step))
@@ -120,8 +120,8 @@ def main():
             S = S.transpose(-1,-2) # B,N,W
 
             # ReLU to guarantee hard separation constraint.
-            for i in range(1, N):
-                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+            for s in range(1, N):
+                S[:, s, :] = torch.where(S[:, s, :] < S[:, s - 1, :], S[:, s - 1, :], S[:, s, :])
 
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(S, G,
                                                                                                      slicesPerPatient=slicesPerPatient,

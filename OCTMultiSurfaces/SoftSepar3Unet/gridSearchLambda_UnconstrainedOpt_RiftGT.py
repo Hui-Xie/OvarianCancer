@@ -120,8 +120,8 @@ def main():
             S = S.transpose(-1,-2) # B,N,W
 
             # ReLU to guarantee hard separation constraint.
-            for i in range(1, N):
-                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+            for s in range(1, N):
+                S[:, s, :] = torch.where(S[:, s, :] < S[:, s - 1, :], S[:, s - 1, :], S[:, s, :])
 
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(S, G,
                                                                                                      slicesPerPatient=slicesPerPatient,
