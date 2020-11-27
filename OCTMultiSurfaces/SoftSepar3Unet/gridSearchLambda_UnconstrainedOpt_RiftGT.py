@@ -18,15 +18,15 @@ import os
 sys.path.append("..")
 from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 
-device = torch.device('cuda:2')
+device = torch.device('cuda:3')
 slicesPerPatient = 51
 hPixelSize = 3.24
 
 rSource = "GTR" # "predictR"  # "GTR": use R ground truth
 
 # Lambda search range:
-lambda0_min, lambda0_max, lambda0_step = 0, 0.5, 0.002
-lambda1_min, lambda1_max, lambda1_step = 0, 0.5, 0.002
+lambda0_min, lambda0_max, lambda0_step = 0, 0.004, 0.00002
+lambda1_min, lambda1_max, lambda1_step = 0, 0.004, 0.00002
 
 lambda0List = list(np.arange(lambda0_min, lambda0_max, lambda0_step))
 lambda1List = list(np.arange(lambda1_min, lambda1_max, lambda1_step))
