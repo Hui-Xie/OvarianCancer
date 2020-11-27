@@ -28,17 +28,17 @@ def main():
     errorArray = np.load(errorArrayPath)
     H,W = errorArray.shape
 
-    #f = plt.figure(frameon=False)
-    #DPI = f.dpi
-    #f.set_size_inches(W / float(DPI), H/ float(DPI))
+    f = plt.figure(frameon=False)
+    DPI = f.dpi
+    f.set_size_inches(W / float(DPI), H/ float(DPI))
 
-    #plt.margins(0)
-    #plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
+    plt.margins(0)
+    plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
     plt.imshow(errorArray, cmap='viridis')  # 'hot'
     plt.colorbar()
-    plt.xlim(lambda0Range[0], lambda0Range[1])
-    plt.ylim(lambda1Range[0], lambda1Range[1])
+    plt.xlim(lambda0Range[0], lambda0Range[1]-lambda0Range[2] )
+    plt.ylim(lambda1Range[0], lambda1Range[1]-lambda1Range[2])
     plt.xlabel("lambda_0")
     plt.ylabel("lambda_1")
     plt.show()
