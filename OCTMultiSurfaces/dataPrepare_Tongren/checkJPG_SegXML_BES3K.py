@@ -15,7 +15,7 @@ xmlPath  = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20
 # Path for output directory
 outputDir = "/home/hxie1/data/temp"
 # slice index starting from 0
-k = 26  #[0,31) indicate the index of OCT B-scan starting from 0
+k = 15  #[0,31) indicate the index of OCT B-scan starting from 0
 
 H=496
 

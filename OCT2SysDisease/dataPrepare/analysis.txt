@@ -1,8 +1,6 @@
 # Nov 26th, 2020
-
-91002_OD_4330_Volume data has problem.
-
-cat
+some raw images has problems:
+1  91002_OD_4330_Volume data has problem. but it is not at hour training,validation, test set;
 
 # Nov 25th, Wednesday, 2020
 Meeting minute of OCT2SysDisease on Nov 24th, 2020
