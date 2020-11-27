@@ -29,7 +29,7 @@ def main():
     H,W = errorArray.shape
 
     f = plt.figure(frameon=False)
-    
+
     plt.imshow(errorArray, cmap='viridis')  # 'hot'
     plt.colorbar()
     plt.xlim(lambda0Range[0], lambda0Range[1]-lambda0Range[2] )
