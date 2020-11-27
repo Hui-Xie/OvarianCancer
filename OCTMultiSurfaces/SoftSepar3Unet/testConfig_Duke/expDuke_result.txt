@@ -4,8 +4,6 @@ Q/2 min = 0.000174444867298007
 Q/2 mean = 0.48962265253067017
 Q/2 max = 3.4920814037323
 
-
-
 # Nov 25th, 2020
 expDuke_20201117A_SurfaceSubnet_NoReLU finished:
 1  trained 372 epochs in 7day 21hour 12min:
@@ -97,8 +95,17 @@ Search best Lambda on validation data:
       surfaceResult: /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation
       riftResult: /home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation
       And checked its order are consisent.
-   B code the unconstrainted optimal function;
-   C grid search lambda with generated Q,mu, r,g on validation data;
+   B code the unconstrainted optimal function;  --done
+   C grid search lambda with generated Q,mu, r,g on validation data; -- done
+     2 experiments parallel both on validaiton data:
+     A  use predicted R;
+     B  use ground truth R;
+     1 search spends one second.
+      lambda0_min, lambda0_max, lambda0_step = 0, 4.0, 0.01
+      lambda1_min, lambda1_max, lambda1_step = 0, 4.0, 0.01,
+      grid search totally needs 400*400 seconds = 44.4 hours.
+
+
    D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --done, with average error 2.039 um.;
    F test fixed lambda with IPM finetune on validation data;
    E test fixed lmabda with IPM on test data;
