@@ -104,11 +104,12 @@ Search best Lambda on validation data with unconstrained soft separation:
       grid search totally needs 400*400 seconds = 44.4 hours. On Monday it will have initial result.
 
    D test expDuke_20201117A_SurfaceSubnet_NoReLU on test data;  --done, with average error 2.039 um.;
-   F test fixed lambda with IPM fine tune on validation data;   -- plan on Monday
-   E test fixed lambda with IPM on test data;                  --plan on Wednesday
-
-
-
+   E test searched fixed lambda fine tune on validation data with 2 experiments;   -- plan on Monday
+      A  fixed Lambda + unconstrained soft separation optimization+ ReLU;
+      B  fixed Lambda + IPM;
+   F test searched fixed lambda final on test data with 2 experiments;             --plan on Wednesday
+      A  fixed Lambda + unconstrained soft separation optimization + ReLU;
+      B  fixed Lambda + IPM;
 
 # Nov 19th, 2020
 Exact slices with max hausdorff distance on Duke_AMD test data.
