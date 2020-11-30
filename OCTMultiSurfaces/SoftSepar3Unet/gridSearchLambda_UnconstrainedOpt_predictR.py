@@ -143,6 +143,7 @@ def main():
         file.write(f"Q/2 min = {np.amin(q) / 2}\n")
         file.write(f"Q/2 mean = {np.mean(q) / 2}\n")
         file.write(f"Q/2 max = {np.amax(q) / 2}\n")
+        file.write(f"at lambda0_min= {lambda0_min}, and lambda1_min = {lambda1_min}, muError = {muErrorArray[0,0]}\n")
         file.write("===========================\n\n")
         file.write(f"rSource = {rSource}\n")
         file.write(f"axis x: lambda0_min, lambda0_max, lambda0_step = {lambda0_min}, {lambda0_max}, {lambda0_step}\n")
