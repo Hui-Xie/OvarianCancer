@@ -149,7 +149,7 @@ def main():
         file.write(f"axis x: lambda0_min, lambda0_max, lambda0_step = {lambda0_min}, {lambda0_max}, {lambda0_step}\n")
         file.write(f"axis y: lambda1_min, lambda1_max, lambda1_step = {lambda1_min}, {lambda1_max}, {lambda1_step}\n")
         j,i = np.unravel_index(np.argmin(muErrorArray), muErrorArray.shape)
-        file.write(f"min error location with mu error = {muErrorArray[j,i]}:\n")
+        file.write(f"min location mu error = {muErrorArray[j,i]}:\n")
         file.write(f"axis x: location: x= {i}, lambda0 = {lambda0List[i]}\n")
         file.write(f"axis y: location: y= {j}, lambda1 = {lambda1List[j]}\n")
 
