@@ -29,7 +29,7 @@ output Dir = /home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda
 
 at both min lambdas (=0), MuError= 2.383739471435547
 ===============================
-Use predict R for grid-searching Lambda:
+Use predicted R for grid-searching Lambda:
 
 rSource = predictR
 axis x: lambda0_min, lambda0_max, lambda0_step = 0, 4.0, 0.01
@@ -67,7 +67,7 @@ axis x: location: x= 190, lambda0 = 3.8e-07
 axis y: location: y= 198, lambda1 = 3.96e-07
 
 ==============================
-Use perfect ground truth for grid-searching Lambda:
+Use perfect ground truth R for grid-searching Lambda:
 
 rSource = GTR
 axis x: lambda0_min, lambda0_max, lambda0_step = 0, 4.0, 0.01
