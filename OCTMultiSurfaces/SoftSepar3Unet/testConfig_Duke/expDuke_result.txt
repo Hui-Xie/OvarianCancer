@@ -4,12 +4,13 @@ Summary:
 1  at lambda=0 (which means not using soft separation), muError = 2.38373947;
 2  In the case of using perfect R from ground truth, lambda0=2.06, lambda1=3.99, muError=1.6399;
    But the coefficient unary terms is in [0.000017, 3.492] with mean 0.4896; does this big lambda make sense in physical meaning?
+   If lambda0= 0.004, lambda1=0.004 at predicted R case level, the muError with perfected R = 2.24765, improving 5.7% from no softSeparataion;
    Reflection: previous binary search experiments didn't search so big lambda value.
 3  In the case of using predicted R from another network, lambda0=0.004, lambda1=0.004, muError = 2.349234;
    Comparing with the No soft separation case, this muError improve 1.4%;
    Reflection:
    A when R is not accurate, improvement is not explict;
-   B We need to further improve predict R;
+   B We need to further improve predict R; we need to rethink the architecture of predictR network to improve it;
    C A caveat: The accuracy of R is more difficult to achieve the same level with mu,as R involves 2 need measureed surfaces;
 4
 
