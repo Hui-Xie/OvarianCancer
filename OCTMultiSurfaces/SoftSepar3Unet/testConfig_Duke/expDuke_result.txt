@@ -1,6 +1,17 @@
 # Nov 30th, Monday, 2020
+Grid search Lambda with unconstrained optimziaiton +ReLU on the validation data:
 Summary:
-1
+1  at lambda=0 (which means not using soft separation), muError = 2.38373947;
+2  In the case of using perfect R from ground truth, lambda0=2.06, lambda1=3.99, muError=1.6399;
+   But the coefficient unary terms is in [0.000017, 3.492] with mean 0.4896; does this big lambda make sense in physical meaning?
+   Reflection: previous binary search experiments didn't search so big lambda value.
+3  In the case of using predicted R from another network, lambda0=0.004, lambda1=0.004, muError = 2.349234;
+   Comparing with the No soft separation case, this muError improve 1.4%;
+   Reflection:
+   A when R is not accurate, improvement is not explict;
+   B We need to further improve predict R;
+   C A caveat: The accuracy of R is more difficult to achieve the same level with mu,as R involves 2 need measureed surfaces;
+4
 
 Grid search Lambda with unconstrained optimziaiton +ReLU:
 sigma2Path = /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_simga2.npy
@@ -13,6 +24,8 @@ Q/2 min = 0.000174444867298007
 Q/2 mean = 0.48962265253067017
 Q/2 max = 3.4920814037323
 output Dir = /home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda
+
+at both min lambdas (=0), MuError= 2.383739471435547
 ===============================
 Use predict R for grid-searching Lambda:
 
