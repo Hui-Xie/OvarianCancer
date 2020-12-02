@@ -1,7 +1,7 @@
 # generate Gaussian Noise with GT
 
 sigmaList=[0.85, 0.95, 1.05, 1.15]
-gPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_gt.npy"
+riftGTPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation/validation_RiftGts.npy"
 outputDir = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda"
 
 import numpy as np
@@ -17,27 +17,27 @@ slicesPerPatient = 51
 hPixelSize = 3.24
 N = 3  # surface number
 
-g = np.load(gPath)
-G = torch.from_numpy(g).to(device)
+riftGT = np.load(riftGTPath)
+RiftGT = torch.from_numpy(riftGT).to(device)
 
 for sigma in sigmaList:
-    noise = np.random.normal(0,sigma, g.shape)
-    noiseG = g + noise
+    noise = np.random.normal(0,sigma, riftGT.shape)
+    noiseRift = riftGT + noise
 
-    stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(torch.from_numpy(noiseG).to(device), G,
+    stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(torch.from_numpy(noiseRift).to(device), RiftGT,
                                                                                              slicesPerPatient=slicesPerPatient,
                                                                                              hPixelSize=hPixelSize, goodBScansInGtOrder=None)
-    print(f"Gaussian noise sigma = {sigma}")
-    print(f"\tstdSurfaceError = {stdSurfaceError}")
-    print(f"\tmuSurfaceError = {muSurfaceError}")
-    print(f"\tstdError = {stdError}")
-    print(f"\tmuError = {muError}")
+    print(f"Gaussian noise sigma = {sigma} for below rift(thickness) error:")
+    print(f"\tstdRiftError = {stdSurfaceError}")
+    print(f"\tRiftError = {muSurfaceError}")
+    print(f"\tstdRiftError = {stdError}")
+    print(f"\triftError = {muError}")
     print("========================")
 
-    basename, ext = os.path.splitext(os.path.basename(gPath))
+    basename, ext = os.path.splitext(os.path.basename(riftGTPath))
     outputFilename = basename+f"_noised_sigma_{sigma}" +ext
     outputPath = os.path.join(outputDir, outputFilename)
-    np.save(outputPath, noiseG)
+    np.save(outputPath, noiseRift)
 
 print(f"=========End of generate Guassian nosed GT=============")
 
