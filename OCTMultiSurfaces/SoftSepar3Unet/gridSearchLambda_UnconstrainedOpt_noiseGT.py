@@ -6,7 +6,8 @@ sigma2Path = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_2
 muPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_mu.npy"
 gPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_gt.npy"
 rPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation/validation_Rift.npy"
-noiseGPath = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda/validation_gt_noised_sigma_0.85.npy"
+noiseRiftGTPath = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda/validation_RiftGts_noised_sigma_0.85.npy"
+
 
 riftGTPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation/validation_RiftGts.npy"
 outputDir = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda"
@@ -27,7 +28,7 @@ slicesPerPatient = 51
 hPixelSize = 3.24
 N = 3  # surface number
 
-rSource = "noisedGT" # "predictR"  # "GTR": use R ground truth
+rSource = "noisedRiftGT" # "predictR"  # "GTR": use R ground truth
 noiseSigma = 0.85 # sigmaList=[0.85, 0.95, 1.05, 1.15]
 
 # Lambda search range:
@@ -75,7 +76,7 @@ def main():
     g  = np.load(gPath)
     r  = np.load(rPath)    # size:3009x2x361
     riftGT = np.load(riftGTPath)
-    noiseRiftGT = np.load(noiseGPath).astype(np.float32)
+    noiseRiftGT = np.load(noiseRiftGTPath).astype(np.float32)
 
     B,N1,W = sigma2.shape
     assert N == N1
@@ -101,7 +102,7 @@ def main():
         R = torch.from_numpy(r).to(device) # B,M,W
     elif rSource == "GTR":
         R = torch.from_numpy(riftGT).to(device)  # B,M,W
-    elif rSource == "noisedGT":
+    elif rSource == "noisedRiftGT":
         R = torch.from_numpy(noiseRiftGT).to(device)  # B,M,W
     else:
         print(f"useR parameter error")

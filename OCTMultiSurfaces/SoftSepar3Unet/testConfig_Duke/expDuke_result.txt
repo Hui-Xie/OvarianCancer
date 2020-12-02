@@ -7,30 +7,30 @@ Design:
 
 Subtasks:
 1  add gaussian noise, generate its numpy array and save to harddisk file;  --done
-python3.7 generateGaussianNoiseWithGT.py
-Gaussian noise sigma = 0.85
-	stdSurfaceError = tensor([0.0120, 0.0096, 0.0116], device='cuda:0')
-	muSurfaceError = tensor([2.1980, 2.1963, 2.1988], device='cuda:0')
-	stdError = 0.011127701960504055
-	muError = 2.1977100372314453
+python3 ./generateGaussianNoiseGTRift.py
+Gaussian noise sigma = 0.85 for below rift(thickness) error:
+	stdRiftError = tensor([0.0127, 0.0122], device='cuda:0')
+	RiftError = tensor([2.1980, 2.1961], device='cuda:0')
+	stdRiftError = 0.012410839088261127
+	riftError = 2.197073459625244
 ========================
-Gaussian noise sigma = 0.95
-	stdSurfaceError = tensor([0.0146, 0.0144, 0.0136], device='cuda:0')
-	muSurfaceError = tensor([2.4567, 2.4560, 2.4578], device='cuda:0')
-	stdError = 0.014134912751615047
-	muError = 2.456836462020874
+Gaussian noise sigma = 0.95 for below rift(thickness) error:
+	stdRiftError = tensor([0.0156, 0.0115], device='cuda:0')
+	RiftError = tensor([2.4568, 2.4564], device='cuda:0')
+	stdRiftError = 0.013624467886984348
+	riftError = 2.4565892219543457
 ========================
-Gaussian noise sigma = 1.05
-	stdSurfaceError = tensor([0.0150, 0.0142, 0.0155], device='cuda:0')
-	muSurfaceError = tensor([2.7149, 2.7123, 2.7129], device='cuda:0')
-	stdError = 0.014869763515889645
-	muError = 2.7133419513702393
+Gaussian noise sigma = 1.05 for below rift(thickness) error:
+	stdRiftError = tensor([0.0178, 0.0169], device='cuda:0')
+	RiftError = tensor([2.7154, 2.7121], device='cuda:0')
+	stdRiftError = 0.01734689623117447
+	riftError = 2.7137765884399414
 ========================
-Gaussian noise sigma = 1.15
-	stdSurfaceError = tensor([0.0181, 0.0178, 0.0162], device='cuda:0')
-	muSurfaceError = tensor([2.9724, 2.9761, 2.9731], device='cuda:0')
-	stdError = 0.01735219545662403
-	muError = 2.973848581314087
+Gaussian noise sigma = 1.15 for below rift(thickness) error:
+	stdRiftError = tensor([0.0197, 0.0172], device='cuda:0')
+	RiftError = tensor([2.9714, 2.9730], device='cuda:0')
+	stdRiftError = 0.01843925192952156
+	riftError = 2.972208023071289
 ========================
 
 2  modifiy main program to support noiseRiftGT to search 4 ranges:
