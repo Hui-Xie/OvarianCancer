@@ -157,14 +157,14 @@ def main():
         file.write("===========================\n\n")
 
         columnHausdorffDNoReLUNoOpt = columnHausdorffDist(mu, g).reshape((1, N))
-        file.write(f"HausdorffDistance in pixel for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt}")
-        file.write(f"HausdorffDistance in physical size (micrometer) for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt * hPixelSize}")
+        file.write(f"HausdorffDistance in pixel for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt}\n")
+        file.write(f"HausdorffDistance in physical size (micrometer) for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt * hPixelSize}\n")
         stdSurfaceError, muSurfaceError, stdError, muErrorNoReLUNoOpt = computeErrorStdMuOverPatientDimMean(torch.from_numpy(mu).to(device), torch.from_numpy(g).to(device),
                                                                                                             slicesPerPatient=slicesPerPatient,
                                                                                                             hPixelSize=hPixelSize,
                                                                                                             goodBScansInGtOrder=None)
-        file.write(f"muError at NoReLU and No optimiztion (lambda=0) = {muErrorNoReLUNoOpt}")
-        file.write("===========================\n")
+        file.write(f"muError at NoReLU and No optimiztion (lambda=0) = {muErrorNoReLUNoOpt}\n")
+        file.write("===========================\n\n")
         file.write(f"rSource = {rSource}\n")
         file.write(f"axis x: lambda0_min, lambda0_max, lambda0_step = {lambda0_min}, {lambda0_max}, {lambda0_step}\n")
         file.write(f"axis y: lambda1_min, lambda1_max, lambda1_step = {lambda1_min}, {lambda1_max}, {lambda1_step}\n")
