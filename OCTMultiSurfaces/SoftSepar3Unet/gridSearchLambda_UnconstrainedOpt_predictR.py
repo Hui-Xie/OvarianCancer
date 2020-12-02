@@ -159,7 +159,7 @@ def main():
         columnHausdorffDNoReLUNoOpt = columnHausdorffDist(mu, g).reshape((1, N))
         file.write(f"HausdorffDistance in pixel for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt}")
         file.write(f"HausdorffDistance in physical size (micrometer) for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt * hPixelSize}")
-        stdSurfaceError, muSurfaceError, stdError, muErrorNoReLUNoOpt = computeErrorStdMuOverPatientDimMean(mu, g,
+        stdSurfaceError, muSurfaceError, stdError, muErrorNoReLUNoOpt = computeErrorStdMuOverPatientDimMean(torch.from_numpy(mu).to(device), torch.from_numpy(g).to(device),
                                                                                                             slicesPerPatient=slicesPerPatient,
                                                                                                             hPixelSize=hPixelSize,
                                                                                                             goodBScansInGtOrder=None)
