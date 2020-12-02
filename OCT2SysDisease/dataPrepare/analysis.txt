@@ -1,3 +1,23 @@
+# Dec 1st, 2020
+read a paper:
+Yim, J., Chopra, R., Spitz, T. et al.
+Predicting conversion to wet age-related macular degeneration using deep learning.
+Nat Med 26, 892–899 (2020). https://doi.org/10.1038/s41591-020-0867-7
+
+This paper from DeepMind used 3D one-hot-code tissue segmentation maps and raw 3D OCT image to ensemble to predict
+the exAMD conversion of the follow eye after the first eye diagnosed as exAMD. It first segments OCT into 13 tissues and 3 artifacts
+including vitreous body, neural retina, RPE, and hyper-reflective foci etc, and then code this 3D segmentation into one-hot
+segmentation map as 13 channels to feed a 3D-dense-analog classification network to predict exAMD. And raw 3D OCT also feed a 3D-dense-analog
+classification network to predict exAMD. Its ensemble is interesting which includes each fold model of 4-fold cross validation,
+and each fold has 4 different initial parameter model, and 2 path(raw 3D OCT and segmentation map), so total 4x3x2 models ensemble with TTA.
+
+This is an excellent paper, but with huge hardware resource. It trained 300K epochs in 16 GPUs for just one model,
+which is not achievable in common university labs.
+
+Its one-hot-code tissue segmentation map and reduced-parameter dense block design can be our reference in the future.
+
+
+
 # Nov 26th, 2020
 some raw images has problems:
 1  91002_OD_4330_Volume data has problem. but it is not at hour training,validation, test set;
