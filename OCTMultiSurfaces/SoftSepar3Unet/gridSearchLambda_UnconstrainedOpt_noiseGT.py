@@ -32,8 +32,14 @@ rSource = "noisedRiftGT" # "predictR"  # "GTR": use R ground truth
 noiseSigma = 0.85 # sigmaList=[0.85, 0.95, 1.05, 1.15]
 
 # Lambda search range:
-lambda0_min, lambda0_max, lambda0_step = 0, 5, 1
-lambda1_min, lambda1_max, lambda1_step = 0, 5, 1
+'''
+lambda0_min, lambda0_max, lambda0_step = 0, 5.0, 1.0e-2
+lambda0_min, lambda0_max, lambda0_step = 0, 5.0e-1, 2.0e-3
+lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-3, 2.0e-5
+lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-7, 2.0e-9
+'''
+lambda0_min, lambda0_max, lambda0_step = 0, 5.0, 1.0e-2
+lambda1_min, lambda1_max, lambda1_step = 0, 5.0, 1.0e-2
 
 lambda0List = list(np.arange(lambda0_min, lambda0_max, lambda0_step))
 lambda1List = list(np.arange(lambda1_min, lambda1_max, lambda1_step))
@@ -155,6 +161,7 @@ def main():
         file.write(f"rPath = {rPath}\n")
         file.write(f"gPath = {gPath}\n")
         file.write(f"riftGTPath = {riftGTPath}\n")
+        file.write(f"noiseRiftGTPath = {noiseRiftGTPath}")
         file.write(f"the coefficient of unary terms(Q = 1.0/(sigma^2)):\n")
         file.write(f"Q/2 min = {np.amin(q) / 2}\n")
         file.write(f"Q/2 mean = {np.mean(q) / 2}\n")

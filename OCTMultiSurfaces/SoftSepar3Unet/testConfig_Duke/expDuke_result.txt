@@ -34,7 +34,7 @@ Gaussian noise sigma = 1.15 for below rift(thickness) error:
 ========================
 
 2  modifiy main program to support noiseRiftGT to search 4 ranges:
-   lambda0_min, lambda0_max, lambda0_step = 0, 5.0, 0.01
+   lambda0_min, lambda0_max, lambda0_step = 0, 5.0, 1.0e-2
    lambda0_min, lambda0_max, lambda0_step = 0, 5.0e-1, 2.0e-3
    lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-3, 2.0e-5
    lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-7, 2.0e-9
