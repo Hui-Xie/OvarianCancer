@@ -18,9 +18,13 @@ import os
 sys.path.append("..")
 from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 
-device = torch.device('cuda:3')
+sys.path.append("../..")
+from framework.NetTools import  columnHausdorffDist
+
+device = torch.device('cuda:0')
 slicesPerPatient = 51
 hPixelSize = 3.24
+N = 3  # surface number
 
 rSource = "GTR" # "predictR"  # "GTR": use R ground truth
 
@@ -36,6 +40,7 @@ Naxis1 = len(lambda1List)
 
 # lambda0 at x axis, and lambda1 is at y axis
 muErrorArray = np.ones((Naxis1, Naxis0),dtype=np.float32) * 1000.0
+hausdorfDArray = np.ones((Naxis1, Naxis0, N),dtype=np.float32)*1000.0
 
 filename = f"muErr_{rSource}__lmd0_{lambda0_min}_{lambda0_max}_{lambda0_step}__lmd1_{lambda1_min}_{lambda1_max}_{lambda1_step}"
 outputErrorArrayFilename = os.path.join(outputDir, filename+".npy")
@@ -69,7 +74,8 @@ def main():
     r  = np.load(rPath)    # size:3009x2x361
     riftGT = np.load(riftGTPath)
 
-    B,N,W = sigma2.shape
+    B,N1,W = sigma2.shape
+    assert N == N1
     M = N - 1  # number of constraints
     q = 1.0/sigma2   # B, N, W
     '''
@@ -77,6 +83,7 @@ def main():
     Q/2 mean = 0.48962265253067017 
     Q/2 max = 3.4920814037323
     '''
+
 
     # switch axes of N,W
     Q = torch.from_numpy(q).to(device)  # B,N,W
@@ -130,6 +137,9 @@ def main():
 
             muErrorArray[j,i] = muError
 
+            hausdorfD = columnHausdorffDist(S.cpu().numpy(), g).reshape((1, N))
+            hausdorfDArray[j,i,:] = hausdorfD
+
     # save output
     np.save(outputErrorArrayFilename, muErrorArray)
     with open(outputRecordFilename, "w") as file:
@@ -143,13 +153,23 @@ def main():
         file.write(f"Q/2 min = {np.amin(q) / 2}\n")
         file.write(f"Q/2 mean = {np.mean(q) / 2}\n")
         file.write(f"Q/2 max = {np.amax(q) / 2}\n")
-        file.write(f"at lambda0_min= {lambda0_min}, and lambda1_min = {lambda1_min}, muError = {muErrorArray[0, 0]}\n")
+        file.write("===========================\n\n")
+        columnHausdorffDNoReLUNoOpt = columnHausdorffDist(mu, g).reshape((1, N))
+        file.write(f"HausdorffDistance in pixel for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt}\n")
+        file.write(f"HausdorffDistance in physical size (micrometer) for NoReLU and No optimization = {columnHausdorffDNoReLUNoOpt * hPixelSize}\n")
+        stdSurfaceError, muSurfaceError, stdError, muErrorNoReLUNoOpt = computeErrorStdMuOverPatientDimMean(torch.from_numpy(mu).to(device), torch.from_numpy(g).to(device),
+                                                                                                            slicesPerPatient=slicesPerPatient,
+                                                                                                            hPixelSize=hPixelSize,
+                                                                                                            goodBScansInGtOrder=None)
+        file.write(f"muError at NoReLU and No optimiztion (lambda=0) = {muErrorNoReLUNoOpt}\n")
+        file.write(f"at lambda0_min= {lambda0_min}, and lambda1_min = {lambda1_min}, with ReLU, muError = {muErrorArray[0, 0]}\n")
         file.write("===========================\n\n")
         file.write(f"rSource = {rSource}\n")
         file.write(f"axis x: lambda0_min, lambda0_max, lambda0_step = {lambda0_min}, {lambda0_max}, {lambda0_step}\n")
         file.write(f"axis y: lambda1_min, lambda1_max, lambda1_step = {lambda1_min}, {lambda1_max}, {lambda1_step}\n")
         j,i = np.unravel_index(np.argmin(muErrorArray), muErrorArray.shape)
-        file.write(f"min location mu error = {muErrorArray[j,i]}:\n")
+        file.write(f"min location mu error = {muErrorArray[j,i]}\n")
+        file.write(f"at min mu error,its Hausdorf distance(pixel) = {hausdorfDArray[j,i,:]}\n")
         file.write(f"axis x: location: x= {i}, lambda0 = {lambda0List[i]}\n")
         file.write(f"axis y: location: y= {j}, lambda1 = {lambda1List[j]}\n")
 
