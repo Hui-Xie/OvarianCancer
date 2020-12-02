@@ -1,14 +1,22 @@
 # Dec 2nd, Wednesday, 2020
-Before improving the RiftSubnet, Let's add gaussian noises to perfect ground truth R, to see what kind of accuracy we can get:
+Goal:
+   Before improving the RiftSubnet, Let's add gaussian noises to perfect ground truth R, to see what kind of accuracy we can get with grid search lambda:
 Design:
-1  add 4 gaussian noises to perfect ground truth R, to search its best lambda;
-2  measure haudorff distance also;
+1  add 4 different gaussian noises to perfect ground truth R, to search its best lambda separately;
+2  alos measure haudorff distance in grid search;   -- done
 3  for a x ~ N(0, sigma) gauassian distribution, E(|x|) = sigma/sqrt(2*pi);
    with average error on patient dimension, value will be a little different.
    muError= 2.38374,  pixelMuError= 2.38374/3.24 , sigma = 1.844181
    muError= 2.5,      pixelMuError= 2.5/3.24 ,     sigma = 1.93413
    muError= 2.9,      pixelMuError= 2.9/3.24,      sigma = 2.24359
    muError= 3.5,      pixelMuError= 3.5/3.24,      sigma = 2.707778
+
+Subtasks:
+1  add gaussian noise, generate its numpy array and save to harddisk file;
+2  modifiy main program to support GTR+Gauss_1.84 etc;
+
+
+
 
 
 
