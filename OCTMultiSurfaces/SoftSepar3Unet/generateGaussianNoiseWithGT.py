@@ -1,6 +1,6 @@
 # generate Gaussian Noise with GT
 
-sigmaList=[0.4, 0.7, 1.0, 1.3]
+sigmaList=[0.8, 0.9, 1.0, 1.1]
 gPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_gt.npy"
 outputDir = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda"
 
