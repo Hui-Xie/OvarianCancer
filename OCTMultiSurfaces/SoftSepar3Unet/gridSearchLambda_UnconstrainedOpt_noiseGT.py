@@ -6,7 +6,7 @@ sigma2Path = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_2
 muPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_mu.npy"
 gPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201117A_SurfaceSubnet_NoReLU/testResult/validation/validation_gt.npy"
 rPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation/validation_Rift.npy"
-noiseRiftGTPath = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda/validation_RiftGts_noised_sigma_0.95.npy"
+noiseRiftGTPath = "/home/hxie1/data/OCT_Duke/numpy_slices/searchSoftLambda/validation_RiftGts_noised_sigma_1.05.npy"
 
 
 riftGTPath = "/home/hxie1/data/OCT_Duke/numpy_slices/log/RiftSubnet/expDuke_20200902A_RiftSubnet/testResult/validation/validation_RiftGts.npy"
@@ -23,13 +23,13 @@ from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
 
-device = torch.device('cuda:0')
+device = torch.device('cuda:1')
 slicesPerPatient = 51
 hPixelSize = 3.24
 N = 3  # surface number
 
 rSource = "noisedRiftGT" # "predictR"  # "GTR": use R ground truth
-noiseSigma = 0.95 # sigmaList=[0.85, 0.95, 1.05, 1.15]
+noiseSigma = 1.05 # sigmaList=[0.85, 0.95, 1.05, 1.15]
 
 # Lambda search range:
 '''
@@ -38,8 +38,8 @@ lambda0_min, lambda0_max, lambda0_step = 0, 5.0e-1, 2.0e-3
 lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-3, 2.0e-5
 lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-7, 2.0e-9
 '''
-lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-7, 2.0e-9
-lambda1_min, lambda1_max, lambda1_step = 0, 4.0e-7, 2.0e-9
+lambda0_min, lambda0_max, lambda0_step = 0, 5.0, 1.0e-2
+lambda1_min, lambda1_max, lambda1_step = 0, 5.0, 1.0e-2
 
 lambda0List = list(np.arange(lambda0_min, lambda0_max, lambda0_step))
 lambda1List = list(np.arange(lambda1_min, lambda1_max, lambda1_step))
