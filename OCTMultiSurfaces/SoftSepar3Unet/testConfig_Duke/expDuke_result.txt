@@ -4,17 +4,40 @@ Goal:
 Design:
 1  add 4 different gaussian noises to perfect ground truth R, to search its best lambda separately;
 2  alos measure haudorff distance in grid search;   -- done
-3  for a x ~ N(0, sigma) gauassian distribution, E(|x|) = sigma/sqrt(2*pi);
-   with average error on patient dimension, value will be a little different.
-   muError= 2.38374,  pixelMuError= 2.38374/3.24 , sigma = 1.844181
-   muError= 2.5,      pixelMuError= 2.5/3.24 ,     sigma = 1.93413
-   muError= 2.9,      pixelMuError= 2.9/3.24,      sigma = 2.24359
-   muError= 3.5,      pixelMuError= 3.5/3.24,      sigma = 2.707778
 
 Subtasks:
-1  add gaussian noise, generate its numpy array and save to harddisk file;
-2  modifiy main program to support GTR+Gauss_1.84 etc;
+1  add gaussian noise, generate its numpy array and save to harddisk file;  --done
+python3.7 generateGaussianNoiseWithGT.py
+Gaussian noise sigma = 0.85
+	stdSurfaceError = tensor([0.0120, 0.0096, 0.0116], device='cuda:0')
+	muSurfaceError = tensor([2.1980, 2.1963, 2.1988], device='cuda:0')
+	stdError = 0.011127701960504055
+	muError = 2.1977100372314453
+========================
+Gaussian noise sigma = 0.95
+	stdSurfaceError = tensor([0.0146, 0.0144, 0.0136], device='cuda:0')
+	muSurfaceError = tensor([2.4567, 2.4560, 2.4578], device='cuda:0')
+	stdError = 0.014134912751615047
+	muError = 2.456836462020874
+========================
+Gaussian noise sigma = 1.05
+	stdSurfaceError = tensor([0.0150, 0.0142, 0.0155], device='cuda:0')
+	muSurfaceError = tensor([2.7149, 2.7123, 2.7129], device='cuda:0')
+	stdError = 0.014869763515889645
+	muError = 2.7133419513702393
+========================
+Gaussian noise sigma = 1.15
+	stdSurfaceError = tensor([0.0181, 0.0178, 0.0162], device='cuda:0')
+	muSurfaceError = tensor([2.9724, 2.9761, 2.9731], device='cuda:0')
+	stdError = 0.01735219545662403
+	muError = 2.973848581314087
+========================
 
+2  modifiy main program to support noiseRiftGT to search 4 ranges:
+   lambda0_min, lambda0_max, lambda0_step = 0, 5.0, 0.01
+   lambda0_min, lambda0_max, lambda0_step = 0, 5.0e-1, 2.0e-3
+   lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-3, 2.0e-5
+   lambda0_min, lambda0_max, lambda0_step = 0, 4.0e-7, 2.0e-9
 
 
 
