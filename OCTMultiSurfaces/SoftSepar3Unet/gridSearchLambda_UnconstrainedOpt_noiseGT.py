@@ -75,7 +75,7 @@ def main():
     g  = np.load(gPath)
     r  = np.load(rPath)    # size:3009x2x361
     riftGT = np.load(riftGTPath)
-    noiseRiftGT = np.load(noiseGPath)
+    noiseRiftGT = np.load(noiseGPath).astype(np.float32)
 
     B,N1,W = sigma2.shape
     assert N == N1
