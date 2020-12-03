@@ -26,7 +26,7 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 
 
 # Network config
-network: "ThicknessMapNet"
+network: "ThicknessMap2HyperTensionNet"
 imageH: 31
 imageW: 512
 volumeSuffix: "_Volume_thickness_enface.npy"
@@ -34,6 +34,7 @@ volumeSuffix: "_Volume_thickness_enface.npy"
 inputChannels: 9 # rawImage + gradChannels(W,H)
 gradChannels: 0   # the added gradient channels beside raw image channel
 channels: [30, 30, 30, 60, 60, 60, 60, 60]
+appKey: "hypertension_bp_plus_history$"
 
 dropoutRate: 0.2 # dropout after global average pooling
 weightDecay: 1.0e-5 #

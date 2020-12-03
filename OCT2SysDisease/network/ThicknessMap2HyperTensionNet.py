@@ -39,14 +39,14 @@ class ThicknessMap2HyperTensionNet(BasicModel):
         self.m_fcLayers= nn.Linear(hps.channels[7], 1)
 
 
-    def forward(self,x):
+    def forward(self,x,t):
         x = self.m_conv2DLayers(x)
         x = x.squeeze(dim=-2)
         x = self.m_conv1DLayers(x)
         x = x.squeeze(dim=-1)
         x = self.m_fcLayers(x)
         criterion = nn.BCEWithLogitsLoss(pos_weight=self.posWeight)
-        loss = criterion(x)
+        loss = criterion(x, t)
         return x, loss
 
 
