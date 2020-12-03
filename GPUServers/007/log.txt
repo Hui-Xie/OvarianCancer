@@ -1,0 +1,51 @@
+# Dec 2nd, cp files to iibi007 server.
+
+scp -qr hxie1@c-xwu000.iibi.uiowa.edu:/home/hxie1/data /localscratch/Users/hxie1/
+hxie1@c-xwu000.iibi.uiowa.edu's password:
+scp: /home/hxie1/data/OvarianCancerCT/workLink/srcSeg: No such file or directory
+scp: /home/hxie1/data/OvarianCancerCT/workLink/dstNrrd: No such file or directory
+scp: /home/hxie1/data/OvarianCancerCT/workLink/dstLabels: No such file or directory
+scp: /home/hxie1/data/OvarianCancerCT/workLink/srcNrrd: No such file or directory
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV3/realtime/Optimizer.pt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV3/realtime/Net.pt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV3/realtime/ConfigParameters.pt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV3/ConfigParameters.pt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV5: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV4: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV7: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV1: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV0: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV8: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV2: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV1: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV0: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_20200512_CV6: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet/expTongren_10Surfaces_AllGood_SoftConst_20200723_CV2: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesUnet_20201031: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesNet: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/readme.txt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/log: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/validation: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/training: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/patientsList.txt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/numpy/glaucomaRaw_W512: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/OCTControlMarkErrorGT.tar.gz: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/markError_Avg_20200206: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/truncatedControl: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/markErrorGTEraseSurface8.tar.gz: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/control: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/readme.txt: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/refXML: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/Revision_yaxingwang_20200202: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/OCTExplorerOutput_W512: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/glaucomaImages_W512: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/OCTExplorerOutput_W768: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/refinedGT_20200204: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/goodBscanPrediction_20200512: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/markErrorGTEraseSurface8: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/markErrorGT: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/markError_Sort_20200204: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/paper: No space left on device
+/localscratch/Users/hxie1//data/OCT_Tongren/predictNumpy: No space left on device
+/localscratch/Users/hxie1//data/Dell_config.txt: No space left on device
