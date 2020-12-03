@@ -1,3 +1,74 @@
+# Dec 3th, Thursday, 2020
+generated all thickness enface images with 3x3 smooth filter.
+at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap
+
+statistics age:
+python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv Age$ number None
+total 1807 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
+values for Age$ have 1807 records
+min=50.0; mean=63.38295517432208; max=93.0
+
+python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv Age$ number None
+total 481 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv
+values for Age$ have 481 records
+min=50.0; mean=64.17671517671518; max=88.0
+
+python3.7 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv Age$ number None
+total 502 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv
+values for Age$ have 502 records
+min=50.0; mean=63.83864541832669; max=87.0
+
+Age prediction:
+Han Peng, Weikang Gong, Christian F. Beckmann, Andrea Vedaldi, Stephen M. Smith.
+``Accurate brain age prediction with lightweight deep neural networks"
+bioRxiv 2019.12.17.879346; doi: https://doi.org/10.1101/2019.12.17.879346
+used KL divergence loss with a gaussian distribution of mu=age, and sigma=1.
+
+Age range: 40-100.
+
+Network design for age:
+1  layer as channel, input 2D conv network;
+2  basic layer design:
+layer name,   ouputSize,    channels,
+input         31x512        9
+conv_3x3      16x256        30
+conv_3x3      8x128         30
+conv_3x3      4x64          30
+conv_3x3      2x32          60
+conv_2x3      1x16          60
+conv_1x4      1x8           60
+conv_1x4      1x4           60
+conv_1x4      1x1           60
+conv_1x1      1x1           60
+softmax       1x1           60
+3  use 2 losses:
+   A  KL divergence loss with mu=age, sigma=1;
+   B  soft argmax + MSE;
+
+Professor Wu directed first to do hypertension prediction.
+
+Network design for hypertension:
+1  layer as channel, input 2D conv network;
+2  basic layer design:
+layer name,   ouputSize,    channels,
+input         31x512        9
+conv_3x3      16x256        30
+conv_3x3      8x128         30
+conv_3x3      4x64          30
+conv_3x3      2x32          60
+conv_2x3      1x16          60
+conv_1x4      1x8           60
+conv_1x4      1x4           60
+conv_1x4      1x1           60
+conv_1x1      1x1           60
+FC             1
+BCEWithLogitsLoss      1
+
+
+
+
+
+
 # Dec 1st, 2020
 read a paper:
 Yim, J., Chopra, R., Spitz, T. et al.
