@@ -24,6 +24,9 @@ testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeM
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
 
+# this file is placed in netPath directory.
+trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
+
 
 # Network config
 network: "ThicknessMap2HyperTensionNet"
@@ -46,8 +49,8 @@ hypertensionClassPercent:  [0.4565578306585501, 0.54344216934145]  # for trainID
 
 trainAugmentation: True
 validationAugmentation: True
-augmentProb: 0.4  #  data augmentation rate
-gaussianNoiseStd: 3 # gausssian nosie std with mean =0, about 20% of the std of original thickness map.
+augmentProb: 0.3  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
 # for salt pepper noise
 #saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
 #saltRate: 0.5  # saltRate = salt/(salt+pepper)

@@ -26,8 +26,8 @@ thicknessMap: C=9, H=31, W=512 for all below files:
  ID: 574,  from trianID
 
 Todo:
-1  all training data do a normalization along different layer dimension
-2  change gaussian noise std to 0.2 after the input data has normalization;
+1  all training data do a normalization and save its mean and std for validation and test data to use; --done
+2  change gaussian noise std to 0.1 after the input data has normalization;   --done.
 
 
 

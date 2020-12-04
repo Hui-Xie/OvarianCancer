@@ -5,6 +5,7 @@ import os
 
 import glob
 import fnmatch
+import yaml
 
 import sys
 sys.path.append(".")
@@ -94,7 +95,22 @@ class OCT2SysD_DataSet(data.Dataset):
             oneVolume = torch.from_numpy(np.load(volumePath)).to(device=hps.device, dtype=torch.float32)
             self.m_volumes[i,] = oneVolume
 
+        # normalize training volumes and save mean and std for using in validation and test data
+        epsilon = 1.0e-8
+        self.normalizationYamlPath = os.path.join(hps.netPath, hps.trainNormalizationStdMeanYamlName)
+        if mode == "training":
+            std, mean = torch.std_mean(self.m_volumes)
+            self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW
+            with open(self.normalizationYamlPath, 'w') as file:
+                yaml.dump({"std": std, "mean": mean}, file)
 
+        elif (mode == "validation") or (mode == "test"):
+            with open(self.normalizationYamlPath) as file:
+                cfg = yaml.load(file, Loader=yaml.FullLoader)
+            self.m_volumes = (self.m_volumes - cfg.mean) / (cfg.std + epsilon)  # size: NxCxHxW
+        else:
+            print(f"OCT2SysDiseaseDataSet mode error")
+            assert False
 
 
 
