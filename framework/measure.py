@@ -1,6 +1,7 @@
 
 import math
 import csv
+import torch
 
 import numpy as np
 
@@ -28,6 +29,25 @@ def computeClassificationAccuracy(gtDict, predictDict, key):
             countDiff +=1
     N = countSame + countDiff +countIgnore
     acc = countSame*1.0/(countSame + countDiff)
+
+    return acc
+
+def computeClassificationAccuracyWithLogit(gt, predictLogits):
+    '''
+    tensor version.
+    :param gt: in torch.tensor in 1D
+    :param predictLogits: in torch.tensor in 1 D
+    :return:
+    '''
+    assert gt.shape == predictLogits.shape
+
+    predict = (torch.sigmoid(predictLogits) +0.5).int()
+    gt = gt.int()
+
+    N = predict.numel()
+    countDiff = torch.count_nonzero(gt-predict).item()
+
+    acc = (N - countDiff)*1.0/N
 
     return acc
 
@@ -128,4 +148,54 @@ def computeThresholdAccTPR_TNRSumFromProbDict(probDict):
     maxIndex = np.argmax(SumList)
     return {"threshold": tdList[maxIndex], "ACC": ACCList[maxIndex], "TPR":TPRList[maxIndex], "TNR": TNRList[maxIndex], "Sum":SumList[maxIndex]}
 
+
+def computeThresholdAccTPR_TNRSumWithLogits(gt,predictLogits):
+    '''
+    tensor version
+    :param gt: in torch.tensor in 1D
+    :param predictLogits: in torch.tensor in 1 D
+    :return: (Threhold, ACC, TPR, TNR, Sum) at max(Acc+TPR+TNR).
+    '''
+
+    epsilon = 1e-8
+    assert gt.shape == predictLogits.shape
+
+    predictProb = torch.sigmoid(predictLogits)
+    gt = gt.int()
+    nTotal = predictProb.numel()
+
+    tdList = np.arange(0.001, 0.999, 0.002) # td: threshold
+    N = len(tdList)
+    ACCList = [0] * N
+    TPRList = [0] * N
+    TNRList = [0] * N
+    SumList = [0] * N
+    for i, td in enumerate(tdList):  # td: threshold
+        TP = 0
+        FP = 0
+        FN = 0
+        TN = 0
+        nIgnore = 0
+
+        for n in range(nTotal):
+            if predictProb[n] < td:
+                if gt[n] == 0:
+                    TN += 1
+                else:
+                    FN += 1
+            else:
+                if gt[n] == 0:
+                    FP += 1
+                else:
+                    TP += 1
+
+        assert nTotal == TP + TN + FP + FN + nIgnore
+        ACCList[i] = (TP + TN) * 1.0 / (TP + TN + FP + FN)
+        TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+        TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+        SumList[i] = ACCList[i] + TPRList[i] + TNRList[i]
+
+    maxIndex = np.argmax(SumList)
+    return {"threshold": tdList[maxIndex], "ACC": ACCList[maxIndex], "TPR": TPRList[maxIndex], "TNR": TNRList[maxIndex],
+            "Sum": SumList[maxIndex]}
 

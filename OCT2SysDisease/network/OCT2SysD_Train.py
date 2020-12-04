@@ -42,13 +42,8 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    trainTransform = None
-    if hps.trainAugmentation:
-        trainTransform = OCT2SysD_Transform(hps)
-
-    validationTransform = None
-    if hps.validationAugmentation:
-        validationTransform = OCT2SysD_Transform(hps)
+    trainTransform = OCT2SysD_Transform(hps) if hps.trainAugmentation else None
+    validationTransform = OCT2SysD_Transform(hps) if hps.validationAugmentation else None
     # some people think validation supporting data augmentation benefits both learning rate decaying and generalization.
 
     trainData = OCT2SysD_DataSet("training", hps=hps, transform=trainTransform)
@@ -113,11 +108,9 @@ def main():
         trBatch = 0
         trHyperTLoss = 0.0
 
-        trPredictDict = {}
-        trPredictProbDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             inputs = batchData['images']# B,C,H,W
-            t = torch.tensor(batchData['GTs']).to(device=hps.device, dtype=torch.float) # target
+            t = batchData['GTs'].to(device=hps.device, dtype=torch.float) # target
 
             x, loss = net.forward(inputs, t)
             optimizer.zero_grad()
@@ -128,67 +121,51 @@ def main():
             trBatch += 1
 
             #debug
-            break;
+            # break
 
 
         trHyperTLoss /= trBatch
 
         net.eval()
-        predictDict= {}
-        predictProbDict={}
         with torch.no_grad():
             validBatch = 0  # valid means validation
             validHyperTLoss = 0.0
 
+            allValidationOutput = None
+            allValidationGTs = None
+
             net.setStatus("validation")
-            batchSize = 1 if hps.TTA else hps.batchSize
+            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
+                inputs = batchData['images']  # B,C,H,W
+                t = batchData['GTs'].to(device=hps.device, dtype=torch.float)  # target
 
-
-            for batchData in data.DataLoader(validationData, batch_size=batchSize, shuffle=False, num_workers=0):
-
-                # squeeze the extra dimension of data
-                inputs = batchData['images'].squeeze(dim=0)
-                batchData["GTs"]= {key: batchData["GTs"][key].squeeze(dim=0) for key in batchData["GTs"]}
-                batchData['IDs'] = [v[0] for v in batchData['IDs']]  # erase tuple wrapper fot TTA
-
-                x = net.forward(inputs)
-                predict, predictProb, loss = net.computeBinaryLoss(x, GTs=batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)
-
-                validHyperTLoss +=loss
+                x, loss = net.forward(inputs, t)
+                validHyperTLoss += loss
                 validBatch += 1
 
-                B = predictProb.shape[0]
-                for i in range(B):
-                    ID = int(batchData['IDs'][i])  # [0] is for list to string
-                    predictDict[ID]={}
-                    predictDict[ID][appKey] = predict[i].item()
-
-                    predictProbDict[ID] = {}
-                    predictProbDict[ID]['Prob1'] = predictProb[i]
-                    predictProbDict[ID]['GT'] = batchData['GTs'][appKey][i]
+                allValidationOutput = x if allValidationOutput is None else torch.cat((allValidationOutput, x))
+                allValidationGTs    = t if allValidationGTs    is None else torch.cat((allValidationGTs,    t))
 
                 # debug
                 # break
 
             validHyperTLoss /= validBatch
 
-        gtDict = validationData.getGTDict()
-        hyperTAcc = computeClassificationAccuracy(gtDict,predictDict, appKey)
-        Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumFromProbDict(predictProbDict)
+        hyperTAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
+        Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumWithLogits(allValidationGTs, allValidationOutput)
 
 
         if "min" == hps.lrSchedulerMode:
             lrScheduler.step(validHyperTLoss)
         else: # "max"
             lrScheduler.step(Td_Acc_TPR_TNR_Sum['Sum'])
-        # debug
-        # print(f"epoch = {epoch}; trainLoss = {trLoss.item()};  validLoss = {validLoss.item()}")  # for smoke debug
+
 
         writer.add_scalar('train/HypertensionLoss', trHyperTLoss, epoch)
         writer.add_scalar('validation/HypertensionLoss', validHyperTLoss, epoch)
         writer.add_scalar('ValidationAccuracy/HypertensionAcc', hyperTAcc, epoch)
         writer.add_scalars('ValidationAccuracy/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
-        writer.add_scalar('TrainingAccuracy/HypertensionAcc', trHyperTAcc, epoch) if hps.debug else None
+        #writer.add_scalar('TrainingAccuracy/HypertensionAcc', trHyperTAcc, epoch) if hps.debug else None
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         #if validHyperTLoss < preValidLoss:
@@ -202,15 +179,11 @@ def main():
             preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)
 
-            curTime = datetime.datetime.now()
-            timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-            outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/validationSetPredictProb_{timeStr}.csv")
-            # print("debug  ===")
 
+        # debug
+        # print(f"smoke test: finish one epoch of training and  validation")
 
-
-
-    print("============ End of Training OCT2SysDisease Network ===========")
+    print("============ End of Training Thickness enface map 2 hypertension Network ===========")
 
 
 
