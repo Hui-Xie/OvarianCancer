@@ -101,13 +101,14 @@ class OCT2SysD_DataSet(data.Dataset):
         if mode == "training":
             std, mean = torch.std_mean(self.m_volumes)
             self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW
-            with open(self.normalizationYamlPath, 'w') as file:
-                yaml.dump({"std": std, "mean": mean}, file)
+            with open(self.normalizationYamlPath, 'w') as outfile:
+                d = {"std": std.item(), "mean": mean.item()}
+                yaml.dump(d, outfile, default_flow_style=False)
 
         elif (mode == "validation") or (mode == "test"):
-            with open(self.normalizationYamlPath) as file:
-                cfg = yaml.load(file, Loader=yaml.FullLoader)
-            self.m_volumes = (self.m_volumes - cfg.mean) / (cfg.std + epsilon)  # size: NxCxHxW
+            with open(self.normalizationYamlPath, 'r') as infile:
+                cfg = yaml.load(infile, Loader=yaml.FullLoader)
+            self.m_volumes = (self.m_volumes - cfg["mean"]) / (cfg["std"] + epsilon)  # size: NxCxHxW
         else:
             print(f"OCT2SysDiseaseDataSet mode error")
             assert False

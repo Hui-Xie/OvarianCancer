@@ -26,6 +26,8 @@ class ConfigReader(object):
             self.netPath = self.loadNetPath
         else:
             self.netPath = os.path.join(cfg["netPath"], self.network,self.experimentName)
+        if not os.path.exists(self.netPath):
+            os.makedirs(self.netPath)  # recursive dir creation
 
         if ("logDir" not in self.__dict__) or ("" == self.logDir):
             self.logDir = os.path.join(self.dataDir, "log", self.network, self.experimentName)
