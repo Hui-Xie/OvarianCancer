@@ -1,6 +1,5 @@
 from torch.utils import data
 import numpy as np
-import random
 import torch
 import os
 
@@ -87,10 +86,21 @@ class OCT2SysD_DataSet(data.Dataset):
                 for v in self.m_IDsCorrespondVolumes:
                     file.write(f"{v}\n")
 
-        assert (len(self.volumePathsFile) == len(self.m_IDsCorrespondVolumes))
+        self.m_NVolumes = len(self.m_volumePaths)
+        assert (self.m_NVolumes == len(self.m_IDsCorrespondVolumes))
+
+        #load all volumes into memory, which needs about 2.6GB memory in BES_3K thickness data.
+        self.m_volumes = torch.empty((self.m_NVolumes, hps.inputChannels, hps.imageH, hps.imageW), device=hps.device, dtype=torch.float)
+        for i, volumePath in enumerate(self.m_volumePaths):
+            oneVolume = torch.from_numpy(np.load(volumePath)).to(device=hps.device, dtype=torch.float32)
+            self.m_volumes[i,] = oneVolume
+
+
+
+
 
     def __len__(self):
-        return len(self.m_volumePaths)
+        return self.m_NVolumes
 
     def getGTDict(self):
         return self.m_labels
@@ -107,7 +117,7 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.hps.existGTLabel:
             label = self.m_labels[int(ID)][self.hps.appKey]
 
-        data = torch.from_numpy(volumePath).to(device=self.hps.device, dtype=torch.float32)
+        data = self.m_volumes[index,]
         C, H, W = data.shape
         if (H != self.hps.imageH) or (W != self.hps.imageW) or (C != self.hps.inputChannels):
             print(f"Error: {volumePath} has incorrect size C= {C}, H={H} and W={W}, ")
@@ -130,7 +140,7 @@ class OCT2SysD_DataSet(data.Dataset):
         #mean = mean.expand_as(data)
         #data = (data - mean) / (std + epsilon)  # size: 3xHxW, or 1,H,W
 
-        # as thickness map is physical size, we do not do normalization on it.
+        # as thickness map is a physical-size volume, we do not do normalization on it.
 
         result = {"images": data,  # B,C,H,W
                   "GTs": label,

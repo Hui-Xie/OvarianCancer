@@ -4,6 +4,7 @@ For Tongren data:
 42*31*496*512*4 = 1.32 GB
 For BES_3K thickness data:
 2288*9*31*512*4 = 1.307 GB
+1.307 GB x2   = 2.614 GB  for OD/OS eyes together.
 Therefore all BES_3K all training and validation data can load into memory at dataset initialization.
 
 
