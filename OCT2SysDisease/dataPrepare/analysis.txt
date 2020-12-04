@@ -20,10 +20,15 @@ thicknessMap: C=9, H=31, W=512 for all below files:
 /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap/1858_OD_13526_Volume_thickness_enface.npy:
  mean= 34.320023420447065, std=21.11553166304982
 
- Therefore, our Guassian noise to the thickness is N(0, 3) , which is about 20% of std of original thickness map.
+ Therefore, our Guassian noise to the thickness is N(0, 3) , which is about 20% of std of original thickness map.  --done;
 
  # delete ID for no xml file
  ID: 574,  from trianID
+
+Todo:
+1  all training data do a normalization along different layer dimension
+2  change gaussian noise std to 0.2 after the input data has normalization;
+
 
 
 
