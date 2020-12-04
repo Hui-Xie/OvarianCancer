@@ -1,7 +1,9 @@
 
 import torch
 import torch.nn as nn
-from framework.BasicModel import  BasicModel
+import sys
+sys.path.append("../..")
+from framework.BasicModel import BasicModel
 
 class ThicknessMap2HyperTensionNet(BasicModel):
     def __init__(self, hps=None):
