@@ -1,3 +1,9 @@
+# Dec 4th, Friday, 2020
+Ideas for further improving R:
+1  Use dense network architecture;
+2  Use U-Net to predict N surface, and then get N-1 layer thickness to compare with ground truth;
+
+
 # Dec 2nd, Wednesday, 2020
 Goal:
    Before improving the RiftSubnet, Let's add gaussian noises to perfect ground truth R, to see what kind of accuracy we can get with grid search lambda:

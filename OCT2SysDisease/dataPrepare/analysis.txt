@@ -1,3 +1,14 @@
+# Dec 4th, Friday, 2020
+The memory footprint of full loading all data into memory:
+For Tongren data:
+42*31*496*512*4 = 1.32 GB
+For BES_3K thickness data:
+2288*9*31*512*4 = 1.307 GB
+Therefore all BES_3K all training and validation data can load into memory at dataset initialization.
+
+
+
+
 # Dec 3th, Thursday, 2020
 generated all thickness enface images with 3x3 smooth filter.
 at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap
