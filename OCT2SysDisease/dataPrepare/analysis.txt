@@ -5,7 +5,30 @@ For Tongren data:
 For BES_3K thickness data:
 2288*9*31*512*4 = 1.307 GB
 1.307 GB x2   = 2.614 GB  for OD/OS eyes together.
-Therefore all BES_3K all training and validation data can load into memory at dataset initialization.
+Therefore all BES_3K all training and validation data can load into memory at dataset initialization.  --done
+
+Observe the mean and std of thickness map:
+(base) [c-xwu000:dataPrepare]#python3.7 ./statisticsThicknessMap.py /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap/33089_OS_7812_Volume_thickness_enface.npy
+thicknessMap: C=9, H=31, W=512 for all below files:
+
+/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap/33089_OS_7812_Volume_thickness_enface.npy:
+ mean= 30.530215236283237, std=15.603827787207281
+/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap/979_OD_8857_Volume_thickness_enface.npy:
+ mean= 29.698770283127836, std=21.908612855917635
+/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap/1955_OS_14474_Volume_thickness_enface.npy:
+ mean= 32.7970074596143, std=17.958001387144986
+/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap/1858_OD_13526_Volume_thickness_enface.npy:
+ mean= 34.320023420447065, std=21.11553166304982
+
+ Therefore, our Guassian noise to the thickness is N(0, 3) , which is about 20% of std of original thickness map.
+
+ # delete ID for no xml file
+ ID: 574,  from trianID
+
+
+
+
+
 
 
 

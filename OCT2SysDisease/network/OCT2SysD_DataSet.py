@@ -42,7 +42,7 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_transform = transform
 
         # get all correct volume numpy path
-        allVolumesList = glob.glob(hps.dataDir + hps.volumeSuffix)
+        allVolumesList = glob.glob(hps.dataDir + f"/*{hps.volumeSuffix}")
         nonexistIDList = []
 
         # make sure volume ID and volume path has strict corresponding order
@@ -108,7 +108,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
     def __getitem__(self, index):
         volumePath = self.m_volumePaths[index]
-        
+
         label = None
         if self.hps.existGTLabel:
             ID = self.m_IDsCorrespondVolumes[index]

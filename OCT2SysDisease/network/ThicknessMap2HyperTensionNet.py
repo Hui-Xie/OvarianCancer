@@ -1,4 +1,5 @@
 
+import torch
 import torch.nn as nn
 from framework.BasicModel import  BasicModel
 
@@ -6,7 +7,7 @@ class ThicknessMap2HyperTensionNet(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps
-        self.posWeight = hps.hypertensionClassPercent[1]/hps.hypertensionClassPercent[0]
+        self.posWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
 
         self.m_conv2DLayers = nn.Sequential(
             nn.Conv2d(hps.inputChannels, hps.channels[0], kernel_size=3, stride=2, padding=1, bias=True),
@@ -45,6 +46,7 @@ class ThicknessMap2HyperTensionNet(BasicModel):
         x = self.m_conv1DLayers(x)
         x = x.squeeze(dim=-1)
         x = self.m_fcLayers(x)
+        x = x.squeeze(dim=-1)
         criterion = nn.BCEWithLogitsLoss(pos_weight=self.posWeight)
         loss = criterion(x, t)
         return x, loss

@@ -45,12 +45,12 @@ hypertensionClassPercent:  [0.4565578306585501, 0.54344216934145]  # for trainID
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
 trainAugmentation: True
+validationAugmentation: True
 augmentProb: 0.4  #  data augmentation rate
-flipProb: 0.5
-gaussianNoiseStd: 0.2 # gausssian nosie std with mean =0
+gaussianNoiseStd: 3 # gausssian nosie std with mean =0, about 20% of the std of original thickness map.
 # for salt pepper noise
-saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
-saltRate: 0.5  # saltRate = salt/(salt+pepper)
+#saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+#saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
 netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename

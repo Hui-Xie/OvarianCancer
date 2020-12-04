@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
-from OCT2SysD_Net import OCT2SysD_Net
+from ThicknessMap2HyperTensionNet import ThicknessMap2HyperTensionNet
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")
@@ -24,8 +24,8 @@ from framework.measure import  *
 
 
 def printUsage(argv):
-    print("============ Training of OCT to Systemic Disease Network =============")
-    print("=======input data is random single slice ===========================")
+    print("============ Training of thickness map to hypertension Network =============")
+    print("=======input data is thickness enface map ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -52,7 +52,7 @@ def main():
     # some people think validation supporting data augmentation benefits both learning rate decaying and generalization.
 
     trainData = OCT2SysD_DataSet("training", hps=hps, transform=trainTransform)
-    validationData = OCT2SysD_DataSet("validation", hps=hps, transform=validationTransform) # only use data augmentation for training set
+    validationData = OCT2SysD_DataSet("validation", hps=hps, transform=validationTransform)
 
     # construct network
     net = eval(hps.network)(hps=hps)
@@ -104,10 +104,6 @@ def main():
     else:
         initialEpoch = 0
 
-    # application specific parameter
-    hyptertensionPosWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
-    appKey = 'hypertension_bp_plus_history$'
-
     for epoch in range(initialEpoch, epochs):
         random.seed()
         net.m_epoch = epoch
@@ -120,11 +116,10 @@ def main():
         trPredictDict = {}
         trPredictProbDict = {}
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
+            inputs = batchData['images']# B,C,H,W
+            t = torch.tensor(batchData['GTs']).to(device=hps.device, dtype=torch.float) # target
 
-            inputs = batchData['images']# B,3,H,W
-
-            x = net.forward(inputs)
-            predict, predictProb, loss = net.computeBinaryLoss(x, GTs = batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)
+            x, loss = net.forward(inputs, t)
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
@@ -132,31 +127,11 @@ def main():
             trHyperTLoss += loss
             trBatch += 1
 
-            if hps.debug:
-                for i in range(len(batchData['IDs'])):
-                    ID = int(batchData['IDs'][i])  # [0] is for list to string
-                    trPredictDict[ID] = {}
-                    trPredictDict[ID][appKey] = predict[i].item()
+            #debug
+            break;
 
-                    trPredictProbDict[ID] = {}
-                    trPredictProbDict[ID]['Prob1'] = predictProb[i]
-                    trPredictProbDict[ID]['GT']    = batchData['GTs'][appKey][i]
-
-            # debug
-            # break
 
         trHyperTLoss /= trBatch
-
-        if hps.debug:
-            trGtDict = trainData.getGTDict()
-            trHyperTAcc = computeClassificationAccuracy(trGtDict, trPredictDict, appKey)
-
-
-        if hps.debug and (epoch%hps.debugOutputPeriod==0):
-            curTime = datetime.datetime.now()
-            timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-            outputPredictProbDict2Csv(trPredictProbDict, hps.outputDir + f"/trainSetPredictProb_{timeStr}.csv")
-
 
         net.eval()
         predictDict= {}
