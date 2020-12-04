@@ -63,7 +63,6 @@ class OCT2SysD_DataSet(data.Dataset):
             self.m_IDsCorrespondVolumes = [item[0:-1] for item in lines]  # erase '\n'
 
         else:
-            # slices of [volumeStartIndex[i]:volumeStartIndex[i]+volumeNumSlices[i]) belong to a same volume.
             for i,ID in enumerate(IDList):
                 resultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_O[D,S]_*{hps.volumeSuffix}")
                 resultList.sort()
@@ -75,7 +74,7 @@ class OCT2SysD_DataSet(data.Dataset):
                     self.m_IDsCorrespondVolumes += [ID,]*numVolumes
 
             if len(nonexistIDList) > 0:
-                print(f"Error:  nonexistIDList:\n {nonexistIDList}")
+                print(f"Error: nonexistIDList:\n {nonexistIDList}")
                 assert False
 
             # save files
@@ -108,13 +107,11 @@ class OCT2SysD_DataSet(data.Dataset):
 
 
     def __getitem__(self, index):
-        epsilon = 1e-8
-
         volumePath = self.m_volumePaths[index]
-        ID = self.m_IDsCorrespondVolumes[index]
-
+        
         label = None
         if self.hps.existGTLabel:
+            ID = self.m_IDsCorrespondVolumes[index]
             label = self.m_labels[int(ID)][self.hps.appKey]
 
         data = self.m_volumes[index,]
