@@ -15,26 +15,33 @@ class ThicknessMap2HyperTensionNet(BasicModel):
             nn.Conv2d(hps.inputChannels, hps.channels[0], kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm2d(hps.channels[0]),
             nn.Hardswish(), # 16x256
+            nn.Dropout2d(p=hps.dropoutRates[0]),  # dropout after activation function
             nn.Conv2d(hps.channels[0], hps.channels[1], kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm2d(hps.channels[1]),
             nn.Hardswish(),  # 8x128
+            nn.Dropout2d(p=hps.dropoutRates[1]),
             nn.Conv2d(hps.channels[1], hps.channels[2], kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm2d(hps.channels[2]),
             nn.Hardswish(),  # 4x64
+            nn.Dropout2d(p=hps.dropoutRates[2]),
             nn.Conv2d(hps.channels[2], hps.channels[3], kernel_size=(4,3), stride=2, padding=(0,1), bias=True),
             nn.BatchNorm2d(hps.channels[3]),
-            nn.Hardswish()  # 1x32
+            nn.Hardswish(),  # 1x32
+            nn.Dropout2d(p=hps.dropoutRates[3])
         )
         self.m_conv1DLayers = nn.Sequential(
             nn.Conv1d(hps.channels[3], hps.channels[4], kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm1d(hps.channels[4]),
             nn.Hardswish(),  # 16
+            nn.Dropout(p=hps.dropoutRates[4]),
             nn.Conv1d(hps.channels[4], hps.channels[5], kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm1d(hps.channels[5]),
             nn.Hardswish(),  # 8
+            nn.Dropout(p=hps.dropoutRates[5]),
             nn.Conv1d(hps.channels[5], hps.channels[6], kernel_size=3, stride=2, padding=1, bias=True),
             nn.BatchNorm1d(hps.channels[6]),
             nn.Hardswish(),  # 4
+            nn.Dropout(p=hps.dropoutRates[6]),
             nn.Conv1d(hps.channels[6], hps.channels[7], kernel_size=4, stride=1, padding=0, bias=True),
             nn.BatchNorm1d(hps.channels[7]),
             nn.Hardswish()  # 1
