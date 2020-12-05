@@ -33,22 +33,27 @@ Experiment:
 expOCT2SysD_20201204_A:  channels: [30, 30, 30, 60, 60, 60, 60, 60],
                          Result: Overfitting.
                          at epoch 100, training loss = 0.00164, and validation loss = 2.706
-                          at stable status, validation acc = 54%
+                         at stable status, validation acc = 54%
 expOCT2SysD_20201204_B:  channels: [15, 15, 15, 30, 30, 30, 30, 30],
                          Result: Overfitting.
                          at epoch 100, training loss = 0.0117, and validation loss = 2.56
                          at stable status, validation acc = 53%
 
 expOCT2SysD_20201205_A:  channels: [9, 9, 9, 15, 15, 15, 15, 15]
-
-
+                         Result: Overfitting. Stop training at 40 epochs.
 
 expOCT2SysD_20201205_B:  channels: [9, 9, 9, 9, 9, 9, 9, 9]
+                         Result: Overfitting. at 300 epochs, traiing accruacy get 93% while validation get 50%;
+
+
+expOCT2SysD_20201205_C: channels: [9, 8, 7, 6, 5, 4, 3, 3]
+                        Result: overfitting.  at 300 epochs, traiing accruacy get 85% while validation get 55%;
+                        at epoch 8. validation start exceed and deviate from training loss.
 
 
 
-
-
+expOCT2SysD_20201205_D: channels:     [9, 8, 7, 6, 5, 4, 3, 3]
+                        dropoutRates: [0.5,0.4,0.3,0.0, 0.5, 0.25, 0.0]  # 7 dropout layers.
 
 
 
