@@ -108,6 +108,9 @@ def main():
         trBatch = 0
         trHyperTLoss = 0.0
 
+        allTrainOutput = None
+        allTrainGTs = None
+
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
             inputs = batchData['images']# B,C,H,W
             t = batchData['GTs'].to(device=hps.device, dtype=torch.float) # target
@@ -120,9 +123,13 @@ def main():
             trHyperTLoss += loss
             trBatch += 1
 
+            allTrainOutput = x if allTrainOutput is None else torch.cat((allTrainOutput, x))
+            allTrainGTs = t if allTrainGTs is None else torch.cat((allTrainGTs, t))
+
             #debug
             # break
 
+        trHyperTAcc = computeClassificationAccuracyWithLogit(allTrainGTs, allTrainOutput)
 
         trHyperTLoss /= trBatch
 
@@ -151,7 +158,7 @@ def main():
 
             validHyperTLoss /= validBatch
 
-        hyperTAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
+        validHyperTAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
         Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumWithLogits(allValidationGTs, allValidationOutput)
 
 
@@ -162,20 +169,20 @@ def main():
 
 
         writer.add_scalar('train/HypertensionLoss', trHyperTLoss, epoch)
+        writer.add_scalar('train/HypertensionAcc', trHyperTAcc, epoch)
         writer.add_scalar('validation/HypertensionLoss', validHyperTLoss, epoch)
-        writer.add_scalar('ValidationAccuracy/HypertensionAcc', hyperTAcc, epoch)
-        writer.add_scalars('ValidationAccuracy/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
-        #writer.add_scalar('TrainingAccuracy/HypertensionAcc', trHyperTAcc, epoch) if hps.debug else None
+        writer.add_scalar('validation/HypertensionAcc', validHyperTAcc, epoch)
+        writer.add_scalars('validation/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        #if validHyperTLoss < preValidLoss:
+        if validHyperTLoss < preValidLoss:
         # if  hyperTAcc > preAccuracy:
-        if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
+        #if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
             net.updateRunParameter("validationLoss", validHyperTLoss)
             net.updateRunParameter("epoch", net.m_epoch)
-            net.updateRunParameter("hyperTensionAccuracy", hyperTAcc)
+            net.updateRunParameter("hyperTensionAccuracy", validHyperTAcc)
             net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
-            #preValidLoss = validHyperTLoss
+            preValidLoss = validHyperTLoss
             preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)
 
