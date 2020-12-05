@@ -32,8 +32,13 @@ Todo:
 Experiment:
 expOCT2SysD_20201204_A:  channels: [30, 30, 30, 60, 60, 60, 60, 60],
                          Result: Overfitting.
+                         at epoch 100, training loss = 0.00164, and validation loss = 2.706
+                          at stable status, validation acc = 54%
 expOCT2SysD_20201204_B:  channels: [15, 15, 15, 30, 30, 30, 30, 30],
-                         Result:  wait
+                         Result: Overfitting.
+                         at epoch 100, training loss = 0.0117, and validation loss = 2.56
+                         at stable status, validation acc = 53%
+
 
 
 
