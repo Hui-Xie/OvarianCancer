@@ -56,7 +56,15 @@ expOCT2SysD_20201205_D: channels:     [9, 8, 7, 6, 5, 4, 3, 3]
                         dropoutRates: [0.5,0.4,0.3,0.0, 0.5, 0.25, 0.0]  # 7 dropout layers.
 
 
+expOCT2SysD_20201205_E: channels:     [6, 6, 6, 6, 6, 6, 6, 6]
+                        dropoutRates: [0.5,0.4,0.3,0.0, 0.5, 0.25, 0.0]  # # 7 dropout layers.
 
+
+expOCT2SysD_20201205_F: channels:     [6, 6, 6, 6, 6, 6, 6, 6]
+                        dropoutRates: [0.5,0.5,0.5,0.5, 0.5, 0.5, 0.0]  # # 7 dropout layers.
+
+expOCT2SysD_20201205_G: channels:     [9, 8, 7, 6, 5, 4, 3, 3]
+                        dropoutRates: [0.5,0.4,0.3,0.3, 0.5, 0.25, 0.0]  # # 7 dropout layers.
 
 
 
