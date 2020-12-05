@@ -141,19 +141,6 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.m_transform:
             data = self.m_transform(data)  # size: CxHxW
 
-
-        # normalization before output to dataloader
-        # AlexNex, GoogleNet V1, VGG, ResNet only do mean subtraction without dividing std.
-        # mean = torch.mean(data, dim=(-1, -2), keepdim=True)
-        # mean = mean.expand_as(data)
-        # data = data - mean
-
-        # Normalization
-        #std, mean = torch.std_mean(data, dim=(-1, -2), keepdim=True)
-        #std = std.expand_as(data)
-        #mean = mean.expand_as(data)
-        #data = (data - mean) / (std + epsilon)  # size: 3xHxW, or 1,H,W
-
         # as thickness map is a physical-size volume, we do not do normalization on it.
 
         result = {"images": data,  # B,C,H,W

@@ -29,6 +29,14 @@ Todo:
 1  all training data do a normalization and save its mean and std for validation and test data to use; --done
 2  change gaussian noise std to 0.1 after the input data has normalization;   --done.
 
+Experiment:
+expOCT2SysD_20201204_A:  channels: [30, 30, 30, 60, 60, 60, 60, 60],
+                         Result: Overfitting.
+expOCT2SysD_20201204_B:  channels: [15, 15, 15, 30, 30, 30, 30, 30],
+                         Result:  wait
+
+
+
 
 
 
