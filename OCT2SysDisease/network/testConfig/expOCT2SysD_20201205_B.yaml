@@ -2,7 +2,7 @@ debug: True
 debugOutputPeriod: 50
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 100 # for 3600 training volumes, and 959 validation volumes
 learningRate: 1.0  #
 lrPatience: 6   # learning rate decay patience
@@ -35,7 +35,7 @@ volumeSuffix: "_Volume_thickness_enface.npy"
 # bothEyes: False  # choose all OD eyes
 inputChannels: 9 # rawImage + gradChannels(W,H)
 gradChannels: 0   # the added gradient channels beside raw image channel
-channels: [9, 9, 9, 15, 15, 15, 15, 15]
+channels: [9, 9, 9, 9, 9, 9, 9, 9]
 appKey: "hypertension_bp_plus_history$"
 
 #dropoutRate: 0.2 # dropout after global average pooling
