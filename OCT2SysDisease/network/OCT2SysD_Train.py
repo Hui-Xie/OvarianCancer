@@ -167,6 +167,7 @@ def main():
         else: # "max"
             lrScheduler.step(Td_Acc_TPR_TNR_Sum['Sum'])
 
+        writer.add_scalars('loss', {"train":trHyperTLoss, "validation": validHyperTLoss}, epoch)
 
         writer.add_scalar('train/HypertensionLoss', trHyperTLoss, epoch)
         writer.add_scalar('train/HypertensionAcc', trHyperTAcc, epoch)
