@@ -1,3 +1,40 @@
+# Dec 07th, Monday, 2020
+The result of grid searching lambda for gaussian noise + perfect thickness(R) on validation data:
+
+Summary:
+1 Unconstrained soft separation optimization + ReLU do improves muError; and its training speed is very quick, comparing with IPM;
+2 Higer accuracy of thickness prediction, bigger lambda values, less muError;
+3 From the below Guassian noise + perfect R experiments comparing with NoReLU, No optimization,
+  it improves Hausdorff distance significantly.
+4 idea of further improving rift(thickness) network:
+  A  Inherit the technologies of our current U-net predicting N surfaces with high accuracy;
+  B  First use a separate U-Net to output N-surface location probabilities, and then compute its (N-1) thickness(R) from this N-Surfaces location probability;
+  C  Compare this (N-1) thickness with ground truth R to compute loss and backward propagation;
+  D  This network only uses (N-1) thickness ground truth, without using N surface ground truth at all;
+     As ground truths and loss functions are not same, riftNetwork and surfaceNetwork are different networks.
+  F  This method fits physical intuition of layer thickness computation;
+
+
+Some tabular details:
+HausdorffDistance in pixel for NoReLU and No optimization = [[38.474457 66.437805 68.57501 ]]
+HausdorffDistance in physical size (micrometer) for NoReLU and No optimization = [[124.65724 215.25848 222.18304]]
+muError at NoReLU and No optimiztion (lambda=0) = 2.383660316467285
+at lambda0_min= 0, and lambda1_min = 0, with ReLU, muError = 2.383739471435547
+
+# below the best result of grid searching lambda for guassian noise + perfect thickness(rift) on validation data:
+# blank means no measurement in that programs.
+-------------------------------------------------------------------------------------------------------------------------
+RiftError           muError                 HausdorffDistance(in pixel)     Lambda_0 Lambda_1
+-------------------------------------------------------------------------------------------------------------------------
+0.0                 1.6399389505386353                                      2.06     3.99   (this perfect R case)
+2.197073459625244   1.90798819065094    49.196      52.69426    39.68515    0.1      0.25   (gaussian noise + perfect R)
+2.4565892219543457  1.9342775344848633  49.261276   53.30031    37.779327   0.08     0.2    (gaussian noise + perfect R)
+2.7137765884399414  1.9585803747177124  48.728424   54.165863   35.518845   0.07     0.16   (gaussian noise + perfect R)
+2.972208023071289   1.9796805381774902  49.18547    54.445984   34.13138    0.06     0.14   (gaussian noise + perfect R)
+5.921670913696289   2.3492398262023926                                      0.004    0.004  (current predicted R case)
+NoRift/No Optimize  2.383660316467285   38.474457   66.437805   68.57501    0.0      0.0    (No ReLU, No optimization)
+-------------------------------------------------------------------------------------------------------------------------
+
 # Dec 4th, Friday, 2020
 Ideas for further improving R:
 1  Use dense network architecture;
