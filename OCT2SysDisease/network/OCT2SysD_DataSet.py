@@ -131,7 +131,7 @@ class OCT2SysD_DataSet(data.Dataset):
             ID = self.m_IDsCorrespondVolumes[index]
             label = self.m_labels[int(ID)][self.hps.appKey]
 
-        data = self.m_volumes[index,]
+        data = self.m_volumes[index,].clone()  # clone is safer to avoid source data corrupted
         C, H, W = data.shape
         if (H != self.hps.imageH) or (W != self.hps.imageW) or (C != self.hps.inputChannels):
             print(f"Error: {volumePath} has incorrect size C= {C}, H={H} and W={W}, ")
