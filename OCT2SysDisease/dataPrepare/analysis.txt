@@ -78,6 +78,37 @@ expOCT2SysD_20201205_G: channels:     [9, 8, 7, 6, 5, 4, 3, 3]
                         at epoch 45, validation loss > training loss.
                         at threshold 0.485,  TPR 0.685, TNR 0.474, Acc 59.5%
 
+# add network capacities, and validation data without augmentation.
+expOCT2SysD_20201206_D: channels:     [90, 80, 70, 60, 50, 40, 30, 30]
+                        dropoutRates: [0.5,0.4,0.3,0.0, 0.5, 0.25, 0.0]  # 7 dropout layers.
+                        validation accuray is 56%, and training accuracy is 69% at stable phase.
+                        at epoch 5, validation loss > training loss.
+                        at threshold 0.50,  TPR 53%, TNR 0.62, Acc 57.0%
+
+
+expOCT2SysD_20201206_E: channels:     [60, 60, 60, 60, 60, 60, 60, 60]
+                        dropoutRates: [0.5,0.4,0.3,0.0, 0.5, 0.25, 0.0]  # 7 dropout layers.
+                        validation accuray is 55%, and training accuracy is 67%.
+                        at epoch 10, validation loss > training loss.
+                        at threshold 0.4333,  TPR 66%, TNR 0.47, Acc 58.0%
+
+
+expOCT2SysD_20201206_F: channels:     [60, 60, 60, 60, 60, 60, 60, 60]
+                        dropoutRates: [0.5,0.5,0.5,0.5, 0.5, 0.5, 0.0]  # 7 dropout layers.
+                        validation accuray is 58%, and training accuracy is 60%.
+                        at epoch 9, validation loss > training loss.
+                        at threshold 0.48  TPR 62%, TNR 55%, Acc 59%
+
+expOCT2SysD_20201206_G: channels:     [90, 80, 70, 60, 50, 40, 30, 30]
+                        dropoutRates: [0.5,0.4,0.3,0.3, 0.5, 0.25, 0.0]  # 7 dropout layers.
+                        validation accuray is 57%, and training accuracy is 64%.
+                        at epoch 10, validation loss > training loss.
+                        at threshold 0.485,  TPR 0.56, TNR 0.59, Acc 58%
+
+# cancel dropout at begining, add dropout at end;
+
+
+
 
 
 
