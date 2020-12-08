@@ -251,6 +251,11 @@ class OCTDataSet(data.Dataset):
         if self.m_transform:
             data, label = self.m_transform(data, label)
 
+        # normalization should put outside of transform, as validation may not use transform
+        std, mean = torch.std_mean(data)
+        data = TF.Normalize([mean], [std])(data.unsqueeze(dim=0))
+        data = data.squeeze(dim=0)
+
         if self.hps.TTA and 0 != self.hps.TTA_Degree:
             data, label = polarImageLabelRotate_Tensor(data, label, rotation=self.hps.TTA_Degree)
 
@@ -265,10 +270,15 @@ class OCTDataSet(data.Dataset):
         N, W1 = label.shape
         assert W==W1
         image = data.unsqueeze(dim=0)
-        if 0 != self.hps.gradChannels:
-            grads = self.generateGradientImage(data, self.hps.gradChannels)
-            for grad in grads:
-                image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
+        if "YufanHe" in self.hps.network:  # YufanHe uses x,y index as extra channel.
+            X = torch.arange(W).view((1, W)).expand(data.size()).to(device=self.hps.device, dtype=torch.float).unsqueeze(dim=0)/W
+            Y = torch.arange(H).view((H, 1)).expand(data.size()).to(device=self.hps.device, dtype=torch.float).unsqueeze(dim=0)/H
+            image = torch.cat((image, Y, X), dim=0)
+        else:
+            if 0 != self.hps.gradChannels:
+                grads = self.generateGradientImage(data, self.hps.gradChannels)
+                for grad in grads:
+                    image = torch.cat((image, grad.unsqueeze(dim=0)),dim=0)
 
         layerGT = []
         if self.hps.useLayerDice and label is not None:
@@ -278,9 +288,12 @@ class OCTDataSet(data.Dataset):
         # N rifts for N surfaces
         #riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
         # (N-1) rifts for N surfaces.
-        riftWidthGT = label[1:, :] - label[0:-1, :]
-        if self.hps.smoothRift:
-            riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
+
+        riftWidthGT = None
+        if self.hps.useRift:
+            riftWidthGT = label[1:, :] - label[0:-1, :]
+            if self.hps.smoothRift:
+                riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
 
         result = {"images": image,
                   "GTs": [] if label is None else label,

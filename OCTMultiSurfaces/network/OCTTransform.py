@@ -54,12 +54,6 @@ class OCTDataTransform(object):
             rotation = random.randint(0,359)
             data, label = polarImageLabelRotate_Tensor(data, label, rotation=rotation)
 
-        # normalize again
-        if dirt:
-            std, mean = torch.std_mean(data)
-            data = TF.Normalize([mean], [std])(data.unsqueeze(dim=0))
-            data = data.squeeze(dim=0)
-
         if inputLabel is None:
             return data
         else:
