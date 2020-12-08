@@ -1,7 +1,7 @@
 # change path from c-xwu000 server to iibi007 server
 
-srcPath= "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/validation/patientList_xwu000.txt"
-outputFile = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/validation/patientList.txt"
+srcPath= "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test/patientList_xwu000.txt"
+outputFile = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test/patientList.txt"
 
 with open(srcPath, 'r') as f:
     patientList = f.readlines()
