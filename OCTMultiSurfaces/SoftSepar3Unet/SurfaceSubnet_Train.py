@@ -16,7 +16,7 @@ from network.OCTTransform import *
 
 sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
-from SurfacesUnet_YufanHe_2 inmport SurfacesUnet_YufanHe_2
+from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *

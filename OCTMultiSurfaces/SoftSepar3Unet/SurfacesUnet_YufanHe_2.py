@@ -218,7 +218,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
             loss_layer += multiLayerCE(layerProb, layerGTs)
 
         else:
-            loss_layerDice = 0.0
+            loss_layer = 0.0
 
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
