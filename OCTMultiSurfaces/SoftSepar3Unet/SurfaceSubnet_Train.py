@@ -126,7 +126,7 @@ def main():
             optimizer.step()
             trLoss += loss
 
-            break
+            #break
 
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
@@ -146,7 +146,7 @@ def main():
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
-                break
+                #break
 
             validLoss = validLoss / validBatch
             if hps.groundTruthInteger:
@@ -192,7 +192,7 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        break
+        #break
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

@@ -205,8 +205,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
             # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
 
             # add layer CE loss
-            layerWeight = getLayerWeightFromImages(inputs, GTs, N+1)
-            multiLayerCE = MultiLayerCrossEntropyLoss(weight=layerWeight)
+            multiLayerCE = MultiLayerCrossEntropyLoss()
             loss_layer += multiLayerCE(layerProb, layerGTs)
 
         else:
