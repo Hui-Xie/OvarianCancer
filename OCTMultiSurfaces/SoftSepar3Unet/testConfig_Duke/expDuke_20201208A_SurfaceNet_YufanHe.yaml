@@ -77,6 +77,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 netPath: "/home/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
 
 usePrimalDualIPM: False
 useLayerDice: True
