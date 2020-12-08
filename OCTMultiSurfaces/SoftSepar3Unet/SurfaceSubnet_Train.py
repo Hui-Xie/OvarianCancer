@@ -10,6 +10,7 @@ from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
 sys.path.append("..")
+sys.path.append("../..")
 from network.OCTDataSet import *
 from network.OCTOptimization import *
 from network.OCTTransform import *
@@ -125,6 +126,8 @@ def main():
             optimizer.step()
             trLoss += loss
 
+            break
+
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
         # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
@@ -143,6 +146,7 @@ def main():
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
+                break
 
             validLoss = validLoss / validBatch
             if hps.groundTruthInteger:
@@ -172,8 +176,7 @@ def main():
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
-        writer.add_scalar('Loss/train', trLoss, epoch)
-        writer.add_scalar('Loss/validation', validLoss, epoch)
+        writer.add_scalars('Loss', {"train":trLoss, "validation": validLoss}, epoch)
         writer.add_scalar('ValidationError/mean', muError, epoch)
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
@@ -188,6 +191,8 @@ def main():
             preValidLoss = validLoss
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
+
+        break
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

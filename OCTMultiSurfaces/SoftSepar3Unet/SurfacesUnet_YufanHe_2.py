@@ -5,9 +5,9 @@ import sys
 import math
 
 sys.path.append(".")
-from OCTOptimization import *
-from OCTPrimalDualIPM import *
-from OCTAugmentation import *
+sys.path.append("../..")
+from network.OCTOptimization import *
+from network.OCTAugmentation import *
 import torch
 
 sys.path.append("../..")
@@ -54,9 +54,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
         )
 
         self.m_down1Pooling = nn.Sequential(
-            nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                        useLeakyReLU=self.m_useLeakyReLU)
+            nn.MaxPool2d(2, stride=2, padding=0)
         )
         self.m_down1 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
@@ -66,9 +64,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
             )
 
         self.m_down2Pooling = nn.Sequential(
-            nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                        useLeakyReLU=self.m_useLeakyReLU)
+            nn.MaxPool2d(2, stride=2, padding=0)
         )
         self.m_down2 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
@@ -78,9 +74,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
             )
 
         self.m_down3Pooling = nn.Sequential(
-            nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N, N , convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                        useLeakyReLU=self.m_useLeakyReLU)
+            nn.MaxPool2d(2, stride=2, padding=0)
         )
         self.m_down3 = nn.Sequential(
             Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
@@ -90,9 +84,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
         )
 
         self.m_down4Pooling = nn.Sequential(
-            nn.MaxPool2d(2, stride=2, padding=0),
-            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
-                        useLeakyReLU=self.m_useLeakyReLU)
+            nn.MaxPool2d(2, stride=2, padding=0)
         )
 
         self.m_down4 = nn.Sequential(
@@ -156,7 +148,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
         )  # output size:(numSurfaces+1)*H*W
 
 
-    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None):
+    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # compute outputs
         device = inputs.device
 
