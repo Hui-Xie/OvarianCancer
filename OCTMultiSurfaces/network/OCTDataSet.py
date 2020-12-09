@@ -285,11 +285,6 @@ class OCTDataSet(data.Dataset):
             layerGT = getLayerLabels(label,H)
 
         riftWidthGT = []
-        # N rifts for N surfaces
-        #riftWidthGT = torch.cat((label[0,:].unsqueeze(dim=0),label[1:,:]-label[0:-1,:]),dim=0)
-        # (N-1) rifts for N surfaces.
-
-        riftWidthGT = []
         if self.hps.useRift:
             riftWidthGT = label[1:, :] - label[0:-1, :]
             if self.hps.smoothRift:

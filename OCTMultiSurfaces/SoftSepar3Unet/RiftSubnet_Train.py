@@ -16,6 +16,7 @@ from network.OCTTransform import *
 
 sys.path.append(".")
 from RiftSubnet import RiftSubnet
+from ThicknessSubnet import ThicknessSubnet
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
@@ -122,6 +123,8 @@ def main():
             optimizer.step()
             trLoss += loss
 
+            break
+
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
         # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
@@ -141,6 +144,8 @@ def main():
                 validGts = torch.cat((validGts, batchData['riftWidth'])) if validBatch != 1 else batchData['riftWidth']
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
+                break
+
             validLoss = validLoss / validBatch
 
 
@@ -153,12 +158,11 @@ def main():
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
-        writer.add_scalar('Loss/train', trLoss, epoch)
-        writer.add_scalar('Loss/validation', validLoss, epoch)
+        writer.add_scalars('Loss/train', {"train":trLoss, "validation":validLoss}, epoch)
         writer.add_scalar('ValidationError/mean', muError, epoch)
         writer.add_scalar('ValidationError/std', stdError, epoch)
-        writer.add_scalars('ValidationError/muRift', convertTensor2Dict(muSurfaceError), epoch)
-        writer.add_scalars('ValidationError/stdRift', convertTensor2Dict(stdSurfaceError), epoch)
+        writer.add_scalars('ValidationError/muThickness', convertTensor2Dict(muSurfaceError), epoch)
+        writer.add_scalars('ValidationError/stdThickness', convertTensor2Dict(stdSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss or muError < preErrorMean:
@@ -170,6 +174,7 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
+        break
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 

@@ -91,7 +91,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurfaceLoss: False
 useSmoothThicknessLoss: True
-useWeightedDivLoss: True
+useWeightedDivLoss: False
 useRift: True
 smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
