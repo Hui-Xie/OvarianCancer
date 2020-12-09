@@ -12,6 +12,9 @@ idea of further improving rift(thickness) network:
   I  Thickness groud truth does not need smooth;   --done
   G  Use L1 loss + smoothThicknessLoss; --done
 
+Now new thickness network  in training.
+
+
 
 # Dec 07th, Monday, 2020
 The result of grid searching lambda for gaussian noise + perfect thickness(R) on validation data:
