@@ -7,8 +7,8 @@ idea of further improving rift(thickness) network:
   D  This network only uses (N-1) thickness ground truth, without using N surface ground truth at all;
      As ground truths and loss functions, network initialization are not same, riftNetwork and surfaceNetwork are different networks.
   F  This method fits physical intuition of layer thickness computation;
-  G  Add dropout in the UNet After each convolution;
-  H  Add filter number of each layer, as predicting Rift is more complicated than predicting surfaces;
+  G  Add dropout in the UNet After concatenation in the expand path;   --done
+  H  Add filter number of each layer, as predicting thickness is more complicated than predicting surfaces;  --done
 
 # Dec 07th, Monday, 2020
 The result of grid searching lambda for gaussian noise + perfect thickness(R) on validation data:
