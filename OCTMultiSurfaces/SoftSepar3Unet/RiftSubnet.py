@@ -98,7 +98,7 @@ class RiftSubnet(BasicModel):
                 l1Loss = nn.SmoothL1Loss().to(device)
                 loss_riftL1 = l1Loss(R,riftGTs)
 
-            if self.hps.useSmoothLoss:
+            if self.hps.useSmoothSurfaceLoss:
                 smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
                 loss_smooth = smoothRiftLoss(R, riftGTs)
 

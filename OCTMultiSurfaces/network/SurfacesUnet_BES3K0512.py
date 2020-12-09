@@ -357,7 +357,7 @@ class SurfacesUnet_BES3K0512(BasicModel):
         else:
             loss_surface =0.0
 
-        if hps.useSmoothSurface and hps.existGTLabel:
+        if hps.useSmoothSurfaceLoss and hps.existGTLabel:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(mu, GTs)
         else:

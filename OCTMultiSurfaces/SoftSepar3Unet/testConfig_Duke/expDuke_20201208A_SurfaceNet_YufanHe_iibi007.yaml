@@ -84,7 +84,7 @@ useLayerDice: True
 useReferSurfaceFromLayer: False
 useLayerCE: True
 useCEReplaceKLDiv: False
-useSmoothSurface: False
+useSmoothSurfaceLoss: False
 useWeightedDivLoss: False
 useRift: False
 smoothRift: False  # smooth Rift in ground truth

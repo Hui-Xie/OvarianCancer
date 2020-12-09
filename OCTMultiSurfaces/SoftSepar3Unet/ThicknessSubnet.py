@@ -10,7 +10,7 @@ sys.path.append("../..")
 from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import logits2Prob, SmoothSurfaceLoss
+from framework.CustomizedLoss import logits2Prob, SmoothThicknessLoss
 from framework.ConfigReader import ConfigReader
 
 '''
@@ -100,11 +100,9 @@ class ThicknessSubnet(BasicModel):
             if self.hps.useL1Loss:
                 l1Loss = nn.SmoothL1Loss().to(device)
                 loss_riftL1 = l1Loss(R,riftGTs)
-
-            if self.hps.useSmoothLoss:
-                smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-                loss_smooth = smoothRiftLoss(R, riftGTs)
-
+            if self.hps.useSmoothThicknessLoss:
+                smoothThicknessLoss = SmoothThicknessLoss(mseLossWeight=10.0)
+                loss_smooth = smoothThicknessLoss(R, riftGTs)
 
         loss = loss_riftL1 + loss_smooth
 

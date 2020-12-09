@@ -109,7 +109,7 @@ def main():
     useLayerDice = cfg['useLayerDice']
     useReferSurfaceFromLayer = cfg['useReferSurfaceFromLayer']
     useLayerCE = cfg['useLayerCE']
-    useSmoothSurface = cfg['useSmoothSurface']
+    useSmoothSurfaceLoss = cfg['useSmoothSurfaceLoss']
     useWeightedDivLoss = cfg['useWeightedDivLoss']
 
     if -1==k and 0==K:  # do not use cross validation
@@ -178,7 +178,7 @@ def main():
     net.updateRunParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
     net.updateRunParameter("useLayerDice", useLayerDice)
     net.updateRunParameter("useReferSurfaceFromLayer", useReferSurfaceFromLayer)
-    net.updateRunParameter("useSmoothSurface", useSmoothSurface)
+    net.updateRunParameter("useSmoothSurfaceLoss", useSmoothSurfaceLoss)
     net.updateRunParameter("gradWeight", gradWeight)
     net.updateRunParameter("useWeightedDivLoss", useWeightedDivLoss)
     net.updateRunParameter("useLayerCE", useLayerCE)

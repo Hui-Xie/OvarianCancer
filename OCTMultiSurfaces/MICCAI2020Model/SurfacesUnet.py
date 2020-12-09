@@ -306,7 +306,7 @@ class SurfacesUnet(BasicModel):
         useWeightedDivLoss = self.getRunParameter("useWeightedDivLoss")
         gradWeight = self.getRunParameter("gradWeight")
         useLayerCE = self.getRunParameter("useLayerCE")
-        useSmoothSurface = self.getRunParameter("useSmoothSurface")
+        useSmoothSurfaceLoss = self.getRunParameter("useSmoothSurfaceLoss")
 
 
         layerMu = None # referred surface mu computed by layer segmentation.
@@ -353,7 +353,7 @@ class SurfacesUnet(BasicModel):
             loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
 
-        if useSmoothSurface:
+        if useSmoothSurfaceLoss:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(mu, GTs)
         else:

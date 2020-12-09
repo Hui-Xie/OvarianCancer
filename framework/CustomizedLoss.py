@@ -498,7 +498,7 @@ class SmoothSurfaceLoss():
         In other words, we expect the distance difference between predicted surface 0  and surface 1
         are consistent with the distance difference between ground truth surface 0 and surface 1.
 
-        This loss forces network to learn the distance difference between surfaces, the laye width.
+        This loss forces network to learn the distance difference between surfaces, the layer width.
         For example, if predicted surface 0 deviates ground truth surface 0 5 pixels,
         this loss will forces  the predicted surface 1 also deviates ground truth surface 1 5 pixels, otherwise it will get some loss.
         This is along height direction shift.
@@ -537,7 +537,33 @@ class SmoothSurfaceLoss():
 
         return loss
 
+class SmoothThicknessLoss():
+    def __init__(self, mseLossWeight=10.0):
+        self.mseLossWeight = mseLossWeight  # weight for embedded MSE loss
 
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
+    def forward(self, inputx, target):
+        '''
+        Similar with SmoothSurfaceLoss, this SmoothThicknessLoss assure the wave shape change of thickness consistent
+        between prediction and target.
+        '''
+        B,N,W = inputx.shape
+        assert (B,N,W) == target.shape
+
+        # along W dimension, use 3-point gradient formula
+        Sw0 = inputx[:, :, 0:-2]  # size: B,N,(W-2)
+        Sw1 = inputx[:, :, 1:-1]
+        Sw2 = inputx[:, :, 2:]
+
+        Gw0 = target[:, :, 0:-2]
+        Gw1 = target[:, :, 1:-1]
+        Gw2 = target[:, :, 2:]
+        loss = torch.pow((Sw0+Sw2-2.0*Sw1)-(Gw0+Gw2-2.0*Gw1), 2.0).mean()\
+                + self.mseLossWeight* torch.pow(inputx-target, 2.0).mean()
+
+        return loss
 
 # support multiclass CrossEntropy Loss
 class MultiSurfaceCrossEntropyLoss():

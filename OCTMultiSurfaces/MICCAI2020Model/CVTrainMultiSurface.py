@@ -90,7 +90,7 @@ def main():
     useDynamicProgramming = cfg['useDynamicProgramming']
     usePrimalDualIPM = cfg['usePrimalDualIPM']
     useCEReplaceKLDiv = cfg['useCEReplaceKLDiv']
-    useSmoothSurface = cfg['useSmoothSurface']
+    useSmoothSurfaceLoss = cfg['useSmoothSurfaceLoss']
 
     if -1==k and 0==K:  # do not use cross validation
         trainImagesPath = os.path.join(dataDir, "training", f"images.npy")
@@ -154,7 +154,7 @@ def main():
     net.updateRunParameter("usePrimalDualIPM", usePrimalDualIPM)
     net.updateRunParameter("useCEReplaceKLDiv", useCEReplaceKLDiv)
 
-    net.updateRunParameter("useSmoothSurface", useSmoothSurface)
+    net.updateRunParameter("useSmoothSurfaceLoss", useSmoothSurfaceLoss)
 
     logDir = dataDir + "/log/" + network + "/" + experimentName
     if not os.path.exists(logDir):

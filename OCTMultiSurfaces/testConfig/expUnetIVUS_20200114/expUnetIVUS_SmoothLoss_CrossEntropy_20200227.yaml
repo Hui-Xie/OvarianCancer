@@ -93,4 +93,4 @@ useDynamicProgramming: False
 usePrimalDualIPM: True
 useLayerDice: True
 useCEReplaceKLDiv: True
-useSmoothSurface: True
+useSmoothSurfaceLoss: True

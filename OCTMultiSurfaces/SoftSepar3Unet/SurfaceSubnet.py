@@ -107,7 +107,7 @@ class SurfaceSubnet(BasicModel):
                 gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
             loss_div = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
-            #hps.useSmoothSurface:
+            #hps.useSmoothSurfaceLoss:
             smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
             loss_smooth = smoothSurfaceLoss(S, GTs)
 

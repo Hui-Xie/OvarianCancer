@@ -95,7 +95,7 @@ useLayerDice: False
 useReferSurfaceFromLayer: False
 useLayerCE: False
 useCEReplaceKLDiv: False
-useSmoothSurface: True
+useSmoothSurfaceLoss: True
 useWeightedDivLoss: True
 useRiftInPretrain: True
 smoothRift: True

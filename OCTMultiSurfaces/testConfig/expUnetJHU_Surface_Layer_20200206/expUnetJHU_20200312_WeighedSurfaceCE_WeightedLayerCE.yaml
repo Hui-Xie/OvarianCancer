@@ -106,7 +106,7 @@ usePrimalDualIPM: True
 useLayerDice: True
 useLayerCE: True
 useCEReplaceKLDiv: True
-useSmoothSurface: True
+useSmoothSurfaceLoss: True
 useWeightedDivLoss: False
 
 

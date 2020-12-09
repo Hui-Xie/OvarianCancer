@@ -10,7 +10,7 @@ idea of further improving rift(thickness) network:
   G  Add dropout in the UNet After concatenation in the expand path;   --done
   H  Add filter number of each layer, as predicting thickness is more complicated than predicting surfaces;  --done
   I  Thickness groud truth does not need smooth;   --done
-  G  Use smoothLoss +L1 loss; --done
+  G  Use L1 loss + smoothThicknessLoss; --done
 
 
 # Dec 07th, Monday, 2020

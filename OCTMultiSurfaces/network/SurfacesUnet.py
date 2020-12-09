@@ -425,7 +425,7 @@ class SurfacesUnet(BasicModel):
                     gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
                 loss_surface = klDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
-            if self.hps.useSmoothSurface:
+            if self.hps.useSmoothSurfaceLoss:
                 smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
                 loss_smooth = smoothSurfaceLoss(mu, GTs)
 

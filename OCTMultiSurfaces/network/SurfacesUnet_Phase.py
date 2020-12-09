@@ -349,7 +349,7 @@ class SurfacesUnet_Phase(BasicModel):
             gaussianGTs = batchGaussianizeLabels(GTs, sigma2, H)
         loss_surface = weightedDivLoss(nn.LogSoftmax(dim=2)(xs), gaussianGTs)
 
-        # useSmoothSurface:
+        # useSmoothSurfaceLoss:
         smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
         loss_smooth = smoothSurfaceLoss(mu, GTs)
 
