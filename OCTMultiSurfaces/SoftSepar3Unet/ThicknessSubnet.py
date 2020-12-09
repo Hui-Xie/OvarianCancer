@@ -48,8 +48,8 @@ class ThicknessSubnet(BasicModel):
 
         # Surface branch
         self.m_surfaces = nn.Sequential(
-            Conv2dBlock(C, C//2),
-            Conv2dBlock(C//2, C//2),
+            Conv2dBlock(C, C//2, useLeakyReLU=True, kernelSize=5, padding=2),
+            Conv2dBlock(C//2, C//2, useLeakyReLU=True, kernelSize=7, padding=3),  # different from surfaceNet
             nn.Conv2d(C//2, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:BxNxHxW
 
@@ -57,7 +57,7 @@ class ThicknessSubnet(BasicModel):
         device = inputs.device
         # compute outputs
         skipxs = [None for _ in range(self.hps.nLayers)]  # skip link x
-        dropoutLayer = [nn.Dropout2d(p=self.hps.dropoutRateUnet[i]) for i in range(self.hps.nLayers)]
+        dropoutLayer = [nn.Dropout2d(p=self.hps.dropoutRateUnet[i], inplace=True) for i in range(self.hps.nLayers)]
 
         # down path of Unet
         for i in range(self.hps.nLayers):
@@ -78,6 +78,25 @@ class ThicknessSubnet(BasicModel):
             x = self.m_upLayers[i](x) + x
             x = self.m_upSamples[i](x)
         # output of Unet: BxCxHxW
+
+        # N is numSurfaces
+        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*N*H*W
+        B, N, H, W = xs.shape
+
+        surfaceProb = logits2Prob(xs, dim=-2)
+
+        # compute surface mu and variance
+        mu, sigma2 = computeMuVariance(surfaceProb)  # size: B,N W
+
+        thickness = mu[:,1:,:]-mu[:,0:-1,:] # size: B,N-1,W
+        zeroThickness = torch.zeros_like(thickness)
+        thickness = torch.where(thickness < zeroThickness, zeroThickness, thickness) # make sure thickness >=0
+
+
+
+
+
+
 
         # N is numSurfaces
         xr = self.m_rifts(x)  # output size: Bx(N-1)xHxW
