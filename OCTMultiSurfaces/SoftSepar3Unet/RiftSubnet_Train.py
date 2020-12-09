@@ -123,7 +123,7 @@ def main():
             optimizer.step()
             trLoss += loss
 
-            break
+            #break
 
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
@@ -144,7 +144,7 @@ def main():
                 validGts = torch.cat((validGts, batchData['riftWidth'])) if validBatch != 1 else batchData['riftWidth']
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
-                break
+                #break
 
             validLoss = validLoss / validBatch
 
@@ -174,7 +174,7 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        break
+        #break
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 

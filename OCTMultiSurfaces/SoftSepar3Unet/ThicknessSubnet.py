@@ -5,6 +5,7 @@ import torch.nn as nn
 
 sys.path.append("..")
 from network.OCTAugmentation import batchGaussianizeLabels
+from network.OCTOptimization import computeMuVariance
 
 sys.path.append("../..")
 from framework.NetTools import *

@@ -50,14 +50,13 @@ network: "ThicknessSubnet"
 inputHeight: 512   # original height
 inputWidth: 361   # rawImageWidth
 maxRift:  150.0 # maxRift + 3*sigma < H/2
-useBetterRiftGaussian: True
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 8 # rawImage + gradChannels
 nLayers: 8
 dropoutRateUnet: [0.25, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]  # for nLayers=8
 numSurfaces: 3  # num of surfaces in an image
-startFilters: 64  # the num of filters in first layer of Unet
+startFilters: 32  # the num of filters in first layer of Unet
 gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
@@ -91,6 +90,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurfaceLoss: False
 useSmoothThicknessLoss: True
+useBetterRiftGaussian: False
 useWeightedDivLoss: False
 useRift: True
 smoothRift: False  # smooth Rift in ground truth
