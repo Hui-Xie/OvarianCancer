@@ -87,10 +87,7 @@ class ThicknessSubnet(BasicModel):
 
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb)  # size: B,N W
-
         thickness = mu[:,1:,:]-mu[:,0:-1,:] # size: B,N-1,W
-        zeroThickness = torch.zeros_like(thickness)
-        thickness = torch.where(thickness < zeroThickness, zeroThickness, thickness) # make sure thickness >=0
         R = thickness
 
         # use smoothLoss and L1loss for rift
@@ -110,7 +107,10 @@ class ThicknessSubnet(BasicModel):
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        return R, loss  # return rift R in (B,N-1,W) dimension and loss
+        zeroThickness = torch.zeros_like(thickness)
+        thickness = torch.where(thickness < zeroThickness, zeroThickness, thickness)  # make sure thickness >=0
+
+        return thickness, loss  # return rift R in (B,N-1,W) dimension and loss
 
 
 
