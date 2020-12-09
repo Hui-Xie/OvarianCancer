@@ -1,3 +1,15 @@
+# Dec 9th, Wednesday, 2020
+Further think the improvement of RiftNet:
+idea of further improving rift(thickness) network:
+  A  Inherit the technologies of our current U-net predicting N surfaces with high accuracy;
+  B  First use a separate U-Net to output N-surface location probabilities, and then compute its (N-1) thickness(R) from this N-Surfaces location probability;
+  C  Compare this (N-1) thickness with ground truth R to compute loss and backward propagation;
+  D  This network only uses (N-1) thickness ground truth, without using N surface ground truth at all;
+     As ground truths and loss functions, network initialization are not same, riftNetwork and surfaceNetwork are different networks.
+  F  This method fits physical intuition of layer thickness computation;
+  G  Add dropout in the UNet After each convolution;
+  H  Add filter number of each layer, as predicting Rift is more complicated than predicting surfaces;
+
 # Dec 07th, Monday, 2020
 The result of grid searching lambda for gaussian noise + perfect thickness(R) on validation data:
 
