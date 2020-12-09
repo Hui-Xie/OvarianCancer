@@ -91,28 +91,11 @@ class ThicknessSubnet(BasicModel):
         thickness = mu[:,1:,:]-mu[:,0:-1,:] # size: B,N-1,W
         zeroThickness = torch.zeros_like(thickness)
         thickness = torch.where(thickness < zeroThickness, zeroThickness, thickness) # make sure thickness >=0
+        R = thickness
 
-
-
-
-
-
-
-        # N is numSurfaces
-        xr = self.m_rifts(x)  # output size: Bx(N-1)xHxW
-        B,N,H,W = xr.shape
-
-        riftProb = logits2Prob(xr, dim=-2)
-        if self.hps.useBetterRiftGaussian:
-            R = argSoftmax(riftProb, rangeH=[-H / 2.0, H / 2.0]) * 4.0 * self.hps.maxRift / H  # size: Bx(N-1)xW
-            R = nn.functional.relu(R)  # make sure R>=0
-        else:
-            R = argSoftmax(riftProb)*self.hps.maxRift/H  # size: Bx(N-1)xW
-
-        # use smoothLoss and KLDivLoss for rift
+        # use smoothLoss and L1loss for rift
         loss_riftL1 = 0.0
         loss_smooth = 0.0
-        loss_div = 0.0
         if self.hps.existGTLabel:
             if self.hps.useL1Loss:
                 l1Loss = nn.SmoothL1Loss().to(device)
@@ -122,18 +105,8 @@ class ThicknessSubnet(BasicModel):
                 smoothRiftLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
                 loss_smooth = smoothRiftLoss(R, riftGTs)
 
-            if self.hps.useKLDivLoss:
-                klDivLoss = nn.KLDivLoss(reduction='batchmean').to(device)
-                # the input given is expected to contain log-probabilities
-                sigma2 = self.hps.sigma**2
-                sigma2 = float(sigma2)*torch.ones_like(riftGTs)
-                if self.hps.useBetterRiftGaussian:
-                    gaussianRiftGTs = batchGaussianizeLabels(riftGTs*H/(4.0*self.hps.maxRift), sigma2, [-H/2.0, H/2.0])
-                else:
-                    gaussianRiftGTs = batchGaussianizeLabels(riftGTs*H/self.hps.maxRift, sigma2, H)  # very important conversion
-                loss_div = klDivLoss(nn.LogSoftmax(dim=2)(xr), gaussianRiftGTs)
 
-        loss = loss_riftL1 + loss_smooth + loss_div
+        loss = loss_riftL1 + loss_smooth
 
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")

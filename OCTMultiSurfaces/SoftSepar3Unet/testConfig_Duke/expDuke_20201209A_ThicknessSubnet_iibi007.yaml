@@ -107,5 +107,5 @@ useReLUInPretrain: True
 goodBscans: []
 # in rift loss
 useL1Loss: True
-useSmoothLoss: False
+useSmoothLoss: True
 useKLDivLoss: False
