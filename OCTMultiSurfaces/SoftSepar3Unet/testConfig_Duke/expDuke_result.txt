@@ -9,8 +9,9 @@ idea of further improving rift(thickness) network:
   F  This method fits physical intuition of layer thickness computation;
   G  Add dropout in the UNet After concatenation in the expand path;   --done
   H  Add filter number of each layer, as predicting thickness is more complicated than predicting surfaces;  --done
-  I  Thickness groud truth does not need smooth;   --done
+  I  Thickness ground truth does not need smooth;   --done
   G  Use L1 loss + smoothThicknessLoss; --done
+  I  initial layer filter number =32, which is different with surfaceNet;  --done
 
 Now new thickness network  in training.
 
