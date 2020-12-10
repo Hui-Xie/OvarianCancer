@@ -15,6 +15,16 @@ idea of further improving rift(thickness) network:
 
 Now new thickness network  in training.
 
+Duke_AMD data is 12.7 times bigger than Tongren data,
+and we can not load all of them into memory one time, so each epoch, we need load data from the disk.
+and both new network has bigger filter number.
+The new JHU network and Thickness Network both need 45 min per epoch.
+
+Duke_AMD data statistics:
+  training set: 266 volumes x 51 slices per volume, where 187 AMD + 79 control = 266 volumes;
+  validation set: 59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
+  test set:  59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
+
 
 
 # Dec 07th, Monday, 2020

@@ -1,9 +1,10 @@
+# Dec 10th, Thursday, 2020
+Current the best result: expOCT2SysD_20201205_D:
+
+
 # Dec 8th, 2020
 "Overfitting is also caused by a deep model over training data. In that case, you'll observe divergence in loss between val and train very early."
 --https://datascience.stackexchange.com/questions/43191/validation-loss-is-not-decreasing
-
-
-
 
 # Dec 4th, Friday, 2020
 The memory footprint of full loading all data into memory:

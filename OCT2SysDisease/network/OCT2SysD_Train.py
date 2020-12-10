@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
-from ThicknessMap2HyperTensionNet import ThicknessMap2HyperTensionNet
+from ThicknessMap2HyperTensionNet_B import ThicknessMap2HyperTensionNet_B
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")
@@ -127,7 +127,7 @@ def main():
             allTrainGTs = t if allTrainGTs is None else torch.cat((allTrainGTs, t))
 
             #debug
-            # break
+            break
 
         trHyperTAcc = computeClassificationAccuracyWithLogit(allTrainGTs, allTrainOutput)
 
@@ -154,7 +154,7 @@ def main():
                 allValidationGTs    = t if allValidationGTs    is None else torch.cat((allValidationGTs,    t))
 
                 # debug
-                # break
+                break
 
             validHyperTLoss /= validBatch
 
@@ -190,7 +190,7 @@ def main():
 
 
         # debug
-        # print(f"smoke test: finish one epoch of training and  validation")
+        print(f"smoke test: finish one epoch of training and  validation")
 
     print("============ End of Training Thickness enface map 2 hypertension Network ===========")
 
