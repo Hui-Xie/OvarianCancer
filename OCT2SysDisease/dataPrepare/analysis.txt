@@ -138,6 +138,33 @@ expOCT2SysD_20201207_G: channels:     [9, 8, 7, 6, 5, 4, 3, 3]
                         at epoch 5, validation loss > training loss.
                         at threshold 0.72,  TPR 0.33, TNR 0.77 Acc 53%
 
+# Dec 10th, 2020: change 4 FC layers into a AvgPooling + 1 FC:
+expOCT2SysD_20201210_A: channels:     [9, 8, 7, 6]
+                        dropoutRates: [0.0,0.0,0.0,0.0]  # 4 dropout layers.
+                        at stable stage: 100 epochs,  taining acc: 71% continue increasing  , validation acc: 53%
+                        at epoch 5, validation loss > training loss.
+                        at threshold 0.44,  TPR 0.63, TNR 0.55 , Acc 0.55
+
+
+expOCT2SysD_20201210_B: channels:     [64, 64, 64, 64]
+                        dropoutRates: [0.0,0.0,0.0,0.0]  # 4 dropout layers.
+                        at stable stage: taining acc: 99% , validation acc: 50%
+                        at epoch 9, validation loss > training loss.
+                        at threshold 0.90,  TPR 0.38, TNR 0.69 , Acc 0.52
+
+
+expOCT2SysD_20201210_C: channels:     [32, 32, 32, 32]
+                        dropoutRates: [0.0,0.0,0.0,0.0]  # 4 dropout layers.
+                        at stable stage: taining acc: 97% , validation acc: 53%
+                        at epoch , validation loss > training loss.
+                        at threshold 0.55,  TPR 0.57, TNR 0.52 , Acc 0.55
+
+expOCT2SysD_20201210_D: channels:     [64, 64, 64, 64]
+                        dropoutRates: [0.0,0.5,0.5,0.5]  # 4 dropout layers.
+                        at stable stage: taining acc: 63% , validation acc: 54%
+                        at epoch 6, validation loss > training loss.
+                        at threshold 0.38,  TPR 0.71, TNR 0.43 , Acc 0.59
+
 
 
 
