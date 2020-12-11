@@ -29,7 +29,7 @@ class ThicknessMap2HyperTensionNet_B(BasicModel):
             nn.Hardswish(),  # 1x32
             nn.Dropout2d(p=hps.dropoutRates[3])
         )
-        # there follows a avgPool to average space features.
+        # there follows an avgPool to average space features.
         self.m_adaptiveAvgPool1D = nn.AdaptiveAvgPool1d(1)
 
         self.m_fcLayers= nn.Linear(hps.channels[3], 1)
