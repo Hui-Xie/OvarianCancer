@@ -177,9 +177,9 @@ def main():
         writer.add_scalars('validation/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validHyperTLoss < preValidLoss:
+        #if validHyperTLoss < preValidLoss:
         # if  hyperTAcc > preAccuracy:
-        #if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
+        if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
             net.updateRunParameter("validationLoss", validHyperTLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("hyperTensionAccuracy", validHyperTAcc)

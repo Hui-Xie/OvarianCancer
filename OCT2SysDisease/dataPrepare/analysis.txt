@@ -142,29 +142,29 @@ expOCT2SysD_20201207_G: channels:     [9, 8, 7, 6, 5, 4, 3, 3]
 # as accuracy depends on threshold, using loss to judge reflection point is better
 expOCT2SysD_20201210_A: channels:     [9, 8, 7, 6]
                         dropoutRates: [0.0,0.0,0.0,0.0]  # 4 dropout layers.
-                        at stable stage: 100 epochs,  taining acc: 71% continue increasing  , validation acc: 53%
+                        at stable stage: 100 epochs,  taining acc: 77% continue increasing  , validation acc: 54%
                         at epoch 2, validation loss > training loss.
                         at threshold 0.44,  TPR 0.63, TNR 0.55 , Acc 0.55
 
 
 expOCT2SysD_20201210_B: channels:     [64, 64, 64, 64]
                         dropoutRates: [0.0,0.0,0.0,0.0]  # 4 dropout layers.
-                        at stable stage: taining acc: 99% , validation acc: 50%
+                        at stable stage: taining acc: 99% , validation acc: 52%
                         at epoch 3, validation loss > training loss.
                         at threshold 0.90,  TPR 0.38, TNR 0.69 , Acc 0.52
 
 
 expOCT2SysD_20201210_C: channels:     [32, 32, 32, 32]
                         dropoutRates: [0.0,0.0,0.0,0.0]  # 4 dropout layers.
-                        at stable stage: taining acc: 97% , validation acc: 53%
+                        at stable stage: taining acc: 99% , validation acc: 54%
                         at epoch 0, validation loss > training loss.
                         at threshold 0.55,  TPR 0.57, TNR 0.52 , Acc 0.55
 
 expOCT2SysD_20201210_D: channels:     [64, 64, 64, 64]
                         dropoutRates: [0.0,0.5,0.5,0.5]  # 4 dropout layers.
-                        at stable stage: taining acc: 63% , validation acc: 54%
-                        at epoch 11, validation loss > training loss.
-                        at threshold 0.38,  TPR 0.71, TNR 0.43 , Acc 0.59
+                        at stable stage: taining acc: 69% , validation acc: 55%
+                        at epoch 3, validation loss > training loss.
+                        at threshold 0.46,  TPR 0.69, TNR 0.47 , Acc 0.59
 
 
 
