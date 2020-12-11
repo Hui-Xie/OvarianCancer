@@ -184,18 +184,40 @@ expOCT2SysD_20201210_D: channels:     [64, 64, 64, 64]
 expOCT2SysD_20201211_A:
 channels:     [128, 64]
 dropoutRates: [0.5,0.5]  # 2 dropout layers.
+at epoch 8, validaLoss > trainingLoss.
+threshold 0.48,, TPR 0.73, TNR 0.46, Acc 0.61.
 
 expOCT2SysD_20201211_B:
 channels:     [256, 128]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 60, validaLoss > trainingLoss.  overfitting trend is not explict, it is still in improving.
+threshold 0.48,, TPR 0.63, TNR 0.55, Acc 0.60.
 
 expOCT2SysD_20201211_C:
 channels:     [128, 64]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 80, validaLoss > trainingLoss.  overfitting trend is not explict, it is still in improving.
+threshold 0.47,, TPR 0.75, TNR 0.43, Acc 0.61.
 
 expOCT2SysD_20201211_D:
 channels:     [64, 64]
 dropoutRates: [0.5,0.5]  # 2 dropout layers.
+at epoch 13, validaLoss > trainingLoss.
+threshold 0.45,, TPR 0.70, TNR 0.50, Acc 0.61.
+
+expOCT2SysD_20201211_E: in lnx-idea005.ecn.uiowa.edu
+channels:     [64, 64]
+dropoutRates: [0.8,0.8]  # 2 dropout layers.
+
+expOCT2SysD_20201211_F: in lnx-idea005.ecn.uiowa.edu
+channels:     [512, 256]
+dropoutRates: [0.8,0.8]  # 2 dropout layers.
+
+expOCT2SysD_20201211_G: in lnx-idea005.ecn.uiowa.edu
+channels:     [128, 128]
+dropoutRates: [0.8,0.8]  # 2 dropout layers.
+
+
 
 
 
