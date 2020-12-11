@@ -14,12 +14,12 @@ class ThicknessMap2HyperTensionNet_C(BasicModel):
         self.m_conv2DLayers = nn.Sequential(
             nn.Conv2d(hps.inputChannels, hps.channels[0], kernel_size=(31,31), stride=(1,4), padding=0, bias=True),
             nn.BatchNorm2d(hps.channels[0]),
-            nn.ReLU(inplace=True), # 1x121
-            nn.Dropout2d(p=hps.dropoutRates[0], inplace=True),  # dropout after activation function
+            nn.ReLU(inplace=False), # 1x121
+            nn.Dropout2d(p=hps.dropoutRates[0], inplace=False),  # dropout after activation function
             nn.Conv2d(hps.channels[0], hps.channels[1], kernel_size=(1,7), stride=(1,3), padding=0, bias=True),
             nn.BatchNorm2d(hps.channels[1]),
-            nn.ReLU(inplace=True),  # 1x39
-            nn.Dropout2d(p=hps.dropoutRates[1], inplace=True),  # dropout after activation function
+            nn.ReLU(inplace=False),  # 1x39
+            nn.Dropout2d(p=hps.dropoutRates[1], inplace=False),  # dropout after activation function
             # this Dropout2D has same affect of dropput before Linear layer.
         )
         # there follows an avgPool to average space features.
