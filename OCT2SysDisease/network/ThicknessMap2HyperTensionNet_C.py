@@ -20,7 +20,7 @@ class ThicknessMap2HyperTensionNet_C(BasicModel):
             nn.BatchNorm2d(hps.channels[1]),
             nn.ReLU(inplace=False),  # 1x39
             nn.Dropout2d(p=hps.dropoutRates[1], inplace=False),  # dropout after activation function
-            # this Dropout2D has same affect of dropput before Linear layer.
+            # this Dropout2D has same affect of dropout before Linear layer.
         )
         # there follows an avgPool to average space features.
         self.m_adaptiveAvgPool1D = nn.AdaptiveAvgPool1d(1)
