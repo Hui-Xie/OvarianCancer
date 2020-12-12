@@ -1,0 +1,64 @@
+# add dropout layer.
+
+debug: True
+debugOutputPeriod: 50
+
+# train config
+device: torch.device('cuda:0')   #GPU ID
+batchSize: 60 # for 3600 training volumes, and 959 validation volumes
+learningRate: 1.0  #
+lrPatience: 12   # learning rate decay patience
+lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
+lrSchedulerMode: "min"  # "min" for loss, "max" for sum of Acc+TNR+TPR
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap"
+
+# _delNonExist: delete ID nonexist, and repeated ID;
+# _final: delete the ID whose slice number does not equal to 31.
+# _delErrWID: delete W=384 image ID
+# _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv"
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+# ODOS: "OD"  # right(OD) or left(OS) eye
+
+# this file is placed in netPath directory.
+trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
+
+# Network config
+network: "ThicknessMap2HyperTensionNet_D"
+imageH: 31
+imageW: 512
+volumeSuffix: "_Volume_thickness_enface.npy"
+# bothEyes: False  # choose all OD eyes
+inputChannels: 9 # rawImage + gradChannels(W,H)
+gradChannels: 0   # the added gradient channels beside raw image channel
+channels:     [32]  # 1 conv +avgPooling+ 1 FC
+dropoutRates: [0.8]  # 1 dropout layers.
+appKey: "hypertension_bp_plus_history$"
+
+#dropoutRate: 0.2 # dropout after global average pooling
+weightDecay: 1.0e-5 #
+
+
+hypertensionClassPercent:  [0.4565578306585501, 0.54344216934145]  # for trainID_delNonExist_delErrWID_excludeMGM.csv
+# hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
+#hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
+
+trainAugmentation: True
+validationAugmentation: True
+augmentProb: 0.3  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
+# for salt pepper noise
+#saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+#saltRate: 0.5  # saltRate = salt/(salt+pepper)
+
+# save network
+netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
