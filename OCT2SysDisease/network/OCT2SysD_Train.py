@@ -15,6 +15,7 @@ sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
 from ThicknessMap2HyperTensionNet_C import ThicknessMap2HyperTensionNet_C
+from ThicknessMap2HyperTensionNet_D import ThicknessMap2HyperTensionNet_D
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")
