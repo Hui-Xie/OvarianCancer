@@ -256,7 +256,6 @@ expOCT2SysD_20201211_E: in lnx-idea006.ecn.uiowa.edu
 channels:     [64, 64]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
 
-
 expOCT2SysD_20201211_F: in lnx-idea006.ecn.uiowa.edu
 channels:     [512, 256]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
@@ -265,6 +264,20 @@ expOCT2SysD_20201211_G: in lnx-idea006.ecn.uiowa.edu
 channels:     [128, 128]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
 
+expOCT2SysD_20201211_H: in lnx-idea006.ecn.uiowa.edu
+channels:     [64, 32]
+dropoutRates: [0.8,0.8]  # 2 dropout layers.
+
+expOCT2SysD_20201211_I: in lnx-idea006.ecn.uiowa.edu
+channels:     [32, 16]
+dropoutRates: [0.8,0.8]  # 2 dropout layers.
+
+expOCT2SysD_20201211_J: in lnx-idea006.ecn.uiowa.edu
+channels:     [16, 8]
+dropoutRates: [0.5,0.5]  # 2 dropout layers.
+
+
+==============================================
 # one layer network  on Dec 12th, 2020
 expOCT2SysD_20201212_A:  on c-xwu000
 channels:     [512]  # 1 conv +avgPooling+ 1 FC
