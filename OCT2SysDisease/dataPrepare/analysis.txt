@@ -319,25 +319,25 @@ threshold 0.48, TPR 0.61, TNR 0.55, Acc 0.61
 
 ===========================================
 
-expOCT2SysD_20201212_E:  on lnx-idea005
+expOCT2SysD_20201212_E:  on lnx-idea005 _> iibi007
 channels:     [32]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
 
 
-expOCT2SysD_20201212_F:  on lnx-idea005
+expOCT2SysD_20201212_F:  on lnx-idea005 _> iibi007
 channels:     [32]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
 
-expOCT2SysD_20201212_G:  on lnx-idea005
+expOCT2SysD_20201212_G:  on lnx-idea005 _> iibi007
 channels:     [16]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
 
 
-expOCT2SysD_20201212_H:  on lnx-idea005
+expOCT2SysD_20201212_H:  on lnx-idea005 _> iibi007
 channels:     [16]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
 
-expOCT2SysD_20201212_I:  on lnx-idea005
+expOCT2SysD_20201212_I:  on lnx-idea005 _> iibi007
 channels:     [8]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
 
