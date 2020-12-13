@@ -1,5 +1,17 @@
 # Dec 12th, Saturday,2020
 Now 3 training programs are running on lnx-idea006.ecn.uiowa.edu.
+Current program:
+Gradually reduce network complexity (8 layers, 4 layers, 2 layers), and did experiments to reduce overfitting of thickness2Hypertension
+thickness2Hypertension network now uses 2 layer network.
+got result:threshold 0.47, TPR 0.71, TNR 0.49, Accuracy 0.61 on validation data with 45.6% of 0s and 54.4% of 1s.
+But network still get overfitting at 30 epochs.
+use the contrast of validation and training loss, instead of accuracy, to judge the reflection point of over-fitting;
+loss directly indicates the error with respect with ground truth, without other factors;
+while accuracy needs another threshold to measure accuracy values, and different thresholds will lead different accuracy values.
+
+
+
+
 
 (base) [lnx-idea006:network]#nvidia-smi
 Sat Dec 12 12:31:55 2020
