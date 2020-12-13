@@ -341,7 +341,7 @@ expOCT2SysD_20201212_I:  on lnx-idea005 _> iibi007
 channels:     [8]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
 
-expOCT2SysD_20201212_J:  on lnx-idea005
+expOCT2SysD_20201212_J:  on lnx-idea005  _> c-xwu000 with pid: 30671
 channels:     [4]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
 
