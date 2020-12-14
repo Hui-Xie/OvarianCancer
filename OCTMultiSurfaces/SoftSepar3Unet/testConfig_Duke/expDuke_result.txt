@@ -1,11 +1,55 @@
 # Dec 14th, Monday, 2020
-JHU method result on validation data:
+JHU method result on Duke_AMD validation data:
 expName: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
 best error at epoch 47
 muError: 2.11
 muErroSurface: 0.9226, 2.266, 3.14
 muStd:   2.084
 muStdSurface: 1.37, 2.346, 1.804
+
+JHU method on test Duke_AMD test data:
+expName: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+stdSurfaceError = tensor([2.5991, 1.5675, 1.6567], device='cuda:1')
+muSurfaceError = tensor([1.1345, 1.8918, 2.8836], device='cuda:1')
+stdError = 2.110976219177246
+muError = 1.9699755907058716
+hausdorff Distance = [[153.  40.  71.]]
+pixel number of violating surface-separation constraints: 0
+
+Different method on Duke_AMD test data:
+=========================================================
+Method                      muError             stdError           Hausdorff_Distance(pixel)            expName
+JHU                         1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+NoReLU_NoRift_ourMethod     2.039097547531128   2.21911358833313                                        expDuke_20201117A_SurfaceSubnet_NoReLU
+ReLU_NoRift_OurMethod       2.0106043815612793  1.9898078441619873                                      expDuke_20200902A_SurfaceSubnet
+==========================================================
+
+
+
+
+New ThicknessNetwork for  on Duke_AMD validation data:
+expName: expDuke_20201209A_ThicknessSubnet_iibi007
+best error at epoch 112
+muError: 4.036
+muErroSurface: 3.495, 4.646
+muStd:   2.725
+muStdSurface: 2.663, 2.689
+
+
+
+
+comparing with history:
+RiftSubnet For test data:
+experimentName:expDuke_20200902A_RiftSubnet: for Rift prediction:
+muError = 5.921670913696289
+muSurfaceError = tensor([3.4042, 8.4392], device='cuda:2')
+stdError = 3.658905267715454
+stdSurfaceError = tensor([2.7749, 2.5322], device='cuda:2')
+Lr = 1.0e-2
+epoch = 42  for training.
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 
 

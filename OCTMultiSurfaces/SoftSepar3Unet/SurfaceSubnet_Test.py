@@ -51,7 +51,7 @@ def main():
 
     outputXmlSegFiles = True
 
-    OutputNumImages = 2
+    OutputNumImages = 0
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
