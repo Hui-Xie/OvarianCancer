@@ -1,3 +1,29 @@
+# Dec 14th, 2020
+Experiment on Lnx-idea006.ecn.uiowa.edu:
+Experiment: expOCT2SysD_20201211_J
+Net starts training from scratch, and save at /home/hxie1/data/BES_3K/netParameters/ThicknessMap2HyperTensionNet_C/expOCT2SysD_20201211_J
+Experiment: expOCT2SysD_20201211_E
+Net starts training from scratch, and save at /home/hxie1/data/BES_3K/netParameters/ThicknessMap2HyperTensionNet_C/expOCT2SysD_20201211_E
+Experiment: expOCT2SysD_20201211_H
+Net starts training from scratch, and save at /home/hxie1/data/BES_3K/netParameters/ThicknessMap2HyperTensionNet_C/expOCT2SysD_20201211_H
+Experiment: expOCT2SysD_20201211_F
+Net starts training from scratch, and save at /home/hxie1/data/BES_3K/netParameters/ThicknessMap2HyperTensionNet_C/expOCT2SysD_20201211_F
+Experiment: expOCT2SysD_20201211_I
+Net starts training from scratch, and save at /home/hxie1/data/BES_3K/netParameters/ThicknessMap2HyperTensionNet_C/expOCT2SysD_20201211_I
+Experiment: expOCT2SysD_20201211_G
+Net starts training from scratch, and save at /home/hxie1/data/BES_3K/netParameters/ThicknessMap2HyperTensionNet_C/expOCT2SysD_20201211_G
+
+Program in c-xwu000:
+(base) [c-xwu000:network]#ps 23367 23346 23269 30671
+  PID TTY      STAT   TIME COMMAND
+23269 ?        Rl   2826:34 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_C.yaml
+23346 ?        Rl   2823:30 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_B.yaml
+23367 ?        Rl   2823:33 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_D.yaml
+30671 ?        Rl   2110:31 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_J.yaml
+
+
+
+
 # Dec 12th, Saturday,2020
 Now 3 training programs are running on lnx-idea006.ecn.uiowa.edu.
 Current program:
@@ -267,26 +293,38 @@ threshold 0.45,, TPR 0.70, TNR 0.50, Acc 0.61.
 expOCT2SysD_20201211_E: in lnx-idea006.ecn.uiowa.edu
 channels:     [64, 64]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 39, validaLoss > trainingLoss.  overfitting
+threshold 0.47, TPR 0.66, TNR 0.53, Acc 0.60.
 
 expOCT2SysD_20201211_F: in lnx-idea006.ecn.uiowa.edu
 channels:     [512, 256]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 33, validaLoss > trainingLoss.  overfitting
+threshold 0.48, TPR 0.66, TNR 0.52, Acc 0.60.
 
 expOCT2SysD_20201211_G: in lnx-idea006.ecn.uiowa.edu
 channels:     [128, 128]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 45, validaLoss > trainingLoss.  overfitting. validation loss didn't increase.
+threshold 0.50, TPR 0.64, TNR 0.55, Acc 0.60.
 
-expOCT2SysD_20201211_H: in lnx-idea006.ecn.uiowa.edu
+expOCT2SysD_20201211_H: in lnx-idea006.ecn.uiowa.edu  (worth to research.)
 channels:     [64, 32]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 625, validaLoss =  trainingLoss.  No explict overfitting
+threshold 0.46, TPR 0.79, TNR 0.40, Acc 0.61.
 
-expOCT2SysD_20201211_I: in lnx-idea006.ecn.uiowa.edu
+expOCT2SysD_20201211_I: in lnx-idea006.ecn.uiowa.edu   (worth to research.)
 channels:     [32, 16]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
+at epoch 700, validaLoss = trainingLoss.  No explict overfitting
+threshold 0.47, TPR 0.83, TNR 0.35, Acc 0.62.
 
 expOCT2SysD_20201211_J: in lnx-idea006.ecn.uiowa.edu
 channels:     [16, 8]
 dropoutRates: [0.5,0.5]  # 2 dropout layers.
+at epoch 18, validaLoss > trainingLoss.  overfitting. But sum is 1.823
+threshold 0.45, TPR 0.67, TNR 0.55, Acc 0.61.
 
 
 ==============================================
@@ -300,22 +338,22 @@ at epoch 15, validationLoss > trainingLoss.
 expOCT2SysD_20201212_B: on c-xwu000
 channels:     [256]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
-at epoch 22, validationLoss > trainingLoss.
+at epoch 44, validationLoss > trainingLoss.  Validaiton loss increase after inflection point.
 threshold 0.46, TPR 0.7, TNR 0.49, Acc 0.61
 
 
 expOCT2SysD_20201212_C:  on c-xwu000
 channels:     [128]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
-at epoch 31, validationLoss > trainingLoss.
-threshold 0.47, TPR 0.71, TNR 0.49, Acc 0.61
+at epoch 44, validationLoss > trainingLoss.
+threshold 0.46, TPR 0.73, TNR 0.45, Acc 0.60
 
 
 expOCT2SysD_20201212_D:  on c-xwu000
 channels:     [64]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
-at epoch 24, validationLoss > trainingLoss.
-threshold 0.48, TPR 0.61, TNR 0.55, Acc 0.61
+at epoch 54, validationLoss > trainingLoss. overfitting.
+threshold 0.49, TPR 0.62, TNR 0.57, Acc 0.60
 
 ===========================================
 
@@ -341,9 +379,11 @@ expOCT2SysD_20201212_I:  on lnx-idea005 _> iibi007
 channels:     [8]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
 
-expOCT2SysD_20201212_J:  on lnx-idea005  _> c-xwu000 with pid: 30671
+expOCT2SysD_20201212_J:  on lnx-idea005  _> c-xwu000 with pid: 30671  (too small is also not good.)
 channels:     [4]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
+at epoch 20, validaLoss > trainingLoss.  overfitting.
+threshold 0.49, TPR 0.69, TNR 0.47, Acc 0.58.
 
 
 # Dec 3th, Thursday, 2020
