@@ -4,7 +4,7 @@ debug: True
 debugOutputPeriod: 50
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
 batchSize: 30 # for 3600 training volumes, and 959 validation volumes
 learningRate: 1.0  #
 lrPatience: 12   # learning rate decay patience
@@ -30,15 +30,15 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
 
 # Network config
-network: "ThicknessMap2HyperTensionNet_C"
+network: "ThicknessMap2HyperTensionNet_D"
 imageH: 31
 imageW: 512
 volumeSuffix: "_Volume_thickness_enface.npy"
 # bothEyes: False  # choose all OD eyes
 inputChannels: 9 # rawImage + gradChannels(W,H)
 gradChannels: 0   # the added gradient channels beside raw image channel
-channels:     [16, 8]
-dropoutRates: [0.8,0.8]  # 2 dropout layers.
+channels:     [1]  # 1 conv +avgPooling+ 1 FC
+dropoutRates: [0]  # 1 dropout layers.
 appKey: "hypertension_bp_plus_history$"
 
 #dropoutRate: 0.2 # dropout after global average pooling
