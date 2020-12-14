@@ -68,9 +68,11 @@ expOCT2SysD_20201212_L:
     channels:     [24]  # 1 conv +avgPooling+ 1 FC
     dropoutRates: [0.8]  # 1 dropout layers.
 
-expOCT2SysD_20201212_M:
+expOCT2SysD_20201212_M:  on c-iibi007
     channels:     [1]  # 1 conv +avgPooling+ 1 FC
     dropoutRates: [0]  # 1 dropout layers =0 .
+
+
 
 # Dec 12th, Saturday,2020
 Now 3 training programs are running on lnx-idea006.ecn.uiowa.edu.
