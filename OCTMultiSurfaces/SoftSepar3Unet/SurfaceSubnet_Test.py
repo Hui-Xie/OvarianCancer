@@ -16,12 +16,14 @@ from network.OCTTransform import *
 import time
 
 from SurfaceSubnet import SurfaceSubnet
+from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
+from framework.NetTools import *
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -174,8 +176,10 @@ def main():
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
 
+
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir,
+                                           refXMLFile=hps.refXMLFile,
                                            y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
 
     testEndTime = time.time()
@@ -184,6 +188,9 @@ def main():
     B,H,W = images.shape
     B, S, W = testOutputs.shape
     patientIDList = []
+
+    if hps.existGTLabel:  # compute hausdorff distance
+        hausdorffD = columnHausdorffDist(testOutputs, testGts).reshape(1, S)
 
     pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan', 'tab:blue']
     assert S <= len(pltColors)
@@ -354,6 +361,8 @@ def main():
             file.write(f"muSurfaceError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
+            file.write(f"hausdorff Distance = {hausdorffD}\n")
+
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
         if comparisonSurfaceIndex is not None:

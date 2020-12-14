@@ -1,3 +1,15 @@
+# Dec 14th, Monday, 2020
+JHU method result on validation data:
+expName: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+best error at epoch 47
+muError: 2.11
+muErroSurface: 0.9226, 2.266, 3.14
+muStd:   2.084
+muStdSurface: 1.37, 2.346, 1.804
+
+
+
+
 # Dec 9th, Wednesday, 2020
 Further think the improvement of RiftNet:
 idea of further improving rift(thickness) network:

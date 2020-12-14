@@ -272,11 +272,13 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
     outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
-def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir, y=496, voxelSizeY=3.87, dataInSlice=False):
+def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir,
+                                   refXMLFile="/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml",
+                                    y=496, voxelSizeY=3.87, dataInSlice=False):
     B,S,W = testOutputs.shape
     assert B == len(testIDs)
     assert 0 == B%numBscan
-    refXMLFile = "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+    # refXMLFile = "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
     i=0
     while i<B:
         predicition = testOutputs[i:i+numBscan,:,:]
