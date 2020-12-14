@@ -21,6 +21,15 @@ Program in c-xwu000:
 23367 ?        Rl   2823:33 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_D.yaml
 30671 ?        Rl   2110:31 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_J.yaml
 
+program in c-iibi007:
+ps 104438 104116 104226 104297 104369
+   PID TTY      STAT   TIME COMMAND
+104116 ?        Rl   2192:51 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_E_iibi007.yaml
+104226 ?        Rl   2190:57 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_F_iibi007.yaml
+104297 ?        Rl   2193:27 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_G_iibi007.yaml
+104369 ?        Rl   2209:29 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_H_iibi007.yaml
+104438 ?        Rl   2210:10 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201212_I_iibi007.yaml
+
 
 
 
@@ -360,24 +369,33 @@ threshold 0.49, TPR 0.62, TNR 0.57, Acc 0.60
 expOCT2SysD_20201212_E:  on lnx-idea005 _> iibi007
 channels:     [32]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
-
+at epoch 57, validaLoss > trainingLoss.  but validation still decrease. (Not bad)
+threshold 0.46, TPR 0.78, TNR 0.42, Acc 0.61.
 
 expOCT2SysD_20201212_F:  on lnx-idea005 _> iibi007
 channels:     [32]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
+at epoch 13, validaLoss > trainingLoss.  explict overfitting, validation loss increases.
+threshold 0.47, TPR 0.64, TNR 0.53, Acc 0.59.
 
 expOCT2SysD_20201212_G:  on lnx-idea005 _> iibi007
 channels:     [16]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.8]  # 1 dropout layers.
+at epoch 69, validaLoss > trainingLoss.   a liitle overfitting.
+threshold 0.47, TPR 0.77, TNR 0.40, Acc 0.60.
 
 
 expOCT2SysD_20201212_H:  on lnx-idea005 _> iibi007
 channels:     [16]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
+at epoch 15, validaLoss > trainingLoss.  explicit overfitting.
+threshold 0.47, TPR 0.72, TNR 0.47, Acc 0.60.
 
 expOCT2SysD_20201212_I:  on lnx-idea005 _> iibi007
 channels:     [8]  # 1 conv +avgPooling+ 1 FC
 dropoutRates: [0.5]  # 1 dropout layers.
+at epoch 22, validaLoss > trainingLoss.  explicit overfitting.
+threshold 0.46, TPR 0.74, TNR 0.43, Acc 0.60.
 
 expOCT2SysD_20201212_J:  on lnx-idea005  _> c-xwu000 with pid: 30671  (too small is also not good.)
 channels:     [4]  # 1 conv +avgPooling+ 1 FC
