@@ -4,7 +4,7 @@ debug: True
 debugOutputPeriod: 50
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 30 # for 3600 training volumes, and 959 validation volumes
 learningRate: 1.0  #
 lrPatience: 12   # learning rate decay patience
