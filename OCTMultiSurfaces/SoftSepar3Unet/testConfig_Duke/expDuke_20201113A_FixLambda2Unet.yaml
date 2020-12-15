@@ -17,7 +17,7 @@ status: "fineTuneSurfaceRift" # "test" #"fineTuneSurfaceRift" # "trainLambda" #"
 # for 3 Unets
 surfaceSubnet: "SurfaceSubnet"
 surfaceSubnetYaml: "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_SurfaceSubnet.yaml"
-surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
+surfaceSubnetDevice: torch.device('cuda:3')   #GPU ID
 surfaceSubnetLr: 5.0e-3  # pretain at epoch 74  # it must have dot and +/- sige in scientific notation
 
 riftSubnet: "RiftSubnet"
