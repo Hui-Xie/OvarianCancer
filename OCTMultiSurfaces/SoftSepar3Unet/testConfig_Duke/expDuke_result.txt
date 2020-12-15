@@ -1,3 +1,12 @@
+# Dec 15th, Tuesday, 2020
+Meeting with professor:
+1   add filter number of ReLU solution, to get better muError;
+2   further improve the thickness prediciton accuracy;
+
+
+
+
+
 # Dec 14th, Monday, 2020
 JHU method result on Duke_AMD validation data: (18GB memory for training)
 expName: expDuke_20201208A_SurfaceNet_YufanHe_iibi007

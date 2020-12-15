@@ -1,3 +1,10 @@
+# Dec 15th, Tuesday, 2020
+Meeting with professor:
+1  use traditional baseline models for classification;
+2  may use SVM to classification;
+
+
+
 # Dec 14th, 2020
 Experiment on Lnx-idea006.ecn.uiowa.edu:
 Experiment: expOCT2SysD_20201211_J
