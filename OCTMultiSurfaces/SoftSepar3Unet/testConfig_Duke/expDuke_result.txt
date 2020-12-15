@@ -22,8 +22,11 @@ Method                      muError             stdError           Hausdorff_Dis
 JHU                         1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007
 NoReLU_NoRift_ourMethod     2.039097547531128   2.21911358833313                                        expDuke_20201117A_SurfaceSubnet_NoReLU
 ReLU_NoRift_OurMethod       2.0106043815612793  1.9898078441619873                                      expDuke_20200902A_SurfaceSubnet
+RiftError5.92+softSepartion 1.9812551736831665  1.9619948863983154                                      expDuke_20201113A_FixLambda2Unet
 ==========================================================
 
+
+==================================================================================
 
 cmd: python3 ./RiftSubnet_Train.py ./testConfig_Duke/expDuke_20201209A_ThicknessSubnet_iibi007.yaml
 New ThicknessNetwork for  on Duke_AMD validation data: (34GB memory for trainig)
@@ -44,7 +47,22 @@ stdError = 3.658905267715454
 stdSurfaceError = tensor([2.7749, 2.5322], device='cuda:2')
 Lr = 1.0e-2
 epoch = 42  for training.
+
+===========================================
+===============Formal Output Result ===========
+experimentName:expDuke_20201209A_ThicknessSubnet_iibi007
+stdThicknessError = tensor([2.5041, 1.7789], device='cuda:0')
+muThicknessError = tensor([3.0774, 4.1209], device='cuda:0')
+stdError = 2.2252163887023926
+muError = 3.5991899967193604
+hausdorff distance of Thickness = [[45.939484 49.970154]]
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
+
+Thickness (Rift) prediction on Duke_AMD test data:
+Method_Name                                 muError                 stdError            muRift0     muRift1
+expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,     8.4392
+expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,     4.1209
 
 
 
