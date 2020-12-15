@@ -80,6 +80,8 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 netPath: "/home/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
+logDir: "/home/hxie1/data/OCT_Duke/numpy_slices/log"
+refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 usePrimalDualIPM: True
 useLayerDice: False
