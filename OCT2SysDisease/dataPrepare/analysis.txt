@@ -43,7 +43,7 @@ Best network for 2Conv + 1Fc layer:
     channels:     [32, 16]
     dropoutRates: [0.8,0.8]  # 2 dropout layers.
     at epoch 700, validaLoss = trainingLoss.  No explict overfitting, with training loss: 0.6261, validation loss: 0.6248
-    threshold 0.47, TPR 0.84, TNR 0.35, Acc 0.62.
+
 
     expOCT2SysD_20201211_J: in lnx-idea006.ecn.uiowa.edu
     channels:     [16, 8]

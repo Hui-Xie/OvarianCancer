@@ -60,9 +60,9 @@ hausdorff distance of Thickness = [[45.939484 49.970154]]
 
 Thickness (Rift) prediction on Duke_AMD test data:
 ============================================================================================================
-Method_Name                                 muError                 stdError            muRift0     muRift1
-expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,     8.4392
-expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,     4.1209
+Method_Name                                 thicknessError          thicknessStdError   thicknessErrorRift0     thicknessErrorRift1
+expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,                 8.4392
+expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,                 4.1209
 ============================================================================================================
 
 Analysis:
