@@ -72,8 +72,9 @@ expOCT2SysD_20201212_M:  on c-iibi007
     channels:     [1]  # 1 conv +avgPooling+ 1 FC
     dropoutRates: [0]  # 1 dropout layers =0 .
 
-On Dec 14th,20:00, suspend below program:
+On Dec 14th,2020, 20:00, suspend below program:
 python3 ./OCT2SysD_Train.py ./testConfig/expOCT2SysD_20201211_K.yaml
+at Dec 14th, 2020, 20:41, resume the above progam.
 
 
 # Dec 12th, Saturday,2020

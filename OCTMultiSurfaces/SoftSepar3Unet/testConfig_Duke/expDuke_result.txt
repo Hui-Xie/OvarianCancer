@@ -16,14 +16,13 @@ muError = 1.9699755907058716
 hausdorff Distance = [[153.  40.  71.]]
 pixel number of violating surface-separation constraints: 0
 
-Different method on Duke_AMD test data:
-=========================================================
-Method                      muError             stdError           Hausdorff_Distance(pixel)            expName
-JHU                         1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007
-NoReLU_NoRift_ourMethod     2.039097547531128   2.21911358833313                                        expDuke_20201117A_SurfaceSubnet_NoReLU
-ReLU_NoRift_OurMethod       2.0106043815612793  1.9898078441619873                                      expDuke_20200902A_SurfaceSubnet
-RiftError5.92+softSepartion 1.9812551736831665  1.9619948863983154                                      expDuke_20201113A_FixLambda2Unet
-==========================================================
+Different methods on Duke_AMD test data for pure surface net, without softSeparation at all:
+============================================================================================================================================================================
+Method                      trainingGPUMemory   muError             stdError           Hausdorff_Distance(pixel)            expName
+JHU                         18GB                1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+NoReLU_NoRift_ourMethod     10GB                2.0391054153442383  2.2191126346588135 65.          123.        54.         expDuke_20201117A_SurfaceSubnet_NoReLU (newTest)
+ReLU_NoRift_OurMethod       10GB                1.9812164306640625  1.961887240409851  50.          33.         30.         expDuke_20200902A_SurfaceSubnet (newTest)
+=============================================================================================================================================================================
 
 
 ==================================================================================
@@ -60,9 +59,17 @@ hausdorff distance of Thickness = [[45.939484 49.970154]]
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 Thickness (Rift) prediction on Duke_AMD test data:
+============================================================================================================
 Method_Name                                 muError                 stdError            muRift0     muRift1
 expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,     8.4392
 expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,     4.1209
+============================================================================================================
+
+Analysis:
+1  current ThicknessPrediction Network(expDuke_20201209A_ThicknessSubnet_iibi007) didn't use surfaceLocation loss;
+2  further improvement: add surfacelocation gaussian loss;
+3  risk: adding surfaceLocation guasssian loss may improve muError, but it may reduce differentiating information from surfacenet;
+         but it ThicknessNetwork has different network architecture, it may be still has differentiating information;
 
 
 
