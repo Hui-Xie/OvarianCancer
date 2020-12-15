@@ -18,6 +18,7 @@ from network.OCTTransform import *
 sys.path.append(".")
 from RiftSubnet import RiftSubnet
 from ThicknessSubnet import ThicknessSubnet
+from ThicknessSubnet_B import ThicknessSubnet_B
 
 import time
 import numpy as np
