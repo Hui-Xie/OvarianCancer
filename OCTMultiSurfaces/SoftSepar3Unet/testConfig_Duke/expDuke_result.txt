@@ -1,5 +1,5 @@
 # Dec 14th, Monday, 2020
-JHU method result on Duke_AMD validation data:
+JHU method result on Duke_AMD validation data: (18GB memory for training)
 expName: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
 best error at epoch 47
 muError: 2.11
@@ -25,17 +25,14 @@ ReLU_NoRift_OurMethod       2.0106043815612793  1.9898078441619873              
 ==========================================================
 
 
-
-
-New ThicknessNetwork for  on Duke_AMD validation data:
+cmd: python3 ./RiftSubnet_Train.py ./testConfig_Duke/expDuke_20201209A_ThicknessSubnet_iibi007.yaml
+New ThicknessNetwork for  on Duke_AMD validation data: (34GB memory for trainig)
 expName: expDuke_20201209A_ThicknessSubnet_iibi007
 best error at epoch 112
 muError: 4.036
 muErroSurface: 3.495, 4.646
 muStd:   2.725
 muStdSurface: 2.663, 2.689
-
-
 
 
 comparing with history:

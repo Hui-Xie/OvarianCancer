@@ -14,8 +14,10 @@ from network.OCTDataSet import OCTDataSet
 from network.OCTOptimization import *
 from network.OCTTransform import *
 
+
 sys.path.append(".")
 from RiftSubnet import RiftSubnet
+from ThicknessSubnet import ThicknessSubnet
 
 import time
 import numpy as np
@@ -26,6 +28,7 @@ from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
+from framework.NetTools import *
 
 
 def printUsage(argv):
@@ -88,7 +91,7 @@ def main():
             R, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs=batchData['GTs'],
                                         layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
             batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
-            images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages  # for output result
+            # images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages  # for output result
             if hps.existGTLabel:
                 testGts = torch.cat((testGts, batchData['riftWidth'])) if testBatch != 1 else batchData['riftWidth']
             else:
@@ -111,6 +114,9 @@ def main():
             np.save(testGtsFilePath, testGts)
 
         testR = testR.cpu().numpy()
+        if hps.existGTLabel:
+            hausdorffD = columnHausdorffDist(testR, testGts).reshape(1, -1)
+
         testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
         np.save(testRFilePath, testR)
 
@@ -119,12 +125,12 @@ def main():
             for id in testIDs:
                 file.write(f"{id}\n")
 
-        images = images.cpu().numpy().squeeze()
+        #images = images.cpu().numpy().squeeze()
         
 
     testEndTime = time.time()
     B,S,W = testR.shape
-    _,H,_ = images.shape
+    # _,H,_ = images.shape
 
     # final output result:
     curTime = datetime.datetime.now()
@@ -133,17 +139,18 @@ def main():
     with open(os.path.join(hps.outputDir, f"output_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
-        file.write(f"B,S,H,W = {B, S, H, W}\n")
+        file.write(f"B,S,H,W = {B, S, hps.inputHeight, W}\n")
         file.write(f"Test time: {testEndTime - testStartTime} seconds.\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
 
         file.write(f"\n\n===============Formal Output Result ===========\n")
         if hps.existGTLabel:
-            file.write(f"stdSurfaceError = {stdSurfaceError}\n")
-            file.write(f"muSurfaceError = {muSurfaceError}\n")
+            file.write(f"stdThicknessError = {stdSurfaceError}\n")
+            file.write(f"muThicknessError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
+            file.write(f"hausdorff distance of Thickness = {hausdorffD}\n")
 
 
 

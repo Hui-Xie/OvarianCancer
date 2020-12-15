@@ -81,6 +81,7 @@ netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  #
 loadNetPath: ""
 outputDir: ""
 logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log"
+refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 
 usePrimalDualIPM: False
