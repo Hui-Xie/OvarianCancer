@@ -46,7 +46,7 @@ batchSize: 8
 learningRate: 0.1
 
 
-network: "ThicknessSubnet"
+network: "ThicknessSubnet_B"
 inputHeight: 512   # original height
 inputWidth: 361   # rawImageWidth
 maxRift:  150.0 # maxRift + 3*sigma < H/2
@@ -91,7 +91,7 @@ useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurfaceLoss: False
 useSmoothThicknessLoss: True
-useGaussianDivLoss:  False
+useGaussianDivLoss:  True
 useBetterRiftGaussian: False
 useWeightedDivLoss: False
 useRift: True

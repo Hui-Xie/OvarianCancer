@@ -17,6 +17,7 @@ from network.OCTTransform import *
 sys.path.append(".")
 from RiftSubnet import RiftSubnet
 from ThicknessSubnet import ThicknessSubnet
+from ThicknessSubnet_B import ThicknessSubnet_B
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
