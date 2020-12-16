@@ -17,6 +17,7 @@ from OCT2SysD_Transform import OCT2SysD_Transform
 from ThicknessMap2HyperTensionNet_C import ThicknessMap2HyperTensionNet_C
 from ThicknessMap2HyperTensionNet_D import ThicknessMap2HyperTensionNet_D
 from ThicknessMap2Gender_A import ThicknessMap2Gender_A
+from ThicknessMap2HyperTensionNet_VGG16 import ThicknessMap2HyperTensionNet_VGG16
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")
@@ -83,7 +84,7 @@ def main():
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
 
     # math.log(0.5,0.98) = 34, this scheduler equals scale 0.5 per 100 epochs.
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=hps.lrSchedulerMode, factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-8, threshold=0.015, threshold_mode='rel')
+    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=hps.lrSchedulerMode, factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-5, threshold=0.015, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
 
     # Load network
