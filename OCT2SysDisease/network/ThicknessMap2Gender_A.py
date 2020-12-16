@@ -5,7 +5,7 @@ import sys
 sys.path.append("../..")
 from framework.BasicModel import BasicModel
 
-class ThicknessMap2Age_A(BasicModel):
+class ThicknessMap2Gender_A(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps

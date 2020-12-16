@@ -16,7 +16,7 @@ from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
 from ThicknessMap2HyperTensionNet_C import ThicknessMap2HyperTensionNet_C
 from ThicknessMap2HyperTensionNet_D import ThicknessMap2HyperTensionNet_D
-from ThicknessMap2Age_A import ThicknessMap2Age_A
+from ThicknessMap2Gender_A import ThicknessMap2Gender_A
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")

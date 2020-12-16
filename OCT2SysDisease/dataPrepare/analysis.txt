@@ -3,8 +3,10 @@
 total 1806 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
 values for gender have 1806 records
 1 rate: 0.41472868217054265; 2 rate: 0.5852713178294574
+emptyValueIDList = []
 
- emptyValueIDList = []
+Thickness2Gender is training: nohup python3 ./OCT2SysD_Train.py ./testConfig/expOCT2Gender_20201216_A.yaml &
+
 
 
 
