@@ -1,3 +1,14 @@
+# Dec 16th, Wednesday, 2020
+(base) [c-xwu000:dataPrepare]#python3 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv gender 12binary None
+total 1806 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
+values for gender have 1806 records
+1 rate: 0.41472868217054265; 2 rate: 0.5852713178294574
+
+ emptyValueIDList = []
+
+
+
+
 # Dec 15th, Tuesday, 2020
 Meeting with professor:
 1  use traditional baseline models for classification;

@@ -130,6 +130,8 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.hps.existGTLabel:
             ID = self.m_IDsCorrespondVolumes[index]
             label = self.m_labels[int(ID)][self.hps.appKey]
+            if "gender" == self.hps.appKey:
+                label = label - 1
 
         data = self.m_volumes[index,].clone()  # clone is safer to avoid source data corrupted
         C, H, W = data.shape

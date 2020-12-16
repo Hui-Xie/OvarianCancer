@@ -16,6 +16,7 @@ from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
 from ThicknessMap2HyperTensionNet_C import ThicknessMap2HyperTensionNet_C
 from ThicknessMap2HyperTensionNet_D import ThicknessMap2HyperTensionNet_D
+from ThicknessMap2Age_A import ThicknessMap2Age_A
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")
@@ -25,7 +26,7 @@ from framework.measure import  *
 
 
 def printUsage(argv):
-    print("============ Training of thickness map to hypertension Network =============")
+    print("============ Training of thickness map to binary prediction Network =============")
     print("=======input data is thickness enface map ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
@@ -107,7 +108,7 @@ def main():
 
         net.train()
         trBatch = 0
-        trHyperTLoss = 0.0
+        trLoss = 0.0
 
         allTrainOutput = None
         allTrainGTs = None
@@ -121,7 +122,7 @@ def main():
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
 
-            trHyperTLoss += loss
+            trLoss += loss
             trBatch += 1
 
             allTrainOutput = x if allTrainOutput is None else torch.cat((allTrainOutput, x))
@@ -130,14 +131,14 @@ def main():
             #debug
             # break
 
-        trHyperTAcc = computeClassificationAccuracyWithLogit(allTrainGTs, allTrainOutput)
+        trAcc = computeClassificationAccuracyWithLogit(allTrainGTs, allTrainOutput)
 
-        trHyperTLoss /= trBatch
+        trLoss /= trBatch
 
         net.eval()
         with torch.no_grad():
             validBatch = 0  # valid means validation
-            validHyperTLoss = 0.0
+            validLoss = 0.0
 
             allValidationOutput = None
             allValidationGTs = None
@@ -148,7 +149,7 @@ def main():
                 t = batchData['GTs'].to(device=hps.device, dtype=torch.float)  # target
 
                 x, loss = net.forward(inputs, t)
-                validHyperTLoss += loss
+                validLoss += loss
                 validBatch += 1
 
                 allValidationOutput = x if allValidationOutput is None else torch.cat((allValidationOutput, x))
@@ -157,35 +158,35 @@ def main():
                 # debug
                 # break
 
-            validHyperTLoss /= validBatch
+            validLoss /= validBatch
 
-        validHyperTAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
+        validAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
         Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumWithLogits(allValidationGTs, allValidationOutput)
 
 
         if "min" == hps.lrSchedulerMode:
-            lrScheduler.step(validHyperTLoss)
+            lrScheduler.step(validLoss)
         else: # "max"
             lrScheduler.step(Td_Acc_TPR_TNR_Sum['Sum'])
 
-        writer.add_scalars('loss',     {"train": trHyperTLoss, "validation": validHyperTLoss}, epoch)
-        writer.add_scalars('accuracy', {"train": trHyperTAcc, "validation": validHyperTAcc}, epoch)
+        writer.add_scalars('loss',     {"train": trLoss, "validation": validLoss}, epoch)
+        writer.add_scalars('accuracy', {"train": trAcc, "validation": validAcc}, epoch)
 
-        writer.add_scalar('train/HypertensionLoss', trHyperTLoss, epoch)
-        writer.add_scalar('train/HypertensionAcc', trHyperTAcc, epoch)
-        writer.add_scalar('validation/HypertensionLoss', validHyperTLoss, epoch)
-        writer.add_scalar('validation/HypertensionAcc', validHyperTAcc, epoch)
+        writer.add_scalar('train/Loss', trLoss, epoch)
+        writer.add_scalar('train/Accuracy', trAcc, epoch)
+        writer.add_scalar('validation/Loss', validLoss, epoch)
+        writer.add_scalar('validation/Accuracy', validAcc, epoch)
         writer.add_scalars('validation/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        #if validHyperTLoss < preValidLoss:
-        # if  hyperTAcc > preAccuracy:
+        #if validLoss < preValidLoss:
+        # if  validAcc > preAccuracy:
         if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
-            net.updateRunParameter("validationLoss", validHyperTLoss)
+            net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
-            net.updateRunParameter("hyperTensionAccuracy", validHyperTAcc)
+            net.updateRunParameter("accuracy", validAcc)
             net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
-            preValidLoss = validHyperTLoss
+            preValidLoss = validLoss
             preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)
 
@@ -193,7 +194,7 @@ def main():
         # debug
         # print(f"smoke test: finish one epoch of training and  validation")
 
-    print("============ End of Training Thickness enface map 2 hypertension Network ===========")
+    print("============ End of Training Thickness enface map 2 Binary Systemic Disease Prediction ===========")
 
 
 
