@@ -1,7 +1,8 @@
 # Dec 15th, Tuesday, 2020
 Meeting with professor:
-1   add filter number of ReLU solution, to get better muError;
-2   further improve the thickness prediciton accuracy;
+1   add filter number of ReLU solution, to get better muError;  --45GB GPU memory, done; Next Tuesday get result;
+2   further improve the thickness prediciton accuracy;         -- add gaussian loss, 35GB GPU memory, done; Next Tuesday get result;
+
 
 
 
