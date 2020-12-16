@@ -64,6 +64,7 @@ class ThicknessMap2HyperTensionNet_VGG16(BasicModel):
         x = x.squeeze(dim=-1)
         x = self.m_fc1(x)
         x = self.m_fc2(x)
+        x = x.squeeze(dim=-1)  # B
         criterion = nn.BCEWithLogitsLoss(pos_weight=self.posWeight)
         loss = criterion(x, t)
         return x, loss
