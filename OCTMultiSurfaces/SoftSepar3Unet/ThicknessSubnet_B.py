@@ -30,7 +30,7 @@ If Deep learning is learning in a similar mode of human brain thinking,
 learning S (surface position) is a basis for learning R(separation). 
 '''
 
-class ThicknessSubnet(BasicModel):
+class ThicknessSubnet_B(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: BxinputChaneels*H*W
