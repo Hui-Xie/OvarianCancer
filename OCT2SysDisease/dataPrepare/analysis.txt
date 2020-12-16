@@ -7,18 +7,32 @@ Further improve OCT2Hypertension Network:
 expOCT2SysD_20201211_M:
     channels:     [48, 16]
     dropoutRates: [0.0,0.8]  # 2 dropout layers.
+    at epoch  10, validationLoss > trainingLoss, validation loss increases;
+    At threshold 0.45, TPR  0.72, TNR 0.45,    Acc 0.60 ,  Sum: 1.762
 
 expOCT2SysD_20201211_N:
     channels:     [48, 16]
     dropoutRates: [0.2,0.8]  # 2 dropout layers.
+    at epoch 52 , validationLoss > trainingLoss, validation loss flats;
+    At threshold 0.50 , TPR 0.62 , TNR 0.54 ,    Acc 0.59,  Sum: 1.76
 
 expOCT2SysD_20201211_P:
     channels:     [48, 16]
-    dropoutRates: [0.5,0.8]  # 2 dropout layers.
+    dropoutRates: [0.5,0.8]  # 2 dropout layers.   (best)
+    at epoch  105, validationLoss > trainingLoss, validation loss slightly increases and flats;
+    At threshold  0.46, TPR  0.70, TNR 0.51,    Acc 0.61,  Sum: 1.824
 
 expOCT2SysD_20201211_Q:
     channels:     [48, 16]
     dropoutRates: [0.5,0.5]  # 2 dropout layers.
+    at epoch  43 , validationLoss > trainingLoss, validation loss slightly increase, flats;
+    At threshold 0.44, TPR 0,65, TNR 0.54,    Acc 0.80,  Sum: 1.8
+
+expOCT2SysD_20201211_R:
+    channels:     [48, 24]
+    dropoutRates: [0.5,0.8]  # 2 dropout layers.
+    at epoch  , validationLoss > trainingLoss,
+    At threshold  , TPR  , TNR ,    Acc ,  Sum:
 
 
 # Dec 14th, 2020
@@ -83,8 +97,8 @@ expOCT2SysD_20201211_K:
 
 expOCT2SysD_20201211_L:
     channels:     [48, 16]
-    dropoutRates: [0.8,0.8]  # 2 dropout layers.  (worrth to further reserach )
-    No overfitting, validation loss lock at 0.6244.
+    dropoutRates: [0.8,0.8]  # 2 dropout layers.  (best)
+    No overfitting, validation loss lock at 0.6244.  validation loss has same trend with training loss.
     threshold  0.48, TPR 0.79 , TNR 0.39,   Acc 0.61.  Sum: 1.797.
 
 expOCT2SysD_20201212_K:  same with config expOCT2SysD_20201212_E
