@@ -18,6 +18,7 @@ from ThicknessMap2HyperTensionNet_C import ThicknessMap2HyperTensionNet_C
 from ThicknessMap2HyperTensionNet_D import ThicknessMap2HyperTensionNet_D
 from ThicknessMap2Gender_A import ThicknessMap2Gender_A
 from ThicknessMap2HyperTensionNet_VGG16 import ThicknessMap2HyperTensionNet_VGG16
+from ThicknessMap2HyperTensionNet_HalfUNet import ThicknessMap2HyperTensionNet_HalfUNet
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")
