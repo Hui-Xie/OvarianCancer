@@ -23,7 +23,7 @@ class ThicknessMap2HyperTensionNet_HalfUNet(BasicModel):
         self.m_pool4 = nn.AdaptiveAvgPool2d((1,1))  # output size: C3x1x1
         # here needs squeeze dim=-1 and dim =-2
 
-        self.m_dropout= nn.Dropout(p=hps.dropoutRate, inplace=False),  # dropout after activation function
+        self.m_dropout= nn.Dropout(p=hps.dropoutRate, inplace=False)  # dropout after activation function
 
         self.m_fc = nn.Linear(hps.channels[hps.nLayers], 1)
 
