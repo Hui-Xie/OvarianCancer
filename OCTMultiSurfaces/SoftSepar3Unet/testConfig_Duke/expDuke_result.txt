@@ -1,8 +1,22 @@
 # Dec 15th, Tuesday, 2020
 Meeting with professor:
 1   add filter number of ReLU solution, to get better muError;  --45GB GPU memory, done; Next Tuesday get result;
-2   further improve the thickness prediciton accuracy;         -- add gaussian loss, 35GB GPU memory, done; Next Tuesday get result;
+2   further improve the thickness prediciton accuracy;         -- add gaussian location loss, 35GB GPU memory, done; Next Tuesday get result;
 
+
+# Result of using pure SurfaceSubnet with ReLU without softSeparation:
+Experiment Name: expDuke_20200902A_SurfaceSubnet
+Testtime: output_20201214_201624
+=====================================================================
+Total Result without differentiating AMD and Control:
+stdSurfaceError = tensor([2.4530, 1.0670, 1.6765], device='cuda:3')
+muSurfaceError = tensor([1.1122, 1.8904, 2.9410], device='cuda:3')
+stdError = 1.961887240409851
+muError = 1.9812164306640625
+hausdorff Distance = [[50. 33. 30.]]
+pixel number of violating surface-separation constraints: 0
+=====================================================================
+Result on AMD and Control Group:
 
 
 
