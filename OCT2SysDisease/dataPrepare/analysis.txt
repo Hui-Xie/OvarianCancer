@@ -9,13 +9,20 @@ Thickness2Gender is training: nohup python3 ./OCT2SysD_Train.py ./testConfig/exp
 
 About applying traditional baseline network:
 As our thickmap has a size 9x31x512, where 9 is channel, 31 is image height, and 512 is image width.
-Below I listed standard traditional baseline network architecture for our OCT to hypertension application:
+Below I listed standard traditional baseline network architectures for our OCT to hypertension application:
 1  MobileNetv3: Its small model has 11 layers with filter size 3x3 or 5x5. Our image height 31 will reduce to 1 at the 5th layer,
                 and following 6 layers with 5x5 convolution on 1 element in height will be meaningless.
-2  VGG-16: it has 5 pooling layer with filter 2x2 with stride 2, following 3 dense layer.
-           At the 4th pooling layer, our image height reduces to 2, leading following 3x3 conv and 3 dense layers meaningless.
+2  VGG-16: it has 5 max pooling layer with filter 2x2 with stride 2, following 3 dense layer.
+           At the 4th pooling layer, our image height reduces to 1, leading following 3x3 conv and 3 dense layers meaningless.
 3  GoogleNet: it has 22 layer with filer size 7x7 and 3x3, after the 3th layer, our image height 31 will reduce to 1. Same conclusion with the above;
 4  ResNet:    It has 34 layer with 7x7 and 3x3 convolution. It is too deep for our image height 31.
+
+5  launched 2 variants of VGG16: 4 Cov+ maxPooling layer + 2 FC layers:
+expOCT2SysD_20201216_VGG16_A:
+channels:     [64, 128, 256, 512, 256]
+
+expOCT2SysD_20201216_VGG16_B:
+channels:     [32, 64, 128, 256, 128]
 
 
 
