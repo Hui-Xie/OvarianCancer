@@ -48,7 +48,10 @@ class ThicknessMap2HyperTensionNet_VGG16(BasicModel):
         self.m_pool4 = nn.AdaptiveMaxPool2d((1,1))  # output size: C3x1x1
         # here needs squeeze dim=-1 and dim =-2
 
-        self.m_fc1 = nn.Linear(hps.channels[3], hps.channels[4])
+        self.m_fc1 = nn.Sequential(
+            nn.Linear(hps.channels[3], hps.channels[4]),
+            nn.ReLU(inplace=False),
+        )
         self.m_fc2 = nn.Linear(hps.channels[4], 1)
 
     def forward(self,x,t):
