@@ -25,7 +25,7 @@ Below I listed standard traditional baseline network architectures for our OCT t
 4  ResNet:    It has 34 layers with 7x7 and 3x3 convolution. It is too deep for our image height 31.
 
 5  launched 2 variants of VGG16: 4 (Cov+ maxPooling) layers + 2 FC layers:
-expOCT2SysD_20201216_VGG16_A: (standard VGG_16 model with only reduce one layer)
+expOCT2SysD_20201216_VGG16_A: (standard VGG_16 model with only reducing one layer)
 channels:     [64, 128, 256, 512, 256]
        validationLoss is always less than trainingLoss;validationLoss = 0.6326; trainingLoss = 0.6331.
        validation always predict 1, majority prediction. TPR =1, TNR =0.

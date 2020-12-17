@@ -63,15 +63,15 @@ def constructUnet(inputChannels, H, W, C, nLayers):
 
     return downPoolings, downLayers, upSamples, upLayers
 
-def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation):
+def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True):
     '''
     # downPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
     #  Pooling->ChannelChange->downLayer
     #  input to downPooling0: BxinputChannelsxHxW
-    #  output of upSample0:  BxCxHxW
+    #  output of downLayer0:  BxCxHxW
 
     :param inputChannels:
-    :param C:
+    :param C: the channel number of the fisrt layer.
     :param nLayers:
     :return:
     '''
@@ -79,7 +79,7 @@ def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation):
     downLayers = nn.ModuleList()
     for i in range(nLayers):
         CPreLayer = C*pow(2, i-1) if i >=1 else C
-        CLayer = C*pow(2, i)  # the channel number in the layer
+        CLayer = C*pow(2, i)  # the channel number in the Downlayer
         if 0 == i:
             downPoolings.append(Conv2dBlock(inputChannels, CLayer, activation=inputActivation))
         else:
