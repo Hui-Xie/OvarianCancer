@@ -6,24 +6,34 @@ values for gender have 1806 records
 emptyValueIDList = []
 
 Thickness2Gender is training: nohup python3 ./OCT2SysD_Train.py ./testConfig/expOCT2Gender_20201216_A.yaml &
+expOCT2Gender_20201216_A:
+        channels:     [48, 24]
+        dropoutRates: [0.5,0.8]  # 2 dropout layers.
+        at epoch  109, validationLoss > trainingLoss, validation loss flat since then.
+        At threshold 0.49 , TPR  0.66, TNR 0.73,    Acc 0.69,  Sum: 2.071
+
+
 
 About applying traditional baseline network:
 As our thickmap has a size 9x31x512, where 9 is channel, 31 is image height, and 512 is image width.
 Below I listed standard traditional baseline network architectures for our OCT to hypertension application:
 1  MobileNetv3: Its small model has 11 layers with filter size 3x3 or 5x5. Our image height 31 will reduce to 1 at the 5th layer,
                 and following 6 layers with 5x5 convolution on 1 element in height will be meaningless.
-2  VGG-16: it has 5 max pooling layer with filter 2x2 with stride 2, following 3 dense layer.
+2  VGG-16: it has 5 max pooling layer with filter 2x2 with stride 2, following 3 dense layers.
            At the 4th pooling layer, our image height reduces to 1, leading following 3x3 conv and 3 dense layers meaningless.
-3  GoogleNet: it has 22 layer with filer size 7x7 and 3x3, after the 3th layer, our image height 31 will reduce to 1. Same conclusion with the above;
-4  ResNet:    It has 34 layer with 7x7 and 3x3 convolution. It is too deep for our image height 31.
+3  GoogleNet: it has 22 layers with filer size 7x7 and 3x3, after the 3th layer, our image height 31 will reduce to 1. Same conclusion with the above;
+4  ResNet:    It has 34 layers with 7x7 and 3x3 convolution. It is too deep for our image height 31.
 
-5  launched 2 variants of VGG16: 4 Cov+ maxPooling layer + 2 FC layers:
-expOCT2SysD_20201216_VGG16_A:
+5  launched 2 variants of VGG16: 4 (Cov+ maxPooling) layers + 2 FC layers:
+expOCT2SysD_20201216_VGG16_A: (standard VGG_16 model with only reduce one layer)
 channels:     [64, 128, 256, 512, 256]
+       validationLoss is always less than trainingLoss;validationLoss = 0.6326; trainingLoss = 0.6331.
+       validation always predict 1, majority prediction. TPR =1, TNR =0.
 
 expOCT2SysD_20201216_VGG16_B:
-channels:     [32, 64, 128, 256, 128]
-
+        channels:     [32, 64, 128, 256, 128]
+        validationLoss is always less than trainingLoss;validationLoss = 0.6326; trainingLoss = 0.6331.
+        validation always predict 1, majority prediction. TPR =1, TNR =0.
 
 
 
@@ -61,8 +71,8 @@ expOCT2SysD_20201211_Q:
 expOCT2SysD_20201211_R:
     channels:     [48, 24]
     dropoutRates: [0.5,0.8]  # 2 dropout layers.
-    at epoch  , validationLoss > trainingLoss,
-    At threshold  , TPR  , TNR ,    Acc ,  Sum:
+    at epoch  109, validationLoss > trainingLoss, validation loss flat since then.
+    At threshold 0.48 , TPR  0.73, TNR 0.46,    Acc 0.60,  Sum: 1.793
 
 
 # Dec 14th, 2020
