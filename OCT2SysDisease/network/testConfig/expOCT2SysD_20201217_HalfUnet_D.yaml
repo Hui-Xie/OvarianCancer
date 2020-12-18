@@ -38,7 +38,7 @@ nLayers: 4 # H changes: 31->15->7->3, W change: 512->256->128->64
 # bothEyes: False  # choose all OD eyes
 inputChannels: 9 # 9 layers
 gradChannels: 0   # the added gradient channels beside raw image channel
-channels:     [2, 4, 8, 16, 16] # the final channel is for FC layer
+channels:     [2, 4, 8, 16, 16] # the final channel is for FC layer, and first 4 layer must inceare by time 2.
 dropoutRate: 0.5  # the dropout rate at final fully connected layer.
 appKey: "hypertension_bp_plus_history$"
 
