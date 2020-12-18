@@ -10,9 +10,14 @@
         at epoch 20, validationLoss > training loss
         at epoch 95, training acc get 99%, while validation acc get 55%;
 
-    expOCT2SysD_20201217_HalfUnet_B: training...
+    expOCT2SysD_20201217_HalfUnet_B:
         channels:     [4, 8, 16, 32, 32] # the final channel is for FC layer
-
+        at epoch 29, validationLoss > training loss
+        at epoch 200, training acc get 99%, while validation acc get 52%;
+    expOCT2SysD_20201217_HalfUnet_D:  training
+        channels:     [4, 4, 8, 8, 16] # the final channel is for FC layer
+        at epoch , validationLoss > training loss
+        at epoch , training acc get , while validation acc get ;
 
 
 2   standard VGG model:
@@ -35,20 +40,40 @@
         channels:     [32, 64, 128, 256, 128]
         at epoch 69, training acc gets 1.0, while validation acc gets 0.53. Overfitting.
 
-    expOCT2SysD_20201217_VGG16_C:  wait launch
+    expOCT2SysD_20201217_VGG16_C: cancel
         channels:     [16, 32, 64, 128, 128]
 
-    expOCT2SysD_20201217_VGG16_D:  wait launch
+    expOCT2SysD_20201217_VGG16_D:  cancel
         channels:     [8, 16, 32, 64, 128]
 
-    expOCT2SysD_20201217_VGG16_E:  training...
+    expOCT2SysD_20201217_VGG16_E:
         channels:     [4, 8, 16, 32, 32]
+        at epoch 9, validationLoss > training loss
+        at epoch 202, training acc gets 1.0, while validation acc gets 0.52. Overfitting.
+    expOCT2SysD_20201217_VGG16_F:   training.
+        channels:     [4, 4, 8, 8, 16]
+        at epoch , validationLoss > training loss
+        at epoch , training acc gets , while validation acc gets . Overfitting.
 
 
 4  prepare 2-layer network:
-   expOCT2SysD_20201218E_A: remove norm before FC.  training...
+   expOCT2SysD_20201218E_A: remove norm before FC.
         channels:     [48, 16]
         dropoutRates: [0.5,0.8]  # 2 dropout layers.
+        at epoch  181, validationLoss > trainingLoss, validation loss flat since then.
+        At threshold 0.46 , TPR  0.76, TNR 0.41,    Acc 0.60,  Sum: 1.78
+
+   expOCT2SysD_20201218E_B:  training
+        channels:     [24, 16]
+        dropoutRates: [0.5,0.8]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss, validation loss flat since then.
+        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+
+   expOCT2SysD_20201218E_C:  training
+        channels:     [16, 16]
+        dropoutRates: [0.0, 0.8]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss, validation loss flat since then.
+        At threshold  , TPR  , TNR ,    Acc ,  Sum:
 
 
 
