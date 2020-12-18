@@ -5,11 +5,15 @@
         after epoch 15, overfitting;
         training accuracy quickly get 99% at epoch 74, while validation accuracy at 0.52.
 
-    expOCT2SysD_20201217_HalfUnet_B: wait launch
-        channels:     [4, 8, 16, 32, 64] # the final channel is for FC layer
-
-    expOCT2SysD_20201217_HalfUnet_C: training.
+    expOCT2SysD_20201217_HalfUnet_C:
         channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
+        at epoch 20, validationLoss > training loss
+        at epoch 95, training acc get 99%, while validation acc get 55%;
+
+    expOCT2SysD_20201217_HalfUnet_B: wait launch
+        channels:     [4, 8, 16, 32, 32] # the final channel is for FC layer
+
+
 
 2   standard VGG model:
     expOCT2SysD_20201216_VGG16_A: (standard VGG_16 model with only reducing one layer)
@@ -23,17 +27,22 @@
         validation always predict 1, majority prediction. TPR =1, TNR =0.
 
 3  Add batchnorm to VGG16 model;
-    expOCT2SysD_20201217_VGG16_A:  training.
+    expOCT2SysD_20201217_VGG16_A:
         channels:     [64, 128, 256, 512, 256]
+        at epoch 69, training acc gets 1.0, while validation acc gets 0.54. Overfitting.
 
-    expOCT2SysD_20201217_VGG16_B:  training.
+    expOCT2SysD_20201217_VGG16_B:
         channels:     [32, 64, 128, 256, 128]
+        at epoch 69, training acc gets 1.0, while validation acc gets 0.53. Overfitting.
 
     expOCT2SysD_20201217_VGG16_C:  wait launch
         channels:     [16, 32, 64, 128, 128]
 
     expOCT2SysD_20201217_VGG16_D:  wait launch
         channels:     [8, 16, 32, 64, 128]
+
+    expOCT2SysD_20201217_VGG16_E:  wait launch
+        channels:     [4, 8, 16, 32, 32]
 
 
 4  prepare 2-layer network:
