@@ -20,6 +20,8 @@ class ThicknessMap2HyperTensionNet_HalfUNet(BasicModel):
             nn.Conv2d(hps.channels[hps.nLayers-1], hps.channels[hps.nLayers], kernel_size=(3, 3), stride=(1, 1), padding=0, bias=True),
             nn.ReLU(inplace=False),  # output size: C3x1x62
         )
+        # remember: Before the FC layer, do not use batch Norm.
+        # as normalization will kill same feature along normalization dimension.
         self.m_pool4 = nn.AdaptiveAvgPool2d((1,1))  # output size: C3x1x1
         # here needs squeeze dim=-1 and dim =-2
 
