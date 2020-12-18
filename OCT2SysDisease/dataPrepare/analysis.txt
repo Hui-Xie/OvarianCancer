@@ -77,13 +77,27 @@
         at epoch  49, validationLoss > trainingLoss, validation loss increases, overfitting.
         At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.745
 
-   expOCT2SysD_20201218E_D:
+   expOCT2SysD_20201218E_D: training.
         channels:     [16, 8]
         dropoutRates: [0.5,0.625]  # 2 dropout layers.
         at epoch  , validationLoss > trainingLoss,
         At threshold  , TPR  , TNR ,    Acc ,  Sum:
 
-   expOCT2SysD_20201218E_E:
+   expOCT2SysD_20201218E_E:  training.
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.375]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+
+5  OCT2Gender:
+   expOCT2Gender_20201218B_A: training.
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.625]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+
+
+   expOCT2Gender_20201218B_B:  training.
         channels:     [16, 8]
         dropoutRates: [0.5,0.375]  # 2 dropout layers.
         at epoch  , validationLoss > trainingLoss,
