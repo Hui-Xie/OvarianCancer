@@ -10,7 +10,7 @@
         at epoch 20, validationLoss > training loss
         at epoch 95, training acc get 99%, while validation acc get 55%;
 
-    expOCT2SysD_20201217_HalfUnet_B: wait launch
+    expOCT2SysD_20201217_HalfUnet_B: training...
         channels:     [4, 8, 16, 32, 32] # the final channel is for FC layer
 
 
@@ -41,12 +41,12 @@
     expOCT2SysD_20201217_VGG16_D:  wait launch
         channels:     [8, 16, 32, 64, 128]
 
-    expOCT2SysD_20201217_VGG16_E:  wait launch
+    expOCT2SysD_20201217_VGG16_E:  training...
         channels:     [4, 8, 16, 32, 32]
 
 
 4  prepare 2-layer network:
-   expOCT2SysD_20201218E_A: remove norm before FC.  wait launch
+   expOCT2SysD_20201218E_A: remove norm before FC.  training...
         channels:     [48, 16]
         dropoutRates: [0.5,0.8]  # 2 dropout layers.
 
