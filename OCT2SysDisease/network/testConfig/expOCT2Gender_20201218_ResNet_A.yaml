@@ -34,6 +34,7 @@ network: "ThicknessMap2Gender_ResNet"
 imageH: 31
 imageW: 512
 volumeSuffix: "_Volume_thickness_enface.npy"
+nLayers: 4 # H changes: 31->15->7->3, W change: 512->256->128->64
 # bothEyes: False  # choose all OD eyes
 inputChannels: 9 # rawImage + gradChannels(W,H)
 gradChannels: 0   # the added gradient channels beside raw image channel
