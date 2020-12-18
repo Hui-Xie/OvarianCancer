@@ -14,10 +14,11 @@
         channels:     [4, 8, 16, 32, 32] # the final channel is for FC layer
         at epoch 29, validationLoss > training loss
         at epoch 200, training acc get 99%, while validation acc get 52%;
-    expOCT2SysD_20201217_HalfUnet_D:  training
+    expOCT2SysD_20201217_HalfUnet_D:
         channels:     [4, 4, 8, 8, 16] # the final channel is for FC layer
-        at epoch , validationLoss > training loss
-        at epoch , training acc get , while validation acc get ;
+        at epoch 13 , validationLoss > training loss
+        at epoch 378, training acc get 97%, while validation acc get 49%;
+        max TPR+TNR+ACC= sum=  1.60
 
 
 2   standard VGG model:
@@ -50,10 +51,11 @@
         channels:     [4, 8, 16, 32, 32]
         at epoch 9, validationLoss > training loss
         at epoch 202, training acc gets 1.0, while validation acc gets 0.52. Overfitting.
-    expOCT2SysD_20201217_VGG16_F:   training.
+    expOCT2SysD_20201217_VGG16_F:
         channels:     [4, 4, 8, 8, 16]
-        at epoch , validationLoss > training loss
-        at epoch , training acc gets , while validation acc gets . Overfitting.
+        at epoch 0, validationLoss > training loss
+        at epoch 391, training acc gets 0.81, while validation acc gets 0.52. Overfitting.
+        sum= 1.742.
 
 
 4  prepare 2-layer network:
@@ -63,18 +65,29 @@
         at epoch  181, validationLoss > trainingLoss, validation loss flat since then.
         At threshold 0.46 , TPR  0.76, TNR 0.41,    Acc 0.60,  Sum: 1.78
 
-   expOCT2SysD_20201218E_B:  training
+   expOCT2SysD_20201218E_B:
         channels:     [24, 16]
         dropoutRates: [0.5,0.8]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss, validation loss flat since then.
-        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+        at epoch  85, validationLoss > trainingLoss, validation loss flat since then.
+        At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.751
 
-   expOCT2SysD_20201218E_C:  training
+   expOCT2SysD_20201218E_C:
         channels:     [16, 16]
         dropoutRates: [0.0, 0.8]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss, validation loss flat since then.
+        at epoch  49, validationLoss > trainingLoss, validation loss increases, overfitting.
+        At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.745
+
+   expOCT2SysD_20201218E_D:
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.625]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss,
         At threshold  , TPR  , TNR ,    Acc ,  Sum:
 
+   expOCT2SysD_20201218E_E:
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.375]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc ,  Sum:
 
 
 # Dec 16th, Wednesday, 2020
@@ -201,11 +214,11 @@ Best network for 2Conv + 1Fc layer:
     at epoch 700, validaLoss = trainingLoss.  No explict overfitting, with training loss: 0.6261, validation loss: 0.6248
     threshold 0.47, TPR 0.84, TNR 0.35, Acc 0.62.
 
-    expOCT2SysD_20201211_J: in lnx-idea006.ecn.uiowa.edu
+    expOCT2SysD_20201211_J: in lnx-idea006.ecn.uiowa.edu  (the best)
     channels:     [16, 8]
     dropoutRates: [0.5,0.5]  # 2 dropout layers.
     at epoch 18, validaLoss > trainingLoss.  overfitting. But sum is 1.823, with training loss: 0.5909, validation loss: 0.6218
-    threshold 0.44, TPR 0.67, TNR 0.55, Acc 0.61.
+    threshold 0.44, TPR 0.71, TNR 0.51, Acc 0.62.  sum: 1.836
 
 Further improvement, and reduce batchSize:
 expOCT2SysD_20201211_K:
