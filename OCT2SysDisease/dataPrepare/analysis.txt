@@ -1,3 +1,41 @@
+#Dec 17th, Thursday, 2020
+1  implemented HalfUnet model;  training;
+    expOCT2SysD_20201217_HalfUnet_A:
+        channels:     [32, 64, 128, 256, 512] # the final channel is for FC layer
+        after epoch 15, overfitting;
+        training accuracy quickly get 99% at epoch 74, while validation accuracy at 0.52.
+
+    expOCT2SysD_20201217_HalfUnet_B: wait launch
+        channels:     [4, 8, 16, 32, 64] # the final channel is for FC layer
+
+    expOCT2SysD_20201217_HalfUnet_C: wait launch
+        channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
+
+2   standard VGG model:
+    expOCT2SysD_20201216_VGG16_A: (standard VGG_16 model with only reducing one layer)
+        channels:     [64, 128, 256, 512, 256]
+        validationLoss is always less than trainingLoss;validationLoss = 0.6326; trainingLoss = 0.6331.
+        validation always predict 1, majority prediction. TPR =1, TNR =0.
+
+    expOCT2SysD_20201216_VGG16_B:
+        channels:     [32, 64, 128, 256, 128]
+        validationLoss is always less than trainingLoss;validationLoss = 0.6326; trainingLoss = 0.6331.
+        validation always predict 1, majority prediction. TPR =1, TNR =0.
+
+3  Add batchnorm to VGG16 model;
+    expOCT2SysD_20201217_VGG16_A:  trianing.
+        channels:     [64, 128, 256, 512, 256]
+
+    expOCT2SysD_20201217_VGG16_A:  training.
+        channels:     [32, 64, 128, 256, 128]
+
+4  prepare 2-layer network:
+   expOCT2SysD_20201218E_A: remove norm before FC.  wait launch
+        channels:     [48, 16]
+        dropoutRates: [0.5,0.8]  # 2 dropout layers.
+
+
+
 # Dec 16th, Wednesday, 2020
 (base) [c-xwu000:dataPrepare]#python3 ./statisticsDataSet.py /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv gender 12binary None
 total 1806 raw IDs in file /home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv
