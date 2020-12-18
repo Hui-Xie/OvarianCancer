@@ -8,7 +8,7 @@
     expOCT2SysD_20201217_HalfUnet_B: wait launch
         channels:     [4, 8, 16, 32, 64] # the final channel is for FC layer
 
-    expOCT2SysD_20201217_HalfUnet_C: wait launch
+    expOCT2SysD_20201217_HalfUnet_C: training.
         channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
 
 2   standard VGG model:
@@ -23,11 +23,18 @@
         validation always predict 1, majority prediction. TPR =1, TNR =0.
 
 3  Add batchnorm to VGG16 model;
-    expOCT2SysD_20201217_VGG16_A:  trianing.
+    expOCT2SysD_20201217_VGG16_A:  training.
         channels:     [64, 128, 256, 512, 256]
 
-    expOCT2SysD_20201217_VGG16_A:  training.
+    expOCT2SysD_20201217_VGG16_B:  training.
         channels:     [32, 64, 128, 256, 128]
+
+    expOCT2SysD_20201217_VGG16_C:  wait launch
+        channels:     [16, 32, 64, 128, 128]
+
+    expOCT2SysD_20201217_VGG16_D:  wait launch
+        channels:     [8, 16, 32, 64, 128]
+
 
 4  prepare 2-layer network:
    expOCT2SysD_20201218E_A: remove norm before FC.  wait launch
