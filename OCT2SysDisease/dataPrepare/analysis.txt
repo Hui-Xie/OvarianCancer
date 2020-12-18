@@ -1,3 +1,54 @@
+
+# Dec 18th, Friday, 2020
+
+Professor,
+
+If you have convenient time, please let me know.
+I can show visualization training/validation loss, accuracy curves to you for all these experiments, which more more vivid.
+
+=========================
+Summary on traditional networks exploration:
+Experements A series: Using VGG-16 network model:
+     A. Used exactly VGG-16 4 layer (conv-maxPooling2d) +2FC layer model, with filter numbers[64, 128, 256, 512, 256]: Network get prediction of 1 (TPR=1, TNR=0)
+        validation loss 0.6326, and then increase, it is explict overfitting;
+     B. Added batchNormalization to VGG model with filter numbers [64, 128,256, 512, 256]:
+        at epoch 69, training acc gets 1.0, while validation acc gets 0.54; Overfitting.
+     C. gradually reduce network filter numbers to  [32, 64, 128, 256, 128], [16, 32, 64, 128, 128],
+        [4, 8, 16, 32, 32],and [4, 4, 8, 8, 16]:
+         they are still overfitting.  For the final [4,4,8,8,16] network,  at epoch 391, training acc gets 0.81, while validation acc gets 0.52.
+         The key information is that all these networks do not reduce validation loss while training loss gradually reduces.
+
+Experiment B series: Using ResNet network model:
+     A. Used 4 layers with (Conv+ residualLink + max2dPooling) + 1FC model;
+     B  initial channels: [32, 64, 128, 256, 512]: training accuracy quickly get 99% at epoch 74, while validation accuracy at 0.52.
+     C  gradually reduce channels size  [8, 16, 32, 64, 128],  [4, 8, 16, 32, 32], [4, 4, 8, 8, 16];
+        at final [4,4,8,8,16] model,  at epoch 378, training acc get 97%, while validation acc get 49%; TPR+TNR+ACC=Sum=1.60;
+
+Expereiment C series: Using simple 2-layer model: 2 Conv+2dropout+1FC:
+    After a series of network scale adjustments:
+    expOCT2SysD_20201211_J: (the best)
+    channels:     [16, 8]
+    dropoutRates: [0.5,0.5]  # 2 dropout layers.
+    at epoch 18, validaLoss > trainingLoss.  at stable, with training loss: 0.5909, validation loss: 0.6218
+    threshold 0.44, TPR 0.71, TNR 0.51, Acc 0.62.  TPR+TNR+ACC=Sum=1.836
+
+Experiment D series:  OCT thickness map predicts gender, instead of hypertension:
+   A use same network, same input, but different binary ground truth (gender vs hypertension) from experiment C;
+     (It just needs ONE line code modification from experiment C)
+   B expOCT2Gender_20201218B_B:
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.375]  # 2 dropout layers.
+        at epoch  11, validationLoss > trainingLoss,
+        At threshold  0.41, TPR 0.71 , TNR 0.73,    Acc 0.72 ,  TPR+TNR+ACc=Sum=2.151
+   C Comparing experiment C and experiment D series, their only difference is different ground truth.
+     OCT2Gender got better result than OCT2Hypertension. Different applications and data really matter.
+
+
+
+
+
+
+
 #Dec 17th, Thursday, 2020
 1  implemented HalfUnet model;  training;
     expOCT2SysD_20201217_HalfUnet_A:
@@ -77,31 +128,31 @@
         at epoch  49, validationLoss > trainingLoss, validation loss increases, overfitting.
         At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.745
 
-   expOCT2SysD_20201218E_D: training.
+   expOCT2SysD_20201218E_D:
         channels:     [16, 8]
         dropoutRates: [0.5,0.625]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss,
-        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+        at epoch 19 , validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.762
 
-   expOCT2SysD_20201218E_E:  training.
+   expOCT2SysD_20201218E_E:
         channels:     [16, 8]
         dropoutRates: [0.5,0.375]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss,
-        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+        at epoch  57, validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.792
 
 5  OCT2Gender:
-   expOCT2Gender_20201218B_A: training.
+   expOCT2Gender_20201218B_A:
         channels:     [16, 8]
         dropoutRates: [0.5,0.625]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss,
-        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+        at epoch  38, validationLoss > trainingLoss; and the validatioin Loss slightly reduces;
+        At threshold  0.49, TPR  0.69, TNR 0.69,  Acc 0.69,  Sum: 2.061
 
 
-   expOCT2Gender_20201218B_B:  training.
+   expOCT2Gender_20201218B_B:
         channels:     [16, 8]
         dropoutRates: [0.5,0.375]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss,
-        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+        at epoch  11, validationLoss > trainingLoss,
+        At threshold  0.41, TPR 0.71 , TNR 0.73,    Acc 0.72 ,  Sum: 2.151
 
 
 # Dec 16th, Wednesday, 2020
