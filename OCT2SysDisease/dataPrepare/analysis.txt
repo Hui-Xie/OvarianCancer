@@ -50,7 +50,7 @@ Experiment D series:  OCT thickness map predicts gender, instead of hypertension
 
 
 #Dec 17th, Thursday, 2020
-1  implemented HalfUnet model;  training;
+1  implemented HalfUnet model;  ResNet Model Architecture
     expOCT2SysD_20201217_HalfUnet_A:
         channels:     [32, 64, 128, 256, 512] # the final channel is for FC layer
         after epoch 15, overfitting;
