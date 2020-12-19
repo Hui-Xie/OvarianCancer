@@ -1,7 +1,7 @@
 # generate thickness en-face map
 
 xmlDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml"
-volumeDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes"
+volumeDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
 outputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap"
 # hPixelSize = 3.870
 

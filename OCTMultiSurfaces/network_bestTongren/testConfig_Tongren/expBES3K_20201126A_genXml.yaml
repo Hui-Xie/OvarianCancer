@@ -8,7 +8,7 @@ dataIn1Parcel: False
 dataInSlice: False
 dataInVolume: True
 
-dataDir: "/home/hxie1/data/BES_3K/W512NumpyVolumes"
+dataDir: "/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
 existGTLabel: False
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
