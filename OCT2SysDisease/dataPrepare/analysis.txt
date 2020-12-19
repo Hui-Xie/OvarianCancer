@@ -140,6 +140,13 @@ Experiment D series:  OCT thickness map predicts gender, instead of hypertension
         at epoch  57, validationLoss > trainingLoss,
         At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.792
 
+    expOCT2SysD_20201218E_F: same with config of expOCT2SysD_20201211_J,  No norm before FC, training.
+        batchSize = 60
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.5]  # 2 dropout layers.
+        at epoch   validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+
 5  OCT2Gender:
    expOCT2Gender_20201218B_A:
         channels:     [16, 8]
@@ -148,11 +155,33 @@ Experiment D series:  OCT thickness map predicts gender, instead of hypertension
         At threshold  0.49, TPR  0.69, TNR 0.69,  Acc 0.69,  Sum: 2.061
 
 
-   expOCT2Gender_20201218B_B:
+   expOCT2Gender_20201218B_B: (the best)
         channels:     [16, 8]
         dropoutRates: [0.5,0.375]  # 2 dropout layers.
         at epoch  11, validationLoss > trainingLoss,
         At threshold  0.41, TPR 0.71 , TNR 0.73,    Acc 0.72 ,  Sum: 2.151
+
+   expOCT2Gender_20201218_ResNet_A:
+        channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
+        dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        at epoch 310, training acc gets 1.0, while validation acc gets 66%;
+        after epoch 99, validation loss increases, while training loss decreases.
+        threshold 0.27   TPR 0.78   TNR 0.61    ACC 0.70     Sum 2.091
+
+   expOCT2Gender_20201218_ResNet_B:
+        channels:     [4, 8, 16, 32, 32] # the final channel is for FC layer
+        dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        at epoch 454, training acc gets 0.98, while validation acc gets 67%;
+        after epoch 96, validation loss increases, while training loss decreases.
+        threshold 0.48   TPR 0.65   TNR 0.74    ACC 0.69     Sum 2.079
+
+   expOCT2Gender_20201219B_A:  same with config of expOCT2SysD_20201211_J,  No norm before FC, training.
+        batchSize = 60
+        channels:     [16, 8]
+        dropoutRates: [0.5,0.5]  # 2 dropout layers.
+        at epoch  , validationLoss > trainingLoss,
+        At threshold  , TPR  , TNR ,    Acc  ,  Sum:
+
 
 
 # Dec 16th, Wednesday, 2020
@@ -615,7 +644,7 @@ expOCT2SysD_20201211_I: in lnx-idea006.ecn.uiowa.edu   (worth to research.)
 channels:     [32, 16]
 dropoutRates: [0.8,0.8]  # 2 dropout layers.
 at epoch 700, validaLoss = trainingLoss.  No explict overfitting
-threshold 0.47, TPR 0.84, TNR 0.35, Acc 0.62.
+threshold 0.47, TPR 0.84, TNR 0.35, Acc 0.62.  Sum= 1.807
 
 expOCT2SysD_20201211_J: in lnx-idea006.ecn.uiowa.edu
 channels:     [16, 8]
