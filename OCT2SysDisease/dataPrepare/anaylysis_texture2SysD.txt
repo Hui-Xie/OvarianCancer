@@ -1,0 +1,4 @@
+# Dec 19th, Saturday, 2020
+generate texture enface map,by /home/sheen/projects/DeepLearningSeg/OCT2SysDisease/dataPrepare/generateTextureEnfaceMap.py.
+total 6499 volumes.
+
