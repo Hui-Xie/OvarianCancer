@@ -40,20 +40,22 @@ class NetMgr:
 
     def loadNet(self, mode):
         # Save on GPU, Load on GPU
-        if len(getFilesList(self.m_netPath, ".pt")) >= 2:
+        if os.path.exists(os.path.join(self.m_netPath, "Net.pt")):
             self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device), strict=True)
+            print(f"Network load from  {self.m_netPath}")
+
             if os.path.exists(os.path.join(self.m_netPath, "ConfigParameters.pt")):
                 self.m_net.m_runParametersDict = torch.load(os.path.join(self.m_netPath, "ConfigParameters.pt"), map_location=self.m_device)
             if mode == "train":
                 # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
-                self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt"), map_location=self.m_device))
+                if os.path.exists(os.path.join(self.m_netPath, "Optimizer.pt")):
+                    self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt"), map_location=self.m_device))
                 self.m_net.train()
             elif mode == "test":   # eval
                 self.m_net.eval()
             else:
                 print("Error: loadNet mode is incorrect.")
                 assert False
-            print(f"Network load from  {self.m_netPath}")
         else:
             print(f"Net starts training from scratch, and save at {self.m_netPath}")
 
