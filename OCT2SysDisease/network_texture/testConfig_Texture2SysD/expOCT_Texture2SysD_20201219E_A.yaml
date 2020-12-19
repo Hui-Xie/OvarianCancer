@@ -27,7 +27,7 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
 
 # this file is placed in netPath directory.
-trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
+trainNormalizationStdMeanFileName: "trainNormalization_Texture_layers"
 
 # Network config
 network: "TextureMap2HyperTensionNet_E"  # remove norm before FC
@@ -54,8 +54,8 @@ validationAugmentation: True
 augmentProb: 0.3  #  data augmentation rate
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
 # for salt pepper noise
-#saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
-#saltRate: 0.5  # saltRate = salt/(salt+pepper)
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
 netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename

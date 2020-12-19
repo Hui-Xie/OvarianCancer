@@ -2,3 +2,7 @@
 generate texture enface map,by /home/sheen/projects/DeepLearningSeg/OCT2SysDisease/dataPrepare/generateTextureEnfaceMap.py.
 total 6499 volumes.
 
+input texture: BxCxHxW, where C=9, H=31, and W =512
+its normalization along channel dimension, which means C mean and std.
+
+

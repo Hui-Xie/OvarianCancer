@@ -96,19 +96,22 @@ class OCT2SysD_DataSet(data.Dataset):
             self.m_volumes[i,] = oneVolume
 
         # normalize training volumes and save mean and std for using in validation and test data
+        # normalization along each C (layer) dimension, and save as torch.pt file.
         epsilon = 1.0e-8
-        self.normalizationYamlPath = os.path.join(hps.netPath, hps.trainNormalizationStdMeanYamlName)
+        self.m_normalizationFilePath_std = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName +"_std.pt")
+        self.m_normalizationFilePath_mean = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_mean.pt")
         if mode == "training":
-            std, mean = torch.std_mean(self.m_volumes)
+            std, mean = torch.std_mean(self.m_volumes, dim=(0,2,3),keepdim=True)
+            torch.save(std, self.m_normalizationFilePath_std)
+            torch.save(mean, self.m_normalizationFilePath_mean)
+            std = std.expand_as(self.m_volumes)
+            mean = mean.expand_as(self.m_volumes)
             self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW
-            with open(self.normalizationYamlPath, 'w') as outfile:
-                d = {"std": std.item(), "mean": mean.item()}
-                yaml.dump(d, outfile, default_flow_style=False)
 
         elif (mode == "validation") or (mode == "test"):
-            with open(self.normalizationYamlPath, 'r') as infile:
-                cfg = yaml.load(infile, Loader=yaml.FullLoader)
-            self.m_volumes = (self.m_volumes - cfg["mean"]) / (cfg["std"] + epsilon)  # size: NxCxHxW
+            std = torch.load(self.m_normalizationFilePath_std).to(device=hps.device).expand_as(self.m_volumes)
+            mean = torch.load(self.m_normalizationFilePath_mean).to(device=hps.device).expand_as(self.m_volumes)
+            self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW
         else:
             print(f"OCT2SysDiseaseDataSet mode error")
             assert False
@@ -124,6 +127,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
 
     def __getitem__(self, index):
+        epsilon = 1.0e-8
         volumePath = self.m_volumePaths[index]
 
         label = None
@@ -143,7 +147,11 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.m_transform:
             data = self.m_transform(data)  # size: CxHxW
 
-        # as thickness map is a physical-size volume, we do not do normalization on it.
+        # texture map needs normalization again.
+        std, mean = torch.std_mean(data, dim=(1,2), keepdim=True)
+        std = std.expand_as(data)
+        mean = mean.expand_as(data)
+        data = (data - mean) / (std + epsilon)  # size: CxHxW
 
         result = {"images": data,  # B,C,H,W
                   "GTs": label,
