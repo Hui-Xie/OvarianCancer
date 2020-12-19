@@ -32,8 +32,8 @@ class OCT2SysD_Transform(object):
         if random.uniform(0, 1) < self.hps.augmentProb:
             # salt: maxValue; pepper: minValue
             mask = torch.empty(data.size(), dtype=torch.float, device=device).uniform_(0, 1)
-            pepperMask = mask <= self.m_saltPepperRate
-            saltMask = mask <= self.m_saltPepperRate * self.m_saltRate
+            pepperMask = mask <= self.hps.saltPepperRate
+            saltMask = mask <= self.hps.saltPepperRate * self.hps.saltRate
             pepperMask ^= saltMask
             max = data.max()
             min = data.min()
