@@ -101,9 +101,14 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_normalizationFilePath_std = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName +"_std.pt")
         self.m_normalizationFilePath_mean = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_mean.pt")
         if mode == "training":
-            std, mean = torch.std_mean(self.m_volumes, dim=(0,2,3),keepdim=True)
-            torch.save(std, self.m_normalizationFilePath_std)
-            torch.save(mean, self.m_normalizationFilePath_mean)
+            if (not os.path.isfile(self.m_normalizationFilePath_std)) or (not os.path.isfile(self.m_normalizationFilePath_mean)):
+                std, mean = torch.std_mean(self.m_volumes, dim=(0, 2, 3), keepdim=True)
+                torch.save(std, self.m_normalizationFilePath_std)
+                torch.save(mean, self.m_normalizationFilePath_mean)
+            else:
+                std = torch.load(self.m_normalizationFilePath_std).to(device=hps.device)
+                mean = torch.load(self.m_normalizationFilePath_mean).to(device=hps.device)
+
             std = std.expand_as(self.m_volumes)
             mean = mean.expand_as(self.m_volumes)
             self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW

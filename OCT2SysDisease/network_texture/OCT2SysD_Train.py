@@ -14,16 +14,8 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
-from ThicknessMap2HyperTensionNet_C import ThicknessMap2HyperTensionNet_C
-from ThicknessMap2HyperTensionNet_D import ThicknessMap2HyperTensionNet_D
-from ThicknessMap2Gender_A import ThicknessMap2Gender_A
-from ThicknessMap2Gender_B import ThicknessMap2Gender_B
-from ThicknessMap2Gender_ResNet import ThicknessMap2Gender_ResNet
-from ThicknessMap2HyperTensionNet_VGG16 import ThicknessMap2HyperTensionNet_VGG16
-from ThicknessMap2HyperTensionNet_HalfUNet import ThicknessMap2HyperTensionNet_HalfUNet
-from ThicknessMap2HyperTensionNet_VGG16BatchNorm import ThicknessMap2HyperTensionNet_VGG16BatchNorm
-from ThicknessMap2HyperTensionNet_VGG16C import ThicknessMap2HyperTensionNet_VGG16C
-from ThicknessMap2HyperTensionNet_E import ThicknessMap2HyperTensionNet_E
+from TextureMap2Gender_B import TextureMap2Gender_B
+from TextureMap2HyperTensionNet_E import TextureMap2HyperTensionNet_E
 
 from OCT2SysD_Tools import *
 
@@ -34,7 +26,7 @@ from framework.measure import  *
 
 
 def printUsage(argv):
-    print("============ Training of thickness map to binary prediction Network =============")
+    print("============ Training of Texture map to binary prediction Network =============")
     print("=======input data is thickness enface map ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
@@ -202,7 +194,7 @@ def main():
         # debug
         # print(f"smoke test: finish one epoch of training and  validation")
 
-    print("============ End of Training Thickness enface map 2 Binary Systemic Disease Prediction ===========")
+    print("============ End of Training Texture enface map 2 Binary Systemic Disease Prediction ===========")
 
 
 
