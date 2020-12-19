@@ -3,6 +3,11 @@ generate texture enface map,by /home/sheen/projects/DeepLearningSeg/OCT2SysDisea
 total 6499 volumes.
 
 input texture: BxCxHxW, where C=9, H=31, and W =512
-its normalization along channel dimension, which means C mean and std.
+its normalization along channel dimension, which means C means and stds.
+
+python3 ./OCT2SysD_Train.py ./testConfig_Texture2SysD/expOCT_Texture2Gender_20201219E_A.yaml:
+
+
+python3 ./OCT2SysD_Train.py ./testConfig_Texture2SysD/expOCT_Texture2HTension_20201219E_A.yaml:
 
 
