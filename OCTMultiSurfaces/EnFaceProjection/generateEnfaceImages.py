@@ -39,7 +39,7 @@ for volumePath in volumesList:
     B1, N1, W1 = volumeSeg.shape
     assert (B == B1) and (W == W1) and (N == N1)
 
-    # define output emtpy array
+    # define output empty array
     enfaceVolume = np.empty((N-1, B, W), dtype=np.float)
     layerWidthVolume = np.empty((N-1, B, W), dtype=np.float)
     # fill the output array

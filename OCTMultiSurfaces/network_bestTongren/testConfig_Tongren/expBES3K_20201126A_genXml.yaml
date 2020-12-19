@@ -79,6 +79,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 netPath: ""  # net is saved at netpath / network / self_filename
 loadNetPath: "/home/hxie1/data/OCT_Tongren/numpy/10FoldCVForMultiSurfaceNet_10Surfaces_AllGoodBscans/netParameters/SurfacesNet/expTongren_20201117B_SurfaceNet_CV5" # reserve for pretrained network.
 outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/W512NumpyVolumes/log"
 refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 usePrimalDualIPM: False
