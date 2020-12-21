@@ -140,12 +140,13 @@ Experiment D series:  OCT thickness map predicts gender, instead of hypertension
         at epoch  57, validationLoss > trainingLoss,
         At threshold  , TPR  , TNR ,    Acc ,  Sum: 1.792
 
-    expOCT2SysD_20201218E_F: same with config of expOCT2SysD_20201211_J,  No norm before FC, training.
+    expOCT2SysD_20201219E_A: same with config of expOCT2SysD_20201211_J,  No norm before FC, (Good, not best)
         batchSize = 60
         channels:     [16, 8]
         dropoutRates: [0.5,0.5]  # 2 dropout layers.
-        at epoch   validationLoss > trainingLoss,
-        At threshold  , TPR  , TNR ,    Acc ,  Sum:
+        at stable of training, training acc 62%, while validation acc 60%
+        at epoch  63, validationLoss > trainingLoss, and then validation loss reduce slowly, but training loss reduces a lot; No overfitting.
+        At threshold  0.48, TPR 0.78 , TNR 0.40,    Acc 0.61  Sum: 1.792
 
 5  OCT2Gender:
    expOCT2Gender_20201218B_A:
@@ -175,12 +176,13 @@ Experiment D series:  OCT thickness map predicts gender, instead of hypertension
         after epoch 96, validation loss increases, while training loss decreases.
         threshold 0.48   TPR 0.65   TNR 0.74    ACC 0.69     Sum 2.079
 
-   expOCT2Gender_20201219B_A:  same with config of expOCT2SysD_20201211_J,  No norm before FC, training.
+   expOCT2Gender_20201219B_A:  same with config of expOCT2SysD_20201211_J,  No norm before FC,
         batchSize = 60
         channels:     [16, 8]
         dropoutRates: [0.5,0.5]  # 2 dropout layers.
-        at epoch  , validationLoss > trainingLoss,
-        At threshold  , TPR  , TNR ,    Acc  ,  Sum:
+        at statble stage, training acc 71%, validation acc 68%
+        at epoch  5, validationLoss > trainingLoss. And validation slight increases, and flat.
+        At threshold  0.46, TPR  0.71, TNR 0.70,    Acc  0.70,  Sum: 2.107
 
 
 

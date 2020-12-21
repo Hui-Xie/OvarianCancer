@@ -6,8 +6,19 @@ input texture: BxCxHxW, where C=9, H=31, and W =512
 its normalization along channel dimension, which means C means and stds.
 
 python3 ./OCT2SysD_Train.py ./testConfig_Texture2SysD/expOCT_Texture2Gender_20201219E_A.yaml:
+        channels:     [16, 8]
+        dropoutRates: [0.5, 0.5]  # 2 dropout layers.
+        at stable stage, training acc 84%, while validation acc 65%;
+        at epoch 32, validation loss > training loss, and validation loss start to increase. Overfitting.
+        at threshold 0.55, TPR 0.67, TNR 0.65, ACC 0.66,  Sum = 1.991
 
 
 python3 ./OCT2SysD_Train.py ./testConfig_Texture2SysD/expOCT_Texture2HTension_20201219E_A.yaml:
+        channels:     [16, 8]
+        dropoutRates: [0.5, 0.5]  # 2 dropout layers.
+        at stable stage, training acc 74%, while validation acc 55%;
+        at epoch 36, validation loss > training loss, and validation loss start to increase. Overfitting.
+        at threshold 0.52, TPR 0.55, TNR 0.55, ACC 0.55,  Sum = 1.645
+
 
 
