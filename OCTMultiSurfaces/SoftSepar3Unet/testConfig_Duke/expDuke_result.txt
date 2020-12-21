@@ -1,8 +1,23 @@
+# Dec 21th, Monday, 2020
+python3 ./RiftSubnet_Train.py ./testConfig_Duke/expDuke_20201215A_ThicknessSubnet_iibi007.yaml:
+A  further improve the thickness prediciton accuracy by adding gaussian location loss;
+B  it uses 35GB GPU memory;
+C  It has trained 5 days for 174 epoch,  5*24*60/174= 42 min/epoch;
+D  It may need one more day to get final stable status;
+
+=================================================================================================================
+python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20201215A_SurfaceSubnet_iibi007.yaml:
+A  It adds filter number of ReLU solution to get better muError;
+B  It uses 45GB GPU memory;
+C  It has trained 4d 22hours for 84 epochs: (4*24*60+22*60)/84  =  84 min /epoch; It is still in training;
+D  this netowrk increases filters at the begining layer from 24 to 64, and other layer same. It is almost 2.7 times bigger of 20200901A_SurfaceSubnet work;
+E  Currently it just trained 84 epochs and learning just reduce one once by reduceOnPlateau , and it still needs about 3 days;
+
+
 # Dec 15th, Tuesday, 2020
 Meeting with professor:
 1   add filter number of ReLU solution, to get better muError;  --45GB GPU memory, done; Next Tuesday get result;
 2   further improve the thickness prediciton accuracy;         -- add gaussian location loss, 35GB GPU memory, done; Next Tuesday get result;
-
 
 # Result of using pure SurfaceSubnet with ReLU without softSeparation:
 Experiment Name: expDuke_20200902A_SurfaceSubnet
