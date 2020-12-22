@@ -16,6 +16,7 @@ from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
 from TextureMap2Gender_B import TextureMap2Gender_B
 from TextureMap2HyperTensionNet_E import TextureMap2HyperTensionNet_E
+from TextureMap2HyTension_ResNet import TextureMap2HyTension_ResNet
 
 from OCT2SysD_Tools import *
 
