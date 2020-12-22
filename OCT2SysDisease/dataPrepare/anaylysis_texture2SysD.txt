@@ -1,6 +1,4 @@
-# Dec 22nd, Tuesday, 2020
-1  input image changes size from 9x31x512 to 9x31x25, 20 times reducing;
-2  so we can increase batch size from 30 to 300;
+
 
 
 
