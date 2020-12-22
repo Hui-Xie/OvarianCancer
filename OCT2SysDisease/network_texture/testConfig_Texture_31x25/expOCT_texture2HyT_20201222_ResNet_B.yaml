@@ -28,7 +28,7 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
 
 # this file is placed in netPath directory.
-trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
+trainNormalizationStdMeanFileName: "trainNormalization_Texture_layers"
 
 # Network config
 network: "TextureMap2HyTension_ResNet"
