@@ -1,4 +1,4 @@
-# visualize en-face image of 31x25 size
+# visualize en-face image of 31x25 size in 3x3 layout.
 
 import os
 import sys
