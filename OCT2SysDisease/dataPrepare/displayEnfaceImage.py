@@ -25,6 +25,13 @@ def main():
     #surfaceNames = ['ILM', 'RNFL-GCL', 'GCL-IPL', 'IPL-INL', 'INL-OPL', 'OPL-HFL', 'BMEIS', 'IS/OSJ', 'IB_RPE', 'OB_RPE']  # 10 surfaces.
     layerNames = ['RNFL', 'GCL', 'IPL', 'INL', 'OPL', 'ONL','ELM','PR', 'RPE']
 
+    '''
+    image dispaly in 3x3 order like below:
+    'RNFL', 'GCL', 'IPL',
+    'INL', 'OPL', 'ONL',
+    'ELM','PR', 'RPE'
+    '''
+
 
     f = plt.figure(frameon=False)
     DPI = f.dpi
@@ -42,7 +49,7 @@ def main():
         subploti = plt.subplot(rowSubplot, colSubplot, i+1)
         subploti.imshow(enfaceVolume[i,], cmap='gray')
         subploti.axis('off')
-        subploti.text(textLocx, textLocy, layerNames[i], fontsize=8)
+        # subploti.text(textLocx, textLocy, layerNames[i], fontsize=8)  # not display names
 
     outputFilePath = os.path.join(outputDir, volumename+ ".png")
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
