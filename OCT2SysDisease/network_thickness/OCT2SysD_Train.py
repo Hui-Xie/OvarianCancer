@@ -25,6 +25,9 @@ from ThicknessMap2HyperTensionNet_VGG16BatchNorm import ThicknessMap2HyperTensio
 from ThicknessMap2HyperTensionNet_VGG16C import ThicknessMap2HyperTensionNet_VGG16C
 from ThicknessMap2HyperTensionNet_E import ThicknessMap2HyperTensionNet_E
 
+# for input size: 9x31x25
+from ThicknessMap2HyTension_ResNet import ThicknessMap2HyTension_ResNet
+
 from OCT2SysD_Tools import *
 
 sys.path.append("../..")

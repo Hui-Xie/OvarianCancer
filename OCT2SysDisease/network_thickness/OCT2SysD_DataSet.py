@@ -124,6 +124,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
 
     def __getitem__(self, index):
+        epsilon = 1.0e-8
         volumePath = self.m_volumePaths[index]
 
         label = None
@@ -143,7 +144,11 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.m_transform:
             data = self.m_transform(data)  # size: CxHxW
 
-        # as thickness map is a physical-size volume, we do not do normalization on it.
+        # thickness map needs normalization again, modified at Dec 22nd, 2020 for new 31x25 thickness map.
+        std, mean = torch.std_mean(data, dim=(1, 2), keepdim=True)
+        std = std.expand_as(data)
+        mean = mean.expand_as(data)
+        data = (data - mean) / (std + epsilon)  # size: CxHxW
 
         result = {"images": data,  # B,C,H,W
                   "GTs": label,
