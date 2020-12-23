@@ -29,6 +29,21 @@ expOCT_thickness2HyT_20201223_ResNet_D:
         dropoutRate: 0.5  # the dropout rate at final fully connected layer.
         Sum = 1.63, overfitting.
 
+===============Use 1Layer network==============
+expOCT_thickness2HyT_20201223_1Layer_A: 96 filters
+
+expOCT_thickness2HyT_20201223_1Layer_B: 64 filters
+
+expOCT_thickness2HyT_20201223_1Layer_C: 32 filters
+
+expOCT_thickness2HyT_20201223_1Layer_D: 16 filters
+
+expOCT_thickness2HyT_20201223_1Layer_E: 8 filters
+
+expOCT_thickness2HyT_20201223_1Layer_F: 4 filters
+
+
+
 
 # Dec 22nd, Tuesday, 2020
 Today, in the process of learning SVM, I found a problem which maybe is the root reason why we always encounter overfitting in both our OCT2HyperTension and
