@@ -14,7 +14,7 @@ weightDecay: 1.0e-5
 
 #data source
 existGTLabel: True
-dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_31x25"
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25"
 
 # _delNonExist: delete ID nonexist, and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.

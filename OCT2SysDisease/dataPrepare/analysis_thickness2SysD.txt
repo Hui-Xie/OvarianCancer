@@ -3,13 +3,8 @@ Let's us try 9x15x12 input size, which keeps 9 layers feature, and preserver X a
 original size: 9x31*512 in CxZxX direction.
 resulution: Z:240.555 um/pixel,  X: 11.29 um/pixel;
 (240.555*2)/11.29 = 42.614 which means 2 pixels in Z direction has same resolution with 42.6 pixels in X direciton.
-512/43 = 12, 31/2 = 16
-new image size: 9x16x12 = 1728 features.
-
-
-
-
-
+512/43 = 12, 31/2 = 15.5
+new image size: 9x15x12 = 1620 features.
 
 # Dec 22nd, Tuesday, 2020
 Today, in the process of learning SVM, I found a problem which maybe is the root reason why we always encounter overfitting in both our OCT2HyperTension and
