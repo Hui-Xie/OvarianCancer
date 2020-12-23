@@ -68,7 +68,6 @@ for xmlSegPath in xmlVolumeList:
 
     # output files
     np.save(outputPath, reducedTextureEnfaceVolume)
-   
 
 print(f"=======End of generating texture enface map==========")
 

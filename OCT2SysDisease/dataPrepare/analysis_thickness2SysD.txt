@@ -6,6 +6,30 @@ resulution: Z:240.555 um/pixel,  X: 11.29 um/pixel;
 512/43 = 12, 31/2 = 15.5
 new image size: 9x15x12 = 1620 features.
 
+expOCT_thickness2HyT_20201223_ResNet_A:
+        channels:     [4, 8, 16, 32] # the final channel is for FC layer
+        dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        TPR+TNR+ACC= Sum = 1.61;
+        at epoch 7, validation Loss > training loss.
+
+expOCT_thickness2HyT_20201223_ResNet_B:
+        channels:     [16, 16, 16, 16] # the final channel is for FC layer
+        dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        Sum = 1.63, overfitting.
+
+expOCT_thickness2HyT_20201223_ResNet_C:
+        channels:     [32, 32, 32, 32] # the final channel is for FC layer
+        dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        Sum = 1.63, overfitting.
+
+
+
+expOCT_thickness2HyT_20201223_ResNet_D:
+        channels:     [64, 64, 64, 64] # the final channel is for FC layer
+        dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        Sum = 1.63, overfitting.
+
+
 # Dec 22nd, Tuesday, 2020
 Today, in the process of learning SVM, I found a problem which maybe is the root reason why we always encounter overfitting in both our OCT2HyperTension and
 OvarianCancerCT to survival prediction.
