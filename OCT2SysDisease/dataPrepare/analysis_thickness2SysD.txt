@@ -1,4 +1,45 @@
 # Dec 22nd, Tuesday, 2020
+Today, in the process of learning SVM, I found a problem which maybe is the root reason why we always encounter overfitting in both our OCT2HyperTension and
+OvarianCancerCT to survival prediction.
+
+The problem is that if the number of features in each sample is much greater than the number of samples, it is easy over-fitting.
+A very good explanation of this problem is in link
+https://www.quora.com/Is-it-possible-to-train-a-machine-learning-model-if-there-are-more-features-than-samples-in-the-data-set
+in which, Alex Gilgur used linear equation system as example to illustrate this problem.
+
+Whatever we use deep learning network or SVM, if the number of features in each sample is much greater than the number of samples, it is easy over-fitting.
+In SVM method, avoid over-fitting in choosing Kernel functions and regularization term is crucial.
+(please refer link: https://scikit-learn.org/stable/modules/svm.html )
+
+We need first solve the feature number problem, and then go further.
+
+In our thickness2Hypertension, our training data has 1806 samples (patients) with binary label for each,
+while our input is 9x31x512 tensor which means input has 142848 features. In other words, our feature number is 79 times bigger than the number of samples.
+
+I am planning to reduce features first, and then do the SVM and deep learning:
+A Currently, we have 10 surface segmentation and 9 layers. we can use the sum of thickness of first 5 layers as a thickness, and use the sum of last 3 layers as thickness;
+  so, we will get 2 thicknesses values;
+B with a principle that that pixel resolutions are same in both Z and X direction, reduce enface map to 31x25 from 31x512 by averaging the neighbour pixels;
+C Therefore, we got a input tensor of size 2x31x25 = 1550 features;
+
+After this feature reduction(feature selection), go to SVM and deep learning.
+
+Professor, How do you think?
+====================================
+In deep learning, methods of overcoming overfitting:
+1  add the number of training samples;
+2  reduce the number of input features;
+3  L2 parameter regulization;
+4  dropout;
+5  add data augmentation;
+6  reduce the layer number and filter number of networks to reduce model complexity;
+
+too many features leads the spare of samples.
+https://stackoverflow.com/questions/37776333/why-too-many-features-cause-over-fitting
+
+
+
+# Dec 22nd, Tuesday, 2020
 1  input image changes size from 9x31x512 to 9x31x25, 20 times reducing;
 2  so we can increase batch size from 30 to 300;
 
