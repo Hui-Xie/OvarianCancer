@@ -71,23 +71,36 @@ def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True):
     #  output of downLayer0:  BxCxHxW
 
     :param inputChannels:
-    :param C: the channel number of the fisrt layer.
+    :param C: the channel number of the first layer, or channles list for all layers.
     :param nLayers:
     :return:
     '''
+    if isinstance(C,int):
+        CLayers=[]
+        for i in range(nLayers):
+            CLayers.append(C*pow(2, i))
+    elif isinstance(C, list):
+        assert len(C) >= nLayers
+        CLayers=C
+    else:
+        print("C type is not correct")
+        assert False
+
     downPoolings = nn.ModuleList()
     downLayers = nn.ModuleList()
     for i in range(nLayers):
-        CPreLayer = C*pow(2, i-1) if i >=1 else C
-        CLayer = C*pow(2, i)  # the channel number in the Downlayer
+        #CPreLayer = C*pow(2, i-1) if i >=1 else C
+        #CLayer = C*pow(2, i)  # the channel number in the Downlayer
+        CLayer = CLayers[i]
+
         if 0 == i:
             downPoolings.append(Conv2dBlock(inputChannels, CLayer, activation=inputActivation))
         else:
+            CPreLayer = CLayers[i-1]
             downPoolings.append(nn.Sequential(
                 nn.MaxPool2d(2, stride=2, padding=0),
                 Conv2dBlock(CPreLayer, CLayer)
             ))
-
         downLayers.append(nn.Sequential(
             Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
 
