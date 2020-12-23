@@ -27,6 +27,7 @@ from ThicknessMap2HyperTensionNet_E import ThicknessMap2HyperTensionNet_E
 
 # for input size: 9x31x25
 from ThicknessMap2HyTension_ResNet import ThicknessMap2HyTension_ResNet
+from Thickness2HyTensionNet_1Layer import Thickness2HyTensionNet_1Layer
 
 from OCT2SysD_Tools import *
 
