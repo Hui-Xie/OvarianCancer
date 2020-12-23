@@ -20,8 +20,6 @@ print(f"total {nXmlVolumes} volumes")
 stepH=2
 stepW=43
 
-
-
 for xmlSegPath in xmlVolumeList:
     basename, ext = os.path.splitext(os.path.basename(xmlSegPath))
     outputFilename = basename[0:basename.rfind("_Sequence_Surfaces_Prediction")] + f"_thickness_enface" + ".npy"
@@ -58,9 +56,8 @@ for xmlSegPath in xmlVolumeList:
 
     # output files
     np.save(outputPath, thicknessEnface)
-    break
 
-print(f"=======End of generating thickness enface map==========")
+print(f"=======End of generating thickness enface map 9x15x12 ==========")
 
 
 
