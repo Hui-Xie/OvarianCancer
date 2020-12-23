@@ -1,11 +1,17 @@
 # Dec 22nd, Tuesday, 2020
-expOCT_texture2HyT_20201222_ResNet_A:
+expOCT_texture2HyT_20201222_ResNet_A: for 9x31x25 input
         channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
         dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        at stable, training acc gets 94%, while validation accc gets 50%;
+        at epoch 5, validation loss increases, while training loss decrease.
+        TPR+TNR+ACC= Sum = 1.583 , very low.
 
-expOCT_texture2HyT_20201222_ResNet_B:
+expOCT_texture2HyT_20201222_ResNet_B: for 9x31x25 input
         channels:     [4, 8, 16, 32, 64] # the final channel is for FC layer
         dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        at stable, training acc gets 92%, while validation accc gets 49%;
+        at epoch 13, validation loss increases, while training loss decrease.
+        TPR+TNR+ACC= Sum = 1.58, very low.
 
 
 

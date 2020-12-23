@@ -1,3 +1,16 @@
+# Dec 23rd, Wednesday, 2020
+Let's us try 9x15x12 input size, which keeps 9 layers feature, and preserver X and Z same pixel resolution:
+original size: 9x31*512 in CxZxX direction.
+resulution: Z:240.555 um/pixel,  X: 11.29 um/pixel;
+(240.555*2)/11.29 = 42.614 which means 2 pixels in Z direction has same resolution with 42.6 pixels in X direciton.
+512/43 = 12, 31/2 = 16
+new image size: 9x16x12 = 1728 features.
+
+
+
+
+
+
 # Dec 22nd, Tuesday, 2020
 Today, in the process of learning SVM, I found a problem which maybe is the root reason why we always encounter overfitting in both our OCT2HyperTension and
 OvarianCancerCT to survival prediction.
@@ -43,13 +56,20 @@ https://stackoverflow.com/questions/37776333/why-too-many-features-cause-over-fi
 1  input image changes size from 9x31x512 to 9x31x25, 20 times reducing;
 2  so we can increase batch size from 30 to 300;
 
-expOCT_thickness2HyT_20201222_ResNet_A:  training.
+expOCT_thickness2HyT_20201222_ResNet_A:  for 9x31x25 input
         channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
         dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        at stable, training acc gets 84%, while validation accc gets 51%;
+        at epoch 5, validation loss increases, while training loss decrease.
+        TPR+TNR+ACC= Sum = 1.59, very low.
 
-expOCT_thickness2HyT_20201222_ResNet_B:  training.
+expOCT_thickness2HyT_20201222_ResNet_B:  for 9x31x25 input
         channels:     [4, 8, 16, 32, 64] # the final channel is for FC layer
         dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+        at stable, training acc gets 81%, while validation accc gets 50%;
+        at epoch 21, validation loss increases, while training loss decrease.
+        TPR+TNR+ACC= Sum = 1.637, low.
+
 
 
 
