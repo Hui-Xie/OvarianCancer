@@ -125,7 +125,7 @@ class OCT2SysD_DataSet(data.Dataset):
         return self.m_labels
 
     def addSamplesAugmentation(self, data0, label0):
-        index1, index2 = random.sample(range(self.m_volumes), 2)
+        index1, index2 = random.sample(range(self.m_NVolumes), 2)
         volumePath = "__AddSamples_MergerPath__"
 
         label1 = self.m_labels[int(self.m_IDsCorrespondVolumes[index1])][self.hps.appKey]
