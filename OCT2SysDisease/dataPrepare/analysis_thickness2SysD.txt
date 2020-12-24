@@ -64,7 +64,7 @@ Conclusion: single layer network is not good.
 
 
 ================================================
-Use sample sum as data augmentation:
+Use sample sum as data augmentation:  --done, training.
 1  get one load index i1 from __getitem__ method;
 2  random choose other 2 indexes: i2,i3;
 3  if these 3 samples have same labels, average the 3 samples;
@@ -74,7 +74,9 @@ Use sample sum as data augmentation:
 4  while using this method, validation data do not augmentation;
 5  this method can generate sample: int(1806*0.45)*(int(1806*0.45)-1)/2+ int(1806*0.55)*(int(1806*0.55)-1)/2 = 821794
 6  while  9*31*25 = 6975 features.
-7  rebo 9x31x25 map, cancel smooth.
+7  redo 9x31x25 map, cancel smooth.  --done
+
+Exp: expOCT_thickness2HyT_20201224_ResNet_A.yaml for addSamples is training.
 
 
 
