@@ -1,3 +1,37 @@
+# Dec 24th, Thursday, 2020
+Use SVM on Thickness map to hypertension,please review.
+
+Assumption: our thickness to hypertension prediction is not a linear separable.
+Solution:
+1  use svc function, which support classification error and 4 kernal functions;
+2  4 kernal functions: linear, polynomial, rbf, sigmoid tanh;
+   one by one try to see which kernal give us best result;
+3  use svc.score to get it accuracy;
+
+Input:
+1  thickness map of size 9x15x12 flat into a vector;
+2  label [0,1] converts into [-1,1];
+
+Possible results:
+1  high prediction result: wonderful;
+2  low prediction result, which is similar overfitting in deep learning:
+   then further possible improvement:
+   A  further consider to use feature engineering (SIFT etc0.) to design features;
+   B  use a separate deep learning network to search features;
+   C  reduce input features;
+
+Plan:
+1  This Friday, code;
+2  This Saturday, test different kernal and parameter config;
+3  Next Monday, report result;
+
+
+
+
+
+
+
+
 # Dec 23rd, Wednesday, 2020
 Let's us try 9x15x12 input size, which keeps 9 layers feature, and preserver X and Z same pixel resolution:
 original size: 9x31*512 in CxZxX direction.
