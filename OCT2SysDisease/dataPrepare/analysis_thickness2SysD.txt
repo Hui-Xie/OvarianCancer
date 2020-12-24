@@ -43,6 +43,21 @@ expOCT_thickness2HyT_20201223_1Layer_E: 8 filters
 expOCT_thickness2HyT_20201223_1Layer_F: 4 filters
 
 
+================================================
+Use sample sum as data augmentation:
+1  get one load index i1 from __getitem__ method;
+2  random choose other 2 indexes: i2,i3;
+3  if these 3 samples have same labels, average the 3 samples;
+   elif i1 = i2, average i1 and i2;
+   elif i1 = i3, average i1 and i3;
+   else  average i2 and i3;
+4  while using this method, validation data do not augmentation;
+5  this method can generate sample: int(1806*0.45)*(int(1806*0.45)-1)/2+ int(1806*0.55)*(int(1806*0.55)-1)/2 = 821794
+6  while  9*31*25 = 6975 features.
+7  rebo 9x31x25 map, cancel smooth.
+
+
+
 
 
 # Dec 22nd, Tuesday, 2020
