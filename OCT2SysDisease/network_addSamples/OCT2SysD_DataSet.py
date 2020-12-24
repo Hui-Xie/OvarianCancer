@@ -2,6 +2,7 @@ from torch.utils import data
 import numpy as np
 import torch
 import os
+import random
 
 import glob
 import fnmatch
@@ -10,6 +11,8 @@ import yaml
 import sys
 sys.path.append(".")
 from OCT2SysD_Tools import readBESClinicalCsv
+
+# use AddSample Augmentation
 
 class OCT2SysD_DataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None):
@@ -121,6 +124,41 @@ class OCT2SysD_DataSet(data.Dataset):
     def getGTDict(self):
         return self.m_labels
 
+    def addSamplesAugmentation(self, data0, label0):
+        index1, index2 = random.sample(range(self.m_volumes), 2)
+        volumePath = "__AddSamples_MergerPath__"
+
+        label1 = self.m_labels[int(self.m_IDsCorrespondVolumes[index1])][self.hps.appKey]
+        if "gender" == self.hps.appKey:
+            label1 = label1 - 1
+        label2 = self.m_labels[int(self.m_IDsCorrespondVolumes[index2])][self.hps.appKey]
+        if "gender" == self.hps.appKey:
+            label2 = label2 - 1
+
+        if label0 == label1 == label2:
+            data1 = self.m_volumes[index1,].clone()  # clone is safer to avoid source data corrupted
+            data2 = self.m_volumes[index2,].clone()  # clone is safer to avoid source data corrupted
+            data = (data0+ data1+data2)/3.0
+            label = label0
+
+        elif label0 == label1:
+            data1 = self.m_volumes[index1,].clone()  # clone is safer to avoid source data corrupted
+            data = (data0 + data1) / 2.0
+            label = label0
+        elif label0 == label2:
+            data2 = self.m_volumes[index2,].clone()  # clone is safer to avoid source data corrupted
+            data = (data0 + data2) / 2.0
+            label = label0
+        elif label1 == label2:
+            data1 = self.m_volumes[index1,].clone()  # clone is safer to avoid source data corrupted
+            data2 = self.m_volumes[index2,].clone()  # clone is safer to avoid source data corrupted
+            data = (data1 + data2) / 2.0
+            label = label1
+        else:
+            print(f"3 samples have 3 different labels in binary labels case")
+            assert False
+
+        return data, label, volumePath
 
 
     def __getitem__(self, index):
@@ -142,7 +180,11 @@ class OCT2SysD_DataSet(data.Dataset):
 
         # transform for data augmentation
         if self.m_transform:
-            data = self.m_transform(data)  # size: CxHxW
+            if self.hps.useAddSamplesAugment:
+                if random.uniform(0, 1) < self.hps.augmentProb:
+                    data, label, volumePath = self.addSamplesAugmentation(data, label)
+            else:
+                data = self.m_transform(data)  # size: CxHxW
 
         # thickness map needs normalization again, modified at Dec 22nd, 2020 for new 31x25 thickness map.
         std, mean = torch.std_mean(data, dim=(1, 2), keepdim=True)

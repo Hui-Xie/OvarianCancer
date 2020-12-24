@@ -39,7 +39,7 @@ nLayers: 4 # H changes: 31->15->7->3, W change: 25->12->6->3
 # bothEyes: False  # choose all OD eyes
 inputChannels: 9 # 9 layers
 gradChannels: 0   # the added gradient channels beside raw image channel
-channels:     [8, 16, 32, 64, 128] # the final channel is for FC layer
+channels:     [16, 32, 64, 128, 256] # the final channel is for FC layer
 dropoutRate: 0.5  # the dropout rate at final fully connected layer.
 appKey: "hypertension_bp_plus_history$"
 
@@ -50,12 +50,13 @@ hypertensionClassPercent:  [0.4565578306585501, 0.54344216934145]  # for trainID
 #hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
 
 trainAugmentation: True
-validationAugmentation: True
-augmentProb: 0.3  #  data augmentation rate
-gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
+validationAugmentation: False
+useAddSamplesAugment: True  # when true, do not use other data augmentation.
+augmentProb: 0.6  #  data augmentation rate
+#gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
 # for salt pepper noise
-saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
-saltRate: 0.5  # saltRate = salt/(salt+pepper)
+#saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+#saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
 netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
