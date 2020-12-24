@@ -31,16 +31,36 @@ expOCT_thickness2HyT_20201223_ResNet_D:
 
 ===============Use 1Layer network==============
 expOCT_thickness2HyT_20201223_1Layer_A: 96 filters
+    Sum= 1.659
+    at epoch 3, validation loss > training loss
+    at stable: training acc 65%, while validation acc 50%;
 
 expOCT_thickness2HyT_20201223_1Layer_B: 64 filters
+    Sum= 1.646
+    at epoch 7, validation loss > training loss
+    at stable: training acc 64%, while validation acc 53%;
 
 expOCT_thickness2HyT_20201223_1Layer_C: 32 filters
+    Sum= 1.653
+    at epoch 3, validation loss > training loss
+    at stable: training acc 61%, while validation acc 52%;
 
 expOCT_thickness2HyT_20201223_1Layer_D: 16 filters
+    Sum= 1.661
+    at epoch 7, validation loss > training loss
+    at stable: training acc 58%, while validation acc 54%;
 
 expOCT_thickness2HyT_20201223_1Layer_E: 8 filters
+    Sum= 1.621
+    at epoch 0, validation loss > training loss
+    at stable: training acc 56%, while validation acc 51%;
 
 expOCT_thickness2HyT_20201223_1Layer_F: 4 filters
+    Sum= 1.643
+    at epoch 7, validation loss > training loss
+    at stable: training acc 57%, while validation acc 51%;
+
+Conclusion: single layer network is not good.
 
 
 ================================================
