@@ -12,7 +12,7 @@ check result:
 Different methods on Duke_AMD test data for pure surface net, without softSeparation at all:
 ======================================================================================================================================================================================================
 Method                      trainingGPUMemory   muError             stdError           Hausdorff_Distance(pixel)            expName
-JHU                         18GB                1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007, all layers have same filters=64
+JHU(YufanHe)                18GB                1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007, all layers have same filters=64
 NoReLU_NoRift_ourMethod     10GB                2.0391054153442383  2.2191126346588135 65.          123.        54.         expDuke_20201117A_SurfaceSubnet_NoReLU with start filters=24
 ReLU_NoRift_OurMethod(24)   10GB                1.9812164306640625  1.961887240409851  50.          33.         30.         expDuke_20200902A_SurfaceSubnet with start filters=24
 ReLU_NoRift_OurMethod(64)   45GB                2.003045082092285   2.13523006439209   63.          60.         57.         expDuke_20201215A_SurfaceSubnet_iibi007 with start filters=64
@@ -22,11 +22,14 @@ For AMD and Control group statistics
 ========================================================================================================================================================
 ExpName                                         Group       muError             stdError            muSurfaceError              HuasdorffDistane(pixel)
 --------------------------------------------------------------------------------------------------------------------------------------------------------
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+--------------------------------------------------------------------------------------------------------------------------------------------------------
 expDuke_20200902A_SurfaceSubnet                 AMD         2.202664852142334   2.2394497394561768  1.3282, 1.9938, 3.2859      50. 33. 30.
 expDuke_20200902A_SurfaceSubnet                 Control     1.4768062829971313  0.929665207862854   0.6202, 1.6550, 2.1552      28.  8.  8.
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-expDuke_20201215A_SurfaceSubnet_iibi007         AMD
-expDuke_20201215A_SurfaceSubnet_iibi007         Control
+expDuke_20201215A_SurfaceSubnet_iibi007         AMD         2.243525505065918   2.453505039215088   1.3835, 1.9919, 3.3552      63. 29. 57.
+expDuke_20201215A_SurfaceSubnet_iibi007         Control     1.4552843570709229  0.9183998107910156  0.5611, 1.6485, 2.1562      19. 60.  9.
 ========================================================================================================================================================
 
 Thickness (Rift) prediction on Duke_AMD test data:
@@ -45,6 +48,32 @@ Analysis:
    A. it looks adding more filters does not help;
    B.
 3  For Thickness prediction, it looks adding guassian N-surface divLoss odes not help;
+
+
+#python3 ./computeAMD_ControlAccuracy.py
+Compute performance in AMD and Control group separately
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20201215A_SurfaceSubnet_iibi007/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.4635, 1.0393, 1.7873])
+muSurfaceError = tensor([1.3835, 1.9919, 3.3552])
+HausdorffDistance in pixel = [[63. 29. 57.]]
+HausdorffDistance in physical size (micrometer) = [[204.12  93.96 184.68]]
+stdError = 2.453505039215088
+muError = 2.243525505065918
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.2939, 0.9639, 0.4560])
+muSurfaceError = tensor([0.5611, 1.6485, 2.1562])
+HausdorffDistance in pixel = [[19. 60.  9.]]
+HausdorffDistance in physical size (micrometer) = [[ 61.56 194.4   29.16]]
+stdError = 0.9183998107910156
+muError = 1.4552843570709229
+===============
+
 
 
 # Dec 21th, Monday, 2020
