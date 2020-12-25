@@ -28,7 +28,7 @@ ReLU_NoRift_OurMethod(64)   45GB                2.003045082092285   2.1352300643
 
 AMD and Control group statistics for surfaceSubnet on test data:
 ========================================================================================================================================================
-ExpName                                         Group       muError             stdError            muSurfaceError              HuasdorffDistane(pixel)
+ExpName                                         Group       muError             stdError            muSurfaceError              Hausdorff_Distance(pixel)
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 expDuke_20201208A_SurfaceNet_YufanHe_iibi007    AMD         2.1859207153320312  2.406925916671753   1.3248, 2.0069, 3.2261      153.    40.     71.
 expDuke_20201208A_SurfaceNet_YufanHe_iibi007    Control     1.478100061416626   1.0525134801864624  0.7013, 1.6296, 2.1034      92.     15.     13.
