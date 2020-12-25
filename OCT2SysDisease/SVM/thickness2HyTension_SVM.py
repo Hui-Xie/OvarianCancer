@@ -165,11 +165,14 @@ def main():
 
     # print result:
     print("\n============ Accuracy of Thickness2HyTension Prediction with different SVM kernels ====================")
+    print(f"inputDataDir: {hps.dataDir}")
     print("========================================================================================================")
     print(f"SVM_Kernel,\t {','.join(str(x) for x in kernelList)}")
     print(f"Training,  \t {','.join(str(x) for x in trainAccList)}")
     print(f"Validation,\t {','.join(str(x) for x in validationAccList)}")
     print(f"Test,      \t {','.join(str(x) for x in testAccList)}")
     print("=======================================================================================================")
+
+
 if __name__ == "__main__":
     main()

@@ -11,6 +11,7 @@ Note: SVM use default parameters;
 python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_A.yaml
 Experiment: expOCT_thickness2HyT_20201225_SVM_A
 ============ Accuracy of Thickness2HyTension Prediction with different SVM kernels ====================
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
 =======================================================================================================
 SVM_kernel,  linear,                poly,                   rbf,                    sigmoid
 Training,  	 0.8202777777777778,    0.6036111111111111,     0.5986111111111111,     0.5425
