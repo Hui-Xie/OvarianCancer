@@ -1,3 +1,11 @@
+# Dec 25th, Friday, 2020
+expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
+    at epoch 297, training acc got 97%, while validation acc got 53%;
+    at epoch 10, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
+    TPR+TNR+ACC= Sum=1.66.
+
+    
+
 # Dec 24th, Thursday, 2020
 Use SVM on Thickness map to hypertension,please review.
 
@@ -110,7 +118,8 @@ Use sample sum as data augmentation:  --done, training.
 6  while  9*31*25 = 6975 features.
 7  redo 9x31x25 map, cancel smooth.  --done
 
-Exp: expOCT_thickness2HyT_20201224_ResNet_A.yaml for addSamples is training.
+Exp: expOCT_thickness2HyT_20201224_ResNet_A.yaml for addSamples is training:
+
 
 
 
@@ -154,6 +163,23 @@ In deep learning, methods of overcoming overfitting:
 
 too many features leads the spare of samples.
 https://stackoverflow.com/questions/37776333/why-too-many-features-cause-over-fitting
+
+I am thinking that 9x15x12 is still too big in input feature number.
+
+For MNIST data set, input size is 28x28, and training sample is 60K, so the rate of training samples vs input feature = 78;
+For ImageNet data set, input size is 3x224x224, and training sample is 14.2 million, so the rate of training sample vs input feature = 94.
+For a common (x,y) 2D data point classification,   general we has 200 points,  so the rate for training sample vs input feature = 100;
+
+For our 1806 training samples, it looks 20 input features is a good choice according to the above rough sense.
+
+I am thinking whether we need to reduce input features to 20, for example, use 9x1x1 input, or some feature engineering like below:
+Harris Corner Detection — Uses a Gaussian window function to detect corners. (read more)
+Shi-Tomasi Corner Detector — The authors modified the scoring function used in Harris Corner Detection to achieve a better corner detection technique (read more)
+Scale-Invariant Feature Transform (SIFT) — This technique is scale invariant unlike the previous two. (read more)
+Speeded-Up Robust Features (SURF) — This is a faster version of SIFT as the name says. (read more)
+Features from Accelerated Segment Test (FAST) — This is a much more faster corner detection technique compared to SURF. (read more)
+Binary Robust Independent Elementary Features (BRIEF) — This is only a feature descriptor that can be used with any other feature detector. This technique reduces the memory usage by converting descriptors in floating point numbers to binary strings. (read more)
+Oriented FAST and Rotated BRIEF (ORB) — SIFT and SURF are patented and this algorithm from OpenCV labs is a free alternative to them, that uses FAST keypoint detector and BRIEF descriptor. (read more)
 
 
 
