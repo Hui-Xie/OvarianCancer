@@ -7,8 +7,10 @@ expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
 expOCT_thickness2HyT_20201225_ResNet_A: with AddSample augmentation + 18 filter in each layer, and 2 conv in each layer.
 
 SVM test result:
+Note: SVM use default parameters;
 python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_A.yaml
 Experiment: expOCT_thickness2HyT_20201225_SVM_A
+============ Accuracy of Thickness2HyTension Prediction with different SVM kernels ====================
 =======================================================================================================
 SVM_kernel,  linear,                poly,                   rbf,                    sigmoid
 Training,  	 0.8202777777777778,    0.6036111111111111,     0.5986111111111111,     0.5425
