@@ -10,6 +10,7 @@ SVM test result:
 Note: SVM use default parameters;
 python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_A.yaml
 Experiment: expOCT_thickness2HyT_20201225_SVM_A
+
 ============ Accuracy of Thickness2HyTension Prediction with different SVM kernels ====================
 inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
 =======================================================================================================
@@ -18,6 +19,19 @@ Training,  	 0.8202777777777778,    0.6036111111111111,     0.5986111111111111, 
 Validation,	 0.5234619395203337,    0.5954118873826904,     0.5860271115745568,     0.5119916579770595
 Test,      	 0.537,                 0.555,                  0.559,                  0.543
 ========================================================================================================
+
+
+python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_B.yaml
+Experiment: expOCT_thickness2HyT_20201225_SVM_B
+
+============ Accuracy of Thickness2HyTension Prediction with different SVM kernels ====================
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 1.0,                   0.6097222222222223,     0.6075,                 0.5452777777777778
+Validation,	 0.5140771637122002,    0.5828988529718456,     0.5912408759124088,     0.5130344108446299
+Test,      	 0.519,                 0.551,                  0.558,                  0.543
+=======================================================================================================
 
 
 
