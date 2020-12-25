@@ -6,6 +6,17 @@ expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
 
 expOCT_thickness2HyT_20201225_ResNet_A: with AddSample augmentation + 18 filter in each layer, and 2 conv in each layer.
 
+SVM test result:
+python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_A.yaml
+Experiment: expOCT_thickness2HyT_20201225_SVM_A
+=======================================================================================================
+SVM_kernel,  linear,                poly,                   rbf,                    sigmoid
+Training,  	 0.8202777777777778,    0.6036111111111111,     0.5986111111111111,     0.5425
+Validation,	 0.5234619395203337,    0.5954118873826904,     0.5860271115745568,     0.5119916579770595
+Test,      	 0.537,                 0.555,                  0.559,                  0.543
+========================================================================================================
+
+
 
 # Dec 24th, Thursday, 2020
 Use SVM on Thickness map to hypertension,please review.

@@ -138,10 +138,14 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
+    print("Program needs about 5 minutes, please wait...")
+
     # load training data, validation, and test data
     trainImages, trainTargets = retrieveImageData_label("training", hps)
     validationImages, validationTargets = retrieveImageData_label("validation", hps)
     testImages, testTargets = retrieveImageData_label("test", hps)
+
+    print(f"finished data and label retrieving ......")
 
     # train SVM
     kernelList=("linear", "poly", "rbf", "sigmoid")
@@ -157,13 +161,15 @@ def main():
         trainAccList[i] = classifier.score(trainImages, trainTargets)
         validationAccList[i] = classifier.score(validationImages, validationTargets)
         testAccList[i] = classifier.score(testImages, testTargets)
+        print(f"finished {kernel} kernel fit and score......")
 
     # print result:
-    print("============================================================")
-    print(f"Accuracy,  \t {','.join(str(x) for x in kernelList)}")
+    print("\n============ Accuracy of Thickness2HyTension Prediction with different SVM kernels ====================")
+    print("========================================================================================================")
+    print(f"SVM_Kernel,\t {','.join(str(x) for x in kernelList)}")
     print(f"Training,  \t {','.join(str(x) for x in trainAccList)}")
     print(f"Validation,\t {','.join(str(x) for x in validationAccList)}")
     print(f"Test,      \t {','.join(str(x) for x in testAccList)}")
-    print("============================================================")
+    print("=======================================================================================================")
 if __name__ == "__main__":
     main()
