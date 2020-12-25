@@ -1,3 +1,52 @@
+# Dec 24th, Thursday, 2020
+previous trained 2 programs:
+nohup python3 ./RiftSubnet_Train.py ./testConfig_Duke/expDuke_20201215A_ThicknessSubnet_iibi007.yaml &
+nohup python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20201215A_SurfaceSubnet_iibi007.yaml &
+
+test programs:
+nohup python3 ./RiftSubnet_Test.py ./testConfig_Duke/expDuke_20201215A_ThicknessSubnet_iibi007.yaml &
+nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20201215A_SurfaceSubnet_iibi007.yaml &
+
+check result:
+
+Different methods on Duke_AMD test data for pure surface net, without softSeparation at all:
+======================================================================================================================================================================================================
+Method                      trainingGPUMemory   muError             stdError           Hausdorff_Distance(pixel)            expName
+JHU                         18GB                1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007, all layers have same filters=64
+NoReLU_NoRift_ourMethod     10GB                2.0391054153442383  2.2191126346588135 65.          123.        54.         expDuke_20201117A_SurfaceSubnet_NoReLU with start filters=24
+ReLU_NoRift_OurMethod(24)   10GB                1.9812164306640625  1.961887240409851  50.          33.         30.         expDuke_20200902A_SurfaceSubnet with start filters=24
+ReLU_NoRift_OurMethod(64)   45GB                2.003045082092285   2.13523006439209   63.          60.         57.         expDuke_20201215A_SurfaceSubnet_iibi007 with start filters=64
+======================================================================================================================================================================================================
+
+For AMD and Control group statistics
+========================================================================================================================================================
+ExpName                                         Group       muError             stdError            muSurfaceError              HuasdorffDistane(pixel)
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+expDuke_20200902A_SurfaceSubnet                 AMD         2.202664852142334   2.2394497394561768  1.3282, 1.9938, 3.2859      50. 33. 30.
+expDuke_20200902A_SurfaceSubnet                 Control     1.4768062829971313  0.929665207862854   0.6202, 1.6550, 2.1552      28.  8.  8.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+expDuke_20201215A_SurfaceSubnet_iibi007         AMD
+expDuke_20201215A_SurfaceSubnet_iibi007         Control
+========================================================================================================================================================
+
+Thickness (Rift) prediction on Duke_AMD test data:
+=====================================================================================================================================================================================================
+Method_Name                                 thicknessError          thicknessStdError   thicknessErrorRift0     thicknessErrorRift1      Note
+expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,                 8.4392                   Directly prediction N-1 thickness.
+expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,                 4.1209                   without Guassian DivLoss
+xpDuke_20201215A_ThicknessSubnet_iibi007    3.800525188446045       2.357407331466675   3.2803,                 4.3208                   with Gausssian DivLoss
+=====================================================================================================================================================================================================
+
+Analysis:
+1  our latest experiments in blue:
+   expDuke_20201215A_ThicknessSubnet_iibi007.yaml: uses 8 days 5 hours for training 285 epochs.
+   expDuke_20201215A_SurfaceSubnet_iibi007.yaml:  uses 8 days 5hours for training 140 epochs.
+2  For pure surfaceNet:
+   A. it looks adding more filters does not help;
+   B.
+3  For Thickness prediction, it looks adding guassian N-surface divLoss odes not help;
+
+
 # Dec 21th, Monday, 2020
 python3 ./RiftSubnet_Train.py ./testConfig_Duke/expDuke_20201215A_ThicknessSubnet_iibi007.yaml:
 A  further improve the thickness prediciton accuracy by adding gaussian location loss;
@@ -121,11 +170,11 @@ hausdorff distance of Thickness = [[45.939484 49.970154]]
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 Thickness (Rift) prediction on Duke_AMD test data:
-============================================================================================================
+====================================================================================================================================
 Method_Name                                 thicknessError          thicknessStdError   thicknessErrorRift0     thicknessErrorRift1
 expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,                 8.4392
 expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,                 4.1209
-============================================================================================================
+=====================================================================================================================================
 
 Analysis:
 1  current ThicknessPrediction Network(expDuke_20201209A_ThicknessSubnet_iibi007) didn't use surfaceLocation loss;
