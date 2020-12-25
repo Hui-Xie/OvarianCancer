@@ -17,6 +17,7 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # this file is placed in netPath directory.
 trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
 
+network: "SVM"
 imageH: 15
 imageW: 12
 volumeSuffix: "_Volume_thickness_enface.npy"
