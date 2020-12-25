@@ -138,7 +138,7 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    print("Program needs about 5 minutes, please wait...")
+    print("Program needs about 5-10 minutes according different input sizes, please wait...")
 
     # load training data, validation, and test data
     trainImages, trainTargets = retrieveImageData_label("training", hps)
