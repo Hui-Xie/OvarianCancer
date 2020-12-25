@@ -22,7 +22,8 @@ def retrieveImageData_label(mode, hps):
 
     :param mode: "training", "validation", or "test"
     :param hps:
-    :return:
+    :return: newVolumes: Nxfeatures
+             targets: N of {-1,1}
     '''
     if mode == "training":
         IDPath = hps.trainingDataPath
@@ -86,7 +87,7 @@ def retrieveImageData_label(mode, hps):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=np.float)
+    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=np.float) # size:NxCxHxW
     for i, volumePath in enumerate(volumePaths):
         oneVolume = np.load(volumePath).astype(np.float)
         volumes[i,] = oneVolume
@@ -110,9 +111,20 @@ def retrieveImageData_label(mode, hps):
         print(f"OCT2SysDiseaseDataSet mode error")
         assert False
 
-    # todo: we need return flat volumes and corresponding label
+    # get all target label {0, 1}
+    fullLabels = readBESClinicalCsv(hps.GTPath)
+    targets = np.empty((NVolumes,), dtype=np.int)
+    for i, id in enumerate(IDsCorrespondVolumes):
+        oneLabel = fullLabels[int(id)][hps.appKey]
+        if "gender" == hps.appKey:
+            oneLabel = oneLabel - 1
+        #if oneLabel==0: # make sure label in {-1,1}
+        #    oneLabel = -1
+        targets[i] = oneLabel
 
-    return volumes
+    # flat feature plane
+    newVolumes = volumes.reshape(NVolumes, -1)
+    return newVolumes, targets
 
 
 def main():
@@ -127,7 +139,6 @@ def main():
     print(f"Experiment: {hps.experimentName}")
 
     # load training data, validation, and test data
-    fullLabels = readBESClinicalCsv(hps.GTPath)
 
 
     # train SVM
