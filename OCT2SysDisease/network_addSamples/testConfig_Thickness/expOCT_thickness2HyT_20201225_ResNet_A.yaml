@@ -36,11 +36,11 @@ imageH: 31
 imageW: 25
 volumeSuffix: "_Volume_thickness_enface.npy"
 nLayers: 4 # H changes: 31->15->7->3, W change: 25->12->6->3
-numConvEachLayer: 3
+numConvEachLayer: 2
 # bothEyes: False  # choose all OD eyes
 inputChannels: 9 # 9 layers
 gradChannels: 0   # the added gradient channels beside raw image channel
-channels:     [16, 32, 64, 128, 256] # the final channel is for FC layer
+channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
 dropoutRate: 0.5  # the dropout rate at final fully connected layer.
 appKey: "hypertension_bp_plus_history$"
 

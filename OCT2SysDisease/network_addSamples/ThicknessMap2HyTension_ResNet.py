@@ -13,7 +13,7 @@ class ThicknessMap2HyTension_ResNet(BasicModel):
         self.hps = hps
         self.posWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
 
-        self.m_downPoolings, self.m_downLayers = construct2DFeatureNet(hps.inputChannels, hps.channels, hps.nLayers)
+        self.m_downPoolings, self.m_downLayers = construct2DFeatureNet(hps.inputChannels, hps.channels, hps.nLayers, numConvEachLayer=hps.numConvEachLayer)
         #output size: Bxchannel[nlayers-1]x3x3
 
         self.m_conv4 = nn.Sequential(

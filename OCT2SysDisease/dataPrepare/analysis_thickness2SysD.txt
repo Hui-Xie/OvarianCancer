@@ -4,7 +4,7 @@ expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
     at epoch 10, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
     TPR+TNR+ACC= Sum=1.66.
 
-    
+
 
 # Dec 24th, Thursday, 2020
 Use SVM on Thickness map to hypertension,please review.

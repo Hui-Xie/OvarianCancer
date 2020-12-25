@@ -63,7 +63,7 @@ def constructUnet(inputChannels, H, W, C, nLayers):
 
     return downPoolings, downLayers, upSamples, upLayers
 
-def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True):
+def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True, numConvEachLayer=3):
     '''
     # downPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
     #  Pooling->ChannelChange->downLayer
@@ -73,6 +73,7 @@ def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True):
     :param inputChannels:
     :param C: the channel number of the first layer, or channles list for all layers.
     :param nLayers:
+    :param numConvEachLayer: 2 or 3
     :return:
     '''
     if isinstance(C,int):
@@ -101,8 +102,13 @@ def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True):
                 nn.MaxPool2d(2, stride=2, padding=0),
                 Conv2dBlock(CPreLayer, CLayer)
             ))
-        downLayers.append(nn.Sequential(
-            Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
+        if 3 <= numConvEachLayer:
+            downLayers.append(nn.Sequential(
+                Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
+        elif 2 == numConvEachLayer:
+            downLayers.append(nn.Sequential(Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
+        else:
+            downLayers.append(nn.Sequential(Conv2dBlock(CLayer, CLayer)))
 
     return downPoolings, downLayers
 
