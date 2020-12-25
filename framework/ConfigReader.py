@@ -17,7 +17,7 @@ class ConfigReader(object):
             cfg = yaml.load(file, Loader=yaml.FullLoader)
         self.__dict__.update(cfg)
 
-        self.device = eval(self.device)
+        self.device = eval(self.device) if "device" not in self.__dict__ else None
 
         if "IVUS" not in self.dataDir:
             self.rotation = False
