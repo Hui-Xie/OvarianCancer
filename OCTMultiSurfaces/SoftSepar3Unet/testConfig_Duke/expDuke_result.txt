@@ -9,6 +9,8 @@ nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20201215A_Surfac
 
 check result:
 
+Pure SurfaceSubnet and Thickness prediction Result on Dec 24th, 2020
+
 Different methods on Duke_AMD test data for pure surface net, without softSeparation at all:
 ======================================================================================================================================================================================================
 Method                      trainingGPUMemory   muError             stdError           Hausdorff_Distance(pixel)            expName
@@ -18,26 +20,26 @@ ReLU_NoRift_OurMethod(24)   10GB                1.9812164306640625  1.9618872404
 ReLU_NoRift_OurMethod(64)   45GB                2.003045082092285   2.13523006439209   63.          60.         57.         expDuke_20201215A_SurfaceSubnet_iibi007 with start filters=64
 ======================================================================================================================================================================================================
 
-For AMD and Control group statistics
+AMD and Control group statistics for surfaceSubnet on test data:
 ========================================================================================================================================================
 ExpName                                         Group       muError             stdError            muSurfaceError              HuasdorffDistane(pixel)
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-expDuke_20201208A_SurfaceNet_YufanHe_iibi007
-expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007    AMD         2.1859207153320312  2.406925916671753   1.3248, 2.0069, 3.2261      153.    40.     71.
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007    Control     1.478100061416626   1.0525134801864624  0.7013, 1.6296, 2.1034      92.     15.     13.
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-expDuke_20200902A_SurfaceSubnet                 AMD         2.202664852142334   2.2394497394561768  1.3282, 1.9938, 3.2859      50. 33. 30.
-expDuke_20200902A_SurfaceSubnet                 Control     1.4768062829971313  0.929665207862854   0.6202, 1.6550, 2.1552      28.  8.  8.
+expDuke_20200902A_SurfaceSubnet                 AMD         2.202664852142334   2.2394497394561768  1.3282, 1.9938, 3.2859      50.     33.     30.
+expDuke_20200902A_SurfaceSubnet                 Control     1.4768062829971313  0.929665207862854   0.6202, 1.6550, 2.1552      28.     8.      8.
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-expDuke_20201215A_SurfaceSubnet_iibi007         AMD         2.243525505065918   2.453505039215088   1.3835, 1.9919, 3.3552      63. 29. 57.
-expDuke_20201215A_SurfaceSubnet_iibi007         Control     1.4552843570709229  0.9183998107910156  0.5611, 1.6485, 2.1562      19. 60.  9.
+expDuke_20201215A_SurfaceSubnet_iibi007         AMD         2.243525505065918   2.453505039215088   1.3835, 1.9919, 3.3552      63.     29.     57.
+expDuke_20201215A_SurfaceSubnet_iibi007         Control     1.4552843570709229  0.9183998107910156  0.5611, 1.6485, 2.1562      19.     60.     9.
 ========================================================================================================================================================
 
 Thickness (Rift) prediction on Duke_AMD test data:
 =====================================================================================================================================================================================================
 Method_Name                                 thicknessError          thicknessStdError   thicknessErrorRift0     thicknessErrorRift1      Note
 expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,                 8.4392                   Directly prediction N-1 thickness.
-expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,                 4.1209                   without Guassian DivLoss
-xpDuke_20201215A_ThicknessSubnet_iibi007    3.800525188446045       2.357407331466675   3.2803,                 4.3208                   with Gausssian DivLoss
+expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,                 4.1209                   without Guassian surface DivLoss, get thickness from N surfaces
+xpDuke_20201215A_ThicknessSubnet_iibi007    3.800525188446045       2.357407331466675   3.2803,                 4.3208                   with Gausssian surface DivLoss, get thickness from N surfaces
 =====================================================================================================================================================================================================
 
 Analysis:
@@ -46,8 +48,10 @@ Analysis:
    expDuke_20201215A_SurfaceSubnet_iibi007.yaml:  uses 8 days 5hours for training 140 epochs.
 2  For pure surfaceNet:
    A. it looks adding more filters does not help;
-   B.
-3  For Thickness prediction, it looks adding guassian N-surface divLoss odes not help;
+   B. new 1215 experiment has better result in Control group than 1208 experiment, but AMD group worse;
+3  For Thickness prediction:
+   A. it looks adding guassian N-surface divLoss odes not help;
+   B. further improvement: try to introduce (N-1) thickness, intead of surface, gaussian divLoss;
 
 
 #python3 ./computeAMD_ControlAccuracy.py
@@ -73,6 +77,32 @@ HausdorffDistance in physical size (micrometer) = [[ 61.56 194.4   29.16]]
 stdError = 0.9183998107910156
 muError = 1.4552843570709229
 ===============
+
+
+python3 ./computeAMD_ControlAccuracy.py
+Compute performance in AMD and Control group separately
+predictDir= /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml
+gtDir = /home/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.0343, 1.7488, 1.8714])
+muSurfaceError = tensor([1.3248, 2.0069, 3.2261])
+HausdorffDistance in pixel = [[153.  40.  71.]]
+HausdorffDistance in physical size (micrometer) = [[495.72 129.6  230.04]]
+stdError = 2.406925916671753
+muError = 2.1859207153320312
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([1.0478, 1.0402, 0.4431])
+muSurfaceError = tensor([0.7013, 1.6296, 2.1034])
+HausdorffDistance in pixel = [[92. 15. 13.]]
+HausdorffDistance in physical size (micrometer) = [[298.08  48.6   42.12]]
+stdError = 1.0525134801864624
+muError = 1.478100061416626
+===============
+
 
 
 
