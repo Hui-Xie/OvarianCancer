@@ -139,23 +139,31 @@ def main():
     print(f"Experiment: {hps.experimentName}")
 
     # load training data, validation, and test data
-
+    trainImages, trainTargets = retrieveImageData_label("training", hps)
+    validationImages, validationTargets = retrieveImageData_label("validation", hps)
+    testImages, testTargets = retrieveImageData_label("test", hps)
 
     # train SVM
+    kernelList=("linear", "poly", "rbf", "sigmoid")
+    nMethods = len(kernelList)
+    trainAccList = [-1,]*nMethods
+    validationAccList = [-1,]*nMethods
+    testAccList = [-1,]*nMethods
 
+    for i,kernel in enumerate(kernelList):
+        classifier = svm.SVC(kernel=kernel)
+        classifier.fit(trainImages, trainTargets)
 
-    # test and print out
+        trainAccList[i] = classifier.score(trainImages, trainTargets)
+        validationAccList[i] = classifier.score(validationImages, validationTargets)
+        testAccList[i] = classifier.score(testImages, testTargets)
 
-
-
-    # load
-    X = [[0, 0], [1, 1]]
-    y = [0, 1]
-    clf = svm.SVC()
-    clf.fit(X, y)
-
-    prediction =clf.predict([[2., 2.]])
-    print(f"prediction: {prediction}")
-
+    # print result:
+    print("============================================================")
+    print(f"Accuracy,  \t {','.join(str(x) for x in kernelList)}")
+    print(f"Training,  \t {','.join(str(x) for x in trainAccList)}")
+    print(f"Validation,\t {','.join(str(x) for x in validationAccList)}")
+    print(f"Test,      \t {','.join(str(x) for x in testAccList)}")
+    print("============================================================")
 if __name__ == "__main__":
     main()
