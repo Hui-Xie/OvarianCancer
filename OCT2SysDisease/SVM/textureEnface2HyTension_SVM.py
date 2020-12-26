@@ -13,7 +13,7 @@ sys.path.append(".")
 from OCT2SysD_Tools import readBESClinicalCsv
 
 def printUsage(argv):
-    print("============ OCT Thickness to Binary SysDisease Using SVM =============")
+    print("============ OCT Texture Enface to Binary SysDisease Using SVM =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_full_path")
 
@@ -92,22 +92,32 @@ def retrieveImageData_label(mode, hps):
         oneVolume = np.load(volumePath).astype(np.float)
         volumes[i,] = oneVolume
 
-    # for thickness map
+    # for texture enface map
     # normalize training volumes and save mean and std for using in validation and test data
+    # normalization along each C (layer) dimension, and save as torch.pt file.
     epsilon = 1.0e-8
-    normalizationYamlPath = os.path.join(hps.netPath, hps.trainNormalizationStdMeanYamlName)
+    normalizationFilePath_std = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_std.pt")
+    normalizationFilePath_mean = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_mean.pt")
     if mode == "training":
-        std = np.std(volumes)
-        mean = np.mean(volumes)
+        if (not os.path.isfile(normalizationFilePath_std)) or (not os.path.isfile(normalizationFilePath_mean)):
+            std = np.std(volumes,axis=(0, 2, 3), keepdims=True)
+            mean = np.mean(volumes, axis=(0, 2, 3), keepdims=True)
+            np.save(normalizationFilePath_std, std)
+            np.save(normalizationFilePath_mean, mean)
+        else:
+            std = np.load(normalizationFilePath_std)  # size: 1xCx1x1
+            mean = np.load(normalizationFilePath_mean)
+
+        std = np.broadcast_to(std, volumes.shape)  # equivalent with torch.expand_as
+        mean = np.broadcast_to(mean, volumes.shape)
         volumes = (volumes - mean) / (std + epsilon)  # size: NxCxHxW
-        with open(normalizationYamlPath, 'w') as outfile:
-            d = {"std": std.item(), "mean": mean.item()}
-            yaml.dump(d, outfile, default_flow_style=False)
 
     elif (mode == "validation") or (mode == "test"):
-        with open(normalizationYamlPath, 'r') as infile:
-            cfg = yaml.load(infile, Loader=yaml.FullLoader)
-        volumes = (volumes - cfg["mean"]) / (cfg["std"] + epsilon)  # size: NxCxHxW
+        std = np.load(normalizationFilePath_std)  # size: 1xCx1x1
+        mean = np.load(normalizationFilePath_mean)
+        std = np.broadcast_to(std, volumes.shape)
+        mean = np.broadcast_to(mean, volumes.shape)
+        volumes = (volumes - mean) / (std + epsilon)  # size: NxCxHxW
     else:
         print(f"OCT2SysDiseaseDataSet mode error")
         assert False
@@ -165,7 +175,7 @@ def main():
         print(f"finished {kernel} kernel fit and score......")
 
     # print result:
-    print(f"\n============ Accuracies of Thickness to {hps.appKey} Prediction with different SVM kernels ====================")
+    print(f"\n============ Accuracies of TextureEnface to {hps.appKey} Prediction with different SVM kernels ====================")
     print(f"inputDataDir: {hps.dataDir}")
     print("========================================================================================================")
     print(f"SVM_Kernel,\t {','.join(str(x) for x in kernelList)}")
