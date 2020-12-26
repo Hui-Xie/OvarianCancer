@@ -4,7 +4,20 @@ expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
     at epoch 10, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
     TPR+TNR+ACC= Sum=1.66.
 
-expOCT_thickness2HyT_20201225_ResNet_A: with AddSample augmentation + 18 filter in each layer, and 2 conv in each layer.
+expOCT_thickness2HyT_20201225_ResNet_A: with AddSample augmentation + 18 filters in each layer, and 2 conv in each layer.
+    at epoch 406, training acc got 95%, while validation acc got 53%;
+    at epoch 3, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
+    TPR+TNR+ACC= Sum=1.653.
+
+expOCT_thickness2HyT_20201225_ResNet_B:   with AddSample augmentation + 9 filters in each layer, and 2 conv in each layer. dropout 0.5
+    training.
+
+expOCT_thickness2HyT_20201225_ResNet_C:   with AddSample augmentation + 9 filters in each layer, and 2 conv in each layer. dropout 0.2
+    training.
+
+expOCT_thickness2HyT_20201225_ResNet_D:  with AddSample augmentation + 6 filters in each layer, and 2 conv in each layer. dropout 0.2
+    training.
+
 
 SVM test result:
 Note: SVM use default parameters;
