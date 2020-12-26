@@ -66,6 +66,16 @@ Validation,	 0.5537017726798749,    0.5537017726798749,     0.5610010427528676, 
 Test,      	 0.533,                 0.549,                  0.559,                  0.53
 ========================================================================================================
 
+============ Accuracies of TextureEnface to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
+Experiment: expOCT_texture2HyT_20201226_SVM_B
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x31x25
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 1.0,                   0.8319444444444445,     0.8091666666666667,     0.5386111111111112
+Validation,	 0.5516162669447341,    0.5547445255474452,     0.5672575599582899,     0.529718456725756
+Test,      	 0.501,                 0.565,                  0.567,                  0.508
+=======================================================================================================
+
 
 
 # Dec 24th, Thursday, 2020
