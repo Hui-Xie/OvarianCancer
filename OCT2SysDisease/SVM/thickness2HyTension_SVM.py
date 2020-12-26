@@ -166,6 +166,7 @@ def main():
 
     # print result:
     print(f"\n============ Accuracies of Thickness to {hps.appKey} Prediction with different SVM kernels ====================")
+    print(f"Experiment: {hps.experimentName}")
     print(f"inputDataDir: {hps.dataDir}")
     print("========================================================================================================")
     print(f"SVM_Kernel,\t {','.join(str(x) for x in kernelList)}")

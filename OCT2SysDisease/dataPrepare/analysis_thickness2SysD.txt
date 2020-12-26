@@ -30,9 +30,10 @@ expOCT_thickness2HyT_20201225_ResNet_D:  with AddSample augmentation + 6 filters
 SVM test result:
 Note: SVM use default parameters;
 python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_A.yaml
-Experiment: expOCT_thickness2HyT_20201225_SVM_A
+
 
 ============ Accuracies of Thickness2HyTension Prediction with different SVM kernels ====================
+Experiment: expOCT_thickness2HyT_20201225_SVM_A
 inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
 =======================================================================================================
 SVM_kernel,  linear,                poly,                   rbf,                    sigmoid
@@ -43,15 +44,28 @@ Test,      	 0.537,                 0.555,                  0.559,              
 
 
 python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_B.yaml
-Experiment: expOCT_thickness2HyT_20201225_SVM_B
+
 
 ============ Accuracies of Thickness2HyTension Prediction with different SVM kernels ====================
+Experiment: expOCT_thickness2HyT_20201225_SVM_B
 inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25
 ========================================================================================================
 SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
 Training,  	 1.0,                   0.6097222222222223,     0.6075,                 0.5452777777777778
 Validation,	 0.5140771637122002,    0.5828988529718456,     0.5912408759124088,     0.5130344108446299
 Test,      	 0.519,                 0.551,                  0.558,                  0.543
+=======================================================================================================
+
+python3 ./textureEnface2HyTension_SVM.py ./testConfig/expOCT_texture2HyT_20201226_SVM_A.yaml
+
+============ Accuracies of TextureEnface to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
+Experiment: expOCT_texture2HyT_20201226_SVM_A
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x15x12
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 0.8736111111111111,    0.7502777777777778,     0.7388888888888889,     0.5094444444444445
+Validation,	 0.5537017726798749,    0.5537017726798749,     0.5610010427528676,     0.5265901981230449
+Test,      	 0.533,                 0.549,                  0.559,                  0.53
 =======================================================================================================
 
 
