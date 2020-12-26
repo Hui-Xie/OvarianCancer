@@ -29,8 +29,6 @@ expOCT_thickness2HyT_20201225_ResNet_D:  with AddSample augmentation + 6 filters
 
 SVM test result:
 Note: SVM use default parameters;
-python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_A.yaml
-
 
 ============ Accuracies of Thickness to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
 Experiment: expOCT_thickness2HyT_20201225_SVM_A
@@ -42,8 +40,6 @@ Validation,	 0.5234619395203337,    0.5954118873826904,     0.5860271115745568, 
 Test,      	 0.537,                 0.555,                  0.559,                  0.543
 ========================================================================================================
 
-python3 ./thickness2HyTension_SVM.py ./testConfig/expOCT_thickness2HyT_20201225_SVM_B.yaml
-
 ============ Accuracies of Thickness to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
 Experiment: expOCT_thickness2HyT_20201225_SVM_B
 inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25
@@ -53,8 +49,6 @@ Training,  	 1.0,                   0.6097222222222223,     0.6075,             
 Validation,	 0.5140771637122002,    0.5828988529718456,     0.5912408759124088,     0.5130344108446299
 Test,      	 0.519,                 0.551,                  0.558,                  0.543
 ========================================================================================================
-
-python3 ./textureEnface2HyTension_SVM.py ./testConfig/expOCT_texture2HyT_20201226_SVM_A.yaml
 
 ============ Accuracies of TextureEnface to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
 Experiment: expOCT_texture2HyT_20201226_SVM_A
@@ -76,6 +70,45 @@ Validation,	 0.5516162669447341,    0.5547445255474452,     0.5672575599582899, 
 Test,      	 0.501,                 0.565,                  0.567,                  0.508
 =======================================================================================================
 
+============ Accuracies of TextureEnface to gender Prediction with different SVM kernels ====================
+Experiment: expOCT_texture2Gender_20201226_SVM_A
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x15x12
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 0.9613888888888888,    0.7658333333333334,     0.8161111111111111,     0.5566666666666666
+Validation,	 0.656934306569343,     0.602711157455683,      0.6579770594369134,     0.5537017726798749
+Test,      	 0.69,                  0.628,                  0.691,                  0.563
+========================================================================================================
+
+============ Accuracies of TextureEnface to gender Prediction with different SVM kernels ====================
+Experiment: expOCT_texture2Gender_20201226_SVM_B
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x31x25
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 1.0,                   0.8077777777777778,     0.865,                  0.5741666666666667
+Validation,	 0.670490093847758,     0.5985401459854015,     0.6579770594369134,     0.5651720542231491
+Test,      	 0.697,                 0.618,                  0.696,                  0.582
+========================================================================================================
+
+============ Accuracies of Thickness to gender Prediction with different SVM kernels ====================
+Experiment: expOCT_thickness2Gender_20201226_SVM_C
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 0.9102777777777777,    0.735,                  0.7311111111111112,     0.6152777777777778
+Validation,	 0.7038581856100105,    0.6923879040667362,     0.6923879040667362,     0.5651720542231491
+Test,      	 0.72,                  0.699,                  0.692,                  0.599
+========================================================================================================
+
+============ Accuracies of Thickness to gender Prediction with different SVM kernels ====================
+Experiment: expOCT_thickness2Gender_20201226_SVM_D
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 1.0,                   0.7458333333333333,     0.74,                   0.6194444444444445
+Validation,	 0.6746611053180396,    0.6871741397288843,     0.6882168925964547,     0.5693430656934306
+Test,      	 0.711,                 0.701,                  0.695,                  0.596
+========================================================================================================
 
 
 # Dec 24th, Thursday, 2020
