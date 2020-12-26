@@ -30,6 +30,25 @@ expOCT_thickness2HyT_20201225_ResNet_D:  with AddSample augmentation + 6 filters
 SVM test result:
 Note: SVM use default parameters;
 
+Summary:
+1  We did total 8 combination experiments using different input size(9x31x25, 9x15x12), textureEnface or thickness map, and prediction of hypertension or gender;
+
+2  For hypertention prediction:
+   A. SVM with polynomial kernel and thickness 9x15x12 input got the best result of average accuracy of validation and test set: 0.575;
+   B. Comparing with our deep learning network, our fine tune deep learning network can get the current best validation accuracy: 0.62;
+
+3  For gender prediction:
+   A. SVM with linear kernel and thickness 9x15x12 input got the best result of average acccuracy of validation and test set: 0.71;
+   B. Comparing with our deep learning network, our hypertention network (not fine tune for gender)can get the current best validation accuracy for gender: 0.72;
+
+4  Both hypertension and gender prediction with SVM showed that a good training accuracy does not mean a good validation and test accuracy;
+
+5  These SVM experiments also shows that for same input size and form, gender prediction always get explict better result than hypertension prediction;
+
+6  These SVM experiments fit traditional expectation: deep learning generally
+
+
+
 ============ Accuracies of Thickness to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
 Experiment: expOCT_thickness2HyT_20201225_SVM_A
 inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
