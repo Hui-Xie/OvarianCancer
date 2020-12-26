@@ -45,9 +45,9 @@ appKey: "hypertension_bp_plus_history$"
 weightDecay: 1.0e-5 #
 
 
-hypertensionClassPercent:  [0.4565578306585501, 0.54344216934145]  # for trainID_delNonExist_delErrWID_excludeMGM.csv
-# hypertensionClassPercent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
-#hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
+class01Percent:  [0.4565578306585501, 0.54344216934145]  # for trainID_delNonExist_delErrWID_excludeMGM.csv
+# class01Percent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
+#class01Percent: [0.36, 0.64] # for 200 small training set
 
 trainAugmentation: True
 validationAugmentation: True

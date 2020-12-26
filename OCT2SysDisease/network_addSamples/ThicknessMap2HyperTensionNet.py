@@ -9,7 +9,7 @@ class ThicknessMap2HyperTensionNet(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps
-        self.posWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
+        self.posWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
 
         self.m_conv2DLayers = nn.Sequential(
             nn.Conv2d(hps.inputChannels, hps.channels[0], kernel_size=3, stride=2, padding=1, bias=True),

@@ -11,7 +11,7 @@ class TextureMap2HyTension_ResNet(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps
-        self.posWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
+        self.posWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
 
         self.m_downPoolings, self.m_downLayers = construct2DFeatureNet(hps.inputChannels, hps.channels[0], hps.nLayers)
         #output size: Bxchannel[nlayers-1]x3x3

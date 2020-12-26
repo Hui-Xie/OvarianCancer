@@ -45,8 +45,8 @@ useGlobalMean: True   # True uses global mean, and False will use IQR+std
 dropoutRate: 0.2 # dropout after global average pooling
 
 classifierWidth: [512, 256, 1] # [0] element is better is the times of 62
-hypertensionClassPercent: [0.4441, 0.5559] # for 2031 big training set
-#hypertensionClassPercent: [0.36, 0.64] # for 200 small training set
+class01Percent: [0.4441, 0.5559] # for 2031 big training set
+#class01Percent: [0.36, 0.64] # for 200 small training set
 
 featureNet:  "Conv2DFeatureNet" # "MobileNetV3_OCT2SysD"
 nStartFilters: 16

@@ -53,7 +53,7 @@ def main():
     netMgr.loadNet("test")
  
     # application specific parameter
-    hyptertensionPosWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
+    hyptertensionPosWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
     appKey = 'hypertension_bp_plus_history$'
 
     net.eval()

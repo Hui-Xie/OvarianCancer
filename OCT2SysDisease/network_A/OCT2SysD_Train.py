@@ -83,7 +83,7 @@ def main():
         initialEpoch = 0
 
     # application specific parameter
-    hyptertensionPosWeight = torch.tensor(hps.hypertensionClassPercent[0] / hps.hypertensionClassPercent[1]).to(hps.device)
+    hyptertensionPosWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
     appKey = 'hypertension_bp_plus_history$'
 
     for epoch in range(initialEpoch, epochs):
