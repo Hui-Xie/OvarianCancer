@@ -173,7 +173,7 @@ def main():
     print(f"Training,  \t {','.join(str(x) for x in trainAccList)}")
     print(f"Validation,\t {','.join(str(x) for x in validationAccList)}")
     print(f"Test,      \t {','.join(str(x) for x in testAccList)}")
-    print("=======================================================================================================")
+    print("========================================================================================================")
 
 
 if __name__ == "__main__":
