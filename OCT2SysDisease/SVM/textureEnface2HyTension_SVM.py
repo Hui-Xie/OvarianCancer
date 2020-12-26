@@ -96,8 +96,8 @@ def retrieveImageData_label(mode, hps):
     # normalize training volumes and save mean and std for using in validation and test data
     # normalization along each C (layer) dimension, and save as torch.pt file.
     epsilon = 1.0e-8
-    normalizationFilePath_std = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_std.pt")
-    normalizationFilePath_mean = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_mean.pt")
+    normalizationFilePath_std = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_std.npy")
+    normalizationFilePath_mean = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_mean.npy")
     if mode == "training":
         if (not os.path.isfile(normalizationFilePath_std)) or (not os.path.isfile(normalizationFilePath_mean)):
             std = np.std(volumes,axis=(0, 2, 3), keepdims=True)
