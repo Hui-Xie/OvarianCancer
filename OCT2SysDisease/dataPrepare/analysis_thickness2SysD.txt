@@ -10,13 +10,21 @@ expOCT_thickness2HyT_20201225_ResNet_A: with AddSample augmentation + 18 filters
     TPR+TNR+ACC= Sum=1.653.
 
 expOCT_thickness2HyT_20201225_ResNet_B:   with AddSample augmentation + 9 filters in each layer, and 2 conv in each layer. dropout 0.5
-    training.
+    Sum= 1.69.
+    at stable, training acc = 77%, while validaiton accc =54%;
+    at epoch 0, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
 
 expOCT_thickness2HyT_20201225_ResNet_C:   with AddSample augmentation + 9 filters in each layer, and 2 conv in each layer. dropout 0.2
-    training.
+    Sum= 1.67.
+    at stable, training acc = 84%, while validaiton accc =54%;
+    at epoch 0, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
+
 
 expOCT_thickness2HyT_20201225_ResNet_D:  with AddSample augmentation + 6 filters in each layer, and 2 conv in each layer. dropout 0.2
-    training.
+    Sum= 1.60.
+    at stable, training acc = 80%, while validaiton accc =51%;
+    at epoch 0, validation loss > training loss, and validation loss continue to increase, while training loss continue to reduce.
+
 
 
 SVM test result:
