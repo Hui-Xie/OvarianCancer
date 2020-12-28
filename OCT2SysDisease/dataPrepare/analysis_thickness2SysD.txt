@@ -19,6 +19,8 @@ A: The first layer has 24 filters, double the number of filters along each deepe
      In other words, the bottom latent vector has a size 1536x7x8 for each slice. If we consider 31 slices together each patient, each patient has 31x1536x7x8 input features, which is 1476 times of training samples(1806), which is highly probable to overfitting.
 
 
+Data Statistics: 1806 training patients, 481 validation patients, and 501 test patients for this data.
+
 # Dec 25th, Friday, 2020
 expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
     at epoch 297, training acc got 97%, while validation acc got 53%;
