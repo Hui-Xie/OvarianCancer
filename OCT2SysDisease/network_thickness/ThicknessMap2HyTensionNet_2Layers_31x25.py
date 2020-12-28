@@ -19,7 +19,7 @@ class ThicknessMap2HyTensionNet_2Layers_31x25(BasicModel):
             nn.ReLU(inplace=False), # 31x25 -> 12x9
             nn.Dropout2d(p=hps.dropoutRates[0], inplace=False),  # dropout after activation function
             nn.Conv2d(hps.channels[0], hps.channels[1], kernel_size=(9,9), stride=(1,1), padding=0, bias=True),
-            nn.ReLU(inplace=False),  # 12x9 -> 5x1
+            nn.ReLU(inplace=False),  # 12x9 -> 4x1
             nn.Dropout2d(p=hps.dropoutRates[1], inplace=False),  # dropout after activation function
             # this Dropout2D has same affect of dropout before Linear layer.
         )

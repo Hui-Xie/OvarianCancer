@@ -14,7 +14,7 @@ class ThicknessMap2HyTensionNet_2Layers_15x12(BasicModel):
         self.posWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
 
         self.m_conv2DLayers = nn.Sequential(
-            nn.Conv2d(hps.inputChannels, hps.channels[0], kernel_size=(9,9), stride=(1,1), padding=0, bias=True),
+            nn.Conv2d(hps.inputChannels, hps.channels[0], kernel_size=(8,8), stride=(1,1), padding=0, bias=True),
             nn.BatchNorm2d(hps.channels[0]),
             nn.ReLU(inplace=False), # 15x12 -> 8x5
             nn.Dropout2d(p=hps.dropoutRates[0], inplace=False),  # dropout after activation function
