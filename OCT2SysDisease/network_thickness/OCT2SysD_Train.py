@@ -29,7 +29,7 @@ from ThicknessMap2HyperTensionNet_E import ThicknessMap2HyperTensionNet_E
 from ThicknessMap2HyTension_ResNet import ThicknessMap2HyTension_ResNet
 from Thickness2HyTensionNet_1Layer import Thickness2HyTensionNet_1Layer
 from ThicknessMap2HyTensionNet_2Layers_31x25 import ThicknessMap2HyTensionNet_2Layers_31x25
-
+from ThicknessMap2HyTensionNet_2Layers_15x12 import ThicknessMap2HyTensionNet_2Layers_15x12
 
 from OCT2SysD_Tools import *
 
