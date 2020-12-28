@@ -1,7 +1,16 @@
 # Dec 25th, Friday, 2020
-Record idea for further improve thickness Network:
-1  use accumulated R to compare with accculated G with SME;
-2  it like compare 2 acculated curves fitting;
+Record the idea for further improving the thickness Network:
+1  use cumulative R to compare with cumulative G with SME;
+2  it like compare 2 cumulative curves fitting;
+3  It has some shadow of comparing 2 cumulative distributions.
+
+expDuke_20201228A_ThicknessSubnet_iibi007:
+improvements:
+1  add cumulativeThickness Loss;
+2  first layer filter =24, and 7 layers: which is the same with the best Tongren network;
+3  dropout rate change into dropoutRateUnet: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]  # for nLayers=7;
+
+
 
 
 # Dec 24th, Thursday, 2020

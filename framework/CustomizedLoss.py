@@ -565,6 +565,28 @@ class SmoothThicknessLoss():
 
         return loss
 
+class CumulativeThicknessLoss():
+    def __init__(self):
+        pass
+
+    def __call__(self, *args, **kwargs):
+        return self.forward(*args, **kwargs)
+
+    def forward(self, inputx, target):
+        '''
+        this loss makes sure the cumulative thickness curves along column direction are similar
+        between prediction and target.
+        '''
+        B,N,W = inputx.shape
+        assert (B,N,W) == target.shape
+
+        inputxCumSum= torch.cumsum(inputx, 1) # cumulate at dimension N
+        targetCumSum = torch.cumsum(target, 1)
+
+        loss = torch.pow(inputxCumSum-targetCumSum, 2.0).mean()
+
+        return loss
+
 # support multiclass CrossEntropy Loss
 class MultiSurfaceCrossEntropyLoss():
     def __init__(self,  weight=None):
