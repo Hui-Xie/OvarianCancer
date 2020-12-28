@@ -1,3 +1,24 @@
+# Dec 28th, Monday, 2020
+Answer professor Wu's questions:
+Traditional machine learning:
+1) It seems thickness maps are not powerful enough and texture features help. But simply averaging the intensity of the enface image may not be good enough. You may also need to use radiomic features.
+A:  OK. I need to research some literature on how to design the radiomic features.  If you have further detailed ideas on this radiomic features, please share with me.
+
+2) Should also try other method, like random forest?
+A:  OK. I will try random forest method this week.
+
+Deep learning:
+1) Why 2-path independent prediction, in stead of using multiple channels to fuse the features?
+A:  These 2 methods both are worth trying.  I worry that using 18 channels (9 thickness + 9 texture) will further increase the number of input features which may lead to further overfitting. But it is worth to try.
+
+2) What is the activation function?
+A:  ReLU in each Conv layer.   The final loss uses binary cross-entropy.
+
+3) What is the number of latent features in our segmentation network? This is for our next step - using similar method as Yusen's for prognostication prediction.
+A: The first layer has 24 filters, double the number of filters along each deeper layer, and the network has total 7 layers, so at the bottom we have 1536 filters with size 7x8 as the latent vector.
+     In other words, the bottom latent vector has a size 1536x7x8 for each slice. If we consider 31 slices together each patient, each patient has 31x1536x7x8 input features, which is 1476 times of training samples(1806), which is highly probable to overfitting.
+
+
 # Dec 25th, Friday, 2020
 expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
     at epoch 297, training acc got 97%, while validation acc got 53%;
@@ -33,19 +54,29 @@ Note: SVM use default parameters;
 Summary:
 1  We did total 8 combination experiments using different input size(9x31x25, 9x15x12), textureEnface or thickness map, and prediction of hypertension or gender;
 
-2  For hypertention prediction:
+2  For hypertension prediction:
    A. SVM with polynomial kernel and thickness 9x15x12 input got the best result of average accuracy of validation and test set: 0.575;
-   B. Comparing with our deep learning network, our fine tune deep learning network can get the current best validation accuracy: 0.62;
+   B. Comparing with our deep learning network, our fine-tune deep learning network can get the current best validation accuracy: 0.62;
 
 3  For gender prediction:
-   A. SVM with linear kernel and thickness 9x15x12 input got the best result of average acccuracy of validation and test set: 0.71;
-   B. Comparing with our deep learning network, our hypertention network (not fine tune for gender)can get the current best validation accuracy for gender: 0.72;
+   A. SVM with linear kernel and thickness 9x15x12 input got the best result of average accuracy of validation and test set: 0.71;
+   B. Comparing with our deep learning network, our hypertension network (not fine-tune for gender) can get the current best validation accuracy for gender: 0.72;
 
-4  Both hypertension and gender prediction with SVM showed that a good training accuracy does not mean a good validation and test accuracy;
+4  Both hypertension and gender prediction with SVM showed that good training accuracy does not mean a good validation and test accuracy;
 
-5  These SVM experiments also shows that for same input size and form, gender prediction always get explict better result than hypertension prediction;
+5  These SVM experiments and deep learning experiments both show that for the same input sizes and forms, gender prediction always gets explicit better result than hypertension prediction;
 
-6  These SVM experiments fit traditional expectation: deep learning generally
+6  These SVM experiments fit traditional expectation:
+   Deep learning generally gets a better performance than traditional ML methods, because of the automatic feature extracting capability of DL.
+
+7  Suggestions on further work:
+   A  Further improve the accuracy on deep learning:
+     A1. Combine thickness and texture enface map for 2-path independent predictions, and then assemble result;
+     A2. Current thickness map is an approximate circle-symmetric map around fovea, can we futher extract one average thickness along same radius or four averages of 4 quadrants along same radius?
+         This method will further reduce the size of input features for reducing overfitting, and it keeps core thickness information because of circle symmetric property.
+         Maybe we need to ask professor Wang's suggestion on this idea, as this is a medical feature design problem.
+   B Report current deep learning and SVM result to professor Wang, and ask her suggestions on further improvement idea;
+   C From this SVM result, we may not have a unrealistic expectation that our accuracy must exceed 70%;
 
 
 
