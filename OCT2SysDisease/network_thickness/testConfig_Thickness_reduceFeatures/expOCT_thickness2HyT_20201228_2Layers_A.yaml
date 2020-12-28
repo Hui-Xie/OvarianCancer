@@ -54,8 +54,8 @@ validationAugmentation: True
 augmentProb: 0.3  #  data augmentation rate
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
 # for salt pepper noise
-#saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
-#saltRate: 0.5  # saltRate = salt/(salt+pepper)
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
 
 # save network
 netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
