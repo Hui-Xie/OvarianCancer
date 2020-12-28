@@ -9,6 +9,7 @@ improvements:
 1  add cumulativeThickness Loss;
 2  first layer filter =24, and 7 layers: which is the same with the best Tongren network;
 3  dropout rate change into dropoutRateUnet: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]  # for nLayers=7;
+4  it needs GPU memory 11863GB.
 
 
 
