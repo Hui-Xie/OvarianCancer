@@ -11,6 +11,7 @@ from framework.ConfigReader import ConfigReader
 sys.path.append("..")
 from dataPrepare.OCT2SysD_Tools import readBESClinicalCsv
 
+from scipy import stats
 import matplotlib.pyplot as plt
 
 def printUsage(argv):
@@ -182,7 +183,23 @@ def main():
         plt.savefig(outputFilePath)
         plt.close()
 
+    for dataSet in dataList:
+        figureName = dataSet[2] + "_Pvalue_t_test.png"
+        pValues = [-1]*nLayers # pValue is prob >=0
+        fig = plt.figure()
 
+        for i in range(nLayers):
+            _, pValues[i] = stats.ttest_ind(dataSet[0][:,i+1], dataSet[1][:,i+1], axis=1)
+
+        plt.scatter(x, pValues)
+
+        plt.xlabel("Layer")
+        plt.ylabel("PValue between Hypertension set and No hyptertension Set")
+        plt.legend(loc='upper right')
+
+        outputFilePath = os.path.join(hps.outputDir, figureName)
+        plt.savefig(outputFilePath)
+        plt.close()
 
 
 
