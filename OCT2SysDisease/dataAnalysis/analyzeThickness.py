@@ -153,26 +153,34 @@ def main():
     testObsv_hyt1 = testObsv[np.nonzero(testObsv[:, 19] == 1)]
 
     # draw figure for each surface, and each data subset
+    dataList = [
+        [trainObsv_hyt0, trainObsv_hyt1, "train"],
+        [validationObsv_hyt0, validationObsv_hyt1, "validation" ],
+        [testObsv_hyt0, testObsv_hyt1, "test"],
+    ]
+
     nLayers = 9
     x = np.arange(nLayers)
-    fig = plt.figure()
 
-    hyt0_mean = np.mean(trainObsv_hyt0[:,1:10], axis=0)
-    hyt0_std  = np.mean(trainObsv_hyt0[:,10:19], axis=0)
-    hyt1_mean = np.mean(trainObsv_hyt1[:, 1:10], axis=0)
-    hyt1_std  = np.mean(trainObsv_hyt1[:, 10:19], axis=0)
-    name = "thickness_layers.png"
+    for dataSet in dataList:
+        figureName = dataSet[2]+"_thickness_layers.png"
+        fig = plt.figure()
 
-    plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension', capsize=3)
-    plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
+        hyt0_mean = np.mean(dataSet[0][:,1:10], axis=0)
+        hyt0_std  = np.mean(dataSet[0][:,10:19], axis=0)
+        hyt1_mean = np.mean(dataSet[1][:, 1:10], axis=0)
+        hyt1_std  = np.mean(dataSet[1][:, 10:19], axis=0)
 
-    plt.xlabel("layer")
-    plt.ylabel("thickness(micrometer)")
-    plt.legend(loc='upper right')
+        plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension', capsize=3)
+        plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
 
-    outputFilePath = os.path.join(hps.outputDir, name)
-    plt.savefig(outputFilePath)
-    plt.close()
+        plt.xlabel("Layer")
+        plt.ylabel("Mean thickness (micrometer)")
+        plt.legend(loc='upper right')
+
+        outputFilePath = os.path.join(hps.outputDir, figureName)
+        plt.savefig(outputFilePath)
+        plt.close()
 
 
 
