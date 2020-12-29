@@ -163,8 +163,8 @@ def main():
     hyt1_std  = np.mean(trainObsv_hyt1[:, 10:19], axis=0)
     name = "thickness_layers.png"
 
-    plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension')
-    plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension')
+    plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension', capsize=3)
+    plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
 
     plt.xlabel("layer")
     plt.ylabel("thickness(micrometer)")
