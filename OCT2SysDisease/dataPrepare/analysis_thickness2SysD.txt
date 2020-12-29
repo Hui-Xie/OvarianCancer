@@ -1,3 +1,13 @@
+# Dec 29th, Tuesday, 2020
+Meeting conclusions with professor
+1  visualize thickness prediction result R with ground truth;
+2  analyze the relationship between age and raw thickness map, use 9 layer averages;
+3  analyze the pattern dominant in the input for predicting hypertension in Deep learning network and SVM;
+4  refer the nature medical paper about the loss design and regulization;
+5  add x,y coordinates into input tensor for the surface prediction;
+6  use JHU method to prediction thickness Rift;
+
+
 # Dec 28th, Monday, 2020
 Answer professor Wu's questions:
 Traditional machine learning:
@@ -24,6 +34,16 @@ Data Statistics:
 2  Age for training data:
     values for Age$ have 1806 records
     min=50.0; mean=63.38538205980066; max=93.0
+3  original thickness map;:9x15x12
+   add age: 10x15x12  age as channel 15x12 of 60;
+   add age as element: 9x15x12 +1
+   normalization: range 50-93, thickness: 0-1, 1-10, -1 to 1
+   add age, gender etc.
+4  Analyze relation of Age and layer average thickness of each layer:
+   in different data set:
+     
+
+
 
 # Dec 25th, Friday, 2020
 expOCT_thickness2HyT_20201224_ResNet_A: with AddSample augmentation:
