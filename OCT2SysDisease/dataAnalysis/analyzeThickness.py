@@ -189,7 +189,7 @@ def main():
         fig = plt.figure()
 
         for i in range(nLayers):
-            _, pValues[i] = stats.ttest_ind(dataSet[0][:,i+1], dataSet[1][:,i+1], axis=1)
+            _, pValues[i] = stats.ttest_ind(dataSet[0][:,i+1], dataSet[1][:,i+1])
 
         plt.scatter(x, pValues)
 
