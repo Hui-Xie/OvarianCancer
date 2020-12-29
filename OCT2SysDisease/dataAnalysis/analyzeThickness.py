@@ -168,7 +168,7 @@ def main():
 
     plt.xlabel("layer")
     plt.ylabel("thickness(micrometer)")
-    plt.legend(loc='lower right')
+    plt.legend(loc='upper right')
 
     outputFilePath = os.path.join(hps.outputDir, name)
     plt.savefig(outputFilePath)
