@@ -1,4 +1,42 @@
 # Dec 29th, Tuesday, 2020
+Meeting with Shafkat on Thickness2Hypertension prediction:
+Attendee: Shafkat, Hui.
+Time: 2:00 pm - 02:50 pm, Dec 29th, Tuesday, 2020
+Minutes:
+1  The difference of 2 disease prediction projeccts:
+   Shafkat's Optic Disk swelling prediction:
+   A. Doctors used OCT enface folds and wrinkles image information to get the ground truth labels;
+      so these known folds and wrinkles in OCT are helpful features;
+   B  It has 200 slices each patients, so its blood vessel information is continuous;
+
+   Hui's hypertension prediction:
+   A. Doctors used another blood pressure measurement to get the ground truth labels;
+      so there is no currently known pattern in OCT relating to hypertension;
+   B. It has 31 slices each patients, so its blood vessel information in not continuous.
+
+2  Possible improvements on OCT2Hypertension projects:
+   A  RPE layer has richer blood vessel information;
+   B  Using pretrained ResNext network in Shafkat's experience improved accuracy about 10%;
+      B1. copy the weight of pretrained network 3 channels to 9 channels;
+      B2. scale up the input image to 224x224  to fit the pretrained network;
+      B3. Merge 9 layer thickness into 3 layers by choosing important, or more differentiating layers;
+   C  analyze activation map to find more important pattern to choose more important layer;
+
+3  input to Shafkat's network:
+Let me summarize your input to disease prediction:
+1  retinal blood segmentation information;
+2  inner retina en-face image (Surface_1_4) ;
+3  total retina en-face image (Surface_1_7);
+4  RPE en-face image (surface_5_7);
+5  total retinal thickness,
+6  ONH shape features,
+
+
+Shafkat, if this minutes is not complete, welcome to add your notes.  Thank you very much.
+
+
+
+# Dec 29th, Tuesday, 2020
 Meeting conclusions with professor
 1  visualize thickness prediction result R with ground truth;
 2  analyze the relationship between age and raw thickness map, use 9 layer averages;
@@ -41,7 +79,7 @@ Data Statistics:
    add age, gender etc.
 4  Analyze relation of Age and layer average thickness of each layer:
    in different data set:
-     
+
 
 
 

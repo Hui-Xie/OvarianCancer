@@ -11,6 +11,8 @@ from framework.ConfigReader import ConfigReader
 sys.path.append("..")
 from dataPrepare.OCT2SysD_Tools import readBESClinicalCsv
 
+import matplotlib.pyplot as plt
+
 def printUsage(argv):
     print("============ Anaylze OCT Thickness map relation with hypertension =============")
     print("Usage:")
@@ -95,22 +97,28 @@ def retrieveImageData_label(mode, hps):
 
     fullLabels = readBESClinicalCsv(hps.GTPath)
 
-    observationTable = np.empty((NVolumes, 13), dtype=np.float) #  size: Nx13
-    # table head: patientID, thickness0,thickness1,... thickness8, Hypertension(0/1), Age(value), gender(0/1);
+    observationTable = np.empty((NVolumes, 22), dtype=np.float) #  size: Nx22
+    # table head: patientID,                                          (0)
+    #             thicknessMean0,thicknessMean1,... thicknessMean8,   (1:10)
+    #             thicknessStd0,thicknessStd1,... thicknessStd8,      (10:19)
+    #             Hypertension(0/1), Age(value), gender(0/1);         (19:22)
     for i in range(NVolumes):
         id = int(IDsCorrespondVolumes[i])
         observationTable[i,0] = id
 
         oneVolume = volumes[i,]  # size:9xHxW
-        thicknesses = np.mean(oneVolume,axis=(1,2))
-        observationTable[i,1:10] = thicknesses
+        thicknessMean = np.mean(oneVolume,axis=(1,2))
+        thicknessStd = np.std(oneVolume, axis=(1, 2))
+        observationTable[i,1:10] = thicknessMean
+        observationTable[i, 10:19] = thicknessStd
+
 
         # appKeys: ["hypertension_bp_plus_history$", "Age$", "gender"]
         for j,key in enumerate(hps.appKeys):
             oneLabel = fullLabels[id][key]
             if "gender" == key:
                 oneLabel = oneLabel - 1
-            observationTable[i, 10+j] = oneLabel
+            observationTable[i, 19+j] = oneLabel
 
     return observationTable
 
@@ -128,14 +136,45 @@ def main():
 
     # load thickness data and ground truth
     # load training data, validation, and test data
-    # table head: patientID, thickness0,thickness1,... thickness8, Hypertension(0/1), Age(value), gender(0/1);
+    # table head: patientID,                                          (0)
+    #             thicknessMean0,thicknessMean1,... thicknessMean8,   (1:10)
+    #             thicknessStd0,thicknessStd1,... thicknessStd8,      (10:19)
+    #             Hypertension(0/1), Age(value), gender(0/1);         (19:22)
     trainObsv = retrieveImageData_label("training", hps)
     validationObsv = retrieveImageData_label("validation", hps)
     testObsv = retrieveImageData_label("test", hps)
 
-    
+    # divide into hypertension 0,1 to analyze
+    trainObsv_hyt0 = trainObsv[np.nonzero(trainObsv[:,19]  == 0)]
+    trainObsv_hyt1 = trainObsv[np.nonzero(trainObsv[:, 19] == 1)]
+    validationObsv_hyt0 = validationObsv[np.nonzero(validationObsv[:, 19] == 0)]
+    validationObsv_hyt1 = validationObsv[np.nonzero(validationObsv[:, 19] == 1)]
+    testObsv_hyt0 = testObsv[np.nonzero(testObsv[:, 19] == 0)]
+    testObsv_hyt1 = testObsv[np.nonzero(testObsv[:, 19] == 1)]
 
     # draw figure for each surface, and each data subset
+    nLayers = 9
+    x = np.arange(nLayers)
+    fig = plt.figure()
+
+    hyt0_mean = np.mean(trainObsv_hyt0[:,1:10], axis=0)
+    hyt0_std  = np.mean(trainObsv_hyt0[:,10:19], axis=0)
+    hyt1_mean = np.mean(trainObsv_hyt1[:, 1:10], axis=0)
+    hyt1_std  = np.mean(trainObsv_hyt1[:, 10:19], axis=0)
+    name = "thickness_layers.png"
+
+    plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension')
+    plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension')
+
+    plt.xlabel("layer")
+    plt.ylabel("thickness(micrometer)")
+    plt.legend(loc='lower right')
+
+    outputFilePath = os.path.join(hps.outputDir, name)
+    plt.savefig(outputFilePath)
+    plt.close()
+
+
 
 
 
