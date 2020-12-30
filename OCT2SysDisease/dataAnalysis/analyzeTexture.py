@@ -206,6 +206,8 @@ def main():
         plt.savefig(outputFilePath)
         plt.close()
 
+    '''  
+    # chisqure need  observation and expectation has same length.
     for dataSet in dataList:
         figureName = dataSet[2] + "_Pvalue_chisquare_textureStdev.png"
         pValues = [-1]*nLayers # pValue is prob >=0
@@ -226,6 +228,8 @@ def main():
         outputFilePath = os.path.join(hps.outputDir, figureName)
         plt.savefig(outputFilePath)
         plt.close()
+    
+    '''
 
 
 
