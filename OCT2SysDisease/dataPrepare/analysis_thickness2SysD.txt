@@ -1,7 +1,7 @@
 # Dec 29th, Tuesday, 2020
 Use t-test to judge the average value of each channel.
-1  we found the 5th channle (starting from 0) is small p-value crossing training, valdiation and test data;
-
+1  we found the 5th channel thickness (starting from 0) is small p-value crossing training, valdiation and test data;
+2  we found the 6th channel texture enface (starting from 0) has small p-value crossing training, valdiation and test data;
 
 
 # Dec 29th, Tuesday, 2020

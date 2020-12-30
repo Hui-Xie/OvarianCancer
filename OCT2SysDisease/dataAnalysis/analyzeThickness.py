@@ -207,12 +207,12 @@ def main():
         plt.close()
 
     for dataSet in dataList:
-        figureName = dataSet[2] + "_Pvalue_t_thicknessStdev.png"
+        figureName = dataSet[2] + "_Pvalue_chisquare_thicknessStdev.png"
         pValues = [-1]*nLayers # pValue is prob >=0
         fig = plt.figure()
 
         for i in range(nLayers):
-            _, pValues[i] = stats.ttest_ind(dataSet[0][:,i+10], dataSet[1][:,i+10])
+            _, pValues[i] = stats.chisquare(dataSet[0][:,i+10]**2, dataSet[1][:,i+10]**2)  # chisqure use variance
 
 
         plt.scatter(x, pValues)
@@ -234,3 +234,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    print(f"================End of anlayzing thickness===============")
