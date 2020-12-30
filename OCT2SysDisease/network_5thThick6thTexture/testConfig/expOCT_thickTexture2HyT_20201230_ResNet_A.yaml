@@ -35,7 +35,7 @@ network: "ThickTexture2HyTension_ResNet"
 imageH: 31
 imageW: 25
 volumeSuffix: "_Volume_5thThickness_6thTexture_enface.npy"
-nLayers: 4 # H changes: 31->15->7->3, W change: 25->12->5->2
+nLayers: 4 # H changes: 31->15->7->3, W change: 25->12->6->3
 numConvEachLayer: 3
 # bothEyes: False  # choose all OD eyes
 inputChannels: 2 # 5th thickness and 6th texture

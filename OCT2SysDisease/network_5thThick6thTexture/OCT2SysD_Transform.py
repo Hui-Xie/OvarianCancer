@@ -42,7 +42,7 @@ class OCT2SysD_Transform(object):
 
         # flip image:
         if random.uniform(0, 1) < self.hps.augmentProb:
-            data = torch.flip(data, dims=2)
+            data = torch.flip(data, dims=(2,))
 
 
         return data
