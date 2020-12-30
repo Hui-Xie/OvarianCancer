@@ -219,7 +219,7 @@ def main():
             N0 = data0.size
             N1 = data1.size
             equalN = min(N0, N1)
-            data0 = data0[0:equalN]**2  # chisqure use variance
+            data0 = data0[0:equalN]**2  # chisqaure use variance
             data1 = data1[0:equalN]**2
             _, pValues[i] = stats.chisquare(data0, data1)
 
