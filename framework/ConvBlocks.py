@@ -69,7 +69,7 @@ class Conv2dBlock(nn.Module):
     """
 
     def __init__(self, inChannels, outChannels, convStride=1, useSpectralNorm=False,
-                 useLeakyReLU=False, kernelSize=3, padding=1, dilation=1, normAffine=False, activation=True):
+                 useLeakyReLU=False, kernelSize=3, padding=1, dilation=1, normAffine=False, activation=True, useBatchNorm=False):
         super().__init__()
 
         self.m_useLeakyReLU = useLeakyReLU
@@ -78,8 +78,11 @@ class Conv2dBlock(nn.Module):
         self.m_conv = nn.Conv2d(inChannels, outChannels, kernel_size=kernelSize, stride=convStride, padding=padding, dilation=dilation, bias=True)
         if useSpectralNorm:
             self.m_conv = nn.utils.spectral_norm(self.m_conv)
-        # self.m_norm = nn.BatchNorm2d(outChannels, affine=normAffine)
-        self.m_norm = nn.InstanceNorm2d(outChannels,affine=normAffine)  # Instance Norm applies on per channel.
+
+        if useBatchNorm:
+            self.m_norm = nn.BatchNorm2d(outChannels, affine=normAffine)
+        else:
+            self.m_norm = nn.InstanceNorm2d(outChannels,affine=normAffine)  # Instance Norm applies on per channel.
 
     def forward(self, x):
         y = self.m_conv(x)

@@ -63,7 +63,7 @@ def constructUnet(inputChannels, H, W, C, nLayers):
 
     return downPoolings, downLayers, upSamples, upLayers
 
-def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True, numConvEachLayer=3):
+def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True, numConvEachLayer=3, useBatchNorm=True):
     '''
     # downPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
     #  Pooling->ChannelChange->downLayer
@@ -71,7 +71,7 @@ def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True, numCo
     #  output of downLayer0:  BxCxHxW
 
     :param inputChannels:
-    :param C: the channel number of the first layer, or channles list for all layers.
+    :param C: the channel number of the first layer, or channels list for all layers.
     :param nLayers:
     :param numConvEachLayer: 2 or 3
     :return:
@@ -95,20 +95,23 @@ def construct2DFeatureNet(inputChannels, C, nLayers, inputActivation=True, numCo
         CLayer = CLayers[i]
 
         if 0 == i:
-            downPoolings.append(Conv2dBlock(inputChannels, CLayer, activation=inputActivation))
+            downPoolings.append(Conv2dBlock(inputChannels, CLayer, activation=inputActivation, useBatchNorm=useBatchNorm))
         else:
             CPreLayer = CLayers[i-1]
             downPoolings.append(nn.Sequential(
                 nn.MaxPool2d(2, stride=2, padding=0),
-                Conv2dBlock(CPreLayer, CLayer)
+                Conv2dBlock(CPreLayer, CLayer, useBatchNorm=useBatchNorm)
             ))
         if 3 <= numConvEachLayer:
             downLayers.append(nn.Sequential(
-                Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
+                Conv2dBlock(CLayer, CLayer, useBatchNorm=useBatchNorm),
+                Conv2dBlock(CLayer, CLayer, useBatchNorm=useBatchNorm),
+                Conv2dBlock(CLayer, CLayer, useBatchNorm=useBatchNorm)))
         elif 2 == numConvEachLayer:
-            downLayers.append(nn.Sequential(Conv2dBlock(CLayer, CLayer), Conv2dBlock(CLayer, CLayer)))
+            downLayers.append(nn.Sequential(Conv2dBlock(CLayer, CLayer, useBatchNorm=useBatchNorm),
+                                            Conv2dBlock(CLayer, CLayer, useBatchNorm=useBatchNorm)))
         else:
-            downLayers.append(nn.Sequential(Conv2dBlock(CLayer, CLayer)))
+            downLayers.append(nn.Sequential(Conv2dBlock(CLayer, CLayer, useBatchNorm=useBatchNorm)))
 
     return downPoolings, downLayers
 
