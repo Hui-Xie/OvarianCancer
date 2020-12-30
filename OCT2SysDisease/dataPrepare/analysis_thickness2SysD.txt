@@ -15,6 +15,9 @@ Generate 5th thickness channel and 6th texture enface map:
 2  5th thickness as channle 0, and 6th texure as channel 1; save original save;
 3  in the dataload class, use channel-dimension normalization;
 4  in conv network, then use 2 head branches to process thickness and texture.
+t test for features choose: https://www.quora.com/How-can-I-use-students-T-test-for-feature-selection
+
+
 
 expOCT_thickTexture2HyT_20201230_ResNet_A:
     network: "ThickTexture2HyTension_ResNet"
