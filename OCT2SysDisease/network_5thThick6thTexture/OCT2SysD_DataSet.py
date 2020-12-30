@@ -6,7 +6,6 @@ import random
 
 import glob
 import fnmatch
-import yaml
 
 import sys
 sys.path.append(".")
@@ -128,7 +127,7 @@ class OCT2SysD_DataSet(data.Dataset):
             assert False
 
 
-def __len__(self):
+    def __len__(self):
         return self.m_NVolumes
 
     def getGTDict(self):
@@ -190,22 +189,23 @@ def __len__(self):
 
         # transform for data augmentation
         if self.m_transform:
-            if self.hps.useAddSamplesAugment:
-                if random.uniform(0, 1) < self.hps.addSamplesProb:
-                    data, label, volumePath = self.addSamplesAugmentation(data, label)
+            if self.hps.useAddSamplesAugment and random.uniform(0, 1) < self.hps.addSamplesProb:
+                data, label, volumePath = self.addSamplesAugmentation(data, label)
             data = self.m_transform(data)  # size: CxHxW
 
-        # thickness map needs normalization again, modified at Dec 22nd, 2020 for new 31x25 thickness map.
-        std, mean = torch.std_mean(data, dim=(1, 2), keepdim=True)
-        std = std.expand_as(data)
-        mean = mean.expand_as(data)
-        data = (data - mean) / (std + epsilon)  # size: CxHxW
+        # cancel normalization again, modified at Dec 30th, 2020
+        # as input volumes has been normlizated.
+
+        # std, mean = torch.std_mean(data, dim=(1, 2), keepdim=True)
+        # std = std.expand_as(data)
+        # mean = mean.expand_as(data)
+        # data = (data - mean) / (std + epsilon)  # size: CxHxW
 
         result = {"images": data,  # B,C,H,W
                   "GTs": label,
                   "IDs": volumePath
                   }
-        return result  # B,3,H,W, following process needs squeeze its extra batch dimension.
+        return result
 
 
 
