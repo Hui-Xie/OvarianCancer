@@ -1,0 +1,69 @@
+# B from A: allow validation augmentation.
+
+debug: True
+debugOutputPeriod: 50
+
+# train config
+device: torch.device('cuda:2')   #GPU ID
+batchSize: 150 # for 3600 training volumes, and 959 validation volumes
+learningRate: 1.0e-1  #
+lrPatience: 12   # learning rate decay patience
+lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
+lrSchedulerMode: "min"  # "min" for loss, "max" for sum of Acc+TNR+TPR
+weightDecay: 1.0e-5
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/5thThickness_6thTexture_2x31x25"
+
+# _delNonExist: delete ID nonexist, and repeated ID;
+# _final: delete the ID whose slice number does not equal to 31.
+# _delErrWID: delete W=384 image ID
+# _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv"
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+# ODOS: "OD"  # right(OD) or left(OS) eye
+
+# this file is placed in netPath directory.
+trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
+
+# Network config
+network: "ThickTexture2HyTension_ResNet"
+imageH: 31
+imageW: 25
+volumeSuffix: "_Volume_5thThickness_6thTexture_enface.npy"
+nLayers: 4 # H changes: 31->15->7->3, W change: 25->12->6->3
+numConvEachLayer: 3
+# bothEyes: False  # choose all OD eyes
+inputChannels: 2 # 5th thickness and 6th texture
+gradChannels: 0   # the added gradient channels beside raw image channel
+channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
+dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+appKey: "hypertension_bp_plus_history$"
+
+#dropoutRate: 0.2 # dropout after global average pooling
+
+class01Percent:  [0.4565578306585501, 0.54344216934145]  # for trainID_delNonExist_delErrWID_excludeMGM.csv
+# class01Percent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
+#class01Percent: [0.36, 0.64] # for 200 small training set
+
+trainAugmentation: True
+validationAugmentation: True
+useAddSamplesAugment: True  # when true, do not use other data augmentation.
+addSamplesProb: 0.6  #  data augmentation rate
+augmentProb: 0.5  # normal augment prob
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
+# for salt pepper noise
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+flipAugmentation: True
+
+
+# save network
+netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename

@@ -16,6 +16,19 @@ Generate 5th thickness channel and 6th texture enface map:
 3  in the dataload class, use channel-dimension normalization;
 4  in conv network, then use 2 head branches to process thickness and texture.
 
+expOCT_thickTexture2HyT_20201230_ResNet_A:
+    network: "ThickTexture2HyTension_ResNet"
+    channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
+    dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+    without validation augmentation.
+
+expOCT_thickTexture2HyT_20201230_ResNet_B:
+    network: "ThickTexture2HyTension_ResNet"
+    channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
+    dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+    with validation augmentation.
+
+
 
 
 
