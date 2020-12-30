@@ -168,15 +168,17 @@ def main():
         fig = plt.figure()
 
         hyt0_mean = np.mean(dataSet[0][:,1:10], axis=0)
-        hyt0_std  = np.mean(dataSet[0][:,10:19], axis=0)
+        hyt0_std = np.std(dataSet[0][:, 1:10], axis=0)   # this std in sample dimension
+        #hyt0_std  = np.mean(dataSet[0][:,10:19], axis=0)  # this std in channle plan
         hyt1_mean = np.mean(dataSet[1][:, 1:10], axis=0)
-        hyt1_std  = np.mean(dataSet[1][:, 10:19], axis=0)
+        hyt1_std = np.std(dataSet[1][:, 1:10], axis=0)
+        #hyt1_std  = np.mean(dataSet[1][:, 10:19], axis=0)
 
         plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension', capsize=3)
         plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
 
         plt.xlabel("Layer")
-        plt.ylabel("Mean thickness (micrometer)")
+        plt.ylabel("Mean/std thickness (micrometer)")
         plt.legend(loc='upper right')
 
         outputFilePath = os.path.join(hps.outputDir, figureName)
@@ -184,7 +186,7 @@ def main():
         plt.close()
 
     for dataSet in dataList:
-        figureName = dataSet[2] + "_Pvalue_t_test.png"
+        figureName = dataSet[2] + "_Pvalue_t_test_thicknessMean.png"
         pValues = [-1]*nLayers # pValue is prob >=0
         fig = plt.figure()
 
