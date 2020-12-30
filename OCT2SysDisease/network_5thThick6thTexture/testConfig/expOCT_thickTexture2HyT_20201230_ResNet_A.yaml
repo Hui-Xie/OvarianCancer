@@ -38,7 +38,7 @@ volumeSuffix: "_Volume_5thThickness_6thTexture_enface.npy"
 nLayers: 4 # H changes: 31->15->7->3, W change: 25->12->5->2
 numConvEachLayer: 3
 # bothEyes: False  # choose all OD eyes
-inputChannels: 2 # 9 layers
+inputChannels: 2 # 5th thickness and 6th texture
 gradChannels: 0   # the added gradient channels beside raw image channel
 channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
 dropoutRate: 0.5  # the dropout rate at final fully connected layer.

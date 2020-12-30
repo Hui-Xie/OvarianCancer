@@ -91,7 +91,7 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_NVolumes = len(self.m_volumePaths)
         assert (self.m_NVolumes == len(self.m_IDsCorrespondVolumes))
 
-        # load all volumes into memory, which needs about 2.6GB memory in BES_3K thickness data.
+        # load all volumes into memory.
         self.m_volumes = torch.empty((self.m_NVolumes, hps.inputChannels, hps.imageH, hps.imageW), device=hps.device,
                                      dtype=torch.float)
         for i, volumePath in enumerate(self.m_volumePaths):
@@ -105,8 +105,7 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_normalizationFilePath_mean = os.path.join(hps.netPath,
                                                          hps.trainNormalizationStdMeanFileName + "_mean.pt")
         if mode == "training":
-            if (not os.path.isfile(self.m_normalizationFilePath_std)) or (
-            not os.path.isfile(self.m_normalizationFilePath_mean)):
+            if (not os.path.isfile(self.m_normalizationFilePath_std)) or ( not os.path.isfile(self.m_normalizationFilePath_mean)):
                 std, mean = torch.std_mean(self.m_volumes, dim=(0, 2, 3), keepdim=True)
                 torch.save(std, self.m_normalizationFilePath_std)
                 torch.save(mean, self.m_normalizationFilePath_mean)

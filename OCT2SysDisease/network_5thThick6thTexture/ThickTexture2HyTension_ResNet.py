@@ -14,7 +14,7 @@ class ThickTexture2HyTension_ResNet(BasicModel):
         self.posWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
 
         self.m_downPoolings, self.m_downLayers = construct2DFeatureNet(hps.inputChannels, hps.channels, hps.nLayers, numConvEachLayer=hps.numConvEachLayer)
-        #output size: Bxchannel[nlayers-1]x3x3
+        #output size: Bxchannel[nlayers-1]x3x2
 
         self.m_conv4 = nn.Sequential(
             nn.Conv2d(hps.channels[hps.nLayers-1], hps.channels[hps.nLayers], kernel_size=(3, 3), stride=(1, 1), padding=0, bias=True),
