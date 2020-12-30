@@ -25,8 +25,8 @@ def retrieveImageData_label(mode, hps):
     :param mode: "training", "validation", or "test"
     :param hps:
     :return: a numpy array with columns: Nx13
-             patientID, thickness0,thickness1,... thickness8, Hypertension(0/1), Age(value), gender(0/1);
-             where thicknessx is the average thickness in each layer of size 31x25
+             patientID, texture0,texture1,... texture8, Hypertension(0/1), Age(value), gender(0/1);
+             where texturex is the average texture in each layer of size 31x25
 
     '''
     if mode == "training":
@@ -100,18 +100,18 @@ def retrieveImageData_label(mode, hps):
 
     observationTable = np.empty((NVolumes, 22), dtype=np.float) #  size: Nx22
     # table head: patientID,                                          (0)
-    #             thicknessMean0,thicknessMean1,... thicknessMean8,   (1:10)
-    #             thicknessStd0,thicknessStd1,... thicknessStd8,      (10:19)
+    #             textureMean0,textureMean1,... textureMean8,   (1:10)
+    #             textureStd0,textureStd1,... textureStd8,      (10:19)
     #             Hypertension(0/1), Age(value), gender(0/1);         (19:22)
     for i in range(NVolumes):
         id = int(IDsCorrespondVolumes[i])
         observationTable[i,0] = id
 
         oneVolume = volumes[i,]  # size:9xHxW
-        thicknessMean = np.mean(oneVolume,axis=(1,2))
-        thicknessStd = np.std(oneVolume, axis=(1, 2))
-        observationTable[i,1:10] = thicknessMean
-        observationTable[i, 10:19] = thicknessStd
+        textureMean = np.mean(oneVolume,axis=(1,2))
+        textureStd = np.std(oneVolume, axis=(1, 2))
+        observationTable[i,1:10] = textureMean
+        observationTable[i, 10:19] = textureStd
 
 
         # appKeys: ["hypertension_bp_plus_history$", "Age$", "gender"]
@@ -135,11 +135,11 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    # load thickness data and ground truth
+    # load texture data and ground truth
     # load training data, validation, and test data
     # table head: patientID,                                          (0)
-    #             thicknessMean0,thicknessMean1,... thicknessMean8,   (1:10)
-    #             thicknessStd0,thicknessStd1,... thicknessStd8,      (10:19)
+    #             textureMean0,textureMean1,... textureMean8,   (1:10)
+    #             textureStd0,textureStd1,... textureStd8,      (10:19)
     #             Hypertension(0/1), Age(value), gender(0/1);         (19:22)
     trainObsv = retrieveImageData_label("training", hps)
     validationObsv = retrieveImageData_label("validation", hps)
@@ -164,7 +164,7 @@ def main():
     x = np.arange(nLayers)
 
     for dataSet in dataList:
-        figureName = dataSet[2]+"_thickness_layers.png"
+        figureName = dataSet[2]+"_texture_layers.png"
         fig = plt.figure()
 
         hyt0_mean = np.mean(dataSet[0][:,1:10], axis=0)
@@ -178,7 +178,7 @@ def main():
         plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
 
         plt.xlabel("Layer")
-        plt.ylabel("Mean/std thickness (micrometer)")
+        plt.ylabel("Mean/std texture (micrometer)")
         plt.legend(loc='upper right')
 
         outputFilePath = os.path.join(hps.outputDir, figureName)
@@ -186,7 +186,7 @@ def main():
         plt.close()
 
     for dataSet in dataList:
-        figureName = dataSet[2] + "_Pvalue_t_thicknessMean.png"
+        figureName = dataSet[2] + "_Pvalue_t_textureMean.png"
         pValues = [-1]*nLayers # pValue is prob >=0
         fig = plt.figure()
 
@@ -207,7 +207,7 @@ def main():
         plt.close()
 
     for dataSet in dataList:
-        figureName = dataSet[2] + "_Pvalue_t_thicknessStdev.png"
+        figureName = dataSet[2] + "_Pvalue_t_textureStdev.png"
         pValues = [-1]*nLayers # pValue is prob >=0
         fig = plt.figure()
 
