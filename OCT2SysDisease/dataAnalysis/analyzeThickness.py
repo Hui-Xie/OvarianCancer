@@ -194,8 +194,9 @@ def main():
 
         plt.scatter(x, pValues)
         for i in range(nLayers):
-            plt.annotate(str(pValues[i]), (x[i], pValues[i]))
-        
+            txt = f"{pValues[i]:.3f}"
+            plt.annotate(txt, (x[i], pValues[i]))
+
         plt.xlabel("Layer")
         plt.ylabel("PValue of Hypertension and Nohyptertension")
 
