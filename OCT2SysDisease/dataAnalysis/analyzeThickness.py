@@ -194,8 +194,7 @@ def main():
         plt.scatter(x, pValues)
 
         plt.xlabel("Layer")
-        plt.ylabel("PValue between Hypertension set and No hyptertension Set")
-        plt.legend(loc='upper right')
+        plt.ylabel("PValue of Hypertension and Nohyptertension")
 
         outputFilePath = os.path.join(hps.outputDir, figureName)
         plt.savefig(outputFilePath)
