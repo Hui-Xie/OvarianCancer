@@ -206,7 +206,7 @@ def main():
         plt.savefig(outputFilePath)
         plt.close()
 
-    '''
+
     # chisqure need  observation and expectation has same length.
     
     for dataSet in dataList:
@@ -215,7 +215,15 @@ def main():
         fig = plt.figure()
 
         for i in range(nLayers):
-            _, pValues[i] = stats.chisquare((dataSet[0][:,i+10])**2, (dataSet[1][:,i+10])**2)  # chisqure use variance
+            data0 = dataSet[0][:,i+10]
+            data1 = dataSet[1][:,i+10]
+            N0 = data0.size
+            N1 = data1.size
+            equalN = min(N0, N1)
+            data0 = data0[0:equalN]**2  # chisqure use variance
+            data1 = data1[0:equalN]**2
+            _, pValues[i] = stats.chisquare(data0, data1)
+
 
 
         plt.scatter(x, pValues)
@@ -229,7 +237,7 @@ def main():
         outputFilePath = os.path.join(hps.outputDir, figureName)
         plt.savefig(outputFilePath)
         plt.close()
-    '''
+
     
 
 
