@@ -212,7 +212,7 @@ def main():
         fig = plt.figure()
 
         for i in range(nLayers):
-            _, pValues[i] = stats.chisquare(dataSet[0][:,i+10]**2, dataSet[1][:,i+10]**2)  # chisqure use variance
+            _, pValues[i] = stats.chisquare((dataSet[0][:,i+10])**2, (dataSet[1][:,i+10])**2)  # chisqure use variance
 
 
         plt.scatter(x, pValues)
