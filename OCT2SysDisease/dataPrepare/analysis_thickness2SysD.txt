@@ -50,6 +50,24 @@ Hypertension:	90,	    96,	    84,	    88,	    150,	56,
 ============================================================
 ================End of anlayzing thickness===================
 
+check statistics significance (pvalue<0.05) between NoHypertension and Hypertension
+crossing training, validation and test data
+for different age groups and different layers
+================================================================================
+        layer0, layer1, layer2, layer3, layer4, layer5, layer6, layer7, layer8
+50-55
+55-60
+60-65
+65-70
+70-80
+80-95
+================================================================================
+No any age group and any layer has this statistics significance.
+
+Some extra conclusion:
+1  from age 60 up, the average thickness of layer 8 is increasing;
+2  from age 55 up, the average thickness of layer 7 is decreasing;
+
 
 
 
