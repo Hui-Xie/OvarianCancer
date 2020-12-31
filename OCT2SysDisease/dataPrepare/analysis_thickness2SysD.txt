@@ -1,3 +1,16 @@
+# Dec 31th, Thursday, 2020:
+
+expOCT_thickTexture2HyT_20201231_ResNet_A_15x12:
+       with channel: 18
+
+expOCT_thickTexture2HyT_20201231_ResNet_B_15x12:
+       with channel: 36
+
+expOCT_thickTexture2HyT_20201231_ResNet_C_15x12:
+       with channel: 9
+
+
+
 # Dec 30th, Wednesday, 2020:
 expOCT_thickness2HyT_20201228_2Layers_A: input 9x31x25
     channels:     [16, 8]
