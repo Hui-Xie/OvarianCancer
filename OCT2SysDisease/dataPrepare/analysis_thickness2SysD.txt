@@ -25,6 +25,42 @@ expOCT_thickTexture2HyT_20201231_ResNet_D_15x12:  still in program
        Sum=
        TPR:  TNR:  ACC:
 
+expOCT_thickTexture2HyT_20201231_ResNet_E_15x12:
+       with channel: 64 initial learning rate 0.01
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
+
+expOCT_thickTexture2HyT_20201231_ResNet_F_15x12:
+       with channel: 96 initial learning rate 0.01
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
+
+expOCT_thickTexture2HyT_20201231_ResNet_G_15x12:
+       with channel: 128 initial learning rate 0.01
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
+
+expOCT_thickTexture2HyT_20201231_ResNet_H_15x12:
+       with channel: 64 initial learning rate 0.001
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
+
+expOCT_thickTexture2HyT_20201231_ResNet_I_15x12:
+       with channel: 96 initial learning rate 0.001
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
+
+expOCT_thickTexture2HyT_20201231_ResNet_J_15x12:
+       with channel: 128  initial learning rate 0.001
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
+
 
 
 Age statistics:
