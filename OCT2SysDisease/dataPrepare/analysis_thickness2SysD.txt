@@ -19,18 +19,22 @@ t test for features choose: https://www.quora.com/How-can-I-use-students-T-test-
 
 
 
-expOCT_thickTexture2HyT_20201230_ResNet_A:
+expOCT_thickTexture2HyT_20201230_ResNet_A: for input 2x31x25
     network: "ThickTexture2HyTension_ResNet"
     channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
     dropoutRate: 0.5  # the dropout rate at final fully connected layer.
     without validation augmentation.
+    Sum= 1.737 at epoch 116.  Overfitting. while training accuracy stuck at 67%.
+    TPR: 0.52, TNR: 0.63, ACC: 0.57
 
-expOCT_thickTexture2HyT_20201230_ResNet_B:
+
+expOCT_thickTexture2HyT_20201230_ResNet_B: for input 2x31x25  (almost best)
     network: "ThickTexture2HyTension_ResNet"
     channels:     [18, 18, 18, 18, 18] # the final channel is for FC layer
     dropoutRate: 0.5  # the dropout rate at final fully connected layer.
     with validation augmentation.
-
+    Sum = 1.814 at epoch 105. at epoch 16, it start to overfitting. training accuracy stuck at 69%.
+    TPR: 0.51, TNR: 0.71; ACC: 0.60;
 
 
 
