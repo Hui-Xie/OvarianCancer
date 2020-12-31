@@ -181,9 +181,24 @@ def main():
             hyt1_AgeSubGroups.append(dataSet[1][np.nonzero(ageDelimiters[i] <= trainObsv[:,20]  <= ageDelimiters[i + 1])])
 
         # print statistics information for different age group.
-        print(f"AgeRange,\t {','.join(str(x) for x in kernelList)}")
-        for i in range(nAgeSections):
 
+        print("\n==========================================")
+        print(f"============{dataSet[2]}===================")
+        print(f"AgeRange:\t", end="")
+        for i in range(nAgeSections):
+            print(f"{ageDelimiters[i]}-{ageDelimiters[i+1]},\t", end="")
+        print("")
+
+        print("NoHypertension:\t", end="")
+        for i in range(nAgeSections):
+            print(f"{len(hyt0_AgeSubGroups[i])},\t", end="")
+        print("")
+
+        print("Hypertension:\t", end="")
+        for i in range(nAgeSections):
+            print(f"{len(hyt1_AgeSubGroups[i])},\t", end="")
+        print("")
+        print("==========================================")
 
         for i in range(nAgeSections):
             hyt0_AgeSubGroups_mean[i,] = np.mean(hyt0_AgeSubGroups[i][:,1:10], axis=0)
