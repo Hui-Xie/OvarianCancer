@@ -38,9 +38,16 @@ expOCT_thickTexture2HyT_20201230_ResNet_B:
 
 
 # Dec 29th, Tuesday, 2020
-Use t-test to judge the average value of each channel.
-1  we found the 5th channel thickness (starting from 0) is small p-value crossing training, valdiation and test data;
-2  we found the 6th channel texture enface (starting from 0) has small p-value crossing training, valdiation and test data;
+Use t-test to judge the statistics significane of average value of each layer each with corresponding target class:
+We choose the layer with all p-values <0.05 crossing training, valdiation and test data.
+Here all layer index start from zero.
+For hypertension:
+      thickness map: 5th layer
+      texture enface map: 6th layer
+
+For gender:
+      thickness map: 0th, 5th, 6th, 7th layer.
+      texture enface map: 1th, 2th layer.
 
 
 # Dec 29th, Tuesday, 2020
