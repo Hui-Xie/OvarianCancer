@@ -182,8 +182,8 @@ def main():
 
         # print statistics information for different age group.
 
-        print("\n==========================================")
-        print(f"============{dataSet[2]}===================")
+        print("\n=============================================================")
+        print(f"======================{dataSet[2]}============================")
         print(f"AgeRange:\t", end="")
         for i in range(nAgeSections):
             print(f"{ageDelimiters[i]}-{ageDelimiters[i+1]},\t", end="")
@@ -198,7 +198,7 @@ def main():
         for i in range(nAgeSections):
             print(f"{len(hyt1_AgeSubGroups[i])},\t", end="")
         print("")
-        print("==========================================")
+        print("=============================================================")
 
         for i in range(nAgeSections):
             hyt0_AgeSubGroups_mean[i,] = np.mean(hyt0_AgeSubGroups[i][:,1:10], axis=0)
