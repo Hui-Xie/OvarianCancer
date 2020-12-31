@@ -15,7 +15,7 @@ from scipy import stats
 import matplotlib.pyplot as plt
 
 def printUsage(argv):
-    print("============ Anaylze OCT Texture map relation with hypertension =============")
+    print("============ Anaylze OCT Texture map relation with Gender =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_full_path")
 
@@ -145,19 +145,19 @@ def main():
     validationObsv = retrieveImageData_label("validation", hps)
     testObsv = retrieveImageData_label("test", hps)
 
-    # divide into hypertension 0,1 to analyze
-    trainObsv_hyt0 = trainObsv[np.nonzero(trainObsv[:,19]  == 0)]
-    trainObsv_hyt1 = trainObsv[np.nonzero(trainObsv[:, 19] == 1)]
-    validationObsv_hyt0 = validationObsv[np.nonzero(validationObsv[:, 19] == 0)]
-    validationObsv_hyt1 = validationObsv[np.nonzero(validationObsv[:, 19] == 1)]
-    testObsv_hyt0 = testObsv[np.nonzero(testObsv[:, 19] == 0)]
-    testObsv_hyt1 = testObsv[np.nonzero(testObsv[:, 19] == 1)]
+    # divide into gender 0,1 to analyze
+    trainObsv_gender0 = trainObsv[np.nonzero(trainObsv[:,21]  == 0)]
+    trainObsv_gender1 = trainObsv[np.nonzero(trainObsv[:, 21] == 1)]
+    validationObsv_gender0 = validationObsv[np.nonzero(validationObsv[:, 21] == 0)]
+    validationObsv_gender1 = validationObsv[np.nonzero(validationObsv[:, 21] == 1)]
+    testObsv_gender0 = testObsv[np.nonzero(testObsv[:, 21] == 0)]
+    testObsv_gender1 = testObsv[np.nonzero(testObsv[:, 21] == 1)]
 
     # draw figure for each surface, and each data subset
     dataList = [
-        [trainObsv_hyt0, trainObsv_hyt1, "train"],
-        [validationObsv_hyt0, validationObsv_hyt1, "validation" ],
-        [testObsv_hyt0, testObsv_hyt1, "test"],
+        [trainObsv_gender0, trainObsv_gender1, hps.target+"_train"],
+        [validationObsv_gender0, validationObsv_gender1, hps.target+"_validation" ],
+        [testObsv_gender0, testObsv_gender1, hps.target+"_test"],
     ]
 
     nLayers = 9
@@ -167,15 +167,15 @@ def main():
         figureName = dataSet[2]+"_texture_layers.png"
         fig = plt.figure()
 
-        hyt0_mean = np.mean(dataSet[0][:,1:10], axis=0)
-        hyt0_std = np.std(dataSet[0][:, 1:10], axis=0)   # this std in sample dimension
-        #hyt0_std  = np.mean(dataSet[0][:,10:19], axis=0)  # this std in channle plan
-        hyt1_mean = np.mean(dataSet[1][:, 1:10], axis=0)
-        hyt1_std = np.std(dataSet[1][:, 1:10], axis=0)
-        #hyt1_std  = np.mean(dataSet[1][:, 10:19], axis=0)
+        gender0_mean = np.mean(dataSet[0][:,1:10], axis=0)
+        gender0_std = np.std(dataSet[0][:, 1:10], axis=0)   # this std in sample dimension
+        #gender0_std  = np.mean(dataSet[0][:,10:19], axis=0)  # this std in channle plan
+        gender1_mean = np.mean(dataSet[1][:, 1:10], axis=0)
+        gender1_std = np.std(dataSet[1][:, 1:10], axis=0)
+        #gender1_std  = np.mean(dataSet[1][:, 10:19], axis=0)
 
-        plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension', capsize=3)
-        plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
+        plt.errorbar(x, gender0_mean, yerr=gender0_std, label='gender0', capsize=3)
+        plt.errorbar(x, gender1_mean, yerr=gender1_std, label='gender1', capsize=3)
 
         plt.xlabel("Layer")
         plt.ylabel("Mean/std of texture intensity")
@@ -200,7 +200,7 @@ def main():
             plt.annotate(txt, (x[i], pValues[i]))
 
         plt.xlabel("Layer")
-        plt.ylabel("PValue of Hypertension and Nohypertension")
+        plt.ylabel("PValue of gender0 and gender1")
 
         outputFilePath = os.path.join(hps.outputDir, figureName)
         plt.savefig(outputFilePath)
@@ -219,9 +219,10 @@ def main():
             N0 = data0.size
             N1 = data1.size
             equalN = min(N0, N1)
-            data0 = data0[0:equalN]**2  # chisqaure use variance
+            data0 = data0[0:equalN]**2  # chisquare use variance
             data1 = data1[0:equalN]**2
             _, pValues[i] = stats.chisquare(data0, data1)
+
 
 
         plt.scatter(x, pValues)
@@ -230,7 +231,7 @@ def main():
             plt.annotate(txt, (x[i], pValues[i]))
 
         plt.xlabel("Layer")
-        plt.ylabel("PValue of Hypertension and Nohypertension")
+        plt.ylabel("PValue of gender0 and gender1")
 
         outputFilePath = os.path.join(hps.outputDir, figureName)
         plt.savefig(outputFilePath)
