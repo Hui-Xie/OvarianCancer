@@ -9,6 +9,22 @@ expOCT_thickTexture2HyT_20201231_ResNet_B_15x12:
 expOCT_thickTexture2HyT_20201231_ResNet_C_15x12:
        with channel: 9
 
+Age statistics:
+values for Age$ have 1806 records
+min=50.0; mean=63.38538205980066; max=93.0
+
+total 481 raw IDs in file /home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv
+values for Age$ have 481 records
+min=50.0; mean=64.17671517671518; max=88.0
+
+total 501 raw IDs in file /home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv
+values for Age$ have 501 records
+min=50.0; mean=63.85429141716567; max=87.0
+
+Age subgroup: 50-55, 55-60, 60-65, 65-70, 70-80,80-95; total 6 group.
+
+
+
 
 
 # Dec 30th, Wednesday, 2020:
