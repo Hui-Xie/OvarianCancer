@@ -2,12 +2,30 @@
 
 expOCT_thickTexture2HyT_20201231_ResNet_A_15x12:
        with channel: 18
+       when stable, training acc stuck at 0.62
+       Sum=1.839
+       TPR:0.60,  TNR: 0.63  ACC: 0.61
 
-expOCT_thickTexture2HyT_20201231_ResNet_B_15x12:
+
+expOCT_thickTexture2HyT_20201231_ResNet_B_15x12:  (the best)
        with channel: 36
+       when stable, training acc stuck at 0.68
+       Sum=1.879 at epoch 124.
+       TPR:0.69  TNR:0.56  ACC: 0.63
 
 expOCT_thickTexture2HyT_20201231_ResNet_C_15x12:
        with channel: 9
+       when stable, training acc stuck at 0.58
+       Sum=1.857
+       TPR:0.65  TNR:0.59  ACC: 0.62
+
+expOCT_thickTexture2HyT_20201231_ResNet_D_15x12:  still in program
+       with channel: 9
+       when stable, training acc stuck at
+       Sum=
+       TPR:  TNR:  ACC:
+
+
 
 Age statistics:
 values for Age$ have 1806 records
@@ -64,9 +82,24 @@ for different age groups and different layers
 ================================================================================
 No any age group and any layer has this statistics significance.
 
-Some extra conclusion:
-1  from age 60 up, the average thickness of layer 8 is increasing;
-2  from age 55 up, the average thickness of layer 7 is decreasing;
+Some extra conclusions:
+1  along age increasing, average of thickness layers 1,2,3,5 and 7 decrease;
+2  along age increasing, average of thickness layers 4,6,and 8 increase;
+3  This is one of reason that using retina thickness to predict age has a high accuracy;
+
+
+
+
+Experiment: expOCT_thicknessAnalyzeAge_AllGroups_20201231_9x31x25
+
+=============================================================
+======================All patients============================
+AgeRange:	50-55,	55-60,	60-65,	65-70,	70-80,	80-95,
+All:	    1155,	1099,	867,	791,	1352,	295,
+=============================================================
+================End of anlayzing thickness===============
+
+
 
 
 
