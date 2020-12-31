@@ -45,13 +45,20 @@ expOCT_thickTexture2HyT_20201230_ResNet_B: for input 2x31x25  (almost best)
 Use t-test to judge the statistics significane of average value of each layer each with corresponding target class:
 We choose the layer with all p-values <0.05 crossing training, valdiation and test data.
 Here all layer index start from zero.
-For hypertension:
+For hypertension: for 9x31x25 image
       thickness map: 5th layer
       texture enface map: 6th layer
 
-For gender:
+For gender:  for 9x31x25 image
       thickness map: 0th, 5th, 6th, 7th layer.
       texture enface map: 1th, 2th layer.
+
+For hypertension: for 9x15x12 image
+      thickness map: 5th layer
+      texture enface map: 6th layer
+
+
+
 
 
 # Dec 29th, Tuesday, 2020
