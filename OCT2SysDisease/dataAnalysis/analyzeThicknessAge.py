@@ -165,86 +165,71 @@ def main():
 
     for dataSet in dataList:
         # divide age subgroup in hyt0 and hyt1:
-        # Age subgroup: 50-55, 55-60, 60-65, 65-70, 70-80,80-95; total 6 group.
-        AgeDelimiter= [50, 55, 60, 65, 70, 80, 95]
-        hyt0_AgeSubGroup = []
+        # Age subgroup: 50-55, 55-60, 60-65, 65-70, 70-80,80-95; total 6 groups
+
+        ageDelimiters = [50, 55, 60, 65, 70, 80, 95,]
+        nAgeSections = len(ageDelimiters)-1
+        hyt0_AgeSubGroups = []
+        hyt0_AgeSubGroups_mean = np.empty(nAgeSections, nLayers)
+        hyt0_AgeSubGroups_std = np.empty(nAgeSections, nLayers)
+        hyt1_AgeSubGroups = []
+        hyt1_AgeSubGroups_mean =np.empty(nAgeSections, nLayers)
+        hyt1_AgeSubGroups_std = np.empty(nAgeSections, nLayers)
+
+        for i in range(nAgeSections):
+            hyt0_AgeSubGroups.append(dataSet[0][np.nonzero(ageDelimiters[i] <= trainObsv[:,20]  <= ageDelimiters[i+1])])
+            hyt1_AgeSubGroups.append(dataSet[1][np.nonzero(ageDelimiters[i] <= trainObsv[:,20]  <= ageDelimiters[i + 1])])
+
+        # print statistics information for different age group.
+        print(f"AgeRange,\t {','.join(str(x) for x in kernelList)}")
+        for i in range(nAgeSections):
 
 
-        figureName = dataSet[2]+"_thickness_layers.png"
-        fig = plt.figure()
+        for i in range(nAgeSections):
+            hyt0_AgeSubGroups_mean[i,] = np.mean(hyt0_AgeSubGroups[i][:,1:10], axis=0)
+            hyt0_AgeSubGroups_std[i,] =  np.std(hyt0_AgeSubGroups[i][:, 1:10], axis=0)
+            hyt1_AgeSubGroups_mean[i,] = np.mean(hyt1_AgeSubGroups[i][:, 1:10], axis=0)
+            hyt1_AgeSubGroups_std[i,] = np.std(hyt1_AgeSubGroups[i][:, 1:10], axis=0)
 
-        hyt0_mean = np.mean(dataSet[0][:,1:10], axis=0)
-        hyt0_std = np.std(dataSet[0][:, 1:10], axis=0)   # this std in sample dimension
-        #hyt0_std  = np.mean(dataSet[0][:,10:19], axis=0)  # this std in channle plan
-        hyt1_mean = np.mean(dataSet[1][:, 1:10], axis=0)
-        hyt1_std = np.std(dataSet[1][:, 1:10], axis=0)
-        #hyt1_std  = np.mean(dataSet[1][:, 10:19], axis=0)
-
-        plt.errorbar(x, hyt0_mean, yerr=hyt0_std, label='no hypertension', capsize=3)
-        plt.errorbar(x, hyt1_mean, yerr=hyt1_std, label='hypertension', capsize=3)
-
-        plt.xlabel("Layer")
-        plt.ylabel("Mean/std thickness (micrometer)")
-        plt.legend(loc='upper right')
-
-        outputFilePath = os.path.join(hps.outputDir, figureName)
-        plt.savefig(outputFilePath)
-        plt.close()
-
-    for dataSet in dataList:
-        figureName = dataSet[2] + "_Pvalue_t_thicknessMean.png"
-        pValues = [-1]*nLayers # pValue is prob >=0
-        fig = plt.figure()
 
         for i in range(nLayers):
-            _, pValues[i] = stats.ttest_ind(dataSet[0][:,i+1], dataSet[1][:,i+1])
+            figureName = dataSet[2]+f"_thickness_layer{i}.png"
+            fig = plt.figure()
 
+            plt.errorbar(ageDelimiters[0:-1], hyt0_AgeSubGroups_mean[:,i], yerr=hyt0_AgeSubGroups_std[:,i], label=f'NoHypertensionLayer{i}', capsize=3)
+            plt.errorbar(ageDelimiters[0:-1], hyt1_AgeSubGroups_mean[:,i], yerr=hyt1_AgeSubGroups_std[:,i],  label=f'HypertensionLayer{i}', capsize=3)
 
-        plt.scatter(x, pValues)
-        for i in range(nLayers):
-            txt = f"{pValues[i]:.3f}"
-            plt.annotate(txt, (x[i], pValues[i]))
+            plt.xlabel("Age")
+            plt.ylabel("Mean/std thickness (micrometer)")
+            plt.legend(loc='upper right')
 
-        plt.xlabel("Layer")
-        plt.ylabel("PValue of Hypertension and Nohypertension")
-
-        outputFilePath = os.path.join(hps.outputDir, figureName)
-        plt.savefig(outputFilePath)
-        plt.close()
-
-
-    # chisqure need  observation and expectation has same length.
-    '''  
-    
-    for dataSet in dataList:
-        figureName = dataSet[2] + "_Pvalue_chisquare_thicknessStdev.png"
-        pValues = [-1]*nLayers # pValue is prob >=0
-        fig = plt.figure()
+            outputFilePath = os.path.join(hps.outputDir, figureName)
+            plt.savefig(outputFilePath)
+            plt.close()
 
         for i in range(nLayers):
-            data0 = dataSet[0][:,i+10]
-            data1 = dataSet[1][:,i+10]
-            N0 = data0.size
-            N1 = data1.size
-            equalN = min(N0, N1)
-            data0 = data0[0:equalN]**2  # chisquare use variance
-            data1 = data1[0:equalN]**2
-            _, pValues[i] = stats.chisquare(data0, data1)
+            figureName = dataSet[2] + f"_Pvalue_t_thicknessMean_layer{i}.png"
+            pValues = [-1]*nAgeSections # pValue is prob >=0
+            fig = plt.figure()
+
+            for j in range(nAgeSections):
+                _, pValues[j] = stats.ttest_ind(hyt0_AgeSubGroups[j][:,i+1], hyt1_AgeSubGroups[j][:,i+1])
+
+
+            plt.scatter(ageDelimiters[0:-1], pValues)
+            for j in range(nAgeSections):
+                txt = f"{pValues[j]:.3f}"
+                plt.annotate(txt, (ageDelimiters[0:-1][j], pValues[j]))
+
+            plt.xlabel("Age")
+            plt.ylabel("PValue of w/wt Hypertension for Age Range")
+
+            outputFilePath = os.path.join(hps.outputDir, figureName)
+            plt.savefig(outputFilePath)
+            plt.close()
 
 
 
-        plt.scatter(x, pValues)
-        for i in range(nLayers):
-            txt = f"{pValues[i]:.3f}"
-            plt.annotate(txt, (x[i], pValues[i]))
-
-        plt.xlabel("Layer")
-        plt.ylabel("PValue of Hypertension and Nohypertension")
-
-        outputFilePath = os.path.join(hps.outputDir, figureName)
-        plt.savefig(outputFilePath)
-        plt.close()
-    '''
     
 
 
