@@ -170,11 +170,11 @@ def main():
         ageDelimiters = [50, 55, 60, 65, 70, 80, 95,]
         nAgeSections = len(ageDelimiters)-1
         hyt0_AgeSubGroups = []
-        hyt0_AgeSubGroups_mean = np.empty(nAgeSections, nLayers)
-        hyt0_AgeSubGroups_std = np.empty(nAgeSections, nLayers)
+        hyt0_AgeSubGroups_mean = np.empty((nAgeSections, nLayers),dtype=np.float)
+        hyt0_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=np.float)
         hyt1_AgeSubGroups = []
-        hyt1_AgeSubGroups_mean =np.empty(nAgeSections, nLayers)
-        hyt1_AgeSubGroups_std = np.empty(nAgeSections, nLayers)
+        hyt1_AgeSubGroups_mean =np.empty((nAgeSections, nLayers),dtype=np.float)
+        hyt1_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=np.float)
 
         for i in range(nAgeSections):
             hyt0_AgeSubGroups.append(dataSet[0][np.nonzero(ageDelimiters[i] <= trainObsv[:,20]  <= ageDelimiters[i+1])])
