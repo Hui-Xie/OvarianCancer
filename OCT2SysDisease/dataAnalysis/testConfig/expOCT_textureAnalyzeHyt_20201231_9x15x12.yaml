@@ -1,7 +1,7 @@
 
 #data source
 existGTLabel: True
-dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x31x25"
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x15x12"
 
 # _delNonExist: delete ID nonexist(ID: 367 in test data), and repeated ID;
 # _final: delete the ID whose slice number does not equal to 31.
@@ -18,8 +18,8 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 trainNormalizationStdMeanFileName: "trainNormalization_Texture_layers"
 
 network: "AnalyzeTexture"
-imageH: 31
-imageW: 25
+imageH: 15
+imageW: 12
 volumeSuffix: "_Volume_texture_enface.npy"
 inputChannels: 9 # 9 layers
 appKeys: ["hypertension_bp_plus_history$",   "Age$", "gender"]
