@@ -208,6 +208,8 @@ def main():
 
 
     # chisqure need  observation and expectation has same length.
+    '''
+    
     
     for dataSet in dataList:
         figureName = dataSet[2] + "_Pvalue_chisquare_thicknessStdev.png"
@@ -237,7 +239,7 @@ def main():
         outputFilePath = os.path.join(hps.outputDir, figureName)
         plt.savefig(outputFilePath)
         plt.close()
-
+    '''
     
 
 
