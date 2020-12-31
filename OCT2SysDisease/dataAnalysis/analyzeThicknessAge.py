@@ -177,8 +177,8 @@ def main():
         hyt1_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=np.float)
 
         for i in range(nAgeSections):
-            hyt0_AgeSubGroups.append(dataSet[0][np.nonzero(ageDelimiters[i] <= trainObsv[:,20]  <= ageDelimiters[i+1])])
-            hyt1_AgeSubGroups.append(dataSet[1][np.nonzero(ageDelimiters[i] <= trainObsv[:,20]  <= ageDelimiters[i + 1])])
+            hyt0_AgeSubGroups.append(dataSet[0][np.nonzero((ageDelimiters[i] <= dataSet[0][:,20]) & (dataSet[0][:,20]< ageDelimiters[i+1]))])
+            hyt1_AgeSubGroups.append(dataSet[1][np.nonzero((ageDelimiters[i] <= dataSet[1][:,20])  & (dataSet[1][:,20]< ageDelimiters[i+1]))])
 
         # print statistics information for different age group.
 
