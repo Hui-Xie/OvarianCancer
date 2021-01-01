@@ -21,7 +21,7 @@ network: "SVM"
 imageH: 15
 imageW: 12
 volumeSuffix: "_Volume_5thThickness_6thTexture_enface.npy"
-inputChannels: 9 # 9 layers
+inputChannels: 2 # 2 layers
 appKey: "hypertension_bp_plus_history$"
 
 #dropoutRate: 0.2 # dropout after global average pooling
