@@ -195,10 +195,11 @@ def main():
     fig = plt.figure()
 
     plt.scatter(x, pValueAge)
+    ylocation = sum(pValueAge)/3.0
     for i in range(3):
         txt = f"{pValueAge[i]:.3f}"
         plt.annotate(txt, (x[i], pValueAge[i]))
-        plt.annotate(datasetName[i], (x[i], 0))
+        plt.annotate(datasetName[i], (x[i], ylocation))
 
     plt.xlabel("dataset")
     plt.ylabel("PValue of Hypertension and Nohypertension")
