@@ -7,8 +7,8 @@ expDuke_20200902A_RiftSubnet                5.921670913696289       3.6589052677
 expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,          4.1209             NoGuassian DivLoss, thickness from N surfaces, initial filter=32, 8layers
 expDuke_20201215A_ThicknessSubnet_iibi007   3.800525188446045       2.357407331466675   3.2803,          4.3208             Gausssian DivLoss, thickness from N surfaces. initial filter=32, 8Layers
 expDuke_20201228A_ThicknessSubnet_iibi007   3.8707656860351562      2.439850091934204   3.2910,          4.4505             without Gaussian Divloss, use cumulative R, intial filter=24. 7Layers
-expDuke_20210101A_ThicknessSubnet_iibi007   training                                                                        32 filters, 8 layers, add XY coordinate input
-expDuke_20210101B_ThicknessSubnet_iibi007   training                                                                        48 filters, 8 layers, add XY coordinate input
+expDuke_20210101A_ThicknessSubnet_iibi007   training     32 filters, 8 layers, add XY coordinate input, No cummulativeRLoss
+expDuke_20210101B_ThicknessSubnet_iibi007   training     32 filters, 8 layers, add XY coordinate input, with CumulativeRLoss
 ========================================================================================================================================================================================================
 
 Analysis:
@@ -17,7 +17,7 @@ Analysis:
 2  further improvement:
    A introduce JHU's coordinates XY as 2 extra input channels;
    B increase intial filter =32 and 48, and 8 layers for 2 experiments;
-   C Cancel the cumulativeR loss;
+
 
 
 
