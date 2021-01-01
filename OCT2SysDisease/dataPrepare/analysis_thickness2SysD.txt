@@ -61,7 +61,11 @@ expOCT_thickTexture2HyT_20201231_ResNet_J_15x12:
        Sum=  at epoch .
        TPR:  TNR:  ACC:
 
-
+expOCT_thickTexture2HyT_20201231_ResNet_K_15x12:
+       with channel: 256  initial learning rate 0.0001
+       when stable, training acc stuck at
+       Sum=  at epoch .
+       TPR:  TNR:  ACC:
 
 Age statistics:
 values for Age$ have 1806 records
