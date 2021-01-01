@@ -1,3 +1,27 @@
+# Jan 1st, Friday, 2020
+
+Thickness (Rift) prediction on Duke_AMD test data:
+=======================================================================================================================================================================================================
+Method_Name                                 thicknessError          thicknessStdError   thicknessError0  thicknessError1    Note
+expDuke_20200902A_RiftSubnet                5.921670913696289       3.658905267715454   3.4042,          8.4392             Directly prediction N-1 thickness.
+expDuke_20201209A_ThicknessSubnet_iibi007   3.5991899967193604      2.2252163887023926  3.0774,          4.1209             NoGuassian DivLoss, thickness from N surfaces, initial filter=32, 8layers
+expDuke_20201215A_ThicknessSubnet_iibi007   3.800525188446045       2.357407331466675   3.2803,          4.3208             Gausssian DivLoss, thickness from N surfaces. initial filter=32, 8Layers
+expDuke_20201228A_ThicknessSubnet_iibi007   3.8707656860351562      2.439850091934204   3.2910,          4.4505             without Gaussian Divloss, use cumulative R, intial filter=24. 7Layers
+expDuke_20210101A_ThicknessSubnet_iibi007   training                                                                        32 filters, 8 layers, add XY coordinate input
+expDuke_20210101B_ThicknessSubnet_iibi007   training                                                                        48 filters, 8 layers, add XY coordinate input
+========================================================================================================================================================================================================
+
+Analysis:
+1  The expDuke_20201228A didn't get improvement on muError:
+   One possible reason is that it used the intial filter 24 and 7 layers which are same with the best Tongren network config;
+2  further improvement:
+   A introduce JHU's coordinates XY as 2 extra input channels;
+   B increase intial filter =32 and 48, and 8 layers for 2 experiments;
+   C Cancel the cumulativeR loss;
+
+
+
+
 # Dec 25th, Friday, 2020
 Record the idea for further improving the thickness Network:
 1  use cumulative R to compare with cumulative G with MSE;

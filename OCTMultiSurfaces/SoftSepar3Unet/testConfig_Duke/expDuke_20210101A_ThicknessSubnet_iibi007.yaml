@@ -1,4 +1,4 @@
-# Duke data without ReLU constraint
+# Duke data for thicknessNetwork
 
 debug: False # debug mark
 dataIn1Parcel: False
@@ -37,24 +37,27 @@ k: -1   # the fold k test
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: True
+# 3xSigma < H/4 is  a good choice for Rift sigma
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:0')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8
 # phased training with different learning rate
-learningRate: 0.01
+learningRate: 0.1
 
 
-network: "SurfacesUnet_YufanHe_2"
+network: "ThicknessSubnet"
 inputHeight: 512   # original height
 inputWidth: 361   # rawImageWidth
+maxRift:  150.0 # maxRift + 3*sigma < H/2
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 3 # rawImage + Y+X
-nLayers: 5
+inputChannels: 10 # rawImage +Y+X+ gradChannels
+nLayers: 8
+dropoutRateUnet: [0.25, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]  # for nLayers=8
 numSurfaces: 3  # num of surfaces in an image
-startFilters: 64  # the num of filters in first layer of Unet
-gradChannels: 0   # the added gradient channels beside raw image channel
+startFilters: 32  # the num of filters in first layer of Unet
+gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: True
@@ -81,14 +84,18 @@ outputDir: ""
 logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log"
 refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
+
 usePrimalDualIPM: False
-useLayerDice: True
+useLayerDice: False
 useReferSurfaceFromLayer: False
-useLayerCE: True
+useLayerCE: False
 useCEReplaceKLDiv: False
 useSmoothSurfaceLoss: False
+useSmoothThicknessLoss: True
+useGaussianDivLoss:  False
+useBetterRiftGaussian: False
 useWeightedDivLoss: False
-useRift: False
+useRift: True
 smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
@@ -102,3 +109,6 @@ softSeparation: False
 useReLUInPretrain: False
 
 goodBscans: []
+# in rift loss
+useL1Loss: True
+useKLDivLoss: False

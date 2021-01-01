@@ -50,13 +50,14 @@ inputHeight: 512   # original height
 inputWidth: 361   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 3 # rawImage + gradChannels
+inputChannels: 3 # rawImage + Y+X
 nLayers: 5
 numSurfaces: 3  # num of surfaces in an image
 startFilters: 64  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+addCoordinatesXYChannels: True
 
 # some physical parameter of images
 slicesPerPatient: 51  # for test and validation set
