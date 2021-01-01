@@ -17,6 +17,8 @@ Analysis:
 2  further improvement:
    A introduce JHU's coordinates XY as 2 extra input channels;
    B increase intial filter =32 and 48, and 8 layers for 2 experiments;
+   C both new experiment networks need 35 GB GPU memory;
+
 
 
 
