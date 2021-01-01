@@ -68,6 +68,14 @@ expOCT_thickTexture2HyT_20201231_ResNet_K_15x12:
        Sum= 1.736  at epoch 492.
        TPR:  TNR:  ACC:
 
+
+sense:
+A. Age is a good assistanted factor to judge hypertension.
+B. thickness is good to judge age;
+C. Add age as channel will help judge hypertension.
+
+
+
 Age statistics:
 values for Age$ have 1806 records
 min=50.0; mean=63.38538205980066; max=93.0
