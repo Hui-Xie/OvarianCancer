@@ -185,7 +185,7 @@ def main():
     plt.legend(loc='upper right')
 
     for i in x:
-        plt.annotate(datasetName[i], (x[i]-0.5, 60))
+        plt.annotate(datasetName[i], (x[i], 60))
 
     outputFilePath = os.path.join(hps.outputDir, figureName)
     plt.savefig(outputFilePath)
@@ -198,7 +198,7 @@ def main():
     for i in range(3):
         txt = f"{pValueAge[i]:.3f}"
         plt.annotate(txt, (x[i], pValueAge[i]))
-        plt.annotate(datasetName[i], (x[i] - 0.5, 60))
+        plt.annotate(datasetName[i], (x[i], 0))
 
     plt.xlabel("dataset")
     plt.ylabel("PValue of Hypertension and Nohypertension")
