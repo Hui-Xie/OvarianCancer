@@ -166,7 +166,7 @@ def main():
     hyt0_ageStd  = [-1,] *3
     hyt1_ageStd = [-1, ] * 3
     pValueAge = [-1,]*3
-    datasetName = ["training", "vdalidation", "test"]
+    datasetName = ["Training", "Validation", "Test"]
 
     for i, dataSet in enumerate(dataList):
         hyt0_ageMean[i] = np.mean(dataSet[0][:, 20], axis=0)
