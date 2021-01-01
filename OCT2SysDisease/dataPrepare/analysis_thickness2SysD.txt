@@ -353,6 +353,15 @@ Summary:
    B Report current deep learning and SVM result to professor Wang, and ask her suggestions on further improvement idea;
    C From this SVM result, we may not have a unrealistic expectation that our accuracy must exceed 70%;
 
+=== Accuracies of the 5thThickness and 6thTexture to hypertension_bp_plus_history$ Prediction with different SVM kernels ====
+Experiment: expOCT_thickTexture2HyT_20210101_SVM_A
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/5thThickness_6thTexture_2x15x12
+========================================================================================================
+SVM_Kernel,	 linear,                poly,                   rbf,                    sigmoid
+Training,  	 0.6605555555555556,    0.6669444444444445,     0.6588888888888889,     0.5263888888888889
+Validation,	 0.5245046923879041,    0.5453597497393118,     0.5453597497393118,     0.5307612095933264
+Test,      	 0.507,                 0.559,                  0.567,                  0.512
+========================================================================================================
 
 
 ============ Accuracies of Thickness to hypertension_bp_plus_history$ Prediction with different SVM kernels ====================
