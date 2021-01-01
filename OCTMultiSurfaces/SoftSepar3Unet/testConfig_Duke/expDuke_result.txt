@@ -20,6 +20,9 @@ improvements:
 
 
 
+
+
+
 # Dec 24th, Thursday, 2020
 previous trained 2 programs:
 nohup python3 ./RiftSubnet_Train.py ./testConfig_Duke/expDuke_20201215A_ThicknessSubnet_iibi007.yaml &
