@@ -2,7 +2,7 @@
 conclusion:
 1 if fixe learning rate, it is better at 0.001;
 2 with learning decay, start at 0.01;
-3 weight decay change to 1.0e-6
+3 weight decay change to 1.0e-6, reducing from 1.0e-5.
 
 expOCT_thickTexture2HyT_20210102_ResNet_A_15x12:
      learning Rate:1.0e-2
