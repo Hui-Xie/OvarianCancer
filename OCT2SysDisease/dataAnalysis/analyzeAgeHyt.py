@@ -179,6 +179,7 @@ def main():
     fig = plt.figure()
     plt.errorbar(x, hyt0_ageMean, yerr=hyt0_ageStd, label='NoHypertension', capsize=3)
     plt.errorbar(x, hyt1_ageMean, yerr=hyt1_ageStd, label='Hypertension', capsize=3)
+    plt.xticks([])
 
     plt.xlabel("dataSet")
     plt.ylabel("Age mean/std (year)")
@@ -195,6 +196,7 @@ def main():
     fig = plt.figure()
 
     plt.scatter(x, pValueAge)
+    plt.xticks([])
     ylocation = sum(pValueAge)/3.0
     for i in range(3):
         txt = f"{pValueAge[i]:.3f}"
