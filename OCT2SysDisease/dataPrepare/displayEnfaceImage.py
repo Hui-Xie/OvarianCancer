@@ -35,8 +35,12 @@ def main():
 
     f = plt.figure(frameon=False)
     DPI = f.dpi
-    rowSubplot = 3  # for 31x25 enface images
-    colSubplot = 3
+    if W >=9*H:
+        rowSubplot = 1  # for 31x25 enface images
+        colSubplot = N
+    else:
+        rowSubplot = 3  # for 31x25 enface images
+        colSubplot = 3
     f.set_size_inches(W * colSubplot / float(DPI), H * rowSubplot / float(DPI))
 
     plt.margins(0)
@@ -49,9 +53,10 @@ def main():
         subploti = plt.subplot(rowSubplot, colSubplot, i+1)
         subploti.imshow(enfaceVolume[i,], cmap='gray')
         subploti.axis('off')
-        # subploti.text(textLocx, textLocy, layerNames[i], fontsize=8)  # not display names
+        if W >= 9*H:
+            subploti.text(textLocx, textLocy, layerNames[i], fontsize=8)
 
-    outputFilePath = os.path.join(outputDir, volumename+ ".png")
+    outputFilePath = os.path.join(outputDir, volumename+ f"_{N}x{H}x{W}.png")
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
     plt.close()
     print(f"image file output at {outputFilePath}")
