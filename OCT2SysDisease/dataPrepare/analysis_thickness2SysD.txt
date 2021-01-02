@@ -1,3 +1,114 @@
+# Jan 2nd, Saturday, 2020
+conclusion:
+1 if fixe learning rate, it is better at 0.001;
+2 with learning decay, start at 0.01;
+3 weight decay change to 1.0e-6
+
+expOCT_thickTexture2HyT_20210102_ResNet_A_15x12:
+     learning Rate:1.0e-2
+     channels:     [96, 128, 160, 192] # the final channel is for FC layer
+     dropoutRate: 0  # the dropout rate at final fully connected layer.
+
+expOCT_thickTexture2HyT_20210102_ResNet_B_15x12:
+     learning Rate: 5.0e-3
+     channels:     [96, 128, 160, 192] # the final channel is for FC layer
+     dropoutRate: 0  # the dropout rate at final fully connected layer.
+
+     when stable, training acc stuck at  vs
+     Sum=   at epoch
+     TPR:  TNR:   ACC:  Threshold
+     at about 2min per epoch.
+
+expOCT_thickTexture2HyT_20210102_ResNet_C_15x12:
+     learning Rate: 1.0e-2
+     channels:     [128, 160, 192, 224] # the final channel is for FC layer
+     dropoutRate: 0  # the dropout rate at final fully connected layer.
+
+     when stable, training acc stuck at  vs
+     Sum=   at epoch
+     TPR:  TNR:   ACC:  Threshold
+     at about 2min per epoch.
+
+
+expOCT_thickTexture2HyT_20210102_ResNet_D_15x12:
+     learning Rate: 5.0e-3
+     channels:     [128, 160, 192, 224] # the final channel is for FC layer
+     dropoutRate: 0  # the dropout rate at final fully connected layer.
+     when stable, training acc stuck at  vs
+     Sum=   at epoch
+     TPR:  TNR:   ACC:  Threshold
+     at about 2min per epoch.
+
+expOCT_thickTexture2HyT_20210102_ResNet_E_15x12:
+     learning Rate: 1.0e-2
+     channels:     [128, 160, 192, 224] # the final channel is for FC layer
+     dropoutRate: 0.2  # the dropout rate at final fully connected layer.
+     when stable, training acc stuck at  vs
+     Sum=   at epoch
+     TPR:  TNR:   ACC:  Threshold
+     at about 2min per epoch.
+
+
+expOCT_thickTexture2HyT_20210102_ResNet_F_15x12:
+     learning Rate: 1.0e-2
+     channels:     [128, 160, 192, 224] # the final channel is for FC layer
+     dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+     when stable, training acc stuck at  vs
+     Sum=   at epoch
+     TPR:  TNR:   ACC:  Threshold
+     at about 2min per epoch.
+
+
+=================
+Some experiment result:
+expOCT_thickTexture2HyT_20210101_ResNet_A_15x12:
+    channels:     [98, 98, 98, 98] # the final channel is for FC layer
+    dropoutRate: 0  # the dropout rate at final fully connected layer.
+    with channel:  initial learning rate 0.1
+    when stable, training acc stuck at  74% vs 56%
+    Sum=  1.823 at epoch 719.  initial learning rate is too big.
+    TPR:  TNR:   ACC:  Threshold
+    at about 2min per epoch.
+
+expOCT_thickTexture2HyT_20210101_ResNet_B_15x12:
+    channels:     [98, 98, 98, 98] # the final channel is for FC layer
+    dropoutRate: 0.2  # the dropout rate at final fully connected layer.
+    with channel:  initial learning rate 0.1
+    when stable, training acc stuck at  74% vs 57%
+    Sum=  1.818 at epoch 654.
+    TPR:  TNR:   ACC:  Threshold
+    at about 2min per epoch.
+
+expOCT_thickTexture2HyT_20210101_ResNet_C_15x12:
+    channels:     [96, 128, 160, 192] # the final channel is for FC layer
+    dropoutRate: 0.2  # the dropout rate at final fully connected layer.
+    with channel:  initial learning rate 0.1
+    when stable, training acc stuck at  75% vs 56%
+    Sum=  1.849 at epoch 22.
+    TPR:  TNR:   ACC:  Threshold
+    at about 2min per epoch.
+
+expOCT_thickTexture2HyT_20210101_ResNet_D_15x12: (it is good, not the best)
+    channels:     [96, 128, 160, 192] # the final channel is for FC layer
+    dropoutRate: 0  # the dropout rate at final fully connected layer.
+    with channel:  initial learning rate 0.1
+    when stable, training acc stuck at  75% vs 54%
+    Sum=  1.855 at epoch 38.
+    TPR: 0.69 TNR: 0.53  ACC: 0.63  Threshold 0.425
+    at about 2min per epoch.
+
+expOCT_thickTexture2HyT_20210101_ResNet_E_15x12:
+    channels:     [96, 128, 160, 192] # the final channel is for FC layer
+    dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+    with channel:  initial learning rate 0.1
+    when stable, training acc stuck at  75% vs 53%
+    Sum=  1.816 at epoch 22.
+    TPR:  TNR:   ACC:  Threshold
+    at about 2min per epoch.
+
+
+
+
 # Dec 31th, Thursday, 2020:
 
 expOCT_thickTexture2HyT_20201231_ResNet_A_15x12:
@@ -22,7 +133,7 @@ expOCT_thickTexture2HyT_20201231_ResNet_C_15x12:
 expOCT_thickTexture2HyT_20201231_ResNet_D_15x12:  still in program, ID=9193
        with channel: 9  using fixed 1.0e-4 learning rate.
        when stable, training acc stuck at
-       Sum=
+       Sum= 1.768 at epoch 2.04K
        TPR:  TNR:  ACC:
 
 expOCT_thickTexture2HyT_20201231_ResNet_E_15x12:
