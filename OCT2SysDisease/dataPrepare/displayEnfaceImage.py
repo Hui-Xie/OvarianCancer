@@ -36,8 +36,8 @@ def main():
     f = plt.figure(frameon=False)
     DPI = f.dpi
     if W >=9*H:
-        rowSubplot = 1  # for 31x25 enface images
-        colSubplot = N
+        rowSubplot = N  # for 31x25 enface images
+        colSubplot = 1
     else:
         rowSubplot = 3  # for 31x25 enface images
         colSubplot = 3
