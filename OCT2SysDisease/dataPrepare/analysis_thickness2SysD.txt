@@ -12,24 +12,35 @@ There are some methods to use gender information:
 3   use gender as pretraining network to get a better initialization network for further hypertension prediction;
 
 
+
+
 # Jan 2nd, Saturday, 2020
 conclusion:
 1 if fixe learning rate, it is better at 0.001;
 2 with learning decay, start at 0.01;
 3 weight decay change to 1.0e-6, reducing from 1.0e-5.
 
+after experiment:
+1 initial learning rate: 0.005;
+2 expOCT_thickTexture2HyT_20210102_ResNet_D_15x12 looks good;
+3 channels:     [128, 160, 192, 224] , without dropout.
+
+
 expOCT_thickTexture2HyT_20210102_ResNet_A_15x12:
      learning Rate:1.0e-2
      channels:     [96, 128, 160, 192] # the final channel is for FC layer
      dropoutRate: 0  # the dropout rate at final fully connected layer.
+     at stable, trianing acc vs validation acc: 64% vs 57%
+     SUM =  1.855 at epoch 1.628K
+     TPR TNR ACC Threshold:
 
 expOCT_thickTexture2HyT_20210102_ResNet_B_15x12:
      learning Rate: 5.0e-3
      channels:     [96, 128, 160, 192] # the final channel is for FC layer
      dropoutRate: 0  # the dropout rate at final fully connected layer.
 
-     when stable, training acc stuck at  vs
-     Sum=   at epoch
+     when stable, training acc stuck at  59% vs 58%.  both training and validation loss are oscillating.
+     Sum=  1.853  at epoch 531.
      TPR:  TNR:   ACC:  Threshold
      at about 2min per epoch.
 
@@ -38,27 +49,27 @@ expOCT_thickTexture2HyT_20210102_ResNet_C_15x12:
      channels:     [128, 160, 192, 224] # the final channel is for FC layer
      dropoutRate: 0  # the dropout rate at final fully connected layer.
 
-     when stable, training acc stuck at  vs
-     Sum=   at epoch
+     when stable, training acc stuck at  64% vs 56%
+     Sum=  1.85  at epoch 1.285K
      TPR:  TNR:   ACC:  Threshold
      at about 2min per epoch.
 
 
-expOCT_thickTexture2HyT_20210102_ResNet_D_15x12:
+expOCT_thickTexture2HyT_20210102_ResNet_D_15x12:   Good. Not the best.
      learning Rate: 5.0e-3
      channels:     [128, 160, 192, 224] # the final channel is for FC layer
      dropoutRate: 0  # the dropout rate at final fully connected layer.
-     when stable, training acc stuck at  vs
-     Sum=   at epoch
-     TPR:  TNR:   ACC:  Threshold
+     when stable, training acc stuck at  60% vs 55%
+     Sum= 1.86  at epoch 1.057K
+     TPR:0.75   TNR: 0.48   ACC:0.63  Threshold 0.47
      at about 2min per epoch.
 
 expOCT_thickTexture2HyT_20210102_ResNet_E_15x12:
      learning Rate: 1.0e-2
      channels:     [128, 160, 192, 224] # the final channel is for FC layer
      dropoutRate: 0.2  # the dropout rate at final fully connected layer.
-     when stable, training acc stuck at  vs
-     Sum=   at epoch
+     when stable, training acc stuck at  64% vs 58%
+     Sum= 1.834  at epoch 1.064K
      TPR:  TNR:   ACC:  Threshold
      at about 2min per epoch.
 
@@ -67,8 +78,8 @@ expOCT_thickTexture2HyT_20210102_ResNet_F_15x12:
      learning Rate: 1.0e-2
      channels:     [128, 160, 192, 224] # the final channel is for FC layer
      dropoutRate: 0.5  # the dropout rate at final fully connected layer.
-     when stable, training acc stuck at  vs
-     Sum=   at epoch
+     when stable, training acc stuck at 61% vs 56%
+     Sum= 1.838 at epoch 1.807
      TPR:  TNR:   ACC:  Threshold
      at about 2min per epoch.
 
@@ -157,7 +168,7 @@ expOCT_thickTexture2HyT_20201231_ResNet_E_15x12:
        TPR:  TNR:  ACC:
 
 expOCT_thickTexture2HyT_20201231_ResNet_F_15x12:  (the best)  it looks no overfitting. reduce dropout rate is good.
-       with channel: 96 initial learning rate 0.01
+       with channel: [98,98,98,98] initial learning rate 0.01, dropout 0.5
        when stable, training acc stuck at 60%.
        Sum= 1.881 at epoch 585.
        TPR: 0.73 TNR: 0.52  ACC: 0.635 .Threshold 0.473.
