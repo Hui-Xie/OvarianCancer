@@ -1,3 +1,17 @@
+# Jan 4th, Monday, 2021:
+
+Professor:
+1  Maybe adding gender is also an option. Do you know which layers can be used to distinguish genders?
+2   For the texture features, again you need to select some radiomic features.
+
+My answer:
+For gender prediction, the (0 th , 5 th, 6 th, 7 th) thickness layer and the (1 th , 2 th ) texture enface maps have statistical significance difference crossing training, validation and test data.
+There are some methods to use gender information:
+1   use gender as input;
+2   use gender as one of predection head to help better extract features;
+3   use gender as pretraining network to get a better initialization network for further hypertension prediction;
+
+
 # Jan 2nd, Saturday, 2020
 conclusion:
 1 if fixe learning rate, it is better at 0.001;
