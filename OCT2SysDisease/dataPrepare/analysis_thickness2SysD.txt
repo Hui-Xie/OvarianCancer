@@ -72,6 +72,9 @@ at channel 7, statistical significance pixel number: 6
 at channel 8, statistical significance pixel number: 0
 ================ End of anlayzing thickness in each pixel ===============
 
+Further idea:
+1  sum the thickness of 5th, 6th 7th, 8th layer to analyze its pixel-level p value;
+2  sum the texture of 6th,7th layer to analyze its pixel-level p value;
 
 
 
