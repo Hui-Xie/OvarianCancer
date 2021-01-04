@@ -11,9 +11,9 @@ There are some methods to use gender information:
 3   use gender as pretraining network to get a better initialization network for further hypertension prediction;
 
 ===============================================
-Analyze each pixel in the thickness of 9x15x12.
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel.py ./testConfig/expOCT_thicknessAnalyzeHyt_pixel_20210104_9x15x12.yaml
 Experiment: expOCT_thicknessAnalyzeHyt_pixel_20210104_9x15x12
-inputData: "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12"
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
 mask shape: (9, 15, 12)
 total statistical significance pixel number: 137
 at channel 0, statistical significance pixel number: 0
@@ -25,6 +25,52 @@ at channel 5, statistical significance pixel number: 91
 at channel 6, statistical significance pixel number: 0
 at channel 7, statistical significance pixel number: 27
 at channel 8, statistical significance pixel number: 13
+================ End of anlayzing thickness in each pixel ===============
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel.py ./testConfig/expOCT_thicknessAnalyzeHyt_pixel_20210104_9x31x25.yaml
+Experiment: expOCT_thicknessAnalyzeHyt_pixel_20210104_9x31x25
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25
+mask shape: (9, 31, 25)
+total statistical significance pixel number: 496
+at channel 0, statistical significance pixel number: 0
+at channel 1, statistical significance pixel number: 0
+at channel 2, statistical significance pixel number: 1
+at channel 3, statistical significance pixel number: 2
+at channel 4, statistical significance pixel number: 11
+at channel 5, statistical significance pixel number: 331
+at channel 6, statistical significance pixel number: 0
+at channel 7, statistical significance pixel number: 108
+at channel 8, statistical significance pixel number: 43
+================ End of anlayzing thickness in each pixel ===============
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel.py ./testConfig/expOCT_textureAnalyzeHyt_pixel_20210104_9x31x25.yaml
+Experiment: expOCT_textureAnalyzeHyt_pixel_20210104_9x31x25
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x31x25
+mask shape: (9, 31, 25)
+total statistical significance pixel number: 114
+at channel 0, statistical significance pixel number: 1
+at channel 1, statistical significance pixel number: 0
+at channel 2, statistical significance pixel number: 0
+at channel 3, statistical significance pixel number: 1
+at channel 4, statistical significance pixel number: 0
+at channel 5, statistical significance pixel number: 0
+at channel 6, statistical significance pixel number: 89
+at channel 7, statistical significance pixel number: 22
+at channel 8, statistical significance pixel number: 1
+================ End of anlayzing thickness in each pixel ===============
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel.py ./testConfig/expOCT_textureAnalyzeHyt_pixel_20210104_9x15x12.yaml
+Experiment: expOCT_textureAnalyzeHyt_pixel_20210104_9x15x12
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/textureEnfaceMap_9x15x12
+mask shape: (9, 15, 12)
+total statistical significance pixel number: 32
+at channel 0, statistical significance pixel number: 0
+at channel 1, statistical significance pixel number: 0
+at channel 2, statistical significance pixel number: 0
+at channel 3, statistical significance pixel number: 0
+at channel 4, statistical significance pixel number: 0
+at channel 5, statistical significance pixel number: 0
+at channel 6, statistical significance pixel number: 26
+at channel 7, statistical significance pixel number: 6
+at channel 8, statistical significance pixel number: 0
+================ End of anlayzing thickness in each pixel ===============
 
 
 
