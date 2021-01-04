@@ -158,7 +158,7 @@ def main():
         print(f"at channel {c}, statistical significance pixel number: {np.count_nonzero(mask[c,])}")
 
     # save mask
-    maskPath = os.path.join(hps.outputDir + f"mask_{C}x{H}x{W}.npy")
+    maskPath = os.path.join(hps.outputDir,f"mask_{C}x{H}x{W}.npy")
     np.save(maskPath, mask)
 
 if __name__ == "__main__":
