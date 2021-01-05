@@ -31,4 +31,4 @@ for thickessPath in thicknessVolumeList:
     newVolume[0,] = thicknessVolume[c1,]
     np.save(outputPath,newVolume)
 
-print(f"=============End of generate {c1}th thickness map===============")
+print(f"=============End of generate {c1}th thickness map at {outputDir} ===============")
