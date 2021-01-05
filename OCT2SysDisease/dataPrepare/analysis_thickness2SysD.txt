@@ -79,6 +79,23 @@ Further idea:
 1  sum the thickness of 5th, 6th 7th, 8th layer to analyze its pixel-level p value;
 2  sum the texture of 6th,7th layer to analyze its pixel-level p value;
 
+Sum layer 5,6,7,8 together result:
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel_sum5678Layer.py ./testConfig/expOCT_thicknessAnalyzeHyt_pixel_sum5678_20210105_9x31x25.yaml
+Experiment: expOCT_thicknessAnalyzeHyt_pixel_sum5678_20210105_9x31x25
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x31x25
+mask shape: (1, 31, 25)
+total statistical significance pixel number: 334
+at channel 0, statistical significance pixel number: 334
+================ End of anlayzing thickness in each pixel ===============
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel_sum5678Layer.py ./testConfig/expOCT_thicknessAnalyzeHyt_pixel_sum5678_20210105_9x15x12.yaml
+Experiment: expOCT_thicknessAnalyzeHyt_pixel_sum5678_20210105_9x15x12
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
+mask shape: (1, 15, 12)
+total statistical significance pixel number: 86
+at channel 0, statistical significance pixel number: 86
+================ End of anlayzing thickness in each pixel ===============
+
+
 
 
 # Jan 2nd, Saturday, 2020
