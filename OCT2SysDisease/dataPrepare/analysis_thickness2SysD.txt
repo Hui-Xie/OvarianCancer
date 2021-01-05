@@ -1,3 +1,6 @@
+
+
+
 # Jan 4th, Monday, 2021:
 Professor:
 1  Maybe adding gender is also an option. Do you know which layers can be used to distinguish genders?

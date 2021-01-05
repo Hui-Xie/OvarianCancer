@@ -1,3 +1,9 @@
+# Jan 5th Tuesday, 2021:
+Meetting with professor:
+1  use total JHU method to predict thickness in SoftSeparation proejct;
+2  try Leixin's idea of using wider context to get better thickness predicion;
+
+
 # Jan 1st, Friday, 2020
 
 Thickness (Rift) prediction on Duke_AMD test data:
