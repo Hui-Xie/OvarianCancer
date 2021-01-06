@@ -6,8 +6,8 @@ expOCT_thickness5th2HyT_20210105_ResNet_A_15x12
     dropoutRate: 0  # the dropout rate at final fully connected layer.
     weightDecay: 1.0e-6
     learningRate: 1.0e-2  #
-    Sum=1.851 at epoch 140.
-    threshold:0.479  TPR: 0.74, TNR:0.48, ACC 0.627
+    Sum=1.853 at epoch 853.
+    threshold:0.477  TPR: 0.74, TNR:0.48, ACC 0.627
     No overfitting. training loss stable 0.61, while validation loss stable at 0.62
     at stable, training acc 58%, while validation acc 56%.
 
