@@ -1,8 +1,26 @@
+# Jan 6th, Wednesday, 2021
+expDuke_20210101A_ThicknessSubnet_iibi007:
+      at 10:50 am, Jan 6th, it trained 164 epochs in 4 days 20hours.
+      it current learning rate at 0.00625, which has not reached general 0.001
+      and both validation loss and training loss are in slowly decline trend.
+      I will wait one more day to check its result again.
+
+
+expDuke_20210101B_ThicknessSubnet_iibi007:
+      at 10:59 am, Jan 6th, it trained 172 epochs in 4 day 22 hours.
+      its current learning rate at 0.003125,  which has not reached general 0.001
+      and both validation loss and training loss are in slowly decline trend.
+      I will wait one more day to check its result again.
+
+Today, I will make the exact JHU method + a high (different with Leixin's width,as we detect thickness instead smooth)
+convolution code ready.
+
+
+
 # Jan 5th Tuesday, 2021:
 Meetting with professor:
 1  use total JHU method to predict thickness in SoftSeparation proejct;
 2  try Leixin's idea of using wider context to get better thickness predicion;
-
 
 # Jan 1st, Friday, 2020
 
