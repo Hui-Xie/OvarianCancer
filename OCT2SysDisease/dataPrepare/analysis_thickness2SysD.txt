@@ -95,8 +95,16 @@ inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_
 mask shape: (1, 15, 12)
 total statistical significance pixel number: 86
 at channel 0, statistical significance pixel number: 86
-================ End of anlayzing thickness in each pixel ===============
+================ End of anlayzing thickness in each pixel =============
 
+sum layer 5,6,7 together
+(base) [c-xwu000:dataAnalysis]#python3 ./analyzeHyt_pixel_sum567Layer.py ./testConfig/expOCT_thicknessAnalyzeHyt_pixel_sum567_20210105_9x15x12.yaml
+Experiment: expOCT_thicknessAnalyzeHyt_pixel_sum567_20210105_9x15x12
+inputDataDir: /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thicknessEnfaceMap_9x15x12
+mask shape: (1, 15, 12)
+total statistical significance pixel number: 96
+at channel 0, statistical significance pixel number: 96
+================ End of anlayzing thickness in each pixel ===============
 
 
 
