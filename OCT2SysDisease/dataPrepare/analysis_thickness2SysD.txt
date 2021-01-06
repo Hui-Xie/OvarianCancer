@@ -23,8 +23,18 @@ expOCT_thickness5th2HyT_20210105_ResNet_B_15x12
 
 Use 5th thickness plus mask to predict:
 1  as summing the 5th, 6th, 7th, 8th thickness layers reduces the number of statistical significance pixel to 47.78%;
-2  we use the 5th thicknes multiplying mask to feed into network to predict;
-3  it gets accuracy 63%, TPR 74%, and TNR 48% in validation data;
+   please refer slides page 31 and 32.
+2  we used the 5th thicknes multiplying mask to feed into network to predict;
+3  it got accuracy 63%, TPR 74%, and TNR 48% in validation data;
+4  it got below result on test data:
+    ACC:0.566
+	TPR:0.663120567364129
+	TNR:0.44036697246696405
+	Sum:1.669487539831093
+5  The result of test data is a little better than SVM method;
+6  We need to continue to think feature selection and radiomics features.
+
+
 
 
 
