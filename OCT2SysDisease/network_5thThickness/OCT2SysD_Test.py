@@ -51,13 +51,9 @@ def main():
     netMgr = NetMgr(net, hps.netPath, hps.device)
     netMgr.loadNet("test")
  
-    # application specific parameter
-    hyptertensionPosWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
-    appKey = hps.appKey
 
     net.eval()
-    predictDict= {}
-    predictProbDict={}
+    # predictProbDict={}
 
     threshold = net.getRunParameter("threshold") if "threshold" in net.m_runParametersDict else hps.threshold
 
@@ -91,9 +87,9 @@ def main():
 
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-    outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/testSetPredictProb_{timeStr}.csv")
+    # outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/testSetPredictProb_{timeStr}.csv")
 
-    with open(os.path.join(hps.outputDir, f"output_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(hps.outputDir, f"testOutput_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"net.m_runParametersDict:\n")
