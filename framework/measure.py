@@ -199,3 +199,43 @@ def search_Threshold_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits):
     return {"threshold": tdList[maxIndex], "ACC": ACCList[maxIndex], "TPR": TPRList[maxIndex], "TNR": TNRList[maxIndex],
             "Sum": SumList[maxIndex]}
 
+
+def compute_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits, threshold):
+    '''
+    tensor version
+    :param gt: in torch.tensor in 1D
+    :param predictLogits: in torch.tensor in 1 D
+    :return: (ACC, TPR, TNR, Sum)
+    '''
+
+    epsilon = 1e-8
+    assert gt.shape == predictLogits.shape
+
+    predictProb = torch.sigmoid(predictLogits)
+    gt = gt.int()
+    nTotal = predictProb.numel()
+
+    TP = 0
+    FP = 0
+    FN = 0
+    TN = 0
+    nIgnore = 0
+    for n in range(nTotal):
+        if predictProb[n] < threshold:
+            if gt[n] == 0:
+                TN += 1
+            else:
+                FN += 1
+        else:
+            if gt[n] == 0:
+                FP += 1
+            else:
+                TP += 1
+
+    assert nTotal == TP + TN + FP + FN + nIgnore
+    ACC = (TP + TN) * 1.0 / (TP + TN + FP + FN)
+    TPR = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+    TNR = TN * 1.0 / (TN + FP + epsilon)  # specificity
+    Sum = ACC + TPR + TNR
+
+    return {"ACC": ACC, "TPR": TPR, "TNR": TNR, "Sum": Sum}
