@@ -1,4 +1,11 @@
 # Jan 6th, Wednesday, 2021
+After U-Net, get CxHxW feature map, using 2D [H,1] convolution with pading [0,0] to get Nx1xW feature, here N is the number of thickness.
+
+Define ThicknessSubnet_Y as yufanHe method plus 1D convolution.
+
+
+
+# Jan 6th, Wednesday, 2021
 expDuke_20210101A_ThicknessSubnet_iibi007:
       at 10:50 am, Jan 6th, it trained 164 epochs in 4 days 20hours.
       it current learning rate at 0.00625, which has not reached general 0.001
