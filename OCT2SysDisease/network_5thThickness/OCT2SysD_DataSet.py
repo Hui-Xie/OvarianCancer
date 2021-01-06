@@ -91,39 +91,20 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_NVolumes = len(self.m_volumePaths)
         assert (self.m_NVolumes == len(self.m_IDsCorrespondVolumes))
 
+        #load mask
+        self.m_mask = torch.from_numpy(np.load(hps.maskPath))[hps.maskChannel, ].unsqueeze(dim=0)
+        self.m_mask = self.m_mask.to(device=hps.device, dtype=torch.int)  # 1xHxW
+
         # load all volumes into memory.
         self.m_volumes = torch.empty((self.m_NVolumes, hps.inputChannels, hps.imageH, hps.imageW), device=hps.device,
                                      dtype=torch.float)
         for i, volumePath in enumerate(self.m_volumePaths):
             oneVolume = torch.from_numpy(np.load(volumePath)).to(device=hps.device, dtype=torch.float32)
+            oneVolume = oneVolume*self.m_mask  # use mask to filter the input.
             self.m_volumes[i,] = oneVolume
 
-        # normalize training volumes and save mean and std for using in validation and test data
-        # normalization along each C (layer) dimension, and save as torch.pt file.
-        epsilon = 1.0e-8
-        self.m_normalizationFilePath_std = os.path.join(hps.netPath, hps.trainNormalizationStdMeanFileName + "_std.pt")
-        self.m_normalizationFilePath_mean = os.path.join(hps.netPath,
-                                                         hps.trainNormalizationStdMeanFileName + "_mean.pt")
-        if mode == "training":
-            if (not os.path.isfile(self.m_normalizationFilePath_std)) or ( not os.path.isfile(self.m_normalizationFilePath_mean)):
-                std, mean = torch.std_mean(self.m_volumes, dim=(0, 2, 3), keepdim=True)
-                torch.save(std, self.m_normalizationFilePath_std)
-                torch.save(mean, self.m_normalizationFilePath_mean)
-            else:
-                std = torch.load(self.m_normalizationFilePath_std).to(device=hps.device)
-                mean = torch.load(self.m_normalizationFilePath_mean).to(device=hps.device)
+        # use mask to mark the undesired elements as 0, so we do not do normalization.
 
-            std = std.expand_as(self.m_volumes)
-            mean = mean.expand_as(self.m_volumes)
-            self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW
-
-        elif (mode == "validation") or (mode == "test"):
-            std = torch.load(self.m_normalizationFilePath_std).to(device=hps.device).expand_as(self.m_volumes)
-            mean = torch.load(self.m_normalizationFilePath_mean).to(device=hps.device).expand_as(self.m_volumes)
-            self.m_volumes = (self.m_volumes - mean) / (std + epsilon)  # size: NxCxHxW
-        else:
-            print(f"OCT2SysDiseaseDataSet mode error")
-            assert False
 
 
     def __len__(self):
