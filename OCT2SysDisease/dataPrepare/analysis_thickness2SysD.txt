@@ -1,5 +1,26 @@
-# Jan 5th, Tuesday, 2021
+# Jan 6th, Tuesday, 2021
 Use 5th thickness plus mask to predict.
+
+expOCT_thickness5th2HyT_20210105_ResNet_A_15x12
+    channels:     [96, 128, 160, 192] # the final channel is for FC layer
+    dropoutRate: 0  # the dropout rate at final fully connected layer.
+    weightDecay: 1.0e-6
+    learningRate: 1.0e-2  #
+    Sum=1.851 at epoch 140.
+    threshold:0.479  TPR: 0.74, TNR:0.48, ACC 0.627
+    No overfitting. training loss stable 0.61, while validation loss stable at 0.62
+    at stable, training acc 58%, while validation acc 56%.
+
+expOCT_thickness5th2HyT_20210105_ResNet_B_15x12
+    channels:     [98, 98, 98, 98] # the final channel is for FC layer
+    dropoutRate: 0.5  # the dropout rate at final fully connected layer.
+    weightDecay: 1.0e-5
+    learningRate: 1.0e-2  #
+    Sum=1.854 at epoch 453.
+    threshold:0.49  TPR: 0.74, TNR:0.48, ACC 0.63
+    No overfitting. training loss stable 0.62, while validation loss stable at 0.62
+    at stable, training acc 58%, while validation acc 57%.
+
 
 
 
