@@ -159,13 +159,12 @@ def main():
                 allValidationOutput = x if allValidationOutput is None else torch.cat((allValidationOutput, x))
                 allValidationGTs    = t if allValidationGTs    is None else torch.cat((allValidationGTs,    t))
 
-                # debug
-                # break
+
 
             validLoss /= validBatch
 
         validAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
-        Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumWithLogits(allValidationGTs, allValidationOutput)
+        Td_Acc_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithLogits(allValidationGTs, allValidationOutput)
 
 
         if lrScheduler is not None:
@@ -191,6 +190,7 @@ def main():
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("accuracy", validAcc)
             net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
+            net.updateRunParameter("threshold", Td_Acc_TPR_TNR_Sum['threshold'])
             preValidLoss = validLoss
             preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)

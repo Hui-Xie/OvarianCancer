@@ -149,7 +149,7 @@ def computeThresholdAccTPR_TNRSumFromProbDict(probDict):
     return {"threshold": tdList[maxIndex], "ACC": ACCList[maxIndex], "TPR":TPRList[maxIndex], "TNR": TNRList[maxIndex], "Sum":SumList[maxIndex]}
 
 
-def computeThresholdAccTPR_TNRSumWithLogits(gt,predictLogits):
+def search_Threshold_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits):
     '''
     tensor version
     :param gt: in torch.tensor in 1D

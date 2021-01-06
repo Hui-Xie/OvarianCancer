@@ -162,7 +162,7 @@ def main():
             validLoss /= validBatch
 
         validAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
-        Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumWithLogits(allValidationGTs, allValidationOutput)
+        Td_Acc_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithLogits(allValidationGTs, allValidationOutput)
 
 
         if "min" == hps.lrSchedulerMode:

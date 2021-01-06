@@ -11,8 +11,8 @@ from torch.utils import data
 
 sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
-from OCT2SysD_Net import OCT2SysD_Net
 from OCT2SysD_Tools import *
+from Thickness5th2HyTension_ResNet import Thickness5th2HyTension_ResNet
 
 sys.path.append("../..")
 from framework.NetMgr import NetMgr
@@ -22,7 +22,6 @@ from framework.measure import  *
 
 def printUsage(argv):
     print("============ Test of OCT to Systemic Disease Network =============")
-    print("=======input data is random single slice ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -54,64 +53,55 @@ def main():
  
     # application specific parameter
     hyptertensionPosWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
-    appKey = 'hypertension_bp_plus_history$'
+    appKey = hps.appKey
 
     net.eval()
     predictDict= {}
     predictProbDict={}
+
+    threshold = net.getRunParameter("threshold") if "threshold" in net.m_runParametersDict else hps.threshold
+
     with torch.no_grad():
-        testBatch = 0  # test means testation
-        testHyperTLoss = 0.0
+        testBatch = 0  # valid means validation
+        testLoss = 0.0
+
+        allTestOutput = None
+        allTestGTs = None
 
         net.setStatus("test")
-        batchSize = 1 if hps.TTA else hps.batchSize
+        for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
+            inputs = batchData['images']  # B,C,H,W
+            t = batchData['GTs'].to(device=hps.device, dtype=torch.float)  # target
 
-        for batchData in data.DataLoader(testData, batch_size=batchSize, shuffle=False, num_workers=0):
-
-            # squeeze the extra dimension of data
-            inputs = batchData['images'].squeeze(dim=0)
-            batchData["GTs"]= {key: batchData["GTs"][key].squeeze(dim=0) for key in batchData["GTs"]}
-            batchData['IDs'] = [v[0] for v in batchData['IDs']]  # erase tuple wrapper fot TTA
-
-            x = net.forward(inputs)
-            predict, predictProb, loss = net.computeBinaryLoss(x, GTs=batchData['GTs'], GTKey=appKey, posWeight=hyptertensionPosWeight)
-
-            testHyperTLoss +=loss
+            x, loss = net.forward(inputs, t)
+            testLoss += loss
             testBatch += 1
 
-            B = predictProb.shape[0]
-            for i in range(B):
-                ID = int(batchData['IDs'][i])  # [0] is for list to string
-                predictDict[ID]={}
-                predictDict[ID][appKey] = predict[i].item()
+            allTestOutput = x if allTestOutput is None else torch.cat((allTestOutput, x))
+            allTestGTs = t if allTestGTs is None else torch.cat((allTestGTs, t))
 
-                predictProbDict[ID] = {}
-                predictProbDict[ID]['Prob1'] = predictProb[i]
-                predictProbDict[ID]['GT'] = batchData['GTs'][appKey][i]
+            # debug
+            # break
+
+        testLoss /= testBatch
 
 
-
-        testHyperTLoss /= testBatch
-
-        gtDict = testData.getGTDict()
-        hyperTAcc = computeClassificationAccuracy(gtDict,predictDict, appKey)
-        Td_Acc_TPR_TNR_Sum = computeThresholdAccTPR_TNRSumFromProbDict(predictProbDict)
+    Acc_TPR_TNR_Sum = compute_Acc_TPR_TNR_Sum_WithLogits(allTestGTs, allTestOutput,threshold)
 
 
+    curTime = datetime.datetime.now()
+    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+    outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/testSetPredictProb_{timeStr}.csv")
 
-        curTime = datetime.datetime.now()
-        timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-        outputPredictProbDict2Csv(predictProbDict, hps.outputDir + f"/testSetPredictProb_{timeStr}.csv")
-
-        with open(os.path.join(hps.outputDir, f"output_{timeStr}.txt"), "w") as file:
-            hps.printTo(file)
-            file.write("\n=======net running parameters=========\n")
-            file.write(f"net.m_runParametersDict:\n")
-            [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
-            file.write("\n=======Test Result=========\n")
-            file.write(f"threshold =0.5, hypertenson accuracy = {hyperTAcc}\n")
-            file.write("Best accuracy sum: \n")
-            [file.write(f"\t{key}:{value}\n") for key, value in Td_Acc_TPR_TNR_Sum.items()]
+    with open(os.path.join(hps.outputDir, f"output_{timeStr}.txt"), "w") as file:
+        hps.printTo(file)
+        file.write("\n=======net running parameters=========\n")
+        file.write(f"net.m_runParametersDict:\n")
+        [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
+        file.write("\n=======Test Result=========\n")
+        file.write(f"threshold =0.5, hypertenson accuracy = {hyperTAcc}\n")
+        file.write("Best accuracy sum: \n")
+        [file.write(f"\t{key}:{value}\n") for key, value in Acc_TPR_TNR_Sum.items()]
 
 
 

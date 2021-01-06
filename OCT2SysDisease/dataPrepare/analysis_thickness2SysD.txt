@@ -17,9 +17,15 @@ expOCT_thickness5th2HyT_20210105_ResNet_B_15x12
     weightDecay: 1.0e-5
     learningRate: 1.0e-2  #
     Sum=1.854 at epoch 453.
-    threshold:0.49  TPR: 0.74, TNR:0.48, ACC 0.63
+    threshold:0.491  TPR: 0.74, TNR:0.48, ACC 0.63
     No overfitting. training loss stable 0.62, while validation loss stable at 0.62
     at stable, training acc 58%, while validation acc 57%.
+
+Use 5th thickness plus mask to predict:
+1  as summing the 5th, 6th, 7th, 8th thickness layers reduces the number of statistical significance pixel to 47.78%;
+2  we use the 5th thicknes multiplying mask to feed into network to predict;
+3  it gets accuracy 63%, TPR 74%, and TNR 48% in validation data;
+
 
 
 
