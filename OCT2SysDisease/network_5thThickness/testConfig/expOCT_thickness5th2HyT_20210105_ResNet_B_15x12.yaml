@@ -70,4 +70,4 @@ netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / ne
 loadNetPath: ""
 outputDir: ""
 logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
-threshold:0.491
+threshold: 0.491
