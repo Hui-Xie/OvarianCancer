@@ -1,0 +1,114 @@
+# Duke data for thicknessNetwork
+
+debug: False # debug mark
+dataIn1Parcel: False
+# Duke data is not in one parcel, while Tongren and JHU are in one parcel.
+# Not dataIn1Parcel means each patient has a volume file.
+dataInSlice: True
+
+dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
+existGTLabel: True
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K: 0  # Kfold cross validation
+k: -1   # the fold k test
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+
+# when do not use cross validation:
+# training data:  dataDir + training + images.npy
+#         label: dataDir + training + surfaces.npy
+#         IDs  : dataDir + training + patientID.json
+
+# validation data:  dataDir + validation + images.npy
+#           label: dataDir + validation + surfaces.npy
+#           IDs  : dataDir + validation + patientID.json
+
+# test data:  dataDir + test + images.npy
+#     label: dataDir + test + surfaces.npy
+#     IDs  : dataDir + test + patientID.json
+
+groundTruthInteger: True
+# 3xSigma < H/4 is  a good choice for Rift sigma
+sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:1')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 8
+# phased training with different learning rate
+learningRate: 0.1
+
+
+network: "ThicknessSubnet_D"
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
+maxRift:  150.0 # maxRift + 3*sigma < H/2
+scaleNumerator: 1
+scaleDenominator: 1
+inputChannels: 8 # rawImage + gradChannels
+nLayers: 8
+dropoutRateUnet: [0.25, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]  # for nLayers=8
+numSurfaces: 3  # num of surfaces in an image
+startFilters: 32  # the num of filters in first layer of Unet
+gradChannels: 7   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+addCoordinatesXYChannels: False
+
+# some physical parameter of images
+slicesPerPatient: 51  # for test and validation set
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+# data augmentation
+
+netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log"
+refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+
+
+usePrimalDualIPM: False
+useLayerDice: False
+useReferSurfaceFromLayer: False
+useLayerCE: False
+useCEReplaceKLDiv: False
+useSmoothSurfaceLoss: False
+useSmoothThicknessLoss: True
+useGaussianDivLoss:  False
+useBetterRiftGaussian: False
+useWeightedDivLoss: False
+useRift: True
+smoothRift: False  # smooth Rift in ground truth
+smoothHalfWidth: 15  # 5% of image width
+smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
+smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
+
+gradientRiftConvGoBack: False
+
+# constrained model, both False meaning RelU
+hardSeparation: 1 # 0: NoReLU; 1: ReLU;  2: hardSeparation;
+softSeparation: False
+useReLUInPretrain: False
+
+goodBscans: []
+# in rift loss
+useL1Loss: True
+useKLDivLoss: False
