@@ -12,15 +12,17 @@ expDuke_20201215A_ThicknessSubnet_iibi007           3.800525188446045       2.35
 expDuke_20201228A_ThicknessSubnet_iibi007           3.8707656860351562      2.439850091934204   3.2910,      4.4505       without Gaussian Divloss, use cumulative R, intial filter=24. 7Layers
 expDuke_20210101A_ThicknessSubnet_iibi007           3.7638235092163086      2.4115993976593018  3.1838,      4.3439       32 filters, 8 layers, add XY coordinate input, No cummulativeRLoss
 expDuke_20210101B_ThicknessSubnet_iibi007           3.8175220489501953      2.0736165046691895  3.2453,      4.3898       32 filters, 8 layers, add XY coordinate input, with cumulativeRLoss
-expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   training, exact YufanHe network(XY channel+ layerSeg+ 64 filter for all layers) + 1D [H,1] convolution to predict thickness
-expDuke_20210107B_Thickness_1D_iibi007              training, base on expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
+expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   18GB, training, the exact YufanHe network(XY channel+ layerSeg+ 64 filter for all layers) + 1D [H,1] convolution to predict thickness
+expDuke_20210107B_Thickness_1D_iibi007              35GB, training, base on expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
 ========================================================================================================================================================================================================
 
 Analysis:
 1  The only difference between expDuke_20210101A and expDuke_20201209A is that 20210101A added XY coordinate channels.
    Now we can figure out the value-added point of JHU method is its layer segmentation branch with dice loss and cross entropy loss;
-2  cumulative loss has value in improving thicknessError, but it improved std deviation;
-3
+2  cumulative loss has no value in improving thicknessError, but it improved std deviation;
+3  Now the exact JHU method plus 1D convolution to directly predict N-1 thicknesses are training; I estimate we can see some results next Monday;
+
+
 
 
 
