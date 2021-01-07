@@ -52,7 +52,7 @@ class ThicknessSubnet_D(BasicModel):
         # thickness branch
         self.m_thicknesses = nn.Sequential(
             Conv2dBlock(C, C//2, useLeakyReLU=True, kernelSize=5, padding=2),
-            nn.Conv2d(C // 2, hps.numSurfaces - 1, kernel_size=[self.m_inputHeight, 1], stride=[1, 1], padding=[0, 0]),  # 1D conv [H,1]
+            nn.Conv2d(C // 2, hps.numSurfaces - 1, kernel_size=[hps.inputHeight, 1], stride=[1, 1], padding=[0, 0]),  # 1D conv [H,1]
             nn.ReLU(),  # reLU make assure thickness >=0
         )  # output size:BxNx1xW
 
