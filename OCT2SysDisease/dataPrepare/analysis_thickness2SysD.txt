@@ -37,17 +37,29 @@ expOCT_thickness5th2HyT_20210108_ResNet_B_NoAdd_15x12:
 
 
 # Jan 8th, Friday, 2021:
-Read paper: Associations with photoreceptor thickness measures in the UK Biobank
+Read papers:
+Associations with photoreceptor thickness measures in the UK Biobank
 at link: https://pubmed.ncbi.nlm.nih.gov/31857628/
 1  this paper has similar result with our current initial observation:
    The hypertension patient has thinner layer at the 5th layer.
 
-Some thinking on our project:
-1  Use 9 sector method to further process our enface thickness map;
-   the center, inner, outer subfields have different association pattern with hypertension.
+Longitudinal Changes in the Peripapillary Retinal Nerve Fiber Layer Thickness in Hypertension: 4-Year Prospective Observational Study
+at link: https://iovs.arvojournals.org/article.aspx?articleid=2752029
+1  this paper researched the pRNFL layer thickness of hypertension patients is decreasing in 4 years longitudianl changes;
+2  its pRNFL layer = RNFL +GCL layers in our project
 
-2  using systolic blood pressure/ diastolic blood pressure with input will bring more information for network;
-   as some patient take hyptertension medicine, blood pressure is low, its retina is should be good.
+Some thinking on our project:
+1  Use retina quadrant (9-sector) method to further process our enface thickness map;
+   the center, inner, outer subfields have different association pattern with hypertension.
+   Both above 2 papers used retina quadrant (one uses 4 sectors, another uses 9 sectors)
+
+2  In the future: may consider to use systolic blood pressure/ diastolic blood pressure with input will bring more information for network;
+
+3  The possible reasons between hypertension and retina thickness:
+    A. Hypertension -> intermittent reduction in blood flow in the DCP -> ischemia in optic nerve -> retina thickness reduction
+    B. Hypertension -> choroidal permeability changes
+        -> increases choroidal interstitial fluid and extends into the subretinal space causing subretinal fluid accumulation
+        -> subsequent photoreceptor defects
 
 
 3  which risk factors are affecting the the thickness of the 5 layer?
@@ -55,16 +67,18 @@ Some thinking on our project:
    gender: the average thickness of the 5th layer of males is 3.5 micrometer less than females;
    Hypertension: the average thickness of the 5th layer of hypertension patients is just 2 micrometer less than non-hypertension patients;
    smoke:
-   axil length:
+   axil length: the elongation of the eye globe leads mechanical stretching and thinning of the retina.
    IOP:
    BMI: m/h^2, where m is kg unit, and h is meter unit.
    waist-hip-rate: w/hip;
 
    The thickness change brought by age and gender is enough to submerge the thickness change of hypertension.
-   In other words, we must use age/gender/smoke as adjusting factors to offset its affect on thickness to predict hypertension.
+   In other words, we must use age/gender/smoke/axil lenglth etc as adjusting factors to offset its affect on thickness to predict hypertension.
 
 Further work:
-Analys all these risk factors relation with hypertension.
+1  Analys all above risk factors relation with hypertension;
+2  combine above risk factors with thickness to predict hypertension;
+
 
 
 
