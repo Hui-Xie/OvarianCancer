@@ -1,3 +1,40 @@
+# Jan 8th, Friday, 2021:
+Read paper: Associations with photoreceptor thickness measures in the UK Biobank
+at link: https://pubmed.ncbi.nlm.nih.gov/31857628/
+1  this paper has similar result with our current initial observation:
+   The hypertension patient has thinner layer at the 5th layer.
+
+Some thinking on our project:
+1  Use 9 sector method to further process our enface thickness map;
+   the center, inner, outer subfields have different association pattern with hypertension.
+
+2  using systolic blood pressure/ diastolic blood pressure with input will bring more information for network;
+   as some patient take hyptertension medicine, blood pressure is low, its retina is should be good.
+
+
+3  which risk factors are affecting the the thickness of the 5 layer?
+   Age: from age 50-95, the average thickness of the 5th layer may reduces about 8 micrometers;
+   gender: the average thickness of the 5th layer of males is 3.5 micrometer less than females;
+   Hypertension: the average thickness of the 5th layer of hypertension patients is just 2 micrometer less than non-hypertension patients;
+   smoke:
+   axil length:
+   IOP:
+   BMI: m/h^2, where m is kg unit, and h is meter unit.
+   waist-hip-rate: w/hip;
+
+   The thickness change brought by age and gender is enough to submerge the thickness change of hypertension.
+   In other words, we must use age/gender/smoke as adjusting factors to offset its affect on thickness to predict hypertension.
+
+Further work:
+Analys all these risk factors relation with hypertension.
+
+
+
+
+
+
+
+
 # Jan 6th, Tuesday, 2021
 Use 5th thickness plus mask to predict.
 
