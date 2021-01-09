@@ -1,3 +1,41 @@
+# Jan 9th, Saturday, 2021:
+1  add augmentation does not help too much;
+2  expOCT_thickness5th2HyT_20210108_ResNet_B_NoAdd_15x12 is the best for test result.
+
+expOCT_thickness5th2HyT_20210108_ResNet_A_NoAdd_15x12
+       Sum=1.76 in validation data with no add augmentation;
+       =======net running parameters=========
+        net.m_runParametersDict:
+	    validationLoss:0.6217029690742493
+	    epoch:58
+	    accuracy:0.5787278415015641
+	    learningRate:0.002097152000000001
+	    threshold:0.47900000000000004
+
+        =======Test Result=========
+	    ACC:0.566
+	    TPR:0.7624113475042126
+	    TNR:0.3119266054974329
+	    Sum:1.6403379530016453
+
+
+expOCT_thickness5th2HyT_20210108_ResNet_B_NoAdd_15x12:
+       Sum=1.744 in validation data with no add augmentation.
+       =======net running parameters=========
+        net.m_runParametersDict:
+	    validationLoss:0.6240633726119995
+	    epoch:46
+	    accuracy:0.5380604796663191
+	    learningRate:0.002621440000000001
+	    threshold:0.437
+
+        =======Test Result=========
+	    ACC:0.579
+	    TPR:0.7659574467949298
+	    TNR:0.33715596329501935
+	    Sum:1.6821134100899493
+
+
 # Jan 8th, Friday, 2021:
 Read paper: Associations with photoreceptor thickness measures in the UK Biobank
 at link: https://pubmed.ncbi.nlm.nih.gov/31857628/
