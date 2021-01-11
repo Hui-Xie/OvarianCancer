@@ -141,7 +141,7 @@ Some thinking on our project:
    waist-hip-rate: w/hip;
 
    The thickness change brought by age and gender is enough to submerge the thickness change of hypertension.
-   In other words, we must use age/gender/smoke/axil lenglth etc as adjusting factors to offset its affect on thickness to predict hypertension.
+   In other words, we must use age/gender/smoke/axil lenglth etc as adjusting factors to offset their affects on thickness, and then to predict hypertension.
 
 Further work:
 1  use 9-sector quadrant map to preprocess the thickness map;
