@@ -97,7 +97,7 @@ def get9SectorsMask(polarMap, OS_OD):
 
 def printSectorMask(sectorMask):
     print("========sectorMask=========")
-    H,W = sectorMask
+    H,W = sectorMask.shape
     for i in range(H):
         for j in range(W):
             if sectorMask[i,j]==-1:
