@@ -31,7 +31,7 @@ def generatePolarMap(H, W):
     # generate rectangle coordinates map
     recMap = np.ones((2,H,W), dtype=np.int)*(-1) # recMap[0] is x coordinate, and recMap[1] is y coordinate
     recMap[0,] = np.repeat(np.arange(-(W//2), W//2+1).reshape(1, W), H, axis=0)
-    recMap[1,] = np.repeat(np.arange(-(H // 2), H // 2 + 1).reshape(H, 1), W, axis=1)
+    recMap[1,] = np.repeat(np.arange(H // 2, -(H // 2) - 1, -1).reshape(H, 1), W, axis=1)  # Y coordinate upward.
     # convert to polar coordinates
     polarMap = np.ones((2,H,W), dtype=np.float)*(-1)
     for i in range(H):
