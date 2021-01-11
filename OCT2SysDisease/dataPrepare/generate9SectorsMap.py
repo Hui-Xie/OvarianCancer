@@ -106,6 +106,12 @@ def printSectorMask(sectorMask):
                 print(f"{sectorMask[i,j]:01d}", end="")
         print("")
 
+def countEachMask(polarMask, N):
+    maskCount=[-1,]*N
+    for i in range(N):
+        maskCount[i] = np.count_nonzero(polarMask==i)
+    return maskCount
+
 
 def main():
     thicknessList = glob.glob(inputDir + f"/*{inputFileSuffix}")
@@ -119,32 +125,40 @@ def main():
     # generate polarmap and sectorMask
     polarMap = generatePolarMap(H,W)
     ODPolarMask = get9SectorsMask(polarMap, "OD")
+    ODCountMask = countEachMask(ODPolarMask, nSectors)
     OSPolarMask = get9SectorsMask(polarMap, "OS")
+    OSCountMask = countEachMask(OSPolarMask, nSectors)
     print(f"OD 9-sector Mask with image size {H}x{W}:")
     printSectorMask(ODPolarMask)
     print(f"OS 9-sector Mask with image size {H}x{W}:")
     printSectorMask(OSPolarMask)
 
-    '''
-    
-    
+    # generate 9 sector average values
     for thickessPath in thicknessList:
         outputFilename = os.path.basename(thickessPath)
+        if "_OD_" in outputFilename:
+            polarMask = ODPolarMask
+            countMask = ODCountMask
+        elif "_OS_" in outputFilename:
+            polarMask = OSPolarMask
+            countMask = OSCountMask
+        else:
+            print("Error: file name can not recognize OS/OD")
+            assert False
+
         outputFilename = outputFilename.replace(inputFileSuffix, outputFileSuffix)
         outputPath = os.path.join(outputDir, outputFilename)
 
-        newVolume = np.empty((2, 31, 25), dtype=np.float)
+        sectorMap = np.empty((nSectors,1), dtype=np.float)
         # read volume
-        thicknessVolume = np.load(thickessPath)  # BxHxW
-        assert (9, 31, 25) == thicknessVolume.shape
+        thicknessMap = np.load(thickessPath)  # BxHxW
+        assert (1, H, W) == thicknessMap.shape
+        for i in range(nSectors):
+            maskedValues = thicknessMap * ((polarMask==i).astype(np.int))
+            sectorMap[i] = maskedValues.sum()/countMask[i]
 
-        textureVolume = np.load(texturePath)
-        assert (9, 31, 25) == textureVolume.shape
+        np.save(outputPath, sectorMap)
 
-        newVolume[0,] = thicknessVolume[c1,]
-        newVolume[1,] = textureVolume[c2,]
-        np.save(outputPath, newVolume)
-    '''
 
     print(f"=============End of generate 9-sector map ===============")
 
