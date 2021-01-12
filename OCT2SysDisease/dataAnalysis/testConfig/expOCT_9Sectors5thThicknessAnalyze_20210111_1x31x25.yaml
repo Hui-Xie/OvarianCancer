@@ -18,12 +18,11 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # trainNormalizationStdMeanYamlName: "trainNormalization_ThicknessStdMean.yaml"
 
 network: "9Sector5thThickness"
-imageH: 31
-imageW: 25
+imageH: 9
+imageW: 1
 volumeSuffix: "_Volume_5thickness_9sectors.npy"
-inputChannels: 9 # 9 layers
-binaryAppKeys: ["hypertension_bp_plus_history$", "gender"]
-continuousAppKeys: ["Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$']
+inputChannels: 1 # 9 layers
+appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$']
 target: "hypertension"
 
 #dropoutRate: 0.2 # dropout after global average pooling

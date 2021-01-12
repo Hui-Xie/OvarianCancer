@@ -1,4 +1,6 @@
-# analyze 9-sector thickness change over some possible variables.
+# analyze 9-sector thickness change over some risk factors.
+# np.polyfit to draw regression line.
+
 
 import glob
 import sys
@@ -23,8 +25,13 @@ def retrieveImageData_label(mode, hps):
 
     :param mode: "training", "validation", or "test"
     :param hps:
-    :return: volumes: volumes of all patient in this data: NxCxHxW;
-             labelTable: numpy array with columns: patientID, Hypertension(0/1), Age(value), gender(0/1);
+    :return: volumes: volumes of all patient in this data: NxHx1 for 9 sectors;
+             labelTable:
+    #labelTable head: patientID,                                          (0)
+    #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$'   (1:11)
+    # columnIndex:         1                           2        3       4          5             6          7             8              9                10
+    #              BMI, WHipRate,       (11,13)
+    # columnIndex:  11    12
 
     '''
     if mode == "training":
@@ -89,26 +96,33 @@ def retrieveImageData_label(mode, hps):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=np.float) # size:NxCxHxW
+    volumes = np.empty((NVolumes, hps.imageH, hps.imageW), dtype=np.float) # size:NxHx1 for 9 sector array
     for i, volumePath in enumerate(volumePaths):
         oneVolume = np.load(volumePath).astype(np.float)
         volumes[i,] = oneVolume
 
     fullLabels = readBESClinicalCsv(hps.GTPath)
 
-    labelTable = np.empty((NVolumes, 4), dtype=np.float) #  size: Nx4
+    labelTable = np.empty((NVolumes, 13), dtype=np.float) #  size: Nx11
     # table head: patientID,                                          (0)
-    #             Hypertension(0/1), Age(value), gender(0/1);         (1:4)
+    #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$'   (1:11)
+    # columnIndex:         1                           2        3       4          5             6          7             8              9                10
+    #              BMI, WHipRate,       (11,13)
+    # columnIndex:  11    12
     for i in range(NVolumes):
         id = int(IDsCorrespondVolumes[i])
         labelTable[i,0] = id
 
-        # appKeys: ["hypertension_bp_plus_history$", "Age$", "gender"]
+        # appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$']
         for j,key in enumerate(hps.appKeys):
             oneLabel = fullLabels[id][key]
             if "gender" == key:
                 oneLabel = oneLabel - 1
             labelTable[i, 1+j] = oneLabel
+
+        # compute BMI and WHipRate
+        labelTable[i, 11] = labelTable[i,7]/ ((labelTable[i,6]/100.0)**2)  # weight is in kg, height is in cm.
+        labelTable[i, 12] = labelTable[i,8]/ labelTable[i,9]  # both are in cm.
 
     return volumes, labelTable
 
@@ -130,6 +144,10 @@ def main():
     trainVolumes, trainLabels = retrieveImageData_label("training", hps)
     validationVolumes, validationLabels = retrieveImageData_label("validation", hps)
     testVolumes, testLabels = retrieveImageData_label("test", hps)
+
+    # concatinate all data crossing training, validation, and test
+    volumes = np.concatenate((trainVolumes, validationVolumes, testVolumes), axis=0)
+    labels = np.concatenate((trainLabels, validationLabels, testLabels), axis=0)
 
     # divide into hypertension 0,1 to analyze
     trainVolumes_hyt0 = trainVolumes[np.nonzero(trainLabels[:,1]  == 0)]
