@@ -159,6 +159,7 @@ def main():
 
     # draw continuous app keys lines.
     for sectorIndex in range(nSectors):
+        print("\n")
         for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
             figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}"
             fig = plt.figure()
@@ -185,7 +186,7 @@ def main():
             plt.legend()
 
             linregressResult = stats.linregress(x, y)
-            print(f"{figureName} P-value: {linregressResult.pvalue}")
+            print(f"{figureName} slop:{linregressResult.slope}; r-value:{linregressResult.rvalue}; P-value:{linregressResult.pvalue};")
 
             outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
             plt.savefig(outputFilePath)
