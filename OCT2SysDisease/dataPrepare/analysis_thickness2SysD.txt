@@ -1,3 +1,109 @@
+# Jan 12th, Tuesday, 2020
+
+python3 ./analyze9SectorThickness.py ./testConfig/expOCT_9Sectors5thThicknessAnalyze_20210112_1x31x25.yaml
+Experiment: expOCT_9Sectors5thThicknessAnalyze_20210112_1x31x25
+Linear Regression between sector thickness and continuous data:
+===============================================================
+
+sector0_Age_5thThickness slope:-0.3261565808691843; r-value:-0.2943420826338276; P-value:1.611423996388955e-111;
+sector0_IOP_5thThickness slope:0.16435550891085854; r-value:0.0428901704583285; P-value:0.0014004610112642185;
+sector0_AxialLength_5thThickness slope:-1.7816428944285794; r-value:-0.16584280519773037; P-value:1.2892977314991688e-33;
+sector0_SmokePackYears_5thThickness slope:0.5073775101341896; r-value:0.09164690702882196; P-value:1.4553255755808134e-11;
+sector0_BMI_5thThickness slope:0.12497200883729431; r-value:0.04550610506472739; P-value:0.0006906595857870511;
+sector0_WaistHipRate_5thThickness slope:0.28046105618625233; r-value:0.0018566957812447282; P-value:0.8899228627501018;
+
+sector1_Age_5thThickness slope:-0.37518687011204255; r-value:-0.3069939525119401; P-value:1.2461839539594972e-121;
+sector1_IOP_5thThickness slope:0.2041050292277695; r-value:0.04829840807383431; P-value:0.0003208980130874705;
+sector1_AxialLength_5thThickness slope:-2.0341869390752265; r-value:-0.17126760312604378; P-value:9.046374714192415e-36;
+sector1_SmokePackYears_5thThickness slope:0.7235181197219214; r-value:0.11818131452094417; P-value:2.7940709298515512e-18;
+sector1_BMI_5thThickness slope:0.15201001537384934; r-value:0.05018051215239561; P-value:0.00018238952454193455;
+sector1_WaistHipRate_5thThickness slope:2.427143374897339; r-value:0.014568659498002727; P-value:0.2774640849438226;
+
+sector2_Age_5thThickness slope:-0.27816945978707136; r-value:-0.2705066701460617; P-value:7.962411669854728e-94;
+sector2_IOP_5thThickness slope:0.1832211056644643; r-value:0.05149819272494509; P-value:0.00012480959830028765;
+sector2_AxialLength_5thThickness slope:-1.5600473395471461; r-value:-0.1552786275852084; P-value:1.2525481730797941e-29;
+sector2_SmokePackYears_5thThickness slope:0.4890793645395435; r-value:0.0956051195421684; P-value:1.8515270640916213e-12;
+sector2_BMI_5thThickness slope:0.12484496351008102; r-value:0.048978361264479756; P-value:0.0002597231498122327;
+sector2_WaistHipRate_5thThickness slope:0.3592236765286843; r-value:0.0025625683469157174; P-value:0.8485106166131244;
+
+sector3_Age_5thThickness slope:-0.2205984939279367; r-value:-0.24985433199315243; P-value:7.023531102720918e-80;
+sector3_IOP_5thThickness slope:0.18887754945525156; r-value:0.06186627768767918; P-value:4.0221396589249274e-06;
+sector3_AxialLength_5thThickness slope:-1.1854359006265622; r-value:-0.1373777283017713; P-value:1.7272574296585292e-23;
+sector3_SmokePackYears_5thThickness slope:0.39579152438224535; r-value:0.08987476445525691; P-value:3.563321613986417e-11;
+sector3_BMI_5thThickness slope:0.06157180466294506; r-value:0.0281351364939724; P-value:0.03596833804605802;
+sector3_WaistHipRate_5thThickness slope:0.1184746027721558; r-value:0.000984354598607574; P-value:0.9415071429549482;
+
+sector4_Age_5thThickness slope:-0.31334490236363116; r-value:-0.33514427224923216; P-value:5.393491062350524e-146;
+sector4_IOP_5thThickness slope:0.21491204348277873; r-value:0.06644502959183847; P-value:7.339025795702681e-07;
+sector4_AxialLength_5thThickness slope:-1.5864549993623556; r-value:-0.17426067228146006; P-value:5.45768416808251e-37;
+sector4_SmokePackYears_5thThickness slope:0.5026627897688202; r-value:0.10744736597703741; P-value:2.3240560011838085e-15;
+sector4_BMI_5thThickness slope:0.09728651288488155; r-value:0.04198104473708251; P-value:0.001747081751241653;
+sector4_WaistHipRate_5thThickness slope:-0.6918929289108093; r-value:-0.005428627377709029; P-value:0.6857249718411373;
+
+sector5_Age_5thThickness slope:-0.27235722431577686; r-value:-0.2753603813442868; P-value:2.7473209508665303e-97;
+sector5_IOP_5thThickness slope:0.1848077016869904; r-value:0.053999773358802995; P-value:5.743494909501438e-05;
+sector5_AxialLength_5thThickness slope:-1.587985694886937; r-value:-0.1626981822477493; P-value:2.1173532934981907e-32;
+sector5_SmokePackYears_5thThickness slope:0.504844841223379; r-value:0.10186456264398873; P-value:5.965568926429872e-14;
+sector5_BMI_5thThickness slope:0.0650345523587726; r-value:0.026524980022737475; P-value:0.04801729752107605;
+sector5_WaistHipRate_5thThickness slope:1.0612717605559308; r-value:0.007871022173672568; P-value:0.5573848489972113;
+
+sector6_Age_5thThickness slope:-0.21093456180082878; r-value:-0.2819469794315784; P-value:4.2293793730788936e-102;
+sector6_IOP_5thThickness slope:0.19303300933432793; r-value:0.07457420902297024; P-value:2.7033045794647423e-08;
+sector6_AxialLength_5thThickness slope:-1.1223661086405534; r-value:-0.1526641543341305; P-value:1.1032629281158848e-28;
+sector6_SmokePackYears_5thThickness slope:0.36781646343988594; r-value:0.09860391306956673; P-value:3.6679148921055594e-13;
+sector6_BMI_5thThickness slope:0.037642390068491405; r-value:0.02029807434816214; P-value:0.13029457974091513;
+sector6_WaistHipRate_5thThickness slope:-1.095419087889482; r-value:-0.010740932274067375; P-value:0.4233209971231843;
+
+sector7_Age_5thThickness slope:-0.1837392648212562; r-value:-0.2382376151466091; P-value:1.388807963439743e-72;
+sector7_IOP_5thThickness slope:0.16667452376604244; r-value:0.06246670995056659; P-value:3.238768997241621e-06;
+sector7_AxialLength_5thThickness slope:-1.1711114546061063; r-value:-0.15732926652830165; P-value:2.2134551096619903e-30;
+sector7_SmokePackYears_5thThickness slope:0.4074178758092756; r-value:0.1071116222343028; P-value:2.8386619127610356e-15;
+sector7_BMI_5thThickness slope:0.020714214592586544; r-value:0.010835252318306631; P-value:0.4193444954463099;
+sector7_WaistHipRate_5thThickness slope:0.3958346678442876; r-value:0.003764992878607489; P-value:0.7789782118503191;
+
+sector8_Age_5thThickness slope:-0.2585116699690476; r-value:-0.33717432268462816; P-value:7.455869021279305e-148;
+sector8_IOP_5thThickness slope:0.19702963459860434; r-value:0.07427133428573097; P-value:3.0769964783208815e-08;
+sector8_AxialLength_5thThickness slope:-1.4061855818614597; r-value:-0.1866614976069694; P-value:2.7998919803675225e-42;
+sector8_SmokePackYears_5thThickness slope:0.4567297676674977; r-value:0.11916567567281679; P-value:1.4606373887501718e-18;
+sector8_BMI_5thThickness slope:0.03381306233894026; r-value:0.017791773428260854; P-value:0.1848067536724216;
+sector8_WaistHipRate_5thThickness slope:-1.2949277412561282; r-value:-0.01238973016869539; P-value:0.35569987291367366;
+
+
+
+Logistic Regression between sector thickness and continuous data:
+=================================================================
+
+sector0_hypertension_5thThickness score:0.5465011692750494; coef:[-0.01208659]; intercept:1.3390994639177545;
+sector0_gender_5thThickness score:0.5903939557474366; coef:[-0.02972402]; intercept:3.1389545880122074;
+
+sector1_hypertension_5thThickness score:0.5493793847814356; coef:[-0.01346942]; intercept:1.2524564639562843;
+sector1_gender_5thThickness score:0.5941716135995683; coef:[-0.02829829]; intercept:2.544558314263178;
+
+sector2_hypertension_5thThickness score:0.5535168195718655; coef:[-0.0148614]; intercept:1.2941070746117176;
+sector2_gender_5thThickness score:0.5853570786112611; coef:[-0.03146398]; intercept:2.6485849302412494;
+
+sector3_hypertension_5thThickness score:0.5465011692750494; coef:[-0.01346022]; intercept:1.2918561148971162;
+sector3_gender_5thThickness score:0.5882352941176471; coef:[-0.03331612]; intercept:3.038827900424826;
+
+sector4_hypertension_5thThickness score:0.5470408346824969; coef:[-0.01706841]; intercept:1.547670736081914;
+sector4_gender_5thThickness score:0.5813995322899802; coef:[-0.02575523]; intercept:2.3563285991509937;
+
+sector5_hypertension_5thThickness score:0.5540564849793128; coef:[-0.01711062]; intercept:1.3337489623878853;
+sector5_gender_5thThickness score:0.5885950710559453; coef:[-0.03113691]; intercept:2.3898290930326382;
+
+sector6_hypertension_5thThickness score:0.5560352581399532; coef:[-0.02428197]; intercept:1.6928313428877029;
+sector6_gender_5thThickness score:0.5878755171793488; coef:[-0.03779509]; intercept:2.647225917053261;
+
+sector7_hypertension_5thThickness score:0.5509983810037776; coef:[-0.0199521]; intercept:1.5757991382594223;
+sector7_gender_5thThickness score:0.596690052167656; coef:[-0.04590439]; intercept:3.4998320961953446;
+
+sector8_hypertension_5thThickness score:0.5560352581399532; coef:[-0.02666199]; intercept:2.0590429329628708;
+sector8_gender_5thThickness score:0.578161539845296; coef:[-0.03040699]; intercept:2.437447158662346;
+================ End of anlayzing 9-sector thickness  ===============
+
+
+
+
 # Jan 11th, 9-sector mask:
 OD 9-sector Mask with image size 31x25:
 ========sectorMask=========
