@@ -186,7 +186,7 @@ def main():
     y = np.delete(y, emptyRows, 0)
     print(f"After deleting empty-value patients, it remains {len(y)} patients.")
 
-    clf = LogisticRegression(max_iter=300).fit(x, y)
+    clf = LogisticRegression(max_iter=3000).fit(x, y)
     score = clf.score(x, y)
 
     print(f"thickness+7clinicalFeatures: score:{score};  intercept:{clf.intercept_[0]};")
