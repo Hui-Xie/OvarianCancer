@@ -96,10 +96,11 @@ def retrieveImageData_label(mode, hps):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, hps.imageH, hps.imageW), dtype=np.float) # size:NxHx1 for 9 sector array
+    assert hps.imageW == 1
+    volumes = np.empty((NVolumes, hps.imageH), dtype=np.float) # size:NxH for 9 sector array
     for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
-        volumes[i,] = oneVolume
+        oneVolume = np.load(volumePath).astype(np.float).squeeze(axis=-1)
+        volumes[i,:] = oneVolume
 
     fullLabels = readBESClinicalCsv(hps.GTPath)
 
@@ -107,7 +108,7 @@ def retrieveImageData_label(mode, hps):
     # table head: patientID,                                          (0)
     #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$'   (1:11)
     # columnIndex:         1                           2        3       4          5             6          7             8              9                10
-    #              BMI, WHipRate,       (11,13)
+    #              BMI, WaistHipRate,       (11,13)
     # columnIndex:  11    12
     for i in range(NVolumes):
         id = int(IDsCorrespondVolumes[i])
@@ -149,38 +150,33 @@ def main():
     volumes = np.concatenate((trainVolumes, validationVolumes, testVolumes), axis=0)
     labels = np.concatenate((trainLabels, validationLabels, testLabels), axis=0)
 
-    # divide into hypertension 0,1 to analyze
-    trainVolumes_hyt0 = trainVolumes[np.nonzero(trainLabels[:,1]  == 0)]
-    trainVolumes_hyt1 = trainVolumes[np.nonzero(trainLabels[:, 1] == 1)]
-    validationVolumes_hyt0 = validationVolumes[np.nonzero(validationLabels[:, 1] == 0)]
-    validationVolumes_hyt1 = validationVolumes[np.nonzero(validationLabels[:, 1] == 1)]
-    testVolumes_hyt0 = testVolumes[np.nonzero(testLabels[:, 1] == 0)]
-    testVolumes_hyt1 = testVolumes[np.nonzero(testLabels[:, 1] == 1)]
+    nSectors = hps.imageH
+    continuousAppKeys = ["Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
+    continuousAppKeyColIndex = [3,4,5,10,11,12]
+    binaryAppKeys = ["hypertension_bp_plus_history", "gender",]
+    binaryAppKeyColIndex = [1,2]
+    layerName= "5thThickness"
 
-    _, pValuesTrain = stats.ttest_ind(trainVolumes_hyt0, trainVolumes_hyt1, axis=0)
-    _, pValuesValidation = stats.ttest_ind(validationVolumes_hyt0, validationVolumes_hyt1, axis=0)
-    _, pValuesTest = stats.ttest_ind(testVolumes_hyt0, testVolumes_hyt1, axis=0)
+    # draw continuous app keys lines.
+    for sectorIndex in range(nSectors):
+        for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
+            figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}.png"
+            fig = plt.figure()
 
-    # mask[c,h,w]=1 means the t-test at location pvalue(c,h,w) < 0.05 crossing trianing, validation and test
-    mask = (pValuesTrain <=0.05).astype(np.int) * (pValuesValidation <=0.05).astype(np.int) * (pValuesTest <=0.05).astype(np.int)
-    C, H, W = mask.shape
+            x = labels[:,colIndex]
+            y = volumes[:,sectorIndex]
+            plt.scatter(x, y)
+            m, b = np.polyfit(x,y, 1)
+            plt.plot(x, m * x + b)
+            plt.xlabel(continuousAppKeys[keyIndex])
+            plt.ylabel(f"Thickness_Sector{sectorIndex}")
 
-    # simple statistic
-    print(f"inputDataDir: {hps.dataDir}")
-    print(f"mask shape: {mask.shape}")
-    print(f"total statistical significance pixel number: {np.count_nonzero(mask)}")
-    for c in range(C):
-        print(f"at channel {c}, statistical significance pixel number: {np.count_nonzero(mask[c,])}")
+            outputFilePath = os.path.join(hps.outputDir, figureName)
+            plt.savefig(outputFilePath)
+            plt.close()
 
-    # save mask
-    if "thickness" in hps.dataDir:
-        maskname = "thickness_mask"
-    else:
-        maskname = "texture_mask"
 
-    maskPath = os.path.join(hps.outputDir,f"{maskname}_{C}x{H}x{W}.npy")
-    np.save(maskPath, mask)
 
 if __name__ == "__main__":
     main()
-    print(f"================ End of anlayzing thickness in each pixel ===============")
+    print(f"================ End of anlayzing 9-sector thickness  ===============")
