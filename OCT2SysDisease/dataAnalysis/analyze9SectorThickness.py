@@ -173,13 +173,18 @@ def main():
                 emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
             x = np.delete(x, emptyRows, 0)
             y = np.delete(y, emptyRows, 0)
-            print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
+            # print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
+            if len(emptyRows[0]) > 0:
+                print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
 
-            plt.scatter(x, y)
+            plt.scatter(x, y, label='original data')
             m, b = np.polyfit(x,y, 1)
-            plt.plot(x, m * x + b, 'r-')
+            plt.plot(x, m * x + b, 'r-', label='fitted line')
             plt.xlabel(continuousAppKeys[keyIndex])
             plt.ylabel(f"Thickness_Sector{sectorIndex} (μm)")
+
+            linregressResult = stats.linregress(x, y)
+            print(f"{figureName} P-value: {linregressResult.pvalue}")
 
             outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
             plt.savefig(outputFilePath)
