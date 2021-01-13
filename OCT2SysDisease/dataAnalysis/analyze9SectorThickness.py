@@ -164,7 +164,6 @@ def main():
     print("Linear Regression between sector thickness and continuous data:")
     print("===============================================================")
     for sectorIndex in range(nSectors):
-        break  # debug
         print(" ")
         for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
             figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}"
