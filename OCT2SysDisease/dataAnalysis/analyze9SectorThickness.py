@@ -278,7 +278,7 @@ def main():
 
         clf = LogisticRegression().fit(x, y)
         score = clf.score(x, y)
-        xtest = np.arange(x.min()*0.8, x.max()*1.2, (x.max()*1.2-x.min()*0.8)/100).reshape(-1, 1)
+        xtest = np.arange(x.min()*0.95, x.max()*1.05, (x.max()*1.05-x.min()*0.95)/100).reshape(-1, 1)
         plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:, 1].ravel(), 'r-', label='fitted line')
         plt.xlabel(continuousAppKeys[keyIndex])
         plt.ylabel(f"Hypertension")
