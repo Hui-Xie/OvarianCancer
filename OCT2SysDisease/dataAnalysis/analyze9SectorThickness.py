@@ -141,7 +141,6 @@ def main():
         # parse config file
     configFile = sys.argv[1]
     hps = ConfigReader(configFile)
-    print(f"Experiment: {hps.experimentName}")
 
     # prepare output file
     curTime = datetime.datetime.now()
@@ -152,6 +151,8 @@ def main():
     logOutput = open(outputPath, "w")
     original_stdout = sys.stdout
     sys.stdout = logOutput
+
+    print(f"Experiment: {hps.experimentName}")
 
     # load training data, validation, and test data
     # volumes: volumes of all patient in this data: NxCxHxW;
@@ -208,7 +209,7 @@ def main():
             plt.savefig(outputFilePath)
             plt.close()
 
-    # draw binary app key lines:
+    # draw binary app key logistic regression lines:
     print("Logistic Regression between sector thickness and continuous data:")
     print("=================================================================")
     for sectorIndex in range(nSectors):

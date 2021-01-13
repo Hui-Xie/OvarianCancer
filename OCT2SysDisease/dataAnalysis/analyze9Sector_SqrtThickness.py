@@ -1,5 +1,6 @@
 # analyze 9-sector thickness change over some risk factors.
 # thickness use sqrt
+# there is no too much use.
 
 
 
@@ -142,7 +143,6 @@ def main():
         # parse config file
     configFile = sys.argv[1]
     hps = ConfigReader(configFile)
-    print(f"Experiment: {hps.experimentName}")
 
     # prepare output file
     curTime = datetime.datetime.now()
@@ -153,6 +153,8 @@ def main():
     logOutput =  open(outputPath, "w")
     original_stdout = sys.stdout
     sys.stdout = logOutput
+
+    print(f"Experiment: {hps.experimentName}")
 
     # load training data, validation, and test data
     # volumes: volumes of all patient in this data: NxCxHxW;
