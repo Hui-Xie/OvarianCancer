@@ -1,5 +1,6 @@
 # analyze 9-sector thickness change over some risk factors.
-# np.polyfit to draw regression line.
+# thickness use sqrt
+
 
 
 import glob
@@ -149,7 +150,7 @@ def main():
 
     outputPath = os.path.join(hps.outputDir, f"output_{timeStr}.txt")
     print(f"Log output is in {outputPath}")
-    logOutput = open(outputPath, "w")
+    logOutput =  open(outputPath, "w")
     original_stdout = sys.stdout
     sys.stdout = logOutput
 
@@ -172,7 +173,7 @@ def main():
     layerName= "5thThickness"
 
     # draw continuous app keys lines.
-    print("Linear Regression between sector thickness and continuous data:")
+    print("Linear Regression between sqrt sector thickness and continuous data:")
     print("===============================================================")
     for sectorIndex in range(nSectors):
         print(" ")
@@ -182,6 +183,7 @@ def main():
 
             x = labels[:,colIndex]
             y = volumes[:,sectorIndex]
+            y = np.sqrt(y)
 
             # delete the empty value of "-100"
             emptyRows = np.nonzero(x == -100)
@@ -198,7 +200,7 @@ def main():
             m, b = np.polyfit(x,y, 1)
             plt.plot(x, m * x + b, 'r-', label='fitted line')
             plt.xlabel(continuousAppKeys[keyIndex])
-            plt.ylabel(f"Thickness_Sector{sectorIndex} (μm)")
+            plt.ylabel(f"Sqrt_Thickness_Sector{sectorIndex} (sqrt(μm))")
             plt.legend()
 
             linregressResult = stats.linregress(x, y)
@@ -209,7 +211,7 @@ def main():
             plt.close()
 
     # draw binary app key lines:
-    print("Logistic Regression between sector thickness and continuous data:")
+    print("Logistic Regression between square sector thickness and continuous data:")
     print("=================================================================")
     for sectorIndex in range(nSectors):
         print(" ")
@@ -219,6 +221,7 @@ def main():
 
             y = labels[:,colIndex]
             x = volumes[:,sectorIndex]
+            x = x**2
 
             # delete the empty value of "-100"
             emptyRows = np.nonzero(y == -100)
@@ -238,10 +241,10 @@ def main():
 
             clf = LogisticRegression().fit(x, y)
             score = clf.score(x,y)
-            xtest = np.arange(1,301).reshape(-1,1)
+            xtest = np.arange(1,301**2).reshape(-1,1)
             plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:,1].ravel(), 'r-', label='fitted line')
             plt.ylabel(binaryAppKeys[keyIndex])
-            plt.xlabel(f"Thickness_Sector{sectorIndex} (μm)")
+            plt.xlabel(f"Square_Thickness_Sector{sectorIndex} (μm^2)")
             plt.legend()
 
             print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
