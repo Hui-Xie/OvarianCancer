@@ -170,7 +170,7 @@ def main():
             emptyRows = np.nonzero(x == -100)
             if continuousAppKeys[keyIndex] == "IOP":
                 extraEmptyRows = np.nonzero(x == 99)
-                emptyRows = emptyRows + extraEmptyRows
+                emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
             x = np.delete(x, emptyRows, 0)
             y = np.delete(y, emptyRows, 0)
             print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
