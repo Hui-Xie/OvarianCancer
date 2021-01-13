@@ -17,6 +17,7 @@ from sklearn.linear_model import LogisticRegression
 
 import matplotlib.pyplot as plt
 import datetime
+from scipy.stats import norm
 
 
 def printUsage(argv):
@@ -132,6 +133,29 @@ def retrieveImageData_label(mode, hps):
     return volumes, labelTable
 
 
+# refer to: https://stackoverflow.com/questions/25122999/scikit-learn-how-to-check-coefficients-significance
+def logit_pvalue(model, x):
+    """ Calculate z-scores for scikit-learn LogisticRegression.
+    parameters:
+        model: fitted sklearn.linear_model.LogisticRegression with intercept and large C
+        x:     matrix on which the model was fit
+    This function uses asymtptics for maximum likelihood estimates.
+    return: p values: where the 0th element is the p value of intercept.
+    """
+    p = model.predict_proba(x)
+    n = len(p)
+    m = len(model.coef_[0]) + 1
+    coefs = np.concatenate([model.intercept_, model.coef_[0]])
+    x_full = np.matrix(np.insert(np.array(x), 0, 1, axis = 1))
+    ans = np.zeros((m, m))
+    for i in range(n):
+        ans = ans + np.dot(np.transpose(x_full[i, :]), x_full[i, :]) * p[i,1] * p[i, 0]
+    vcov = np.linalg.inv(np.matrix(ans))
+    se = np.sqrt(np.diag(vcov))
+    t =  coefs/se
+    p = (1 - norm.cdf(abs(t))) * 2
+    return p
+
 def main():
     if len(sys.argv) != 2:
         print("Error: input parameters error.")
@@ -176,11 +200,13 @@ def main():
 
     clf = LogisticRegression(max_iter=3000).fit(x, y)
     score = clf.score(x, y)
+    pValues = logit_pvalue(clf, x)
 
-    print(f"thickness only: score:{score};  intercept:{clf.intercept_[0]};")
+    print(f"thickness only: score:{score}")
     print(f"Thickness coefficient of {layerName}:")
+    print(f"intercept:{clf.intercept_[0]};  p value: {pValues[0]}")
     for i in range(nSectors):
-        print(f"thickness sector_{i}:\t{clf.coef_[0, i]}")
+        print(f"thickness sector_{i}:\t{clf.coef_[0, i]},  p value: {pValues[i+1]}")
 
     print("\n====Use thickness and clinical feature to predict==========")
     appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
@@ -203,14 +229,16 @@ def main():
 
     clf = LogisticRegression(max_iter=3000).fit(x, y)
     score = clf.score(x, y)
+    pValues = logit_pvalue(clf, x)
 
-    print(f"thickness+7clinicalFeatures: score:{score};  intercept:{clf.intercept_[0]};")
+    print(f"thickness+7clinicalFeatures: score:{score}")
     print(f"Feature coefficient of {layerName}:")
+    print(f"intercept:{clf.intercept_[0]};  p value: {pValues[0]}")
     for i in range(nSectors+nClinicalFtr):
         if i<9:
-            print(f"thickness sector_{i}:\t{clf.coef_[0,i]}")
+            print(f"thickness sector_{i}:\t{clf.coef_[0,i]}, p value: {pValues[i+1]} ")
         else:
-            print(f"{appKeys[i-9]}:\t{clf.coef_[0,i]}")
+            print(f"{appKeys[i-9]}:\t{clf.coef_[0,i]}, p value: {pValues[i+1]}")
 
     logOutput.close()
     sys.stdout = original_stdout
