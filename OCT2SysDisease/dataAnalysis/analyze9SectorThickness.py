@@ -176,7 +176,7 @@ def main():
             plt.close()
 
 
+    print(f"================ End of anlayzing 9-sector thickness  ===============")
 
 if __name__ == "__main__":
     main()
-    print(f"================ End of anlayzing 9-sector thickness  ===============")
