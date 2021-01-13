@@ -1,7 +1,6 @@
 # Jan 12th, Tuesday, 2020
-
-python3 ./analyze9SectorThickness.py ./testConfig/expOCT_9Sectors5thThicknessAnalyze_20210112_1x31x25.yaml
 Experiment: expOCT_9Sectors5thThicknessAnalyze_20210112_1x31x25
+
 Linear Regression between sector thickness and continuous data:
 ===============================================================
 
@@ -68,9 +67,7 @@ sector8_SmokePackYears_5thThickness slope:0.4567297676674977; r-value:0.11916567
 sector8_BMI_5thThickness slope:0.03381306233894026; r-value:0.017791773428260854; P-value:0.1848067536724216;
 sector8_WaistHipRate_5thThickness slope:-1.2949277412561282; r-value:-0.01238973016869539; P-value:0.35569987291367366;
 
-
-
-Logistic Regression between sector thickness and continuous data:
+Logistic Regression between sector thickness and binary data:
 =================================================================
 
 sector0_hypertension_5thThickness score:0.5465011692750494; coef:[-0.01208659]; intercept:1.3390994639177545;
@@ -99,8 +96,15 @@ sector7_gender_5thThickness score:0.596690052167656; coef:[-0.04590439]; interce
 
 sector8_hypertension_5thThickness score:0.5560352581399532; coef:[-0.02666199]; intercept:2.0590429329628708;
 sector8_gender_5thThickness score:0.578161539845296; coef:[-0.03040699]; intercept:2.437447158662346;
-================ End of anlayzing 9-sector thickness  ===============
 
+Logistic Regression between other continuous variable and hypertension:
+=================================================================
+Hypertension_Age_5thThickness score:0.6013671523655334; coef:[0.04886154]; intercept:-2.907798971695493;
+Hypertension_IOP_5thThickness score:0.5471596032461677; coef:[0.0351597]; intercept:-0.3216401805876325;
+Hypertension_AxialLength_5thThickness score:0.5448644520809469; coef:[-0.07935186]; intercept:2.0104226019496885;
+Hypertension_SmokePackYears_5thThickness score:0.5547337278106509; coef:[0.05716786]; intercept:0.1646799221239527;
+Hypertension_BMI_5thThickness score:0.5852078459600504; coef:[0.13006554]; intercept:-3.1212026952399596;
+Hypertension_WaistHipRate_5thThickness score:0.599388379204893; coef:[5.7348945]; intercept:-4.905733607216095;
 
 
 
