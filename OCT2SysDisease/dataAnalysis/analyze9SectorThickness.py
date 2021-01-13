@@ -16,6 +16,7 @@ from sklearn.linear_model import LogisticRegression
 
 import matplotlib.pyplot as plt
 import datetime
+from scipy.stats import norm
 
 
 def printUsage(argv):
@@ -130,6 +131,28 @@ def retrieveImageData_label(mode, hps):
 
     return volumes, labelTable
 
+# refer to: https://stackoverflow.com/questions/25122999/scikit-learn-how-to-check-coefficients-significance
+def logit_pvalue(model, x):
+    """ Calculate z-scores for scikit-learn LogisticRegression.
+    parameters:
+        model: fitted sklearn.linear_model.LogisticRegression with intercept and large C
+        x:     matrix on which the model was fit
+    This function uses asymtptics for maximum likelihood estimates.
+    return: p values: where the 0th element is the p value of intercept.
+    """
+    p = model.predict_proba(x)
+    n = len(p)
+    m = len(model.coef_[0]) + 1
+    coefs = np.concatenate([model.intercept_, model.coef_[0]])
+    x_full = np.matrix(np.insert(np.array(x), 0, 1, axis = 1))
+    ans = np.zeros((m, m))
+    for i in range(n):
+        ans = ans + np.dot(np.transpose(x_full[i, :]), x_full[i, :]) * p[i,1] * p[i, 0]
+    vcov = np.linalg.inv(np.matrix(ans))
+    se = np.sqrt(np.diag(vcov))
+    t =  coefs/se
+    p = (1 - norm.cdf(abs(t))) * 2
+    return p
 
 def main():
     if len(sys.argv) != 2:
@@ -238,13 +261,14 @@ def main():
 
             clf = LogisticRegression().fit(x, y)
             score = clf.score(x,y)
+            pValues = logit_pvalue(clf, x)
+
             xtest = np.arange(1,301).reshape(-1,1)
             plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:,1].ravel(), 'r-', label='fitted line')
             plt.ylabel(binaryAppKeys[keyIndex])
             plt.xlabel(f"Thickness_Sector{sectorIndex} (μm)")
             plt.legend()
-
-            print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
+            print(f"{figureName} score:{score}; intercept:{clf.intercept_[0]},\tp value:{pValues[0]};\tcoef:{clf.coef_[0,0]},\tp value:{pValues[1]}")
             outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
             plt.savefig(outputFilePath)
             plt.close()
@@ -277,13 +301,15 @@ def main():
 
         clf = LogisticRegression().fit(x, y)
         score = clf.score(x, y)
+        pValues = logit_pvalue(clf, x)
+
         xtest = np.arange(x.min()*0.95, x.max()*1.05, (x.max()*1.05-x.min()*0.95)/100).reshape(-1, 1)
         plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:, 1].ravel(), 'r-', label='fitted line')
         plt.xlabel(continuousAppKeys[keyIndex])
         plt.ylabel(f"Hypertension")
         plt.legend()
 
-        print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
+        print(f"{figureName} score:{score}; intercept:{clf.intercept_[0]},\tp value:{pValues[0]};\tcoef:{clf.coef_[0,0]},\tp value:{pValues[1]}")
         outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
         plt.savefig(outputFilePath)
         plt.close()
