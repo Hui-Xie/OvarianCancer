@@ -229,8 +229,8 @@ def main():
 
             clf = LogisticRegression().fit(x, y)
             score = clf.score(x,y)
-            xtest = np.arange(x.min(),x.max(), (x.max()-x.min())/100)
-            plt.plot(xtest, clf.predict_proba(xtest), 'r-', label='fitted line')
+            xtest = np.arange(x.min(),x.max(), (x.max()-x.min())/100).reshape(-1,1)
+            plt.plot(xtest.ravel(), clf.predict_proba(xtest).ravel(), 'r-', label='fitted line')
             plt.ylabel(binaryAppKeys[keyIndex])
             plt.xlabel(f"Thickness_Sector{sectorIndex} (μm)")
             plt.legend()
