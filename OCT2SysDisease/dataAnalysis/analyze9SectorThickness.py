@@ -13,7 +13,10 @@ sys.path.append("..")
 from dataPrepare.OCT2SysD_Tools import readBESClinicalCsv
 
 from scipy import stats
+from sklearn.linear_model import LogisticRegression
+
 import matplotlib.pyplot as plt
+
 
 def printUsage(argv):
     print("============ Anaylze OCT Thickness or texture map relation with hypertension =============")
@@ -153,13 +156,16 @@ def main():
     nSectors = hps.imageH
     continuousAppKeys = ["Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
     continuousAppKeyColIndex = [3,4,5,10,11,12]
-    binaryAppKeys = ["hypertension_bp_plus_history", "gender",]
+    binaryAppKeys = ["hypertension", "gender",] # hypertension means "hypertension_bp_plus_history"
     binaryAppKeyColIndex = [1,2]
     layerName= "5thThickness"
 
     # draw continuous app keys lines.
+    print("Linear Regression between sector thickness and continuous data:")
+    print("===============================================================")
     for sectorIndex in range(nSectors):
-        print("\n")
+        break  # debug
+        print(" ")
         for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
             figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}"
             fig = plt.figure()
@@ -186,8 +192,50 @@ def main():
             plt.legend()
 
             linregressResult = stats.linregress(x, y)
-            print(f"{figureName} slop:{linregressResult.slope}; r-value:{linregressResult.rvalue}; P-value:{linregressResult.pvalue};")
+            print(f"{figureName} slope:{linregressResult.slope}; r-value:{linregressResult.rvalue}; P-value:{linregressResult.pvalue};")
 
+            outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
+            plt.savefig(outputFilePath)
+            plt.close()
+
+    # draw binary app key lines:
+    print("Logistic Regression between sector thickness and continuous data:")
+    print("=================================================================")
+    for sectorIndex in range(nSectors):
+        print(" ")
+        for (keyIndex, colIndex) in enumerate(binaryAppKeyColIndex):
+            figureName = f"sector{sectorIndex}_{binaryAppKeys[keyIndex]}_{layerName}"
+            fig = plt.figure()
+
+            y = labels[:,colIndex]
+            x = volumes[:,sectorIndex]
+
+            # delete the empty value of "-100"
+            emptyRows = np.nonzero(y == -100)
+            if binaryAppKeys[keyIndex] == "IOP":
+                extraEmptyRows = np.nonzero(y == 99)
+                emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+            x = np.delete(x, emptyRows, 0)
+            y = np.delete(y, emptyRows, 0)
+            # print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
+            #if len(emptyRows[0]) > 0:
+            #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
+
+            plt.scatter(x, y, label='original data')
+
+            # for single feature
+            x = x.reshape(-1,1)
+            y = y.reshape(-1,1)
+
+            clf = LogisticRegression().fit(x, y)
+            score = clf.score(x,y)
+            xtest = np.arange(x.min(),x.max(), (x.max()-x.min())/100)
+            plt.plot(xtest, clf.predict_proba(xtest), 'r-', label='fitted line')
+            plt.ylabel(binaryAppKeys[keyIndex])
+            plt.xlabel(f"Thickness_Sector{sectorIndex} (μm)")
+            plt.legend()
+
+            print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
             outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
             plt.savefig(outputFilePath)
             plt.close()
