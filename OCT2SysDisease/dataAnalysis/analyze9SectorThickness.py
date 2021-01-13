@@ -173,8 +173,8 @@ def main():
     layerName= "5thThickness"
 
     # draw continuous app keys lines.
+    print("\n===============================================================")
     print("Linear Regression between sector thickness and continuous data:")
-    print("===============================================================")
     for sectorIndex in range(nSectors):
         print(" ")
         for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
@@ -210,8 +210,8 @@ def main():
             plt.close()
 
     # draw binary app key logistic regression lines:
+    print("\n=================================================================")
     print("Logistic Regression between sector thickness and binary data:")
-    print("=================================================================")
     for sectorIndex in range(nSectors):
         print(" ")
         for (keyIndex, colIndex) in enumerate(binaryAppKeyColIndex):
@@ -251,8 +251,8 @@ def main():
             plt.close()
 
     # draw binary logistic regression lines:
+    print("\n=================================================================")
     print("Logistic Regression between other continuous variable and hypertension:")
-    print("=================================================================")
     for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
         figureName = f"Hypertension_{continuousAppKeys[keyIndex]}_{layerName}"
         fig = plt.figure()
