@@ -1,6 +1,7 @@
 # analyze 9-sector thickness change over some risk factors.
 
 
+
 import glob
 import sys
 import os
@@ -165,128 +166,36 @@ def main():
     labels = np.concatenate((trainLabels, validationLabels, testLabels), axis=0)
 
     nSectors = hps.imageH
-    continuousAppKeys = ["Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
-    continuousAppKeyColIndex = [3,4,5,10,11,12]
-    binaryAppKeys = ["hypertension", "gender",] # hypertension means "hypertension_bp_plus_history"
-    binaryAppKeyColIndex = [1,2]
+    appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
+    appKeyColIndex = (2,3,4,5,10,11,12,)
+    nClinicalFtr = len(appKeyColIndex)
     layerName= "5thThickness"
 
-    # draw continuous app keys lines.
-    print("\n===============================================================")
-    print("Linear Regression between sector thickness and continuous data:")
-    for sectorIndex in range(nSectors):
-        print(" ")
-        for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
-            figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}"
-            fig = plt.figure()
 
-            x = labels[:,colIndex]
-            y = volumes[:,sectorIndex]
+    clinicalFtr = labels[:,appKeyColIndex]
+    # delete the empty value of "-100"
+    emptyRows = np.nonzero(clinicalFtr == -100)
+    extraEmptyRows = np.nonzero(clinicalFtr == 99)
+    emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+    # concatenate sector thickness with multi variables:
+    thickness_features = np.concatenate((volumes, clinicalFtr), axis=1) # size: Nx(9+7)
 
-            # delete the empty value of "-100"
-            emptyRows = np.nonzero(x == -100)
-            if continuousAppKeys[keyIndex] == "IOP":
-                extraEmptyRows = np.nonzero(x == 99)
-                emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-            x = np.delete(x, emptyRows, 0)
-            y = np.delete(y, emptyRows, 0)
-            # print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
-            #if len(emptyRows[0]) > 0:
-            #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
+    x = thickness_features
+    y = labels[:, 1]  # hypertension
+    x = np.delete(x, emptyRows, 0)
+    y = np.delete(y, emptyRows, 0)
+    print(f"After deleting empty-value patients, it remains {len(y)} patients.")
 
-            plt.scatter(x, y, label='original data')
-            m, b = np.polyfit(x,y, 1)
-            plt.plot(x, m * x + b, 'r-', label='fitted line')
-            plt.xlabel(continuousAppKeys[keyIndex])
-            plt.ylabel(f"Thickness_Sector{sectorIndex} (μm)")
-            plt.legend()
+    clf = LogisticRegression().fit(x, y)
+    score = clf.score(x, y)
 
-            linregressResult = stats.linregress(x, y)
-            print(f"{figureName} slope:{linregressResult.slope}; r-value:{linregressResult.rvalue}; P-value:{linregressResult.pvalue};")
-
-            outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
-            plt.savefig(outputFilePath)
-            plt.close()
-
-    # draw binary app key logistic regression lines:
-    print("\n=================================================================")
-    print("Logistic Regression between sector thickness and binary data:")
-    for sectorIndex in range(nSectors):
-        print(" ")
-        for (keyIndex, colIndex) in enumerate(binaryAppKeyColIndex):
-            figureName = f"sector{sectorIndex}_{binaryAppKeys[keyIndex]}_{layerName}"
-            fig = plt.figure()
-
-            y = labels[:,colIndex]
-            x = volumes[:,sectorIndex]
-
-            # delete the empty value of "-100"
-            emptyRows = np.nonzero(y == -100)
-            if binaryAppKeys[keyIndex] == "IOP":
-                extraEmptyRows = np.nonzero(y == 99)
-                emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-            x = np.delete(x, emptyRows, 0)
-            y = np.delete(y, emptyRows, 0)
-            # print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
-            #if len(emptyRows[0]) > 0:
-            #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
-
-            plt.scatter(x, y, label='original data')
-
-            # for single feature
-            x = x.reshape(-1,1)
-
-            clf = LogisticRegression().fit(x, y)
-            score = clf.score(x,y)
-            xtest = np.arange(1,301).reshape(-1,1)
-            plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:,1].ravel(), 'r-', label='fitted line')
-            plt.ylabel(binaryAppKeys[keyIndex])
-            plt.xlabel(f"Thickness_Sector{sectorIndex} (μm)")
-            plt.legend()
-
-            print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
-            outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
-            plt.savefig(outputFilePath)
-            plt.close()
-
-    # draw binary logistic regression lines:
-    print("\n=================================================================")
-    print("Logistic Regression between other continuous variable and hypertension:")
-    for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
-        figureName = f"Hypertension_{continuousAppKeys[keyIndex]}_{layerName}"
-        fig = plt.figure()
-
-        y = labels[:, 1] # hypertension
-        x = labels[:, colIndex]
-
-        # delete the empty value of "-100"
-        emptyRows = np.nonzero(x == -100)
-        if continuousAppKeys[keyIndex] == "IOP":
-            extraEmptyRows = np.nonzero(x == 99)
-            emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-        x = np.delete(x, emptyRows, 0)
-        y = np.delete(y, emptyRows, 0)
-        # print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
-        # if len(emptyRows[0]) > 0:
-        #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
-
-        plt.scatter(x, y, label='original data')
-
-        # for single feature
-        x = x.reshape(-1, 1)
-
-        clf = LogisticRegression().fit(x, y)
-        score = clf.score(x, y)
-        xtest = np.arange(x.min()*0.95, x.max()*1.05, (x.max()*1.05-x.min()*0.95)/100).reshape(-1, 1)
-        plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:, 1].ravel(), 'r-', label='fitted line')
-        plt.xlabel(continuousAppKeys[keyIndex])
-        plt.ylabel(f"Hypertension")
-        plt.legend()
-
-        print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
-        outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
-        plt.savefig(outputFilePath)
-        plt.close()
+    print(f"thickness+7clinicalFeatures: score:{score};  intercept:{clf.intercept_[0]};")
+    print(f"Feature coefficient of {layerName}:")
+    for i in range(nSectors+nClinicalFtr):
+        if i<9:
+            print(f"thickness sector_{i}:\t{clf.coef_[i]}")
+        else:
+            print(f"{appKeys[i-9]}:\t{clf.coef_[i]}")
 
     logOutput.close()
     sys.stdout = original_stdout

@@ -1,6 +1,6 @@
 # analyze 9-sector thickness change over some risk factors.
 # thickness use sqrt
-# there is no too much use.
+# there is not too much use.
 
 
 
