@@ -204,9 +204,9 @@ def main():
 
     print(f"thickness only: score:{score}")
     print(f"Thickness coefficient of {layerName}:")
-    print(f"intercept:{clf.intercept_[0]};  p value: {pValues[0]}")
+    print(f"intercept:{clf.intercept_[0]};\t p value: {pValues[0]}")
     for i in range(nSectors):
-        print(f"thickness sector_{i}:\t{clf.coef_[0, i]},  p value: {pValues[i+1]}")
+        print(f"thickness sector_{i}:\t{clf.coef_[0, i]};\t  p value: {pValues[i+1]}")
 
     print("\n====Use thickness and clinical feature to predict==========")
     appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
@@ -233,12 +233,12 @@ def main():
 
     print(f"thickness+7clinicalFeatures: score:{score}")
     print(f"Feature coefficient of {layerName}:")
-    print(f"intercept:{clf.intercept_[0]};  p value: {pValues[0]}")
+    print(f"intercept:{clf.intercept_[0]};\t p value: {pValues[0]}")
     for i in range(nSectors+nClinicalFtr):
         if i<9:
-            print(f"thickness sector_{i}:\t{clf.coef_[0,i]}, p value: {pValues[i+1]} ")
+            print(f"thickness sector_{i}:\t{clf.coef_[0,i]};\t p value: {pValues[i+1]} ")
         else:
-            print(f"{appKeys[i-9]}:\t{clf.coef_[0,i]}, p value: {pValues[i+1]}")
+            print(f"{appKeys[i-9]}:\t{clf.coef_[0,i]};\t p value: {pValues[i+1]}")
 
     logOutput.close()
     sys.stdout = original_stdout
