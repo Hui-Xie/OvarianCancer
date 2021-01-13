@@ -182,6 +182,7 @@ def main():
             plt.plot(x, m * x + b, 'r-', label='fitted line')
             plt.xlabel(continuousAppKeys[keyIndex])
             plt.ylabel(f"Thickness_Sector{sectorIndex} (μm)")
+            plt.legend()
 
             linregressResult = stats.linregress(x, y)
             print(f"{figureName} P-value: {linregressResult.pvalue}")
