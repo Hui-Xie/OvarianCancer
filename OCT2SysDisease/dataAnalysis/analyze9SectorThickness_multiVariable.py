@@ -193,9 +193,9 @@ def main():
     print(f"Feature coefficient of {layerName}:")
     for i in range(nSectors+nClinicalFtr):
         if i<9:
-            print(f"thickness sector_{i}:\t{clf.coef_[i]}")
+            print(f"thickness sector_{i}:\t{clf.coef_[0,i]}")
         else:
-            print(f"{appKeys[i-9]}:\t{clf.coef_[i]}")
+            print(f"{appKeys[i-9]}:\t{clf.coef_[0,i]}")
 
     logOutput.close()
     sys.stdout = original_stdout
