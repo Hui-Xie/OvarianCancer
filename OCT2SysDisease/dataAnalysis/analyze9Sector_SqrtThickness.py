@@ -213,7 +213,7 @@ def main():
             plt.close()
 
     # draw binary app key lines:
-    print("Logistic Regression between square sector thickness and continuous data:")
+    print("Logistic Regression between square sector thickness and binary data:")
     print("=================================================================")
     for sectorIndex in range(nSectors):
         print(" ")

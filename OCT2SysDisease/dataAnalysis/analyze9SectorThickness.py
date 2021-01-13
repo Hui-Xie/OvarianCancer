@@ -210,7 +210,7 @@ def main():
             plt.close()
 
     # draw binary app key logistic regression lines:
-    print("Logistic Regression between sector thickness and continuous data:")
+    print("Logistic Regression between sector thickness and binary data:")
     print("=================================================================")
     for sectorIndex in range(nSectors):
         print(" ")
@@ -249,6 +249,45 @@ def main():
             outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
             plt.savefig(outputFilePath)
             plt.close()
+
+    # draw binary logistic regression lines:
+    print("Logistic Regression between other continuous variable and hypertension:")
+    print("=================================================================")
+    for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
+        figureName = f"Hypertension_{continuousAppKeys[keyIndex]}_{layerName}"
+        fig = plt.figure()
+
+        y = labels[:, 1] # hypertension
+        x = labels[:, colIndex]
+
+        # delete the empty value of "-100"
+        emptyRows = np.nonzero(x == -100)
+        if continuousAppKeys[keyIndex] == "IOP":
+            extraEmptyRows = np.nonzero(x == 99)
+            emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+        x = np.delete(x, emptyRows, 0)
+        y = np.delete(y, emptyRows, 0)
+        # print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
+        # if len(emptyRows[0]) > 0:
+        #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
+
+        plt.scatter(x, y, label='original data')
+
+        # for single feature
+        x = x.reshape(-1, 1)
+
+        clf = LogisticRegression().fit(x, y)
+        score = clf.score(x, y)
+        xtest = np.arange(1, 301).reshape(-1, 1)
+        plt.plot(xtest.ravel(), clf.predict_proba(xtest)[:, 1].ravel(), 'r-', label='fitted line')
+        plt.xlabel(continuousAppKeys[keyIndex])
+        plt.ylabel(f"Hypertension")
+        plt.legend()
+
+        print(f"{figureName} score:{score}; coef:{clf.coef_[0]}; intercept:{clf.intercept_[0]};")
+        outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
+        plt.savefig(outputFilePath)
+        plt.close()
 
     logOutput.close()
     sys.stdout = original_stdout
