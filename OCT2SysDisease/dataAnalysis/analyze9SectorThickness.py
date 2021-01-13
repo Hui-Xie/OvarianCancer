@@ -169,7 +169,7 @@ def main():
             # delete the empty value of "-100"
             emptyRows = np.nonzero(x == -100)
             if continuousAppKeys[keyIndex] == "IOP":
-                extraEmptyRows = np.nonzero(x==99)
+                extraEmptyRows = np.nonzero(x == 99)
                 emptyRows = emptyRows + extraEmptyRows
             x = np.delete(x, emptyRows, 0)
             y = np.delete(y, emptyRows, 0)
