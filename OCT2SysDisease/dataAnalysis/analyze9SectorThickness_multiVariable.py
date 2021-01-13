@@ -164,13 +164,28 @@ def main():
     # concatinate all data crossing training, validation, and test
     volumes = np.concatenate((trainVolumes, validationVolumes, testVolumes), axis=0)
     labels = np.concatenate((trainLabels, validationLabels, testLabels), axis=0)
-
     nSectors = hps.imageH
+    layerName= "5thThickness"
+
+
+    # use thickness only to predict
+    print("\n====== Use thickness only to predict hypertension =============")
+    x = volumes
+    y = labels[:, 1]  # hypertension
+    print(f"Input only thickness, it has {len(y)} patients.")
+
+    clf = LogisticRegression(max_iter=3000).fit(x, y)
+    score = clf.score(x, y)
+
+    print(f"thickness only: score:{score};  intercept:{clf.intercept_[0]};")
+    print(f"Thickness coefficient of {layerName}:")
+    for i in range(nSectors):
+        print(f"thickness sector_{i}:\t{clf.coef_[0, i]}")
+
+    print("\n====Use thickness and clinical feature to predict==========")
     appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
     appKeyColIndex = (2,3,4,5,10,11,12,)
     nClinicalFtr = len(appKeyColIndex)
-    layerName= "5thThickness"
-
 
     clinicalFtr = labels[:,appKeyColIndex]
     # delete the empty value of "-100"
