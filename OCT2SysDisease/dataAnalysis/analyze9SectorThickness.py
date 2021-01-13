@@ -168,17 +168,20 @@ def main():
 
             # delete the empty value of "-100"
             emptyRows = np.nonzero(x == -100)
+            if continuousAppKeys[keyIndex] == "IOP":
+                extraEmptyRows = np.nonzero(x==99)
+                emptyRows = np.concatenate((emptyRows,extraEmptyRows),axis=0)
             x = np.delete(x, emptyRows, 0)
             y = np.delete(y, emptyRows, 0)
-            print(f"{figureName}: deleted IDs of {labels[emptyRows,0]}")
+            print(f"{figureName}: deleted IDs:\n{labels[emptyRows,0]}\n")
 
             plt.scatter(x, y)
             m, b = np.polyfit(x,y, 1)
             plt.plot(x, m * x + b, 'r-')
             plt.xlabel(continuousAppKeys[keyIndex])
-            plt.ylabel(f"Thickness_Sector_{sectorIndex}(μm)")
+            plt.ylabel(f"Thickness_Sector{sectorIndex} (μm)")
 
-            outputFilePath = os.path.join(hps.outputDir, figureName + ",png")
+            outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
             plt.savefig(outputFilePath)
             plt.close()
 
