@@ -134,6 +134,7 @@ def retrieveImageData_label(mode, hps):
 
 
 # refer to: https://stackoverflow.com/questions/25122999/scikit-learn-how-to-check-coefficients-significance
+# may direct use statmodels: https://stackoverflow.com/questions/22306341/python-sklearn-how-to-calculate-p-values
 def logit_pvalue(model, x):
     """ Calculate z-scores for scikit-learn LogisticRegression.
     parameters:
