@@ -3,6 +3,8 @@ import csv
 
 def readBESClinicalCsv(gtPath):
     '''
+    notes: empty value replace by -100.
+
         ID,Eye,gender,Age$,VA$,Pres_VA$,VA_Corr$,IOP$,Ref_Equa$,AxialLength$,Axiallength_26_ormore_exclude$,Glaucoma_exclude$,Retina_exclude$,Height$,Weight$,Waist_Circum$,Hip_Circum$,BP_Sys$,BP_Dia$,hypertension_bp_plus_history$,Diabetes$final,Dyslipidemia_lab$,Dyslipidemia_lab_plus_his$,Hyperlipdemia_treat$_WithCompleteZero,Pulse$,Cognitive$,Depression_Correct_wyx,Drink_quanti_includ0$,SmokePackYears$,Glucose$_Corrected2015,CRPL$_Corrected2015,Choles$_Corrected2015,HDL$_Corrected2015,LDL$_Correcetd2015,TG$_Corrected2015
 2.0,1,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 3.0,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

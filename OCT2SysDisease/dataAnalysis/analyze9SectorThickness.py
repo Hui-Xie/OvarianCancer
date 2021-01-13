@@ -160,18 +160,25 @@ def main():
     # draw continuous app keys lines.
     for sectorIndex in range(nSectors):
         for (keyIndex, colIndex) in enumerate(continuousAppKeyColIndex):
-            figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}.png"
+            figureName = f"sector{sectorIndex}_{continuousAppKeys[keyIndex]}_{layerName}"
             fig = plt.figure()
 
             x = labels[:,colIndex]
             y = volumes[:,sectorIndex]
+
+            # delete the empty value of "-100"
+            emptyRows = np.nonzero(x == -100)
+            x = np.delete(x, emptyRows, 0)
+            y = np.delete(y, emptyRows, 0)
+            print(f"{figureName}: deleted IDs of {labels[emptyRows,0]}")
+
             plt.scatter(x, y)
             m, b = np.polyfit(x,y, 1)
-            plt.plot(x, m * x + b)
+            plt.plot(x, m * x + b, 'r-')
             plt.xlabel(continuousAppKeys[keyIndex])
-            plt.ylabel(f"Thickness_Sector{sectorIndex}")
+            plt.ylabel(f"Thickness_Sector_{sectorIndex}(μm)")
 
-            outputFilePath = os.path.join(hps.outputDir, figureName)
+            outputFilePath = os.path.join(hps.outputDir, figureName + ",png")
             plt.savefig(outputFilePath)
             plt.close()
 
