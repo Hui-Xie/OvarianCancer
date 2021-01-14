@@ -4,7 +4,7 @@ import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-
+import math
 outputDir = "/home/hxie1/data/temp"
 
 displaySectors = True
@@ -36,16 +36,25 @@ def main():
     plt.imshow(enfaceImage, cmap='gray')
     plt.axis('off')
 
+
+
     outputName = imagename+ f"_{H}x{W}.png"
     if displaySectors:
         outputName = imagename+ f"_9sector_{H}x{W}.png"
+        a = math.sqrt(2)/2.0
         D = min(H,W)
-        circle1= plt.Circle((W//2, H//2), D//6, color='r', fill=False, linewidth=0.5)
-        circle2 = plt.Circle((W // 2, H // 2), D // 3, color='r', fill=False, linewidth=0.5)
-        circle3 = plt.Circle((W // 2, H // 2), D // 2, color='r', fill=False, linewidth=0.5)
+        r = D//2
+        circle1= plt.Circle((W//2, H//2), D//6, color='r', fill=False, linewidth=0.1)
+        circle2 = plt.Circle((W // 2, H // 2), D // 3, color='r', fill=False, linewidth=0.1)
+        circle3 = plt.Circle((W // 2, H // 2), D // 2, color='r', fill=False, linewidth=0.1)
         ax.add_patch(circle1)
         ax.add_patch(circle2)
         ax.add_patch(circle3)
+        x1,y1 = [W//2+r/3*a, W//2+r*a],[H//2+ r/3*a, H//2+r*a]  # 45 degree
+        x2,y2 = [W//2-r/3*a, W//2-r*a],[H//2+ r/3*a, H//2+r*a]  # 134 degree
+        x3,y3 = [W//2-r/3*a, W//2-r*a],[H//2- r/3*a, H//2-r*a]  # -135 degree
+        x4,y4 = [W//2+r/3*a, W//2+r*a],[H//2- r/3*a, H//2-r*a]  # -145 degree
+        plt.plot(x1,y1,x2,y2, x3,y3, x4,y4,'r-')
 
 
 
