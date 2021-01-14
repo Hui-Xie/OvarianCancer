@@ -36,12 +36,20 @@ def main():
     plt.imshow(enfaceImage, cmap='gray')
     plt.axis('off')
 
+    outputName = imagename+ f"_{H}x{W}.png"
     if displaySectors:
+        outputName = imagename+ f"_9sector_{H}x{W}.png"
         D = min(H,W)
-        circle= plt.Circle((W//2, H//2), D//6, color='r', fill=False)
-        ax.add_patch(circle)
+        circle1= plt.Circle((W//2, H//2), D//6, color='r', fill=False, linewidth=0.5)
+        circle2 = plt.Circle((W // 2, H // 2), D // 3, color='r', fill=False, linewidth=0.5)
+        circle3 = plt.Circle((W // 2, H // 2), D // 2, color='r', fill=False, linewidth=0.5)
+        ax.add_patch(circle1)
+        ax.add_patch(circle2)
+        ax.add_patch(circle3)
 
-    outputFilePath = os.path.join(outputDir, imagename+ f"_{H}x{W}.png")
+
+
+    outputFilePath = os.path.join(outputDir, outputName)
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
     plt.close()
     print(f"image file output at {outputFilePath}")
