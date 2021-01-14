@@ -30,7 +30,7 @@ def main():
     f.set_size_inches(W / float(DPI), H / float(DPI))
 
     plt.margins(0)
-    plt.plots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
+    plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
     plt.imshow(enfaceImage, cmap='gray')
     plt.axis('off')
