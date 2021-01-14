@@ -192,7 +192,7 @@ def main():
         print(f"x{i+1}=sector{i}", end="; ")
     print("")
 
-    print("\n====Use thickness and clinical feature to predict==========")
+    print("\n====Use thickness and clinical features to predict==========")
     appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
     appKeyColIndex = (2,3,4,5,10,11,12,)
     nClinicalFtr = len(appKeyColIndex)
@@ -221,9 +221,41 @@ def main():
         print(f"x{i+1}=sector{i}", end="; ")
     print("")
     for i in range(nSectors, nSectors+nClinicalFtr):
-        print(f"x{i+1}={appKeys[i-9]}", end="; ")
+        print(f"x{i+1}={appKeys[i-nSectors]}", end="; ")
     print("")
 
+    print("\n====Use sector8_Age_Age_IOP_AxialLength_Smoke_BMI_WaistHipRate to predict Hypertension ==========")
+    appKeys = ["Age", 'IOP', 'AxialLength', 'SmokePackYears', "BMI", "WaistHipRate", ]
+    appKeyColIndex = (3, 4, 5, 10, 11, 12,)
+    nClinicalFtr = len(appKeyColIndex)
+    nSectors = 1
+
+    clinicalFtr = labels[:, appKeyColIndex]
+    # delete the empty value of "-100"
+    emptyRows = np.nonzero(clinicalFtr == -100)
+    extraEmptyRows = np.nonzero(clinicalFtr == 99)
+    emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+    # concatenate sector thickness with multi variables:
+    thickness_features = np.concatenate((volumes[:,8], clinicalFtr), axis=1)  # size: Nx(1+6)
+
+    x = thickness_features
+    y = labels[:, 1]  # hypertension
+    x = np.delete(x, emptyRows, 0)
+    y = np.delete(y, emptyRows, 0)
+    print(f"After deleting empty-value patients, it remains {len(y)} patients.")
+
+    clf = sm.Logit(y, x).fit()
+    print(clf.summary())
+    predict = clf.predict(x)
+    score = np.mean((predict >= 0.5).astype(np.int) == y)
+    print(f"sector8+6clinicalFeatures: accuracy:{score}")
+    print("Where:")
+    for i in range(nSectors):
+        print(f"x{i + 1}=sector8", end="; ")
+    print("")
+    for i in range(nSectors, nSectors + nClinicalFtr):
+        print(f"x{i + 1}={appKeys[i - nSectors]}", end="; ")
+    print("")
 
     if output2File:
         logOutput.close()
