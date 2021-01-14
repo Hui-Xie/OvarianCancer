@@ -187,7 +187,8 @@ def main():
     print(clf.summary())
     predict = clf.predict(x)
     score = np.mean((predict >= 0.5).astype(np.int) == y)
-    print(f"thickness only: score:{score}")
+    print(f"thickness only: accuracy:{score}")
+    print("Where:")
     for i in range(nSectors):
         print(f"x{i+1}=sector{i}", end=";")
     print("")
@@ -215,7 +216,8 @@ def main():
     print(clf.summary())
     predict = clf.predict(x)
     score = np.mean((predict >= 0.5).astype(np.int) == y)
-    print(f"thickness+7clinicalFeatures: score:{score}")
+    print(f"thickness+7clinicalFeatures: accuracy:{score}")
+    print("Where:")
     for i in range(nSectors):
         print(f"x{i+1}=sector{i}", end=";")
     print("")
