@@ -188,6 +188,9 @@ def main():
     predict = clf.predict(x)
     score = np.mean((predict >= 0.5).astype(np.int) == y)
     print(f"thickness only: score:{score}")
+    for i in range(nSectors):
+        print(f"x{i+1}=sector{i}", end=";")
+    print("")
 
     print("\n====Use thickness and clinical feature to predict==========")
     appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
@@ -213,6 +216,13 @@ def main():
     predict = clf.predict(x)
     score = np.mean((predict >= 0.5).astype(np.int) == y)
     print(f"thickness+7clinicalFeatures: score:{score}")
+    for i in range(nSectors):
+        print(f"x{i+1}=sector{i}", end=";")
+    print("")
+    for i in range(nSectors, nSectors+7):
+        print(f"x{i+1}={appKeys[i-9]}", end=";")
+    print("")
+
 
     if output2File:
         logOutput.close()
