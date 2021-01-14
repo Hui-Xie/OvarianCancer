@@ -26,6 +26,7 @@ def main():
     imagename, ext = os.path.splitext(basename)
 
     f = plt.figure(frameon=False)
+    ax = plt.gca()
     DPI = f.dpi
     f.set_size_inches(W / float(DPI), H / float(DPI))
 
@@ -38,7 +39,7 @@ def main():
     if displaySectors:
         D = min(H,W)
         circle= plt.Circle((H//2, W//2), D//6, color='r')
-        plt.add_patch(circle)
+        ax.add_patch(circle)
 
     outputFilePath = os.path.join(outputDir, imagename+ f"_{H}x{W}.png")
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
