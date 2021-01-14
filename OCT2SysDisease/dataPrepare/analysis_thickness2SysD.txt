@@ -1,4 +1,5 @@
 # Jan 14th, Thursday, 2021
+cat output_20210114_120327.txt
 Experiment: expOCT_9Sectors5thThicknessAnalyze_20210114_MultiVariable_statsmodels_1x31x25
 
 ====== Use thickness only to predict hypertension =============
@@ -12,7 +13,7 @@ Dep. Variable:                      y   No. Observations:                 5559
 Model:                          Logit   Df Residuals:                     5550
 Method:                           MLE   Df Model:                            8
 Date:                Thu, 14 Jan 2021   Pseudo R-squ.:                0.003040
-Time:                        11:47:41   Log-Likelihood:                -3817.3
+Time:                        12:03:28   Log-Likelihood:                -3817.3
 converged:                       True   LL-Null:                       -3828.9
 Covariance Type:            nonrobust   LLR p-value:                  0.003020
 ==============================================================================
@@ -32,7 +33,7 @@ thickness only: accuracy:0.5429033998920669
 Where:
 x1=sector0; x2=sector1; x3=sector2; x4=sector3; x5=sector4; x6=sector5; x7=sector6; x8=sector7; x9=sector8;
 
-====Use thickness and clinical feature to predict==========
+====Use thickness and clinical features to predict==========
 After deleting empty-value patients, it remains 5081 patients.
 Optimization terminated successfully.
          Current function value: 0.616761
@@ -43,7 +44,7 @@ Dep. Variable:                      y   No. Observations:                 5081
 Model:                          Logit   Df Residuals:                     5065
 Method:                           MLE   Df Model:                           15
 Date:                Thu, 14 Jan 2021   Pseudo R-squ.:                  0.1034
-Time:                        11:47:41   Log-Likelihood:                -3133.8
+Time:                        12:03:28   Log-Likelihood:                -3133.8
 converged:                       True   LL-Null:                       -3495.1
 Covariance Type:            nonrobust   LLR p-value:                2.662e-144
 ==============================================================================
@@ -70,6 +71,37 @@ thickness+7clinicalFeatures: accuracy:0.6642393229679197
 Where:
 x1=sector0; x2=sector1; x3=sector2; x4=sector3; x5=sector4; x6=sector5; x7=sector6; x8=sector7; x9=sector8;
 x10=gender; x11=Age; x12=IOP; x13=AxialLength; x14=SmokePackYears; x15=BMI; x16=WaistHipRate;
+
+====Use sector8_Age_Age_IOP_AxialLength_Smoke_BMI_WaistHipRate to predict Hypertension ==========
+After deleting empty-value patients, it remains 5081 patients.
+Optimization terminated successfully.
+         Current function value: 0.617685
+         Iterations 5
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5081
+Model:                          Logit   Df Residuals:                     5074
+Method:                           MLE   Df Model:                            6
+Date:                Thu, 14 Jan 2021   Pseudo R-squ.:                  0.1020
+Time:                        12:03:28   Log-Likelihood:                -3138.5
+converged:                       True   LL-Null:                       -3495.1
+Covariance Type:            nonrobust   LLR p-value:                8.089e-151
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -0.0226      0.004     -5.715      0.000      -0.030      -0.015
+x2             0.0576      0.004     16.112      0.000       0.051       0.065
+x3             0.0558      0.011      4.878      0.000       0.033       0.078
+x4            -0.3192      0.021    -15.266      0.000      -0.360      -0.278
+x5             0.0657      0.017      3.973      0.000       0.033       0.098
+x6             0.1413      0.010     14.355      0.000       0.122       0.161
+x7             1.2187      0.501      2.431      0.015       0.236       2.201
+==============================================================================
+sector8+6clinicalFeatures: accuracy:0.6603030899429246
+Where:
+x1=sector8;
+x2=Age; x3=IOP; x4=AxialLength; x5=SmokePackYears; x6=BMI; x7=WaistHipRate;
+
 
 
 
