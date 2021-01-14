@@ -20,8 +20,7 @@ import datetime
 # from scipy.stats import norm
 import statsmodels.api as sm
 
-output2File = False
-
+output2File = True
 
 def printUsage(argv):
     print("============ Anaylze OCT Thickness or texture map relation with hypertension =============")
@@ -190,7 +189,7 @@ def main():
     print(f"thickness only: accuracy:{score}")
     print("Where:")
     for i in range(nSectors):
-        print(f"x{i+1}=sector{i}", end=";")
+        print(f"x{i+1}=sector{i}", end="; ")
     print("")
 
     print("\n====Use thickness and clinical feature to predict==========")
@@ -219,10 +218,10 @@ def main():
     print(f"thickness+7clinicalFeatures: accuracy:{score}")
     print("Where:")
     for i in range(nSectors):
-        print(f"x{i+1}=sector{i}", end=";")
+        print(f"x{i+1}=sector{i}", end="; ")
     print("")
-    for i in range(nSectors, nSectors+7):
-        print(f"x{i+1}={appKeys[i-9]}", end=";")
+    for i in range(nSectors, nSectors+nClinicalFtr):
+        print(f"x{i+1}={appKeys[i-9]}", end="; ")
     print("")
 
 
