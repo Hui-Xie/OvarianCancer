@@ -54,7 +54,7 @@ def main():
         x2,y2 = [W//2-r/3*a, W//2-r*a],[H//2+ r/3*a, H//2+r*a]  # 134 degree
         x3,y3 = [W//2-r/3*a, W//2-r*a],[H//2- r/3*a, H//2-r*a]  # -135 degree
         x4,y4 = [W//2+r/3*a, W//2+r*a],[H//2- r/3*a, H//2-r*a]  # -145 degree
-        plt.plot(x1,y1,x2,y2, x3,y3, x4,y4,'r-')
+        plt.plot(x1,y1,x2,y2, x3,y3, x4,y4, color='r', linewidth=0.1)
 
 
 
