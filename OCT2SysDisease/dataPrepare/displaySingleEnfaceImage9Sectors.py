@@ -19,7 +19,7 @@ def main():
     enfaceImage = np.load(enfaceImagePath)
     N, H,W = enfaceImage.shape
     assert N==1
-    enfaceImage = enfaceImage.squeeze(axis=1)
+    enfaceImage = enfaceImage.squeeze(axis=0)
     print(f"enface Image: H={H}, W={W}")
 
     basename = os.path.basename(enfaceImagePath)
