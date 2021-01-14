@@ -37,7 +37,8 @@ def main():
 
     if displaySectors:
         D = min(H,W)
-        # plt.Circle((H//2, W//2), )
+        circle= plt.Circle((H//2, W//2), D//6, color='r')
+        plt.add_patch(circle)
 
     outputFilePath = os.path.join(outputDir, imagename+ f"_{H}x{W}.png")
     plt.savefig(outputFilePath, dpi='figure', bbox_inches='tight', pad_inches=0)
