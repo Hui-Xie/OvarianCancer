@@ -236,7 +236,7 @@ def main():
     extraEmptyRows = np.nonzero(clinicalFtr == 99)
     emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
     # concatenate sector thickness with multi variables:
-    thickness_features = np.concatenate((volumes[:,8], clinicalFtr), axis=1)  # size: Nx(1+6)
+    thickness_features = np.concatenate((volumes[:,8].reshape(-1,1), clinicalFtr), axis=1)  # size: Nx(1+6)
 
     x = thickness_features
     y = labels[:, 1]  # hypertension
