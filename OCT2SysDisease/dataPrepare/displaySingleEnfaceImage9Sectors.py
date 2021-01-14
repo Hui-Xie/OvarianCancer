@@ -17,7 +17,9 @@ def main():
     enfaceImagePath = sys.argv[1]
 
     enfaceImage = np.load(enfaceImagePath)
-    H,W = enfaceImage.shape
+    N, H,W = enfaceImage.shape
+    assert N==1
+    enfaceImage = enfaceImage.squeeze(axis=1)
     print(f"enface Image: H={H}, W={W}")
 
     basename = os.path.basename(enfaceImagePath)
