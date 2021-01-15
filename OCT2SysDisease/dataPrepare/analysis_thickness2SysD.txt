@@ -1,3 +1,14 @@
+# Jan 15th, Friday, 2021
+Meeting with professor:
+1  use surface and layer information to infer the thickness;
+2  use red/blue to mark individual hypertension or not;
+3  use color to mark the number of patient in univariable figure;
+4  use random forest to analyze hypertension;
+5  use 9 layerx9sector + risk factor to predict hypertension;
+6  use radiomics to select features, with logistic method;
+
+
+
 # Jan 14th, Thursday, 2021
 cat output_20210114_120327.txt
 Experiment: expOCT_9Sectors5thThicknessAnalyze_20210114_MultiVariable_statsmodels_1x31x25

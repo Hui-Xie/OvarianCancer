@@ -21,6 +21,7 @@ from ThicknessSubnet import ThicknessSubnet
 from ThicknessSubnet_B import ThicknessSubnet_B
 from ThicknessSubnet_C import ThicknessSubnet_C
 from ThicknessSubnet_D import ThicknessSubnet_D
+from ThicknessSubnet_E import ThicknessSubnet_E
 from ThicknessSubnet_Y import ThicknessSubnet_Y
 
 import time

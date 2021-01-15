@@ -1,3 +1,28 @@
+# Jan 15th, Friday, 2021
+Thickness (Rift) prediction on Duke_AMD test data:
+================================================================================================================================================================================================================
+Method_Name                                         thicknessError          thicknessStdError   thickError0  thickError1  Note
+expDuke_20200902A_RiftSubnet                        5.921670913696289       3.658905267715454   3.4042,      8.4392       Directly prediction N-1 thickness.
+expDuke_20201209A_ThicknessSubnet_iibi007           3.5991899967193604      2.2252163887023926  3.0774,      4.1209       NoGuassian DivLoss, thickness from N surfaces, initial filter=32, 8layers
+expDuke_20201215A_ThicknessSubnet_iibi007           3.800525188446045       2.357407331466675   3.2803,      4.3208       Gausssian DivLoss, thickness from N surfaces. initial filter=32, 8Layers
+expDuke_20201228A_ThicknessSubnet_iibi007           3.8707656860351562      2.439850091934204   3.2910,      4.4505       without Gaussian Divloss, use cumulative R, intial filter=24. 7Layers
+expDuke_20210101A_ThicknessSubnet_iibi007           3.7638235092163086      2.4115993976593018  3.1838,      4.3439       32 filters, 8 layers, add XY coordinate input, No cummulativeRLoss
+expDuke_20210101B_ThicknessSubnet_iibi007           3.8175220489501953      2.0736165046691895  3.2453,      4.3898       32 filters, 8 layers, add XY coordinate input, with cumulativeRLoss
+expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121246814727783      2.4195966720581055  3.0530,      4.1713       18GB, exact YufanHe network(XY channel+layerSeg+64 filter for all layers)+1D [H,1]conv
+expDuke_20210107B_Thickness_1D_iibi007              still in training,                                                    35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
+=================================================================================================================================================================================================================
+
+Analysis:
+1  expDuke_20210107B_Thickness_1D_iibi007 is still traning whose both validation and training loss are still decreasing;
+   A.  35GB GPU memory; 8d16h trained 316 epochs; (8*24*60+16*60)/316 = 40 min/epoch;
+   B.  I will keep its training to next Tusday;
+2  The exact JHU network didn't get better accuracy than our 20201209A network, but it is better than 20201215, 20201228, 20200101 networks;
+   It shows that layerLoss helps, but less efficient than computing (N-1) thickness from N surfaces.
+3
+
+
+
+
 # Jan 6th, Wednesday, 2021
 After U-Net, get CxHxW feature map, using 2D [H,1] convolution with pading [0,0] to get Nx1xW feature, here N is the number of thickness.
 

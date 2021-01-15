@@ -1,4 +1,5 @@
-# ThicknessSubnet: RiftNet_2
+# ThicknessSubnet_E
+# Use layerLoss, N surface to infer (N-1) thickess, and 1D convolution to directly get (N-1) thickness.
 
 import sys
 import torch.nn as nn
@@ -30,9 +31,7 @@ If Deep learning is learning in a similar mode of human brain thinking,
 learning S (surface position) is a basis for learning R(separation). 
 '''
 
-# use 1D [H,1] convolution at end of Unet.
-
-class ThicknessSubnet_D(BasicModel):
+class ThicknessSubnet_E(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: BxinputChaneels*H*W
@@ -49,10 +48,25 @@ class ThicknessSubnet_D(BasicModel):
             constructUnet(self.hps.inputChannels, self.hps.inputHeight, self.hps.inputWidth, C, self.hps.nLayers)
         # output of Unet: BxCxHxW
 
+        # Surface branch
+        self.m_surfaces = nn.Sequential(
+            Conv2dBlock(C, C//2, useLeakyReLU=True, kernelSize=5, padding=2),
+            Conv2dBlock(C//2, C//2, useLeakyReLU=True, kernelSize=7, padding=3),  # different from surfaceNet
+            nn.Conv2d(C//2, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
+        )  # output size:BxNxHxW
+
+        # layer branch
+        self.m_layers = nn.Sequential(
+            Conv2dBlock(C, C // 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            nn.Conv2d(C // 2, hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
+        )  # output size:(numSurfaces+1)*H*W
+
         # thickness branch
         self.m_thicknesses = nn.Sequential(
-            Conv2dBlock(C, C//2, useLeakyReLU=True, kernelSize=5, padding=2),
-            nn.Conv2d(C // 2, hps.numSurfaces - 1, kernel_size=[hps.inputHeight, 1], stride=[1, 1], padding=[0, 0]),  # 1D conv [H,1]
+            Conv2dBlock(C, C // 2, useLeakyReLU=True, kernelSize=5, padding=2),
+            nn.Conv2d(C // 2, hps.numSurfaces - 1, kernel_size=[hps.inputHeight, 1], stride=[1, 1], padding=[0, 0]),
+            # 1D conv [H,1]
             nn.ReLU(),  # reLU make assure thickness >=0
         )  # output size:BxNx1xW
 
@@ -82,11 +96,20 @@ class ThicknessSubnet_D(BasicModel):
             x = self.m_upSamples[i](x)
         # output of Unet: BxCxHxW
 
-        # N is (numSurfaces-1)
+        # N is numSurfaces
+        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*N*H*W
+        B, N, H, W = xs.shape
+
         xt = self.m_thicknesses(x)  # xs means x_thickess, # output size: B*N*1*W
         thickness = xt.squeeze(dim=-2)  # size: Bx(numSurface-1)xW
 
+        xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
 
+        surfaceProb = logits2Prob(xs, dim=-2)
+
+        # compute surface mu and variance
+        mu, sigma2 = computeMuVariance(surfaceProb)  # size: B,N W
+        thickness = mu[:,1:,:]-mu[:,0:-1,:] # size: B,N-1,W
         R = thickness
 
         # use smoothLoss and L1loss for rift
@@ -105,6 +128,9 @@ class ThicknessSubnet_D(BasicModel):
         if torch.isnan(loss.sum()): # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
+
+        zeroThickness = torch.zeros_like(thickness)
+        thickness = torch.where(thickness < zeroThickness, zeroThickness, thickness)  # make sure thickness >=0
 
         return thickness, loss  # return rift R in (B,N-1,W) dimension and loss
 
