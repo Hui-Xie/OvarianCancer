@@ -20,7 +20,7 @@ import datetime
 # from scipy.stats import norm
 import statsmodels.api as sm
 
-output2File = True
+output2File = False
 
 def printUsage(argv):
     print("============ Anaylze OCT 9x9 sector Thickness plus risk factor with respect to hypertension =============")
@@ -192,6 +192,17 @@ def main():
             print(f"x{n}=sector[{i},{j}]", end="; ")
             n += 1
         print("")
+    print("=========================")
+    print("list of x whose pvalues <=0.05")
+    n = 1
+    for i in range(hps.inputChannels):
+        for j in range(hps.imageH):
+            if clf.pvalues[n-1] <= 0.5:
+                print(f"x{n}=sector[{i},{j}], z={clf.tvalues[n-1]}, pvalue={clf.pvalues[n-1]}")
+            n += 1
+
+
+
 
     print("\n====Use 9x9 sector thickness and clinical features to predict Hypertension ==========")
     appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
@@ -229,6 +240,18 @@ def main():
         print(f"x{n}={appKeys[i-nSectors]}", end="; ")
         n += 1
     print("")
+    print("=========================")
+    print("list of x whose pvalues <=0.05")
+    n = 1
+    for i in range(hps.inputChannels):
+        for j in range(hps.imageH):
+            if clf.pvalues[n - 1] <= 0.5:
+                print(f"x{n}=sector[{i},{j}], z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
+            n += 1
+    for i in range(nSectors, nSectors+nClinicalFtr):
+        if clf.pvalues[n - 1] <= 0.5:
+            print(f"x{n}={appKeys[i-nSectors]}, z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
+        n += 1
 
 
     if output2File:
