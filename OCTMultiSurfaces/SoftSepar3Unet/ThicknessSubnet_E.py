@@ -1,136 +1,249 @@
-# ThicknessSubnet_E
-# Use layerLoss, N surface to infer (N-1) thickess, and 1D convolution to directly get (N-1) thickness.
+# Base on SurfacesUnet_YufanHe_2 nework, the exact YufanHe network
+# to deduce (N-1) thickness.
+
 
 import sys
-import torch.nn as nn
+import math
 
-sys.path.append("..")
-from network.OCTAugmentation import batchGaussianizeLabels
-from network.OCTOptimization import computeMuVariance
+sys.path.append(".")
+sys.path.append("../..")
+from network.OCTOptimization import *
+from network.OCTAugmentation import *
+import torch
 
 sys.path.append("../..")
 from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
-from framework.CustomizedLoss import logits2Prob, SmoothThicknessLoss
-from framework.ConfigReader import ConfigReader
+from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfaceCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, MultiLayerCrossEntropyLoss, SmoothThicknessLoss
 
-'''
-In deep learning, smoothNet tries to learn the distance of adjacent pixels along their surface direction, 
-here the adjacent pixels  are in 3x3 neighborhoods where 3x3 convolution and gradient information 
-along the surface  will be helpful to get some information. 
-
-While thicknessSubNet tries to learn the distance of adjacent surfaces along column direction. 
-here the adjacent surfaces are most not in 3x3 or 5x5 neighborhoods. 
-In Tongren data, the average distance of adjacent surfaces is 9 pixels, and maximal distance is 49 pixels.  
-Learning R requires network to learn 2 information intuitively : 
-A . the next computing point of distance is the adjacent surface, instead of a middle or next region point;  
-B. what is the distance to his next adjacent surface.  
-In this context, a simple 3x3 convolution is not enough to help solve this problem.  
-If Deep learning is learning in a similar mode of human brain thinking, 
-learning S (surface position) is a basis for learning R(separation). 
-'''
-
-class ThicknessSubnet_E(BasicModel):
+class ThicknessSubnet_E(BasicModel):  #
+    ''''
+    This network refer Yufan He paper: He,Y., Carass A., Liu, Yi., et al. (2019).:
+    Fully Convolutional Boundary Regression for Retina OCT Segmentation.
+    In: Medical Image Computing and Computer Assisted Intervention(MICCAI 2019).
+    \doi{10.1007/978-3-030-32239-7\_14}
+    '''
     def __init__(self, hps=None):
         '''
-        inputSize: BxinputChaneels*H*W
-        outputSize: (B, N-1, H, W), where N is the number of surfaces.
+        inputSize: inputChaneels*H*W
+        outputSize: (Surface, H, W)
+        :param numSurfaces:
+        :param N: startFilters
         '''
         super().__init__()
-        if isinstance(hps, str):
-            hps = ConfigReader(hps)
         self.hps = hps
-        C = self.hps.startFilters
 
-        # input of Unet: BxinputChannelsxHxW
-        self.m_downPoolings, self.m_downLayers, self.m_upSamples, self.m_upLayers = \
-            constructUnet(self.hps.inputChannels, self.hps.inputHeight, self.hps.inputWidth, C, self.hps.nLayers)
-        # output of Unet: BxCxHxW
+        self.m_inputHeight = hps.inputHeight
+        self.m_inputWidth = hps.inputWidth
+        self.m_inputChannels = hps.inputChannels
+        self.m_nLayers = hps.nLayers
+        self.m_layerSizeList = computeLayerSizeUsingMaxPool2D(self.m_inputHeight, self.m_inputWidth, self.m_nLayers)
+        N = hps.startFilters
 
-        # Surface branch
-        self.m_surfaces = nn.Sequential(
-            Conv2dBlock(C, C//2, useLeakyReLU=True, kernelSize=5, padding=2),
-            Conv2dBlock(C//2, C//2, useLeakyReLU=True, kernelSize=7, padding=3),  # different from surfaceNet
-            nn.Conv2d(C//2, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:BxNxHxW
+        self.m_useSpectralNorm = False
+        self.m_useLeakyReLU = True
+        # downxPooling layer is responsible change size of feature map (by MaxPool) and number of filters.
+        self.m_down0Pooling = nn.Sequential(
+            Conv2dBlock(self.m_inputChannels, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )
+        self.m_down0 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        )
 
-        # layer branch
-        self.m_layers = nn.Sequential(
-            Conv2dBlock(C, C // 2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+        self.m_down1Pooling = nn.Sequential(
+            nn.MaxPool2d(2, stride=2, padding=0)
+        )
+        self.m_down1 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),
-            nn.Conv2d(C // 2, hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )
+
+        self.m_down2Pooling = nn.Sequential(
+            nn.MaxPool2d(2, stride=2, padding=0)
+        )
+        self.m_down2 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+            )
+
+        self.m_down3Pooling = nn.Sequential(
+            nn.MaxPool2d(2, stride=2, padding=0)
+        )
+        self.m_down3 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        )
+
+        self.m_down4Pooling = nn.Sequential(
+            nn.MaxPool2d(2, stride=2, padding=0)
+        )
+
+        self.m_down4 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        )
+
+        # this is the bottleNeck at bottom with size: self.m_layerSizeList[6]
+        self.m_up4Pooling = nn.Upsample(size=self.m_layerSizeList[3], mode='bilinear')
+        self.m_up4AfterCat= Conv2dBlock(N*2, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        self.m_up4 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        )
+
+        self.m_up3Pooling = nn.Upsample(size=self.m_layerSizeList[2], mode='bilinear')
+        self.m_up3AfterCat= Conv2dBlock(N*2, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU)
+        self.m_up3 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        )
+
+        self.m_up2Pooling = nn.Upsample(size=self.m_layerSizeList[1], mode='bilinear')
+        self.m_up2AfterCat = Conv2dBlock(N*2,  N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        self.m_up2 = nn.Sequential(
+            Conv2dBlock(N , N, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        )
+
+        self.m_up1Pooling = nn.Upsample(size=self.m_layerSizeList[0], mode='bilinear')
+        self.m_up1AfterCat = Conv2dBlock(N*2, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+
+        self.m_up1 = nn.Sequential(
+            Conv2dBlock(N, N, convStride=1,
+                        useSpectralNorm=self.m_useSpectralNorm, useLeakyReLU=self.m_useLeakyReLU),
+            Conv2dBlock(N, N, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU)
+        )
+
+        # 2 branches:
+        self.m_surfaces = nn.Sequential(
+            Conv2dBlock(N, N//2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            nn.Conv2d(N//2, hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
+        )  # output size:numSurfaces*H*W
+
+        self.m_layers = nn.Sequential(
+            Conv2dBlock(N, N//2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
+                        useLeakyReLU=self.m_useLeakyReLU),
+            nn.Conv2d(N//2, hps.numSurfaces + 1, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:(numSurfaces+1)*H*W
 
-        # thickness branch
-        self.m_thicknesses = nn.Sequential(
-            Conv2dBlock(C, C // 2, useLeakyReLU=True, kernelSize=5, padding=2),
-            nn.Conv2d(C // 2, hps.numSurfaces - 1, kernel_size=[hps.inputHeight, 1], stride=[1, 1], padding=[0, 0]),
-            # 1D conv [H,1]
-            nn.ReLU(),  # reLU make assure thickness >=0
-        )  # output size:BxNx1xW
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
-        device = inputs.device
         # compute outputs
-        skipxs = [None for _ in range(self.hps.nLayers)]  # skip link x
-        dropoutLayer = [nn.Dropout2d(p=self.hps.dropoutRateUnet[i], inplace=True) for i in range(self.hps.nLayers)]
+        device = inputs.device
 
-        # down path of Unet
-        for i in range(self.hps.nLayers):
-            if 0 == i:
-                x = inputs
-            else:
-                x = skipxs[i - 1]
-            x = self.m_downPoolings[i](x)
-            skipxs[i] = self.m_downLayers[i](x) + x
+        x0 = self.m_down0Pooling(inputs)
+        x0 = self.m_down0(x0) + x0    # this residual link may hurts dice performance.
+        x0 = self.m_down0(x0)
 
-        # up path of Unet
-        for i in range(self.hps.nLayers - 1, -1, -1):
-            if self.hps.nLayers - 1 == i:
-                x = skipxs[i]
-            else:
-                x = x + skipxs[i]
-            x = dropoutLayer[i](x)    # dropout only at expand path, which make ThicknessNetwork different with SurfaceNet.
-            x = self.m_upLayers[i](x) + x
-            x = self.m_upSamples[i](x)
-        # output of Unet: BxCxHxW
+        x1 = self.m_down1Pooling(x0)
+        x1 = self.m_down1(x1) + x1
 
-        # N is numSurfaces
-        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*N*H*W
-        B, N, H, W = xs.shape
+        x2 = self.m_down2Pooling(x1)
+        x2 = self.m_down2(x2) + x2
 
-        xt = self.m_thicknesses(x)  # xs means x_thickess, # output size: B*N*1*W
-        thickness = xt.squeeze(dim=-2)  # size: Bx(numSurface-1)xW
+        x3 = self.m_down3Pooling(x2)
+        x3 = self.m_down3(x3) + x3
 
+        x4 = self.m_down4Pooling(x3)
+        x4 = self.m_down4(x4) + x4
+
+        x = x4 # bottom
+
+        x = torch.cat((self.m_up4Pooling(x), x3), dim=1)
+        x = self.m_up4AfterCat(x)
+        x = self.m_up4(x) + x
+
+        x = torch.cat((self.m_up3Pooling(x), x2), dim=1)
+        x = self.m_up3AfterCat(x)
+        x = self.m_up3(x) + x
+
+        x = torch.cat((self.m_up2Pooling(x), x1), dim=1)
+        x = self.m_up2AfterCat(x)
+        x = self.m_up2(x) + x
+
+        x = torch.cat((self.m_up1Pooling(x), x0), dim=1)
+        x = self.m_up1AfterCat(x)
+        x = self.m_up1(x) + x
+
+        xs = self.m_surfaces(x)  # xs means x_surfaces, # output size: B*numSurfaces*H*W
         xl = self.m_layers(x)  # xs means x_layers,   # output size: B*(numSurfaces+1)*H*W
 
-        surfaceProb = logits2Prob(xs, dim=-2)
 
-        # compute surface mu and variance
-        mu, sigma2 = computeMuVariance(surfaceProb)  # size: B,N W
-        thickness = mu[:,1:,:]-mu[:,0:-1,:] # size: B,N-1,W
+        B,N,H,W = xs.shape
+
+        hps = self.hps
+
+        layerMu = None # referred surface mu computed by layer segmentation.
+        layerConf = None
+        surfaceProb = logits2Prob(xs, dim=-2)
+        layerProb = logits2Prob(xl, dim=1)
+
+        if hps.useLayerDice:
+            generalizedDiceLoss = GeneralizedDiceLoss()
+            loss_layer = generalizedDiceLoss(layerProb, layerGTs)
+            # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
+
+            # add layer CE loss
+            multiLayerCE = MultiLayerCrossEntropyLoss()
+            loss_layer += multiLayerCE(layerProb, layerGTs)
+
+        else:
+            loss_layer = 0.0
+
+        mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
+
+        multiSurfaceCE = MultiSurfaceCrossEntropyLoss()
+        loss_surface = multiSurfaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
+
+
+        #ReLU to guarantee layer order
+        S = mu.clone()
+        for i in range(1,N):
+            S[:,i,:] = torch.where(S[:, i,:]< S[:,i-1,:], S[:,i-1,:], S[:,i,:])
+        thickness = S[:, 1:, :] - S[:, 0:-1, :]  # size: B,N-1,W
         R = thickness
+
+        surfaceL1Loss = nn.SmoothL1Loss().to(device)
+        loss_surfaceL1 = surfaceL1Loss(S, GTs)
 
         # use smoothLoss and L1loss for rift
         loss_riftL1 = 0.0
-        loss_smooth = 0.0
+        loss_riftSmooth = 0.0
         if self.hps.existGTLabel:
             if self.hps.useL1Loss:
-                l1Loss = nn.SmoothL1Loss().to(device)
-                loss_riftL1 = l1Loss(R,riftGTs)
+                riftL1Loss = nn.SmoothL1Loss().to(device)
+                loss_riftL1 = riftL1Loss(R, riftGTs)
             if self.hps.useSmoothThicknessLoss:
                 smoothThicknessLoss = SmoothThicknessLoss(mseLossWeight=10.0)
-                loss_smooth = smoothThicknessLoss(R, riftGTs)
+                loss_riftSmooth = smoothThicknessLoss(R, riftGTs)
 
-        loss = loss_riftL1 + loss_smooth
+        loss = loss_layer + loss_surface + loss_surfaceL1 +loss_riftL1 + loss_riftSmooth
 
-        if torch.isnan(loss.sum()): # detect NaN
+        if torch.isnan(loss.sum()):  # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
-
-        zeroThickness = torch.zeros_like(thickness)
-        thickness = torch.where(thickness < zeroThickness, zeroThickness, thickness)  # make sure thickness >=0
 
         return thickness, loss  # return rift R in (B,N-1,W) dimension and loss
 

@@ -19,17 +19,17 @@ Analysis:
 2  The exact JHU network didn't get better accuracy than our 20201209A network, but it is better than 20201215, 20201228, 20200101 networks;
    It shows that layerLoss helps, but less efficient than computing (N-1) thickness from N surfaces.
 3  Use layerSegmentation and Surface branch to further infer thickness:
-   A use the reflection point between 2 max values of neighbor layers to get surface location, and the infer the thickness;
+   A use the reflection point between 2 max probability values of neighbor layers to get surface location, and the infer the thickness;
    B use N surface branch to get (N-1) thickness;
    C use learning weight to average A and B result as the final result;
    D use N surface location ground truth;
-   But the inferred location of surface from layer is less accurate than direct surface location prediction.
+   But the inferred surface location from neighbour layers is less accurate than direct surface location prediction.
    A alternative solution:
    1 use JHU's 3 channel input network;
-   2 use N surface and layer segmentation ground truth;
+   2 use N surfaces and layer segmentation ground truth;
    3 from N surface to deduce (N-1) thickness, and use smoothThickness loss like in 20121209A experiment;
    4 Layer segemntation is helpful to detect thickness;
-   
+   This network
 
 
 
