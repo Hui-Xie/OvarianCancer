@@ -1,5 +1,5 @@
 # Base on SurfacesUnet_YufanHe_2 nework, the exact YufanHe network
-# to deduce (N-1) thickness.
+# to deduce (N-1) thickness from N surface.
 
 
 import sys
@@ -200,6 +200,7 @@ class ThicknessSubnet_E(BasicModel):  #
         surfaceProb = logits2Prob(xs, dim=-2)
         layerProb = logits2Prob(xl, dim=1)
 
+        loss_layer = 0.0
         if hps.useLayerDice:
             generalizedDiceLoss = GeneralizedDiceLoss()
             loss_layer = generalizedDiceLoss(layerProb, layerGTs)
@@ -209,13 +210,10 @@ class ThicknessSubnet_E(BasicModel):  #
             multiLayerCE = MultiLayerCrossEntropyLoss()
             loss_layer += multiLayerCE(layerProb, layerGTs)
 
-        else:
-            loss_layer = 0.0
-
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=layerMu, layerConf=layerConf)
 
         multiSurfaceCE = MultiSurfaceCrossEntropyLoss()
-        loss_surface = multiSurfaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
+        loss_surfaceCE = multiSurfaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
 
         #ReLU to guarantee layer order
@@ -225,21 +223,28 @@ class ThicknessSubnet_E(BasicModel):  #
         thickness = S[:, 1:, :] - S[:, 0:-1, :]  # size: B,N-1,W
         R = thickness
 
-        surfaceL1Loss = nn.SmoothL1Loss().to(device)
-        loss_surfaceL1 = surfaceL1Loss(S, GTs)
-
-        # use smoothLoss and L1loss for rift
+        # use smoothLoss and L1loss for surface and rift
+        loss_surfaceL1 = 0.0
+        loss_surfaceSmooth = 0.0
         loss_riftL1 = 0.0
         loss_riftSmooth = 0.0
         if self.hps.existGTLabel:
             if self.hps.useL1Loss:
+                surfaceL1Loss = nn.SmoothL1Loss().to(device)
+                loss_surfaceL1 = surfaceL1Loss(S, GTs)
+
                 riftL1Loss = nn.SmoothL1Loss().to(device)
                 loss_riftL1 = riftL1Loss(R, riftGTs)
+
+            if self.hps.useSmoothSurfaceLoss:
+                smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+                loss_surfaceSmooth = smoothSurfaceLoss(S, GTs)
+
             if self.hps.useSmoothThicknessLoss:
                 smoothThicknessLoss = SmoothThicknessLoss(mseLossWeight=10.0)
                 loss_riftSmooth = smoothThicknessLoss(R, riftGTs)
 
-        loss = loss_layer + loss_surface + loss_surfaceL1 +loss_riftL1 + loss_riftSmooth
+        loss = loss_layer + loss_surfaceCE + loss_surfaceL1 +loss_surfaceSmooth+ loss_riftL1 + loss_riftSmooth
 
         if torch.isnan(loss.sum()):  # detect NaN
             print(f"Error: find NaN loss at epoch {self.m_epoch}")

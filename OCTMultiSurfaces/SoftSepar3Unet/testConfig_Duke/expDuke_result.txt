@@ -10,6 +10,7 @@ expDuke_20210101A_ThicknessSubnet_iibi007           3.7638235092163086      2.41
 expDuke_20210101B_ThicknessSubnet_iibi007           3.8175220489501953      2.0736165046691895  3.2453,      4.3898       32 filters, 8 layers, add XY coordinate input, with cumulativeRLoss
 expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121246814727783      2.4195966720581055  3.0530,      4.1713       18GB, exact YufanHe network(XY channel+layerSeg+64 filter for all layers)+1D [H,1]conv
 expDuke_20210107B_Thickness_1D_iibi007              still in training,                                                    35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
+expDuke_20210115A_Thickness_iibi007                 training, use YufanHe's network to get N surface, and then get (N-1) thickness.
 =================================================================================================================================================================================================================
 
 Analysis:
@@ -29,7 +30,13 @@ Analysis:
    2 use N surfaces and layer segmentation ground truth;
    3 from N surface to deduce (N-1) thickness, and use smoothThickness loss like in 20121209A experiment;
    4 Layer segemntation is helpful to detect thickness;
-   This network
+   The core idea of this network used YufanHe(JHU method) to get N surfaces and the deduce (N-1) thickness.
+   Difference between YufanHe network and our surfaceNet:
+   1  input channels difference: YufanHe has 3 channel, Our 8 channel;
+   2  Network arichiture different:layer number 5 vs 7, filter 64x5 vs {24,48,96,192, ...]
+   3  Loss function are different:
+
+
 
 
 

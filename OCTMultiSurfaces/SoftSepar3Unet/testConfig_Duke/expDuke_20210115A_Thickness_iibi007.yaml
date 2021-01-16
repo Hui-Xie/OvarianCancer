@@ -1,4 +1,4 @@
-# Use YufanHe network to deduce N-1 thickness
+# Use YufanHe network to deduce N-1 thickness from N surface.
 
 debug: False # debug mark
 dataIn1Parcel: False
@@ -87,7 +87,7 @@ useLayerDice: True
 useReferSurfaceFromLayer: False
 useLayerCE: True
 useCEReplaceKLDiv: False
-useSmoothSurfaceLoss: False
+useSmoothSurfaceLoss: True
 useSmoothThicknessLoss: True
 useGaussianDivLoss:  False
 useBetterRiftGaussian: False
