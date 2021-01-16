@@ -9,6 +9,7 @@ import fnmatch
 import numpy as np
 sys.path.append("../..")
 from framework.ConfigReader import ConfigReader
+from framework.measure import search_Threshold_Acc_TPR_TNR_Sum_WithProb
 sys.path.append("..")
 from dataPrepare.OCT2SysD_Tools import readBESClinicalCsv
 
@@ -184,7 +185,9 @@ def main():
     print(clf.summary())
     predict = clf.predict(x)
     score = np.mean((predict >= 0.5).astype(np.int) == y)
-    print(f"thickness only: accuracy:{score}")
+    print(f"thickness only: accuracy with cutoff 0.5:{score}")
+    threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
+    print(threhold_ACC_TPR_TNR_Sum)
     print("Where:")
     n = 1
     for i in range(hps.inputChannels):
@@ -227,7 +230,9 @@ def main():
     print(clf.summary())
     predict = clf.predict(x)
     score = np.mean((predict >= 0.5).astype(np.int) == y)
-    print(f"9x9 sector thickness+7clinicalFeatures: accuracy:{score}")
+    print(f"9x9 sector thickness+7clinicalFeatures: accuracy  with cutoff 0.5:{score}")
+    threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
+    print(threhold_ACC_TPR_TNR_Sum)
     print("Where:")
     nSectors = hps.inputChannels *hps.imageH *hps.imageW
     n = 1

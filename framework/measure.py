@@ -199,6 +199,55 @@ def search_Threshold_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits):
     return {"threshold": tdList[maxIndex], "ACC": ACCList[maxIndex], "TPR": TPRList[maxIndex], "TNR": TNRList[maxIndex],
             "Sum": SumList[maxIndex]}
 
+def search_Threshold_Acc_TPR_TNR_Sum_WithProb(gt,predictProbs):
+    '''
+    numpy version
+    :param gt: 1D of {0,1}
+    :param predictProbs: in numpy of  1D
+    :return: (Threhold, ACC, TPR, TNR, Sum) at max(Acc+TPR+TNR).
+    '''
+
+    epsilon = 1e-8
+    assert gt.shape == predictProbs.shape
+
+    gt = gt.astype(np.int)
+    nTotal = predictProbs.size
+
+    tdList = np.arange(0.001, 0.999, 0.002) # td: threshold
+    N = len(tdList)
+    ACCList = [0] * N
+    TPRList = [0] * N
+    TNRList = [0] * N
+    SumList = [0] * N
+    for i, td in enumerate(tdList):  # td: threshold
+        TP = 0
+        FP = 0
+        FN = 0
+        TN = 0
+        nIgnore = 0
+
+        for n in range(nTotal):
+            if predictProbs[n] < td:
+                if gt[n] == 0:
+                    TN += 1
+                else:
+                    FN += 1
+            else:
+                if gt[n] == 0:
+                    FP += 1
+                else:
+                    TP += 1
+
+        assert nTotal == TP + TN + FP + FN + nIgnore
+        ACCList[i] = (TP + TN) * 1.0 / (TP + TN + FP + FN)
+        TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+        TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+        SumList[i] = ACCList[i] + TPRList[i] + TNRList[i]
+
+    maxIndex = np.argmax(SumList)
+    return {"threshold": tdList[maxIndex], "ACC": ACCList[maxIndex], "TPR": TPRList[maxIndex], "TNR": TNRList[maxIndex],
+            "Sum": SumList[maxIndex]}
+
 
 def compute_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits, threshold):
     '''
