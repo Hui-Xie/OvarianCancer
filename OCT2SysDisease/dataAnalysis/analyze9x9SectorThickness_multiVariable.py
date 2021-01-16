@@ -187,6 +187,7 @@ def main():
     score = np.mean((predict >= 0.5).astype(np.int) == y)
     print(f"thickness only: accuracy with cutoff 0.5:{score}")
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
+    print("With a different cut off:")
     print(threhold_ACC_TPR_TNR_Sum)
     print("Where:")
     n = 1
@@ -232,6 +233,7 @@ def main():
     score = np.mean((predict >= 0.5).astype(np.int) == y)
     print(f"9x9 sector thickness+7clinicalFeatures: accuracy  with cutoff 0.5:{score}")
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
+    print("With a different cut off:")
     print(threhold_ACC_TPR_TNR_Sum)
     print("Where:")
     nSectors = hps.inputChannels *hps.imageH *hps.imageW
