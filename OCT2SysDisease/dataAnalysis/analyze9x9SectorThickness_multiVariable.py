@@ -197,7 +197,7 @@ def main():
     n = 1
     for i in range(hps.inputChannels):
         for j in range(hps.imageH):
-            if clf.pvalues[n-1] <= 0.5:
+            if clf.pvalues[n-1] <= 0.05:
                 print(f"x{n}=sector[{i},{j}], z={clf.tvalues[n-1]}, pvalue={clf.pvalues[n-1]}")
             n += 1
 
@@ -245,11 +245,11 @@ def main():
     n = 1
     for i in range(hps.inputChannels):
         for j in range(hps.imageH):
-            if clf.pvalues[n - 1] <= 0.5:
+            if clf.pvalues[n - 1] <= 0.05:
                 print(f"x{n}=sector[{i},{j}], z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
             n += 1
     for i in range(nSectors, nSectors+nClinicalFtr):
-        if clf.pvalues[n - 1] <= 0.5:
+        if clf.pvalues[n - 1] <= 0.05:
             print(f"x{n}={appKeys[i-nSectors]}, z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
         n += 1
 
