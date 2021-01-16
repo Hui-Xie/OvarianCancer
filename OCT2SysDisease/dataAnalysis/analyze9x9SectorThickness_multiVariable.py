@@ -20,7 +20,7 @@ import datetime
 # from scipy.stats import norm
 import statsmodels.api as sm
 
-output2File = False
+output2File = True
 
 def printUsage(argv):
     print("============ Anaylze OCT 9x9 sector Thickness plus risk factor with respect to hypertension =============")
