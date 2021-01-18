@@ -180,7 +180,7 @@ def main():
         [validationVolumes, validationLabels, "validationData"],
         [testVolumes, testLabels, "testData"],
     ]
-    print(f"Empty value in {appKeys}")
+    print(f"Deleted empty values in {appKeys}")
     print("dataName,\t#Original,\t#Remaining")
     for volume, label, dataName in volume_label_name_list:
         clinicalFtr = label[:,appKeyColIndex]
