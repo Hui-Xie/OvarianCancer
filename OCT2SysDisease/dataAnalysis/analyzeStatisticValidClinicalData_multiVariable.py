@@ -181,14 +181,15 @@ def main():
         [testVolumes, testLabels, "testData"],
     ]
     print(f"Empty value in {appKeys}")
-    print("dataName,\t#Original,\t#Empty,\t#Remaining")
+    print("dataName,\t#Original,\t#Remaining")
     for volume, label, dataName in volume_label_name_list:
         clinicalFtr = label[:,appKeyColIndex]
         # delete the empty value of "-100"
         emptyRows = np.nonzero(clinicalFtr == -100)
         extraEmptyRows = np.nonzero(clinicalFtr == 99)
         emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-        print(f"{dataName},\t{len(clinicalFtr)},\t{len(emptyRows[0])},\t{len(clinicalFtr)-len(emptyRows[0])}")
+        remainingClinicalFtr = np.delete(clinicalFtr, emptyRows, 0)
+        print(f"{dataName},\t{len(clinicalFtr)},\t{len(remainingClinicalFtr)}")
 
 
 
