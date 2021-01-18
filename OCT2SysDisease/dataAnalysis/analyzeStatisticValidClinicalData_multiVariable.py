@@ -188,7 +188,7 @@ def main():
         emptyRows = np.nonzero(clinicalFtr == -100)
         extraEmptyRows = np.nonzero(clinicalFtr == 99)
         emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-        print(f"{dataName},\t{len(clinicalFtr)},\t{len(emptyRows)},\t{len(clinicalFtr)-len(emptyRows)}")
+        print(f"{dataName},\t{len(clinicalFtr)},\t{len(emptyRows[0])},\t{len(clinicalFtr)-len(emptyRows[0])}")
 
 
 
