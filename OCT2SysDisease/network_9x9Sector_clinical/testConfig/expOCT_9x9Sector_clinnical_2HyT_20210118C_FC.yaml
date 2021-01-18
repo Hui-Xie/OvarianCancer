@@ -1,0 +1,73 @@
+
+debug: True
+debugOutputPeriod: 50
+
+# train config
+device: torch.device('cuda:1')   #GPU ID
+batchSize: 139 # for 3171 training volumes, and 934 validation volumes 3171%139=113, 934%139=100
+learningRate: 1.0e-2  #
+lrPatience: 6   # learning rate decay patience
+lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
+lrSchedulerMode: "min"  # "min" for loss, "max" for sum of Acc+TNR+TPR
+weightDecay: 1.0e-5
+useFixedLearningRate: False
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9"
+
+# _delNonExist: delete ID nonexist, and repeated ID;
+# _final: delete the ID whose slice number does not equal to 31.
+# _delErrWID: delete W=384 image ID
+# _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv"
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+# ODOS: "OD"  # right(OD) or left(OS) eye
+
+# this file is placed in netPath directory.
+trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
+
+# Network config
+network: "Thickness9x9_FCNet"
+imageH: 9
+imageW: 1
+volumeSuffix: "_thickness9sector_9x9.npy"
+nLayers: 3
+# numConvEachLayer: 3
+# bothEyes: False  # choose all OD eyes
+inputChannels: 9 #
+gradChannels: 0   # the added gradient channels beside raw image channel
+numClinicalFtr: 7
+inputWidth: 88
+fcWidths: [40, 20,1] # num of neural in each FC layer # 89*41+41*20+21*1 = 4490 parameters
+# dropoutRate: 0.0  # the dropout rate at final fully connected layer.
+appKey: "hypertension_bp_plus_history$"
+appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$']
+
+#dropoutRate: 0.2 # dropout after global average pooling
+
+class01Percent:  [0.4565578306585501, 0.54344216934145]  # for trainID_delNonExist_delErrWID_excludeMGM.csv
+# class01Percent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
+#class01Percent: [0.36, 0.64] # for 200 small training set
+
+trainAugmentation: False
+validationAugmentation: False
+useAddSamplesAugment: False  # when true, do not use other data augmentation.
+addSamplesProb: 0.6  #  data augmentation rate
+augmentProb: 0.5  # normal augment prob
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
+# for salt pepper noise
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+flipAugmentation: True
+
+
+# save network
+netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
+threshold: 0.491
