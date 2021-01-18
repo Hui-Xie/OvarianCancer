@@ -87,7 +87,7 @@ def main():
     if hps.useFixedLearningRate:
         lrScheduler = None
     else:
-        lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=hps.lrSchedulerMode, factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-7, threshold=0.015, threshold_mode='rel')
+        lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode=hps.lrSchedulerMode, factor=hps.lrDecayFactor, patience=hps.lrPatience, min_lr=1e-8, threshold=0.015, threshold_mode='rel')
         net.setLrScheduler(lrScheduler)
 
     # Load network

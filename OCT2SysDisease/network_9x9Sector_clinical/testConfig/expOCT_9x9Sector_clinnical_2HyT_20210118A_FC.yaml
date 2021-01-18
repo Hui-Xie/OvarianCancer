@@ -31,18 +31,21 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
 
 # Network config
-network: "Thickness5th2HyTension_ResNet"
+network: "Thickness9x9_FCNet"
 imageH: 9
 imageW: 1
-volumeSuffix: "_Volume_thickness_enface.npy"
-nLayers: 3 # H changes: 15->7->3, W change: 12->6->3
-numConvEachLayer: 3
+volumeSuffix: "_thickness9sector_9x9.npy"
+nLayers: 7
+# numConvEachLayer: 3
 # bothEyes: False  # choose all OD eyes
-inputChannels: 9 # just 5th thickness
+inputChannels: 9 #
 gradChannels: 0   # the added gradient channels beside raw image channel
-channels:     [120,100,80,60,40, 20,1] # num of neural in each layer
+numClinicalFtr: 7
+inputWidth: 88
+fcWidths: [120,100,80,60,40, 20,1] # num of neural in each FC layer
 # dropoutRate: 0.0  # the dropout rate at final fully connected layer.
 appKey: "hypertension_bp_plus_history$"
+appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$']
 
 #dropoutRate: 0.2 # dropout after global average pooling
 
@@ -50,7 +53,7 @@ class01Percent:  [0.4565578306585501, 0.54344216934145]  # for trainID_delNonExi
 # class01Percent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
 #class01Percent: [0.36, 0.64] # for 200 small training set
 
-trainAugmentation: True
+trainAugmentation: False
 validationAugmentation: False
 useAddSamplesAugment: False  # when true, do not use other data augmentation.
 addSamplesProb: 0.6  #  data augmentation rate

@@ -91,20 +91,59 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_NVolumes = len(self.m_volumePaths)
         assert (self.m_NVolumes == len(self.m_IDsCorrespondVolumes))
 
-        #load mask
-        self.m_mask = torch.from_numpy(np.load(hps.maskPath))[hps.maskChannel, ].unsqueeze(dim=0)
-        self.m_mask = self.m_mask.to(device=hps.device, dtype=torch.int)  # 1xHxW
-
-        # load all volumes into memory.
-        self.m_volumes = torch.empty((self.m_NVolumes, hps.inputChannels, hps.imageH, hps.imageW), device=hps.device,
-                                     dtype=torch.float)
+        # load all volumes into memory
+        assert hps.imageW == 1
+        self.m_volumes = np.empty((self.m_NVolumes, hps.inputChannels, hps.imageH), dtype=np.float)  # size:NxCxH for 9x9 sector array
         for i, volumePath in enumerate(self.m_volumePaths):
-            oneVolume = torch.from_numpy(np.load(volumePath)).to(device=hps.device, dtype=torch.float32)
-            oneVolume = oneVolume*self.m_mask  # use mask to filter the input.
-            self.m_volumes[i,] = oneVolume
+            oneVolume = np.load(volumePath).astype(np.float)
+            self.m_volumes[i, :] = oneVolume
+        self.m_volumes = self.m_volumes.reshape(-1, hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
 
-        # use mask to mark the undesired elements as 0, so we do not do normalization.
+        # read clinical features
+        fullLabels = readBESClinicalCsv(hps.GTPath)
 
+        labelTable = np.empty((self.m_NVolumes, 13), dtype=np.float)  # size: Nx13
+        # table head: patientID,                                          (0)
+        #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$'   (1:11)
+        # columnIndex:         1                           2        3       4          5             6          7             8              9                10
+        #              BMI, WaistHipRate,       (11,13)
+        # columnIndex:  11    12
+        for i in range(self.m_NVolumes):
+            id = int(self.m_IDsCorrespondVolumes[i])
+            labelTable[i, 0] = id
+
+            # appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$']
+            for j, key in enumerate(hps.appKeys):
+                oneLabel = fullLabels[id][key]
+                if "gender" == key:
+                    oneLabel = oneLabel - 1
+                labelTable[i, 1 + j] = oneLabel
+
+            # compute BMI and WHipRate
+            labelTable[i, 11] = labelTable[i, 7] / ((labelTable[i, 6] / 100.0) ** 2)  # weight is in kg, height is in cm.
+            labelTable[i, 12] = labelTable[i, 8] / labelTable[i, 9]  # both are in cm.
+
+
+        # concatenate 9x9 sector with 7 clinical features, and delete empty-feature patients
+        appKeyColIndex = (2, 3, 4, 5, 10, 11, 12,)
+        nClinicalFtr = len(appKeyColIndex)
+        assert nClinicalFtr == hps.numClinicalFtr
+
+        clinicalFtr = labelTable[:, appKeyColIndex]
+        # delete the empty value of "-100"
+        emptyRows = np.nonzero(clinicalFtr == -100)
+        extraEmptyRows = np.nonzero(clinicalFtr == 99)
+        emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+        # concatenate sector thickness with multi variables:
+        self.m_volumes = np.concatenate((self.m_volumes, clinicalFtr), axis=1)  # size: Nx(81+7)
+
+        self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
+        self.m_targetLabels = np.delete(labelTable, emptyRows, 0)[:,1] # for hypertension
+        self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index not in emptyRows]
+        self.m_IDsCorrespondVolumes = [id for index, id in enumerate(self.m_IDsCorrespondVolumes) if index not in emptyRows]
+
+        self.m_NVolumes = len(self.m_volumes)
+        assert hps.inputWidth == self.m_volumes.shape[1]
 
 
     def __len__(self):
@@ -156,22 +195,12 @@ class OCT2SysD_DataSet(data.Dataset):
 
         label = None
         if self.hps.existGTLabel:
-            ID = self.m_IDsCorrespondVolumes[index]
-            label = self.m_labels[int(ID)][self.hps.appKey]
-            if "gender" == self.hps.appKey:
-                label = label - 1
+            label = self.m_targetLabels[index]
 
         data = self.m_volumes[index,].clone()  # clone is safer to avoid source data corrupted
-        C, H, W = data.shape
-        if (H != self.hps.imageH) or (W != self.hps.imageW) or (C != self.hps.inputChannels):
-            print(f"Error: {volumePath} has incorrect size C= {C}, H={H} and W={W}, ")
-            assert False
 
-        # transform for data augmentation
-        if self.m_transform:
-            if self.hps.useAddSamplesAugment and random.uniform(0, 1) < self.hps.addSamplesProb:
-                data, label, volumePath = self.addSamplesAugmentation(data, label)
-            data = self.m_transform(data)  # size: CxHxW
+        # No transform for data augmentation
+
 
         # cancel normalization again, modified at Dec 30th, 2020
         # as input volumes has been normlizated.
