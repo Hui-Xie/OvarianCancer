@@ -139,6 +139,12 @@ class OCT2SysD_DataSet(data.Dataset):
 
         self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
         self.m_targetLabels = np.delete(labelTable, emptyRows, 0)[:,1] # for hypertension
+
+        # convert to torch tensor
+        self.m_volumes = torch.from_numpy(self.m_volumes).to(device=hps.device, dtype=torch.float32)
+        self.m_targetLabels = torch.from_numpy(self.m_targetLabels).to(device=hps.device, dtype=torch.float32)
+
+        emptyRows = tuple(emptyRows[0])
         self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index not in emptyRows]
         self.m_IDsCorrespondVolumes = [id for index, id in enumerate(self.m_IDsCorrespondVolumes) if index not in emptyRows]
 

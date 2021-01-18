@@ -14,7 +14,7 @@ class Thickness9x9_FCNet(BasicModel):
         self.posWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
 
         # construct FC network
-        self.m_linearLayerList == nn.ModuleList()
+        self.m_linearLayerList = nn.ModuleList()
 
         widthInput = hps.inputWidth
         nLayer = len(hps.fcWidths)
@@ -36,7 +36,7 @@ class Thickness9x9_FCNet(BasicModel):
 
     def forward(self,x,t):
         # FC layers with batchnorm1d
-        for layer in range(self.m_linearLayerList):
+        for layer in self.m_linearLayerList:
             x = layer(x)
 
         x = x.squeeze(dim=-1)  # B
