@@ -20,6 +20,13 @@ Meeting with professor on Jan 19th, 2021:
 2  add radimics and texture into input;
 3  backward activatin map analysis;
 
+ high blood pressure (HBP or hypertension):
+
+ High blood cholestrol and HBP: https://www.healthline.com/health/high-cholesterol/treating-with-statins/hypertension#1
+ Triglycerides with hypertension:
+ https://www.mayoclinic.org/diseases-conditions/high-blood-cholesterol/in-depth/triglycerides/art-20048186#:~:text=Borderline%20high%20%E2%80%94%20150%20to%20199,5.7%20mmol%2FL%20or%20above)
+
+
 
 
 # Jan 18th, Monday, 2021:
