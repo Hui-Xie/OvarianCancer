@@ -1,3 +1,26 @@
+# Jan 19th, Tuesday, 2021
+High cholesterol can lead to the build-up of plaque on the walls of your blood vessels,
+which can block your arteries and cause high blood pressure, a stroke, heart disease, or a heart attack.
+
+Task: add cholesterol as a risk factor;
+
+expOCT_9x9Sector_clinnical_2HyT_20210118A_FC:  fcWidths: [120,100,80,60,40, 20,1] , explicit overfitting.
+
+expOCT_9x9Sector_clinnical_2HyT_20210118B_FC:  fcWidths: [60,40, 20,1], 89*60+ 61*40+41*20+21*1 = 8621 parameters
+                                               slightly overfitting.
+
+expOCT_9x9Sector_clinnical_2HyT_20210118C_FC:  fcWidths: [40, 20,1] # num of neural in each FC layer # 89*40+41*20+21*1 = 4401 parameters
+                                               Good.
+
+expOCT_9x9Sector_clinnical_2HyT_20210118D_FC:  fcWidths: [20, 10,1] # num of neural in each FC layer # 89*20+21*10+11*1 = 2001 parameters
+                                               a little weak.
+
+Meeting with professor on Jan 19th, 2021:
+1  add blood lipid etc network;
+2  add radimics and texture into input;
+3  backward activatin map analysis;
+
+
 
 # Jan 18th, Monday, 2021:
 Deep learning model contains logistic regression model, so in theory, a neural network can do no worse than logistic regression.
@@ -6,17 +29,15 @@ because neural networks are more difficult to train and are more prone to overfi
 
 A deep learning model for hypertension with 9x9 sectors + 7 clinical features:
 1 input: 9x9 thickness sectors + 7 clinical features;
-2 FC layers: 88->120->100->80->60->40 ->20->1, with batch normalization and ReLU at each layer, except at the final layer.
-  Here a rough parameter scale: 89*120+121*100+101*80+81*60+61*40+41*20+21*1 =39001  vs 3171 observations in training sample. log(3171,2) = 11.6
-  39001/3171 = 12.3
+2 FC layers: with batch normalization and ReLU at each layer, except at the final layer.
+  Total observations in training data: 3171;
+  88 -> 40->20-> 1: 89*40+41*20+21*1 = 4401 parameters
   observation/inputspace = 3171/88 = 36.0 > 30, good.
   Hui's estimation in deep learning:(here observation is the number of training samples)
   A observation/inputSpace > 10 or 30;
-  B parameters/observation = log(observation, 2)+1  with considering data augmentation;
-    12.3 = 11.6+1 = 12.6
-    +1 means it need a binary bit to remember labels.
+  B parameters/observation = 1~2  with considering data augmentation;
+    4401/3171 = 1.39, good.
 
-4  Experiment: expOCT_9x9SectorsThicknessStatistica_20210118_9x31x25
 
 ====Statistics patient number with non-empty clinical data ==========
 Deleted empty values in ['gender', 'Age', 'IOP', 'AxialLength', 'SmokePackYears', 'BMI', 'WaistHipRate']
