@@ -10,7 +10,7 @@ expOCT_9x9Sector_clinnical_2HyT_20210118B_FC:  fcWidths: [60,40, 20,1], 89*60+ 6
                                                slightly overfitting.
 
 expOCT_9x9Sector_clinnical_2HyT_20210118C_FC:  fcWidths: [40, 20,1] # num of neural in each FC layer # 89*40+41*20+21*1 = 4401 parameters
-                                               Good.
+                                               Good. ACC: 67.6% and Sum: 2.009; TPR 76%. TNR 57%, threshold: 0.4664
 
 expOCT_9x9Sector_clinnical_2HyT_20210118D_FC:  fcWidths: [20, 10,1] # num of neural in each FC layer # 89*20+21*10+11*1 = 2001 parameters
                                                a little weak.
