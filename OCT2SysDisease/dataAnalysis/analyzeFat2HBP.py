@@ -193,7 +193,7 @@ def main():
     print("\n=================================================================")
     print("Logistic Regression between a clinical variable and hypertension:")
     variableKeys= ["gender", "Age", 'IOP', 'AxialLength', 'SmokePackYears', 'Pulse', 'Drink_quantity', 'Glucose', 'CRPL',
-              'Cholesterol', 'HDL', 'LDL', 'Triglyceride', "BMI",   "WaistHipRate",  "LDL/HDL"]
+              'Cholesterol', 'HDL', 'LDL', 'Triglyceride', "BMI",   "WaistHipRate",  "LDLoverHDL"]
     variableIndex = (2,3,4,5,10,11,12,13,14,15,16,17,18,19,20,21,)
     assert len(variableKeys) == len(variableIndex)
 
@@ -239,7 +239,7 @@ def main():
 
     print("\n\n====Multivariable Logistic regression between clinical risk factors and hypertension ==========")
     variableKeys = ["gender", "Age", 'IOP', 'AxialLength', 'SmokePackYears', 'Pulse', 'Drink_quantity', 'Glucose',
-                    'CRPL', 'Cholesterol', 'Triglyceride', "BMI", "WaistHipRate", "LDL/HDL"]
+                    'CRPL', 'Cholesterol', 'Triglyceride', "BMI", "WaistHipRate", "LDLoverHDL"]
     variableIndex = (2, 3, 4, 5, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21,)  # exclude HDL and LDL
     assert len(variableKeys) == len(variableIndex)
     nClinicalFtr = len(variableIndex)
