@@ -16,7 +16,7 @@ expDuke_20210115A_Thickness_iibi007                 training, 19GB, use YufanHe'
 Analysis:
 1  expDuke_20210107B_Thickness_1D_iibi007: 13days 14hours for 496 epochs: (13*24*60+14*60)/496 = 39.4 min/epoch;  35GB GPU memory;
    directly predicting (N-1) thickness always get a not good result.
-    
+
 2  expDuke_20210115A_Thickness_iibi007: 4 days 11 hours for 167 epcohs: (4*24*60+11*60)/167 = 38.4 min/epoch;  19GB GPU memory.
 
 

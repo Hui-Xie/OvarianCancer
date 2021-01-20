@@ -1,3 +1,8 @@
+# Jan 20th, Wednesday, 2021:
+1  As some patients miss some biochemical index(cholesterol) data, introducing the biochemical index will reduce the number of available data;
+2  
+
+
 # Jan 19th, Tuesday, 2021
 High cholesterol can lead to the build-up of plaque on the walls of your blood vessels,
 which can block your arteries and cause high blood pressure, a stroke, heart disease, or a heart attack.
