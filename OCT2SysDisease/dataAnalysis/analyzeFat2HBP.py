@@ -138,9 +138,20 @@ def retrieveImageData_label(mode, hps):
             labelTable[i, 1+j] = oneLabel
 
         # compute BMI, WaistHipRate, LDL/HDL
-        labelTable[i, 19] = labelTable[i,7]/ ((labelTable[i,6]/100.0)**2)  # weight is in kg, height is in cm.
-        labelTable[i, 20] = labelTable[i,8]/ labelTable[i,9]  # both are in cm.
-        labelTable[i, 21] = labelTable[i, 17] / labelTable[i, 16]  # LDL/HDL, bigger means more risk to hypertension.
+        if labelTable[i,7]==-100 or labelTable[i,6] ==-100:
+            labelTable[i, 19] = -100 # emtpty value
+        else:
+            labelTable[i, 19] = labelTable[i,7]/ ((labelTable[i,6]/100.0)**2)  # weight is in kg, height is in cm.
+
+        if labelTable[i, 8] == -100 or labelTable[i, 9] == -100:
+            labelTable[i, 20] = -100
+        else:
+            labelTable[i, 20] = labelTable[i,8]/ labelTable[i,9]  # both are in cm.
+
+        if labelTable[i, 17] == -100 or labelTable[i, 16] == -100:
+            labelTable[i, 21] = -100
+        else:
+            labelTable[i, 21] = labelTable[i, 17] / labelTable[i, 16]  # LDL/HDL, bigger means more risk to hypertension.
 
     return volumes, labelTable
 
@@ -179,56 +190,64 @@ def main():
     labels = np.concatenate((trainLabels, validationLabels, testLabels), axis=0)
 
     #== Logistic regression from Uni-variable to hypertension==============
+    print("\n=================================================================")
+    print("Logistic Regression between a clinical variable and hypertension:")
+    variableKeys= ["gender", "Age", 'IOP', 'AxialLength', 'SmokePackYears', 'Pulse', 'Drink_quantity', 'Glucose', 'CRPL',
+              'Cholesterol', 'HDL', 'LDL', 'Triglyceride', "BMI",   "WaistHipRate",  "LDL/HDL"]
+    variableIndex = (2,3,4,5,10,11,12,13,14,15,16,17,18,19,20,21,)
+    assert len(variableKeys) == len(variableIndex)
 
+    for (keyIndex, colIndex) in enumerate(variableIndex):
+        figureName = f"Hypertension_{variableKeys[keyIndex]}_logit"
+        fig = plt.figure()
 
+        y = labels[:, 1]  # hypertension
+        x = labels[:, colIndex]
 
-    # use thickness only to predict
-    print("\n====== Use thickness only to predict hypertension =============")
-    x = volumes
-    y = labels[:, 1]  # hypertension
-    print(f"Input only thickness, it has {len(y)} patients.")
+        # delete the empty value of "-100"
+        emptyRows = np.nonzero((x < 0) or (x==-100))  # delete empty values, e.g -100
+        if variableKeys[keyIndex] == "IOP":
+            extraEmptyRows = np.nonzero(x == 99)
+            emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+        x = np.delete(x, emptyRows, 0)
+        y = np.delete(y, emptyRows, 0)
 
-    clf = sm.Logit(y, x).fit()
-    print(clf.summary())
-    predict = clf.predict(x)
-    score = np.mean((predict >= 0.5).astype(np.int) == y)
-    print(f"thickness only: accuracy with cutoff 0.5:{score}")
-    threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
-    print("With a different cut off:")
-    print(threhold_ACC_TPR_TNR_Sum)
-    print("Where:")
-    n = 1
-    for i in range(hps.inputChannels):
-        for j in range(hps.imageH):
-            print(f"x{n}=sector[{i},{j}]", end="; ")
-            n += 1
-        print("")
-    print("=========================")
-    print("list of x whose pvalues <=0.05")
-    n = 1
-    for i in range(hps.inputChannels):
-        for j in range(hps.imageH):
-            if clf.pvalues[n-1] <= 0.05:
-                print(f"x{n}=sector[{i},{j}], z={clf.tvalues[n-1]}, pvalue={clf.pvalues[n-1]}")
-            n += 1
+        plt.scatter(x, y, label='original data')
 
+        # for single feature
+        x = x.reshape(-1, 1)
 
+        clf = sm.Logit(y, x).fit()
+        print(f"===============Logistic regression between hypertension and {variableKeys[keyIndex]}===============")
+        print(clf.summary())
+        predict = clf.predict(x)
+        accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
 
+        xtest = np.arange(x.min() * 0.95, x.max() * 1.05, (x.max() * 1.05 - x.min() * 0.95) / 100).reshape(-1, 1)
+        plt.plot(xtest.ravel(), clf.predict(xtest).ravel(), 'r-', label='fitted line')
+        textLocx = (x.max() * 1.05 - x.min() * 0.95)/2.2 + x.min()
+        textLocy = 0.5
+        plt.text(textLocx, textLocy, f"{accuracy:.1%}", fontsize=12)
+        plt.xlabel(variableKeys[keyIndex])
+        plt.ylabel(f"Hypertension")
+        plt.legend()
+        print(f"Accuracy of using {variableKeys[keyIndex]} to predict hypertension with cutoff 0.5: {accuracy}")
 
-    print("\n====Use 9x9 sector thickness and clinical features to predict Hypertension ==========")
-    appKeys = ["gender", "Age",'IOP', 'AxialLength','SmokePackYears', "BMI", "WaistHipRate",]
-    appKeyColIndex = (2,3,4,5,10,11,12,)
-    nClinicalFtr = len(appKeyColIndex)
+        outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
+        plt.savefig(outputFilePath)
+        plt.close()
 
-    clinicalFtr = labels[:,appKeyColIndex]
+    print("\n====Multivariable Logistic regression between clinical risk factors and hypertension ==========")
+    nClinicalFtr = len(variableIndex)
+
+    clinicalFtrs = labels[:,variableIndex]
+
     # delete the empty value of "-100"
-    emptyRows = np.nonzero(clinicalFtr == -100)
-    extraEmptyRows = np.nonzero(clinicalFtr == 99)
+    emptyRows = np.nonzero(clinicalFtrs == -100 or clinicalFtrs<0)
+    extraEmptyRows = np.nonzero(clinicalFtrs[:,2] == 99)  # IOP value
     emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-    # concatenate sector thickness with multi variables:
-    thickness_features = np.concatenate((volumes, clinicalFtr), axis=1) # size: Nx(81+7)
 
-    x = thickness_features
+    x = clinicalFtrs
     y = labels[:, 1]  # hypertension
     x = np.delete(x, emptyRows, 0)
     y = np.delete(y, emptyRows, 0)
@@ -237,8 +256,8 @@ def main():
     clf = sm.Logit(y, x).fit()
     print(clf.summary())
     predict = clf.predict(x)
-    score = np.mean((predict >= 0.5).astype(np.int) == y)
-    print(f"9x9 sector thickness+7clinicalFeatures: accuracy  with cutoff 0.5:{score}")
+    accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
+    print(f"Accuracy of using {variableKeys} \n to predict hypertension with cutoff 0.5: {accuracy}")
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
     print("With a different cut off:")
     print(threhold_ACC_TPR_TNR_Sum)
@@ -272,7 +291,7 @@ def main():
         logOutput.close()
         sys.stdout = original_stdout
 
-    print(f"================ End of analyzing 9x9 sector thickness  ===============")
+    print(f"================ End of logistic regression between clinical data and hypertension   ===============")
 
 if __name__ == "__main__":
     main()
