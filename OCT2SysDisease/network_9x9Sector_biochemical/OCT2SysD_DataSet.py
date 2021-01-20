@@ -141,11 +141,12 @@ class OCT2SysD_DataSet(data.Dataset):
 
         # concatenate 9x9 sector with 9 clinical features, and delete empty-feature patients
         # 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
-        appKeyColIndex = hps.appKeyColIndex
-        nClinicalFtr = len(appKeyColIndex)
+        self.m_inputClinicalFeatures = hps.inputClinicalFeatures
+        featureColIndex = hps.featureColIndex
+        nClinicalFtr = len(featureColIndex)
         assert nClinicalFtr == hps.numClinicalFtr
 
-        clinicalFtrs = labelTable[:, appKeyColIndex]
+        clinicalFtrs = labelTable[:, featureColIndex]
         # delete the empty value of "-100"
         emptyRows = np.nonzero(clinicalFtrs == -100)
         extraEmptyRows = np.nonzero(clinicalFtrs[:,1] == 99)  #missing IOP value
@@ -167,6 +168,9 @@ class OCT2SysD_DataSet(data.Dataset):
         # update the number of volumes.
         self.m_NVolumes = len(self.m_volumes)
         assert hps.inputWidth == self.m_volumes.shape[1]
+
+        with open(hps.logMemoPath, "a") as file:
+            file.write(f"{mode} data set: NVolumes={self.m_NVolumes}\n")
 
 
     def __len__(self):
