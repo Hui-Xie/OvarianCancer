@@ -14,6 +14,9 @@ x14=LDLoverHDL, z=-2.3358503378650624, pvalue=0.019499043033275744
 
 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
 
+after use 9 clinical features:
+training data set: NVolumes=2473
+validation data set: NVolumes=700
 
 
 
