@@ -248,7 +248,7 @@ def main():
         n += 1
     print("")
     print("=========================")
-    print("list of x whose pvalues <=0.05")
+    print("list of x whose pvalue <=0.05")
     n = 1
     for i in range(hps.inputChannels):
         for j in range(hps.imageH):

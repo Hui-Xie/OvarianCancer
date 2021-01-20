@@ -218,7 +218,7 @@ def main():
         x = x.reshape(-1, 1)
 
         clf = sm.Logit(y, x).fit()
-        print(f"===============Logistic regression between hypertension and {variableKeys[keyIndex]}===============")
+        print(f"\n===============Logistic regression between hypertension and {variableKeys[keyIndex]}===============")
         print(clf.summary())
         predict = clf.predict(x)
         accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
@@ -237,7 +237,11 @@ def main():
         plt.savefig(outputFilePath)
         plt.close()
 
-    print("\n====Multivariable Logistic regression between clinical risk factors and hypertension ==========")
+    print("\n\n====Multivariable Logistic regression between clinical risk factors and hypertension ==========")
+    variableKeys = ["gender", "Age", 'IOP', 'AxialLength', 'SmokePackYears', 'Pulse', 'Drink_quantity', 'Glucose',
+                    'CRPL', 'Cholesterol', 'Triglyceride', "BMI", "WaistHipRate", "LDL/HDL"]
+    variableIndex = (2, 3, 4, 5, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21,)  # exclude HDL and LDL
+    assert len(variableKeys) == len(variableIndex)
     nClinicalFtr = len(variableIndex)
 
     clinicalFtrs = labels[:,variableIndex]
@@ -262,28 +266,17 @@ def main():
     print("With a different cut off:")
     print(threhold_ACC_TPR_TNR_Sum)
     print("Where:")
-    nSectors = hps.inputChannels *hps.imageH *hps.imageW
-    n = 1
-    for i in range(hps.inputChannels):
-        for j in range(hps.imageH):
-            print(f"x{n}=sector[{i},{j}]", end="; ")
-            n += 1
-        print("")
-    for i in range(nSectors, nSectors+nClinicalFtr):
-        print(f"x{n}={appKeys[i-nSectors]}", end="; ")
+    n=1
+    for i in range(nClinicalFtr):
+        print(f"x{n}={variableKeys[i]}", end="; ")
         n += 1
     print("")
     print("=========================")
-    print("list of x whose pvalues <=0.05")
+    print("list of x whose pvalue <=0.05")
     n = 1
-    for i in range(hps.inputChannels):
-        for j in range(hps.imageH):
-            if clf.pvalues[n - 1] <= 0.05:
-                print(f"x{n}=sector[{i},{j}], z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
-            n += 1
-    for i in range(nSectors, nSectors+nClinicalFtr):
+    for i in range(0, nClinicalFtr):
         if clf.pvalues[n - 1] <= 0.05:
-            print(f"x{n}={appKeys[i-nSectors]}, z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
+            print(f"x{n}={variableKeys[i]}, z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
         n += 1
 
 
