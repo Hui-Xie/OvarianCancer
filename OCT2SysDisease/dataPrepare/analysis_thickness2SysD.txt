@@ -26,6 +26,384 @@ Meeting with professor on Jan 19th, 2021:
  Triglycerides with hypertension:
  https://www.mayoclinic.org/diseases-conditions/high-blood-cholesterol/in-depth/triglycerides/art-20048186#:~:text=Borderline%20high%20%E2%80%94%20150%20to%20199,5.7%20mmol%2FL%20or%20above)
 
+cat output_20210119_191203.txt
+Experiment: expOCT_fat2HBP_20210119
+
+=================================================================
+Logistic Regression between a clinical variable and hypertension:
+Optimization terminated successfully.
+         Current function value: 0.691016
+         Iterations 3
+
+===============Logistic regression between hypertension and gender===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5559
+Model:                          Logit   Df Residuals:                     5558
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:               -0.003242
+Time:                        19:12:12   Log-Likelihood:                -3841.4
+converged:                       True   LL-Null:                       -3828.9
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.1726      0.036      4.859      0.000       0.103       0.242
+==============================================================================
+Accuracy of using gender to predict hypertension with cutoff 0.5: 0.5466810577441986
+Optimization terminated successfully.
+         Current function value: 0.685427
+         Iterations 3
+
+===============Logistic regression between hypertension and Age===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5559
+Model:                          Logit   Df Residuals:                     5558
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                0.004871
+Time:                        19:12:13   Log-Likelihood:                -3810.3
+converged:                       True   LL-Null:                       -3828.9
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0039      0.000      9.225      0.000       0.003       0.005
+==============================================================================
+Accuracy of using Age to predict hypertension with cutoff 0.5: 0.5466810577441986
+Optimization terminated successfully.
+         Current function value: 0.688106
+         Iterations 3
+
+===============Logistic regression between hypertension and IOP===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5545
+Model:                          Logit   Df Residuals:                     5544
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:               0.0009994
+Time:                        19:12:13   Log-Likelihood:                -3815.5
+converged:                       True   LL-Null:                       -3819.4
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0137      0.002      7.455      0.000       0.010       0.017
+==============================================================================
+Accuracy of using IOP to predict hypertension with cutoff 0.5: 0.5466185752930568
+Optimization terminated successfully.
+         Current function value: 0.689526
+         Iterations 3
+
+===============Logistic regression between hypertension and AxialLength===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5238
+Model:                          Logit   Df Residuals:                     5237
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:              -0.0002020
+Time:                        19:12:13   Log-Likelihood:                -3611.7
+converged:                       True   LL-Null:                       -3611.0
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0074      0.001      6.148      0.000       0.005       0.010
+==============================================================================
+Accuracy of using AxialLength to predict hypertension with cutoff 0.5: 0.5433371515845743
+Optimization terminated successfully.
+         Current function value: 0.688401
+         Iterations 4
+
+===============Logistic regression between hypertension and SmokePackYears===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5408
+Model:                          Logit   Df Residuals:                     5407
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:               -0.001830
+Time:                        19:12:13   Log-Likelihood:                -3722.9
+converged:                       True   LL-Null:                       -3716.1
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0937      0.013      7.024      0.000       0.068       0.120
+==============================================================================
+Accuracy of using SmokePackYears to predict hypertension with cutoff 0.5: 0.5547337278106509
+Optimization terminated successfully.
+         Current function value: 0.689190
+         Iterations 3
+
+===============Logistic regression between hypertension and Pulse===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5557
+Model:                          Logit   Df Residuals:                     5556
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:              -0.0005476
+Time:                        19:12:14   Log-Likelihood:                -3829.8
+converged:                       True   LL-Null:                       -3827.7
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0024      0.000      6.617      0.000       0.002       0.003
+==============================================================================
+Accuracy of using Pulse to predict hypertension with cutoff 0.5: 0.5465179053446104
+Optimization terminated successfully.
+         Current function value: 0.691870
+         Iterations 4
+
+===============Logistic regression between hypertension and Drink_quantity===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5438
+Model:                          Logit   Df Residuals:                     5437
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:               -0.006841
+Time:                        19:12:14   Log-Likelihood:                -3762.4
+converged:                       True   LL-Null:                       -3736.8
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0747      0.020      3.692      0.000       0.035       0.114
+==============================================================================
+Accuracy of using Drink_quantity to predict hypertension with cutoff 0.5: 0.5546156675248253
+Optimization terminated successfully.
+         Current function value: 0.684049
+         Iterations 4
+
+===============Logistic regression between hypertension and Glucose===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4137
+Model:                          Logit   Df Residuals:                     4136
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                0.003631
+Time:                        19:12:14   Log-Likelihood:                -2829.9
+converged:                       True   LL-Null:                       -2840.2
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0464      0.005      8.617      0.000       0.036       0.057
+==============================================================================
+Accuracy of using Glucose to predict hypertension with cutoff 0.5: 0.5574087503021513
+Optimization terminated successfully.
+         Current function value: 0.687405
+         Iterations 5
+
+===============Logistic regression between hypertension and CRPL===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4155
+Model:                          Logit   Df Residuals:                     4154
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:               -0.001583
+Time:                        19:12:15   Log-Likelihood:                -2856.2
+converged:                       True   LL-Null:                       -2851.7
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0685      0.011      6.295      0.000       0.047       0.090
+==============================================================================
+Accuracy of using CRPL to predict hypertension with cutoff 0.5: 0.5583634175691937
+Optimization terminated successfully.
+         Current function value: 0.687147
+         Iterations 4
+
+===============Logistic regression between hypertension and Cholesterol===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4137
+Model:                          Logit   Df Residuals:                     4136
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:              -0.0008831
+Time:                        19:12:15   Log-Likelihood:                -2842.7
+converged:                       True   LL-Null:                       -2840.2
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0426      0.006      7.021      0.000       0.031       0.055
+==============================================================================
+Accuracy of using Cholesterol to predict hypertension with cutoff 0.5: 0.5574087503021513
+Optimization terminated successfully.
+         Current function value: 0.689229
+         Iterations 4
+
+===============Logistic regression between hypertension and HDL===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4137
+Model:                          Logit   Df Residuals:                     4136
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:               -0.003915
+Time:                        19:12:15   Log-Likelihood:                -2851.3
+converged:                       True   LL-Null:                       -2840.2
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.1197      0.021      5.679      0.000       0.078       0.161
+==============================================================================
+Accuracy of using HDL to predict hypertension with cutoff 0.5: 0.5574087503021513
+Optimization terminated successfully.
+         Current function value: 0.687200
+         Iterations 4
+
+===============Logistic regression between hypertension and LDL===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4137
+Model:                          Logit   Df Residuals:                     4136
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:              -0.0009593
+Time:                        19:12:15   Log-Likelihood:                -2842.9
+converged:                       True   LL-Null:                       -2840.2
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0629      0.009      6.989      0.000       0.045       0.080
+==============================================================================
+Accuracy of using LDL to predict hypertension with cutoff 0.5: 0.5574087503021513
+Optimization terminated successfully.
+         Current function value: 0.682450
+         Iterations 4
+
+===============Logistic regression between hypertension and Triglyceride===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4137
+Model:                          Logit   Df Residuals:                     4136
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                0.005959
+Time:                        19:12:16   Log-Likelihood:                -2823.3
+converged:                       True   LL-Null:                       -2840.2
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.1514      0.017      9.134      0.000       0.119       0.184
+==============================================================================
+Accuracy of using Triglyceride to predict hypertension with cutoff 0.5: 0.5574087503021513
+Optimization terminated successfully.
+         Current function value: 0.685288
+         Iterations 3
+
+===============Logistic regression between hypertension and BMI===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5557
+Model:                          Logit   Df Residuals:                     5556
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                0.005117
+Time:                        19:12:16   Log-Likelihood:                -3808.1
+converged:                       True   LL-Null:                       -3827.7
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0098      0.001      9.306      0.000       0.008       0.012
+==============================================================================
+Accuracy of using BMI to predict hypertension with cutoff 0.5: 0.5465179053446104
+Optimization terminated successfully.
+         Current function value: 0.687303
+         Iterations 4
+
+===============Logistic regression between hypertension and WaistHipRate===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 5557
+Model:                          Logit   Df Residuals:                     5556
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                0.002193
+Time:                        19:12:16   Log-Likelihood:                -3819.3
+converged:                       True   LL-Null:                       -3827.7
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.2431      0.030      8.035      0.000       0.184       0.302
+==============================================================================
+Accuracy of using WaistHipRate to predict hypertension with cutoff 0.5: 0.5465179053446104
+Optimization terminated successfully.
+         Current function value: 0.685594
+         Iterations 4
+
+===============Logistic regression between hypertension and LDLoverHDL===============
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 4137
+Model:                          Logit   Df Residuals:                     4136
+Method:                           MLE   Df Model:                            0
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                0.001379
+Time:                        19:12:16   Log-Likelihood:                -2836.3
+converged:                       True   LL-Null:                       -2840.2
+Covariance Type:            nonrobust   LLR p-value:                       nan
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0922      0.012      7.859      0.000       0.069       0.115
+==============================================================================
+Accuracy of using LDLoverHDL to predict hypertension with cutoff 0.5: 0.5574087503021513
+
+
+====Multivariable Logistic regression between clinical risk factors and hypertension ==========
+After deleting empty-value patients, it remains 3804 patients.
+Optimization terminated successfully.
+         Current function value: 0.613759
+         Iterations 5
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 3804
+Model:                          Logit   Df Residuals:                     3790
+Method:                           MLE   Df Model:                           13
+Date:                Tue, 19 Jan 2021   Pseudo R-squ.:                  0.1040
+Time:                        19:12:16   Log-Likelihood:                -2334.7
+converged:                       True   LL-Null:                       -2605.6
+Covariance Type:            nonrobust   LLR p-value:                1.980e-107
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -0.0472      0.090     -0.522      0.602      -0.224       0.130
+x2             0.0608      0.004     14.097      0.000       0.052       0.069
+x3             0.0712      0.013      5.287      0.000       0.045       0.098
+x4            -0.3194      0.024    -13.413      0.000      -0.366      -0.273
+x5             0.0229      0.021      1.078      0.281      -0.019       0.065
+x6            -0.0198      0.004     -5.552      0.000      -0.027      -0.013
+x7             0.0372      0.033      1.126      0.260      -0.028       0.102
+x8             0.0894      0.027      3.258      0.001       0.036       0.143
+x9            -0.0033      0.011     -0.303      0.762      -0.025       0.018
+x10           -0.1041      0.045     -2.289      0.022      -0.193      -0.015
+x11            0.1331      0.036      3.699      0.000       0.063       0.204
+x12            0.1416      0.012     12.256      0.000       0.119       0.164
+x13            0.7815      0.565      1.384      0.166      -0.325       1.888
+x14           -0.1217      0.052     -2.336      0.019      -0.224      -0.020
+==============================================================================
+Accuracy of using ['gender', 'Age', 'IOP', 'AxialLength', 'SmokePackYears', 'Pulse', 'Drink_quantity', 'Glucose', 'CRPL', 'Cholesterol', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
+ to predict hypertension with cutoff 0.5: 0.6561514195583596
+With a different cut off:
+{'threshold': 0.537, 'ACC': 0.656677181913775, 'TPR': 0.6955710955678529, 'TNR': 0.6063893911958627, 'Sum': 1.9586376686774905}
+Where:
+x1=gender; x2=Age; x3=IOP; x4=AxialLength; x5=SmokePackYears; x6=Pulse; x7=Drink_quantity; x8=Glucose; x9=CRPL; x10=Cholesterol; x11=Triglyceride; x12=BMI; x13=WaistHipRate; x14=LDLoverHDL;
+=========================
+list of x whose pvalue <=0.05
+x2=Age, z=14.096921717188435, pvalue=3.966999793137572e-45
+x3=IOP, z=5.286857743484339, pvalue=1.2443533288996497e-07
+x4=AxialLength, z=-13.413135007273308, pvalue=5.065154183697109e-41
+x6=Pulse, z=-5.551521739416451, pvalue=2.8319348958319192e-08
+x8=Glucose, z=3.2581298337851825, pvalue=0.0011214908327010097
+x10=Cholesterol, z=-2.288740215141951, pvalue=0.0220944509447221
+x11=Triglyceride, z=3.6990793476487913, pvalue=0.00021638295043066667
+x12=BMI, z=12.255963972141293, pvalue=1.5608220122516097e-34
+x14=LDLoverHDL, z=-2.3358503378650624, pvalue=0.019499043033275744
+
+Features of Pvalue> 0.05: gender, smoke, drink, CRPL, WaistHipRate.
 
 
 
@@ -327,6 +705,9 @@ x85=AxialLength, z=-5.420244622280784, pvalue=5.9517537977543504e-08
 x86=SmokePackYears, z=3.0459276176712073, pvalue=0.0023196366973009114
 x87=BMI, z=14.122733787368833, pvalue=2.751083375752029e-45
 x88=WaistHipRate, z=3.4232088140207657, pvalue=0.0006188651689663687
+
+excluding feature of pvalue>0.05: gender.
+
 (base) [c-xwu000:testResult]#
 
 
