@@ -205,7 +205,7 @@ def main():
         x = labels[:, colIndex]
 
         # delete the empty value of "-100"
-        emptyRows = np.nonzero((x < 0) or (x==-100))  # delete empty values, e.g -100
+        emptyRows = np.nonzero((x < 0).astype(np.int) + (x==-100).astype(np.int))  # delete empty values, e.g -100
         if variableKeys[keyIndex] == "IOP":
             extraEmptyRows = np.nonzero(x == 99)
             emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
@@ -247,7 +247,7 @@ def main():
     clinicalFtrs = labels[:,variableIndex]
 
     # delete the empty value of "-100"
-    emptyRows = np.nonzero(clinicalFtrs == -100 or clinicalFtrs<0)
+    emptyRows = np.nonzero((clinicalFtrs == -100).astype(np.int) + (clinicalFtrs<0).astype(np.int))
     extraEmptyRows = np.nonzero(clinicalFtrs[:,2] == 99)  # IOP value
     emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
 
