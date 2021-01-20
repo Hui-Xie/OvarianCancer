@@ -41,6 +41,9 @@ class ConfigReader(object):
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
 
+        #Add a log path for some log memo output
+        self.logMemoPath = os.path.join(self.outputDir, f"logMemo.txt")
+
         self.imagesOutputDir = os.path.join(self.outputDir,"images")
         self.xmlOutputDir = os.path.join(self.outputDir, "xml")
         if not os.path.exists(self.imagesOutputDir):
