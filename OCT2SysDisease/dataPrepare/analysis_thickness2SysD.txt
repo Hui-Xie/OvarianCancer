@@ -1,6 +1,20 @@
 # Jan 20th, Wednesday, 2021:
 1  As some patients miss some biochemical index(cholesterol) data, introducing the biochemical index will reduce the number of available data;
-2  
+2  choose good clincial features, and exclude low-quality features:
+    list of x whose pvalue <=0.05
+x2=Age, z=14.096921717188435, pvalue=3.966999793137572e-45
+x3=IOP, z=5.286857743484339, pvalue=1.2443533288996497e-07
+x4=AxialLength, z=-13.413135007273308, pvalue=5.065154183697109e-41
+x6=Pulse, z=-5.551521739416451, pvalue=2.8319348958319192e-08
+x8=Glucose, z=3.2581298337851825, pvalue=0.0011214908327010097
+x10=Cholesterol, z=-2.288740215141951, pvalue=0.0220944509447221
+x11=Triglyceride, z=3.6990793476487913, pvalue=0.00021638295043066667
+x12=BMI, z=12.255963972141293, pvalue=1.5608220122516097e-34
+x14=LDLoverHDL, z=-2.3358503378650624, pvalue=0.019499043033275744
+
+9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
+
+
 
 
 # Jan 19th, Tuesday, 2021
