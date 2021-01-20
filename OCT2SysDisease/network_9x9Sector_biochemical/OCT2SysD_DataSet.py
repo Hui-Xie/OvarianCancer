@@ -142,7 +142,7 @@ class OCT2SysD_DataSet(data.Dataset):
         # concatenate 9x9 sector with 9 clinical features, and delete empty-feature patients
         # 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
         self.m_inputClinicalFeatures = hps.inputClinicalFeatures
-        featureColIndex = hps.featureColIndex
+        featureColIndex = tuple(hps.featureColIndex)
         nClinicalFtr = len(featureColIndex)
         assert nClinicalFtr == hps.numClinicalFtr
 
