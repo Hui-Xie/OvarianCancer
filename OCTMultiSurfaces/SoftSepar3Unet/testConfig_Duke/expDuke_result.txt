@@ -18,12 +18,14 @@ expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    training, 19GB  JHU network 
 
 Analysis:
 1  expDuke_20210107B_Thickness_1D_iibi007: 13days 14hours for 496 epochs: (13*24*60+14*60)/496 = 39.4 min/epoch;  35GB GPU memory;
-   directly predicting (N-1) thickness always get a not good result.
+   directly predicting (N-1) thickness always gets a not good result.
 
 2  expDuke_20210115A_Thickness_iibi007: 5 days 13 hours for 207 epcohs: (5*24*60+13*60)/207 = 38.6 min/epoch;  19GB GPU memory.
-   This result error is just at middle level.
-   I just detected a error in introducing SmoothThicknessLoss for reducing Hausdorff distance of thickness,
-   in which a should-be 1st order gradient formula used a incorrect 2nd order gradient formula.  I just fixed it.
+   I just detected an error in introducing SmoothThicknessLoss for reducing Hausdorff distance of thickness,
+   in which a should-be 1st order gradient formula used an incorrect 2nd order gradient formula.  I just fixed it.
+
+3  Now fixed error 3 network are training. I estimate we can get their results next Wednesday.
+
 
 
 
