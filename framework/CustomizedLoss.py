@@ -552,15 +552,14 @@ class SmoothThicknessLoss():
         B,N,W = inputx.shape
         assert (B,N,W) == target.shape
 
-        # along W dimension, use 3-point gradient formula
-        Sw0 = inputx[:, :, 0:-2]  # size: B,N,(W-2)
-        Sw1 = inputx[:, :, 1:-1]
-        Sw2 = inputx[:, :, 2:]
+        # along W dimension, use 2-point gradient formula
+        Sw0 = inputx[:, :, 0:-1]  # size: B,N,(W-2)
+        Sw1 = inputx[:, :, 1:]
 
-        Gw0 = target[:, :, 0:-2]
-        Gw1 = target[:, :, 1:-1]
-        Gw2 = target[:, :, 2:]
-        loss = torch.pow((Sw0+Sw2-2.0*Sw1)-(Gw0+Gw2-2.0*Gw1), 2.0).mean()\
+        Gw0 = target[:, :, 0:-1]
+        Gw1 = target[:, :, 1:]
+
+        loss = torch.pow((Sw0-Sw1)-(Gw0-Gw1), 2.0).mean()\
                 + self.mseLossWeight* torch.pow(inputx-target, 2.0).mean()
 
         return loss

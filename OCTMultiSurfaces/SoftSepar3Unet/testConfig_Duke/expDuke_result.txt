@@ -10,14 +10,16 @@ expDuke_20210101A_ThicknessSubnet_iibi007           3.7638235092163086      2.41
 expDuke_20210101B_ThicknessSubnet_iibi007           3.8175220489501953      2.0736165046691895  3.2453,      4.3898       32 filters, 8 layers, add XY coordinate input, with cumulativeRLoss
 expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121246814727783      2.4195966720581055  3.0530,      4.1713       18GB, exact YufanHe network(XY channel+layerSeg+64 filter for all layers)+1D [H,1]conv
 expDuke_20210107B_Thickness_1D_iibi007              4.362186908721924       3.042391300201416   3.3330,      5.3914       35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
-expDuke_20210115A_Thickness_iibi007                 training, 19GB, use YufanHe's network to get N surface, and then get (N-1) thickness.
+expDuke_20210115A_Thickness_iibi007                 3.799421787261963       2.632540702819824   3.2553,      4.3435       19GB, use YufanHe's network to get N surface, and then get (N-1) thickness.
 =================================================================================================================================================================================================================
 
 Analysis:
 1  expDuke_20210107B_Thickness_1D_iibi007: 13days 14hours for 496 epochs: (13*24*60+14*60)/496 = 39.4 min/epoch;  35GB GPU memory;
    directly predicting (N-1) thickness always get a not good result.
 
-2  expDuke_20210115A_Thickness_iibi007: 4 days 11 hours for 167 epcohs: (4*24*60+11*60)/167 = 38.4 min/epoch;  19GB GPU memory.
+2  expDuke_20210115A_Thickness_iibi007: 5 days 13 hours for 207 epcohs: (5*24*60+13*60)/207 = 38.6 min/epoch;  19GB GPU memory.
+   This result error is just at middle level.
+
 
 
 
