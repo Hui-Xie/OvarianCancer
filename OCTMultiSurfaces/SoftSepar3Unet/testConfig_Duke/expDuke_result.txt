@@ -1,4 +1,4 @@
-# Jan 20th, Wednesday, 2021
+# Jan 21th, Wednesday, 2021
 Thickness (Rift) prediction on Duke_AMD test data:
 ================================================================================================================================================================================================================
 Method_Name                                         thicknessError          thicknessStdError   thickError0  thickError1  Note
@@ -12,8 +12,8 @@ expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121246814727783      2.41
 expDuke_20210107B_Thickness_1D_iibi007              4.362186908721924       3.042391300201416   3.3330,      5.3914       35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
 expDuke_20210115A_Thickness_iibi007                 3.799421787261963       2.632540702819824   3.2553,      4.3435       19GB, use YufanHe's network to get N surface, and then get (N-1) thickness.
 expDuke_20210121B_Dropout_Thickness_iibi007         training, 35GB  A added dropout N surfaces to N-1 thicknesses
-expDuke_20210121A_JHU_Thickness_iibi007             training, 19GB  JHU network from N surafces to N-1 thicknesses, fixed the SmoothThicknessLoss error.
-expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    training, 19GB  JHU network from N surafces to N-1 thicknesses, without SmoothThicknessLoss.
+expDuke_20210121A_JHU_Thickness_iibi007             training, 19GB  JHU network from N surfaces to N-1 thicknesses, fixed the SmoothThicknessLoss error.
+expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    training, 19GB  JHU network from N surfaces to N-1 thicknesses, without SmoothThicknessLoss.
 =================================================================================================================================================================================================================
 
 Analysis:
@@ -24,13 +24,7 @@ Analysis:
    I just detected an error in introducing SmoothThicknessLoss for reducing Hausdorff distance of thickness,
    in which a should-be 1st order gradient formula used an incorrect 2nd order gradient formula.  I just fixed it.
 
-3  Now fixed error 3 network are training. I estimate we can get their results next Wednesday.
-
-
-
-
-
-
+3  Now fixed error 3 networks are training. I estimate we can get their results next Wednesday.
 
 
 
