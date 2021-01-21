@@ -237,11 +237,11 @@ class ThicknessSubnet_E(BasicModel):  #
                 loss_riftL1 = riftL1Loss(R, riftGTs)
 
             if self.hps.useSmoothSurfaceLoss:
-                smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
+                smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=5.0)
                 loss_surfaceSmooth = smoothSurfaceLoss(S, GTs)
 
             if self.hps.useSmoothThicknessLoss:
-                smoothThicknessLoss = SmoothThicknessLoss(mseLossWeight=10.0)
+                smoothThicknessLoss = SmoothThicknessLoss(mseLossWeight=5.0)
                 loss_riftSmooth = smoothThicknessLoss(R, riftGTs)
 
         loss = loss_layer + loss_surfaceCE + loss_surfaceL1 +loss_surfaceSmooth+ loss_riftL1 + loss_riftSmooth
