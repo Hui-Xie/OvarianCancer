@@ -94,8 +94,12 @@ def main():
         file.write("\n=======net running parameters=========\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
-        file.write("\n=======Test Result=========\n")
+        file.write(f"\n=======Test Result on test data with threshold of {threshold}=========\n")
         [file.write(f"\t{key}:{value}\n") for key, value in Acc_TPR_TNR_Sum.items()]
+
+        file.write(f"\n=======Test Result on test data with threshold of 0.5 =========\n")
+        Acc_TPR_TNR_Sum2 = compute_Acc_TPR_TNR_Sum_WithLogits(allTestGTs, allTestOutput, 0.5)
+        [file.write(f"\t{key}:{value}\n") for key, value in Acc_TPR_TNR_Sum2.items()]
 
 
 
