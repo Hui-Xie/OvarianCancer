@@ -189,6 +189,7 @@ def main():
     # 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
     # 10 clinical features: ["gender", "Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
     inputClinicalFeatures = hps.inputClinicalFeatures
+    print(f"inputClinical features: {inputClinicalFeatures}")
     featureColIndex = tuple(hps.featureColIndex)
     nClinicalFtr = len(featureColIndex)
     assert nClinicalFtr == hps.numClinicalFtr
@@ -198,80 +199,53 @@ def main():
         ["validation", validationVolumes, validationLabels,],
         ["test", testVolumes, testLabels,],
     ]
-    clinicalFtrs = labelTable[:, featureColIndex]
-    # delete the empty value of "-100"
-    emptyRows = np.nonzero(clinicalFtrs == -100)
-    extraEmptyRows = np.nonzero(clinicalFtrs[:, self.m_inputClinicalFeatures.index("IOP")] == 99)  # missing IOP value
-    emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-    # concatenate sector thickness with multi variables:
-    self.m_volumes = np.concatenate((self.m_volumes, clinicalFtrs),
-                                    axis=1)  # size: Nx(81+len(self.m_inputClinicalFeatures))
-
-    self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
-    self.m_targetLabels = np.delete(labelTable, emptyRows, 0)[:, 1]  # for hypertension
-
-    # convert to torch tensor
-    self.m_volumes = torch.from_numpy(self.m_volumes).to(device=hps.device, dtype=torch.float32)
-    self.m_targetLabels = torch.from_numpy(self.m_targetLabels).to(device=hps.device, dtype=torch.float32)
-
-    emptyRows = tuple(emptyRows[0])
-    self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index not in emptyRows]
-    self.m_IDsCorrespondVolumes = [id for index, id in enumerate(self.m_IDsCorrespondVolumes) if index not in emptyRows]
-
-    # update the number of volumes.
-    self.m_NVolumes = len(self.m_volumes)
-    assert hps.inputWidth == self.m_volumes.shape[1]
-
-    with open(hps.logMemoPath, "a") as file:
-        file.write(f"{mode} data set: NVolumes={self.m_NVolumes}\n")
-
-    for (keyIndex, colIndex) in enumerate(variableIndex):
-        figureName = f"Hypertension_{variableKeys[keyIndex]}_logit"
-        fig = plt.figure()
-
-        y = labels[:, 1]  # hypertension
-        x = labels[:, colIndex]
-
+    for name, volumes, labels in volume_label_list:
+        clinicalFtrs = labels[:, featureColIndex]
         # delete the empty value of "-100"
-        emptyRows = np.nonzero((x < 0).astype(np.int) + (x==-100).astype(np.int))  # delete empty values, e.g -100
-        if variableKeys[keyIndex] == "IOP":
-            extraEmptyRows = np.nonzero(x == 99)
-            emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-        x = np.delete(x, emptyRows, 0)
-        y = np.delete(y, emptyRows, 0)
+        emptyRows = np.nonzero(clinicalFtrs == -100)
+        extraEmptyRows = np.nonzero(clinicalFtrs[:, inputClinicalFeatures.index("IOP")] == 99)  # missing IOP value
+        emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+        # concatenate sector thickness with multi variables:
+        volumes = np.concatenate((volumes, clinicalFtrs), axis=1)  # size: Nx(81+len(self.m_inputClinicalFeatures))
 
-        plt.scatter(x, y, label='original data')
+        volumes = np.delete(volumes, emptyRows, 0)
+        targetLabels = np.delete(labels, emptyRows, 0)[:, 1]  # for hypertension
 
-        # for single feature
-        x = x.reshape(-1, 1)
+        assert len(volumes) == len(targetLabels)
+        print(f"size of {name} data set: {volumes.shape}")
 
-        clf = sm.Logit(y, x).fit()
-        print(f"\n===============Logistic regression between hypertension and {variableKeys[keyIndex]}===============")
-        print(clf.summary())
-        predict = clf.predict(x)
-        accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
+        if name == "train":
+            trainX = volumes
+            trainY = targetLabels
+        elif name == "validation":
+            validationX = volumes
+            validationY = targetLabels
+        elif name =="test":
+            testX = volumes
+            testY = targetLabels
+        else:
+            print("Error data name")
+            assert False
 
-        xtest = np.arange(x.min() * 0.95, x.max() * 1.05, (x.max() * 1.05 - x.min() * 0.95) / 100).reshape(-1, 1)
-        plt.plot(xtest.ravel(), clf.predict(xtest).ravel(), 'r-', label='fitted line')
-        textLocx = (x.max() * 1.05 - x.min() * 0.95)/2.2 + x.min()
-        textLocy = 0.5
-        plt.text(textLocx, textLocy, f"{accuracy:.1%}", fontsize=12)
-        plt.xlabel(variableKeys[keyIndex])
-        plt.ylabel(f"Hypertension")
-        plt.legend()
-        print(f"Accuracy of using {variableKeys[keyIndex]} to predict hypertension with cutoff 0.5: {accuracy}")
 
-        outputFilePath = os.path.join(hps.outputDir, figureName + ".png")
-        plt.savefig(outputFilePath)
-        plt.close()
+    clf = RandomForestClassifier(n_estimators=200,  max_features=0.2)
+    clf.fit(trainX, trainY)
+    trainAcc = clf.score(trainX,trainY)
+    validationAcc = clf.score(validationX,validationY)
+    testAcc = clf.score(testX,testY)
 
+    print(f"training score: {trainAcc}")
+    print(f"validation score: {validationAcc}")
+    print(f"test score: {testAcc}")
+
+    print(f"Random forest parameters: \n{clf.get_params()}")
 
 
     if output2File:
         logOutput.close()
         sys.stdout = original_stdout
 
-    print(f"================ End of logistic regression between clinical data and hypertension   ===============")
+    print(f"================ End of random forest from thickness and clinical features to hypertension   ===============")
 
 if __name__ == "__main__":
     main()
