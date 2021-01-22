@@ -227,19 +227,42 @@ def main():
             print("Error data name")
             assert False
 
-
-    clf = RandomForestClassifier(n_estimators=200,  max_features=0.2)
+    # single Random Forest test
+    clf = RandomForestClassifier(n_estimators=200, max_features=0.2)
     print("RandomForest: n_estimators=200,  max_features=0.2")
+    print(f"Random forest parameters: \n{clf.get_params()}")
     clf.fit(trainX, trainY)
-    trainAcc = clf.score(trainX,trainY)
-    validationAcc = clf.score(validationX,validationY)
-    testAcc = clf.score(testX,testY)
+    trainAcc = clf.score(trainX, trainY)
+    validationAcc = clf.score(validationX, validationY)
+    testAcc = clf.score(testX, testY)
 
     print(f"training score: {trainAcc}")
     print(f"validation score: {validationAcc}")
     print(f"test score: {testAcc}")
 
-    print(f"Random forest parameters: \n{clf.get_params()}")
+
+    # Grid search best config for random forest
+    print(f"================Grid search for Random Forest================")
+    print(f"========the element in below table is validationACC_testAcc==========")
+    print(f"=== the float feature indicate proportion of whole feature number====")
+    RF_nFeatures = np.arange(0.1,0.32,0.02)
+    RF_nEstimator = np.arange(100, 320, 20)
+    strNFeatures = ", ".join(RF_nFeatures)
+    print(f"Estimators\Features, {strNFeatures}")
+    for nFeatures in RF_nFeatures:
+        for nEstimators in RF_nEstimator:
+            print(nEstimators, end=", ")
+            clf = RandomForestClassifier(n_estimators=nEstimators, max_features=nFeatures)
+            clf.fit(trainX, trainY)
+            validationAcc = clf.score(validationX, validationY)
+            testAcc = clf.score(testX, testY)
+            print(f"{validationAcc:.2f}_{testAcc:.2f}",end=", ")
+        print("")
+    print("==========================================================================")
+
+
+
+
 
 
     if output2File:
