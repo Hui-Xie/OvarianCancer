@@ -228,8 +228,8 @@ def main():
             assert False
 
 
-    clf = RandomForestClassifier(n_estimators=100,  max_features=0.2)
-    print("RandomForest: n_estimators=100,  max_features=0.2")
+    clf = RandomForestClassifier(n_estimators=200,  max_features=0.2)
+    print("RandomForest: n_estimators=200,  max_features=0.2")
     clf.fit(trainX, trainY)
     trainAcc = clf.score(trainX,trainY)
     validationAcc = clf.score(validationX,validationY)
