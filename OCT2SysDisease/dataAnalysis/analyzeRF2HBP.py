@@ -183,7 +183,7 @@ def main():
     validationVolumes, validationLabels = retrieveImageData_label("validation", hps)
     testVolumes, testLabels = retrieveImageData_label("test", hps)
 
-    print("\n== RandomForest with 81+10 features to predict HBP ==============")
+    print("\n== RandomForest using 81+10 features to predict HBP ==============")
 
     # concatenate 9x9 sector with clinical features, and delete empty-feature patients
     # 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
@@ -228,7 +228,8 @@ def main():
             assert False
 
 
-    clf = RandomForestClassifier(n_estimators=200,  max_features=0.2)
+    clf = RandomForestClassifier(n_estimators=300,  max_features=0.2)
+    print("RandomForest: n_estimators=300,  max_features=0.2")
     clf.fit(trainX, trainY)
     trainAcc = clf.score(trainX,trainY)
     validationAcc = clf.score(validationX,validationY)
