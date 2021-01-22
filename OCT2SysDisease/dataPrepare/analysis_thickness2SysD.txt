@@ -16,6 +16,15 @@ expOCT_9x9Sector_10Biochemical_2HyT_20210121A_FC: start lr= 0.1, lrPatient=24, f
      Overfitting. sum=1.887. ACC=0.64.
 
 
+expOCT_9x9Sector_10Biochemical_2HyT_20210122A_FC: start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
+
+expOCT_9x9Sector_10Biochemical_2HyT_20210122B_FC: start lr= 0.001, lrPatient=12, fcWidths: [40, 20,1]
+
+expOCT_9x9Sector_10Biochemical_2HyT_20210122C_FC: start lr= 0.001, lrPatient=6, fcWidths: [40, 20,1]
+
+expOCT_9x9Sector_10Biochemical_2HyT_20210122D_FC: start lr= 0.0001, lrPatient=12, fcWidths: [40, 20,1]
+
+
 
 # Jan 21st, Thursday, 2021:
 Summary:
