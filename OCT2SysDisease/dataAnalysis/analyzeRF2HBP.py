@@ -242,16 +242,16 @@ def main():
 
 
     # Grid search best config for random forest
-    print(f"================Grid search for Random Forest================")
+    print(f"\n================Grid search for Random Forest================")
     print(f"========the element in below table is validationACC_testAcc==========")
     print(f"=== the float feature indicate proportion of whole feature number====")
     RF_nFeatures = np.arange(0.1,0.32,0.02)
     RF_nEstimator = np.arange(100, 320, 20)
-    strNFeatures = ", ".join([str(elem) for elem in RF_nFeatures])
+    strNFeatures = ", ".join([f"{elem:.2f}" for elem in RF_nFeatures])
     print(f"Estimators\Features, {strNFeatures}")
-    for nFeatures in RF_nFeatures:
-        for nEstimators in RF_nEstimator:
-            print(nEstimators, end=", ")
+    for nEstimators in RF_nEstimator:
+        print(nEstimators, end=", ")
+        for nFeatures in RF_nFeatures:
             clf = RandomForestClassifier(n_estimators=nEstimators, max_features=nFeatures)
             clf.fit(trainX, trainY)
             validationAcc = clf.score(validationX, validationY)
