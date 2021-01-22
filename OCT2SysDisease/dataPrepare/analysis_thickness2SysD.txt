@@ -1,3 +1,22 @@
+# Jan 22nd, Friday, 2021:
+1  Use 81 sectors + 10 clinical features: ["gender", ""Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"];
+2  Big learning rate is also possible leading overfitting:
+   In deep learning, normally we do not hope training loss decease to zero, as zero training loss means perfect match with training data, which is general over-fitting.
+   learning rate acts a regularization item, and small learning rate means more regularization.
+
+
+expOCT_9x9Sector_10Biochemical_2HyT_20210121A_FC: start lr= 0.1, lrPatient=24, fcWidths: [40, 20,1]
+     Overfitting.  Sum=1.832.
+
+
+expOCT_9x9Sector_10Biochemical_2HyT_20210121A_FC: start lr= 0.1, lrPatient=24, fcWidths: [50, 20,1]
+     Overfitting. sum= 1.83
+
+expOCT_9x9Sector_10Biochemical_2HyT_20210121A_FC: start lr= 0.1, lrPatient=24, fcWidths: [50, 30,1]
+     Overfitting. sum=1.887. ACC=0.64.
+
+
+
 # Jan 21st, Thursday, 2021:
 Summary:
 1  Use 81 sectors + 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"];
@@ -12,7 +31,7 @@ Summary:
 5  All these experiment shows the data quality matters. Different data bring different accuracies.
 6  Now I am working on random forests methods to check whether it will get better accuracy;
 
-expOCT_9x9Sector_biochemical_2HyT_20210120A_FC: fcWidths: [40, 20,1]
+expOCT_9x9Sector_biochemical_2HyT_20210120A_FC: start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
  at epoch 55, ACC =0.6943, Sum=2.051, TPR=0.80, TNR=0.56,  for validation data.
 =======Test Result on test data with threshold of 0.371=========
 	ACC:0.6164383561643836
@@ -20,7 +39,7 @@ expOCT_9x9Sector_biochemical_2HyT_20210120A_FC: fcWidths: [40, 20,1]
 	TNR:0.5224358974191526
 	Sum:1.8254771243805075
 
-expOCT_9x9Sector_biochemical_2HyT_20210120B_FC: fcWidths: [50, 30,1]
+expOCT_9x9Sector_biochemical_2HyT_20210120B_FC: start lr= 0.01,  lrPatient=6, fcWidths: [50, 30,1]
  at epoch 32, ACC =0.69, Sum=2.056, TPR=0.73, TNR=0.63,  for validation data.
 =======Test Result on test data with threshold of 0.521=========
 	ACC:0.6041095890410959
@@ -28,7 +47,7 @@ expOCT_9x9Sector_biochemical_2HyT_20210120B_FC: fcWidths: [50, 30,1]
 	TNR:0.53846153844428
 	Sum:1.7956811753166413
 
-expOCT_9x9Sector_biochemical_2HyT_20210120C_FC: fcWidths: [30, 20,1]
+expOCT_9x9Sector_biochemical_2HyT_20210120C_FC: start lr= 0.01,  lrPatient=6, fcWidths: [30, 20,1]
  at epoch 39, ACC =0.6757, Sum=2.009, TPR=0.73, TNR=0.60,  for validation data.
 =======Test Result on test data with threshold of 0.463=========
 	ACC:0.5931506849315068
@@ -37,7 +56,7 @@ expOCT_9x9Sector_biochemical_2HyT_20210120C_FC: fcWidths: [30, 20,1]
 	Sum:1.7647707315191736
 
 
-expOCT_9x9Sector_biochemical_2HyT_20210120D_FC: fcWidths: [30, 30, 20,1]
+expOCT_9x9Sector_biochemical_2HyT_20210120D_FC: start lr= 0.01,  lrPatient=6, fcWidths: [30, 30, 20,1]
  at epoch 42, ACC =0.6914, Sum=2.043, TPR=0.79, TNR=0.57, for validation data.
 =======Test Result on test data with threshold of 0.309=========
 	ACC:0.6068493150684932
