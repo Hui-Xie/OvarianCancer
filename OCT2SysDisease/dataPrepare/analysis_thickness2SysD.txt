@@ -1,19 +1,19 @@
 # Jan 21st, Thursday, 2021:
-summary:
+Summary:
 1  Use 81 sectors + 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"];
-2  exclude gender, smoke, drink, CRPL, WaistHipRate.;
-3   training data set: NVolumes=2473
+2  Excluded gender, smoke, drink, CRPL, WaistHipRate features according to the p values of logisitc regression analysis;
+3  Increasing biochemical index as input will reduce the availabel data number as missing data:
+    training data set: NVolumes=2473
     validation data set: NVolumes=700
     test data set: NVolumes=730
-4  Using these 9 clinical features can get validation accuracy 69%, and test accuracy 61.6%;
-
-   It is better than before 81 sectors + 7 clincial features: ["gender", "Age",'IOP', 'AxialLength$',"smoke", "BMI", "WaistHipRate"]
-   with validation accuracy 67%, and test accuracy of 54%.
-
-
+4  Using these 9 clinical features can get validation accuracy 69%, and test accuracy 61.64%;
+   It is better than before 81 sectors + 7 clinical features: ["gender", "Age",'IOP', 'AxialLength$',"smoke", "BMI", "WaistHipRate"]
+   with validation accuracy 67%, and test accuracy of 60.96%.
+5  All these experiment shows the data quality matters. Different data bring different accuracies.
+6  Now I am working on random forests methods to check whether it will get better accuracy;
 
 expOCT_9x9Sector_biochemical_2HyT_20210120A_FC: fcWidths: [40, 20,1]
- at epoch 55, ACC =0.6943, Sum=2.051, TPR=0.80, TNR=0.56, Threshold=0.441 for validation data.
+ at epoch 55, ACC =0.6943, Sum=2.051, TPR=0.80, TNR=0.56,  for validation data.
 =======Test Result on test data with threshold of 0.371=========
 	ACC:0.6164383561643836
 	TPR:0.6866028707969712
@@ -21,7 +21,7 @@ expOCT_9x9Sector_biochemical_2HyT_20210120A_FC: fcWidths: [40, 20,1]
 	Sum:1.8254771243805075
 
 expOCT_9x9Sector_biochemical_2HyT_20210120B_FC: fcWidths: [50, 30,1]
- at epoch 32, ACC =0.69, Sum=2.056, TPR=0.73, TNR=0.63, Threshold=0.529  for validation data.
+ at epoch 32, ACC =0.69, Sum=2.056, TPR=0.73, TNR=0.63,  for validation data.
 =======Test Result on test data with threshold of 0.521=========
 	ACC:0.6041095890410959
 	TPR:0.6531100478312653
@@ -29,7 +29,7 @@ expOCT_9x9Sector_biochemical_2HyT_20210120B_FC: fcWidths: [50, 30,1]
 	Sum:1.7956811753166413
 
 expOCT_9x9Sector_biochemical_2HyT_20210120C_FC: fcWidths: [30, 20,1]
- at epoch 39, ACC =0.6757, Sum=2.009, TPR=0.73, TNR=0.60, Threshold=0.563  for validation data.
+ at epoch 39, ACC =0.6757, Sum=2.009, TPR=0.73, TNR=0.60,  for validation data.
 =======Test Result on test data with threshold of 0.463=========
 	ACC:0.5931506849315068
 	TPR:0.6363636363484123
@@ -38,7 +38,7 @@ expOCT_9x9Sector_biochemical_2HyT_20210120C_FC: fcWidths: [30, 20,1]
 
 
 expOCT_9x9Sector_biochemical_2HyT_20210120D_FC: fcWidths: [30, 30, 20,1]
- at epoch 42, ACC =0.6914, Sum=2.043, TPR=0.79, TNR=0.57, Threshold=0.309  for validation data.
+ at epoch 42, ACC =0.6914, Sum=2.043, TPR=0.79, TNR=0.57, for validation data.
 =======Test Result on test data with threshold of 0.309=========
 	ACC:0.6068493150684932
 	TPR:0.691387559792072
@@ -81,6 +81,18 @@ expOCT_9x9Sector_clinnical_2HyT_20210118B_FC:  fcWidths: [60,40, 20,1], 89*60+ 6
 
 expOCT_9x9Sector_clinnical_2HyT_20210118C_FC:  fcWidths: [40, 20,1] # num of neural in each FC layer # 89*40+41*20+21*1 = 4401 parameters
                                                Good. ACC: 67.6% and Sum: 2.009; TPR 76%. TNR 57%, threshold: 0.4664
+=======Test Result on test data with threshold of 0.47100000000000003=========
+	ACC:0.6096311475409836
+	TPR:0.6684587813500276
+	TNR:0.5311004784561938
+	Sum:1.809190407347205
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.5983606557377049
+	TPR:0.6093189964048509
+	TNR:0.583732057402303
+	Sum:1.7914117095448587
+
 
 expOCT_9x9Sector_clinnical_2HyT_20210118D_FC:  fcWidths: [20, 10,1] # num of neural in each FC layer # 89*20+21*10+11*1 = 2001 parameters
                                                a little weak.
