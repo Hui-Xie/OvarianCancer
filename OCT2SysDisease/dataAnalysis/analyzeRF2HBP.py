@@ -247,7 +247,7 @@ def main():
     print(f"=== the float feature indicate proportion of whole feature number====")
     RF_nFeatures = np.arange(0.1,0.32,0.02)
     RF_nEstimator = np.arange(100, 320, 20)
-    strNFeatures = ", ".join(RF_nFeatures)
+    strNFeatures = ", ".join([str(elem) for elem in RF_nFeatures])
     print(f"Estimators\Features, {strNFeatures}")
     for nFeatures in RF_nFeatures:
         for nEstimators in RF_nEstimator:
