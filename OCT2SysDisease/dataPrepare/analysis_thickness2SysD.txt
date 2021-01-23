@@ -1,4 +1,58 @@
 # Jan 22nd, Friday, 2021:
+Summary:
+1  input: 81-sector thickness + 10 clinical features: ['gender', 'Age', 'IOP', 'AxialLength', 'Pulse', 'Glucose', 'Cholesterol', 'Triglyceride', 'BMI', 'LDLoverHDL']
+2  Grid search best config in Random Forest:
+   A: decision tree number range: 100-300
+   B: feature number range: 10%x91-30%x91
+   The best config: 220 decision trees, and 0.2*91 features. It got 67% accuracy on validation data, an 62% accuracy on test data;
+3  The disadvantage of Random forest is its unexplainable features, as its final result is the majority vote of N decision trees of random features.
+4  This result is almost consistent with our deep learning and logistic regression.
+   Now deep learning, SVM, logistic regression, random forest for hypertension all get almost similar results.
+   The improvement from 62% to 67-69% on validation data is because of adding clinical features on the thickness data.
+5  Further plan:
+   A  Use radiomics to search texture features for hypertension:
+      Without medical knowledge as a guide, this kind of radiomics feature searching is like looking for a needle in a haystack; It can not guarantee success.
+      As hypertension is a cardio-vascular disease, what we are looking now is OCT neural layers, which is more related with nerual degenerative disease;
+   or
+   B  Change to another disease to try, for example diabetes, cognitive disable, or depression.
+
+Experiment: expOCT_RF2HBP_20210122
+
+== RandomForest using 81+10 features to predict HBP ==============
+inputClinical features: ['gender', 'Age', 'IOP', 'AxialLength', 'Pulse', 'Glucose', 'Cholesterol', 'Triglyceride', 'BMI', 'LDLoverHDL']
+size of train data set: (2473, 91)
+size of validation data set: (700, 91)
+size of test data set: (730, 91)
+RandomForest: n_estimators=200,  max_features=0.2
+Random forest parameters:
+{'bootstrap': True, 'ccp_alpha': 0.0, 'class_weight': None, 'criterion': 'gini', 'max_depth': None, 'max_features': 0.2,
+'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_impurity_split': None, 'min_samples_leaf': 1,
+'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'n_estimators': 200, 'n_jobs': None, 'oob_score': False,
+'random_state': None, 'verbose': 0, 'warm_start': False}
+training score: 1.0
+validation score: 0.6442857142857142
+test score: 0.6219178082191781
+
+===========================================================Grid search for Random Forest=========================================================
+===========================================the element in below table is validationACC_testAcc===================================================
+========================================= the float feature indicate proportion of whole feature number==========================================
+Estimators\Features,        0.10,   0.12,       0.14,       0.16,       0.18,    0.20,      0.22,       0.24,       0.26,    0.28,      0.30
+100,                    0.64_0.59, 0.63_0.59, 0.64_0.60, 0.62_0.61, 0.66_0.61, 0.66_0.60, 0.67_0.62, 0.64_0.61, 0.65_0.62, 0.63_0.61, 0.64_0.61,
+120,                    0.64_0.61, 0.64_0.61, 0.64_0.59, 0.64_0.60, 0.64_0.60, 0.64_0.62, 0.64_0.62, 0.63_0.62, 0.64_0.60, 0.65_0.60, 0.65_0.60,
+140,                    0.65_0.61, 0.63_0.61, 0.63_0.59, 0.65_0.60, 0.66_0.61, 0.66_0.61, 0.64_0.61, 0.63_0.60, 0.65_0.61, 0.65_0.61, 0.64_0.62,
+160,                    0.64_0.61, 0.65_0.61, 0.65_0.62, 0.66_0.59, 0.65_0.62, 0.65_0.60, 0.63_0.60, 0.63_0.62, 0.65_0.62, 0.64_0.61, 0.66_0.61,
+180,                    0.65_0.61, 0.64_0.61, 0.67_0.61, 0.64_0.62, 0.65_0.61, 0.64_0.60, 0.65_0.59, 0.65_0.61, 0.64_0.61, 0.65_0.62, 0.66_0.63,
+200,                    0.65_0.59, 0.65_0.61, 0.66_0.60, 0.64_0.60, 0.64_0.61, 0.64_0.60, 0.67_0.61, 0.66_0.61, 0.66_0.61, 0.65_0.60, 0.64_0.61,
+220,                    0.65_0.61, 0.64_0.62, 0.65_0.60, 0.65_0.61, 0.66_0.60, 0.67_0.62, 0.65_0.63, 0.65_0.60, 0.65_0.60, 0.66_0.61, 0.64_0.61,
+240,                    0.64_0.60, 0.64_0.62, 0.66_0.61, 0.64_0.60, 0.64_0.62, 0.65_0.61, 0.64_0.61, 0.65_0.61, 0.65_0.60, 0.65_0.60, 0.66_0.61,
+260,                    0.66_0.60, 0.66_0.61, 0.66_0.60, 0.65_0.62, 0.64_0.62, 0.64_0.62, 0.65_0.59, 0.64_0.61, 0.64_0.60, 0.66_0.63, 0.65_0.61,
+280,                    0.65_0.62, 0.65_0.61, 0.64_0.61, 0.65_0.60, 0.65_0.61, 0.65_0.61, 0.66_0.62, 0.66_0.62, 0.65_0.60, 0.65_0.61, 0.64_0.61,
+300,                    0.66_0.61, 0.65_0.60, 0.63_0.60, 0.65_0.61, 0.66_0.61, 0.64_0.61, 0.64_0.60, 0.65_0.61, 0.66_0.60, 0.64_0.61, 0.65_0.62,
+==================================================================================================================================================
+
+
+
+# Jan 22nd, Friday, 2021:
 1  Use 81 sectors + 10 clinical features: ["gender", ""Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"];
 2  Big learning rate is also possible leading overfitting:
    In deep learning, normally we do not hope training loss decease to zero, as zero training loss means perfect match with training data, which is general over-fitting.
