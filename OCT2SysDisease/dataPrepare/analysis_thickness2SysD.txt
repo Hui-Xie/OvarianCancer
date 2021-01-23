@@ -57,6 +57,13 @@ Estimators\Features,        0.10,   0.12,       0.14,       0.16,       0.18,   
 2  Big learning rate is also possible leading overfitting:
    In deep learning, normally we do not hope training loss decease to zero, as zero training loss means perfect match with training data, which is general over-fitting.
    learning rate acts a regularization item, and small learning rate means more regularization.
+3  But too small learning rate also hurt trianing performace.
+4  comparing 2 experiment:
+   ExpName                                              lr      lrPatient, fcWidths    validationACC   testACC   input
+   expOCT_9x9Sector_biochemical_2HyT_20210120A_FC       0.01    6         [40, 20,1]   0.6943          0.6164    81thickness+9clinical without age
+   expOCT_9x9Sector_10Biochemical_2HyT_20210122A_FC     0.01    6         [40, 20,1]   0.6529          0.6096    81thickness+10clinical with age
+5  As age has bigger p-value, it hurt performance.
+
 
 
 expOCT_9x9Sector_10Biochemical_2HyT_20210121A_FC: start lr= 0.1, lrPatient=24, fcWidths: [40, 20,1]
@@ -71,12 +78,40 @@ expOCT_9x9Sector_10Biochemical_2HyT_20210121A_FC: start lr= 0.1, lrPatient=24, f
 
 
 expOCT_9x9Sector_10Biochemical_2HyT_20210122A_FC: start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
+    this only added age in input comparing with expOCT_9x9Sector_biochemical_2HyT_20210120A_FC, the best result of 9 clinical features without age.
+    at epoch 1.076k, ACC =0.6529, Sum=1.959, TPR=0.65, TNR=0.65,  for validation data.
+    =======Test Result on test data with threshold of 0.503=========
+	ACC:0.6095890410958904
+	TPR:0.6818181818018704
+	TNR:0.5128205128040763
+	Sum:1.8042277357018368
+
 
 expOCT_9x9Sector_10Biochemical_2HyT_20210122B_FC: start lr= 0.001, lrPatient=12, fcWidths: [40, 20,1]
+    at epoch 1.131k, ACC =0.627, Sum=1.834, TPR=0.78, TNR=0.42,  for validation data.
+    =======Test Result on test data with threshold of 0.453=========
+	ACC:0.5808219178082191
+	TPR:0.7846889951965386
+	TNR:0.30769230768244576
+	Sum:1.6732032206872034
+
 
 expOCT_9x9Sector_10Biochemical_2HyT_20210122C_FC: start lr= 0.001, lrPatient=6, fcWidths: [40, 20,1]
+    at epoch 931, ACC =0.61, Sum=1.775, TPR=0.79, TNR=0.38,  for validation data.
+    =======Test Result on test data with threshold of 0.483=========
+	ACC:0.5794520547945206
+	TPR:0.7583732057234839
+	TNR:0.3397435897327005
+	Sum:1.6775688502507051
+
 
 expOCT_9x9Sector_10Biochemical_2HyT_20210122D_FC: start lr= 0.0001, lrPatient=12, fcWidths: [40, 20,1]
+    at epoch 736, ACC =0.58, Sum=1.626, TPR=0.90, TNR=0.15,  for validation data.
+    =======Test Result on test data with threshold of 0.47100000000000003=========
+	ACC:0.5698630136986301
+	TPR:0.7631578947185848
+	TNR:0.3108974358874712
+	Sum:1.643918344304686
 
 
 
