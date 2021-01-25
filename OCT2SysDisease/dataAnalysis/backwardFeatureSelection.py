@@ -253,9 +253,6 @@ def main():
             predict = minClf.predict(x[:, tuple(curIndexes)])
             curAcc = np.mean((predict >= 0.5).astype(np.int) == y)
             print(f"number of features: {len(curIndexes)};\taic={minAIC};\tACC(cutoff0.5)={curAcc}")
-
-            # debug
-            break
         else:
             break
 
