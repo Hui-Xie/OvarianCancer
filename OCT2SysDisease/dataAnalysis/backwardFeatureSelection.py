@@ -222,8 +222,10 @@ def main():
         fullFtrIndexes.append(i)
     assert len(fullFtrNames)==len(fullFtrIndexes)
     print(f"Initial input features before feature selection:\n{fullFtrNames}")
+    print("")
 
     #================sequential backward feature selection========================
+    print(f"============program is in sequential backward feature selection, please wait......==============")
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
     curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(disp=0)
@@ -232,7 +234,6 @@ def main():
     predict = curClf.predict(x[:, tuple(curIndexes)])
     curAcc = np.mean((predict >= 0.5).astype(np.int) == y)
     print(f"number of features: {len(curIndexes)};\taic={minAIC};\tACC(cutoff0.5)={curAcc}")
-    print(f"============program is in sequential backward feature selection, please wait......==============")
     while True:
         # loop on each feature in current x to get aic for all delete feature
         isAICDecreased = False
@@ -258,11 +259,11 @@ def main():
         else:
             break
 
-    print(f"=============End of sequential backward feature selection===========")
-    # print result
+    print(f"========================End of sequential backward feature selection======================")
+    print("Selected features with min AIC:")
     print(f"minAIC = {minAIC}")
     print(f"selected features: {curFtrs}")
-    print(f"selccted feature indexes: {curIndexes}")
+    print(f"selccted feature indexes: {curIndexes}\n")
 
     #===Redo logistic regression with selected features===========
     clf = sm.Logit(y, x[:,tuple(curIndexes)]).fit(disp=0)
@@ -271,7 +272,7 @@ def main():
     accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
     print(f"Accuracy of using {curFtrs} \n to predict hypertension with cutoff 0.5: {accuracy}")
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
-    print("With a different cut off:")
+    print("With a different cut off with max(ACC+TPR+TNR):")
     print(threhold_ACC_TPR_TNR_Sum)
 
     if output2File:
