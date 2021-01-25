@@ -194,6 +194,7 @@ def main():
     clinicalFtrColIndex = tuple(hps.clinicalFeatureColIndex)
     inputClinicalFeatures = hps.inputClinicalFeatures
 
+
     clinicalFtrs = labels[:, clinicalFtrColIndex]
 
     # delete the empty value of "-100"
@@ -220,6 +221,7 @@ def main():
     for i in range(index, index + len(inputClinicalFeatures)):
         fullFtrIndexes.append(i)
     assert len(fullFtrNames)==len(fullFtrIndexes)
+    print(f"Initial input features before feature selection:\n{fullFtrNames}")
 
     #================sequential backward feature selection========================
     curIndexes = fullFtrIndexes.copy()
