@@ -271,6 +271,9 @@ def main():
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
     print("With a different cut off with max(ACC+TPR+TNR):")
     print(threhold_ACC_TPR_TNR_Sum)
+    print("Where:")
+    for i in range(len(curFtrs)):
+        print(f"x{i+1} = {curFtrs[i]}")
 
     if output2File:
         logOutput.close()
