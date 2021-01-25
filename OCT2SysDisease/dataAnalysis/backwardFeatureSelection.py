@@ -229,6 +229,9 @@ def main():
     curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
+    predict = curClf.predict(x[:, tuple(curIndexes)])
+    curAcc = np.mean((predict >= 0.5).astype(np.int) == y)
+    print(f"number of features: {len(curIndexes)};\taic={minAIC};\tACC(cutoff0.5)={curAcc}")
     print(f"============program is in sequential backward feature selection, please wait......==============")
     while True:
         # loop on each feature in current x to get aic for all delete feature
@@ -241,11 +244,14 @@ def main():
                 minAIC = nextAIC
                 minIndexes = nextIndexes
                 minFtrs = curFtrs[0:i] + curFtrs[i + 1:]
+                minClf  =nextClf
                 isAICDecreased = True
         if isAICDecreased:
             curIndexes = minIndexes.copy()
             curFtrs = minFtrs.copy()
-            print(f"number of features: {len(curIndexes)};\taic={minAIC}")
+            predict = minClf.predict(x[:, tuple(curIndexes)])
+            curAcc = np.mean((predict >= 0.5).astype(np.int) == y)
+            print(f"number of features: {len(curIndexes)};\taic={minAIC};\tACC(cutoff0.5)={curAcc}")
 
             # debug
             break
