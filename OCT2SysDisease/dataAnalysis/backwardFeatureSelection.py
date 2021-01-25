@@ -221,12 +221,13 @@ def main():
         fullFtrIndexes.append(i)
     assert len(fullFtrNames)==len(fullFtrIndexes)
 
+    #================sequential backward feature selection========================
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
     curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit()
     curAIC = curClf.aic
     minAIC = curAIC
-    print(f"program is in sequential backward feature selection, please wait......")
+    print(f"============program is in sequential backward feature selection, please wait......==============")
     while True:
         # loop on each feature in current x to get aic for all delete feature
         isAICDecreased = False
@@ -242,56 +243,34 @@ def main():
         if isAICDecreased:
             curIndexes = minIndexes.copy()
             curFtrs = minFtrs.copy()
+            print(f"number of features: {len(curIndexes)};\taic={minAIC}")
+
+            # debug
+            break
         else:
             break
 
-    print(f"End of sequential backward feature selection")
+    print(f"=============End of sequential backward feature selection===========")
+    # print result
+    print(f"minAIC = {minAIC}")
+    print(f"selected features: {curFtrs}")
+    print(f"selccted feature indexes: {curIndexes}")
 
-
-
-
-
-
-
-
-
-
-
-        print ("debug")
-
-
-
-
-
-    print(f"Accuracy of using {inputClinicalFeatures} \n to predict hypertension with cutoff 0.5: {accuracy}")
+    #===Redo logistic regression with selected features===========
+    clf = sm.Logit(y, x[:,tuple(curIndexes)]).fit()
+    print(clf.summary())
+    predict = clf.predict(x[:,tuple(curIndexes)])
+    accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
+    print(f"Accuracy of using {curFtrs} \n to predict hypertension with cutoff 0.5: {accuracy}")
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
     print("With a different cut off:")
     print(threhold_ACC_TPR_TNR_Sum)
-    print("Where:")
-    n = 1
-    for i in range(nClinicalFtr):
-        print(f"x{n}={inputClinicalFeatures[i]}", end="; ")
-        n += 1
-    print("")
-    print("=========================")
-    print("list of x whose pvalue <=0.05")
-    n = 1
-    for i in range(0, nClinicalFtr):
-        if clf.pvalues[n - 1] <= 0.05:
-            print(f"x{n}={inputClinicalFeatures[i]}, z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
-        n += 1
-
-
-
-
-
-
 
     if output2File:
         logOutput.close()
         sys.stdout = original_stdout
 
-    print(f"================ End of random forest from thickness and clinical features to hypertension   ===============")
+    print(f"================ End of sequential backward feature selection w.r.t. hypertension   ===============")
 
 if __name__ == "__main__":
     main()
