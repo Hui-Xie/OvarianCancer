@@ -1,4 +1,4 @@
-# Backward feature selection
+# Sequential Backward feature selection
 
 
 import glob
@@ -18,13 +18,13 @@ from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 import datetime
 # from scipy.stats import norm
-# import statsmodels.api as sm
-from sklearn.ensemble import RandomForestClassifier
+import statsmodels.api as sm
+# from sklearn.ensemble import RandomForestClassifier
 
 output2File = True
 
 def printUsage(argv):
-    print("============ Anaylze OCT 9x9 sector Thickness plus 10 risk factors to  predict hypertension =============")
+    print("============ Sequential backward feature selection from 81 thickness and 14 clinical features =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_full_path")
 
@@ -184,82 +184,103 @@ def main():
     validationVolumes, validationLabels = retrieveImageData_label("validation", hps)
     testVolumes, testLabels = retrieveImageData_label("test", hps)
 
-    print("\n== RandomForest using 81+10 features to predict HBP ==============")
+    # concatinate all data crossing training, validation, and test
+    volumes = np.concatenate((trainVolumes, validationVolumes, testVolumes), axis=0)
+    labels = np.concatenate((trainLabels, validationLabels, testLabels), axis=0)
 
-    # concatenate 9x9 sector with clinical features, and delete empty-feature patients
-    # 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
-    # 10 clinical features: ["gender", "Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
+    print("\n== Sequential backward feature selection w.r.t. HBP ==============")
+    assert len(hps.inputClinicalFeatures) == len(hps.clinicalFeatureColIndex)
+    nClinicalFtr = len(hps.clinicalFeatureColIndex)
+    clinicalFtrColIndex = tuple(hps.clinicalFeatureColIndex)
     inputClinicalFeatures = hps.inputClinicalFeatures
-    print(f"inputClinical features: {inputClinicalFeatures}")
-    featureColIndex = tuple(hps.featureColIndex)
-    nClinicalFtr = len(featureColIndex)
-    assert nClinicalFtr == hps.numClinicalFtr
 
-    volume_label_list= [
-        ["train", trainVolumes, trainLabels,],
-        ["validation", validationVolumes, validationLabels,],
-        ["test", testVolumes, testLabels,],
-    ]
-    for name, volumes, labels in volume_label_list:
-        clinicalFtrs = labels[:, featureColIndex]
-        # delete the empty value of "-100"
-        emptyRows = np.nonzero(clinicalFtrs == -100)
-        extraEmptyRows = np.nonzero(clinicalFtrs[:, inputClinicalFeatures.index("IOP")] == 99)  # missing IOP value
-        emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-        # concatenate sector thickness with multi variables:
-        volumes = np.concatenate((volumes, clinicalFtrs), axis=1)  # size: Nx(81+len(self.m_inputClinicalFeatures))
+    clinicalFtrs = labels[:, clinicalFtrColIndex]
 
-        volumes = np.delete(volumes, emptyRows, 0)
-        targetLabels = np.delete(labels, emptyRows, 0)[:, 1]  # for hypertension
+    # delete the empty value of "-100"
+    emptyRows = np.nonzero((clinicalFtrs == -100).astype(np.int) + (clinicalFtrs < 0).astype(np.int))
+    extraEmptyRows = np.nonzero(clinicalFtrs[:, inputClinicalFeatures.index("IOP")] == 99)  # IOP value
+    emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
 
-        assert len(volumes) == len(targetLabels)
-        print(f"size of {name} data set: {volumes.shape}")
+    x = np.concatenate((volumes, clinicalFtrs), axis=1)
+    y = labels[:, 1]  # hypertension
+    x = np.delete(x, emptyRows, 0)
+    y = np.delete(y, emptyRows, 0)
+    print(f"After deleting empty-value patients, it remains {len(y)} patients.")
 
-        if name == "train":
-            trainX = volumes
-            trainY = targetLabels
-        elif name == "validation":
-            validationX = volumes
-            validationY = targetLabels
-        elif name =="test":
-            testX = volumes
-            testY = targetLabels
+    # store the full feature names and its indexes in the x:
+    fullFtrNames=[]
+    fullFtrIndexes = []
+    index=0
+    for layer in range(hps.inputChannels):
+        for sector in range(hps.imageH):
+            fullFtrNames.append(f"L{layer}_S{sector}")
+            fullFtrIndexes.append(index)
+            index +=1
+    fullFtrNames += inputClinicalFeatures
+    for i in range(index, index + len(inputClinicalFeatures)):
+        fullFtrIndexes.append(i)
+    assert len(fullFtrNames)==len(fullFtrIndexes)
+
+    curIndexes = fullFtrIndexes.copy()
+    curFtrs = fullFtrNames.copy()
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit()
+    curAIC = curClf.aic
+    minAIC = curAIC
+    print(f"program is in sequential backward feature selection, please wait......")
+    while True:
+        # loop on each feature in current x to get aic for all delete feature
+        isAICDecreased = False
+        for i in range(0, len(curIndexes)):
+            nextIndexes = curIndexes[0:i] + curIndexes[i+1:]
+            nextClf = sm.Logit(y, x[:,tuple(nextIndexes)]).fit()
+            nextAIC = nextClf.aic
+            if nextAIC < minAIC:
+                minAIC = nextAIC
+                minIndexes = nextIndexes
+                minFtrs = curFtrs[0:i] + curFtrs[i + 1:]
+                isAICDecreased = True
+        if isAICDecreased:
+            curIndexes = minIndexes.copy()
+            curFtrs = minFtrs.copy()
         else:
-            print("Error data name")
-            assert False
+            break
 
-    # single Random Forest test
-    clf = RandomForestClassifier(n_estimators=200, max_features=0.2)
-    print("RandomForest: n_estimators=200,  max_features=0.2")
-    print(f"Random forest parameters: \n{clf.get_params()}")
-    clf.fit(trainX, trainY)
-    trainAcc = clf.score(trainX, trainY)
-    validationAcc = clf.score(validationX, validationY)
-    testAcc = clf.score(testX, testY)
-
-    print(f"training score: {trainAcc}")
-    print(f"validation score: {validationAcc}")
-    print(f"test score: {testAcc}")
+    print(f"End of sequential backward feature selection")
 
 
-    # Grid search best config for random forest
-    print(f"\n================Grid search for Random Forest================")
-    print(f"========the element in below table is validationACC_testAcc==========")
-    print(f"=== the float feature indicate proportion of whole feature number====")
-    RF_nFeatures = np.arange(0.1,0.32,0.02)
-    RF_nEstimator = np.arange(100, 320, 20)
-    strNFeatures = ", ".join([f"{elem:.2f}" for elem in RF_nFeatures])
-    print(f"Estimators\Features, {strNFeatures}")
-    for nEstimators in RF_nEstimator:
-        print(nEstimators, end=", ")
-        for nFeatures in RF_nFeatures:
-            clf = RandomForestClassifier(n_estimators=nEstimators, max_features=nFeatures)
-            clf.fit(trainX, trainY)
-            validationAcc = clf.score(validationX, validationY)
-            testAcc = clf.score(testX, testY)
-            print(f"{validationAcc:.2f}_{testAcc:.2f}",end=", ")
-        print("")
-    print("==========================================================================")
+
+
+
+
+
+
+
+
+
+        print ("debug")
+
+
+
+
+
+    print(f"Accuracy of using {inputClinicalFeatures} \n to predict hypertension with cutoff 0.5: {accuracy}")
+    threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
+    print("With a different cut off:")
+    print(threhold_ACC_TPR_TNR_Sum)
+    print("Where:")
+    n = 1
+    for i in range(nClinicalFtr):
+        print(f"x{n}={inputClinicalFeatures[i]}", end="; ")
+        n += 1
+    print("")
+    print("=========================")
+    print("list of x whose pvalue <=0.05")
+    n = 1
+    for i in range(0, nClinicalFtr):
+        if clf.pvalues[n - 1] <= 0.05:
+            print(f"x{n}={inputClinicalFeatures[i]}, z={clf.tvalues[n - 1]}, pvalue={clf.pvalues[n - 1]}")
+        n += 1
+
 
 
 

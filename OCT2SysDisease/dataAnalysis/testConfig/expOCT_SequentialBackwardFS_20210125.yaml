@@ -36,7 +36,7 @@ appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength
 # columnIndex:      18                 19       20         21
 
 inputClinicalFeatures: ["gender", "Age", "IOP", "AxialLength", 'Smoke', "Pulse", 'Drink', "Glucose", "CRPL", "Cholesterol",  "Triglyceride", "BMI", "WaistHipRate", "LDLoverHDL"]
-featureColIndex: [2, 3, 4, 5, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21]
+clinicalFeatureColIndex: [2, 3, 4, 5, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21]
 numClinicalFtr: 14
 
 #dropoutRate: 0.2 # dropout after global average pooling
