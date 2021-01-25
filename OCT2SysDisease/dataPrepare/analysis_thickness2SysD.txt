@@ -1,3 +1,65 @@
+# Jan 23rd, Satursday, 2021:
+
+https://machinelearningmastery.com/probabilistic-model-selection-measures/
+
+Model selection and AIC:
+The benefit of these Akaike information criterion statistics is that they do not require a hold-out test set,
+although a limitation is that they do not take the uncertainty of the models into account
+and may end-up selecting models that are too simple.
+
+A benefit of probabilistic model selection methods is that a test dataset is not required, meaning that all of
+the data can be used to fit the model, and the final model that will be used for prediction in the domain can be scored directly.
+
+The simplest reliable method of model selection involves fitting candidate models on a training set,
+tuning them on the validation dataset, and selecting a model that performs the best on the test dataset
+according to a chosen metric, such as accuracy or error. A problem with this approach is that it requires a lot of data.
+
+There are many common approaches that may be used for model selection. For example,
+in the case of supervised learning, the three most common approaches are:
+A Train, Validation, and Test datasets.
+B  Resampling Methods.
+C  Probabilistic Statistics.
+
+Probabilistic model selection (or “information criteria”) provides an analytical technique for scoring and choosing among candidate models.
+
+AIC = -2/N * LL + 2 * k/N
+Where N is the number of examples in the training dataset, LL is the log-likelihood of the model on the training dataset,
+ and k is the number of parameters in the model.
+
+The score, as defined above, is minimized, e.g. the model with the lowest AIC is selected
+
+Compared to the BIC method (below), the AIC statistic penalizes complex models less,
+meaning that it may put more emphasis on model performance on the training dataset, and, in turn, select more complex models.
+
+
+stepwise regression for variables selection.
+
+Irrelevant IVs may deceases the fiting accuracy, or overfitting.
+
+Unless the number of candidate variables > sample size (or number of events), use a backward stepwise approach.
+
+Automated variable selection is not meant to replace expert opinion. In fact, important variables judged by background
+ knowledge should still be entered in the model even if they are statistically non-significant.
+
+Where automated variable selection is most helpful is in exploratory data analysis especially when working on
+new problems not already studied by other researchers (where background knowledge is not available).
+
+This instability is reduced when we have a sample size (or number of events) > 50 per candidate variable.
+
+Forward or backward stepwise variable selection/regression is like SGD, at each step, looking at previous step, and
+search current biggest improvement step.
+
+Forward and backward stepwise selection is not guaranteed to give us the best model containing a particular subset of
+the p predictors but that's the price to pay in order to avoid overfitting.
+
+OLS in statsmodels for model selection.
+
+https://github.com/AakkashVijayakumar/stepwise-regression
+
+
+
+
+
 # Jan 22nd, Friday, 2021:
 Summary:
 1  input: 81-sector thickness + 10 clinical features: ['gender', 'Age', 'IOP', 'AxialLength', 'Pulse', 'Glucose', 'Cholesterol', 'Triglyceride', 'BMI', 'LDLoverHDL']
