@@ -322,7 +322,7 @@ Estimators\Features,        0.10,   0.12,       0.14,       0.16,       0.18,   
    ExpName                                              lr      lrPatient, fcWidths    validationACC   testACC   input
    expOCT_9x9Sector_biochemical_2HyT_20210120A_FC       0.01    6         [40, 20,1]   0.6943          0.6164    81thickness+9clinical without gender
    expOCT_9x9Sector_10Biochemical_2HyT_20210122A_FC     0.01    6         [40, 20,1]   0.6529          0.6096    81thickness+10clinical with gender
-5  As age has bigger p-value, it hurt performance.
+5  As gender has bigger p-value, it hurt performance.
 
 
 
