@@ -1,3 +1,189 @@
+# Jan 25th, Monday, 2021
+Feature selection result using sequential backward feature selection algorithm:
+Summary:
+1  Input: 9x9 thickness sectors + 14 clinical features = 95 featurs;
+2  Used sequential backward features selection according to AIC (Akaike information criterion);
+3  Final selected 41 features: 31 thickness features + 10 clinical features:
+   This 41 features are the  best features combination by a sequential, not exhaust(impractical in computation), feature search.
+4  Clinical features excluded gender, smoke, cholesterol, and CRPL;
+   excluding cholesterol is a little surprise, but it is also reasonable as its pvalue is a little big comparing with others.
+5  Below ACC change in search process is reasonable, as its change is less than 1%.
+6  tomorrow I will use these 41 features to feed into a deep learning network to see his deep learning result;
+
+
+Experiment: expOCT_SequentialBackwardFS_20210125
+
+== Sequential backward feature selection w.r.t. HBP ==============
+After deleting empty-value patients, it remains 3804 patients.
+Initial input features before feature selection:
+['L0_S0', 'L0_S1', 'L0_S2', 'L0_S3', 'L0_S4', 'L0_S5', 'L0_S6', 'L0_S7', 'L0_S8', 'L1_S0', 'L1_S1', 'L1_S2', 'L1_S3', 'L1_S4', 'L1_S5', 'L1_S6', 'L1_S7', 'L1_S8', 'L2_S0', 'L2_S1', 'L2_S2', 'L2_S3', 'L2_S4', 'L2_S5', 'L2_S6', 'L2_S7', 'L2_S8', 'L3_S0', 'L3_S1', 'L3_S2', 'L3_S3', 'L3_S4', 'L3_S5', 'L3_S6', 'L3_S7', 'L3_S8', 'L4_S0', 'L4_S1', 'L4_S2', 'L4_S3', 'L4_S4', 'L4_S5', 'L4_S6', 'L4_S7', 'L4_S8', 'L5_S0', 'L5_S1', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S7', 'L5_S8', 'L6_S0', 'L6_S1', 'L6_S2', 'L6_S3', 'L6_S4', 'L6_S5', 'L6_S6', 'L6_S7', 'L6_S8', 'L7_S0', 'L7_S1', 'L7_S2', 'L7_S3', 'L7_S4', 'L7_S5', 'L7_S6', 'L7_S7', 'L7_S8', 'L8_S0', 'L8_S1', 'L8_S2', 'L8_S3', 'L8_S4', 'L8_S5', 'L8_S6', 'L8_S7', 'L8_S8', 'gender', 'Age', 'IOP', 'AxialLength', 'Smoke', 'Pulse', 'Drink', 'Glucose', 'CRPL', 'Cholesterol', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
+
+============program is in sequential backward feature selection, please wait......==============
+number of features: 95;	aic=4703.115993941735;	ACC(cutoff0.5)=0.6840168243953733
+number of features: 94;	aic=4701.116248603205;	ACC(cutoff0.5)=0.6840168243953733
+number of features: 93;	aic=4699.116923172041;	ACC(cutoff0.5)=0.6840168243953733
+number of features: 92;	aic=4697.117972411769;	ACC(cutoff0.5)=0.6837539432176656
+number of features: 91;	aic=4695.119843124134;	ACC(cutoff0.5)=0.6837539432176656
+number of features: 90;	aic=4693.125248965362;	ACC(cutoff0.5)=0.6832281808622502
+number of features: 89;	aic=4691.154089600343;	ACC(cutoff0.5)=0.6834910620399579
+number of features: 88;	aic=4689.185742904654;	ACC(cutoff0.5)=0.6840168243953733
+number of features: 87;	aic=4687.220080347437;	ACC(cutoff0.5)=0.6832281808622502
+number of features: 86;	aic=4685.2462006096175;	ACC(cutoff0.5)=0.6829652996845426
+number of features: 85;	aic=4683.279165413104;	ACC(cutoff0.5)=0.6829652996845426
+number of features: 84;	aic=4681.3199136866415;	ACC(cutoff0.5)=0.6821766561514195
+number of features: 83;	aic=4679.378923374291;	ACC(cutoff0.5)=0.6813880126182965
+number of features: 82;	aic=4677.438207643816;	ACC(cutoff0.5)=0.6808622502628812
+number of features: 81;	aic=4675.507354504261;	ACC(cutoff0.5)=0.6803364879074658
+number of features: 80;	aic=4673.576585366525;	ACC(cutoff0.5)=0.6795478443743428
+number of features: 79;	aic=4671.6548580133385;	ACC(cutoff0.5)=0.6821766561514195
+number of features: 78;	aic=4669.7525602784435;	ACC(cutoff0.5)=0.6821766561514195
+number of features: 77;	aic=4667.870870252643;	ACC(cutoff0.5)=0.6819137749737119
+number of features: 76;	aic=4665.985840638892;	ACC(cutoff0.5)=0.6824395373291272
+number of features: 75;	aic=4664.105726676983;	ACC(cutoff0.5)=0.6824395373291272
+number of features: 74;	aic=4662.18500678698;	ACC(cutoff0.5)=0.6827024185068349
+number of features: 73;	aic=4660.312011509949;	ACC(cutoff0.5)=0.6816508937960042
+number of features: 72;	aic=4658.485155419752;	ACC(cutoff0.5)=0.6813880126182965
+number of features: 71;	aic=4656.6765610795355;	ACC(cutoff0.5)=0.6808622502628812
+number of features: 70;	aic=4654.981147510332;	ACC(cutoff0.5)=0.6790220820189274
+number of features: 69;	aic=4653.258967380402;	ACC(cutoff0.5)=0.6784963196635121
+number of features: 68;	aic=4651.563539549977;	ACC(cutoff0.5)=0.6803364879074658
+number of features: 67;	aic=4649.862483323349;	ACC(cutoff0.5)=0.6771819137749737
+number of features: 66;	aic=4648.157576292952;	ACC(cutoff0.5)=0.6790220820189274
+number of features: 65;	aic=4646.346152181433;	ACC(cutoff0.5)=0.6790220820189274
+number of features: 64;	aic=4644.8659653596405;	ACC(cutoff0.5)=0.6774447949526814
+number of features: 63;	aic=4643.595082141491;	ACC(cutoff0.5)=0.6771819137749737
+number of features: 62;	aic=4642.432003530882;	ACC(cutoff0.5)=0.6779705573080967
+number of features: 61;	aic=4641.272140801453;	ACC(cutoff0.5)=0.6784963196635121
+number of features: 60;	aic=4640.109090310414;	ACC(cutoff0.5)=0.6790220820189274
+number of features: 59;	aic=4638.548446264683;	ACC(cutoff0.5)=0.6784963196635121
+number of features: 58;	aic=4637.254631759639;	ACC(cutoff0.5)=0.6800736067297581
+number of features: 57;	aic=4636.08738784991;	ACC(cutoff0.5)=0.6787592008412198
+number of features: 56;	aic=4635.079825073293;	ACC(cutoff0.5)=0.6798107255520505
+number of features: 55;	aic=4633.950133345463;	ACC(cutoff0.5)=0.6816508937960042
+number of features: 54;	aic=4632.8449930797815;	ACC(cutoff0.5)=0.6813880126182965
+number of features: 53;	aic=4631.929920578448;	ACC(cutoff0.5)=0.6813880126182965
+number of features: 52;	aic=4630.803072277773;	ACC(cutoff0.5)=0.6784963196635121
+number of features: 51;	aic=4630.075797876193;	ACC(cutoff0.5)=0.6795478443743428
+number of features: 50;	aic=4629.387838694521;	ACC(cutoff0.5)=0.6803364879074658
+number of features: 49;	aic=4628.80049791979;	ACC(cutoff0.5)=0.6790220820189274
+number of features: 48;	aic=4628.213351631597;	ACC(cutoff0.5)=0.6766561514195584
+number of features: 47;	aic=4627.5928144324125;	ACC(cutoff0.5)=0.6742902208201893
+number of features: 46;	aic=4626.567829122094;	ACC(cutoff0.5)=0.676130389064143
+number of features: 45;	aic=4625.910927912311;	ACC(cutoff0.5)=0.673764458464774
+number of features: 44;	aic=4624.276124954185;	ACC(cutoff0.5)=0.6742902208201893
+number of features: 43;	aic=4623.87098491536;	ACC(cutoff0.5)=0.6748159831756047
+number of features: 42;	aic=4623.643487225389;	ACC(cutoff0.5)=0.6774447949526814
+number of features: 41;	aic=4623.37899409433;	ACC(cutoff0.5)=0.676919032597266
+========================End of sequential backward feature selection======================
+Selected features with min AIC:
+minAIC = 4623.37899409433
+selected features: ['L0_S1', 'L0_S3', 'L0_S4', 'L0_S5', 'L1_S1', 'L1_S3', 'L2_S2', 'L2_S3', 'L3_S2', 'L3_S3', 'L3_S7', 'L4_S7', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S8', 'L6_S1', 'L6_S3', 'L6_S5', 'L6_S6', 'L6_S7', 'L7_S0', 'L7_S1', 'L7_S4', 'L7_S6', 'L7_S8', 'L8_S5', 'L8_S7', 'L8_S8', 'Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
+selccted feature indexes: [1, 3, 4, 5, 10, 12, 20, 21, 29, 30, 34, 43, 47, 48, 49, 50, 51, 53, 55, 57, 59, 60, 61, 63, 64, 67, 69, 71, 77, 79, 80, 82, 83, 84, 86, 87, 88, 91, 92, 93, 94]
+
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 3804
+Model:                          Logit   Df Residuals:                     3763
+Method:                           MLE   Df Model:                           40
+Date:                Mon, 25 Jan 2021   Pseudo R-squ.:                  0.1285
+Time:                        17:21:12   Log-Likelihood:                -2270.7
+converged:                       True   LL-Null:                       -2605.6
+Covariance Type:            nonrobust   LLR p-value:                2.908e-115
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -0.0389      0.016     -2.507      0.012      -0.069      -0.008
+x2             0.0257      0.014      1.897      0.058      -0.001       0.052
+x3             0.0236      0.012      1.926      0.054      -0.000       0.048
+x4             0.0112      0.008      1.492      0.136      -0.004       0.026
+x5             0.0327      0.011      3.031      0.002       0.012       0.054
+x6            -0.0435      0.012     -3.748      0.000      -0.066      -0.021
+x7             0.0322      0.015      2.155      0.031       0.003       0.061
+x8            -0.0256      0.016     -1.571      0.116      -0.058       0.006
+x9            -0.0786      0.029     -2.748      0.006      -0.135      -0.023
+x10            0.1129      0.036      3.173      0.002       0.043       0.183
+x11           -0.0901      0.032     -2.835      0.005      -0.152      -0.028
+x12            0.0480      0.019      2.518      0.012       0.011       0.085
+x13           -0.0164      0.011     -1.428      0.153      -0.039       0.006
+x14            0.0245      0.012      2.057      0.040       0.001       0.048
+x15            0.0400      0.014      2.807      0.005       0.012       0.068
+x16           -0.0300      0.011     -2.776      0.006      -0.051      -0.009
+x17            0.0275      0.016      1.698      0.090      -0.004       0.059
+x18           -0.0394      0.017     -2.364      0.018      -0.072      -0.007
+x19           -0.0733      0.042     -1.762      0.078      -0.155       0.008
+x20           -0.1192      0.058     -2.062      0.039      -0.233      -0.006
+x21            0.0480      0.027      1.788      0.074      -0.005       0.101
+x22           -0.1676      0.043     -3.941      0.000      -0.251      -0.084
+x23            0.1291      0.050      2.589      0.010       0.031       0.227
+x24            0.0520      0.022      2.413      0.016       0.010       0.094
+x25           -0.0516      0.031     -1.674      0.094      -0.112       0.009
+x26           -0.1344      0.040     -3.323      0.001      -0.214      -0.055
+x27           -0.0865      0.026     -3.369      0.001      -0.137      -0.036
+x28            0.1813      0.036      4.973      0.000       0.110       0.253
+x29           -0.1327      0.052     -2.563      0.010      -0.234      -0.031
+x30           -0.1518      0.046     -3.274      0.001      -0.243      -0.061
+x31            0.2126      0.063      3.352      0.001       0.088       0.337
+x32            0.0645      0.005     12.325      0.000       0.054       0.075
+x33            0.0825      0.014      5.952      0.000       0.055       0.110
+x34           -0.1878      0.041     -4.526      0.000      -0.269      -0.106
+x35           -0.0167      0.004     -4.544      0.000      -0.024      -0.010
+x36            0.0481      0.029      1.654      0.098      -0.009       0.105
+x37            0.1001      0.029      3.502      0.000       0.044       0.156
+x38            0.1193      0.037      3.257      0.001       0.048       0.191
+x39            0.1539      0.012     12.772      0.000       0.130       0.177
+x40            1.8278      0.643      2.842      0.004       0.567       3.089
+x41           -0.1929      0.047     -4.135      0.000      -0.284      -0.101
+==============================================================================
+Accuracy of using ['L0_S1', 'L0_S3', 'L0_S4', 'L0_S5', 'L1_S1', 'L1_S3', 'L2_S2', 'L2_S3', 'L3_S2', 'L3_S3', 'L3_S7', 'L4_S7', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S8', 'L6_S1', 'L6_S3', 'L6_S5', 'L6_S6', 'L6_S7', 'L7_S0', 'L7_S1', 'L7_S4', 'L7_S6', 'L7_S8', 'L8_S5', 'L8_S7', 'L8_S8', 'Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
+ to predict hypertension with cutoff 0.5: 0.676919032597266
+With a different cut off with max(ACC+TPR+TNR):
+{'threshold': 0.5690000000000001, 'ACC': 0.6729758149316509, 'TPR': 0.6564102564071963, 'TNR': 0.6943942133773696, 'Sum': 2.0237802847162167}
+Where:
+x1 = L0_S1
+x2 = L0_S3
+x3 = L0_S4
+x4 = L0_S5
+x5 = L1_S1
+x6 = L1_S3
+x7 = L2_S2
+x8 = L2_S3
+x9 = L3_S2
+x10 = L3_S3
+x11 = L3_S7
+x12 = L4_S7
+x13 = L5_S2
+x14 = L5_S3
+x15 = L5_S4
+x16 = L5_S5
+x17 = L5_S6
+x18 = L5_S8
+x19 = L6_S1
+x20 = L6_S3
+x21 = L6_S5
+x22 = L6_S6
+x23 = L6_S7
+x24 = L7_S0
+x25 = L7_S1
+x26 = L7_S4
+x27 = L7_S6
+x28 = L7_S8
+x29 = L8_S5
+x30 = L8_S7
+x31 = L8_S8
+x32 = Age
+x33 = IOP
+x34 = AxialLength
+x35 = Pulse
+x36 = Drink
+x37 = Glucose
+x38 = Triglyceride
+x39 = BMI
+x40 = WaistHipRate
+x41 = LDLoverHDL
+
+
+
+
 # Jan 23rd, Satursday, 2021:
 
 https://machinelearningmastery.com/probabilistic-model-selection-measures/
