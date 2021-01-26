@@ -139,21 +139,27 @@ class OCT2SysD_DataSet(data.Dataset):
             else:
                 labelTable[i, 21] = labelTable[i, 17] / labelTable[i, 16]  # LDL/HDL, bigger means more risk to hypertension.
 
-        # concatenate 9x9 sector with clinical features, and delete empty-feature patients
-        # 9 clinical features: ["Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
-        # 10 clinical features: ["gender", "Age", "IOP", "AxialLength", "Pulse", "Glucose", "Cholesterol", "Triglyceride", "BMI", "LDLoverHDL"]
+        # concatenate selected thickness and clinical features, and then delete empty-feature patients
         self.m_inputClinicalFeatures = hps.inputClinicalFeatures
-        featureColIndex = tuple(hps.featureColIndex)
-        nClinicalFtr = len(featureColIndex)
+        clinicalFeatureColIndex = tuple(hps.clinicalFeatureColIndex)
+        nClinicalFtr = len(clinicalFeatureColIndex)
         assert nClinicalFtr == hps.numClinicalFtr
 
-        clinicalFtrs = labelTable[:, featureColIndex]
+        clinicalFtrs = labelTable[:, clinicalFeatureColIndex]
         # delete the empty value of "-100"
         emptyRows = np.nonzero(clinicalFtrs == -100)
         extraEmptyRows = np.nonzero(clinicalFtrs[:,self.m_inputClinicalFeatures.index("IOP")] == 99)  #missing IOP value
         emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
+
+        self.m_inputThicknessFeatures = hps.inputThicknessFeatures
+        thicknessFeatureColIndex = tuple(hps.thicknessFeatureColIndex)
+        nThicknessFtr = len(thicknessFeatureColIndex)
+        assert nThicknessFtr == hps.numThicknessFtr
+
+        thicknessFtrs = self.m_volumes[:,thicknessFeatureColIndex]
+
         # concatenate sector thickness with multi variables:
-        self.m_volumes = np.concatenate((self.m_volumes, clinicalFtrs), axis=1)  # size: Nx(81+len(self.m_inputClinicalFeatures))
+        self.m_volumes = np.concatenate((thicknessFtrs, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
 
         self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
         self.m_targetLabels = np.delete(labelTable, emptyRows, 0)[:,1] # for hypertension

@@ -15,7 +15,7 @@ sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
 # for input size: 2x31x25
-from Thickness9x9_bioch_FCNet import Thickness9x9_bioch_FCNet
+from ThicknessClinical41Ftrs_FCNet import ThicknessClinical41Ftrs_FCNet
 
 
 from OCT2SysD_Tools import *
@@ -188,9 +188,10 @@ def main():
         if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
-            net.updateRunParameter("accuracy", validAcc)
+            net.updateRunParameter("accuracy_cutoff0.5", validAcc)
             net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
             net.updateRunParameter("threshold", Td_Acc_TPR_TNR_Sum['threshold'])
+            net.updateRunParameter("train_Td_Acc_TPR_TNR_Sum", Td_Acc_TPR_TNR_Sum)
             preValidLoss = validLoss
             preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)

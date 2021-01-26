@@ -7,7 +7,7 @@ from framework.BasicModel import BasicModel
 from framework.NetTools import  construct2DFeatureNet
 
 # for input size: 9x9+7 and flat
-class Thickness9x9_bioch_FCNet(BasicModel):
+class ThicknessClinical41Ftrs_FCNet(BasicModel):
     def __init__(self, hps=None):
         super().__init__()
         self.hps = hps

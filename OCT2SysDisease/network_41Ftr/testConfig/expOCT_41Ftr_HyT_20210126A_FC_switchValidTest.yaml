@@ -4,7 +4,7 @@ debug: True
 debugOutputPeriod: 50
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 batchSize: 80 #
 learningRate: 1.0e-2  #
 lrPatience: 6   # learning rate decay patience
@@ -22,8 +22,8 @@ dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_202
 # _delErrWID: delete W=384 image ID
 # _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
 trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv"
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv"
-testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
