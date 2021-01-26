@@ -16,7 +16,11 @@ Experiment: expOCT_SequentialBackwardFS_20210125
 == Sequential backward feature selection w.r.t. HBP ==============
 After deleting empty-value patients, it remains 3804 patients.
 Initial input features before feature selection:
-['L0_S0', 'L0_S1', 'L0_S2', 'L0_S3', 'L0_S4', 'L0_S5', 'L0_S6', 'L0_S7', 'L0_S8', 'L1_S0', 'L1_S1', 'L1_S2', 'L1_S3', 'L1_S4', 'L1_S5', 'L1_S6', 'L1_S7', 'L1_S8', 'L2_S0', 'L2_S1', 'L2_S2', 'L2_S3', 'L2_S4', 'L2_S5', 'L2_S6', 'L2_S7', 'L2_S8', 'L3_S0', 'L3_S1', 'L3_S2', 'L3_S3', 'L3_S4', 'L3_S5', 'L3_S6', 'L3_S7', 'L3_S8', 'L4_S0', 'L4_S1', 'L4_S2', 'L4_S3', 'L4_S4', 'L4_S5', 'L4_S6', 'L4_S7', 'L4_S8', 'L5_S0', 'L5_S1', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S7', 'L5_S8', 'L6_S0', 'L6_S1', 'L6_S2', 'L6_S3', 'L6_S4', 'L6_S5', 'L6_S6', 'L6_S7', 'L6_S8', 'L7_S0', 'L7_S1', 'L7_S2', 'L7_S3', 'L7_S4', 'L7_S5', 'L7_S6', 'L7_S7', 'L7_S8', 'L8_S0', 'L8_S1', 'L8_S2', 'L8_S3', 'L8_S4', 'L8_S5', 'L8_S6', 'L8_S7', 'L8_S8', 'gender', 'Age', 'IOP', 'AxialLength', 'Smoke', 'Pulse', 'Drink', 'Glucose', 'CRPL', 'Cholesterol', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
+['L0_S0', 'L0_S1', 'L0_S2', 'L0_S3', 'L0_S4', 'L0_S5', 'L0_S6', 'L0_S7', 'L0_S8', 'L1_S0', 'L1_S1', 'L1_S2', 'L1_S3', 'L1_S4', 'L1_S5', 'L1_S6', 'L1_S7', 'L1_S8', 'L2_S0', 'L2_S1',
+'L2_S2', 'L2_S3', 'L2_S4', 'L2_S5', 'L2_S6', 'L2_S7', 'L2_S8', 'L3_S0', 'L3_S1', 'L3_S2', 'L3_S3', 'L3_S4', 'L3_S5', 'L3_S6', 'L3_S7', 'L3_S8', 'L4_S0', 'L4_S1', 'L4_S2', 'L4_S3',
+'L4_S4', 'L4_S5', 'L4_S6', 'L4_S7', 'L4_S8', 'L5_S0', 'L5_S1', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S7', 'L5_S8', 'L6_S0', 'L6_S1', 'L6_S2', 'L6_S3', 'L6_S4', 'L6_S5',
+'L6_S6', 'L6_S7', 'L6_S8', 'L7_S0', 'L7_S1', 'L7_S2', 'L7_S3', 'L7_S4', 'L7_S5', 'L7_S6', 'L7_S7', 'L7_S8', 'L8_S0', 'L8_S1', 'L8_S2', 'L8_S3', 'L8_S4', 'L8_S5', 'L8_S6', 'L8_S7',
+'L8_S8', 'gender', 'Age', 'IOP', 'AxialLength', 'Smoke', 'Pulse', 'Drink', 'Glucose', 'CRPL', 'Cholesterol', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
 
 ============program is in sequential backward feature selection, please wait......==============
 number of features: 95;	aic=4703.115993941735;	ACC(cutoff0.5)=0.6840168243953733
@@ -77,7 +81,9 @@ number of features: 41;	aic=4623.37899409433;	ACC(cutoff0.5)=0.676919032597266
 ========================End of sequential backward feature selection======================
 Selected features with min AIC:
 minAIC = 4623.37899409433
-selected features: ['L0_S1', 'L0_S3', 'L0_S4', 'L0_S5', 'L1_S1', 'L1_S3', 'L2_S2', 'L2_S3', 'L3_S2', 'L3_S3', 'L3_S7', 'L4_S7', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S8', 'L6_S1', 'L6_S3', 'L6_S5', 'L6_S6', 'L6_S7', 'L7_S0', 'L7_S1', 'L7_S4', 'L7_S6', 'L7_S8', 'L8_S5', 'L8_S7', 'L8_S8', 'Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
+selected features: ['L0_S1', 'L0_S3', 'L0_S4', 'L0_S5', 'L1_S1', 'L1_S3', 'L2_S2', 'L2_S3', 'L3_S2', 'L3_S3', 'L3_S7', 'L4_S7', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5',
+'L5_S6', 'L5_S8', 'L6_S1', 'L6_S3', 'L6_S5', 'L6_S6', 'L6_S7', 'L7_S0', 'L7_S1', 'L7_S4', 'L7_S6', 'L7_S8', 'L8_S5', 'L8_S7', 'L8_S8',
+'Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Triglyceride', 'BMI', 'WaistHipRate', 'LDLoverHDL']
 selccted feature indexes: [1, 3, 4, 5, 10, 12, 20, 21, 29, 30, 34, 43, 47, 48, 49, 50, 51, 53, 55, 57, 59, 60, 61, 63, 64, 67, 69, 71, 77, 79, 80, 82, 83, 84, 86, 87, 88, 91, 92, 93, 94]
 
                            Logit Regression Results
@@ -246,6 +252,9 @@ why automatic feature selection:  We want to improve the computational efficienc
 reduce the generalization error of the model by removing irrelevant features or noise.
 
 
+gender -> thickness -> hyptension
+gender -> hypertension
+
 
 
 
@@ -311,8 +320,8 @@ Estimators\Features,        0.10,   0.12,       0.14,       0.16,       0.18,   
 3  But too small learning rate also hurt trianing performace.
 4  comparing 2 experiment:
    ExpName                                              lr      lrPatient, fcWidths    validationACC   testACC   input
-   expOCT_9x9Sector_biochemical_2HyT_20210120A_FC       0.01    6         [40, 20,1]   0.6943          0.6164    81thickness+9clinical without age
-   expOCT_9x9Sector_10Biochemical_2HyT_20210122A_FC     0.01    6         [40, 20,1]   0.6529          0.6096    81thickness+10clinical with age
+   expOCT_9x9Sector_biochemical_2HyT_20210120A_FC       0.01    6         [40, 20,1]   0.6943          0.6164    81thickness+9clinical without gender
+   expOCT_9x9Sector_10Biochemical_2HyT_20210122A_FC     0.01    6         [40, 20,1]   0.6529          0.6096    81thickness+10clinical with gender
 5  As age has bigger p-value, it hurt performance.
 
 
