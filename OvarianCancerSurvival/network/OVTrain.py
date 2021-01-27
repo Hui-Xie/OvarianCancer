@@ -101,7 +101,7 @@ def main():
 
         trPredictDict = {}
         trPredictProbDict = {}
-        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
+        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0, drop_last=True):
 
             residualPredict, residualLoss, chemoPredict, chemoLoss, agePredict, ageLoss, survivalPredict, survivalLoss,optimalPredict, optimalLoss, predictProb\
                 = net.forward(batchData['images'], GTs = batchData['GTs'])

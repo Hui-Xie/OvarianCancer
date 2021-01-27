@@ -127,7 +127,7 @@ def main():
         allTrainOutput = None
         allTrainGTs = None
 
-        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
+        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0, drop_last=True):
             inputs = batchData['images']# B,C,H,W
             t = batchData['GTs'].to(device=hps.device, dtype=torch.float) # target
 

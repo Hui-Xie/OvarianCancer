@@ -119,7 +119,7 @@ def main():
 
         trPredictDict = {}
         trPredictProbDict = {}
-        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0):
+        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0, drop_last=True):
 
             inputs = batchData['images']# B,3,H,W
 

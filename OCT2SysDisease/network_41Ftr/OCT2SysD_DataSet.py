@@ -160,6 +160,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
         # concatenate sector thickness with multi variables:
         self.m_volumes = np.concatenate((thicknessFtrs, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
+        assert self.m_volumes.shape[1] == hps.inputWidth
 
         self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
         self.m_targetLabels = np.delete(labelTable, emptyRows, 0)[:,1] # for hypertension
@@ -244,7 +245,7 @@ class OCT2SysD_DataSet(data.Dataset):
         # mean = mean.expand_as(data)
         # data = (data - mean) / (std + epsilon)  # size: CxHxW
 
-        result = {"images": data,  # B,C,H,W
+        result = {"images": data,
                   "GTs": label,
                   "IDs": volumePath
                   }
