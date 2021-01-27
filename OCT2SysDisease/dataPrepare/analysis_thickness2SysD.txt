@@ -208,6 +208,12 @@ x41 = LDLoverHDL
 
 https://machinelearningmastery.com/probabilistic-model-selection-measures/
 
+The benefits of reducing irrelevant redundant features:
+1  reduce multi-colinearity;
+2  add fit accuracy, and decrease overfitting;
+3  removing irrelevant noise features;
+
+
 Model selection and AIC:
 The benefit of these Akaike information criterion statistics is that they do not require a hold-out test set,
 although a limitation is that they do not take the uncertainty of the models into account
