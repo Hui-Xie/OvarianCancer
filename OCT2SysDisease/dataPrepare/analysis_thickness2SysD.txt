@@ -1,13 +1,68 @@
+# Jan 27th, Wednesday, 2021:
+41 features test:
+
+expOCT_41Ftr_HyT_20210127A_FC_switchValidTest: lr=0.01, lrPatient=6, fcWidths=[40, 20,1]
+
+expOCT_41Ftr_HyT_20210127B_FC_switchValidTest: lr=0.1, lrPatient=12, fcWidths=[40, 20,1]
+
+expOCT_41Ftr_HyT_20210127C_FC: lr=0.1, lrPatient=6, fcWidths=[40, 20,1]
+
+expOCT_41Ftr_HyT_20210127D_FC: lr=0.1, lrPatient=12, fcWidths=[40, 20,1]
+
+
 # Jan 26th, Tuesday, 2021
-Use 41 features for training:
-training data set: NVolumes=2401
-validation data set: NVolumes=689
-
+Use 41 features(31 thickness +10 clinical) for training:
 expOCT_41Ftr_HyT_20210126A_FC: start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
+    training data set: NVolumes=2401
+    validation data set: NVolumes=689
+    test data set: NVolumes=718
+net.m_runParametersDict:
+	validationLoss:0.5483165383338928
+	epoch:72
+	accuracy_cutoff0.5:0.6850507982583455
+	learningRate:0.002097152000000001
+	threshold:0.47300000000000003
+	train_Td_Acc_TPR_TNR_Sum:{'threshold': 0.47300000000000003, 'ACC': 0.706821480406386, 'TPR': 0.7840616966379419, 'TNR': 0.6066666666464444, 'Sum': 2.0975498436907722}
+
+=======Test Result on test data with threshold of 0.47300000000000003=========
+	ACC:0.6072423398328691
+	TPR:0.6947115384448387
+	TNR:0.4867549668712995
+	Sum:1.7887088451490074
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.6086350974930362
+	TPR:0.651442307676648
+	TNR:0.5496688741539845
+	Sum:1.8097462793236687
 
 
-expOCT_41Ftr_HyT_20210126A_FC_switchValidTest:  start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
-     switch validation and test data set.
+expOCT_41Ftr_HyT_20210126B_FC:  start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
+    name origin: expOCT_41Ftr_HyT_20210126A_FC_switchValidTest: (a dir bug data sets didn't switch)
+    training data set: NVolumes=2401
+    validation data set: NVolumes=689
+    test data set: NVolumes=718
+
+net.m_runParametersDict:
+	validationLoss:0.5623322129249573
+	epoch:40
+	accuracy_cutoff0.5:0.6821480406386067
+	learningRate:0.008
+	threshold:0.531
+	train_Td_Acc_TPR_TNR_Sum:{'threshold': 0.531, 'ACC': 0.7010159651669086, 'TPR': 0.740359897153204, 'TNR': 0.6499999999783334, 'Sum': 2.0913758622984457}
+
+=======Test Result on test data with threshold of 0.531=========
+	ACC:0.6128133704735376
+	TPR:0.6658653845993783
+	TNR:0.5397350993198763
+	Sum:1.8184138543927921
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.6058495821727019
+	TPR:0.7211538461365107
+	TNR:0.4470198675348669
+	Sum:1.7740232958440794
+
 
 
 
