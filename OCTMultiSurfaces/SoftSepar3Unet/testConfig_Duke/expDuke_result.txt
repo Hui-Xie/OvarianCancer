@@ -1,3 +1,24 @@
+#Jan 27th, Wednesday, 2021
+
+Thickness (Rift) prediction on Duke_AMD test data:
+================================================================================================================================================================================================================
+Method_Name                                         meanErr StdError thickErr0 thickErr1 HausdfDist0 HausdfDist1 Note
+expDuke_20200902A_RiftSubnet                        5.9216   3.6589   3.4042,   8.4392                            Directly prediction N-1 thickness.
+expDuke_20201209A_ThicknessSubnet_iibi007           3.5991   2.2252   3.0774,   4.1209    45.9394    49.9701      NoGuassian DivLoss, thickness from N surfaces, initial filter=32, 8layers
+expDuke_20201215A_ThicknessSubnet_iibi007           3.8005   2.3574   3.2803,   4.3208    42.5530    54.1401      Gausssian DivLoss, thickness from N surfaces. initial filter=32, 8Layers
+expDuke_20201228A_ThicknessSubnet_iibi007           3.8707   2.4398   3.2910,   4.4505    45.0367    57.6670      without Gaussian Divloss, use cumulative R, intial filter=24. 7Layers
+expDuke_20210101A_ThicknessSubnet_iibi007           3.7638   2.4115   3.1838,   4.3439    52.3715    42.0491      32 filters, 8 layers, add XY coordinate input, No cummulativeRLoss
+expDuke_20210101B_ThicknessSubnet_iibi007           3.8175   2.0736   3.2453,   4.3898    89.6813    27.2954      32 filters, 8 layers, add XY coordinate input, with cumulativeRLoss
+expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121   2.4195   3.0530,   4.1713    58.6041    42.0000      18GB, exact YufanHe network(XY channel+layerSeg+64 filter for all layers)+1D [H,1]conv
+expDuke_20210107B_Thickness_1D_iibi007              4.3621   3.0423   3.3330,   5.3914    41.4189    26.6668      35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
+expDuke_20210115A_Thickness_iibi007                 3.7994   2.6325   3.2553,   4.3435    90.8217    73.9762      19GB, use YufanHe's network to get N surface, and then get (N-1) thickness.
+expDuke_20210121B_Dropout_Thickness_iibi007         3.6778   2.1588   2.9880,   4.3678    44.0114    33.7338      35GB  A added dropout N surfaces to N-1 thicknesses
+expDuke_20210121A_JHU_Thickness_iibi007             3.7836   2.3051   3.1955,   4.3718    88.8038    40.6891      19GB  JHU network from N surfaces to N-1 thicknesses, fixed the SmoothThicknessLoss error.
+expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    3.5161   2.8313   2.9707,   4.0616    250.4738   183.8192     19GB  JHU network from N surfaces to N-1 thicknesses, without SmoothThicknessLoss.
+=================================================================================================================================================================================================================
+Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um.
+=================================================================================================================================================================================================================
+
 # Jan 21th, Wednesday, 2021
 Thickness (Rift) prediction on Duke_AMD test data:
 ================================================================================================================================================================================================================
@@ -11,9 +32,9 @@ expDuke_20210101B_ThicknessSubnet_iibi007           3.8175220489501953      2.07
 expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121246814727783      2.4195966720581055  3.0530,      4.1713       18GB, exact YufanHe network(XY channel+layerSeg+64 filter for all layers)+1D [H,1]conv
 expDuke_20210107B_Thickness_1D_iibi007              4.362186908721924       3.042391300201416   3.3330,      5.3914       35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convoluiton.
 expDuke_20210115A_Thickness_iibi007                 3.799421787261963       2.632540702819824   3.2553,      4.3435       19GB, use YufanHe's network to get N surface, and then get (N-1) thickness.
-expDuke_20210121B_Dropout_Thickness_iibi007         training, 35GB  A added dropout N surfaces to N-1 thicknesses
-expDuke_20210121A_JHU_Thickness_iibi007             training, 19GB  JHU network from N surfaces to N-1 thicknesses, fixed the SmoothThicknessLoss error.
-expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    training, 19GB  JHU network from N surfaces to N-1 thicknesses, without SmoothThicknessLoss.
+expDuke_20210121B_Dropout_Thickness_iibi007         3.6778833866119385      2.1588995456695557  2.9880,      4.3678       35GB  A added dropout N surfaces to N-1 thicknesses
+expDuke_20210121A_JHU_Thickness_iibi007             3.783660888671875       2.305124282836914   3.1955,      4.3718       19GB  JHU network from N surfaces to N-1 thicknesses, fixed the SmoothThicknessLoss error.
+expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    3.5161519050598145      2.831364870071411   2.9707,      4.0616       19GB  JHU network from N surfaces to N-1 thicknesses, without SmoothThicknessLoss.
 =================================================================================================================================================================================================================
 
 Analysis:

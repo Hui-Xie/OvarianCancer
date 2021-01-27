@@ -155,7 +155,7 @@ def main():
             file.write(f"muThicknessError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
-            file.write(f"hausdorff distance of Thickness = {hausdorffD}\n")
+            file.write(f"hausdorff distance(pixel) of Thickness = {hausdorffD}\n")
 
 
 
