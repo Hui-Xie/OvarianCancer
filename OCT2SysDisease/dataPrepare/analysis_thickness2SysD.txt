@@ -1,3 +1,17 @@
+# Jan 26th, Tuesday, 2021
+Use 41 features for training:
+training data set: NVolumes=2401
+validation data set: NVolumes=689
+
+expOCT_41Ftr_HyT_20210126A_FC: start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
+
+
+expOCT_41Ftr_HyT_20210126A_FC_switchValidTest:  start lr= 0.01, lrPatient=6, fcWidths: [40, 20,1]
+     switch validation and test data set.
+
+
+
+
 # Jan 25th, Monday, 2021
 Feature selection result using sequential backward feature selection algorithm:
 Summary:
