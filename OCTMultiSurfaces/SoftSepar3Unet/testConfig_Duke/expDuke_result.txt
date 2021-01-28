@@ -19,6 +19,9 @@ expDuke_20210121A_JHU_Thickness_iibi007             3.7836   2.3051   3.1955,   
                                                                                                                         SmoothSurfaceLoss=True, smoothThicknessLoss=True. lr=0.1
 expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    3.5161   2.8313   2.9707,   4.0616    250.4738   183.8192     19GB  JHU network from N surfaces to N-1 thicknesses.
                                                                                                                         SmoothSurfaceLoss=False, smoothThicknessLoss=False.lr=0.1
+expDuke_20210128A_Thickness_YufanHePlus1D_iibi007   training, YufanHe network Plus a full Height conv of [H,5], directly deduce N-1 thickness, lr =0.1
+
+expDuke_20210128B_Thickness_YufanHePlus1D_iibi007   training, YufanHe network Plus a full Height conv of [H,5], using N-surface ground truth, and then deduce N-1 thickness, lr =0.1
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
