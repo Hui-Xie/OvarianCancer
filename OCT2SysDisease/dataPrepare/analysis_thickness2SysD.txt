@@ -1,13 +1,135 @@
+
+# Jan 28th, Thursay, 2021
+Test result of using reduced 41 features (31 thicknesses+ 10 clinical features) to predict hypertension:
+=================================================================================================================================================
+                                                  Experiment result on validation and test data:
+                                          Below experiments all use lr=0.01, lrPatient=6, fcWidths=[40, 20,1].
+=================================================================================================================================================
+ExperimentName                                  ValidACC  ValidTPR  ValidTNR  TestACC  TestTPR  TestTNR     Note
+expOCT_9x9Sector_biochemical_2HyT_20210120A_FC  0.6943    0.80      0.56      0.6164   0.6866   0.5224      81 thickness + 9 clinical features.
+expOCT_41Ftr_HyT_20210126B_FC                   0.7010    0.7403    0.65      0.6128   0.6658   0.5397      31 thickness + 10 clinical features.
+expOCT_41Ftr_HyT_20210127A_FC_switchValidTest   0.6169    0.5096    0.7649    0.6952   0.7377   0.6399      31 thickness + 10 clinical features,
+                                                                                                            switch validation and test data
+==================================================================================================================================================
+In above table, Valid means validationData.
+==================================================================================================================================================
+
+Analysis:
+1  Experiment used backward step-wise feature selection basing on AIC to get 41 features from original 95 features;
+2  After experiment 20201027A switch validation data and test data from previous experiments, it lead to its validation result almost switches with its test result.
+   In other words, after switch, testAcc get 0.6952. It shows testAcc is depend on specific test data set.
+   In the future, we need to do a 6-fold cross validation to evaluate model's accuracy.
+3  Comparing two 41-feature input experiments with the previous 90-feature experiment,
+   0.7010+0.6128 > 0.6943+0.6164,   and 0.6169+0.6952 > 0.6943+0.6164
+   It shows 41-feature input gets a little better than 90-feature input.
+4  In literature, the benefits of reducing irrelevant redundant features:
+    A  reduce multi-colinearity;
+    B  improve fit accuracy, and decrease over-fitting;
+    C  remove irrelevant noise features;
+5  Current 41-feature and 91-feature networks are still easy to overfitting. If we just add learning rate to 0.1, its validation loss will increase while train loss goes down quickly.
+   It shows that training data has some significant features related with output, but these features can not generalize well in validation data.
+   In othe words, we may have not found significant and can-generalize-well features with respect to output.
+   Or the thickness and clinical features are not powerful enough to predict hypertension.
+6  Further plan:
+   A  search radiomics features, feature selection,  and then add into input to deep learning network.
+
+
+
+
+
+
+
+
+
 # Jan 27th, Wednesday, 2021:
 41 features test:
 
 expOCT_41Ftr_HyT_20210127A_FC_switchValidTest: lr=0.01, lrPatient=6, fcWidths=[40, 20,1]
+training data set: NVolumes=2401
+validation data set: NVolumes=718
+test data set: NVolumes=689
+	train_Td_Acc_TPR_TNR_Sum:{'threshold': 0.589, 'ACC': 0.616991643454039, 'TPR': 0.5096153846031343, 'TNR': 0.7649006622263278, 'Sum': 1.8915076902835013}
+
+=======Test Result on test data with threshold of 0.589=========
+	ACC:0.6618287373004355
+	TPR:0.5809768637382782
+	TNR:0.766666666641111
+	Sum:2.0094722676798247
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.6952104499274311
+	TPR:0.7377892030658666
+	TNR:0.6399999999786666
+	Sum:2.0729996529719643
+
+
 
 expOCT_41Ftr_HyT_20210127B_FC_switchValidTest: lr=0.1, lrPatient=12, fcWidths=[40, 20,1]
+training data set: NVolumes=2401
+validation data set: NVolumes=718
+test data set: NVolumes=689
+
+    Overfitting by observing validation loss without decreasing.
+
+	train_Td_Acc_TPR_TNR_Sum:{'threshold': 0.025, 'ACC': 0.6323119777158774, 'TPR': 0.6370192307539178, 'TNR': 0.6258278145488136, 'Sum': 1.8951590230186088}
+
+=======Test Result on test data with threshold of 0.025=========
+	ACC:0.6298984034833092
+	TPR:0.6606683804457412
+	TNR:0.5899999999803334
+	Sum:1.8805667839093836
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.4426705370101596
+	TPR:0.038560411310062714
+	TNR:0.9666666666344444
+	Sum:1.4478976149546667
+
+
 
 expOCT_41Ftr_HyT_20210127C_FC: lr=0.1, lrPatient=6, fcWidths=[40, 20,1]
+training data set: NVolumes=2401
+validation data set: NVolumes=689
+test data set: NVolumes=718
+
+Overfitting by observing validation loss without decreasing.
+train_Td_Acc_TPR_TNR_Sum:{'threshold': 0.537, 'ACC': 0.6952104499274311, 'TPR': 0.7120822621924915, 'TNR': 0.6733333333108888, 'Sum': 2.0806260454308116}
+
+=======Test Result on test data with threshold of 0.537=========
+	ACC:0.5988857938718662
+	TPR:0.5937499999857272
+	TNR:0.6059602648805973
+	Sum:1.7985960587381908
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.6044568245125348
+	TPR:0.6394230769077062
+	TNR:0.5562913907100565
+	Sum:1.8001712921302975
+
+
 
 expOCT_41Ftr_HyT_20210127D_FC: lr=0.1, lrPatient=12, fcWidths=[40, 20,1]
+training data set: NVolumes=2401
+validation data set: NVolumes=689
+test data set: NVolumes=718
+
+Overfitting by observing validation loss without decreasing.
+
+	train_Td_Acc_TPR_TNR_Sum:{'threshold': 0.333, 'ACC': 0.6894049346879536, 'TPR': 0.8431876606467047, 'TNR': 0.48999999998366667, 'Sum': 2.022592595318325}
+
+=======Test Result on test data with threshold of 0.333=========
+	ACC:0.6197771587743732
+	TPR:0.7740384615198548
+	TNR:0.4072847681984343
+	Sum:1.8011003884926624
+
+=======Test Result on test data with threshold of 0.5 =========
+	ACC:0.6030640668523677
+	TPR:0.5576923076789017
+	TNR:0.6655629138852462
+	Sum:1.8263192884165154
+
 
 
 # Jan 26th, Tuesday, 2021
@@ -266,7 +388,7 @@ https://machinelearningmastery.com/probabilistic-model-selection-measures/
 The benefits of reducing irrelevant redundant features:
 1  reduce multi-colinearity;
 2  add fit accuracy, and decrease overfitting;
-3  removing irrelevant noise features;
+3  remove irrelevant noise features;
 
 
 Model selection and AIC:
