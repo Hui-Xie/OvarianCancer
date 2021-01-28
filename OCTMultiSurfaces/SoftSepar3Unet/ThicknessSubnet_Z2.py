@@ -18,7 +18,7 @@ from framework.ConvBlocks import *
 from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfaceCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, MultiLayerCrossEntropyLoss
 
 # YufanHe network + 1D H dimension convolution to predict thickness
-class ThicknessSubnet_Y(BasicModel):  #
+class ThicknessSubnet_Z2(BasicModel):  #
     ''''
     This network refer Yufan He paper: He,Y., Carass A., Liu, Yi., et al. (2019).:
     Fully Convolutional Boundary Regression for Retina OCT Segmentation.
