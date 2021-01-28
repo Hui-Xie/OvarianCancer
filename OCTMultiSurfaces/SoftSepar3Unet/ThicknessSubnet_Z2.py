@@ -193,7 +193,7 @@ class ThicknessSubnet_Z2(BasicModel):  #
         xs = xs.squeeze(dim=-2)   # size: Bx(numSurface)xW
 
         # ReLU to guarantee layer order
-        B,N,H,W = xs.shape
+        B,N,W = xs.shape
         S = xs.clone()
         for i in range(1, N):
             S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
