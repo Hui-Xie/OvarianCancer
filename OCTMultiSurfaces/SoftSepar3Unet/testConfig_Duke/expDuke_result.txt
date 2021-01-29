@@ -13,10 +13,13 @@ some thinking:
 1  If we used surface location loss in thickness prediction, do we need to use thickness loss? does the thickness loss hurt or help?
    A. If final target is the surface location, thickness loss may hurt performance as thickness loss will force correct surface offset to get better thickness;
    B. In softSeparation model, we hope the more accurate R, better model optimization. so in the thickness network, reserving thickness loss is good.
-3  in the thickness prediction network, accurate R is more important and accurate S(surface location),:
+2  in the thickness prediction network, accurate R is more important and accurate S(surface location),:
    A  use surface 0's location for single surface loss, and do not use all surface loss;
    B  and then use R thickness loss;
    This idea embeds in the experiment: expDuke_20210129B_Thickness_YufanHePlus1D_iibi007
+3  basing on JHU network, plus [H,5] conv, get N surface,but do not use N-surface ground truth, directly use N-1 thickness loss:
+   in experiment: expDuke_20210129C_Thickness_YufanHePlus1D_iibi007.
+
 
 
 #Jan 27th, Wednesday, 2021
