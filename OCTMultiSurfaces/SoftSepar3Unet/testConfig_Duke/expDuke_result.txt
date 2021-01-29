@@ -1,3 +1,24 @@
+# Jan 29th, Friday, 2021
+Lets consider a simple example in one column for 3 surfaces and 2 thickness:
+surface 0:  fullly correct with ground truth;
+surface 1:  offset 3 pixel in one column;
+surface 2:  fully correct with gound truth;
+
+Now surface mean error: 3/3 = 1 pixel
+    thickness mean error: (3+3)/2 = 3 pixel, as surface 1 error leads error in 2 adjacent thickness computation.
+    So it is possible that thickness mean error is bigger than surface mean error for a same prediction result.
+
+In other words, thickness mean error in value is an augmentation value of surface mean error.
+some thinking:
+1  If we used surface location loss in thickness prediction, do we need to use thickness loss? does the thickness loss hurt or help?
+   A. If final target is the surface location, thickness loss may hurt performance as thickness loss will force correct surface offset to get better thickness;
+   B. In softSeparation model, we hope the more accurate R, better model optimization. so in the thickness network, reserving thickness loss is good.
+3  in the thickness prediction network, accurate R is more important and accurate S(surface location),:
+   A  use surface 0's location for single surface loss, and do not use all surface loss;
+   B  and then use R thickness loss;
+   This idea embeds in the experiment: expDuke_20210129B_Thickness_YufanHePlus1D_iibi007
+
+
 #Jan 27th, Wednesday, 2021
 
 Thickness (Rift) prediction on Duke_AMD test data:
@@ -20,8 +41,12 @@ expDuke_20210121A_JHU_Thickness_iibi007             3.7836   2.3051   3.1955,   
 expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    3.5161   2.8313   2.9707,   4.0616    250.4738   183.8192     19GB  JHU network from N surfaces to N-1 thicknesses.
                                                                                                                         SmoothSurfaceLoss=False, smoothThicknessLoss=False.lr=0.1
 expDuke_20210128A_Thickness_YufanHePlus1D_iibi007   training, YufanHe network Plus a full Height conv of [H,5], directly deduce N-1 thickness, lr =0.1
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
 
 expDuke_20210128B_Thickness_YufanHePlus1D_iibi007   training, YufanHe network Plus a full Height conv of [H,5], using N-surface ground truth, and then deduce N-1 thickness, lr =0.1
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+expDuke_20210129B_Thickness_YufanHePlus1D_iibi007   training, YufanHe network Plus a full Height conv of [H,5], using N surfaces, but use surface 0 ground truth only, and then deduce N-1 thickness, lr =0.1
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
