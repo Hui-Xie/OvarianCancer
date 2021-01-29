@@ -179,6 +179,9 @@ class OCT2SysD_DataSet(data.Dataset):
 
         with open(hps.logMemoPath, "a") as file:
             file.write(f"{mode} data set: NVolumes={self.m_NVolumes}\n")
+            rate1 = self.m_targetLabels.sum()*1.0/self.m_NVolumes
+            rate0 = 1- rate1
+            file.write(f"{mode} data set: proportion of 0,1 = [{rate0},{rate1}]\n")
 
 
     def __len__(self):
