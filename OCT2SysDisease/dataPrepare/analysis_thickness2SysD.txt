@@ -4,8 +4,12 @@ Prepare 10-fold cross validation for 41-feature network:
    make a new dir: thickness9Sector_9x9_41Ftrs_10CV    --done
 2  at GT directory, make a new dir: 41Ftr_10CV
    store 10-fold training, validation, test ID      --done.
-3  dataload classe, according to k-fold to read ID, and save ID path with k-fold;
+3  dataload classe, according to k-fold to read ID, and save ID path with k-fold; --done
 4  write a srcipt to divide data;  --done.
+
+each fold needs GPU memory: 660MB.
+
+
 
 
 
