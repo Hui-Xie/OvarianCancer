@@ -1,3 +1,17 @@
+# Jan 30th, Saturday, 2021
+Prepare 10-fold cross validation for 41-feature network:
+1  at dir=/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult
+   make a new dir: thickness9Sector_9x9_41Ftrs_10CV
+2  at GT directory, make a new dir: 41Ftr_10CV
+   store 10-fold training, validation, test ID
+3  dataload classe, according to k-fold to read ID, and save ID path with k-fold;
+4  write a srcipt to divide data;
+
+
+
+
+
+
 
 # Jan 28th, Thursay, 2021
 Test result of using reduced 41 features (31 thicknesses+ 10 clinical features) to predict hypertension:
