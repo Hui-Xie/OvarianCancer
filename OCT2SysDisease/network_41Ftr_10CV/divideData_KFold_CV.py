@@ -228,7 +228,7 @@ def main():
 
     # partition for test, validation, and training
     outputValidation = hps.outputValidation
-    
+
     if not os.path.exists(hps.outputCV_ID_Dir):
         os.makedirs(hps.outputCV_ID_Dir)  # recursive dir creation
 
