@@ -9,6 +9,10 @@ Prepare 10-fold cross validation for 41-feature network:
 
 each fold needs GPU memory: 660MB.
 
+expOCT_41Ftr_HyT_20210130_10CV_0.yaml: lr=0.01
+
+expOCT_41Ftr_HyT_20210130B_10CV_0.yaml: lr=0.001
+
 
 
 
