@@ -26,14 +26,15 @@ class OCT2SysD_DataSet(data.Dataset):
         self.hps = hps
 
         if mode == "training":
-            IDPath = hps.trainingDataPath
+            p = hps.trainingDataPath
         elif mode == "validation":
-            IDPath = hps.validationDataPath
+            p = hps.validationDataPath
         elif mode == "test":
-            IDPath = hps.testDataPath
+            p = hps.testDataPath
         else:
             print(f"OCT2SysDiseaseDataSet mode error")
             assert False
+        IDPath = p[:p.rfind(".csv")] + f"{hps.k}.csv"  # add k to IDPath
 
         # read GT
         self.m_labels = readBESClinicalCsv(hps.GTPath)
@@ -52,8 +53,8 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_volumePaths = []  # number of volumes is about 2 times of IDList
         self.m_IDsCorrespondVolumes = []
 
-        volumePathsFile = os.path.join(hps.dataDir, self.m_mode+"_VolumePaths.txt")
-        IDsCorrespondVolumesPathFile = os.path.join(hps.dataDir, self.m_mode+"_IDsCorrespondVolumes.txt")
+        volumePathsFile = os.path.join(hps.dataDir, self.m_mode+f"_VolumePaths_{hps.K_fold}CV_{hps.k}.txt")
+        IDsCorrespondVolumesPathFile = os.path.join(hps.dataDir, self.m_mode+f"_IDsCorrespondVolumes_{hps.K_fold}CV_{hps.k}.txt")
 
         # save related file in order to speed up.
         if os.path.isfile(volumePathsFile) and os.path.isfile(IDsCorrespondVolumesPathFile):
@@ -178,10 +179,10 @@ class OCT2SysD_DataSet(data.Dataset):
         assert hps.inputWidth == self.m_volumes.shape[1]
 
         with open(hps.logMemoPath, "a") as file:
-            file.write(f"{mode} data set: NVolumes={self.m_NVolumes}\n")
+            file.write(f"{mode} dataset_{hps.K_fold}CV_{hps.k}: NVolumes={self.m_NVolumes}\n")
             rate1 = self.m_targetLabels.sum()*1.0/self.m_NVolumes
             rate0 = 1- rate1
-            file.write(f"{mode} data set: proportion of 0,1 = [{rate0},{rate1}]\n")
+            file.write(f"{mode} dataset_{hps.K_fold}CV_{hps.k}: proportion of 0,1 = [{rate0},{rate1}]\n")
 
 
     def __len__(self):
