@@ -181,7 +181,7 @@ def main():
 
     volumes = np.delete(volumes, emptyRows, 0)
     targetLabels = np.delete(labelTable, emptyRows, 0)[:, 1]  # for hypertension
-    patientIDColumn = np.delete(labelTable, emptyRows, 0)[:, 0]  # for patientID
+    patientIDColumn = np.delete(labelTable, emptyRows, 0)[:, 0].astype(np.int)  # for patientID
 
     emptyRows = tuple(emptyRows[0])
     volumePaths = [path for index, path in enumerate(volumePaths) if index not in emptyRows]
@@ -232,6 +232,7 @@ def main():
     if not os.path.exists(hps.outputCV_ID_Dir):
         os.makedirs(hps.outputCV_ID_Dir)  # recursive dir creation
 
+    print("")
     for k in range(0, K):
         partitions = {}
         partitions["test"] = patientsSubList[k]
@@ -251,16 +252,16 @@ def main():
         # save to file
         with open(os.path.join(hps.outputCV_ID_Dir, f"testID_41Ftrs_{K}CV_{k}.csv"), "w") as file:
             for v in partitions["test"]:
-                file.write(f"{v}\n")
+                file.write(f"{int(v)}\n")
 
         if outputValidation:
             with open(os.path.join(hps.outputCV_ID_Dir, f"validationID_41Ftrs_{K}CV_{k}.csv"), "w") as file:
                 for v in partitions["validation"]:
-                    file.write(f"{v}\n")
+                    file.write(f"{int(v)}\n")
 
         with open(os.path.join(hps.outputCV_ID_Dir, f"trainID_41Ftrs_{K}CV_{k}.csv"), "w") as file:
             for v in partitions["training"]:
-                file.write(f"{v}\n")
+                file.write(f"{int(v)}\n")
 
         print(f"in CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
 
