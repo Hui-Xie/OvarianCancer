@@ -4,9 +4,9 @@ debug: True
 debugOutputPeriod: 50
 
 # train config
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:0')   #GPU ID
 batchSize: 97 #  training data 1530, validation data:193, for 10-fold CV
-learningRate: 1.0e-2  #
+learningRate: 1.0e-3  #
 lrPatience: 6   # learning rate decay patience
 lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
 lrSchedulerMode: "min"  # "min" for loss, "max" for sum of Acc+TNR+TPR
