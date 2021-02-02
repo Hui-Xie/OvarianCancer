@@ -1,3 +1,43 @@
+#Feb 02nd, Tuesday, 2021:
+=======================
+Use non-sysmmetric thickness of OD/OS:
+1  current: 31 thickness + 10 clinical features;
+2  plan: 81x2 thickness + 9 clinical feature
+3  training sample number: 1520 patients.
+4  network structure:
+   81thicknessOD--|
+   81thicknessOS--| ========(FC)=======>10--|
+        9 clinical  ======(1x1Conv)====>9 --|==(FC)=>1
+
+   parameters: (162+1)*10+ 9*2+ (19+1)*1 = 1668.
+   parameters/obsereration: 1668/1520 = 1.097
+   training sample/input space:  1520/(162+9) = 8.89
+5  if no overfitting, add the 10 (after 1st FC) to bigger;
+
+Work for OD/OS both eyes input:
+1  mkdir of dataDir;
+2  dataLoader support 2 input data;
+3  main train/test need moify input inerface;
+4  new network;
+5  rebuild GTs dir for data set ID;
+
+
+# check data CV0:
+in CV: 0/10: test: 193 patients;  validation: 191 patients;  training: 1528 patients; without repeated ID.
+in code:
+training dataset_10CV_0: NVolumes=3040
+validation dataset_10CV_0: NVolumes=382
+test dataset_10CV_0: NVolumes=386
+
+It means in training data of CV0, some patitent only has single eye data.
+1  some patitent has 3 eye data:e.g. ID= 773
+2  some pateints have one eye data: ID= 719
+
+
+
+
+
+
 # Feb 01st, Monday, 2021:
 Hyptension 10-fold crossing validation result:
 
@@ -83,44 +123,6 @@ Notes:
 1 all result used the threshold of maximizing sum in validation data.
 2 all result are on the test fold
 3 experiment name: expOCT_41Ftr_HyT_20210201_10CV_?.yaml
-
-
-
-=======================
-Use non-sysmmetric thickness of OD/OS:
-1  current: 31 thickness + 10 clinical features;
-2  plan: 81x2 thickness + 9 clinical feature
-3  training sample number: 1520 patients.
-4  network structure:
-   81thicknessOD--|
-   81thicknessOS--| ========(FC)=======>10--|
-        9 clinical  ======(1x1Conv)====>9 --|==(FC)=>1
-
-   parameters: (162+1)*10+ 9*2+ (19+1)*1 = 1668.
-   parameters/obsereration: 1668/1520 = 1.097
-   training sample/input space:  1520/(162+9) = 8.89
-5  if no overfitting, add the 10 (after 1st FC) to bigger;
-
-Work for OD/OS both eyes input:
-1  mkdir of dataDir;
-2  dataLoader support 2 input data;
-3  main train/test need moify input inerface;
-4  new network;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
