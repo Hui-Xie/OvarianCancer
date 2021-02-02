@@ -33,6 +33,45 @@ It means in training data of CV0, some patitent only has single eye data.
 1  some patitent has 3 eye data:e.g. ID= 773
 2  some pateints have one eye data: ID= 719
 
+Meeting with professor:
+1  Tongren data has no OS ground truth, we need to check the quality of OS; to get further or not?
+2  read Tianbao's paper;
+3  arrange a meeting with professor Wang, afer spring festival;
+
+
+Check OS segmentation quality:
+As training data has no OS images:
+
+python3 displayJPG_SegXML_BES3K.py /home/hxie1/data/BES_3K/raw/2093_OS_14923_Volume /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/2093_OS_14923_Volume_Sequence_Surfaces_Prediction.xml /home/hxie1/data/temp/2093_OS_seg
+python3 displayJPG_SegXML_BES3K.py /home/hxie1/data/BES_3K/raw/2093_OD_14918_Volume /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/2093_OD_14918_Volume_Sequence_Surfaces_Prediction.xml /home/hxie1/data/temp/2093_OD_seg
+About the segmentation quality of OS:
+
+Notes:
+1  our training data of segmentation network are all OD eyes with ground truth.
+2  We used the above trained network to segmentation both OD/OS volumes of BES_3K data.
+3  In human eye, the segmenatation result quality of OS eyes looks almost same good with OD eyes;
+   Please refer to the attachment of random choose example patient 2093.
+   Reason: As surface patterns in OCT of OD/OS eyes have no significant difference;
+4  Further plan:
+   A  use OD eye only to redo single eye hypertension prediction of 10 fold crossing validation;
+   B  use OS/OD eyes to utilize the difference of OD/OS eyes to predict hypertension;
+5  Professor Wu, what is your suggestion?
+   Do A?  and discard B;
+   or Do A, and then do B;
+   or Do B?
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
