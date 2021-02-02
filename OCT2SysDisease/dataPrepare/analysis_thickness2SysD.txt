@@ -44,6 +44,7 @@ As training data has no OS images:
 
 python3 displayJPG_SegXML_BES3K.py /home/hxie1/data/BES_3K/raw/2093_OS_14923_Volume /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/2093_OS_14923_Volume_Sequence_Surfaces_Prediction.xml /home/hxie1/data/temp/2093_OS_seg
 python3 displayJPG_SegXML_BES3K.py /home/hxie1/data/BES_3K/raw/2093_OD_14918_Volume /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/2093_OD_14918_Volume_Sequence_Surfaces_Prediction.xml /home/hxie1/data/temp/2093_OD_seg
+
 About the segmentation quality of OS:
 
 Notes:
@@ -59,23 +60,13 @@ Notes:
    Do A?  and discard B;
    or Do A, and then do B;
    or Do B?
+   Professor answer: do both.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# use OD single eye to predict:
+1 use AIC to do thickness variable selection on OD eye only;
+2 use AIC to clinical variable selection against hypertension only;
+3 assembly thickness on OD and clincial feature to deep learning network;
+4 clincial feature should do 1x1 conv before assemblying with thickness features.
 
 # Feb 01st, Monday, 2021:
 Hyptension 10-fold crossing validation result:
