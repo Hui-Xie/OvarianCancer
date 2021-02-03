@@ -48,13 +48,14 @@ class OCT2SysD_DataSet(data.Dataset):
         # get all correct volume numpy path
         allVolumesList = glob.glob(hps.dataDir + f"/*{hps.volumeSuffix}")
         nonexistIDList = []
+        multipleImages_IDList= []
 
         # make sure volume ID and volume path has strict corresponding order
         self.m_volumePaths = []  # number of volumes is about 2 times of IDList
         self.m_IDsCorrespondVolumes = []
 
-        volumePathsFile = os.path.join(hps.dataDir, self.m_mode+f"_VolumePaths_{hps.K_fold}CV_{hps.k}.txt")
-        IDsCorrespondVolumesPathFile = os.path.join(hps.dataDir, self.m_mode+f"_IDsCorrespondVolumes_{hps.K_fold}CV_{hps.k}.txt")
+        volumePathsFile = os.path.join(hps.dataDir, self.m_mode+f"_{hps.ODOS}_VolumePaths_{hps.K_fold}CV_{hps.k}.txt")
+        IDsCorrespondVolumesPathFile = os.path.join(hps.dataDir, self.m_mode+f"_{hps.ODOS}_IDsCorrespondVolumes_{hps.K_fold}CV_{hps.k}.txt")
 
         # save related file in order to speed up.
         if os.path.isfile(volumePathsFile) and os.path.isfile(IDsCorrespondVolumesPathFile):
@@ -68,18 +69,23 @@ class OCT2SysD_DataSet(data.Dataset):
 
         else:
             for i,ID in enumerate(IDList):
-                resultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_O[D,S]_*{hps.volumeSuffix}")
+                resultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_{hps.ODOS}_*{hps.volumeSuffix}")
                 resultList.sort()
                 numVolumes = len(resultList)
                 if 0 == numVolumes:
                     nonexistIDList.append(ID)
+                elif numVolumes > 1:
+                    multipleImages_IDList.append(ID)
                 else:
                     self.m_volumePaths += resultList
-                    self.m_IDsCorrespondVolumes += [ID,]*numVolumes
+                    self.m_IDsCorrespondVolumes += [ID, ]  # one ID, one volume
 
             if len(nonexistIDList) > 0:
-                print(f"Error: nonexistIDList:\n {nonexistIDList}")
-                assert False
+                with open(hps.logMemoPath, "a") as file:
+                    file.write(f"nonExistIDList of {hps.ODOS} in {mode}_{hps.K_fold}CV_{hps.k}:\n {nonexistIDList}")
+            if len(multipleImages_IDList) > 0:
+                with open(hps.logMemoPath, "a") as file:
+                    file.write(f"List of ID corresponding multiple {hps.ODOS} images in {mode}_{hps.K_fold}CV_{hps.k}:\n {multipleImages_IDList}")
 
             # save files
             with open(volumePathsFile, "w") as file:

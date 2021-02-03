@@ -12,7 +12,7 @@ from torch.utils import data
 sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Tools import *
-from ThicknessClinical41Ftrs_FCNet import ThicknessClinical41Ftrs_FCNet
+from ThicknessClinical29Ftrs_FCNet import ThicknessClinical29Ftrs_FCNet
 
 sys.path.append("../..")
 from framework.NetMgr import NetMgr
