@@ -1,4 +1,5 @@
 # Feb 03rd, Wednesday, 2021:
+================================================
 Feature selection on clinical features:
 cat output_20210203_104219.txt
 Experiment: expOCT_SeqBackwardFS_Clinical_20210203
@@ -23,6 +24,7 @@ Selected features with min AIC:
 minAIC = 2358.4009903061515
 selected features: ['Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Cholesterol', 'Triglyceride', 'BMI', 'LDLoverHDL']
 selected feature indexes: [1, 2, 3, 5, 6, 7, 9, 10, 11, 13]
+clinicalFeatureColIndex: [3, 4, 5, 11, 12, 13, 15, 18, 19, 21]  in fullLabelTable index.
 
                            Logit Regression Results
 ==============================================================================
@@ -62,6 +64,146 @@ x7 = Cholesterol
 x8 = Triglyceride
 x9 = BMI
 x10 = LDLoverHDL
+=============================================================
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+==================================================================
+Feature selection on OD thickness:
+
+Experiment: expOCT_SeqBackwardFS_ODThickness_20210203
+
+== Sequential backward feature selection w.r.t. HBP ==============
+After deleting empty-value patients, it remains 1910 patients.
+Initial input features before feature selection:
+['L0_S0', 'L0_S1', 'L0_S2', 'L0_S3', 'L0_S4', 'L0_S5', 'L0_S6', 'L0_S7', 'L0_S8', 'L1_S0', 'L1_S1', 'L1_S2', 'L1_S3', 'L1_S4', 'L1_S5', 'L1_S6', 'L1_S7', 'L1_S8', 'L2_S0', 'L2_S1', 'L2_S2', 'L2_S3', 'L2_S4', 'L2_S5', 'L2_S6', 'L2_S7', 'L2_S8', 'L3_S0', 'L3_S1', 'L3_S2', 'L3_S3', 'L3_S4', 'L3_S5', 'L3_S6', 'L3_S7', 'L3_S8', 'L4_S0', 'L4_S1', 'L4_S2', 'L4_S3', 'L4_S4', 'L4_S5', 'L4_S6', 'L4_S7', 'L4_S8', 'L5_S0', 'L5_S1', 'L5_S2', 'L5_S3', 'L5_S4', 'L5_S5', 'L5_S6', 'L5_S7', 'L5_S8', 'L6_S0', 'L6_S1', 'L6_S2', 'L6_S3', 'L6_S4', 'L6_S5', 'L6_S6', 'L6_S7', 'L6_S8', 'L7_S0', 'L7_S1', 'L7_S2', 'L7_S3', 'L7_S4', 'L7_S5', 'L7_S6', 'L7_S7', 'L7_S8', 'L8_S0', 'L8_S1', 'L8_S2', 'L8_S3', 'L8_S4', 'L8_S5', 'L8_S6', 'L8_S7', 'L8_S8']
+
+============program is in sequential backward feature selection, please wait......==============
+number of features: 81;	aic=2649.4422062884523;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 80;	aic=2647.4422079808182;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 79;	aic=2645.4422324641087;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 78;	aic=2643.444274207918;	ACC(cutoff0.5)=0.6047120418848168
+number of features: 77;	aic=2641.447971379788;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 76;	aic=2639.4543661283196;	ACC(cutoff0.5)=0.6057591623036649
+number of features: 75;	aic=2637.4655560388273;	ACC(cutoff0.5)=0.6068062827225131
+number of features: 74;	aic=2635.4812882284186;	ACC(cutoff0.5)=0.6068062827225131
+number of features: 73;	aic=2633.4996670629257;	ACC(cutoff0.5)=0.6073298429319371
+number of features: 72;	aic=2631.523947564773;	ACC(cutoff0.5)=0.6068062827225131
+number of features: 71;	aic=2629.5511962080936;	ACC(cutoff0.5)=0.6089005235602094
+number of features: 70;	aic=2627.576862287271;	ACC(cutoff0.5)=0.6089005235602094
+number of features: 69;	aic=2625.608911683589;	ACC(cutoff0.5)=0.6109947643979058
+number of features: 68;	aic=2623.6443752311798;	ACC(cutoff0.5)=0.6099476439790575
+number of features: 67;	aic=2621.6917053817856;	ACC(cutoff0.5)=0.6089005235602094
+number of features: 66;	aic=2619.767891187339;	ACC(cutoff0.5)=0.6104712041884817
+number of features: 65;	aic=2617.894499633804;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 64;	aic=2615.976792041648;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 63;	aic=2614.1266226437892;	ACC(cutoff0.5)=0.6089005235602094
+number of features: 62;	aic=2612.2848062652465;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 61;	aic=2610.451738225158;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 60;	aic=2608.625156207668;	ACC(cutoff0.5)=0.6083769633507854
+number of features: 59;	aic=2606.805423083163;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 58;	aic=2604.971077947933;	ACC(cutoff0.5)=0.606282722513089
+number of features: 57;	aic=2603.2413397962982;	ACC(cutoff0.5)=0.6047120418848168
+number of features: 56;	aic=2601.4838943308873;	ACC(cutoff0.5)=0.6047120418848168
+number of features: 55;	aic=2599.7922818071347;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 54;	aic=2597.974668898574;	ACC(cutoff0.5)=0.6031413612565445
+number of features: 53;	aic=2596.39236771995;	ACC(cutoff0.5)=0.612565445026178
+number of features: 52;	aic=2594.8101973041016;	ACC(cutoff0.5)=0.6104712041884817
+number of features: 51;	aic=2593.293767461292;	ACC(cutoff0.5)=0.6157068062827226
+number of features: 50;	aic=2591.748852231868;	ACC(cutoff0.5)=0.6115183246073298
+number of features: 49;	aic=2590.037707066468;	ACC(cutoff0.5)=0.6104712041884817
+number of features: 48;	aic=2588.4691832313083;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 47;	aic=2586.695576234728;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 46;	aic=2584.916640318633;	ACC(cutoff0.5)=0.6083769633507854
+number of features: 45;	aic=2583.3939819662996;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 44;	aic=2582.0732063379087;	ACC(cutoff0.5)=0.6031413612565445
+number of features: 43;	aic=2580.593543540755;	ACC(cutoff0.5)=0.6020942408376964
+number of features: 42;	aic=2579.3304148431753;	ACC(cutoff0.5)=0.6041884816753926
+number of features: 41;	aic=2577.806842527586;	ACC(cutoff0.5)=0.6052356020942409
+number of features: 40;	aic=2576.6502115396097;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 39;	aic=2575.0525232676146;	ACC(cutoff0.5)=0.6104712041884817
+number of features: 38;	aic=2573.9101675721176;	ACC(cutoff0.5)=0.6073298429319371
+number of features: 37;	aic=2572.5937469027112;	ACC(cutoff0.5)=0.6047120418848168
+number of features: 36;	aic=2571.9355794486646;	ACC(cutoff0.5)=0.606282722513089
+number of features: 35;	aic=2571.1995774138786;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 34;	aic=2570.6512478907334;	ACC(cutoff0.5)=0.6109947643979058
+number of features: 33;	aic=2569.9508496550375;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 32;	aic=2569.0960900360565;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 31;	aic=2568.264799257626;	ACC(cutoff0.5)=0.6094240837696335
+number of features: 30;	aic=2567.913035409491;	ACC(cutoff0.5)=0.6068062827225131
+number of features: 29;	aic=2567.1930450111713;	ACC(cutoff0.5)=0.6089005235602094
+number of features: 28;	aic=2565.555018942871;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 27;	aic=2565.3257755544128;	ACC(cutoff0.5)=0.6020942408376964
+number of features: 26;	aic=2564.498618477544;	ACC(cutoff0.5)=0.6010471204188481
+number of features: 25;	aic=2564.071862367904;	ACC(cutoff0.5)=0.6020942408376964
+number of features: 24;	aic=2562.7365254858905;	ACC(cutoff0.5)=0.5984293193717277
+number of features: 23;	aic=2561.31795539813;	ACC(cutoff0.5)=0.6015706806282722
+number of features: 22;	aic=2561.0572955709486;	ACC(cutoff0.5)=0.6078534031413613
+number of features: 21;	aic=2560.4647671126922;	ACC(cutoff0.5)=0.6020942408376964
+number of features: 20;	aic=2559.550514082446;	ACC(cutoff0.5)=0.5958115183246073
+number of features: 19;	aic=2558.86673645954;	ACC(cutoff0.5)=0.5973821989528796
+========================End of sequential backward feature selection======================
+Selected features with min AIC:
+minAIC = 2558.86673645954
+selected features: ['L0_S1', 'L0_S4', 'L0_S7', 'L1_S2', 'L1_S4', 'L2_S2', 'L3_S1', 'L3_S2', 'L3_S5', 'L4_S4', 'L4_S8', 'L5_S3', 'L5_S4', 'L5_S7', 'L6_S0', 'L6_S1', 'L7_S4', 'L7_S8', 'L8_S0']
+selected feature indexes: [1, 4, 7, 11, 13, 20, 28, 29, 32, 40, 44, 48, 49, 52, 54, 55, 67, 71, 72]
+
+                           Logit Regression Results
+==============================================================================
+Dep. Variable:                      y   No. Observations:                 1910
+Model:                          Logit   Df Residuals:                     1891
+Method:                           MLE   Df Model:                           18
+Date:                Wed, 03 Feb 2021   Pseudo R-squ.:                 0.03619
+Time:                        11:19:11   Log-Likelihood:                -1260.4
+converged:                       True   LL-Null:                       -1307.8
+Covariance Type:            nonrobust   LLR p-value:                 2.080e-12
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -0.0639      0.021     -3.085      0.002      -0.105      -0.023
+x2             0.0279      0.019      1.484      0.138      -0.009       0.065
+x3             0.0485      0.026      1.838      0.066      -0.003       0.100
+x4             0.0292      0.016      1.824      0.068      -0.002       0.061
+x5            -0.0325      0.015     -2.178      0.029      -0.062      -0.003
+x6             0.0327      0.017      1.979      0.048       0.000       0.065
+x7             0.0965      0.045      2.142      0.032       0.008       0.185
+x8            -0.1105      0.042     -2.630      0.009      -0.193      -0.028
+x9            -0.0966      0.039     -2.467      0.014      -0.173      -0.020
+x10           -0.0368      0.023     -1.592      0.111      -0.082       0.009
+x11            0.1173      0.036      3.254      0.001       0.047       0.188
+x12            0.0452      0.019      2.403      0.016       0.008       0.082
+x13            0.0320      0.014      2.341      0.019       0.005       0.059
+x14           -0.0749      0.021     -3.594      0.000      -0.116      -0.034
+x15            0.1129      0.072      1.573      0.116      -0.028       0.254
+x16           -0.1461      0.074     -1.982      0.047      -0.291      -0.002
+x17           -0.1155      0.037     -3.147      0.002      -0.187      -0.044
+x18            0.0727      0.032      2.291      0.022       0.010       0.135
+x19            0.0769      0.032      2.380      0.017       0.014       0.140
+==============================================================================
+Accuracy of using ['L0_S1', 'L0_S4', 'L0_S7', 'L1_S2', 'L1_S4', 'L2_S2', 'L3_S1', 'L3_S2', 'L3_S5', 'L4_S4', 'L4_S8', 'L5_S3', 'L5_S4', 'L5_S7', 'L6_S0', 'L6_S1', 'L7_S4', 'L7_S8', 'L8_S0']
+ to predict hypertension with cutoff 0.5: 0.5973821989528796
+With a different cut off with max(ACC+TPR+TNR):
+{'threshold': 0.583, 'ACC': 0.5963350785340314, 'TPR': 0.5097312326180748, 'TNR': 0.7087845968627101, 'Sum': 1.8148509080148165}
+Where:
+x1 = L0_S1
+x2 = L0_S4
+x3 = L0_S7
+x4 = L1_S2
+x5 = L1_S4
+x6 = L2_S2
+x7 = L3_S1
+x8 = L3_S2
+x9 = L3_S5
+x10 = L4_S4
+x11 = L4_S8
+x12 = L5_S3
+x13 = L5_S4
+x14 = L5_S7
+x15 = L6_S0
+x16 = L6_S1
+x17 = L7_S4
+x18 = L7_S8
+x19 = L8_S0
+===================================================================
+
 
 
 
@@ -130,8 +272,8 @@ Notes:
    Professor answer: do both.
 
 # use OD single eye to predict:
-1 use AIC to do thickness variable selection on OD eye only;
-2 use AIC to clinical variable selection against hypertension only;
+1 use AIC to do thickness variable selection on OD eye only;   --done, 19 features
+2 use AIC to clinical variable selection against hypertension only;  --done, 10 features
 3 assembly thickness on OD and clincial feature to deep learning network;
 4 clincial feature should do 1x1 conv before assemblying with thickness features.
 
