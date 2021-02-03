@@ -89,7 +89,7 @@ def retrieveImageData_label(mode, hps):
                 IDsCorrespondVolumes += [ID, ] # one ID, one volume
 
         if len(nonexistIDList) > 0:
-            print(f"Error: nonExistIDList of {hps.ODOS} in {mode}:\n {nonexistIDList}")
+            print(f"nonExistIDList of {hps.ODOS} in {mode}:\n {nonexistIDList}")
         if len(multipleImages_IDList) > 0:
             print(f"List of ID corresponding multiple {hps.ODOS} images in {mode}:\n {multipleImages_IDList}")
 
@@ -254,7 +254,7 @@ def main():
     print("Selected features with min AIC:")
     print(f"minAIC = {minAIC}")
     print(f"selected features: {curFtrs}")
-    print(f"selccted feature indexes: {curIndexes}\n")
+    print(f"selected feature indexes: {curIndexes}\n")
 
     #===Redo logistic regression with selected features===========
     clf = sm.Logit(y, x[:,tuple(curIndexes)]).fit(disp=0)
