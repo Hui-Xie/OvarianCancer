@@ -82,7 +82,7 @@ def retrieveImageData_label(mode, hps):
             numVolumes = len(resultList)
             if 0 == numVolumes:
                 nonexistIDList.append(ID)
-            if numVolumes > 1:
+            elif numVolumes > 1:
                 multipleImages_IDList.append(ID)
             else:
                 volumePaths += resultList
