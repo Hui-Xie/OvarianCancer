@@ -1,4 +1,30 @@
 # Feb 03rd, Wednesday, 2021:
+29 features(19 thicknesses + 10 clinical features) pure OD networks for 10-fold CV are running:
+1 Clinical features using backward sequential variable selection by AIC in logistic regression chose 10 features;
+2 OD thickness features using backward sequential variable selection by AIC in logistic regression chose 19 features;
+3 Using 19+10 features with OD eyes regenerated 10-fold crossing validation IDs for pure OD eyes:
+  There exist some patients(['2750', '358']) having only OS eye images.
+4 Assemble 10+19 features to feed a deep learning network.
+5 Now networks are training. On Thursday we will get its result;
+
+# use OD single eye to predict:
+1 use AIC to do thickness variable selection on OD eye only;   --done, 19 features
+2 use AIC to clinical variable selection against hypertension only;  --done, 10 features
+3 redo 10 fold ID for OD image with 29 features: ---done, at ~/data/BES_3K/GTs/29Ftrs_OD_10CV/
+4 assembly thickness on OD and clinical feature to deep learning network;  --done
+5 network structure:
+  19thicknessOD--| ========(FC)=======>10 --|
+      10 clinical  ======(1x1Conv)====>10 --|==(FC...)=>1   --done
+6 clinical feature should do 1x1 conv before assembling with thickness features.  --done.
+
+Experiments:
+1  expOCT_29Ftr_OD_HyT_20210203_10CV_0: 20-20-1 network
+2  expOCT_29Ftr_OD_HyT_20210203B_10CV_0: 40-20-1 network
+
+
+
+
+
 ================================================
 Feature selection on clinical features:
 cat output_20210203_104219.txt
@@ -278,9 +304,9 @@ Notes:
 4 assembly thickness on OD and clincial feature to deep learning network;  --done
 5 network structure:
   19thicknessOD--| ========(FC)=======>10 --|
-      10 clinical  ======(1x1Conv)====>10 --|==(FC)=>1
+      10 clinical  ======(1x1Conv)====>10 --|==(FC...)=>1   --done
 
-6  clincial feature should do 1x1 conv before assemblying with thickness features.
+6  clincial feature should do 1x1 conv before assembling with thickness features.  --done.
 
 # Feb 01st, Monday, 2021:
 Hyptension 10-fold crossing validation result:
