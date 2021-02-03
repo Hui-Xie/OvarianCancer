@@ -46,7 +46,12 @@ inputChannels: 9 #
 gradChannels: 0   # the added gradient channels beside raw image channel
 inputWidth: 29 # 31 thickness +10 clinical features = 41
 # where,
-fcWidths: [40, 20,1] # num of neural in each FC layer # 42*40+41*20+21*1 =  2521 parameters
+# network structure:
+#  19thicknessOD--| ========(FC)=======>10 --|
+#      10 clinical  ======(1x1Conv)====>10 --|==(FC)=>1
+# parameters: 20*10 + 10*2 + 21*1 =  241
+
+# fcWidths: [20,1] # num of neural in each FC layer
 # dropoutRate: 0.0  # the dropout rate at final fully connected layer.
 targetKey: "hypertension_bp_plus_history$"
 appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',

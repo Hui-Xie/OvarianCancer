@@ -13,31 +13,28 @@ class ThicknessClinical29Ftrs_FCNet(BasicModel):
         self.hps = hps
         self.posWeight = torch.tensor(hps.class01Percent[0] / hps.class01Percent[1]).to(hps.device)
 
-        # construct FC network
-        self.m_linearLayerList = nn.ModuleList()
-
-        widthInput = hps.inputWidth
-        nLayer = len(hps.fcWidths)
-        for i, widthOutput in enumerate(hps.fcWidths):
-            if i != nLayer-1:
-                layer = nn.Sequential(
-                    nn.Linear(widthInput,widthOutput),
-                    nn.BatchNorm1d(widthOutput),
+        self.m_thicknessLayer0= nn.Sequential(
+                    nn.Linear(hps.numThicknessFtr,10),
+                    nn.BatchNorm1d(10),
                     nn.ReLU(),
                 )
-            else:
-                layer = nn.Sequential(
-                    nn.Linear(widthInput, widthOutput),
+        self.m_clinicalLayer0 = nn.Sequential(
+                    nn.Conv1d(1, 1, kernel_size=1, stride=1, padding=0),  # 1*1 conv to adjust clinical parameter.
+                    nn.BatchNorm1d(1),  ## normorlization an batch dimension.
+                    nn.ReLU(),
                 )
-            self.m_linearLayerList.append(layer)
-            widthInput = widthOutput
 
-
+        self.m_thicknessClinicalLayer= nn.Sequential(
+                    nn.Linear(20,1),
+                )
 
     def forward(self,x,t):
-        # FC layers with batchnorm1d
-        for layer in self.m_linearLayerList:
-            x = layer(x)
+        thickness = x[:,0:self.hps.numThicknessFtr]
+        clinical  = x[:,self.hps.numThicknessFtr:].unsqueeze(dim=1)
+        x1 = self.m_thicknessLayer0(thickness)
+        x2 = self.m_clinicalLayer0(clinical).squeeze(dim=1)
+        x12 = torch.cat((x1,x2),dim=1)
+        x = self.m_thicknessClinicalLayer(x12)
 
         x = x.squeeze(dim=-1)  # B
         criterion = nn.BCEWithLogitsLoss(pos_weight=self.posWeight)

@@ -275,8 +275,12 @@ Notes:
 1 use AIC to do thickness variable selection on OD eye only;   --done, 19 features
 2 use AIC to clinical variable selection against hypertension only;  --done, 10 features
 3 redo 10 fold ID for OD image with 29 features: ---done, at ~/data/BES_3K/GTs/29Ftrs_OD_10CV/
-3 assembly thickness on OD and clincial feature to deep learning network;
-4 clincial feature should do 1x1 conv before assemblying with thickness features.
+4 assembly thickness on OD and clincial feature to deep learning network;  --done
+5 network structure:
+  19thicknessOD--| ========(FC)=======>10 --|
+      10 clinical  ======(1x1Conv)====>10 --|==(FC)=>1
+
+6  clincial feature should do 1x1 conv before assemblying with thickness features.
 
 # Feb 01st, Monday, 2021:
 Hyptension 10-fold crossing validation result:
