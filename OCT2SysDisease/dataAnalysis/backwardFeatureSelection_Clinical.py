@@ -89,10 +89,9 @@ def retrieveImageData_label(mode, hps):
                 IDsCorrespondVolumes += [ID, ] # one ID, one volume
 
         if len(nonexistIDList) > 0:
-            print(f"Error: nonexistIDList:\n {nonexistIDList}")
-            assert False
+            print(f"Error: nonExistIDList of {hps.ODOS} in {mode}:\n {nonexistIDList}")
         if len(multipleImages_IDList) > 0:
-            print(f"List of ID corresponding multiple {hps.ODOS} images:\n {multipleImages_IDList}")
+            print(f"List of ID corresponding multiple {hps.ODOS} images in {mode}:\n {multipleImages_IDList}")
 
         # save files
         with open(volumePathsFile, "w") as file:
