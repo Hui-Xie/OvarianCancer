@@ -34,7 +34,7 @@ CV9	    0.6	    0.7476	0.4096
 Average	0.5450	0.5997	0.4744
 ===============================================
 1 all result used the threshold of maximizing sum in validation data.
-2 all result are on the test fold
+2 all result are on the test folds
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 2  expOCT_29Ftr_OD_HyT_20210203B_10CV_0: 40-20-1 network
 ===============================================
@@ -52,14 +52,14 @@ CV9	    0.5473	0.6915	0.3614
 Average	0.5565	0.5784	0.5283
 ===============================================
 1 all result used the threshold of maximizing sum in validation data.
-2 all result are on the test fold
+2 all result are on the test folds
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Analysis:
 1  pure OD network get a lower accuracy(55%) than the OD/OS network (63%):
 2  possible reasons and improvements:
-   A  two-input-head design may hurt the clinical features' dominant capability over thickness features,
-      as by logistic regression that clinical features shows better prediction capability than thickness features.
-3  A improved single-head network is training, I will check its result on Friday.
+   A  the two-input-head design may hurt the clinical features' dominant capability over thickness features,
+      as by logistic regression experiment that clinical features show better prediction capability of hypertension than thickness features.
+3  A improved single-head network is training, I will check its result on Friday morning.
 
 
 
