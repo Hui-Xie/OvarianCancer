@@ -140,7 +140,7 @@ class ThicknessSubnet_Z3(BasicModel):  #
         self.m_surface = nn.Sequential(
             Conv2dBlock(N, N//2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),  # output: C,N//2, H,W
-            nn.Conv2d(N//2, hps.numSurfaces, kernel_size=[self.m_inputHeight,5], stride=[1,1], padding=[0,2]),  # 2D conv [H,5]
+            nn.Conv2d(N//2, hps.numSurfaces, kernel_size=[self.m_inputHeight,1], stride=[1,1], padding=[0,0]),  # 2D conv [H,1]
             nn.ReLU(),  # reLU make location >=0
         )  # output size:(numSurfaces)*1*W
 
