@@ -30,6 +30,18 @@ expDuke_20210129B_Thickness_YufanHePlus1D_iibi007   validationMeanErr=159 at epo
 expDuke_20210129C_Thickness_YufanHePlus1D_iibi007   validationMeanErr=159 at epoch 100, YufanHe network Plus a full Height conv of [H,5], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.1
                                                                                                                         SmoothSurfaceLoss=False, smoothThicknessLoss=False.
 
+expDuke_20210204A_Thickness_YufanHe_iibi007        training, YufanHe network Plus a full Height conv of [H,1], directly deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204B_Thickness_YufanHe_iibi007        training, YufanHe network Plus a full Height conv of [H,1], using N-surface ground truth, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204C_Thickness_YufanHe_iibi007        training, YufanHe network Plus a full Height conv of [H,1], using N surfaces, but use surface 0 ground truth only, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204D_Thickness_YufanHe_iibi007        training, YufanHe network Plus a full Height conv of [H,1], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
@@ -38,13 +50,13 @@ Analysis:
 1  The above 20210128 and 2021029 4 experiments all did not converge: after 100 epochs, its validation mean error is 159, very high;
    comparing with 20210107A experiment which got 4.0 validation mean error at epoch 53.
 2  There are only 2 differences between experiment 20210107A and  20210128A:
-         20210107A          20200128A
+         20210107A          20210128A
    lr:   0.01               0.1
    conv: [H,1]              [H,5]
    where [H,5] convolution was hoping to capture more neighbor information along width direction to get better thickness prediction.
-3  [H,1] is a 1D convolution using whole the column information to get surface location,and it is a learnable equivalence with soft_argmax in column dimension;
+3  [H,1] is a 1D convolution using whole the column information to get surface location, and it is a learnable equivalence with soft_argmax in column dimension;
    [H,5] is a 2D convolution hoping to capture more neighbor information, and it offsets the idea of soft_argmax or gaussian fitting in column dimension.
-4  A big filter size of [H,1] or [H,5] may need a small learning rate as a regularization,
+4  A big-size (full height) filter of [H,1] or [H,5] may need a small learning rate as a regularization,
    otherwise the possible parameter combinations of the big-size filter have too many variation model to get an undesired local minima;
 5  further improvements:
    A  stop above 4 non-converged experiments;
