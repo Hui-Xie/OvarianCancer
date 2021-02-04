@@ -1,0 +1,103 @@
+# use 19 thickness +10 clinical futures to feed into deep learning.
+
+debug: True
+debugOutputPeriod: 50
+
+# train config
+device: torch.device('cuda:2')   #GPU ID
+batchSize: 96 #  training data 1528, validation data:191, for 10-fold CV
+learningRate: 1.0e-2  #
+lrPatience: 6   # learning rate decay patience
+lrDecayFactor: 0.8   # pow(0.826, 12) = 0.1
+lrSchedulerMode: "min"  # "min" for loss, "max" for sum of Acc+TNR+TPR
+weightDecay: 1.0e-5
+useFixedLearningRate: False
+
+#data source
+existGTLabel: True
+dataDir:  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9_OD"
+ODOS: "OD"
+
+# _delNonExist: delete ID nonexist, and repeated ID;
+# _final: delete the ID whose slice number does not equal to 31.
+# _delErrWID: delete W=384 image ID
+# _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
+K_fold: 10
+k: 0
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/29Ftrs_OD_10CV/trainID_29Ftrs_10CV_.csv"  # name needs add k
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/29Ftrs_OD_10CV/validationID_29Ftrs_10CV_.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/29Ftrs_OD_10CV/testID_29Ftrs_10CV_.csv"
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+# ODOS: "OD"  # right(OD) or left(OS) eye
+
+# this file is placed in netPath directory.
+trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
+
+# Network config
+network: "ThicknessClinical29Ftrs_FCNet_B"
+imageH: 9
+imageW: 1
+volumeSuffix: "_thickness9sector_9x9.npy"
+nLayers: 3
+# numConvEachLayer: 3
+# bothEyes: False  # choose all OD eyes
+inputChannels: 9 #
+gradChannels: 0   # the added gradient channels beside raw image channel
+inputWidth: 29 # 31 thickness +10 clinical features = 41
+# where,
+# network structure:
+#  numThicknessFtr thickness========(FC)=======>(nThicknessLayer0) --|
+#  numClinicalFtr clinical  ======(1x1Conv)====>(numClinicalFtr)   --|==(FC_Widths....)=>1
+# parameters: 20*10 + 10*2 + 21*20 +21x1 =  661
+
+nThicknessLayer0: 30  # the output features of thickness layer0
+fcWidths: [20,1] # num of neural in each FC layer, after the concatenated layer0
+# dropoutRate: 0.0  # the dropout rate at final fully connected layer.
+targetKey: "hypertension_bp_plus_history$"
+appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
+          'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
+          'TG$_Corrected2015']
+# labelTable head: patientID,                                          (0)
+#             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
+# columnIndex:         1                           2        3       4          5             6          7             8              9                10
+#              'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
+# columnIndex:   11            12                           13                      14                       15                       16                  17
+#              'TG$_Corrected2015',  BMI,   WaistHipRate,  LDL/HDL
+# columnIndex:      18                 19       20         21
+
+# selected clinical features  according to expOCT_SeqBackwardFS_Clinical_20210203
+inputClinicalFeatures: ['Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Cholesterol', 'Triglyceride', 'BMI', 'LDLoverHDL']
+clinicalFeatureColIndex: [3, 4, 5, 11, 12, 13, 15, 18, 19, 21]   # in label array index
+numClinicalFtr: 10
+
+# selected thickness features according to expOCT_SeqBackwardFS_ODThickness_20210203
+inputThicknessFeatures: [ 'L0_S1', 'L0_S4', 'L0_S7', 'L1_S2', 'L1_S4', 'L2_S2', 'L3_S1', 'L3_S2', 'L3_S5', 'L4_S4', 'L4_S8',
+                          'L5_S3', 'L5_S4', 'L5_S7', 'L6_S0', 'L6_S1', 'L7_S4', 'L7_S8', 'L8_S0' ]
+thicknessFeatureColIndex: [ 1, 4, 7, 11, 13, 20, 28, 29, 32, 40, 44, 48, 49, 52, 54, 55, 67, 71, 72 ]  # the volume array index
+numThicknessFtr: 19
+
+#dropoutRate: 0.2 # dropout after global average pooling
+
+class01Percent:  [0.4350785340314136,0.5649214659685864]  # for 10-fold CV data
+# class01Percent: [ 0.4441711756025578, 0.5558288243974422] # for rainID_delNonExist_delErrWID.csv
+#class01Percent: [0.36, 0.64] # for 200 small training set
+
+trainAugmentation: False
+validationAugmentation: False
+useAddSamplesAugment: False  # when true, do not use other data augmentation.
+addSamplesProb: 0.6  #  data augmentation rate
+augmentProb: 0.5  # normal augment prob
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0, after  input data used normalization
+# for salt pepper noise
+saltPepperRate: 0.1  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+flipAugmentation: True
+
+
+# save network
+netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
+threshold: 0.50

@@ -16,6 +16,8 @@ from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Transform import OCT2SysD_Transform
 # for input size: 2x31x25
 from ThicknessClinical29Ftrs_FCNet import ThicknessClinical29Ftrs_FCNet
+from ThicknessClinical29Ftrs_FCNet_B import ThicknessClinical29Ftrs_FCNet_B
+from ThicknessClinical29Ftrs_FCNet_C import ThicknessClinical29Ftrs_FCNet_C
 
 
 from OCT2SysD_Tools import *

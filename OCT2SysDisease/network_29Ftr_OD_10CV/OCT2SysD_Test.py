@@ -13,6 +13,8 @@ sys.path.append(".")
 from OCT2SysD_DataSet import OCT2SysD_DataSet
 from OCT2SysD_Tools import *
 from ThicknessClinical29Ftrs_FCNet import ThicknessClinical29Ftrs_FCNet
+from ThicknessClinical29Ftrs_FCNet_B import ThicknessClinical29Ftrs_FCNet_B
+from ThicknessClinical29Ftrs_FCNet_C import ThicknessClinical29Ftrs_FCNet_C
 
 sys.path.append("../..")
 from framework.NetMgr import NetMgr

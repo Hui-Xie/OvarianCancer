@@ -20,7 +20,7 @@
 Experiments:
 1  expOCT_29Ftr_OD_HyT_20210203_10CV_0: 20-20-1 network
 ===============================================
-CVFold	Accuracy	TPR	TNR
+CVFold	Accuracy TPR	TNR
 CV0	    0.5468	0.7777	0.2499
 CV1	    0.4973	0.6203	0.3373
 CV2	    0.5706	0.7777	0.3012
@@ -38,7 +38,7 @@ Average	0.5450	0.5997	0.4744
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 2  expOCT_29Ftr_OD_HyT_20210203B_10CV_0: 40-20-1 network
 ===============================================
-CVFold	Accuracy	TPR	TNR
+CVFold	Accuracy  TPR	TNR
 CV0	    0.625	0.7685	0.4404
 CV1	    0.5235	0.3796	0.7108
 CV2	    0.5706	0.7407	0.3493
@@ -54,6 +54,14 @@ Average	0.5565	0.5784	0.5283
 1 all result used the threshold of maximizing sum in validation data.
 2 all result are on the test fold
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Analysis:
+1  pure OD network get a lower accuracy(55%) than the OD/OS network (63%):
+2  possible reasons and improvements:
+   A  two-input-head design may hurt the clinical features' dominant capability over thickness features,
+      as by logistic regression that clinical features shows better prediction capability than thickness features.
+3  A improved single-head network is training, I will check its result on Friday.
+
+
 
 
 
