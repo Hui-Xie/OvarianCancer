@@ -47,7 +47,7 @@ numClinicalFtr: 10
 
 # selected thickness features according to expOCT_SeqBackwardFS_ODThickness_20210203
 # inputThicknessFeatures: [ 'L0_S1', 'L0_S4', 'L0_S7', 'L1_S2', 'L1_S4', 'L2_S2', 'L3_S1', 'L3_S2', 'L3_S5', 'L4_S4', 'L4_S8',
-                          'L5_S3', 'L5_S4', 'L5_S7', 'L6_S0', 'L6_S1', 'L7_S4', 'L7_S8', 'L8_S0' ]
+#                          'L5_S3', 'L5_S4', 'L5_S7', 'L6_S0', 'L6_S1', 'L7_S4', 'L7_S8', 'L8_S0' ]
 # thicknessFeatureColIndex: [ 1, 4, 7, 11, 13, 20, 28, 29, 32, 40, 44, 48, 49, 52, 54, 55, 67, 71, 72 ]  # the volume array index
 numThicknessFtr: 162  # full thickness feature
 
