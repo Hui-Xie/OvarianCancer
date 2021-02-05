@@ -19,7 +19,7 @@ from framework.ConfigReader import ConfigReader
 output2File = True
 
 def printUsage(argv):
-    print("============ Divid data into Folds =============")
+    print("============ Divide data into Folds =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_full_path")
 
@@ -61,8 +61,7 @@ def main():
 
     # get all correct volume numpy path
     allVolumesList = glob.glob(hps.dataDir + f"/*{hps.volumeSuffix}")
-    nonexistIDList = []
-    multipleImages_IDList=[]
+    incorrectIDList = []
 
     # make sure volume ID and volume path has strict corresponding order
     volumePaths = []  # number of volumes is about 2 times of IDList
@@ -83,21 +82,19 @@ def main():
 
     else:
         for i, ID in enumerate(IDList):
-            resultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_{hps.ODOS}_*{hps.volumeSuffix}")
-            resultList.sort()
-            numVolumes = len(resultList)
-            if 0 == numVolumes:
-                nonexistIDList.append(ID)
-            elif numVolumes > 1:
-                multipleImages_IDList.append(ID)
-            else:
-                volumePaths += resultList
-                IDsCorrespondVolumes += [ID, ]  # one ID, one volume
+            # for OD and OS
+            ODResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_OD_*{hps.volumeSuffix}")
+            OSResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_OS_*{hps.volumeSuffix}")
 
-        if len(nonexistIDList) > 0:
-            print(f"nonExistIDList of {hps.ODOS} in all data sets:\n {nonexistIDList}")
-        if len(multipleImages_IDList) > 0:
-            print(f"List of ID corresponding multiple {hps.ODOS} images in all data sets:\n {multipleImages_IDList}")
+            if 1 == len(ODResultList) == len(OSResultList):
+                volumePaths += ODResultList + OSResultList
+                IDsCorrespondVolumes += [ID]  # one ID for OD and OS
+            else:
+                incorrectIDList.append(ID)
+
+
+        if len(incorrectIDList) > 0:
+            print(f"incorrect ID List of {hps.ODOS} in all data sets (missing or redundant OD_OS match):\n {incorrectIDList}")
 
         # save files
         with open(volumePathsFile, "w") as file:
@@ -107,16 +104,18 @@ def main():
             for v in IDsCorrespondVolumes:
                 file.write(f"{v}\n")
 
-    NVolumes = len(volumePaths)
-    assert (NVolumes == len(IDsCorrespondVolumes))
+    NVolumes = len(IDsCorrespondVolumes)  # number of OD/OS matches
+    assert (NVolumes*2  == len(volumePaths))
 
     # load all volumes into memory
     assert hps.imageW == 1
-    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH),  dtype=np.float)  # size:NxCxH for 9x9 sector array
-    for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
-        volumes[i, :] = oneVolume
-    volumes = volumes.reshape(-1, hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
+    volumes = np.empty((NVolumes, 2, hps.inputChannels, hps.imageH),  dtype=np.float)  # size:Nx2xlayerxH for OD/OS 9x9 sector array
+    for i in range(NVolumes):
+        ODVolume = np.load(volumePaths[i*2]).astype(np.float)
+        OSVolume = np.load(volumePaths[i*2+1]).astype(np.float)
+        volumes[i,0, :] = ODVolume
+        volumes[i,1, :] = OSVolume
+    volumes = volumes.reshape(-1, 2*hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
 
     # read clinical features
     fullLabels = readBESClinicalCsv(hps.GTPath)
@@ -170,15 +169,8 @@ def main():
     extraEmptyRows = np.nonzero(clinicalFtrs[:, inputClinicalFeatures.index("IOP")] == 99)  # missing IOP value
     emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
 
-    inputThicknessFeatures = hps.inputThicknessFeatures
-    thicknessFeatureColIndex = tuple(hps.thicknessFeatureColIndex)
-    nThicknessFtr = len(thicknessFeatureColIndex)
-    assert nThicknessFtr == hps.numThicknessFtr
-
-    thicknessFtrs = volumes[:, thicknessFeatureColIndex]
-
-    # concatenate sector thickness with multi variables:
-    volumes = np.concatenate((thicknessFtrs, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
+    # concatenate sector full thickness with multi variables:
+    volumes = np.concatenate((volumes, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
     assert volumes.shape[1] == hps.inputWidth
 
     volumes = np.delete(volumes, emptyRows, 0)
@@ -186,7 +178,7 @@ def main():
     patientIDColumn = np.delete(labelTable, emptyRows, 0)[:, 0].astype(np.int)  # for patientID
 
     emptyRows = tuple(emptyRows[0])
-    volumePaths = [path for index, path in enumerate(volumePaths) if index not in emptyRows]
+    volumePaths = [path for index, path in enumerate(volumePaths) if index//2 not in emptyRows]
     IDsCorrespondVolumes = [id for index, id in enumerate(IDsCorrespondVolumes) if index not in emptyRows]
 
     # update the number of volumes.
