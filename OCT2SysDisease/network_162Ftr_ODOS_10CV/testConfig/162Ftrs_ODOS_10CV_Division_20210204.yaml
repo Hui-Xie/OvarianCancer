@@ -1,0 +1,62 @@
+dataDir: "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9_ODOS_162Ftrs_10CV"
+ODOS: "ODOS"
+# _delNonExist: delete ID nonexist, and repeated ID;
+# _final: delete the ID whose slice number does not equal to 31.
+# _delErrWID: delete W=384 image ID
+# _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/trainID_delNonExist_delErrWID_excludeMGM.csv"
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/validationID_delNonExist_delErrWID_excludeMGM.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/testID_delNonExist_delErrWID_excludeMGM.csv"
+
+GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+# ODOS:"OD"  # right(OD) or left(OS) eye
+
+# this file is placed in netPath directory.
+trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
+
+# Network config
+network: "Divid162FtrData_ODOS_10Fold"
+imageH: 9
+imageW: 1
+volumeSuffix: "_thickness9sector_9x9.npy"
+nLayers: 3
+# numConvEachLayer:3
+# bothEyes:False  # choose all OD eyes
+inputChannels: 9 #
+gradChannels: 0   # the added gradient channels beside raw image channel
+inputWidth: 172 # 31 thickness +10 clinical features :41
+# where,
+fcWidths: [40, 20,1] # num of neural in each FC layer # 42*40+41*20+21*1 : 2521 parameters
+# dropoutRate:0.0  # the dropout rate at final fully connected layer.
+targetKey: "hypertension_bp_plus_history$"
+appKeys: ["hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
+          'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
+          'TG$_Corrected2015']
+# labelTable head:patientID,                                          (0)
+#             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
+# columnIndex:        1                           2        3       4          5             6          7             8              9                10
+#              'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
+# columnIndex:  11            12                           13                      14                       15                       16                  17
+#              'TG$_Corrected2015',  BMI,   WaistHipRate,  LDL/HDL
+# columnIndex:     18                 19       20         21
+
+# selected clinical features  according to expOCT_SeqBackwardFS_Clinical_20210203
+inputClinicalFeatures: ['Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose', 'Cholesterol', 'Triglyceride', 'BMI', 'LDLoverHDL']
+clinicalFeatureColIndex: [3, 4, 5, 11, 12, 13, 15, 18, 19, 21]   # in label array index
+numClinicalFtr: 10
+
+# selected thickness features according to expOCT_SeqBackwardFS_ODThickness_20210203
+# inputThicknessFeatures: [ 'L0_S1', 'L0_S4', 'L0_S7', 'L1_S2', 'L1_S4', 'L2_S2', 'L3_S1', 'L3_S2', 'L3_S5', 'L4_S4', 'L4_S8',
+                          'L5_S3', 'L5_S4', 'L5_S7', 'L6_S0', 'L6_S1', 'L7_S4', 'L7_S8', 'L8_S0' ]
+# thicknessFeatureColIndex: [ 1, 4, 7, 11, 13, 20, 28, 29, 32, 40, 44, 48, 49, 52, 54, 55, 67, 71, 72 ]  # the volume array index
+numThicknessFtr: 162  # full thickness feature
+
+outputCV_ID_Dir: "/home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV"
+K_Fold: 10
+outputValidation: True
+
+netPath: "/home/hxie1/data/BES_3K/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/home/hxie1/data/BES_3K/log"  # net is saved at logPath / network / self_filename
+threshold: 0.50

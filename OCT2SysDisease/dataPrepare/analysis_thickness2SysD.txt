@@ -1,4 +1,32 @@
 # Feb 05th, Friday, 2021:
+About using OD/OS features. It is updated thinking from Feb 2nd.
+=============================================
+Use non-sysmmetric thickness of OD/OS:
+1  Input: 81x2 thicknesses + 10 clinical features
+3  training sample number: about 1500 patients.
+4  network structure:
+   81thicknessOD--|
+   81thicknessOS--| ========(FC)=======>10--|
+        10 clinical ======(1x1Conv)====>9 --|==(FC)=>1
+
+   parameters: (162+1)*10+ 9*2+ (19+1)*1 = 1668.
+   parameters/obsereration: 1668/1500 = 1.11
+   training sample/input space:  1500/(162+9) = 8.77
+5  if no overfitting, add the 10 (after 1st FC) to bigger;
+
+Work for OD/OS both eyes input:
+1  mkdir of dataDir;   --done.
+/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9_ODOS_162Ftrs_10CV
+2  rebuild GTs dir for data set ID:
+/home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV
+
+3  dataLoader support 2 input data;
+4  main train/test need moify input interface;
+5  new network;
+
+
+=============================================
+# Feb 05th, Friday, 2021:
 Summary:
 1   Please refer to 2 screenshots below:
     ODS files:
