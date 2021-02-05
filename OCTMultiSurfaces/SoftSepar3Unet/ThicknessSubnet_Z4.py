@@ -137,10 +137,18 @@ class ThicknessSubnet_Z4(BasicModel):  #
         )
 
         # 2 branches:
+        if hps.filterWidthFullHConv==5:  #[H,5]
+            wPadding = 2
+        elif hps.filterWidthFullHConv == 1: #[H,1]
+            wPadding = 0
+        else:
+            print(f"Error: Not support value of filterWidthFullHConv")
+            assert False
+
         self.m_surface = nn.Sequential(
             Conv2dBlock(N, N//2, convStride=1, useSpectralNorm=self.m_useSpectralNorm,
                         useLeakyReLU=self.m_useLeakyReLU),  # output: C,N//2, H,W
-            nn.Conv2d(N//2, hps.numSurfaces, kernel_size=[self.m_inputHeight,1], stride=[1,1], padding=[0,0]),  # 2D conv [H,1]
+            nn.Conv2d(N//2, hps.numSurfaces, kernel_size=[self.m_inputHeight,hps.filterWidthFullHConv], stride=[1,1], padding=[0,wPadding]),  # 2D conv [H,1]
             nn.ReLU(),  # reLU make location >=0
         )  # output size:(numSurfaces)*1*W
 

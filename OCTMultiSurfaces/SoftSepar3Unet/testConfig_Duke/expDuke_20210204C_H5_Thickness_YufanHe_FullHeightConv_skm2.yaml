@@ -39,7 +39,7 @@ k: -1   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:6')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8
 # phased training with different learning rate
@@ -59,7 +59,7 @@ gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: True
-filterWidthFullHConv: 1 # [H,5] or [H,1]
+filterWidthFullHConv: 5 # [H,5] or [H,1]
 
 # some physical parameter of images
 slicesPerPatient: 51  # for test and validation set
