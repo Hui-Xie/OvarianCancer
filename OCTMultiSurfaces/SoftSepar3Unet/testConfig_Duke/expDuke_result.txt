@@ -42,6 +42,17 @@ expDuke_20210204C_Thickness_YufanHe_iibi007        training, YufanHe network Plu
 expDuke_20210204D_Thickness_YufanHe_iibi007        training, YufanHe network Plus a full Height conv of [H,1], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01
                                                                                                                         SmoothSurfaceLoss=False, smoothThicknessLoss=False.
 
+expDuke_20210204A_H5_Thickness_YufanHe_skm2        training, YufanHe network Plus a full Height conv of [H,5], directly deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204B_H5_Thickness_YufanHe_skm2        training, YufanHe network Plus a full Height conv of [H,5], using N-surface ground truth, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204C_H5_Thickness_YufanHe_skm2        training, YufanHe network Plus a full Height conv of [H,5], using N surfaces, but use surface 0 ground truth only, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204D_H5_Thickness_YufanHe_skm2        training, YufanHe network Plus a full Height conv of [H,5], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
@@ -60,7 +71,8 @@ Analysis:
    otherwise the possible parameter combinations of the big-size filter have too many variation model to get an undesired local minima;
 5  further improvements:
    A  stop above 4 non-converged experiments;
-   B  redo above 4 experiments with new lr=0.01, and [H,1] convolution;
+   B  redo above 4 experiments with new lr=0.01, and [H,1] convolution at c-iibi007.iibi.uiowa.edu
+   C  redo above 4 experiments with new lr=0.01, and [H,5] convolution at skm2.healthcare.uiowa.edu
 
 
 
