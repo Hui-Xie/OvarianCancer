@@ -1,3 +1,25 @@
+# Feb 05th, Friday, 2021:
+Summary:
+1   Please refer to 2 screenshots below:
+    ODS files:
+    /home/sheen/projects/DeepLearningSeg/OCT2SysDisease/network_41Ftr_10CV/testConfig/41Ftrs2HBP_10CV_TestResult.ods
+    /home/sheen/projects/DeepLearningSeg/OCT2SysDisease/network_29Ftr_OD_10CV/testConfig/29Ftrs2HBP_10CV_TestResult_20210204.ods
+
+2   OD network gets an accuracy of 62%, while OD/OS network gets an accuracy of 63%.
+     A possible reason is that OD/OS network has 2 times training sample number than the OD network.
+3   Single-head OD network gets an accuracy of 62%, while dual-head OD network gets an accuracy of 55%.
+     It verified our initial judgement that normalization between clinical feature and thickness hurts the clinical features' dominant capability.
+4   Our logistic regression on pure clinical features on the whole dataset can get an accuracy of 66%, which can be regarded as a training accuracy on logistic regression.
+     I estimate its test accuracy is less than 60%.
+5   Our logistic regression on pure thickness features on the whole dataset can get an accuracy of 60%, which can be regarded as a training accuracy on logistic regression.
+     I estimate its test accuracy is about 50%.
+
+Further plan:
+1   Use both OD/OS thickness input and clinical feature to predict hypertension, hoping their OD/OS thickness difference may help.
+2   Radiomics.
+
+
+
 # Feb 03rd, Wednesday, 2021:
 29 features(19 thicknesses + 10 clinical features) pure OD networks for 10-fold CV are running:
 1 Clinical features using backward sequential variable selection by AIC in logistic regression chose 10 features;
