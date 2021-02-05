@@ -88,7 +88,7 @@ def main():
 
             if 1 == len(ODResultList) == len(OSResultList):
                 volumePaths += ODResultList + OSResultList
-                IDsCorrespondVolumes += [ID]  # one ID for OD and OS
+                IDsCorrespondVolumes += [ID,]  # one ID for OD and OS
             else:
                 incorrectIDList.append(ID)
 

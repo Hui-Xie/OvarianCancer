@@ -47,11 +47,10 @@ class OCT2SysD_DataSet(data.Dataset):
 
         # get all correct volume numpy path
         allVolumesList = glob.glob(hps.dataDir + f"/*{hps.volumeSuffix}")
-        nonexistIDList = []
-        multipleImages_IDList= []
+        incorrectIDList = []
 
         # make sure volume ID and volume path has strict corresponding order
-        self.m_volumePaths = []  # number of volumes is about 2 times of IDList
+        self.m_volumePaths = []  # number of volumes is exact 2 times of IDList for ODOS matches
         self.m_IDsCorrespondVolumes = []
 
         volumePathsFile = os.path.join(hps.dataDir, self.m_mode+f"_{hps.ODOS}_VolumePaths_{hps.K_fold}CV_{hps.k}.txt")
@@ -69,23 +68,19 @@ class OCT2SysD_DataSet(data.Dataset):
 
         else:
             for i,ID in enumerate(IDList):
-                resultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_{hps.ODOS}_*{hps.volumeSuffix}")
-                resultList.sort()
-                numVolumes = len(resultList)
-                if 0 == numVolumes:
-                    nonexistIDList.append(ID)
-                elif numVolumes > 1:
-                    multipleImages_IDList.append(ID)
-                else:
-                    self.m_volumePaths += resultList
-                    self.m_IDsCorrespondVolumes += [ID, ]  # one ID, one volume
+                # for OD and OS
+                ODResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_OD_*{hps.volumeSuffix}")
+                OSResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_OS_*{hps.volumeSuffix}")
 
-            if len(nonexistIDList) > 0:
+                if 1 == len(ODResultList) == len(OSResultList):
+                    self.m_volumePaths += ODResultList + OSResultList
+                    self.m_IDsCorrespondVolumes += [ID,]  # one ID for OD and OS
+                else:
+                    incorrectIDList.append(ID)
+
+            if len(incorrectIDList) > 0:
                 with open(hps.logMemoPath, "a") as file:
-                    file.write(f"nonExistIDList of {hps.ODOS} in {mode}_{hps.K_fold}CV_{hps.k}:\n {nonexistIDList}")
-            if len(multipleImages_IDList) > 0:
-                with open(hps.logMemoPath, "a") as file:
-                    file.write(f"List of ID corresponding multiple {hps.ODOS} images in {mode}_{hps.K_fold}CV_{hps.k}:\n {multipleImages_IDList}")
+                    file.write(f"incorrect ID List of {hps.ODOS} in {mode}_{hps.K_fold}CV_{hps.k} (missing or redundant OD_OS match):\n {incorrectIDList}")
 
             # save files
             with open(volumePathsFile, "w") as file:
@@ -95,16 +90,18 @@ class OCT2SysD_DataSet(data.Dataset):
                 for v in self.m_IDsCorrespondVolumes:
                     file.write(f"{v}\n")
 
-        self.m_NVolumes = len(self.m_volumePaths)
-        assert (self.m_NVolumes == len(self.m_IDsCorrespondVolumes))
+        self.m_NVolumes = len(self.m_IDsCorrespondVolumes)  # number of OD/OS matches
+        assert (self.m_NVolumes * 2 == len(self.m_volumePaths))
 
         # load all volumes into memory
         assert hps.imageW == 1
-        self.m_volumes = np.empty((self.m_NVolumes, hps.inputChannels, hps.imageH), dtype=np.float)  # size:NxCxH for 9x9 sector array
-        for i, volumePath in enumerate(self.m_volumePaths):
-            oneVolume = np.load(volumePath).astype(np.float)
-            self.m_volumes[i, :] = oneVolume
-        self.m_volumes = self.m_volumes.reshape(-1, hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
+        self.m_volumes = np.empty((self.m_NVolumes, 2, hps.inputChannels, hps.imageH), dtype=np.float)  # size:Nx2xlayerxH for OD/OS 9x9 sector array
+        for i in range(self.m_NVolumes):
+            ODVolume = np.load(self.m_volumePaths[i * 2]).astype(np.float)
+            OSVolume = np.load(self.m_volumePaths[i * 2 + 1]).astype(np.float)
+            self.m_volumes[i, 0, :] = ODVolume
+            self.m_volumes[i, 1, :] = OSVolume
+        self.m_volumes = self.m_volumes.reshape(-1, 2 * hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
 
         # read clinical features
         fullLabels = readBESClinicalCsv(hps.GTPath)
@@ -158,15 +155,9 @@ class OCT2SysD_DataSet(data.Dataset):
         extraEmptyRows = np.nonzero(clinicalFtrs[:,self.m_inputClinicalFeatures.index("IOP")] == 99)  #missing IOP value
         emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
 
-        self.m_inputThicknessFeatures = hps.inputThicknessFeatures
-        thicknessFeatureColIndex = tuple(hps.thicknessFeatureColIndex)
-        nThicknessFtr = len(thicknessFeatureColIndex)
-        assert nThicknessFtr == hps.numThicknessFtr
 
-        thicknessFtrs = self.m_volumes[:,thicknessFeatureColIndex]
-
-        # concatenate sector thickness with multi variables:
-        self.m_volumes = np.concatenate((thicknessFtrs, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
+        # concatenate full sector thickness with multi variables:
+        self.m_volumes = np.concatenate((self.m_volumes, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
         assert self.m_volumes.shape[1] == hps.inputWidth
 
         self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
@@ -177,12 +168,12 @@ class OCT2SysD_DataSet(data.Dataset):
         self.m_targetLabels = torch.from_numpy(self.m_targetLabels).to(device=hps.device, dtype=torch.float32)
 
         emptyRows = tuple(emptyRows[0])
-        self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index not in emptyRows]
+        self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index//2 not in emptyRows]
         self.m_IDsCorrespondVolumes = [id for index, id in enumerate(self.m_IDsCorrespondVolumes) if index not in emptyRows]
+        assert (len(self.m_volumePaths) == len(self.m_IDsCorrespondVolumes)*2)
 
         # update the number of volumes.
         self.m_NVolumes = len(self.m_volumes)
-        assert hps.inputWidth == self.m_volumes.shape[1]
 
         with open(hps.logMemoPath, "a") as file:
             file.write(f"{mode} dataset_{hps.K_fold}CV_{hps.k}: NVolumes={self.m_NVolumes}\n")
@@ -236,7 +227,7 @@ class OCT2SysD_DataSet(data.Dataset):
 
     def __getitem__(self, index):
         epsilon = 1.0e-8
-        volumePath = self.m_volumePaths[index]
+        volumePath = self.m_volumePaths[index*2] +"+++" + self.m_volumePaths[index*2+1]
 
         label = None
         if self.hps.existGTLabel:

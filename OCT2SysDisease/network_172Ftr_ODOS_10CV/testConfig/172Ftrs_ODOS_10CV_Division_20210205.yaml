@@ -15,7 +15,7 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
 
 # Network config
-network: "Divid162FtrData_ODOS_10Fold"
+network: "Divid172FtrData_ODOS_10Fold"
 imageH: 9
 imageW: 1
 volumeSuffix: "_thickness9sector_9x9.npy"
@@ -51,7 +51,7 @@ numClinicalFtr: 10
 # thicknessFeatureColIndex: [ 1, 4, 7, 11, 13, 20, 28, 29, 32, 40, 44, 48, 49, 52, 54, 55, 67, 71, 72 ]  # the volume array index
 numThicknessFtr: 162  # full thickness feature
 
-outputCV_ID_Dir: "/home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV"
+outputCV_ID_Dir: "/home/hxie1/data/BES_3K/GTs/172Ftrs_ODOS_10CV"
 K_Fold: 10
 outputValidation: True
 

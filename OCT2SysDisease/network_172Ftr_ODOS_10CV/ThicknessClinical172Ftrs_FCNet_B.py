@@ -7,7 +7,7 @@ from framework.BasicModel import BasicModel
 from framework.NetTools import  construct2DFeatureNet
 
 # for input size: 9x9+7 and flat
-class ThicknessClinical29Ftrs_FCNet_B(BasicModel):
+class ThicknessClinical172Ftrs_FCNet_B(BasicModel):
     '''
     erase the ReLU in the  input layer0 .
     '''

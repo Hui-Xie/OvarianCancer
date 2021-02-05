@@ -24,9 +24,9 @@ ODOS: "ODOS"
 # _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
 K_fold: 10
 k: 0
-trainingDataPath: "/home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV/trainID_172Ftrs_10CV_.csv"  # name needs add k
-validationDataPath: "/home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV/validationID_172Ftrs_10CV_.csv"
-testDataPath: "/home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV/testID_172Ftrs_10CV_.csv"
+trainingDataPath: "/home/hxie1/data/BES_3K/GTs/172Ftrs_ODOS_10CV/trainID_172Ftrs_10CV_.csv"  # name needs add k
+validationDataPath: "/home/hxie1/data/BES_3K/GTs/172Ftrs_ODOS_10CV/validationID_172Ftrs_10CV_.csv"
+testDataPath: "/home/hxie1/data/BES_3K/GTs/172Ftrs_ODOS_10CV/testID_172Ftrs_10CV_.csv"
 
 GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 # ODOS: "OD"  # right(OD) or left(OS) eye
@@ -35,7 +35,7 @@ GTPath: "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 trainNormalizationStdMeanFileName: "trainNormalization_Thickness_Texture_layers"
 
 # Network config
-network: "ThicknessClinical29Ftrs_FCNet_C"
+network: "ThicknessClinical172Ftrs_FCNet_C"
 imageH: 9
 imageW: 1
 volumeSuffix: "_thickness9sector_9x9.npy"

@@ -19,9 +19,9 @@ Work for OD/OS both eyes input:
 /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9_ODOS_162Ftrs_10CV
 2  rebuild GTs dir for data set ID:  --done
 /home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV
-3  dataLoader support 2 input data;
+3  dataLoader support 2 input data;  --done
 4  main train/test need moify input interface;
-5  new network;
+5  new network;  --done
 6  modify train and test with threshold of 0.5
 
 

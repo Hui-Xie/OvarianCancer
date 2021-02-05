@@ -179,10 +179,10 @@ class OCT2SysD_DataSet(data.Dataset):
         emptyRows = tuple(emptyRows[0])
         self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index not in emptyRows]
         self.m_IDsCorrespondVolumes = [id for index, id in enumerate(self.m_IDsCorrespondVolumes) if index not in emptyRows]
+        assert (len(self.m_volumePaths) == len(self.m_IDsCorrespondVolumes))
 
         # update the number of volumes.
         self.m_NVolumes = len(self.m_volumes)
-        assert hps.inputWidth == self.m_volumes.shape[1]
 
         with open(hps.logMemoPath, "a") as file:
             file.write(f"{mode} dataset_{hps.K_fold}CV_{hps.k}: NVolumes={self.m_NVolumes}\n")
