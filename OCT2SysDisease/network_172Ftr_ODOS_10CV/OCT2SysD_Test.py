@@ -15,6 +15,7 @@ from OCT2SysD_Tools import *
 from ThicknessClinical172Ftrs_FCNet import ThicknessClinical172Ftrs_FCNet
 from ThicknessClinical172Ftrs_FCNet_B import ThicknessClinical172Ftrs_FCNet_B
 from ThicknessClinical172Ftrs_FCNet_C import ThicknessClinical172Ftrs_FCNet_C
+from ThicknessClinical172Ftrs_FCNet_D import ThicknessClinical172Ftrs_FCNet_D
 
 sys.path.append("../..")
 from framework.NetMgr import NetMgr
