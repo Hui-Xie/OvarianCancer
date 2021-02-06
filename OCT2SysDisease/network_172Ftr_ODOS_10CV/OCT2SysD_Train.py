@@ -119,7 +119,7 @@ def main():
         allTrainOutput = None
         allTrainGTs = None
 
-        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0, drop_last=True):
+        for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0, drop_last=False):
             inputs = batchData['images']# B,C,H,W
             t = batchData['GTs'].to(device=hps.device, dtype=torch.float) # target
 
@@ -150,7 +150,7 @@ def main():
             allValidationGTs = None
 
             net.setStatus("validation")
-            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
+            for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False, num_workers=0, drop_last=False):
                 inputs = batchData['images']  # B,C,H,W
                 t = batchData['GTs'].to(device=hps.device, dtype=torch.float)  # target
 
