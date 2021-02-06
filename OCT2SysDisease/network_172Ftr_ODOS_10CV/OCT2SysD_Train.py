@@ -161,19 +161,17 @@ def main():
                 allValidationOutput = x if allValidationOutput is None else torch.cat((allValidationOutput, x))
                 allValidationGTs    = t if allValidationGTs    is None else torch.cat((allValidationGTs,    t))
 
-
-
             validLoss /= validBatch
 
         validAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
-        Td_Acc_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithLogits(allValidationGTs, allValidationOutput)
+        Acc_TPR_TNR_Sum = compute_Acc_TPR_TNR_Sum_WithLogits(allValidationGTs, allValidationOutput,0.5)  # use 0.5 threshold
 
 
         if lrScheduler is not None:
             if "min" == hps.lrSchedulerMode:
                 lrScheduler.step(validLoss)
             else: # "max"
-                lrScheduler.step(Td_Acc_TPR_TNR_Sum['Sum'])
+                lrScheduler.step(Acc_TPR_TNR_Sum['Sum'])
 
         writer.add_scalars('loss',     {"train": trLoss, "validation": validLoss}, epoch)
         writer.add_scalars('accuracy', {"train": trAcc, "validation": validAcc}, epoch)
@@ -182,20 +180,20 @@ def main():
         writer.add_scalar('train/Accuracy', trAcc, epoch)
         writer.add_scalar('validation/Loss', validLoss, epoch)
         writer.add_scalar('validation/Accuracy', validAcc, epoch)
-        writer.add_scalars('validation/threshold_ACC_TPR_TNR_Sum', Td_Acc_TPR_TNR_Sum, epoch)
+        writer.add_scalars('validation/ACC_TPR_TNR_Sum', Acc_TPR_TNR_Sum, epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        #if validLoss < preValidLoss:
+        if validLoss < preValidLoss:
         # if  validAcc > preAccuracy:
-        if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
+        # if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("accuracy_cutoff0.5", validAcc)
             net.updateRunParameter("learningRate", optimizer.param_groups[0]['lr'])
-            net.updateRunParameter("threshold", Td_Acc_TPR_TNR_Sum['threshold'])
-            net.updateRunParameter("train_Td_Acc_TPR_TNR_Sum", Td_Acc_TPR_TNR_Sum)
+            net.updateRunParameter("threshold", 0.5)
+            net.updateRunParameter("validation_Acc_TPR_TNR_Sum", Acc_TPR_TNR_Sum)
             preValidLoss = validLoss
-            preAccuracy = Td_Acc_TPR_TNR_Sum['Sum']
+            preAccuracy = Acc_TPR_TNR_Sum['Sum']
             netMgr.saveNet(hps.netPath)
 
 

@@ -20,9 +20,9 @@ Work for OD/OS both eyes input:
 2  rebuild GTs dir for data set ID:  --done
 /home/hxie1/data/BES_3K/GTs/162Ftrs_ODOS_10CV
 3  dataLoader support 2 input data;  --done
-4  main train/test need moify input interface;
+4  main train/test need moify input interface;  --cancel
 5  new network;  --done
-6  modify train and test with threshold of 0.5
+6  modify train and test with  a fixed threshold of 0.5   --done.
 
 
 =============================================
