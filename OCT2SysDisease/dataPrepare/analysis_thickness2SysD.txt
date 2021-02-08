@@ -1,3 +1,26 @@
+# Feb 08th, Monday, 2021:
+The OD/OS dual input network result:
+Summary:
+1 input: OD/OS thickness 81*2 + clinical features 10.
+2 For single-head input(where clinical data without normalization), got 10-fold CV average acc of 60%.
+  current network is (172,40,20,1) fully-connected width. It has some over-fitting.
+  Need further to reduce network width.
+3 For dual-head input, where clinical data normalization separate from thickness data, gots 10-fold CV average acc of 60%.
+  current network is ((162->20)+(10->10))->20->20->1) fully-connected width. it has over-fitting.
+  Need further to reduce network width.
+4 The layer thickness information is not powerful to predict hypertension.
+
+Further work:
+1 reduce above 2 networks' layer and width to reduce over-fitting.
+2 start radiomics research;
+
+please refer 10-fold CV resutl:
+ /home/sheen/projects/DeepLearningSeg/OCT2SysDisease/network_172Ftr_ODOS_10CV/testConfig/172Ftrs2HBP_10CV_TestResult_20210208.ods
+
+
+
+
+
 # Feb 05th, Friday, 2021:
 About using OD/OS features. It is updated thinking from Feb 2nd.
 =============================================
