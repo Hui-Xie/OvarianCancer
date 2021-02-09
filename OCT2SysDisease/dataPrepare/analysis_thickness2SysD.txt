@@ -3,6 +3,14 @@
 2  traditional method needs to do cross validation for comparing with deep learning;
 3  MICCAI paper talk only focus on MICCAI paper;
 
+Further OD/OS input network result:
+1  after reduce 1 layer, network still get over-fitting. Its test result didn't improve.
+   One reason is that OD/OS dual eye input increases input width from 29(OD eye with feature selection) to 172(both eye without feature selection).
+2  Continue to reduce network to single layer.
+3  started radiomics.
+
+
+
 
 # Feb 08th, Monday, 2021:
 The OD/OS dual input network result:
