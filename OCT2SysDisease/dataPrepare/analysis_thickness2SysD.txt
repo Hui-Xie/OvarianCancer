@@ -1,3 +1,9 @@
+# Feb 09th, Tuesday, 2021:
+1  look into Leixin's paper, check its 3D formula;
+2  traditional method needs to do cross validation for comparing with deep learning;
+3  MICCAI paper talk only focus on MICCAI paper;
+
+
 # Feb 08th, Monday, 2021:
 The OD/OS dual input network result:
 Summary:
