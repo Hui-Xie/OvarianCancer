@@ -9,6 +9,32 @@ Further OD/OS input network result:
 2  Continue to reduce network to single layer.
 3  started radiomics.
 
+exp: expOCT_172Ftr_ODOS_HyT_20210209D_2Head_10CV_0
+1  Network: ((162->20)+(10->10))->1:  only one neural after just 2 heads. It is almost a single layer network.
+2  get 63.35% average accuracy of 10-fold crossing validation.
+   It is similar with exp:expOCT_41Ftr_HyT_20210130_10CV_?.yaml, which got 63.76% average accuracy of 10-fold crossing validation.
+
+
+exp: expOCT_172Ftr_ODOS_HyT_20210209D_2Head_10CV_0
+	Network: 1
+	Threshold =0.5
+CVFold	Accuracy  TPR	TNR
+CV0	    0.6842	0.7009	0.6626
+CV1	    0.6157	0.5981	0.6385
+CV2	    0.6789	0.6822	0.6746
+CV3	    0.6578	0.5607	0.7813
+CV4	    0.5978	0.6415	0.5421
+CV5	    0.656	0.5849	0.7469
+CV6	    0.6402	0.6603	0.6144
+CV7	    0.5767	0.5188	0.6506
+CV8	    0.6137	0.5188	0.7349
+CV9	    0.6137	0.6698	0.5421
+Average	0.6335	0.6136	0.6588
+
+
+
+
+
 
 
 
