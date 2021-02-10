@@ -1,2 +1,10 @@
 # Feb 9th, Tuesday, 2021
 Radiomics = Genomics
+Radiomic data has the potential to uncover disease characteristics that fail to be appreciated by the naked eye.
+Logistic Regression + L1/L2 regulirization = elasticNet
+
+1  thickness images: 9x31x25
+2  texture image with sigmented mask: 31xSegHx512
+1  radiomics feature extracion at whole dataset;
+2  use elasticNet for feature selection at whole dataset;
+3  use 10-fold crossing-validation to measure performance;
