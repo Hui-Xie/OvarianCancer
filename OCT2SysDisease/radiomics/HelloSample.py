@@ -12,9 +12,7 @@ from radiomics import featureextractor
 
 # Download the test case to temporary files and return it's location. If already downloaded, it is not downloaded again,
 # but it's location is still returned.
-#imageName, maskName = radiomics.getTestCase('brain1')
-imageName = "/home/hxie1/data/radiomics/examples/brain1_image.nrrd"
-maskName = "/home/hxie1/data/radiomics/examples/brain1_label.nrrd"
+imageName, maskName = radiomics.getTestCase('brain1', dataDirectory="/home/hxie1/data/radiomics/examples")
 
 if imageName is None or maskName is None:  # Something went wrong, in this case PyRadiomics will also log an error
   print('Error getting testcase!')
