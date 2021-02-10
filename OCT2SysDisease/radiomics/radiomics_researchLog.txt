@@ -5,6 +5,18 @@ Logistic Regression + L1/L2 regulirization = elasticNet
 
 1  thickness images: 9x31x25
 2  texture image with sigmented mask: 31xSegHx512
-1  radiomics feature extracion at whole dataset;
-2  use elasticNet for feature selection at whole dataset;
-3  use 10-fold crossing-validation to measure performance;
+3  some features:
+   GLCM: is a direction x n x n matrix, where n is the number of gray levels,
+   Gray Level Run Length Matrix (GLRLM):  a matrix of direction x n x Length, where n is the number of gray leveles.
+   Gray Level Size Zone Matrix (GLSZM):   a matrix of n x maxZoneSize, where n is the number of gray levels.
+   Gray Level Dependece Matrix (GLDM):    a matrix of n x maxDepenceNum, where n is the number of gray levels.
+   Neighboring Gray Tone Difference Matrix (NGTDM):  a matrix of nx4, where n is the number of gray levels.
+
+
+4  radiomics feature extracion at whole dataset;
+5  use elasticNet for feature selection at whole dataset;
+6  use 10-fold crossing-validation to measure performance;
+
+
+Notes:
+GLCM: The function creates a gray-level co-occurrence matrix (GLCM) by calculating how often a pixel with the intensity (gray-level) value i occurs in a specific spatial relationship to a pixel with the value j.
