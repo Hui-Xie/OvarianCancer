@@ -24,11 +24,11 @@ GLCM: The function creates a gray-level co-occurrence matrix (GLCM) by calculati
 
 Questions:
 1  which texture image as input for radiomics feature extraction:
-   A. enface image of 9x31x512: the pixel resolution of H and W has 11.3 times difference; It has layer informaiton.
+   A. enface image of 9x31x512: the pixel resolution of H and W has 11.3 times difference; It has layer information.
    B. original OCT image of 31x496x512 with segmented OCT layers:
       B1. if we choose the whole segmented retina layer, we may has not the layer information for different layers.
       B2. if we want to preserve the segmented layer information, how do we do?
-   C. enface image of 9x31x25:  the pixel resoluiton of H and W are same, but texture image is blurry.
+   C. enface image of 9x31x25:  the pixel resolution of H and W are same, but texture image is blurry.
 
    An initial try: use the middle B-scan of 496x512 with segmented retina mask.
        pros: the best pixel resolution gives the best information for texture.
