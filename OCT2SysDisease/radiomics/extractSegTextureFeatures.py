@@ -48,7 +48,7 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
 
 def main():
     imagePath, maskPath = generateImage_Mask(srcVolumePath, segXmlPath, indexBscan, outputDir)
-    generateRadiomics(imagePath,maskPath)
+    generateRadiomics(imagePath,maskPath, radiomicsCfgPath)
 
 
 if __name__ == "__main__":
