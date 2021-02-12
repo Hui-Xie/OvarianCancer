@@ -16,6 +16,12 @@ import sys
 sys.path.append("../..")
 from OCTMultiSurfaces.dataPrepare_Tongren.TongrenFileUtilities import  getSurfacesArray
 
+import logging
+import os
+
+import radiomics
+from radiomics import featureextractor, getFeatureClasses
+
 
 def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
@@ -43,7 +49,33 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     return imagePath, maskPath
 
 def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
-    pass
+    # Get the PyRadiomics logger (default log-level = INFO
+    logger = radiomics.logger
+    logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
+
+    # Write out all log entries to a file
+    handler = logging.FileHandler(filename=os.path.join(outputDir, 'testLog_radiomics.txt'), mode='w')
+    formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    # Initialize feature extractor using the settings file
+    extractor = featureextractor.RadiomicsFeatureExtractor(radiomicsCfgPath)
+    featureClasses = getFeatureClasses()
+
+    print("Active features:")
+    for cls, features in extractor.enabledFeatures:
+        if features is None or len(features) == 0:
+            features = [f for f, deprecated in featureClasses[cls].getFeatureNames() if not deprecated]
+        for f in features:
+            print(f)
+            print(getattr(featureClasses[cls], 'get%sFeatureValue' % f).__doc__)
+
+    print("Calculating features")
+    featureVector = extractor.execute(imagePath, maskPath)
+
+    for featureName in featureVector.keys():
+        print("Computed %s: %s" % (featureName, featureVector[featureName]))
 
 
 def main():
