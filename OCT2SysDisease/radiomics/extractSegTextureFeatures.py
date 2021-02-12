@@ -9,8 +9,9 @@ indexBscan = 15
 
 
 import numpy as np
-import os
-import matplotlib.pyplot as plt
+# import os
+# import matplotlib.pyplot as plt
+from PIL import Image
 
 import sys
 sys.path.append("../..")
@@ -27,24 +28,28 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")
-    maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.tif")
+    maskPath = os.path.join(outputDir, sliceName + f"_mask.tif")
 
     volume = np.load(volumePath)  # 31x496x512
-    volumeSeg  = getSurfacesArray(xmlPath).astype(np.int32)  # 31x10x512
+    volumeSeg  = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
     slice = volume[indexBscan,]  # 496x512
     H,W = slice.shape
     sliceSeg = volumeSeg[indexBscan,]  # 10x512
     N,W = sliceSeg.shape
 
     #generate retina layer mask
-    mask = np.zeros(slice.shape, dtype=np.int32)  # size: HxW
+    mask = np.zeros(slice.shape, dtype=np.uint32)  # size: HxW
     for c in range(W):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
-    # save slice and mask
-    plt.imsave(imagePath,slice, cmap="gray")
-    plt.imsave(maskPath, mask, cmap="gray") # save in binary image.
+    # use plt to save slice and mask
+    # plt.imsave(imagePath,slice, cmap="gray")  #import matplotlib.pyplot as plt
+    # plt.imsave(maskPath, mask, cmap="gray")
+
+    # use PIL to save image
+    Image.fromarray(slice).save(imagePath)
+    Image.fromarray(mask).save(maskPath)
 
     return imagePath, maskPath
 
@@ -72,7 +77,7 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
             print(getattr(featureClasses[cls], 'get%sFeatureValue' % f).__doc__)
 
     print("Calculating features")
-    featureVector = extractor.execute(imagePath, maskPath, label=255)
+    featureVector = extractor.execute(imagePath, maskPath, label=1)
 
     for featureName in featureVector.keys():
         print("Computed %s: %s" % (featureName, featureVector[featureName]))
