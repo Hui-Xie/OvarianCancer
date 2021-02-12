@@ -31,20 +31,20 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
 
     volume = np.load(volumePath)  # 31x496x512
-    volumeSeg  = getSurfacesArray(xmlPath).astype(np.int32)  # 31x10x512
+    volumeSeg  = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
     slice = volume[indexBscan,]  # 496x512
     H,W = slice.shape
     sliceSeg = volumeSeg[indexBscan,]  # 10x512
     N,W = sliceSeg.shape
 
     #generate retina layer mask
-    mask = np.zeros(slice.shape, dtype=np.int32)  # size: HxW
+    mask = np.zeros(slice.shape, dtype=np.uint32)  # size: HxW
     for c in range(W):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
     # save slice and mask
-    plt.imsave(imagePath,slice, cmap='gray')
-    plt.imsave(maskPath, mask, cmap='gray')
+    plt.imsave(imagePath,slice, cmap='gray', vmin= slice.min(), vmax=slice.max())
+    plt.imsave(maskPath, mask, cmap='gray', vmin=0, vmax=1) # save in binary image.
 
     return imagePath, maskPath
 
@@ -64,9 +64,9 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     featureClasses = getFeatureClasses()
 
     print("Active features:")
-    for cls, features in extractor.enabledFeatures:
+    for cls, features in extractor.enabledFeatures.items():
         if features is None or len(features) == 0:
-            features = [f for f, deprecated in featureClasses[cls].getFeatureNames() if not deprecated]
+            features = [f for f, deprecated in featureClasses[cls].getFeatureNames().items() if not deprecated]
         for f in features:
             print(f)
             print(getattr(featureClasses[cls], 'get%sFeatureValue' % f).__doc__)
