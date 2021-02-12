@@ -1,3 +1,66 @@
+# Feb 11th, Thursday, 2021
+Thickness (Rift) prediction on Duke_AMD test data:
+================================================================================================================================================================================================================
+Method_Name                                         meanErr StdError thickErr0 thickErr1 HausdfDist0 HausdfDist1 Note
+expDuke_20200902A_RiftSubnet                        5.9216   3.6589   3.4042,   8.4392                            Directly prediction N-1 thickness.
+expDuke_20201209A_ThicknessSubnet_iibi007           3.5991   2.2252   3.0774,   4.1209    45.9394    49.9701      NoGuassian DivLoss, thickness from N surfaces, initial filter=32, 8layers
+expDuke_20201215A_ThicknessSubnet_iibi007           3.8005   2.3574   3.2803,   4.3208    42.5530    54.1401      Gaussian DivLoss, thickness from N surfaces. initial filter=32, 8Layers
+expDuke_20201228A_ThicknessSubnet_iibi007           3.8707   2.4398   3.2910,   4.4505    45.0367    57.6670      without Gaussian Divloss, use cumulative R, initial filter=24. 7Layers
+expDuke_20210101A_ThicknessSubnet_iibi007           3.7638   2.4115   3.1838,   4.3439    52.3715    42.0491      32 filters, 8 layers, add XY coordinate input, No cummulativeRLoss
+expDuke_20210101B_ThicknessSubnet_iibi007           3.8175   2.0736   3.2453,   4.3898    89.6813    27.2954      32 filters, 8 layers, add XY coordinate input, with cummulativeRLoss
+expDuke_20210107A_Thickness_YufanHePlus1D_iibi007   3.6121   2.4195   3.0530,   4.1713    58.6041    42.0000      18GB, exact YufanHe network(XY channel+layerSeg+64 filter for all layers)+1D [H,1]conv
+expDuke_20210107B_Thickness_1D_iibi007              4.3621   3.0423   3.3330,   5.3914    41.4189    26.6668      35GB, expDuke_20201209A network, but directly predict N-1 thickness, plus 1D [H,1] convolution.
+expDuke_20210115A_Thickness_iibi007                 3.7994   2.6325   3.2553,   4.3435    90.8217    73.9762      19GB, use YufanHe's network to get N surface, and then get (N-1) thickness.
+                                                                                                                        smoothSurfaceLoss = True, smoothThicknessLoss=True, lr=0.01
+expDuke_20210121B_Dropout_Thickness_iibi007         3.6778   2.1588   2.9880,   4.3678    44.0114    33.7338      35GB  A added dropout N surfaces to N-1 thicknesses
+                                                                                                                        smoothThicknessLoss=True, smoothSurfaceLoss=False, lr=0.1
+expDuke_20210121A_JHU_Thickness_iibi007             3.7836   2.3051   3.1955,   4.3718    88.8038    40.6891      19GB  JHU network from N surfaces to N-1 thicknesses
+                                                                                                                        SmoothSurfaceLoss=True, smoothThicknessLoss=True. lr=0.1
+expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007    3.5161   2.8313   2.9707,   4.0616    250.4738   183.8192     19GB  JHU network from N surfaces to N-1 thicknesses.
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.lr=0.1
+expDuke_20210204A_Thickness_YufanHe_iibi007         19.786  18.349    2.9211,  36.6523   48.6058     89.            YufanHe network Plus a full Height conv of [H,1], directly deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204B_Thickness_YufanHe_iibi007         19.840  18.259    3.0277,  36.6523    73.4171    89.            YufanHe network Plus a full Height conv of [H,1], using N-surface ground truth, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204C_Thickness_YufanHe_iibi007         19.870  18.239    3.0891,  36.6523   148.9094    89.            YufanHe network Plus a full Height conv of [H,1], using N surfaces, but use surface 0 ground truth only, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204D_Thickness_YufanHe_iibi007         3.6021  2.2906    3.0053,   4.1989    53.1821    42.            YufanHe network Plus a full Height conv of [H,1], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204A_H5_Thickness_YufanHe_skm2         4.7477  2.3756    5.2286,   4.2668   129.        32.9963        YufanHe network Plus a full Height conv of [H,5], directly deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204B_H5_Thickness_YufanHe_skm2        19.855   18.252    3.0579,   36.6523  61.0992     89.            YufanHe network Plus a full Height conv of [H,5], using N-surface ground truth, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204C_H5_Thickness_YufanHe_skm2        19.787   18.343    2.9226,   36.6523  63.9092     89.            YufanHe network Plus a full Height conv of [H,5], using N surfaces, but use surface 0 ground truth only, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+
+expDuke_20210204D_H5_Thickness_YufanHe_skm2        20.872   17.301    5.0924,   36.6523  133.        89.            YufanHe network Plus a full Height conv of [H,5], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01
+                                                                                                                        SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+=================================================================================================================================================================================================================
+Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
+=================================================================================================================================================================================================================
+
+Analysis:
+1  For [H,1] or [H, 5] convs overlapping on the YufanHe network, expDuke_20210204D_Thickness_YufanHe_iibi007 get the best result of muError=3.60, and minimum hausdorff distances.
+   Its network: YufanHe network Plus a full Height conv of [H,1], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01
+2  [H,5] conv has not explict advantage on [H,1], as [H,5] has 5 times of the number of parameters of [H,1].
+3  YufanHe network(expDuke_20201208A_SurfaceNet_YufanHe_iibi007) for surface prediction can get 1.97 meanError for 3 surfaces,
+   As one surface error can lead 2 thickness error, it is reasonable its mean thickness error of 2 thicknesses: (1.97*2+ 1.97*2)/2 = 3.94.
+   In other words, thickness prediction error < 3.94 is a equivalent high accuracy result with its surface prediction network.
+
+Further plan:
+1  use  expDuke_20210121C_JHU_Thickness_NoSmooth_iibi007 (3.51) and  expDuke_20210204D_Thickness_YufanHe_iibi007(3.60) with surface network to get final optimal softSeparation result.
+
+  
+
+
+
+
 # Feb 4th, Thursday, 2021:
 Thickness (Rift) prediction on Duke_AMD test data:
 ================================================================================================================================================================================================================
