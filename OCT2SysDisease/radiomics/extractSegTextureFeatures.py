@@ -21,8 +21,8 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.tiff")  # .jpg is int8 format.
-    maskPath = os.path.join(outputDir, sliceName + f"_mask.tiff")
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")  # .jpg is int8 format.
+    maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
 
     volume = np.load(volumePath).astype(np.float)  # 31x496x512
     volumeSeg  = getSurfacesArray(xmlPath).astype(np.int32)  # 31x10x512
