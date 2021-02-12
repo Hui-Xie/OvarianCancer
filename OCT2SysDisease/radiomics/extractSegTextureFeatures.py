@@ -28,7 +28,7 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeSeg  = getSurfacesArray(xmlPath)  # 31x10x512
     slice = volume[indexBscan,]  # 496x512
     H,W = slice.shape
-    sliceSeg = volumeSeg[indexBscan,]  # 10x512
+    sliceSeg = volumeSeg[indexBscan,].astype(np.int)  # 10x512
     N,W = sliceSeg.shape
 
     #generate retina layer mask
