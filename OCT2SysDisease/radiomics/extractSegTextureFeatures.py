@@ -31,14 +31,14 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
 
     volume = np.load(volumePath)  # 31x496x512
-    volumeSeg  = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
+    volumeSeg  = getSurfacesArray(xmlPath).astype(np.int32)  # 31x10x512
     slice = volume[indexBscan,]  # 496x512
     H,W = slice.shape
     sliceSeg = volumeSeg[indexBscan,]  # 10x512
     N,W = sliceSeg.shape
 
     #generate retina layer mask
-    mask = np.zeros(slice.shape, dtype=np.uint32)  # size: HxW
+    mask = np.zeros(slice.shape, dtype=np.int32)  # size: HxW
     for c in range(W):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
