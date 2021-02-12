@@ -10,7 +10,7 @@ indexBscan = 15
 
 import numpy as np
 import os
-import imageio
+import matplotlib.pyplot as plt
 
 import sys
 sys.path.append("../..")
@@ -21,14 +21,14 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")  # .jpg is int8 format.
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")  
     maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
 
-    volume = np.load(volumePath).astype(np.float)  # 31x496x512
+    volume = np.load(volumePath)  # 31x496x512
     volumeSeg  = getSurfacesArray(xmlPath).astype(np.int32)  # 31x10x512
     slice = volume[indexBscan,]  # 496x512
     H,W = slice.shape
-    sliceSeg = volumeSeg[indexBscan,].astype(np.int32)  # 10x512
+    sliceSeg = volumeSeg[indexBscan,]  # 10x512
     N,W = sliceSeg.shape
 
     #generate retina layer mask
@@ -37,8 +37,8 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
     # save slice and mask
-    imageio.imwrite(imagePath,slice)
-    imageio.imwrite(maskPath, mask)
+    plt.imsave(imagePath,slice)
+    plt.imsave(maskPath, mask)
 
     return imagePath, maskPath
 
