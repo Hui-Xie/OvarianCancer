@@ -21,7 +21,7 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")  
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")
     maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
 
     volume = np.load(volumePath)  # 31x496x512
@@ -37,8 +37,8 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
     # save slice and mask
-    plt.imsave(imagePath,slice)
-    plt.imsave(maskPath, mask)
+    plt.imsave(imagePath,slice, cmap='gray')
+    plt.imsave(maskPath, mask, cmap='gray')
 
     return imagePath, maskPath
 
