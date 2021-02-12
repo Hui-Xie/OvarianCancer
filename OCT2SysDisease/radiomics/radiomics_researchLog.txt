@@ -7,7 +7,7 @@ Logistic Regression + L1/L2 regulirization = elasticNet
 2  texture image with sigmented mask: 31xSegHx512
 3  some features:
    GLCM: is a direction x n x n matrix, where n is the number of gray levels,
-   Gray Level Run Length Matrix (GLRLM):  a matrix of direction x n x Length, where n is the number of gray leveles.
+   Gray Level Run Length Matrix (GLRLM):  a matrix of direction x n x Length, where n is the number of gray levels.
    Gray Level Size Zone Matrix (GLSZM):   a matrix of n x maxZoneSize, where n is the number of gray levels.
    Gray Level Dependece Matrix (GLDM):    a matrix of n x maxDepenceNum, where n is the number of gray levels.
    Neighboring Gray Tone Difference Matrix (NGTDM):  a matrix of nx4, where n is the number of gray levels.
@@ -19,4 +19,20 @@ Logistic Regression + L1/L2 regulirization = elasticNet
 
 
 Notes:
-GLCM: The function creates a gray-level co-occurrence matrix (GLCM) by calculating how often a pixel with the intensity (gray-level) value i occurs in a specific spatial relationship to a pixel with the value j.
+GLCM: The function creates a gray-level co-occurrence matrix (GLCM) by calculating how often a pixel with the intensity
+      (gray-level) value i occurs in a specific spatial relationship to a pixel with the value j.
+
+Questions:
+1  which texture image as input for radiomics feature extraction:
+   A. enface image of 9x31x512: the pixel resolution of H and W has 11.3 times difference; It has layer informaiton.
+   B. original OCT image of 31x496x512 with segmented OCT layers:
+      B1. if we choose the whole segmented retina layer, we may has not the layer information for different layers.
+      B2. if we want to preserve the segmented layer information, how do we do?
+   C. enface image of 9x31x25:  the pixel resoluiton of H and W are same, but texture image is blurry.
+
+   An initial try: use the middle B-scan of 496x512 with segmented retina mask.
+       pros: the best pixel resolution gives the best information for texture.
+       cons: it ignored other B-scans.
+   Our previous experiment showed that thickness information is not powerful enough to predict hypertension.
+   If OCT image had the prediction capability of hypertension, the not powerful above may implies that the transform
+   from OCT to thickness losses some more powerful information. Therefore, we hope the clearer texture information may help.
