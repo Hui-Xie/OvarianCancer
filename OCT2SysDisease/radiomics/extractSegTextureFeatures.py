@@ -43,8 +43,8 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
     # save slice and mask
-    plt.imsave(imagePath,slice, vmin= slice.min(), vmax=slice.max())
-    plt.imsave(maskPath, mask, vmin=0, vmax=1) # save in binary image.
+    plt.imsave(imagePath,slice, cmap="gray", vmin= slice.min(), vmax=slice.max())
+    plt.imsave(maskPath, mask, cmap="binary", vmin=0, vmax=1) # save in binary image.
 
     return imagePath, maskPath
 
