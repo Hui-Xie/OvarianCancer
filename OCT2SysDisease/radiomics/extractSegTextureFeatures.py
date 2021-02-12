@@ -27,8 +27,8 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.bmp")
-    maskPath = os.path.join(outputDir, sliceName + f"_mask.bmp")
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.png")
+    maskPath = os.path.join(outputDir, sliceName + f"_mask.png")
 
     volume = np.load(volumePath)  # 31x496x512
     volumeSeg  = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
@@ -43,8 +43,8 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
     # save slice and mask
-    plt.imsave(imagePath,slice, cmap="gray", vmin= slice.min(), vmax=slice.max())
-    plt.imsave(maskPath, mask, cmap="binary", vmin=0, vmax=1) # save in binary image.
+    plt.imsave(imagePath,slice, cmap="gray")
+    plt.imsave(maskPath, mask, cmap="gray") # save in binary image.
 
     return imagePath, maskPath
 
@@ -72,7 +72,7 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
             print(getattr(featureClasses[cls], 'get%sFeatureValue' % f).__doc__)
 
     print("Calculating features")
-    featureVector = extractor.execute(imagePath, maskPath)
+    featureVector = extractor.execute(imagePath, maskPath, label=255)
 
     for featureName in featureVector.keys():
         print("Computed %s: %s" % (featureName, featureVector[featureName]))
