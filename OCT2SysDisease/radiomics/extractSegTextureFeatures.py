@@ -10,7 +10,6 @@ indexBscan = 15
 
 import numpy as np
 # import os
-# import matplotlib.pyplot as plt
 from PIL import Image
 
 import sys
@@ -28,7 +27,7 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.tif")
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.tif")  # It must use tiff format for float format
     maskPath = os.path.join(outputDir, sliceName + f"_mask.tif")
 
     volume = np.load(volumePath)  # 31x496x512
@@ -43,10 +42,7 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     for c in range(W):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
-    # use plt to save slice and mask
-    # plt.imsave(imagePath,slice, cmap="gray")  #import matplotlib.pyplot as plt
-    # plt.imsave(maskPath, mask, cmap="gray")
-
+    
     # use PIL to save image
     Image.fromarray(slice).save(imagePath)
     Image.fromarray(mask).save(maskPath)
