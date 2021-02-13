@@ -51,6 +51,7 @@ def main():
         # use PIL to save image
         Image.fromarray(slice).save(imagePath)
         Image.fromarray(mask).save(maskPath)
+    print(f"===== End of generating texture and mask ==============")
 
 
 if __name__ == "__main__":
