@@ -103,7 +103,8 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
 def main():
     #imagePath, maskPath = generateImage_Mask(srcVolumePath, segXmlPath, indexBscan, outputDir)
     imagePath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/texture/6890_OD_19307_Volume_s15_texture.tif"
-    maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/mask/6890_OD_19307_Volume_s15_mask.tif"
+    # maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/mask/6890_OD_19307_Volume_s15_mask.tif"
+    maskPath = "/home/hxie1/temp/extractRadiomics/6890_OD_19307_Volume_s15_mask.tif"
     generateRadiomics(imagePath,maskPath, radiomicsCfgPath)
 
 
