@@ -42,7 +42,7 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     for c in range(W):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
-    
+
     # use PIL to save image
     Image.fromarray(slice).save(imagePath)
     Image.fromarray(mask).save(maskPath)
@@ -75,8 +75,16 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     print("Calculating features")
     featureVector = extractor.execute(imagePath, maskPath, label=1)
 
+    print(f"Print diagnostics features:")
     for featureName in featureVector.keys():
-        print("Computed %s: %s" % (featureName, featureVector[featureName]))
+        if "diagnostics_" in featureName:
+            print(f"{featureName}:{featureVector[featureName]}")
+    print("========================================")
+    print(f"\nPrint original features:")
+    for featureName in featureVector.keys():
+        if "original_" in featureName:
+            print(f"{featureName}:{featureVector[featureName]}")
+    print("========================================")
 
 
 def main():
