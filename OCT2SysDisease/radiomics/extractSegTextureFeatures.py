@@ -77,12 +77,12 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
 
     print(f"Print diagnostics features:")
     for featureName in featureVector.keys():
-        if "diagnostics_" in featureName:
+        if "diagnostics_" == featureName[0:12]:
             print(f"{featureName}:{featureVector[featureName]}")
     print("========================================")
     print(f"\nPrint original features:")
     for featureName in featureVector.keys():
-        if "original_" in featureName:
+        if "original_" == featureName[0:9]:
             print(f"{featureName}:{featureVector[featureName]}")
     print("========================================")
 
