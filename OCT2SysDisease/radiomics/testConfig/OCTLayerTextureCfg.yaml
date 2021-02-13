@@ -33,9 +33,10 @@ imageType:
 featureClass:
   # redundant Compactness 1, Compactness 2 an Spherical Disproportion features are disabled by default, they can be
   # enabled by specifying individual feature names (as is done for glcm) and including them in the list.
-  shape:
+  shape2D:
   firstorder: [] # specifying an empty list has the same effect as specifying nothing.
   glcm:   # all features.
+          # GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
   glrlm: # for lists none values are allowed, in this case, all features are enabled
   glszm:
   gldm:  # contains deprecated features, but as no individual features are specified, the deprecated features are not enabled
