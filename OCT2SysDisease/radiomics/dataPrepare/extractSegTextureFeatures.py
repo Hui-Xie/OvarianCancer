@@ -4,17 +4,16 @@ srcVolumePath ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes/2081_OD_14279_V
 segXmlPath ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/2081_OD_14279_Volume_Sequence_Surfaces_Prediction.xml"
 outputDir = "/home/hxie1/temp/extractRadiomics"
 
-radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg.yaml"
+radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_95Radiomics.yaml"
 indexBscan = 15
 K = 95   # the number of extracted features.
 
 
 import numpy as np
-# import os
 from PIL import Image
 
 import sys
-sys.path.append("../..")
+sys.path.append("../../..")
 from OCTMultiSurfaces.dataPrepare_Tongren.TongrenFileUtilities import  getSurfacesArray
 
 import logging
