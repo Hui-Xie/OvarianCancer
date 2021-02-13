@@ -1,7 +1,7 @@
 # Extract segmented OCT layer texture features.
 
-srcVolumePath ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes/2081_OD_14279_Volume.npy"
-segXmlPath ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/2081_OD_14279_Volume_Sequence_Surfaces_Prediction.xml"
+srcVolumePath ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes/6890_OD_19307_Volume.npy"
+segXmlPath ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml/6890_OD_19307_Volume_Sequence_Surfaces_Prediction.xml"
 outputDir = "/home/hxie1/temp/extractRadiomics"
 
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_95Radiomics.yaml"

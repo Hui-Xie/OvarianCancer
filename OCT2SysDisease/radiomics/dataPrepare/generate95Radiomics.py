@@ -12,11 +12,21 @@ import glob
 import numpy as np
 
 import os
-
+import logging
 import radiomics
-from radiomics import featureextractor, getFeatureClasses
+from radiomics import featureextractor
 
 def main():
+    # Get the PyRadiomics logger (default log-level = INFO
+    logger = radiomics.logger
+    logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
+
+    # Write out all log entries to a file
+    handler = logging.FileHandler(filename=os.path.join(outputRadiomicsDir, 'generateLog_radiomics.txt'), mode='w')
+    formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
     textureList = glob.glob(textureDir + f"/*_Volume_s15_texture.tif")
     print(f"total {len(textureList)} texture files.")
     for texturePath in textureList:
