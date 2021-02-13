@@ -81,10 +81,13 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
             print(f"{featureName}:{featureVector[featureName]}")
     print("========================================")
     print(f"\nPrint original features:")
+    nFeatures = 0
     for featureName in featureVector.keys():
         if "original_" == featureName[0:9]:
             print(f"{featureName}:{featureVector[featureName]}")
+            nFeatures += 1
     print("========================================")
+    print(f"Total {nFeatures} features")
 
 
 def main():

@@ -35,29 +35,7 @@ featureClass:
   # enabled by specifying individual feature names (as is done for glcm) and including them in the list.
   shape:
   firstorder: [] # specifying an empty list has the same effect as specifying nothing.
-  glcm:  # Disable SumAverage by specifying all other GLCM features available
-    - 'Autocorrelation'
-    - 'JointAverage'
-    - 'ClusterProminence'
-    - 'ClusterShade'
-    - 'ClusterTendency'
-    - 'Contrast'
-    - 'Correlation'
-    - 'DifferenceAverage'
-    - 'DifferenceEntropy'
-    - 'DifferenceVariance'
-    - 'JointEnergy'
-    - 'JointEntropy'
-    - 'Imc1'
-    - 'Imc2'
-    - 'Idm'
-    - 'Idmn'
-    - 'Id'
-    - 'Idn'
-    - 'InverseVariance'
-    - 'MaximumProbability'
-    - 'SumEntropy'
-    - 'SumSquares'
+  glcm:   # all features.
   glrlm: # for lists none values are allowed, in this case, all features are enabled
   glszm:
   gldm:  # contains deprecated features, but as no individual features are specified, the deprecated features are not enabled
