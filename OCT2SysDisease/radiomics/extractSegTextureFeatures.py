@@ -6,6 +6,7 @@ outputDir = "/home/hxie1/temp/extractRadiomics"
 
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg.yaml"
 indexBscan = 15
+K = 95   # the number of extracted features.
 
 
 import numpy as np
@@ -50,6 +51,11 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     return imagePath, maskPath
 
 def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
+    sliceName,_ = os.path.splitext(os.path.basename(imagePath))  # 2081_OD_14279_Volume_s15_texture
+    sliceName = sliceName[0:sliceName.rfind("_texture")]
+
+    radiomicsArrayPath = os.path.join(outputDir, sliceName+f"_{K}radiomics.npy")
+
     # Get the PyRadiomics logger (default log-level = INFO
     logger = radiomics.logger
     logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
@@ -84,10 +90,13 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     print(f"\nPrint original features:")
     nFeatures = 0
     sortedFeatureKeys = sorted(featureVector.keys())  # make sure the output value in dictionary order.
+    radiomicsArray = np.zeros((1,K), dtype=np.float32)
     for featureName in sortedFeatureKeys:
         if "original_" == featureName[0:9]:
             print(f"{featureName}:{featureVector[featureName]}")
+            radiomicsArray[0, nFeatures] = featureVector[featureName]
             nFeatures += 1
+    np.save(radiomicsArrayPath,radiomicsArray)
     print("=============================================")
     print(f"===========Total {nFeatures} features=============")
 
