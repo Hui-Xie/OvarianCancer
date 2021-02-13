@@ -39,4 +39,4 @@ featureClass:
   glrlm: # for lists none values are allowed, in this case, all features are enabled
   glszm:
   gldm:  # contains deprecated features, but as no individual features are specified, the deprecated features are not enabled
-  ngtdm:  #Neighboring Gray Tone Difference Matrix
+  # ngtdm:  #Neighboring Gray Tone Difference Matrix, most are zero.
