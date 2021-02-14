@@ -107,7 +107,7 @@ def main():
 
     patientsSubList = []
     for i in range(K):
-        patientsSubList.append(patientID0SubList[i] + patientID1SubList[i])
+        patientsSubList.append(patientID0SubList[i] + patientID1SubList[K-1-i])   # help each fold has same number of samples
 
 
     if not os.path.exists(outputDir):
