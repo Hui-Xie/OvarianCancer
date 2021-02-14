@@ -80,10 +80,10 @@ def main():
 
     # divide all remaining IDs into K folds
     # K-Fold division
-    patientID_0 = ID_HBP_Array[np.nonzero(ID_HBP_Array[:,1] == 0), 0]
+    patientID_0 = ID_HBP_Array[np.nonzero(ID_HBP_Array[:,1] == 0), 0] # size: 1xnHBP0
     patientID_1 = ID_HBP_Array[np.nonzero(ID_HBP_Array[:,1] == 1), 0]
-    patientID_0 = list(set(list(patientID_0[:])))  # erase repeated IDs
-    patientID_1 = list(set(list(patientID_1[:])))
+    patientID_0 = list(set(list(patientID_0[0,:])))  # erase repeated IDs
+    patientID_1 = list(set(list(patientID_1[0,:])))
     assert len(patientID_0) == nHBP0
     assert len(patientID_1) == nHBP1
     print(f"After erasing repeated ID: Num_response0 = {len(patientID_0)}, Num_response1= {len(patientID_1)}, total={len(patientID_0) + len(patientID_1)}")
