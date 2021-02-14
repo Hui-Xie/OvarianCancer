@@ -3,24 +3,23 @@ Think to use 95 radiiomics features to predict hypertension.
 1  from the original middle B-scan of size 496x512 with segmented retina, extract 95 radiomics features; (6499 slices)   --done.
 2  Use ground truth hypertension with history to divide all data into 10 folds;   -done
    outputDir: /home/hxie1/data/BES_3K/GTs/95radiomics_ODOS_10CV
-   ===============Divide IDs with 95 radiomics features and hypertension tags into 10 folds================
+===============Divide IDs with 95 radiomics features and hypertension tags into 10 folds================
 in the clinical GT files of 5208 patients, taggedHBP0 = 1535, taggedHBP1 = 1915, total 3450 patients.
 In radiomics dir, there are 3254 unique IDs.
 After deleting invalid IDs in radiomics files, ID_HBP_Array remains HBP0=1409, HBP1=1778, total 3187 patients.
 valid HBP data set: proportion of 0,1 = [0.4421085660495764,0.5578914339504236]
 After erasing repeated ID: Num_response0 = 1409, Num_response1= 1778, total=3187
 
-CV: 0/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
-CV: 1/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
+CV: 0/10: test: 318 patients;  validation: 318 patients;  training: 2551 patients;
+CV: 1/10: test: 318 patients;  validation: 319 patients;  training: 2550 patients;
 CV: 2/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
 CV: 3/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
 CV: 4/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
 CV: 5/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
 CV: 6/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
-CV: 7/10: test: 319 patients;  validation: 318 patients;  training: 2550 patients;
-CV: 8/10: test: 318 patients;  validation: 317 patients;  training: 2552 patients;
-CV: 9/10: test: 317 patients;  validation: 319 patients;  training: 2551 patients;
-
+CV: 7/10: test: 319 patients;  validation: 319 patients;  training: 2549 patients;
+CV: 8/10: test: 319 patients;  validation: 318 patients;  training: 2550 patients;
+CV: 9/10: test: 318 patients;  validation: 318 patients;  training: 2551 patients;
 
 3  Use logistic regession to choose features from 95 features;
 4  use elasticNet to predict result on test folds;
