@@ -1,3 +1,11 @@
+# Feb 14th, Sunday, 2021
+Think to use 95 radiiomics features to predict hypertension.
+1  from the original middle B-scan of size 496x512 with segmented retina, extract 95 radiomics features; (6499 slices)   --done.
+2  Use ground truth hypertension with history to divide all data into 10 folds;
+3  Use logistic regession to choose features from 95 features;
+4  use elasticNet to predict result on test folds;
+
+
 # Feb 9th, Tuesday, 2021
 Radiomics = Genomics
 Radiomic data has the potential to uncover disease characteristics that fail to be appreciated by the naked eye.
@@ -37,6 +45,7 @@ Questions:
    If OCT image had the prediction capability of hypertension, the not powerful above may implies that the transform
    from OCT to thickness losses some more powerful information. Therefore, we hope the clearer texture information may help.
 
+# Feb 13th, Saturday, 2021
 ===============================================
 Radiomic feature list:
 ===============================================
