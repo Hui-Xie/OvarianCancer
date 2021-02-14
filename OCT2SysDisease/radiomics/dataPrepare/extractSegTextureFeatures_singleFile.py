@@ -18,6 +18,7 @@ from OCTMultiSurfaces.dataPrepare_Tongren.TongrenFileUtilities import  getSurfac
 
 import logging
 import os
+import SimpleITK as sitk
 
 import radiomics
 from radiomics import featureextractor, getFeatureClasses
@@ -27,8 +28,14 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     volumeName, _ = os.path.splitext(os.path.basename(volumePath))
     sliceName = volumeName + f"_s{indexBscan}"
 
-    imagePath = os.path.join(outputDir, sliceName + f"_texture.tif")  # It must use tiff format for float format
-    maskPath = os.path.join(outputDir, sliceName + f"_mask.tif")
+    # use Tiff to save image and mask
+    # pyradiomics can not correctly recognize mask in 2D tiff.
+    # imagePath = os.path.join(outputDir, sliceName + f"_texture.tif")
+    # maskPath = os.path.join(outputDir, sliceName + f"_mask.tif")
+
+    # use nrrd to save image and mask
+    imagePath = os.path.join(outputDir, sliceName + f"_texture.nrrd")
+    maskPath = os.path.join(outputDir, sliceName + f"_mask.nrrd")
 
     volume = np.load(volumePath)  # 31x496x512
     volumeSeg  = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
@@ -42,10 +49,16 @@ def generateImage_Mask(volumePath, xmlPath, indexBscan, outputDir):
     for c in range(W):
         mask[sliceSeg[0,c]:sliceSeg[N-1,c],c] = 1
 
-
     # use PIL to save image
-    Image.fromarray(slice).save(imagePath)
-    Image.fromarray(mask).save(maskPath)
+    # Image.fromarray(slice).save(imagePath)
+    # Image.fromarray(mask).save(maskPath)
+
+    # use sitk to save image
+    slice = np.expand_dims(slice,axis=0)
+    sitk.WriteImage(sitk.GetImageFromArray(slice), imagePath)
+    mask = np.expand_dims(mask, axis=0)  # expand into 3D array
+    sitk.WriteImage(sitk.GetImageFromArray(mask), maskPath)
+
 
     return imagePath, maskPath
 
@@ -67,6 +80,8 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
 
     # Initialize feature extractor using the settings file
     extractor = featureextractor.RadiomicsFeatureExtractor(radiomicsCfgPath)
+    extractor.settings["force2D"] = True
+    extractor.settings["force2Ddimension"] = 0
     featureClasses = getFeatureClasses()
 
     print("Active features:")
@@ -101,12 +116,19 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
 
 
 def main():
-    imagePath, maskPath = generateImage_Mask(srcVolumePath, segXmlPath, indexBscan, outputDir)
-    
+    #imagePath, maskPath = generateImage_Mask(srcVolumePath, segXmlPath, indexBscan, outputDir)
+    #print(f"imagePath = {imagePath}")
+    #print(f"maskPath  = {maskPath}")
+
+    # use new bath dir
     #imagePath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/texture/6890_OD_19307_Volume_s15_texture.tif"
-    # maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/mask/6890_OD_19307_Volume_s15_mask.tif"
-    #maskPath = "/home/hxie1/temp/extractRadiomics/6890_OD_19307_Volume_s15_mask.tif"
+    #maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/mask/6890_OD_19307_Volume_s15_mask.tif"
+
+    # use temp dir:
+    imagePath = "/home/hxie1/temp/extractRadiomics/6890_OD_19307_Volume_s15_texture.nrrd"
+    maskPath = "/home/hxie1/temp/extractRadiomics/6890_OD_19307_Volume_s15_mask.nrrd"
     generateRadiomics(imagePath,maskPath, radiomicsCfgPath)
+    print("=====End===")
 
 
 if __name__ == "__main__":

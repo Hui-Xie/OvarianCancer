@@ -12,7 +12,8 @@ indexBscan = 15
 
 import glob
 import numpy as np
-from PIL import Image
+#  from PIL import Image  # for Tiff image save.
+import SimpleITK as sitk
 
 import sys
 sys.path.append("../../..")
@@ -33,8 +34,8 @@ def main():
 
         sliceName = volumeName + f"_s{indexBscan}"
 
-        imagePath = os.path.join(textureOutputDir, sliceName + f"_texture.tif")  # It must use tiff format for float format
-        maskPath = os.path.join(maskOutputDir, sliceName + f"_mask.tif")
+        imagePath = os.path.join(textureOutputDir, sliceName + f"_texture.nrrd")
+        maskPath = os.path.join(maskOutputDir, sliceName + f"_mask.nrrd")
 
         volume = np.load(volumePath)  # 31x496x512
         volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
@@ -48,9 +49,17 @@ def main():
         for c in range(W):
             mask[sliceSeg[0, c]:sliceSeg[N - 1, c], c] = 1
 
-        # use PIL to save image
-        Image.fromarray(slice).save(imagePath)
-        Image.fromarray(mask).save(maskPath)
+        # use PIL to save image,
+        # pyradiomics can not correctly recognize tiff 2D mask
+        # Image.fromarray(slice).save(imagePath)
+        # Image.fromarray(mask).save(maskPath)
+
+        # use sitk to save image in 3D array
+        slice = np.expand_dims(slice, axis=0)
+        sitk.WriteImage(sitk.GetImageFromArray(slice), imagePath)
+        mask = np.expand_dims(mask, axis=0)  # expand into 3D array
+        sitk.WriteImage(sitk.GetImageFromArray(mask), maskPath)
+
     print(f"===== End of generating texture and mask ==============")
 
 
