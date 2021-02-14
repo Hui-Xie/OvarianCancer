@@ -16,6 +16,8 @@ import datetime
 output2File = True
 keyName = "hypertension_bp_plus_history$"
 srcSuffix = "_Volume_s15_95radiomics.npy"
+K = 10   # K-fold cross validation.
+outputValidation = True
 
 def main():
     # prepare output file
@@ -71,11 +73,78 @@ def main():
     nonexistIDRows = tuple(nonexistIDRows)
     ID_HBP_Array = np.delete(ID_HBP_Array, nonexistIDRows, 0)
     nHBP01 = len(ID_HBP_Array)
-    nHBP1 = ID_HBP_Array[:,1].sum()
+    nHBP1 = int(ID_HBP_Array[:,1].sum())
     nHBP0 = nHBP01- nHBP1
-    print(f"After deleting invalid IDs in radiomics files, ID_HBP_Array remains {nHBP01} patients: HBP0={nHBP0}, HBP1={nHBP1}.")
+    print(f"After deleting invalid IDs in radiomics files, ID_HBP_Array remains HBP0={nHBP0}, HBP1={nHBP1}, total {nHBP01} patients.")
+    print(f"valid HBP data set: proportion of 0,1 = [{nHBP0*1.0/nHBP01},{nHBP1*1.0/nHBP01}]")
 
-    # divide all remaining IDs into 10 folds
+    # divide all remaining IDs into K folds
+    # K-Fold division
+    patientID_0 = ID_HBP_Array[np.nonzero(ID_HBP_Array[:,1] == 0), 0]
+    patientID_1 = ID_HBP_Array[np.nonzero(ID_HBP_Array[:,1] == 1), 0]
+    patientID_0 = list(set(list(patientID_0)))  # erase repeated IDs
+    patientID_1 = list(set(list(patientID_1)))
+    assert len(patientID_0) == nHBP0
+    assert len(patientID_1) == nHBP1
+    print(f"After erasing repeated ID: Num_response0 = {len(patientID_0)}, Num_response1= {len(patientID_1)}, total={len(patientID_0) + len(patientID_1)}")
+
+    # split files in sublist, this is a better method than before.
+    patientID0SubList = []
+    step = len(patientID_0) // K
+    for i in range(0, K * step, step):
+        nexti = i + step
+        patientID0SubList.append(patientID_0[i:nexti])
+    for i in range(K * step, len(patientID_0)):
+        patientID0SubList[i - K * step].append(patientID_0[i])
+
+    patientID1SubList = []
+    step = len(patientID_1) // K
+    for i in range(0, K * step, step):
+        nexti = i + step
+        patientID1SubList.append(patientID_1[i:nexti])
+    for i in range(K * step, len(patientID_1)):
+        patientID1SubList[i - K * step].append(patientID_1[i])
+
+    patientsSubList = []
+    for i in range(K):
+        patientsSubList.append(patientID0SubList[i] + patientID1SubList[i])
+
+
+    if not os.path.exists(outputDir):
+        os.makedirs(outputDir)  # recursive dir creation
+
+    print("")
+    for k in range(0, K):
+        partitions = {}
+        partitions["test"] = patientsSubList[k]
+
+        if outputValidation:
+            k1 = (k + 1) % K  # validation k
+            partitions["validation"] = patientsSubList[k1]
+        else:
+            k1 = k
+            partitions["validation"] = []
+
+        partitions["training"] = []
+        for i in range(K):
+            if i != k and i != k1:
+                partitions["training"] += patientsSubList[i]
+
+        # save to file
+        with open(os.path.join(outputDir, f"testID_95radiomics_{K}CV_{k}.csv"), "w") as file:
+            for v in partitions["test"]:
+                file.write(f"{int(v)}\n")
+
+        if outputValidation:
+            with open(os.path.join(outputDir, f"validationID_95radiomics_{K}CV_{k}.csv"),"w") as file:
+                for v in partitions["validation"]:
+                    file.write(f"{int(v)}\n")
+
+        with open(os.path.join(outputDir, f"trainID_95radiomics_{K}CV_{k}.csv"), "w") as file:
+            for v in partitions["training"]:
+                file.write(f"{int(v)}\n")
+
+        print(f"CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
 
 
     if output2File:
