@@ -56,7 +56,7 @@ def main():
 
     # check ID with hypertension in srcRadiomicsDir, delete the not exist IDs
     allRadiomicsList = glob.glob(srcRadiomicsDir + f"/*{srcSuffix}")
-    radimicsIDSet = {}
+    radimicsIDSet = set()
     for radiomicsFile in allRadiomicsList:
         filename = os.path.splitext(os.path.basename(radiomicsFile))[0]
         ID = filename[0: filename.find("_O")]
