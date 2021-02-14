@@ -15,6 +15,7 @@ import datetime
 
 output2File = True
 keyName = "hypertension_bp_plus_history$"
+srcSuffix = "_Volume_s15_95radiomics.npy"
 
 def main():
     # prepare output file
@@ -42,18 +43,37 @@ def main():
         else:
             continue
     nHBP01 = nHBP0 + nHBP1
-    print(f"in clinical GT files, taggedHBP0 = {nHBP0}, taggedHBP1 = {nHBP1}, total {nHBP01} patients.")
+    print(f"in the clinical GT files of {len(fullLabels)} patients, taggedHBP0 = {nHBP0}, taggedHBP1 = {nHBP1}, total {nHBP01} patients.")
 
     ID_HBP_Array = np.zeros((nHBP01, 2), dtype=np.uint32)
     i = 0
     for ID in fullLabels:
         tag = fullLabels[ID][keyName]
         if 1 == tag or 0 ==tag:
-            ID_HBP_Array[i,0] = ID
-            ID_HBP_Array[i,1] = tag
+            ID_HBP_Array[i,0] = int(ID)
+            ID_HBP_Array[i,1] = int(tag)
             i += 1
 
     # check ID with hypertension in srcRadiomicsDir, delete the not exist IDs
+    allRadiomicsList = glob.glob(srcRadiomicsDir + f"/*{srcSuffix}")
+    radimicsIDSet = {}
+    for radiomicsFile in allRadiomicsList:
+        filename = os.path.splitext(os.path.basename(radiomicsFile))[0]
+        ID = filename[0: filename.find("_O")]
+        if ID.isdigit():
+            radimicsIDSet.add(int(ID))
+    print(f"In radiomics dir, there are {len(radimicsIDSet)} unique IDs.")
+
+    nonexistIDRows = []
+    for i in range(nHBP01):
+        if not (ID_HBP_Array[i,0] in radimicsIDSet):
+            nonexistIDRows.append(i)
+    nonexistIDRows = tuple(nonexistIDRows)
+    ID_HBP_Array = np.delete(ID_HBP_Array, nonexistIDRows, 0)
+    nHBP01 = len(ID_HBP_Array)
+    nHBP1 = ID_HBP_Array[:,1].sum()
+    nHBP0 = nHBP01- nHBP1
+    print(f"After deleting invalid IDs in radiomics files, ID_HBP_Array remains {nHBP01} patients: HBP0={nHBP0}, HBP1={nHBP1}.")
 
     # divide all remaining IDs into 10 folds
 
