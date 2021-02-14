@@ -1,15 +1,33 @@
-# Sequential Backward feature selection on 95 radiomics features.
+# Sequential Backward feature selection on 95 radiomics
+
+dataDir =  "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15_95radiomics"
+ODOS = "ODOS"
+
+# for sequential backward feature choose, use all data at CV0
+trainingDataPath = "/home/hxie1/data/BES_3K/GTs/95radiomics_ODOS_10CV/trainID_95radiomics_10CV_0.csv"
+validationDataPath = "/home/hxie1/data/BES_3K/GTs/95radiomics_ODOS_10CV/validationID_95radiomics_10CV_0.csv"
+testDataPath = "/home/hxie1/data/BES_3K/GTs/95radiomics_ODOS_10CV/testID_95radiomics_10CV_0.csv"
+
+clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
+
+outputDir = "/home/hxie1/data/BES_3K/GTs/95radiomics_ODOS_10CV"
+
+imageSize =  [1,95]
+numRadiomics = 95
+keyName = "hypertension_bp_plus_history$"
+srcSuffix = "_Volume_s15_95radiomics.npy"
+class01Percent =  [0.4421085660495764,0.5578914339504236]  # according to HBP tag and xml image.
+
+output2File = True
 
 import glob
 import sys
 import os
 import fnmatch
 import numpy as np
-sys.path.append("../..")
-from framework.ConfigReader import ConfigReader
 from framework.measure import search_Threshold_Acc_TPR_TNR_Sum_WithProb
 sys.path.append("..")
-from dataPrepare.OCT2SysD_Tools import readBESClinicalCsv
+from OCT2SysD_Tools import readBESClinicalCsv
 
 import datetime
 import statsmodels.api as sm
@@ -18,7 +36,7 @@ import statsmodels.api as sm
 output2File = True
 
 def printUsage(argv):
-    print("============ Sequential backward feature selection from 14 clinical features =============")
+    print("============ Sequential backward feature selection from 9x9 thickness features =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_full_path")
 
@@ -153,6 +171,19 @@ def retrieveImageData_label(mode, hps):
     return volumes, labelTable
 
 def main():
+    # prepare output file
+    if output2File:
+        curTime = datetime.datetime.now()
+        timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+
+        outputPath = os.path.join(outputDir, f"95radiomics_FeatureSelection_{timeStr}.txt")
+        print(f"Log output is in {outputPath}")
+        logOutput = open(outputPath, "w")
+        original_stdout = sys.stdout
+        sys.stdout = logOutput
+
+    print(f"===============Logistic Regression Feature Selection from 95 radiomics ================")
+
     if len(sys.argv) != 2:
         print("Error: input parameters error.")
         printUsage(sys.argv)
@@ -201,18 +232,22 @@ def main():
     emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
 
     # x = np.concatenate((volumes, clinicalFtrs), axis=1)
-    x = clinicalFtrs  # only use clinical features for sequential backward feature selection
+    # x = clinicalFtrs  # only use clinical features for sequential backward feature selection
+    x = volumes   # only use thickness features for sequential backward feature selection
     y = labels[:, 1]  # hypertension
     x = np.delete(x, emptyRows, 0)
     y = np.delete(y, emptyRows, 0)
     print(f"After deleting empty-value patients, it remains {len(y)} patients.")
 
     # store the full feature names and its indexes in the x:
-    fullFtrNames=inputClinicalFeatures
+    fullFtrNames = []
     fullFtrIndexes = []
-    index=0
-    for i in range(index, index + len(inputClinicalFeatures)):
-        fullFtrIndexes.append(i)
+    index = 0
+    for layer in range(hps.inputChannels):
+        for sector in range(hps.imageH):
+            fullFtrNames.append(f"L{layer}_S{sector}")
+            fullFtrIndexes.append(index)
+            index += 1
     assert len(fullFtrNames)==len(fullFtrIndexes)
     print(f"Initial input features before feature selection:\n{fullFtrNames}")
     print("")
@@ -268,11 +303,13 @@ def main():
     for i in range(len(curFtrs)):
         print(f"x{i+1} = {curFtrs[i]}")
 
+
     if output2File:
         logOutput.close()
         sys.stdout = original_stdout
 
-    print(f"================ End of sequential backward feature selection w.r.t. hypertension   ===============")
+    print(f"========== End of 95-radiomics Features Selection ============ ")
+
 
 if __name__ == "__main__":
     main()
