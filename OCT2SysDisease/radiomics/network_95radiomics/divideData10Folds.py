@@ -45,11 +45,13 @@ def main():
     print(f"in clinical GT files, taggedHBP0 = {nHBP0}, taggedHBP1 = {nHBP1}, total {nHBP01} patients.")
 
     ID_HBP_Array = np.zeros((nHBP01, 2), dtype=np.uint32)
-    for i,ID in enumerate(fullLabels):
+    i = 0
+    for ID in fullLabels:
         tag = fullLabels[ID][keyName]
         if 1 == tag or 0 ==tag:
             ID_HBP_Array[i,0] = ID
             ID_HBP_Array[i,1] = tag
+            i += 1
 
     # check ID with hypertension in srcRadiomicsDir, delete the not exist IDs
 
