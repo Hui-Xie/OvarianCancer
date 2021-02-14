@@ -35,33 +35,17 @@ import statsmodels.api as sm
 
 output2File = True
 
-def printUsage(argv):
-    print("============ Sequential backward feature selection from 9x9 thickness features =============")
-    print("Usage:")
-    print(argv[0], " yaml_Config_file_full_path")
-
-def retrieveImageData_label(mode, hps):
+def retrieveImageData_label(mode):
     '''
-
     :param mode: "training", "validation", or "test"
-    :param hps:
-    :return:
-             labelTable:
-    #labelTable head: patientID,                                          (0)
-    #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',   (1:11)
-    # columnIndex:         1                           2        3       4          5             6          7             8              9                10
-    #              'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
-    # columnIndex:   11            12                           13                      14                       15                       16                  17
-    #              'TG$_Corrected2015',  BMI,   WHipRate,  LDL/HDL
-    #columnIndex:      18                 19       20         21
 
     '''
     if mode == "training":
-        IDPath = hps.trainingDataPath
+        IDPath = trainingDataPath
     elif mode == "validation":
-        IDPath = hps.validationDataPath
+        IDPath = validationDataPath
     elif mode == "test":
-        IDPath = hps.testDataPath
+        IDPath = testDataPath
     else:
         print(f"OCT2SysDiseaseDataSet mode error")
         assert False
@@ -71,7 +55,7 @@ def retrieveImageData_label(mode, hps):
     IDList = [item[0:-1] for item in IDList]  # erase '\n'
 
     # get all correct volume numpy path
-    allVolumesList = glob.glob(hps.dataDir + f"/*{hps.volumeSuffix}")
+    allVolumesList = glob.glob(dataDir + f"/*{srcSuffix}")
     nonexistIDList = []
     multipleImages_IDList = []
 
