@@ -117,6 +117,8 @@ srcSuffix = "_Volume_s15_95radiomics.npy"
 class01Percent = [0.4421085660495764, 0.5578914339504236]  # according to HBP tag and xml image.
 
 output2File = True
+deleteOutlierIterateOnce = True
+
 
 import glob
 import sys
@@ -130,7 +132,6 @@ from OCT2SysD_Tools import readBESClinicalCsv
 import datetime
 import statsmodels.api as sm
 
-output2File = True
 
 
 def retrieveImageData_label(mode):
@@ -271,10 +272,12 @@ def main():
 
         xMean = np.tile(xMean, (N,1))  # same with np.broadcast_to, or pytorch expand
         xStd  = np.tile(xStd, (N,1))
-        xNorm = (x -xMean)/(xStd+1.0e-8)
+        xNorm = (x -xMean)/(xStd+1.0e-8)  # Z-score
 
         newOutlierRows = tuple(set(list(np.nonzero(np.abs(xNorm)> 3)[0].astype(np.int))))
         outlierRowsList.append(newOutlierRows)
+        if deleteOutlierIterateOnce:  # general only once.
+            break
         if len(newOutlierRows) ==0:
             break
         else:
@@ -289,13 +292,22 @@ def main():
 
     print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
     print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
+
+    y = labels[:, 1].copy()  # hypertension
+    x = volumes.copy()
     for outlierRows in outlierRowsList:
         y = np.delete(y,outlierRows, axis=0)
-    x = xNorm.copy()
+        x = np.delete(x, outlierRows, axis=0)
+
+    # re-normalize x
     N = len(y)
-    assert len(y) == len(x)
-    print(f"feature mean values for all data after deleting outliers: \n{xMean[0,:]}")
-    print(f"feature std devs for all data after deleting outliers: \n{xStd[0,:]}")
+    xMean = np.mean(x, axis=0, keepdims=True)  # size: 1xnRadiomics
+    xStd = np.std(x, axis=0, keepdims=True)
+    print(f"feature mean values for all data after deleting outliers: \n{xMean}")
+    print(f"feature std devs for all data after deleting outliers: \n{xStd}")
+    xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
+    xStd = np.tile(xStd, (N, 1))
+    x = (x - xMean) / (xStd + 1.0e-8)  # Z-score
 
     # store the full feature names and its indexes in the x:
     fullFtrNames = []
@@ -310,9 +322,8 @@ def main():
     print(f"============program is in sequential backward feature selection, please wait......==============")
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
-    # use bfgs to avoid Singular matrix
-    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
-
+    # use bfgs to avoid Singular matrix  # use ‘nm’ for Nelder-Mead to avoid Hessian failure
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="nm", disp=0)
     #curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
@@ -324,7 +335,7 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
+            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=100, method="nm", disp=0)
             #nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
@@ -351,7 +362,7 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
+    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="nm", disp=0)
     #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])
