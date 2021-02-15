@@ -207,7 +207,7 @@ def retrieveImageData_label(mode):
     fullLabels = readBESClinicalCsv(clinicalGTPath)
 
     # get HBP labels
-    labelTable = np.empty((NVolumes, 2), dtype=np.float)  # size: Nx2 with (ID, Hypertension)
+    labelTable = np.empty((NVolumes, 2), dtype=np.int)  # size: Nx2 with (ID, Hypertension)
     for i in range(NVolumes):
         id = int(IDsCorrespondVolumes[i])
         labelTable[i, 0] = id
@@ -272,9 +272,8 @@ def main():
         xMean = np.tile(xMean, (N,1))  # same with np.broadcast_to, or pytorch expand
         xStd  = np.tile(xStd, (N,1))
         xNorm = (x -xMean)/(xStd+1.0e-8)
-        xNorm = np.abs(xNorm)
 
-        newOutlierRows = tuple(set(list(np.nonzero(xNorm> 3)[0].astype(np.int))))
+        newOutlierRows = tuple(set(list(np.nonzero(np.abs(xNorm)> 3)[0].astype(np.int))))
         outlierRowsList.append(newOutlierRows)
         if len(newOutlierRows) ==0:
             break
@@ -292,6 +291,7 @@ def main():
     print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
     for outlierRows in outlierRowsList:
         y = np.delete(y,outlierRows, axis=0)
+    x = xNorm.copy()
     N = len(y)
     assert len(y) == len(x)
     print(f"feature mean values for all data after deleting outliers: \n{xMean[0,:]}")
