@@ -323,7 +323,7 @@ def main():
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
     # use bfgs to avoid Singular matrix  # use ‘nm’ for Nelder-Mead to avoid Hessian failure
-    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="nm", disp=0)
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
     #curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
@@ -335,7 +335,7 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=100, method="nm", disp=0)
+            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
             #nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
@@ -362,7 +362,7 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="nm", disp=0)
+    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
     #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])

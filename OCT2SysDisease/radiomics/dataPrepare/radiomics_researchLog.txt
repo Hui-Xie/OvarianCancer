@@ -21,7 +21,7 @@ CV: 7/10: test: 319 patients;  validation: 319 patients;  training: 2549 patient
 CV: 8/10: test: 319 patients;  validation: 318 patients;  training: 2550 patients;
 CV: 9/10: test: 318 patients;  validation: 318 patients;  training: 2551 patients;
 
-3  Use logistic regession to choose features from 95 features;
+3  Use logistic regession to choose features from 95 features;   --done.
 4  use elasticNet to predict result on test folds;
 
 
