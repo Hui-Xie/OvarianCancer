@@ -249,22 +249,42 @@ def main():
     assert len(volumes) == len(labels)
 
     print("\n== Sequential backward feature selection w.r.t. HBP ==============")
-    x = volumes  # only use radiomics features for sequential backward feature selection
-    y = labels[:, 1]  # hypertension
-    N = len(volumes)  # number of samples.
+    x = volumes.copy()  # only use radiomics features for sequential backward feature selection
+    y = labels[:, 1].copy()  # hypertension
+    N = len(x)  # number of samples.
     print(f"After concatenating training, validation and test data, it has {len(y)} samples.")
 
     # normalize x in each feature dimension
     # normalization does not affect the data distribution
     # as some features with big values will lead Logit overflow.
     # But if there is outlier, normalization still lead overflow.
-    xMean = np.mean(x, axis=0, keepdims=True) # size: 1xnRadiomics
-    xStd  = np.std(x, axis=0,  keepdims=True)
-    print(f"feature mean values for all data: \n{xMean}")
-    print(f"feature std devs for all data: \n{xStd}")
-    xMean = np.tile(xMean, (N,1))  # same with np.broadcast_to, or pytorch expand
-    xStd  = np.tile(xStd, (N,1))
-    x = (x -xMean)/(xStd+1.0e-8)
+    # delete outliers whose normalization abs value > 3.
+    outlierRows= tuple()
+    nDeleteOutLierIteration = 0
+    while True:
+        x = volumes.copy()
+        x = np.delete(x, outlierRows, axis=0)
+        N = len(x)
+        xMean = np.mean(x, axis=0, keepdims=True) # size: 1xnRadiomics
+        xStd  = np.std(x, axis=0,  keepdims=True)
+
+        xMean = np.tile(xMean, (N,1))  # same with np.broadcast_to, or pytorch expand
+        xStd  = np.tile(xStd, (N,1))
+        xNorm = (x -xMean)/(xStd+1.0e-8)
+
+        newOutliierRows = np.nonzero(xNorm > 3)[0]
+        outlierRows = outlierRows + newOutliierRows
+        if len(newOutliierRows) ==0:
+            break
+        else:
+            nDeleteOutLierIteration += 1
+    print(f"Deleting outlier  used {nDeleteOutLierIteration+1} iterations.")
+    print(f"ID of outliers: \n {labels[outlierRows,0]}")
+    y = np.delete(y,outlierRows, axis=0)
+    N = len(y)
+    assert len(y) == len(x)
+    print(f"feature mean values for all data after deleting outliers: \n{xMean[0,:]}")
+    print(f"feature std devs for all data after deleting outliers: \n{xStd[0,:]}")
 
     # store the full feature names and its indexes in the x:
     fullFtrNames = []
@@ -279,8 +299,8 @@ def main():
     print(f"============program is in sequential backward feature selection, please wait......==============")
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
-    # curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
-    curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=135, disp=0)
+    #curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
     predict = curClf.predict(x[:, tuple(curIndexes)])
@@ -291,8 +311,8 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            # nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=235, disp=0)
-            nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
+            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=135, disp=0)
+            #nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
                 minAIC = nextAIC
@@ -318,8 +338,8 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    #clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
-    clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
+    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=135, disp=0)
+    #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])
     accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
