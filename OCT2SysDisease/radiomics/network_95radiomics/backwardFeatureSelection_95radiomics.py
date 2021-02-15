@@ -278,7 +278,7 @@ def main():
     print(f"============program is in sequential backward feature selection, please wait......==============")
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
-    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(disp=0)
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
     predict = curClf.predict(x[:, tuple(curIndexes)])
@@ -289,7 +289,7 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(disp=0)
+            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=235, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
                 minAIC = nextAIC
@@ -315,7 +315,7 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(disp=0)
+    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])
     accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
