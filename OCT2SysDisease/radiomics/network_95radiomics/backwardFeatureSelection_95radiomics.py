@@ -123,9 +123,8 @@ import sys
 import os
 import fnmatch
 import numpy as np
+sys.path.append("../..")
 from framework.measure import search_Threshold_Acc_TPR_TNR_Sum_WithProb
-
-sys.path.append("..")
 from OCT2SysD_Tools import readBESClinicalCsv
 
 import datetime
