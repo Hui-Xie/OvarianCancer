@@ -259,11 +259,12 @@ def main():
     # as some features with big values will lead Logit overflow.
     # But if there is outlier, normalization still lead overflow.
     # delete outliers whose normalization abs value > 3.
-    outlierRows= tuple()
+    outlierRowsList= [] # embedded outlier rows list, in which elements are tuples.
     nDeleteOutLierIteration = 0
     while True:
         x = volumes.copy()
-        x = np.delete(x, outlierRows, axis=0)
+        for outlierRows in outlierRowsList:
+            x = np.delete(x, outlierRows, axis=0)
         N = len(x)
         xMean = np.mean(x, axis=0, keepdims=True) # size: 1xnRadiomics
         xStd  = np.std(x, axis=0,  keepdims=True)
@@ -272,15 +273,24 @@ def main():
         xStd  = np.tile(xStd, (N,1))
         xNorm = (x -xMean)/(xStd+1.0e-8)
 
-        newOutliierRows = np.nonzero(xNorm > 3)[0]
-        outlierRows = outlierRows + newOutliierRows
+        newOutliierRows = tuple(set(np.nonzero(xNorm > 3)[0]))
+        outlierRowsList.append(newOutliierRows)
         if len(newOutliierRows) ==0:
             break
         else:
             nDeleteOutLierIteration += 1
-    print(f"Deleting outlier  used {nDeleteOutLierIteration+1} iterations.")
-    print(f"ID of outliers: \n {labels[outlierRows,0]}")
-    y = np.delete(y,outlierRows, axis=0)
+
+    print(f"Deleting outlier used {nDeleteOutLierIteration+1} iterations.")
+    outlierIDs = []
+    remainIDs = labels[:, 0].copy()
+    for outlierRows in outlierRowsList:
+        outlierIDs = outlierIDs +remainIDs[outlierRows]
+        remainIDs = np.delete(remainIDs, outlierRows, axis=0)
+
+    print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
+    print(f"ID of {len(remainIDs)}: \n {remainIDs}")
+    for outlierRows in outlierRowsList:
+        y = np.delete(y,outlierRows, axis=0)
     N = len(y)
     assert len(y) == len(x)
     print(f"feature mean values for all data after deleting outliers: \n{xMean[0,:]}")
