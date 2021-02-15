@@ -22,6 +22,10 @@ CV: 8/10: test: 319 patients;  validation: 318 patients;  training: 2550 patient
 CV: 9/10: test: 318 patients;  validation: 318 patients;  training: 2551 patients;
 
 3  Use logistic regession to choose features from 95 features;   --done.
+   Using 95 radiomics with logistic regression on all data including training, validation and test data, with bfgs optimization method,
+   can get 59% accuracy on all data, which can be regarded as training accuracy.
+   total 6363 samples including OD/OS, excluded 777 samples whose z-score > 3.
+
 4  use elasticNet to predict result on test folds;
 
 
