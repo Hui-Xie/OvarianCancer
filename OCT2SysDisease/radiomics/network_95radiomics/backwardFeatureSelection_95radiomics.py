@@ -284,7 +284,7 @@ def main():
     outlierIDs = []
     remainIDs = labels[:, 0].copy()
     for outlierRows in outlierRowsList:
-        outlierIDs = outlierIDs +remainIDs[outlierRows]
+        outlierIDs = outlierIDs +remainIDs[outlierRows,]  # must use comma
         remainIDs = np.delete(remainIDs, outlierRows, axis=0)
 
     print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
