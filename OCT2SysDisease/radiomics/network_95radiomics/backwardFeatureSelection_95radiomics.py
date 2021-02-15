@@ -214,10 +214,10 @@ def retrieveImageData_label(mode):
         labelTable[i, 1] = fullLabels[id][keyName]
 
     # save log information:
-    print(f"{mode} dataset feature selection: NVolumes={NVolumes}\n")
+    print(f"{mode} dataset feature selection: NVolumes={NVolumes}")
     rate1 = labelTable[:, 1].sum() * 1.0 / NVolumes
     rate0 = 1 - rate1
-    print(f"{mode} dataset feature selection: proportion of 0,1 = [{rate0},{rate1}]\n")
+    print(f"{mode} dataset feature selection: proportion of 0,1 = [{rate0},{rate1}]")
 
     return volumes, labelTable
 
@@ -251,7 +251,19 @@ def main():
     print("\n== Sequential backward feature selection w.r.t. HBP ==============")
     x = volumes  # only use radiomics features for sequential backward feature selection
     y = labels[:, 1]  # hypertension
+    N = len(volumes)  # number of samples.
     print(f"After concatenating training, validation and test data, it has {len(y)} samples.")
+
+    # normalize x in each feature dimension
+    # normalization does not affect the data distribution
+    # as some features with big values will lead Logit overflow.
+    xMean = np.mean(x, axis=0, keepdims=True) # size: 1xnRadiomics
+    xStd  = np.std(x, axis=0,  keepdims=True)
+    print(f"feature mean values for all data: \n{xMean}")
+    print(f"feature std devs for all data: \n{xStd}")
+    xMean = np.tile(xMean, (N,1))  # same with np.broadcast_to, or pytorch expand
+    xStd  = np.tile(xStd, (N,1))
+    x = (x -xMean)/(xStd+1.0e-8)
 
     # store the full feature names and its indexes in the x:
     fullFtrNames = []
