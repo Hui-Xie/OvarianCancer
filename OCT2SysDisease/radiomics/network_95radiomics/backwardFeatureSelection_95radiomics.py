@@ -298,8 +298,10 @@ def main():
     print(f"========================End of sequential backward feature selection======================")
     print("Selected features with min AIC:")
     print(f"minAIC = {minAIC}")
+    print(f"The number of selected features = {len(curIndexes)}")
     print(f"selected features: {curFtrs}")
     print(f"selected feature indexes: {curIndexes}\n")
+
 
     # ===Redo logistic regression with selected features===========
     clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(disp=0)
