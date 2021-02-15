@@ -257,6 +257,7 @@ def main():
     # normalize x in each feature dimension
     # normalization does not affect the data distribution
     # as some features with big values will lead Logit overflow.
+    # But if there is outlier, normalization still lead overflow.
     xMean = np.mean(x, axis=0, keepdims=True) # size: 1xnRadiomics
     xStd  = np.std(x, axis=0,  keepdims=True)
     print(f"feature mean values for all data: \n{xMean}")
@@ -278,7 +279,8 @@ def main():
     print(f"============program is in sequential backward feature selection, please wait......==============")
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
-    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
+    # curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
+    curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
     predict = curClf.predict(x[:, tuple(curIndexes)])
@@ -289,7 +291,8 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=235, disp=0)
+            # nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=235, disp=0)
+            nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
                 minAIC = nextAIC
@@ -315,7 +318,8 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
+    #clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=235, disp=0)
+    clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])
     accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
