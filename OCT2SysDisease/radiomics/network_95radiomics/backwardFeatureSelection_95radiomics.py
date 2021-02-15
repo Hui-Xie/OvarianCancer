@@ -272,10 +272,11 @@ def main():
         xMean = np.tile(xMean, (N,1))  # same with np.broadcast_to, or pytorch expand
         xStd  = np.tile(xStd, (N,1))
         xNorm = (x -xMean)/(xStd+1.0e-8)
+        xNorm = np.abs(xNorm)
 
-        newOutliierRows = tuple(set(np.nonzero(xNorm > 3)[0]))
-        outlierRowsList.append(newOutliierRows)
-        if len(newOutliierRows) ==0:
+        newOutlierRows = tuple(set(list(np.nonzero(xNorm> 3)[0].astype(np.int))))
+        outlierRowsList.append(newOutlierRows)
+        if len(newOutlierRows) ==0:
             break
         else:
             nDeleteOutLierIteration += 1
@@ -288,7 +289,7 @@ def main():
         remainIDs = np.delete(remainIDs, outlierRows, axis=0)
 
     print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
-    print(f"ID of {len(remainIDs)}: \n {remainIDs}")
+    print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
     for outlierRows in outlierRowsList:
         y = np.delete(y,outlierRows, axis=0)
     N = len(y)
@@ -309,7 +310,7 @@ def main():
     print(f"============program is in sequential backward feature selection, please wait......==============")
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
-    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=135, disp=0)
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, disp=0)
     #curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
@@ -321,7 +322,7 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=135, disp=0)
+            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=100, disp=0)
             #nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
@@ -348,7 +349,7 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=135, disp=0)
+    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, disp=0)
     #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])
