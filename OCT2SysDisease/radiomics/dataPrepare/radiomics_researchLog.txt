@@ -1,4 +1,11 @@
 # Feb 16th, Tuesday, 2021:
+Meeting with professor:
+1  send an email to professor Wang: progress and her ider on layer.
+2  4-6 layer 3D radiomics features.
+
+
+
+# Feb 16th, Tuesday, 2021:
 cat singleIteration_bfgs_95radiomics_FeatureSelection_20210215_163602.txt
 ===============Logistic Regression Feature Selection from 95 radiomics ================
 training dataset feature selection: NVolumes=5085
