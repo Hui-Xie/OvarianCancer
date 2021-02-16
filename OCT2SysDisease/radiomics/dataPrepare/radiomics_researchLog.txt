@@ -176,8 +176,7 @@ x31 = original_shape2D_MaximumDiameter
 x32 = original_shape2D_MeshSurface
 x33 = original_shape2D_Perimeter
 x34 = original_shape2D_PixelSurface
-x35 = original_shape2D_Sphericity
-
+x35 = original_shape2D_Sphericityf4
 
 # Feb 14th, Sunday, 2021
 Think to use 95 radiiomics features to predict hypertension.
@@ -211,7 +210,7 @@ CV: 9/10: test: 318 patients;  validation: 318 patients;  training: 2551 patient
 
 
 # Feb 9th, Tuesday, 2021
-Radiomics = Genomics
+Radiomics <-- Genomics
 Radiomic data has the potential to uncover disease characteristics that fail to be appreciated by the naked eye.
 Logistic Regression + L1/L2 regulirization = elasticNet
 
@@ -341,7 +340,7 @@ original_glszm_ZonePercentage:0.3333333333333333
 original_glszm_ZoneVariance:0.0
 original_shape2D_Elongation:0.21660386621246067
 original_shape2D_MajorAxisLength:869.2154369036384
-original_shape2D_MaximumDiameter:488.53249636027283
+original_shape2D_MaximumDiameter:488.53249636027283n
 original_shape2D_MeshSurface:7.5
 original_shape2D_MinorAxisLength:188.27542420488126
 original_shape2D_Perimeter:20.485281374238568
