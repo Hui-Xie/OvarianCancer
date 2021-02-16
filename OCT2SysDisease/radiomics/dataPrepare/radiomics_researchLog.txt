@@ -251,7 +251,7 @@ Questions:
 
 # Feb 13th, Saturday, 2021
 ===============================================
-Radiomic feature list:
+Radiomics feature list:
 ===============================================
 original_firstorder_10Percentile:7.2
 original_firstorder_90Percentile:45.2
