@@ -7,7 +7,8 @@ outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/exp
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
 K = 100   # the number of extracted features.
 
-reverseIterate = True
+fastFold = 2 # 1: reverse 2: middlefold
+
 
 import glob
 import numpy as np
@@ -27,8 +28,14 @@ def main():
     # logger.addHandler(handler)
 
     textureList = glob.glob(textureDir + f"/*_Volume_texture.nrrd")
-    if reverseIterate:
+    if 1 == fastFold: #reverseIterate:
         textureList.reverse()
+    elif 2 == fastFold:  # middle fold
+        N = len(textureList)
+        textureList = textureList[N//2:] + textureList[0:N//2]
+    else:
+        pass
+
     print(f"total {len(textureList)} texture files.")
     for texturePath in textureList:
         volumeName = os.path.basename(texturePath)  # 31118_OS_5069_Volume_texture.nrrd
