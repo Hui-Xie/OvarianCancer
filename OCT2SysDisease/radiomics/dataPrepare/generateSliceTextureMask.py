@@ -20,9 +20,6 @@ sys.path.append("../../..")
 from OCTMultiSurfaces.dataPrepare_Tongren.TongrenFileUtilities import  getSurfacesArray
 import os
 
-import radiomics
-from radiomics import featureextractor, getFeatureClasses
-
 
 def main():
     patientSegsList = glob.glob(segXmlDir + f"/*_Volume_Sequence_Surfaces_Prediction.xml")
