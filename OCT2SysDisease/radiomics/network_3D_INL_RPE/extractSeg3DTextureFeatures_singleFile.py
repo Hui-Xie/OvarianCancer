@@ -6,8 +6,8 @@ maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20
 outputDir = "/home/hxie1/temp/extract3DRadiomics"
 
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_95Radiomics_3D.yaml"
-K = 95   # the number of extracted features.
 
+K = 95 # need to change.
 
 import numpy as np
 from PIL import Image
@@ -27,7 +27,7 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     volumeName,_ = os.path.splitext(os.path.basename(imagePath))  # 297_OD_2031_Volume_texture
     volumeName = volumeName[0:volumeName.rfind("_texture")]
 
-    radiomicsArrayPath = os.path.join(outputDir, volumeName+f"_{K}radiomics.npy")
+    radiomicsArrayPath = os.path.join(outputDir, volumeName+f"_3Dradiomics.npy")
 
     # Get the PyRadiomics logger (default log-level = INFO
     logger = radiomics.logger
@@ -55,23 +55,25 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     featureVector = extractor.execute(imagePath, maskPath, label=1)
 
     print(f"Print diagnostics features:")
+    nDiagnostics = 0
     for featureName in featureVector.keys():
         if "diagnostics_" == featureName[0:12]:
             print(f"{featureName}:{featureVector[featureName]}")
-    print("============================================")
+            nDiagnostics += 1
+    print(f"=============total {nDiagnostics} diagnostics features===============================")
 
     print(f"\nPrint original features:")
     nFeatures = 0
     sortedFeatureKeys = sorted(featureVector.keys())  # make sure the output value in dictionary order.
-    radiomicsArray = np.zeros((1,K), dtype=np.float32)
+    # radiomicsArray = np.zeros((1,K), dtype=np.float32)
     for featureName in sortedFeatureKeys:
         if "original_" == featureName[0:9]:
             print(f"{featureName}:{featureVector[featureName]}")
-            radiomicsArray[0, nFeatures] = featureVector[featureName]
+            # radiomicsArray[0, nFeatures] = featureVector[featureName]
             nFeatures += 1
-    np.save(radiomicsArrayPath,radiomicsArray)
-    print("=============================================")
-    print(f"===========Total {nFeatures} features=============")
+    # np.save(radiomicsArrayPath,radiomicsArray)
+    print("================================================")
+    print(f"===========Total {nFeatures} original features=============")
 
 
 def main():
