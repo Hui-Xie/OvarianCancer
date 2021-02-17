@@ -7,6 +7,8 @@ outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/exp
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
 K = 100   # the number of extracted features.
 
+reverseIterate = True
+
 import glob
 import numpy as np
 
@@ -25,6 +27,8 @@ def main():
     # logger.addHandler(handler)
 
     textureList = glob.glob(textureDir + f"/*_Volume_texture.nrrd")
+    if reverseIterate:
+        textureList.reverse()
     print(f"total {len(textureList)} texture files.")
     for texturePath in textureList:
         volumeName = os.path.basename(texturePath)  # 31118_OS_5069_Volume_texture.nrrd
@@ -50,6 +54,9 @@ def main():
                 radiomicsArray[0, nFeatures] = featureVector[featureName]
                 nFeatures += 1
         assert nFeatures==K
+
+        if os.path.isfile(radiomicsArrayPath):  # generating one file needs 30 seconds.
+            continue
         np.save(radiomicsArrayPath, radiomicsArray)
     print(f"===== End of generating {K} radiomics features ==============")
 
