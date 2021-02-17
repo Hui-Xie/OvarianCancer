@@ -26,7 +26,8 @@ Think 3D retina layer design:
 1  define exact layers:    --done.
     region from the surface 3 starting from zero to the surface 8 starting from 0 are the INL_RPE layer.
     The ELM_IS/OS layer are the region from surface 6 to surface 7.
-2  use layer indexes to generate 3D retina image and its mask in nrrd format;
+2  use layer indexes to generate 3D retina image and its mask in nrrd format;  --done
+   at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd
 3  generate 3D radiomics features;
 4  logistic regression to test 3d radiomics features;
 
