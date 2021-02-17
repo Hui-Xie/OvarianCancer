@@ -7,7 +7,11 @@ outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/exp
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
 K = 100   # the number of extracted features.
 
-fastFold = 2 # 1: reverse 2: middlefold
+fastFold = 2
+# for example, a=[0,1,2,3,4,5,6,7,8,9] with N=10
+#  1: reverse   [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+#  2: middlefold  [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]
+#  3: middle_fold_reverse: b = a[0:N//2]; b.reverse(); b+a[N//2:]  => [4, 3, 2, 1, 0, 5, 6, 7, 8, 9]
 
 
 import glob
@@ -33,6 +37,11 @@ def main():
     elif 2 == fastFold:  # middle fold
         N = len(textureList)
         textureList = textureList[N//2:] + textureList[0:N//2]
+    elif 3 == fastFold:  # middle_fold_reverse
+        N =  len(textureList)
+        temp = textureList[0:N//2]
+        temp.reverse()
+        textureList = temp+ textureList[N//2:]
     else:
         pass
 
