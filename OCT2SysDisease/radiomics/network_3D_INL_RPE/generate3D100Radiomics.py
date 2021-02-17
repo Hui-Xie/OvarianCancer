@@ -34,6 +34,9 @@ def main():
         radiomicsArrayName =volumeName.replace("_texture.nrrd", f"_{K}radiomics.npy")
         radiomicsArrayPath = os.path.join(outputRadiomicsDir, radiomicsArrayName)
 
+        if os.path.isfile(radiomicsArrayPath):  # generating one file needs 30 seconds.
+            continue
+
         # Initialize feature extractor using the settings file
         extractor = featureextractor.RadiomicsFeatureExtractor(radiomicsCfgPath)
         featureVector = extractor.execute(texturePath, maskPath, label=1)
