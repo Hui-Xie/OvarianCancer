@@ -1,19 +1,16 @@
 # generate 95 radiomics
 
-textureDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/texture"
-maskDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/mask"
-outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15_95radiomics"
+textureDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd/texture"
+maskDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd/mask_s3tos8"
+outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics"
 
-radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_95Radiomics_2D.yaml"
-#indexBscan = 15
-K = 95   # the number of extracted features.
+radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
+K = 100   # the number of extracted features.
 
 import glob
 import numpy as np
 
 import os
-import logging
-import radiomics
 from radiomics import featureextractor
 
 def main():
@@ -27,20 +24,18 @@ def main():
     # handler.setFormatter(formatter)
     # logger.addHandler(handler)
 
-    textureList = glob.glob(textureDir + f"/*_Volume_s15_texture.nrrd")
+    textureList = glob.glob(textureDir + f"/*_Volume_texture.nrrd")
     print(f"total {len(textureList)} texture files.")
     for texturePath in textureList:
-        sliceName = os.path.basename(texturePath)  # 334027_OS_17817_Volume_s15_texture.nrrd
-        maskName = sliceName.replace("_texture.nrrd", "_mask.nrrd") # 334027_OS_17817_Volume_s15_mask.nrrd
+        volumeName = os.path.basename(texturePath)  # 31118_OS_5069_Volume_texture.nrrd
+        maskName = volumeName.replace("_texture.nrrd", "_s3tos8_mask.nrrd") # 31118_OS_5069_Volume_s3tos8_mask.nrrd
         maskPath = os.path.join(maskDir, maskName)
 
-        radiomicsArrayName =sliceName.replace("_texture.nrrd", f"_{K}radiomics.npy")
+        radiomicsArrayName =volumeName.replace("_texture.nrrd", f"_{K}radiomics.npy")
         radiomicsArrayPath = os.path.join(outputRadiomicsDir, radiomicsArrayName)
 
         # Initialize feature extractor using the settings file
         extractor = featureextractor.RadiomicsFeatureExtractor(radiomicsCfgPath)
-        extractor.settings["force2D"] = True
-        extractor.settings["force2Ddimension"] = 0
         featureVector = extractor.execute(texturePath, maskPath, label=1)
 
         nFeatures = 0
@@ -53,7 +48,7 @@ def main():
                 nFeatures += 1
         assert nFeatures==K
         np.save(radiomicsArrayPath, radiomicsArray)
-    print(f"===== End of generating {K} radiomics ==============")
+    print(f"===== End of generating {K} radiomics features ==============")
 
 
 if __name__ == "__main__":
