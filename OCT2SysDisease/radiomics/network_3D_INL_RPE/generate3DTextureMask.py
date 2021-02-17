@@ -1,14 +1,17 @@
-# generate texture and mask for specific slice
-# save them into tiff format
+# generate 3D texture and mask from INL to RPE
+# region from the surface 3 starting from zero to the surface 8 starting from 0 are the INL_RPE layer.
+# save them into nrrd format
 
-textureOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/texture"
-maskOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15TextureMask/mask"
+textureOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd/texture"
+maskOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd/mask_s3tos8"
 
 srcVolumeDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
 segXmlDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml"
 
-radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_95Radiomics_2D.yaml"
-indexBscan = 15
+radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_95Radiomics_3D.yaml"
+
+sStart = 3
+sEnd = 8  # surface index starting from zero.
 
 import glob
 import numpy as np

@@ -22,6 +22,13 @@ in the context of z = 240.55 um/pixel, y = 3.87 um/pixel, x= 11.29 um/pixel,  is
 Radiomics matrix feature focuses on the pattern of neighboring associations, in texture terms.
 3  Any other suggestions to go further are welcome.
 
+Think 3D retina layer design:
+1  define exact layers:    --done.
+    region from the surface 3 starting from zero to the surface 8 starting from 0 are the INL_RPE layer.
+    The ELM_IS/OS layer are the region from surface 6 to surface 7.
+2  use layer indexes to generate 3D retina image and its mask in nrrd format;
+3  generate 3D radiomics features;
+4  logistic regression to test 3d radiomics features;
 
 
 # Feb 16th, Tuesday, 2021:
