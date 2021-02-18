@@ -1,104 +1,109 @@
-# Sequential Backward feature selection on 95 radiomics
+# Sequential Backward feature selection on 100 radiomics in index(pixel) space
 
-dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15_95radiomics"
+dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
 ODOS = "ODOS"
 
-radiomics95Features = [
-    "original_firstorder_10Percentile",
-    "original_firstorder_90Percentile",
-    "original_firstorder_Energy",
-    "original_firstorder_Entropy",
-    "original_firstorder_InterquartileRange",
-    "original_firstorder_Kurtosis",
-    "original_firstorder_Maximum",
-    "original_firstorder_Mean",
-    "original_firstorder_MeanAbsoluteDeviation",
-    "original_firstorder_Median",
-    "original_firstorder_Minimum",
-    "original_firstorder_Range",
-    "original_firstorder_RobustMeanAbsoluteDeviation",
-    "original_firstorder_RootMeanSquared",
-    "original_firstorder_Skewness",
-    "original_firstorder_TotalEnergy",
-    "original_firstorder_Uniformity",
-    "original_firstorder_Variance",
-    "original_glcm_Autocorrelation",
-    "original_glcm_ClusterProminence",
-    "original_glcm_ClusterShade",
-    "original_glcm_ClusterTendency",
-    "original_glcm_Contrast",
-    "original_glcm_Correlation",
-    "original_glcm_DifferenceAverage",
-    "original_glcm_DifferenceEntropy",
-    "original_glcm_DifferenceVariance",
-    "original_glcm_Id",
-    "original_glcm_Idm",
-    "original_glcm_Idmn",
-    "original_glcm_Idn",
-    "original_glcm_Imc1",
-    "original_glcm_Imc2",
-    "original_glcm_InverseVariance",
-    "original_glcm_JointAverage",
-    "original_glcm_JointEnergy",
-    "original_glcm_JointEntropy",
-    "original_glcm_MaximumProbability",
-    "original_glcm_SumEntropy",
-    "original_glcm_SumSquares",
-    "original_gldm_DependenceEntropy",
-    "original_gldm_DependenceNonUniformity",
-    "original_gldm_DependenceNonUniformityNormalized",
-    "original_gldm_DependenceVariance",
-    "original_gldm_GrayLevelNonUniformity",
-    "original_gldm_GrayLevelVariance",
-    "original_gldm_HighGrayLevelEmphasis",
-    "original_gldm_LargeDependenceEmphasis",
-    "original_gldm_LargeDependenceHighGrayLevelEmphasis",
-    "original_gldm_LargeDependenceLowGrayLevelEmphasis",
-    "original_gldm_LowGrayLevelEmphasis",
-    "original_gldm_SmallDependenceEmphasis",
-    "original_gldm_SmallDependenceHighGrayLevelEmphasis",
-    "original_gldm_SmallDependenceLowGrayLevelEmphasis",
-    "original_glrlm_GrayLevelNonUniformity",
-    "original_glrlm_GrayLevelNonUniformityNormalized",
-    "original_glrlm_GrayLevelVariance",
-    "original_glrlm_HighGrayLevelRunEmphasis",
-    "original_glrlm_LongRunEmphasis",
-    "original_glrlm_LongRunHighGrayLevelEmphasis",
-    "original_glrlm_LongRunLowGrayLevelEmphasis",
-    "original_glrlm_LowGrayLevelRunEmphasis",
-    "original_glrlm_RunEntropy",
-    "original_glrlm_RunLengthNonUniformity",
-    "original_glrlm_RunLengthNonUniformityNormalized",
-    "original_glrlm_RunPercentage",
-    "original_glrlm_RunVariance",
-    "original_glrlm_ShortRunEmphasis",
-    "original_glrlm_ShortRunHighGrayLevelEmphasis",
-    "original_glrlm_ShortRunLowGrayLevelEmphasis",
-    "original_glszm_GrayLevelNonUniformity",
-    "original_glszm_GrayLevelNonUniformityNormalized",
-    "original_glszm_GrayLevelVariance",
-    "original_glszm_HighGrayLevelZoneEmphasis",
-    "original_glszm_LargeAreaEmphasis",
-    "original_glszm_LargeAreaHighGrayLevelEmphasis",
-    "original_glszm_LargeAreaLowGrayLevelEmphasis",
-    "original_glszm_LowGrayLevelZoneEmphasis",
-    "original_glszm_SizeZoneNonUniformity",
-    "original_glszm_SizeZoneNonUniformityNormalized",
-    "original_glszm_SmallAreaEmphasis",
-    "original_glszm_SmallAreaHighGrayLevelEmphasis",
-    "original_glszm_SmallAreaLowGrayLevelEmphasis",
-    "original_glszm_ZoneEntropy",
-    "original_glszm_ZonePercentage",
-    "original_glszm_ZoneVariance",
-    "original_shape2D_Elongation",
-    "original_shape2D_MajorAxisLength",
-    "original_shape2D_MaximumDiameter",
-    "original_shape2D_MeshSurface",
-    "original_shape2D_MinorAxisLength",
-    "original_shape2D_Perimeter",
-    "original_shape2D_PerimeterSurfaceRatio",
-    "original_shape2D_PixelSurface",
-    "original_shape2D_Sphericity",
+radiomics100Features = [
+"original_firstorder_10Percentile", # sample value :42.0
+"original_firstorder_90Percentile", # sample value :122.0
+"original_firstorder_Energy", # sample value :4546035246.0
+"original_firstorder_Entropy", # sample value :2.290483429722902
+"original_firstorder_InterquartileRange", # sample value :37.0
+"original_firstorder_Kurtosis", # sample value :4.9019165966015015
+"original_firstorder_Maximum", # sample value :255.0
+"original_firstorder_Mean", # sample value :74.69587063807806
+"original_firstorder_MeanAbsoluteDeviation", # sample value :25.09769550893551
+"original_firstorder_Median", # sample value :66.0
+"original_firstorder_Minimum", # sample value :0.0
+"original_firstorder_Range", # sample value :255.0
+"original_firstorder_RobustMeanAbsoluteDeviation", # sample value :16.297969041319497
+"original_firstorder_RootMeanSquared", # sample value :81.6777083003706
+"original_firstorder_Skewness", # sample value :1.309870242982822
+"original_firstorder_TotalEnergy", # sample value :4546035246.0
+"original_firstorder_Uniformity", # sample value :0.257001376438416
+"original_firstorder_Variance", # sample value :1091.7749428199356
+"original_glcm_Autocorrelation", # sample value :13.445557595443358
+"original_glcm_ClusterProminence", # sample value :181.72086300382574
+"original_glcm_ClusterShade", # sample value :19.446166987043277
+"original_glcm_ClusterTendency", # sample value :6.382152775147923
+"original_glcm_Contrast", # sample value :0.7569681474089494
+"original_glcm_Correlation", # sample value :0.7877438390604021
+"original_glcm_DifferenceAverage", # sample value :0.5321648546570841
+"original_glcm_DifferenceEntropy", # sample value :1.310176093469075
+"original_glcm_DifferenceVariance", # sample value :0.46133124978722395
+"original_glcm_Id", # sample value :0.7648781309979223
+"original_glcm_Idm", # sample value :0.7556187862889131
+"original_glcm_Idmn", # sample value :0.9939580335140424
+"original_glcm_Idn", # sample value :0.9570133845390073
+"original_glcm_Imc1", # sample value :-0.3095395644942348
+"original_glcm_Imc2", # sample value :0.8564980904211521
+"original_glcm_InverseVariance", # sample value :0.39147550672037795
+"original_glcm_JointAverage", # sample value :3.4697463969469755
+"original_glcm_JointEnergy", # sample value :0.12217498988669677
+"original_glcm_JointEntropy", # sample value :3.8295065172518408
+"original_glcm_MaximumProbability", # sample value :0.270951894631309
+"original_glcm_SumEntropy", # sample value :3.1120002276241197
+"original_glcm_SumSquares", # sample value :1.7847802306392178
+"original_gldm_DependenceEntropy", # sample value :6.678234307296107
+"original_gldm_DependenceNonUniformity", # sample value :27541.935112123352
+"original_gldm_DependenceNonUniformityNormalized", # sample value :0.0404174342046636
+"original_gldm_DependenceVariance", # sample value :45.41983390219565
+"original_gldm_GrayLevelNonUniformity", # sample value :175130.2469560649
+"original_gldm_GrayLevelVariance", # sample value :1.838393018618642
+"original_gldm_HighGrayLevelEmphasis", # sample value :14.131858117478211
+"original_gldm_LargeDependenceEmphasis", # sample value :265.7640031286825
+"original_gldm_LargeDependenceHighGrayLevelEmphasis", # sample value :2708.802916483842
+"original_gldm_LargeDependenceLowGrayLevelEmphasis", # sample value :35.866339746892635
+"original_gldm_LowGrayLevelEmphasis", # sample value :0.12124936233989302
+"original_gldm_SmallDependenceEmphasis", # sample value :0.01945374983188274
+"original_gldm_SmallDependenceHighGrayLevelEmphasis", # sample value :0.4641673242683492
+"original_gldm_SmallDependenceLowGrayLevelEmphasis", # sample value :0.003015741865058172
+"original_glrlm_GrayLevelNonUniformity", # sample value :64762.95411439012
+"original_glrlm_GrayLevelNonUniformityNormalized", # sample value :0.2019612815507785
+"original_glrlm_GrayLevelVariance", # sample value :2.4082273338471643
+"original_glrlm_HighGrayLevelRunEmphasis", # sample value :17.34035339474268
+"original_glrlm_LongRunEmphasis", # sample value :10.613395125558059
+"original_glrlm_LongRunHighGrayLevelEmphasis", # sample value :111.31010096421248
+"original_glrlm_LongRunLowGrayLevelEmphasis", # sample value :1.4575836342279298
+"original_glrlm_LowGrayLevelRunEmphasis", # sample value :0.11217147029110729
+"original_glrlm_RunEntropy", # sample value :4.554336370935227
+"original_glrlm_RunLengthNonUniformity", # sample value :121398.84755314625
+"original_glrlm_RunLengthNonUniformityNormalized", # sample value :0.3694146349109773
+"original_glrlm_RunPercentage", # sample value :0.46753867759771467
+"original_glrlm_RunVariance", # sample value :5.480309177473375
+"original_glrlm_ShortRunEmphasis", # sample value :0.6232494732836416
+"original_glrlm_ShortRunHighGrayLevelEmphasis", # sample value :12.140498420707608
+"original_glrlm_ShortRunLowGrayLevelEmphasis", # sample value :0.06830135941130923
+"original_glszm_GrayLevelNonUniformity", # sample value :963.3403279440431
+"original_glszm_GrayLevelNonUniformityNormalized", # sample value :0.11046214057379235
+"original_glszm_GrayLevelVariance", # sample value :7.043698800201288
+"original_glszm_HighGrayLevelZoneEmphasis", # sample value :30.008026602453846
+"original_glszm_LargeAreaEmphasis", # sample value :12944440.11271643
+"original_glszm_LargeAreaHighGrayLevelEmphasis", # sample value :127297991.09402591
+"original_glszm_LargeAreaLowGrayLevelEmphasis", # sample value :1600230.2391638118
+"original_glszm_LowGrayLevelZoneEmphasis", # sample value :0.19626521041929643
+"original_glszm_SizeZoneNonUniformity", # sample value :2113.1284256392614
+"original_glszm_SizeZoneNonUniformityNormalized", # sample value :0.2423034543790003
+"original_glszm_SmallAreaEmphasis", # sample value :0.49473352262254067
+"original_glszm_SmallAreaHighGrayLevelEmphasis", # sample value :13.9363132320453
+"original_glszm_SmallAreaLowGrayLevelEmphasis", # sample value :0.11258455448193426
+"original_glszm_ZoneEntropy", # sample value :6.081747083200463
+"original_glszm_ZonePercentage", # sample value :0.01279795490999168
+"original_glszm_ZoneVariance", # sample value :12938334.646274097
+"original_shape_Elongation", # sample value :0.1063750261465349
+"original_shape_Flatness", # sample value :0.05904268066748336
+"original_shape_LeastAxisLength", # sample value :34.183579998584754
+"original_shape_MajorAxisLength", # sample value :578.9638887011225
+"original_shape_Maximum2DDiameterColumn", # sample value :512.8781531709067
+"original_shape_Maximum2DDiameterRow", # sample value :69.6419413859206
+"original_shape_Maximum2DDiameterSlice", # sample value :519.339002964345
+"original_shape_Maximum3DDiameter", # sample value :519.9278796140865
+"original_shape_MeshVolume", # sample value :681129.2083333334
+"original_shape_MinorAxisLength", # sample value :61.587298798481434
+"original_shape_Sphericity", # sample value :0.42730924331409403
+"original_shape_SurfaceArea", # sample value :87611.57880600162
+"original_shape_SurfaceVolumeRatio", # sample value :0.1286269590763548
+"original_shape_VoxelVolume", # sample value :681437.0
 ]
 
 # for sequential backward feature choose, use all data at CV0

@@ -1,7 +1,7 @@
 # divide all data into 10 folds
 srcRadiomicsDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15_95radiomics"
 clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
-outputDir = "/home/hxie1/data/BES_3K/GTs/95radiomics_ODOS_10CV"
+outputDir = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV"
 
 import numpy as np
 import glob
