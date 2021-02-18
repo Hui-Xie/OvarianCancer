@@ -115,7 +115,7 @@ clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 
 outputDir = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV"
 
-# input 95 radiomics size: [1,95]
+# input radiomics size: [1,numRadiomics]
 numRadiomics = 100
 keyName = "hypertension_bp_plus_history$"
 srcSuffix = "_Volume_100radiomics.npy"
