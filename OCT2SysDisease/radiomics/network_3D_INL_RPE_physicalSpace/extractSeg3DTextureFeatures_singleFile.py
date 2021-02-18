@@ -18,10 +18,12 @@ sys.path.append("../../..")
 import logging
 import os
 import SimpleITK as sitk
+import datetime
 
 import radiomics
 from radiomics import featureextractor, getFeatureClasses
 
+output2File = True
 
 def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     volumeName,_ = os.path.splitext(os.path.basename(imagePath))  # 297_OD_2031_Volume_texture
@@ -72,14 +74,29 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
             # radiomicsArray[0, nFeatures] = featureVector[featureName]
             nFeatures += 1
     # np.save(radiomicsArrayPath,radiomicsArray)
-    print("================================================")
     print(f"===========Total {nFeatures} original features=============")
 
 
 def main():
-    generateRadiomics(imagePath,maskPath, radiomicsCfgPath)
-    print("=====End===")
+    # prepare output file
+    if output2File:
+        curTime = datetime.datetime.now()
+        timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
+        outputPath = os.path.join(outputDir, f"output_generateRadiomicsPhysicalSpace_{timeStr}.txt")
+        print(f"Log output is in {outputPath}")
+        logOutput = open(outputPath, "w")
+        original_stdout = sys.stdout
+        sys.stdout = logOutput
+
+    print(f"===============Generate radiomics feature from resample physical space image ================")
+
+    generateRadiomics(imagePath,maskPath, radiomicsCfgPath)
+
+    if output2File:
+        logOutput.close()
+        sys.stdout = original_stdout
+    print(f"===============END=====================")
 
 if __name__ == "__main__":
     main()

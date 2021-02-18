@@ -1,3 +1,30 @@
+# Feb 18th, Thurday, 2021:
+Using 3D retina in pixel space to extract 100 radiomics features got hypertension prediction accuracy of 60.5% in the whole data.
+
+The above pixel space means it only considers raw OCT image pixel neighboring layerout, without considering voxel's different physical size in different direction.
+Now I am considering to resample all 3D OCT image into isotropic pixel space at [0.011, 0.011, 0.011] mm in all W,H, Z direction.
+And then regenerate radiomics features to predict hypertension.
+
+
+You may ignore below details:
+1  define exact layers:    --done.
+    region from the surface 3 starting from zero to the surface 8 starting from 0 are the INL_RPE layer.
+    The ELM_IS/OS layer are the region from surface 6 to surface 7.
+
+2  use layer indexes to generate 3D retina image and its mask in nrrd format;  --done
+   at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd
+
+3  generate 3D radiomics features;  --done:
+   at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics
+   total 6499 files, 2.5/min, used multple processes to git it done in 18 hours.
+   100 radiomics features.
+
+4  logistic regression to test 3d radiomics features;   --done
+   use 3D radiomics extract 100 features, to predict with logistic regression getting 60.5% accuracy on whole data.
+   while the rate of [0,1] in the whole dataset is [0.4430678466076696,0.5569321533923304].
+   output: /home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/100radiomics_FeatureSelection_20210218_113741.txt
+
+
 # Feb 16th, Tuesday, 2021:
 Meeting with professor:
 1  send an email to professor Wang: progress and her ider on layer.
@@ -26,14 +53,19 @@ Think 3D retina layer design:
 1  define exact layers:    --done.
     region from the surface 3 starting from zero to the surface 8 starting from 0 are the INL_RPE layer.
     The ELM_IS/OS layer are the region from surface 6 to surface 7.
+
 2  use layer indexes to generate 3D retina image and its mask in nrrd format;  --done
    at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd
-3  generate 3D radiomics features;  --progress:
-   at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics
-   total 6499 files, 2.5/min, it need 6499/(2.5*60) = 43 hours.
-4  logistic regression to test 3d radiomics features;   --done
-   use 3D radiomics extract 100 features, to predict get 60.5% accuracy on whole data.
 
+3  generate 3D radiomics features;  --done:
+   at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics
+   total 6499 files, 2.5/min, used multple processes to git it done in 18 hours.
+   100 radiomics features.
+
+4  logistic regression to test 3d radiomics features;   --done
+   use 3D radiomics extract 100 features, to predict with logistic regression getting 60.5% accuracy on whole data.
+   while the rate of [0,1] in the whole dataset is [0.4430678466076696,0.5569321533923304].
+   output: /home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/100radiomics_FeatureSelection_20210218_113741.txt
 
 # Feb 16th, Tuesday, 2021:
 cat singleIteration_bfgs_95radiomics_FeatureSelection_20210215_163602.txt
