@@ -78,7 +78,7 @@ def main():
         sitk.WriteImage(maskImage, maskPath)
 
         # debug
-        break
+        # break
 
     print(f"===== End of generating texture and mask in physical space ==============")
 
