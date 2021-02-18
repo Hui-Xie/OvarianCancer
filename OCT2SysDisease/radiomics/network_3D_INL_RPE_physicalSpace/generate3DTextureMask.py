@@ -7,6 +7,7 @@ maskOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES
 
 srcVolumeDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
 segXmlDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml"
+spacingPath = "/home/hxie1/data/BES_3K/GTs/spacing/rawVolumeSpacing.yaml"
 
 # radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
 
@@ -19,6 +20,7 @@ import numpy as np
 #  from PIL import Image  # for Tiff image save.
 import SimpleITK as sitk
 import random
+import yaml
 
 import sys
 sys.path.append("../../..")
@@ -28,6 +30,9 @@ import os
 # spacing=[11.29, 3.87, 240.555]  # in W, H, S order as numpy and nrrd have reverse axial order.
 
 def main():
+    with open(spacingPath) as file:
+        spacingDict = yaml.load(file, Loader=yaml.FullLoader)
+
     patientSegsList = glob.glob(segXmlDir + f"/*_Volume_Sequence_Surfaces_Prediction.xml")
 
     random.shuffle(patientSegsList)  # for multiple processes running to speed up.
@@ -58,16 +63,24 @@ def main():
                 mask[s, volumeSeg[s,sStart, c]:volumeSeg[s,sEnd, c], c] = 1
 
         # use sitk to save image in 3D array
-        if os.path.isfile(imagePath) or os.path.isfile(maskPath):  # generating one file needs 30 seconds.
-            continue
-         # set spacing.
+
+        # set spacing.
         volumeImage = sitk.GetImageFromArray(volume)
         maskImage = sitk.GetImageFromArray(mask)
-        volumeImage.SetSpacing([])
-        sitk.WriteImage(sitk.GetImageFromArray(volume), imagePath)
-        sitk.WriteImage(sitk.GetImageFromArray(mask), maskPath)
 
-    print(f"===== End of generating texture and mask ==============")
+        spacing  = spacingDict[volumeName]
+        volumeImage.SetSpacing(spacing)
+        maskImage.SetSpacing(spacing)
+
+        if os.path.isfile(imagePath) or os.path.isfile(maskPath):  # generating one file needs 30 seconds.
+            continue
+        sitk.WriteImage(volumeImage, imagePath)
+        sitk.WriteImage(maskImage, maskPath)
+
+        # debug
+        break
+
+    print(f"===== End of generating texture and mask in physical space ==============")
 
 
 if __name__ == "__main__":
