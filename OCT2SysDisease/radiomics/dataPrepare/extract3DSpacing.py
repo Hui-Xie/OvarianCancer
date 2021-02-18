@@ -26,6 +26,7 @@ def main():
         sys.stdout = logOutput
 
     print(f"=============== Extract the spacing of raw volumes ================")
+    print("volumeName: [W,H,Z] # order is consistent with nrrd, and values are in unit of mm/pixel")
 
     yamlPath = os.path.join(outputDir, "rawVolumeSpacing.yaml")
     yamlOutput = open(yamlPath, "w")
