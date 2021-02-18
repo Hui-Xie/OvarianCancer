@@ -3,7 +3,7 @@
 dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
 ODOS = "ODOS"
 
-radiomics100Features = [
+radiomicsFeatures = [
 "original_firstorder_10Percentile", # sample value :42.0
 "original_firstorder_90Percentile", # sample value :122.0
 "original_firstorder_Energy", # sample value :4546035246.0
@@ -116,9 +116,9 @@ clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 outputDir = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV"
 
 # input 95 radiomics size: [1,95]
-numRadiomics = 95
+numRadiomics = 100
 keyName = "hypertension_bp_plus_history$"
-srcSuffix = "_Volume_s15_95radiomics.npy"
+srcSuffix = "_Volume_100radiomics.npy"
 class01Percent = [0.4421085660495764, 0.5578914339504236]  # according to HBP tag and xml image.
 
 output2File = True
@@ -136,8 +136,6 @@ from OCT2SysD_Tools import readBESClinicalCsv
 
 import datetime
 import statsmodels.api as sm
-
-
 
 def retrieveImageData_label(mode):
     '''
@@ -223,7 +221,7 @@ def retrieveImageData_label(mode):
     print(f"{mode} dataset feature selection: NVolumes={NVolumes}")
     rate1 = labelTable[:, 1].sum() * 1.0 / NVolumes
     rate0 = 1 - rate1
-    print(f"{mode} dataset feature selection: proportion of 0,1 = [{rate0},{rate1}]")
+    print(f"{mode} dataset {numRadiomics} feature selection: proportion of 0,1 = [{rate0},{rate1}]")
 
     return volumes, labelTable
 
@@ -234,13 +232,13 @@ def main():
         curTime = datetime.datetime.now()
         timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-        outputPath = os.path.join(outputDir, f"95radiomics_FeatureSelection_{timeStr}.txt")
+        outputPath = os.path.join(outputDir, f"{numRadiomics}radiomics_FeatureSelection_{timeStr}.txt")
         print(f"Log output is in {outputPath}")
         logOutput = open(outputPath, "w")
         original_stdout = sys.stdout
         sys.stdout = logOutput
 
-    print(f"===============Logistic Regression Feature Selection from 95 radiomics ================")
+    print(f"===============Logistic Regression Feature Selection from {numRadiomics} radiomics ================")
 
     # load training data, validation, and test data
     # volumes: volumes of all patient in this data: NxnRadiomics;
@@ -264,7 +262,7 @@ def main():
     # normalization does not affect the data distribution
     # as some features with big values will lead Logit overflow.
     # But if there is outlier, normalization still lead overflow.
-    # delete outliers whose normalization abs value > 3.
+    # delete outliers whose z-score abs value > 3.
     outlierRowsList= [] # embedded outlier rows list, in which elements are tuples.
     nDeleteOutLierIteration = 0
     while True:
@@ -279,7 +277,7 @@ def main():
         xStd  = np.tile(xStd, (N,1))
         xNorm = (x -xMean)/(xStd+1.0e-8)  # Z-score
 
-        newOutlierRows = tuple(set(list(np.nonzero(np.abs(xNorm)> 3)[0].astype(np.int))))
+        newOutlierRows = tuple(set(list(np.nonzero(np.abs(xNorm)>= 3.0)[0].astype(np.int))))
         outlierRowsList.append(newOutlierRows)
         if deleteOutlierIterateOnce:  # general only once.
             break
@@ -318,7 +316,7 @@ def main():
     fullFtrNames = []
     fullFtrIndexes = []
     for index in range(numRadiomics):
-        fullFtrNames.append(radiomics95Features[index])
+        fullFtrNames.append(radiomicsFeatures[index])
         fullFtrIndexes.append(index)
     print(f"Initial input features before feature selection:\n{fullFtrNames}")
     print("")
@@ -328,7 +326,7 @@ def main():
     curIndexes = fullFtrIndexes.copy()
     curFtrs = fullFtrNames.copy()
     # use bfgs to avoid Singular matrix  # use ‘nm’ for Nelder-Mead to avoid Hessian failure
-    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
+    curClf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=200, method="bfgs", disp=0)
     #curClf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     curAIC = curClf.aic
     minAIC = curAIC
@@ -340,7 +338,7 @@ def main():
         isAICDecreased = False
         for i in range(0, len(curIndexes)):
             nextIndexes = curIndexes[0:i] + curIndexes[i + 1:]
-            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
+            nextClf = sm.Logit(y, x[:, tuple(nextIndexes)]).fit(maxiter=200, method="bfgs", disp=0)
             #nextClf = sm.GLM(y, x[:, tuple(nextIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
             nextAIC = nextClf.aic
             if nextAIC < minAIC:
@@ -367,7 +365,7 @@ def main():
 
 
     # ===Redo logistic regression with selected features===========
-    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=100, method="bfgs", disp=0)
+    clf = sm.Logit(y, x[:, tuple(curIndexes)]).fit(maxiter=200, method="bfgs", disp=0)
     #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
     predict = clf.predict(x[:, tuple(curIndexes)])
@@ -384,7 +382,7 @@ def main():
         logOutput.close()
         sys.stdout = original_stdout
 
-    print(f"========== End of 95-radiomics Features Selection ============ ")
+    print(f"========== End of {numRadiomics}-radiomics Features Selection ============ ")
 
 
 if __name__ == "__main__":
