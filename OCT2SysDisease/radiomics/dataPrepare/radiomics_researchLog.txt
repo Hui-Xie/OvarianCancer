@@ -31,7 +31,8 @@ Think 3D retina layer design:
 3  generate 3D radiomics features;  --progress:
    at /home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics
    total 6499 files, 2.5/min, it need 6499/(2.5*60) = 43 hours.
-4  logistic regression to test 3d radiomics features;
+4  logistic regression to test 3d radiomics features;   --done
+   use 3D radiomics extract 100 features, to predict get 60.5% accuracy on whole data.
 
 
 # Feb 16th, Tuesday, 2021:
