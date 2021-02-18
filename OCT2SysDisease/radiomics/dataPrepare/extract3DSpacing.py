@@ -27,6 +27,9 @@ def main():
 
     print(f"=============== Extract the spacing of raw volumes ================")
 
+    yamlPath = os.path.join(outputDir, "rawVolumeSpacing.yaml")
+    yamlOutput = open(yamlPath, "w")
+
     patientSegsList = glob.glob(segXmlDir + f"/*_Volume_Sequence_Surfaces_Prediction.xml")
     print(f"total {len(patientSegsList)} xml files.")
     for xmlPath in patientSegsList:
@@ -35,17 +38,36 @@ def main():
         aVolumeDir = os.path.join(rawVolumeDir, volumeName)
 
         infoPathList = glob.glob(aVolumeDir + f"/*_Info.txt")
-        if len(infoPathList) != 0:
+        if len(infoPathList) != 1:
             print(f"at {aVolumeDir}, program found {len(infoPathList)} information files:\n {infoPathList}")
             continue
 
         infoPath = infoPathList[0]
         with open(infoPath) as f:
             lines = f.readlines()
-            print("===debug===")
 
+        getwSpacing = False
+        getzSpacing = False
+        for line in lines:
+            if "A-Scan Width" in line:
+                strList = line.split()
+                umPerPixelIndex = strList.index("um/pixel")
+                wSpacing = float(strList[umPerPixelIndex-1])*1.0e-3  # convert into unit of mm/pixel
+                getwSpacing = True
+            if "A-Scan Height" in line:
+                strList = line.split()
+                umPerPixelIndex = strList.index("um/pixel")
+                zSpacing = float(strList[umPerPixelIndex - 1]) * 1.0e-3  # convert into unit of mm/pixel
+                getzSpacing = True
+            if getwSpacing and getzSpacing:
+                break
 
+        if getzSpacing and getwSpacing:
+            yamlOutput.write(f"{volumeName}: {[wSpacing, hSpacing, zSpacing]} # mm/pixel \n")
+        else:
+            print(f"at {volumeName}: program can not find z spacing and w spacing, at file {infoPath}")
 
+    yamlOutput.close()
 
     if output2File:
         logOutput.close()
