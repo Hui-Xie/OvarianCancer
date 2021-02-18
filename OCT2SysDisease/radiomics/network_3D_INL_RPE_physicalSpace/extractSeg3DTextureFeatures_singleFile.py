@@ -1,11 +1,11 @@
 # Extract segmented OCT layer texture features.
 
 
-imagePath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_indexSpace/texture/297_OD_2031_Volume_texture.nrrd"
-maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_indexSpace/mask_s3tos8/297_OD_2031_Volume_s3tos8_mask.nrrd"
+imagePath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_physicalSpace/texture/31003_OD_932_Volume_texture.nrrd"
+maskPath = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_physicalSpace/mask_s3tos8/31003_OD_932_Volume_s3tos8_mask.nrrd"
 outputDir = "/home/hxie1/temp/extract3DRadiomics"
 
-radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
+radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D_physicalSpace.yaml"
 
 K = 100 # need to change.
 

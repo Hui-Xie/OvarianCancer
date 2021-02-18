@@ -22,8 +22,17 @@ setting:
   label: 1
   force2D: False
   force2Ddimension: 0
+
+  # Resampling:
+  # If slices are very thin (~1mm), such as in 3D scanned (isotropic) volumes, resampledPixelSpacing may be reduced to
+  # (1, 1, 1). Furthermore, in case of isotropic volumes, consider disabling resampling.
+  # On a side note: increasing the resampled spacing forces PyRadiomics to look at more coarse textures, which may or
+  # may not increase accuracy and stability of your extracted features.
   interpolator: 'sitkBSpline' # This is an enumerated value, here None is not allowed
-  resampledPixelSpacing: # This disables resampling, as it is interpreted as None, to enable it, specify spacing in x, y, z as [x, y , z]
+  resampledPixelSpacing:  [ 0.011, 0.011,0.011]
+  # This disables resampling, as it is interpreted as None, to enable it, specify spacing in x, y, z as [x, y , z]
+
+
   weightingNorm: # If no value is specified, it is interpreted as None
 
 # Image types to use: "Original" for unfiltered image, for possible filters, see documentation.

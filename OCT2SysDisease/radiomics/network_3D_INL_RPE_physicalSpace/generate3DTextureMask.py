@@ -9,7 +9,7 @@ srcVolumeDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
 segXmlDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml"
 spacingPath = "/home/hxie1/data/BES_3K/GTs/spacing/rawVolumeSpacing.yaml"
 
-# radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D.yaml"
+# radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D_indexSpace.yaml"
 
 # surface index starting from zero.
 sStart = 3
