@@ -1,7 +1,9 @@
-# Sequential Backward feature selection on 100 radiomics in index(pixel) space
+# Sequential Backward feature selection on 100 radiomics in physical space
 
-dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
+dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_physicalSpace"
 ODOS = "ODOS"
+
+hintName= "physicalspace"
 
 radiomicsFeatures = [
 "original_firstorder_10Percentile", # sample value :42.0
@@ -232,7 +234,7 @@ def main():
         curTime = datetime.datetime.now()
         timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-        outputPath = os.path.join(outputDir, f"{numRadiomics}radiomics_FeatureSelection_{timeStr}.txt")
+        outputPath = os.path.join(outputDir, f"{numRadiomics}radiomics_{hintName}_FeatureSelection_{timeStr}.txt")
         print(f"Log output is in {outputPath}")
         logOutput = open(outputPath, "w")
         original_stdout = sys.stdout
