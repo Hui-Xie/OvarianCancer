@@ -24,6 +24,12 @@ You may ignore below details:
    while the rate of [0,1] in the whole dataset is [0.4430678466076696,0.5569321533923304].
    output: /home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/100radiomics_FeatureSelection_20210218_113741.txt
 
+Isotropic pixel space:
+1  28min generates one radiomics file; Use 32 processes parallel;
+2  6488/(60*24) = 4.5 days.
+
+
+
 
 # Feb 16th, Tuesday, 2021:
 Meeting with professor:
