@@ -1,3 +1,29 @@
+#Feb 19th, Friday, 2021:
+Prepare slide for a comprehensive report:
+1  project introduction
+2  data in hand
+3  experiments for prediction:
+   Date, input, #samples, data[0,1] rate, method, result, notes
+   A  whole OCT image + deep learning
+   B  middle OCT slice + deep learning
+   C  SVM
+   D  Random Forests
+   F  Logistic Regrssion
+   G  Radiomics + Logistic Regression
+
+4  Data Analysis:
+   intensity
+   thickness
+   texture(radiomics)
+5  further suggestion:
+    1  thickness and HBP has some association;
+    2  but thickness is not powerfull enough to predict HBP with a statistical significant accuracy;
+    3  reposition this project into association analysis between thickness and HBP.
+
+
+
+
+
 # Feb 09th, Tuesday, 2021:
 1  look into Leixin's paper, check its 3D formula;
 2  traditional method needs to do cross validation for comparing with deep learning;
