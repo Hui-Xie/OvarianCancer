@@ -3,7 +3,7 @@
 dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_physicalSpace"
 ODOS = "ODOS"
 
-hintName= "physicalspace"
+hintName= "3DPhySpace"
 
 radiomicsFeatures = [
 "original_firstorder_10Percentile", # sample value :42.0

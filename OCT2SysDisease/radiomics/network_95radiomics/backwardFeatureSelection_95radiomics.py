@@ -2,6 +2,7 @@
 
 dataDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/bscan15_95radiomics"
 ODOS = "ODOS"
+hintName= "2DIndexSpace"
 
 radiomics95Features = [
     "original_firstorder_10Percentile",
@@ -229,7 +230,7 @@ def main():
         curTime = datetime.datetime.now()
         timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-        outputPath = os.path.join(outputDir, f"95radiomics_FeatureSelection_{timeStr}.txt")
+        outputPath = os.path.join(outputDir, f"95radiomics_{hintName}_FeatureSelection_{timeStr}.txt")
         print(f"Log output is in {outputPath}")
         logOutput = open(outputPath, "w")
         original_stdout = sys.stdout
