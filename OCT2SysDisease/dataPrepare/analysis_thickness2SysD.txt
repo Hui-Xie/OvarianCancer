@@ -11,23 +11,27 @@ background:
 4  In concept, engineered features using radiomics is equivalent with automatic feature selection using several neural layers.
    So the radiomics website (https://www.radiomics.io/) parallels both engineered features and deep learning as its radiomics methodologies.
 
-Plan next week:
-1  next week, when we wait for 3D retina radiomics generating. I am planning to try a new idea.
-2  The new idea: Use transfer learning to train 3D segmented retina for HBP(Hypertension)
-3  Method:
+A new idea: Use transfer learning to train 3D segmented retina for HBP(Hypertension)
+1  Next week, when we wait for 3D retina radiomics generating. I am planning to try a new idea.
+2  Method of the new idea:
    A. Input: 31x496x512 in pixel space, where 31 is the number of B-scans.
    B. Use segmented mask to exclude non-retina region, e.g. vitreous body and choroid etc, getting 31x496x512 filtered volume.
    C. Random crop the filtered 3D volume into 31x448x448 as data augmentation.
-   D. half-size scale down to 31x224x224.
-   E. 31 as channel, 31x224x224 input to a trained network: ResNext or MobielNet-v3 with replicated channel parameter from RGB to 31 channels.
+   D. halve size in X and Y to scale down to 31x224x224.
+   E. 31 as channels, 31x224x224 input to a trained network: ResNext or MobielNet-v3 with replicated channel parameters from RGB to 31 channels.
    F. Fine-tune whole network parameters.
-   G. Test time use 5-crop probabilities average to get the final test accuracy.
+   G. Test time uses 5-crop probabilities average to get the final test accuracy.
    H. Its possible further improvement:
       may consider to add clinical information before the final FC layer.
+3  Advantage of this method:
+   A  implicitly augment training data through a pretrained network.
+   B  reduce over-fitting.
+   C  use segmented 3D retina features, reducing the vitreous body etc noise information.
+   D  automatic features selection.
+4  Will the result be better?
+   We don't know. It needs experiments to verify it. I just estimate it may be better.
 
-
-
-
+If you have any comments or further suggestions, please feel free to let me know.
 
 
 #Feb 19th, Friday, 2021:
