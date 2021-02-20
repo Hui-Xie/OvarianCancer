@@ -66,12 +66,22 @@ def main():
             radimicsIDSet.add(int(ID))
     print(f"In radiomics dir, there are {len(radimicsIDSet)} unique IDs.")
 
-    nonexistIDRows = []
+    invalidIDRows = []
+    # delete ID without its radiomic feature/segmented xml
+    # delete MGM cases: high myopia(axilLength>=26), Glaucoma, Macula / Retina disease cases
+    excludedKeys = ['Axiallength_26_ormore_exclude$', 'Glaucoma_exclude$', 'Retina_exclude$']
     for i in range(nHBP01):
         if not (ID_HBP_Array[i,0] in radimicsIDSet):
-            nonexistIDRows.append(i)
-    nonexistIDRows = tuple(nonexistIDRows)
-    ID_HBP_Array = np.delete(ID_HBP_Array, nonexistIDRows, 0)
+            invalidIDRows.append(i)
+        for excludedKey in excludedKeys:
+            if 1 == fullLabels[ID_HBP_Array[i,0]][excludedKey]:
+                invalidIDRows.append(i)
+                break
+    print(f"delete IDs with high myopia, glaucoma and macula/retina disease")
+    print(f"delete IDs without segmented files.")
+
+    invalidIDRows = tuple(invalidIDRows)
+    ID_HBP_Array = np.delete(ID_HBP_Array, invalidIDRows, 0)
     nHBP01 = len(ID_HBP_Array)
     nHBP1 = int(ID_HBP_Array[:,1].sum())
     nHBP0 = nHBP01- nHBP1
