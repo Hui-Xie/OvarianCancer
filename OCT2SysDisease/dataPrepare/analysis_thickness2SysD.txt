@@ -23,13 +23,17 @@ A new idea: Use transfer learning to train 3D segmented retina for HBP(Hypertens
    G. Test time uses 5-crop probabilities average to get the final test accuracy.
    H. Its possible further improvement:
       may consider to add clinical information before the final FC layer.
-3  Advantage of this method:
+3  Advantages of this method:
    A  implicitly augment training data through a pretrained network.
    B  reduce over-fitting.
    C  use segmented 3D retina features, reducing the vitreous body etc noise information.
    D  automatic features selection.
-4  Will the result be better?
-   We don't know. It needs experiments to verify it. I just estimate it may be better.
+4  Disvantages of this method:
+   Replicating pretrained RGB 3-channel parameters to 31 channels may change the pretrained and optimized network status.
+   The feature values in the feature map of layer 0 after 31 channels may change into 10 times of feature values of original RGB pretrained network.
+   Maybe a normalization in input 31 channel may help. It needs further research on this detail.
+5  Will the result be better?
+   I don't know. It needs experiments to verify it. I just estimate it may be better.
 
 If you have any comments or further suggestions, please feel free to let me know.
 
