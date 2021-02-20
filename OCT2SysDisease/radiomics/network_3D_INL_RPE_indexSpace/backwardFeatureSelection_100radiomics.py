@@ -107,9 +107,9 @@ radiomicsFeatures = [
 ]
 
 # for sequential backward feature choose, use all data at CV0
-trainingDataPath = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/trainID_95radiomics_10CV_0.csv"
-validationDataPath = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/validationID_95radiomics_10CV_0.csv"
-testDataPath = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/testID_95radiomics_10CV_0.csv"
+trainingDataPath = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/trainID_segmented_10CV_0.csv"
+validationDataPath = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/validationID_segmented_10CV_0.csv"
+testDataPath = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/testID_segmented_10CV_0.csv"
 
 clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 
@@ -119,7 +119,7 @@ outputDir = "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV"
 numRadiomics = 100
 keyName = "hypertension_bp_plus_history$"
 srcSuffix = "_Volume_100radiomics.npy"
-class01Percent = [0.4421085660495764, 0.5578914339504236]  # according to HBP tag and xml image.
+class01Percent = [0.449438202247191,0.550561797752809]  # according to HBP tag and xml image.
 
 output2File = True
 deleteOutlierIterateOnce = True
