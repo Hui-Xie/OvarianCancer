@@ -1,10 +1,11 @@
 # Feb 20th, Saturday, 2021:
 Use transfer learning to train 3D segmented retina for HBP(Hypertension)
-background:
+Background:
 1  Yesterday when I was summarizing previous experiments on HBP for a comprehensive report, I found that our MobileNetV3 experiment got 63% validation accuracy.
-   It is not too bad comparing with logistic regression, radiomics on thickness input;
+   It is not too bad comparing with logistic regression, radiomics on thickness input; (Please refer the attached 3 excel sheets.)
 2  Our a lot of experiment shows that thickness is not powerful enough to predict HBP with a statistical significant accuracy.
    There may be an association between thickness of some layers and HBP, but this association is not powerful enough to predict HBP with a a statistical significant accuracy.
+   There is a possible way to reposition our current research into a association analysis between OCT thickness and HBP, instead of HBP prediction. (This needs two professors' decision.)
 3  Reducing the size of input space though features selection is a way to  reduce over-fitting;
    When it is not enough, transfer learning is also a way to reduce over-fitting, as transfer learning uses a trained network on a huge dataset.
    In some sense, transfer learning uses a huge data data as an initial network training.
@@ -17,7 +18,7 @@ A new idea: Use transfer learning to train 3D segmented retina for HBP(Hypertens
    A. Input: 31x496x512 in pixel space, where 31 is the number of B-scans.
    B. Use segmented mask to exclude non-retina region, e.g. vitreous body and choroid etc, getting 31x496x512 filtered volume.
    C. Random crop the filtered 3D volume into 31x448x448 as data augmentation.
-   D. halve size in X and Y to scale down to 31x224x224.
+   D. halve size in X and Y direction to scale down to 31x224x224.
    E. 31 as channels, 31x224x224 input to a trained network: ResNext or MobielNet-v3 with replicated channel parameters from RGB to 31 channels.
    F. Fine-tune whole network parameters.
    G. Test time uses 5-crop probabilities average to get the final test accuracy.
@@ -30,7 +31,7 @@ A new idea: Use transfer learning to train 3D segmented retina for HBP(Hypertens
    D  automatic features selection.
 4  Disvantages of this method:
    Replicating pretrained RGB 3-channel parameters to 31 channels may change the pretrained and optimized network status.
-   The feature values in the feature map of layer 0 after 31 channels may change into 10 times of feature values of original RGB pretrained network.
+   The feature values in the feature map of layer 0 after 31 channels may change into 10 times of the feature values of original RGB pretrained network.
    Maybe a normalization in input 31 channel may help. It needs further research on this detail.
 5  Will the result be better?
    I don't know. It needs experiments to verify it. I just estimate it may be better.
