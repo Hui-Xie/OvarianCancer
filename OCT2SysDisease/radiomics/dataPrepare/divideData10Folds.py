@@ -9,7 +9,7 @@ import os
 import fnmatch
 
 import sys
-sys.path.append(".")
+sys.path.append("../network_95radiomics")
 from OCT2SysD_Tools import readBESClinicalCsv
 import datetime
 
@@ -141,16 +141,16 @@ def main():
                 partitions["training"] += patientsSubList[i]
 
         # save to file
-        with open(os.path.join(outputDir, f"testID_95radiomics_{K}CV_{k}.csv"), "w") as file:
+        with open(os.path.join(outputDir, f"testID_segmented_{K}CV_{k}.csv"), "w") as file:
             for v in partitions["test"]:
                 file.write(f"{int(v)}\n")
 
         if outputValidation:
-            with open(os.path.join(outputDir, f"validationID_95radiomics_{K}CV_{k}.csv"),"w") as file:
+            with open(os.path.join(outputDir, f"validationID_segmented_{K}CV_{k}.csv"),"w") as file:
                 for v in partitions["validation"]:
                     file.write(f"{int(v)}\n")
 
-        with open(os.path.join(outputDir, f"trainID_95radiomics_{K}CV_{k}.csv"), "w") as file:
+        with open(os.path.join(outputDir, f"trainID_segmented_{K}CV_{k}.csv"), "w") as file:
             for v in partitions["training"]:
                 file.write(f"{int(v)}\n")
 
@@ -161,7 +161,7 @@ def main():
         logOutput.close()
         sys.stdout = original_stdout
 
-    print(f"==========End of dividing IDs with 95 radiomics features and hypertension tag into 10 folds============ ")
+    print(f"==========End of dividing IDs with segmented features and hypertension tag into 10 folds============ ")
 
 
 if __name__ == "__main__":
