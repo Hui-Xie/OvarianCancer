@@ -1,3 +1,12 @@
+#Feb 23rd, Tuesday, 2021:
+Discuss with professor:
+1  output a comprenhensive slide about HBP prediction, about radiomics design, implementation, and result.
+2  research loss function.
+3  HBP prediction go forward:
+   A transfer learning.
+   B combine thinkness, clinical data, radiomics to predict HBP.
+   
+
 # Feb 22nd, Monday, 2021:
 Research transfer learning:
 Transfer learning is a machine learning method where a model developed for a task is reused as the starting point for a model on a second task.
@@ -22,9 +31,6 @@ Note:
    If the gradient is big, you should reduce the learning rate.
    However you usually have different gradient magnitudes in a same batch.
    Normalizing the image to smaller pixel values is a cheap price to pay while making easier to tune an optimal learning rate for input images.
-
-
-
 
 
 # Feb 20th, Saturday, 2021:
