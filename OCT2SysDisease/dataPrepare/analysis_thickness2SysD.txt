@@ -1,3 +1,32 @@
+# Feb 22nd, Monday, 2021:
+Research transfer learning:
+Transfer learning is a machine learning method where a model developed for a task is reused as the starting point for a model on a second task.
+Transfer learning only works in deep learning if the model features learned from the first task are general.
+features are more generic in early layers and more original-dataset-specific in later layers.
+Transfer learning is an optimization, a shortcut to saving time or getting better performance.
+Transfer learning can be used to accelerate the training of neural networks as either a weight initialization scheme or feature extraction method.
+Weight Initialization: This may be useful when the first related problem has a lot more labeled data than the problem of interest
+                       and the similarity in the structure of the problem may be useful in both contexts.  It can use big learning rate.
+Feature extraction:    only new layers after the reused layers may be trained to interpret their output.  It needs small learning rate.
+
+Because these days, it is standard practice to use Transfer Learning to make use of pre-trained models instead of training a brand new model from scratch.
+
+Note:
+1 pretrained ImageNet NN generally uses normalized input;
+2 an excellent post: https://www.azavea.com/blog/2019/08/30/transfer-learning-from-rgb-to-multi-band-imagery/
+3 replicate RGB to 31 channels, then we have 2 methods to go further
+  A . 31 channels values after the first RGB layer add together, which may scale up the value;
+  B . use 1x1 conv to project 31 channels  to 3 channel, then feed into RGB channel layer.
+4 ImageNet input image normalization in which dimension?
+   Answer: normalization on the RGB channel dimension.
+   If the gradient is big, you should reduce the learning rate.
+   However you usually have different gradient magnitudes in a same batch.
+   Normalizing the image to smaller pixel values is a cheap price to pay while making easier to tune an optimal learning rate for input images.
+
+
+
+
+
 # Feb 20th, Saturday, 2021:
 Use transfer learning to train 3D segmented retina for HBP(Hypertension)
 Background:
