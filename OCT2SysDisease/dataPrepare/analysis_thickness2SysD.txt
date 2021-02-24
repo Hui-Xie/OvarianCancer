@@ -9,9 +9,17 @@ Discuss with professor:
 ======================
 Design transfer learing:
 1  volume data: /home/hxie1/data/BES_3K/W512NumpyVolumes/volumes   --ready.
-2  generate the segmented 3D retina by xml, and normalizaiton;
-2  check pretrained network in Pytorch:
-3  research how to change and input layer width and copy pretrained parameters;
+2  generate the segmented 3D retina using xml, and normalization;
+   original volume pixel value in [0, 255],
+   All pre-trained models expect input images normalized in the same way,
+   i.e. mini-batches of 3-channel RGB images of shape (3 x H x W), where H and W are expected to be at least 224.
+   The images have to be loaded in to a range of [0, 1]
+   and then normalized using mean = [0.485, 0.456, 0.406] and std = [0.229, 0.224, 0.225], which are the mean and stddev of ImageNet.
+   We should compute the mean and std of each channels of 31 channels of OCT images.
+
+
+2  check pretrained network in Pytorch; --done
+3  research how to change and input layer width and copy pretrained parameters;   --done
 4  use the radiomics 10-fold CV data.       -- ready.
 5  code network. 
 
