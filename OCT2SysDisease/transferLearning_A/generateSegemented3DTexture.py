@@ -12,7 +12,12 @@
 #  E.  normalization: (image-mean)/std.
 #  F.  save as npy file.
 
-textureOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s0tos9_indexSpace"
+import os
+
+outputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s0tos9_indexSpace"
+textureOutputDir = os.path.join(outputDir,"volumes")
+maskOutputDir = os.path.join(outputDir,"masks")
+
 
 srcVolumeDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
 segXmlDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/xml"
@@ -27,7 +32,7 @@ import numpy as np
 import sys
 sys.path.append("../..")
 from OCTMultiSurfaces.dataPrepare_Tongren.TongrenFileUtilities import  getSurfacesArray
-import os
+
 import datetime
 
 output2File = True
@@ -43,7 +48,7 @@ def main():
         curTime = datetime.datetime.now()
         timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-        outputPath = os.path.join(textureOutputDir, f"outputLog_{timeStr}.txt")
+        outputPath = os.path.join(outputDir, f"outputLog_{timeStr}.txt")
         print(f"Log output is in {outputPath}")
         logOutput = open(outputPath, "w")
         original_stdout = sys.stdout
@@ -53,6 +58,27 @@ def main():
     print(f"total {len(patientSegsList)} xml files.")
     print(f"output segmented and normalized retina regions from surface {sStart} to surface{sEnd}.")
 
+    # first generate masks
+    for xmlPath in patientSegsList:
+        volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
+        volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
+        maskPath = os.path.join(maskOutputDir, f"{volumeName}_mask.npy")
+
+        if os.path.isfile(maskPath):  # generating one file needs 30 seconds.
+            continue
+
+        volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
+
+        # generate retina layer mask for surface sStart to sEnd
+        mask = np.zeros((S,H,W), dtype=np.uint32)  # size: SxHxW
+        for s in range(S):
+            for c in range(W):
+                mask[s, volumeSeg[s, sStart, c]:volumeSeg[s, sEnd, c], c] = 1
+
+        np.save(maskPath, mask)
+    print(f"Now all masks have been generated in {maskOutputDir}")
+
+
     # first compute mean for each B-scan
     nPatients = 0
     sumBscans = np.zeros((S), dtype=np.float)
@@ -60,15 +86,10 @@ def main():
         volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
         volumePath = os.path.join(srcVolumeDir, volumeName+".npy")
+        maskPath = os.path.join(maskOutputDir, f"{volumeName}_mask.npy")
 
         volume = np.load(volumePath)  # 31x496x512
-        volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
-
-        # generate retina layer mask for surface sStart to sEnd
-        mask = np.zeros(volume.shape, dtype=np.uint32)  # size: SxHxW
-        for s in range(S):
-            for c in range(W):
-                mask[s, volumeSeg[s,sStart, c]:volumeSeg[s,sEnd, c], c] = 1
+        mask = np.load(maskPath)
 
         retinaVolume = (volume * mask)/255.0  # size: 31x496x512
         nPatients += 1
@@ -85,20 +106,15 @@ def main():
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
         volumePath = os.path.join(srcVolumeDir, volumeName + ".npy")
 
+        maskPath = os.path.join(maskOutputDir, f"{volumeName}_mask.npy")
         volume = np.load(volumePath)  # 31x496x512
-        volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
-
-        # generate retina layer mask for surface sStart to sEnd
-        mask = np.zeros(volume.shape, dtype=np.uint32)  # size: SxHxW
-        for s in range(S):
-            for c in range(W):
-                mask[s, volumeSeg[s, sStart, c]:volumeSeg[s, sEnd, c], c] = 1
+        mask = np.load(maskPath)
 
         retinaVolume = (volume * mask) / 255.0  # size: 31x496x512
         nPatients += 1
 
         sumBscans = sumBscans + np.square(retinaVolume-meanBscansExpand).sum(axis=(1, 2))
-    stdBscans = sumBscans / (nPatients * H * W)
+    stdBscans = np.sqrt(sumBscans / (nPatients * H * W))
     print(f"stdBscans = {stdBscans}")
 
     # normalization and save to numpy file
@@ -108,20 +124,17 @@ def main():
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
         volumePath = os.path.join(srcVolumeDir, volumeName + ".npy")
 
-        volume = np.load(volumePath)  # 31x496x512
-        volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
+        imagePath = os.path.join(textureOutputDir, volumeName + f"_SegTexture.npy")
+        if os.path.isfile(imagePath):  # generating one file needs 30 seconds.
+            continue
 
-        # generate retina layer mask for surface sStart to sEnd
-        mask = np.zeros(volume.shape, dtype=np.uint32)  # size: SxHxW
-        for s in range(S):
-            for c in range(W):
-                mask[s, volumeSeg[s, sStart, c]:volumeSeg[s, sEnd, c], c] = 1
+        maskPath = os.path.join(maskOutputDir, f"{volumeName}_mask.npy")
+        volume = np.load(volumePath)  # 31x496x512
+        mask = np.load(maskPath)
 
         retinaVolume = (volume * mask) / 255.0  # size: 31x496x512
         normVolume = (retinaVolume-meanBscansExpand)/stdBscansExpand
 
-
-        imagePath = os.path.join(textureOutputDir, volumeName + f"_SegTexture.npy")
         np.save(imagePath, normVolume)
 
     if output2File:

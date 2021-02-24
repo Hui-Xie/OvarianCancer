@@ -9,7 +9,7 @@ Discuss with professor:
 ======================
 Design transfer learing:
 1  volume data: /home/hxie1/data/BES_3K/W512NumpyVolumes/volumes   --ready.
-2  generate the segmented 3D retina using xml, and normalization;
+2  generate the segmented 3D retina using xml, and normalization;  --done.
    original volume pixel value in [0, 255],
    All pre-trained models expect input images normalized in the same way,
    i.e. mini-batches of 3-channel RGB images of shape (3 x H x W), where H and W are expected to be at least 224.
