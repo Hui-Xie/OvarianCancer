@@ -34,12 +34,14 @@ import os
 import datetime
 
 output2File = True
-S = 31
-H = 496
-W = 512
-N = 10
+
 
 def main():
+    S = 31
+    H = 496
+    W = 512
+    N = 10
+
     # prepare output file
     if output2File:
         curTime = datetime.datetime.now()
@@ -77,7 +79,6 @@ def main():
     meanBscans = sumBscans/(nPatients*H*W)
     print(f"meanBscans = {meanBscans}")
 
-    return
 
 
 
@@ -87,7 +88,7 @@ def main():
     # compute std
 
     # normalization and save to numpy file
-    for xmlPath in patientSegsList:
+    if False:#for xmlPath in patientSegsList:
         volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
         volumePath = os.path.join(srcVolumeDir, volumeName+".npy")
