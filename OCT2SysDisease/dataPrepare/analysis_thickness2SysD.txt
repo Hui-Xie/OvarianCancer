@@ -9,6 +9,7 @@ Discuss with professor:
 ======================
 Design transfer learing:
 1  volume data: /home/hxie1/data/BES_3K/W512NumpyVolumes/volumes   --ready.
+2  generate the segmented 3D retina by xml, and normalizaiton;
 2  check pretrained network in Pytorch:
 3  research how to change and input layer width and copy pretrained parameters;
 4  use the radiomics 10-fold CV data.       -- ready.
