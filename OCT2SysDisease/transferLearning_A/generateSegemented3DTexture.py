@@ -58,7 +58,7 @@ def main():
 
     # first compute mean for each B-scan
     nPatients = 0
-    sumBscans = np.zeros((32), dtype=np.float)
+    sumBscans = np.zeros((S), dtype=np.float)
     for xmlPath in patientSegsList:
         volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
