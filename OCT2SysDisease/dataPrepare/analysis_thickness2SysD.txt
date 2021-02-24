@@ -5,7 +5,16 @@ Discuss with professor:
 3  HBP prediction go forward:
    A transfer learning.
    B combine thinkness, clinical data, radiomics to predict HBP.
-   
+
+======================
+Design transfer learing:
+1  volume data: /home/hxie1/data/BES_3K/W512NumpyVolumes/volumes   --ready.
+2  check pretrained network in Pytorch:
+3  research how to change and input layer width and copy pretrained parameters;
+4  use the radiomics 10-fold CV data.       -- ready.
+5  code network. 
+
+
 
 # Feb 22nd, Monday, 2021:
 Research transfer learning:
