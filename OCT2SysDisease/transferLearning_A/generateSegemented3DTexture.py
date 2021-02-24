@@ -75,7 +75,7 @@ def main():
 
         retinaVolume = (volume * mask)/255.0  # size: 31x496x512
         nPatients += 1
-        sumBscans =sumBscans + retinaVolume.sum(axis=[1,2])
+        sumBscans =sumBscans + retinaVolume.sum(axis=(1,2))
     meanBscans = sumBscans/(nPatients*H*W)
     print(f"meanBscans = {meanBscans}")
 
