@@ -12,7 +12,6 @@
 #  E.  normalization: (image-mean)/std.
 #  F.  save as npy file.
 
-
 textureOutputDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s0tos9_indexSpace"
 
 srcVolumeDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/volumes"
@@ -24,8 +23,6 @@ sEnd = 9   # the whole segmented section.
 
 import glob
 import numpy as np
-#  from PIL import Image  # for Tiff image save.
-import SimpleITK as sitk
 
 import sys
 sys.path.append("../..")
@@ -35,12 +32,11 @@ import datetime
 
 output2File = True
 
-
 def main():
     S = 31
     H = 496
     W = 512
-    N = 10
+    N = 10  # surface number
 
     # prepare output file
     if output2File:
@@ -55,6 +51,7 @@ def main():
 
     patientSegsList = glob.glob(segXmlDir + f"/*_Volume_Sequence_Surfaces_Prediction.xml")
     print(f"total {len(patientSegsList)} xml files.")
+    print(f"output segmented and normalized retina regions from surface {sStart} to surface{sEnd}.")
 
     # first compute mean for each B-scan
     nPatients = 0
@@ -79,45 +76,53 @@ def main():
     meanBscans = sumBscans/(nPatients*H*W)
     print(f"meanBscans = {meanBscans}")
 
-
-
-
-
-
-
-    # compute std
-
-    # normalization and save to numpy file
-    if False:#for xmlPath in patientSegsList:
+    # compute std for each B-scan
+    nPatients = 0
+    sumBscans = np.zeros((S), dtype=np.float)
+    meanBscansExpand = np.tile(meanBscans.reshape(S,1,1), reps=(1,H,W))
+    for xmlPath in patientSegsList:
         volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
-        volumePath = os.path.join(srcVolumeDir, volumeName+".npy")
-
-        maskName = volumeName + f"_s{sStart}tos{sEnd}"
-
-        imagePath = os.path.join(textureOutputDir, volumeName + f"_texture.nrrd")
-        maskPath = os.path.join(maskOutputDir, maskName + f"_mask.nrrd")
+        volumePath = os.path.join(srcVolumeDir, volumeName + ".npy")
 
         volume = np.load(volumePath)  # 31x496x512
         volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
-        S, H, W = volume.shape
-        _, N, _ = volumeSeg.shape
 
         # generate retina layer mask for surface sStart to sEnd
         mask = np.zeros(volume.shape, dtype=np.uint32)  # size: SxHxW
         for s in range(S):
             for c in range(W):
-                mask[s, volumeSeg[s,sStart, c]:volumeSeg[s,sEnd, c], c] = 1
+                mask[s, volumeSeg[s, sStart, c]:volumeSeg[s, sEnd, c], c] = 1
 
-        # use PIL to save image for tiff format
-        # pyradiomics can not correctly recognize tiff 2D mask
-        # Image.fromarray(slice).save(imagePath)
-        # Image.fromarray(mask).save(maskPath)
+        retinaVolume = (volume * mask) / 255.0  # size: 31x496x512
+        nPatients += 1
 
-        # use sitk to save image in 3D array
-        sitk.WriteImage(sitk.GetImageFromArray(volume), imagePath)
-        sitk.WriteImage(sitk.GetImageFromArray(mask), maskPath)
+        sumBscans = sumBscans + np.square(retinaVolume-meanBscansExpand).sum(axis=(1, 2))
+    stdBscans = sumBscans / (nPatients * H * W)
+    print(f"stdBscans = {stdBscans}")
 
+    # normalization and save to numpy file
+    stdBscansExpand = np.tile(stdBscans.reshape(S, 1, 1), reps=(1, H, W))
+    for xmlPath in patientSegsList:
+        volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
+        volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
+        volumePath = os.path.join(srcVolumeDir, volumeName + ".npy")
+
+        volume = np.load(volumePath)  # 31x496x512
+        volumeSeg = getSurfacesArray(xmlPath).astype(np.uint32)  # 31x10x512
+
+        # generate retina layer mask for surface sStart to sEnd
+        mask = np.zeros(volume.shape, dtype=np.uint32)  # size: SxHxW
+        for s in range(S):
+            for c in range(W):
+                mask[s, volumeSeg[s, sStart, c]:volumeSeg[s, sEnd, c], c] = 1
+
+        retinaVolume = (volume * mask) / 255.0  # size: 31x496x512
+        normVolume = (retinaVolume-meanBscansExpand)/stdBscansExpand
+
+
+        imagePath = os.path.join(textureOutputDir, volumeName + f"_SegTexture.npy")
+        np.save(imagePath, normVolume)
 
     if output2File:
         logOutput.close()
