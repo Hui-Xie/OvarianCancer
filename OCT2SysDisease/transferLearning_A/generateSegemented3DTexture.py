@@ -77,6 +77,8 @@ def main():
     meanBscans = sumBscans/(nPatients*H*W)
     print(f"meanBscans = {meanBscans}")
 
+    return
+
 
 
 
