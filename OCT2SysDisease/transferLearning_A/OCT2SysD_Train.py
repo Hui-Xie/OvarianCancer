@@ -26,7 +26,7 @@ from framework.measure import  *
 
 def printUsage(argv):
     print("============ Training of 3D sgemented retina to binary prediction Network =============")
-    print("=======input data is thickness enface map ===========================")
+    print("=======input data is 3D normalized and segmented retina image  ===========================")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -47,8 +47,8 @@ def main():
     validationTransform = OCT2SysD_Transform(hps) if hps.validationAugmentation else None
     # some people think validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    #trainData = OCT2SysD_DataSet("training", hps=hps, transform=trainTransform)
-    #validationData = OCT2SysD_DataSet("validation", hps=hps, transform=validationTransform)
+    trainData = OCT2SysD_DataSet("training", hps=hps, transform=trainTransform)
+    validationData = OCT2SysD_DataSet("validation", hps=hps, transform=validationTransform)
 
     # construct network
     net = eval(hps.network)(hps=hps)
@@ -76,7 +76,7 @@ def main():
     worse (often significantly worse) than SGD, even when these solutions have better training performance. 
     These results suggest that practitioners should reconsider the use of adaptive methods to train neural networks.
     '''
-    optimizer = optim.SGD(net.parameters(), lr=hps.learningRate, weight_decay=hps.weightDecay, momentum=0)
+    optimizer = optim.SGD(net.parameters(), lr=hps.learningRate, weight_decay=hps.weightDecay, momentum=hps.momentum)
     net.setOptimizer(optimizer)
 
     # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
@@ -131,7 +131,7 @@ def main():
             allTrainGTs = t if allTrainGTs is None else torch.cat((allTrainGTs, t))
 
             #debug
-            # break
+            break
 
         trAcc = computeClassificationAccuracyWithLogit(allTrainGTs, allTrainOutput)
 
@@ -157,6 +157,9 @@ def main():
                 allValidationOutput = x if allValidationOutput is None else torch.cat((allValidationOutput, x))
                 allValidationGTs    = t if allValidationGTs    is None else torch.cat((allValidationGTs,    t))
 
+                # debug
+                break
+
             validLoss /= validBatch
 
         validAcc = computeClassificationAccuracyWithLogit(allValidationGTs, allValidationOutput)
@@ -180,8 +183,6 @@ def main():
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss:
-        # if  validAcc > preAccuracy:
-        # if Td_Acc_TPR_TNR_Sum['Sum'] > preAccuracy:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("accuracy_cutoff0.5", validAcc)
@@ -194,9 +195,9 @@ def main():
 
 
         # debug
-        # print(f"smoke test: finish one epoch of training and  validation")
+        print(f"smoke test: finish one epoch of training and  validation")
 
-    print("============ End of Training Thickness enface map 2 Binary Systemic Disease Prediction ===========")
+    print("============ End of Training 3D retina to  2 Binary Systemic Disease Prediction ===========")
 
 
 

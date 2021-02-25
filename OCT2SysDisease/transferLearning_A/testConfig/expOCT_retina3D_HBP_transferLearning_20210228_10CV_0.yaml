@@ -66,7 +66,7 @@ targetKey: "hypertension_bp_plus_history$"
 class01Percent:  [0.449438202247191,0.550561797752809]  # for 10-fold CV data
 
 trainAugmentation: True
-validationAugmentation: False
+validationAugmentation: True
 useAddSamplesAugment: False  # when true, do not use other data augmentation.
 addSamplesProb: 0.6  #  data augmentation rate
 augmentProb: 0.5  # normal augment prob
