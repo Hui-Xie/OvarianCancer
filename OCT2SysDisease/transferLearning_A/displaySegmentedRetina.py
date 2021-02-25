@@ -21,4 +21,6 @@ print(f"volume.shape = {volume.shape}")
 slice = volume[k]
 
 # use PIL to save tiff image, which keep single byte for each pixel.
+# using PIL to save tif image can preserver its float value. good.
+
 Image.fromarray(slice).save(outputPath)
