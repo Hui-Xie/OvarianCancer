@@ -3,7 +3,7 @@ debug: True
 debugOutputPeriod: 50
 
 # train config
-device: torch.device('cuda:2')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 batchSize: 32 # test: 275 patients;  validation: 276 patients;  training: 2208 patients;
 #  proper batchSize may keep drop_last=False
 learningRate: 1.0e-2  #
@@ -38,7 +38,7 @@ ODOS: "ODOS"
 # _delErrWID: delete W=384 image ID
 # _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
 K_fold: 10
-k: 0
+k: 7
 trainingDataPath: "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/trainID_segmented_10CV_.csv"  # name needs add k
 validationDataPath: "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/validationID_segmented_10CV_.csv"
 testDataPath: "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/testID_segmented_10CV_.csv"

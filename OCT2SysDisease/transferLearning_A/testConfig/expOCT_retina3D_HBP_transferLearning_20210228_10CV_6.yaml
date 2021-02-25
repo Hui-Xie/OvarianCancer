@@ -38,7 +38,7 @@ ODOS: "ODOS"
 # _delErrWID: delete W=384 image ID
 # _excludeMGM: delete high myopia, Glaucoma, and Macula and retina disease
 K_fold: 10
-k: 0
+k: 6
 trainingDataPath: "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/trainID_segmented_10CV_.csv"  # name needs add k
 validationDataPath: "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/validationID_segmented_10CV_.csv"
 testDataPath: "/home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV/testID_segmented_10CV_.csv"
