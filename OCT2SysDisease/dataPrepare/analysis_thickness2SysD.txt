@@ -41,7 +41,9 @@ stdBscans = [0.14800051 0.14917299 0.14980883 0.1504818  0.15139771 0.15180002
    B  dataLoad.  --done
    C  dataTransform.  --done
    D  training main program.  --done, pass smoke test.
-   E  5-crop+mirror test program.
+   E  5-crop+mirror test program.   --done.
+   Now 10-CV is training on skm2 server, at 5 min/epoch.
+
 
 
 
