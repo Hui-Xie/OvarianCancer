@@ -141,8 +141,16 @@ def computeThresholdAccTPR_TNRSumFromProbDict(probDict):
 
         assert nTotal == TP + TN + FP + FN + nIgnore
         ACCList[i] = (TP + TN) * 1.0 / (TP + TN + FP + FN)
-        TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
-        TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+        if TP == TP + FN:
+            TPRList[i] = 1.0
+        else:
+            TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+
+        if TN == TN + FP:
+            TNRList[i] = 1.0
+        else:
+            TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+
         SumList[i] = ACCList[i] + TPRList[i] + TNRList[i]
 
     maxIndex = np.argmax(SumList)
@@ -191,8 +199,15 @@ def search_Threshold_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits):
 
         assert nTotal == TP + TN + FP + FN + nIgnore
         ACCList[i] = (TP + TN) * 1.0 / (TP + TN + FP + FN)
-        TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
-        TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+        if TP == TP + FN:
+            TPRList[i] = 1.0
+        else:
+            TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+
+        if TN == TN + FP:
+            TNRList[i] = 1.0
+        else:
+            TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
         SumList[i] = ACCList[i] + TPRList[i] + TNRList[i]
 
     maxIndex = np.argmax(SumList)
@@ -240,8 +255,16 @@ def search_Threshold_Acc_TPR_TNR_Sum_WithProb(gt,predictProbs):
 
         assert nTotal == TP + TN + FP + FN + nIgnore
         ACCList[i] = (TP + TN) * 1.0 / (TP + TN + FP + FN)
-        TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
-        TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+        if TP == TP + FN:
+            TPRList[i] = 1.0
+        else:
+            TPRList[i] = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+
+        if TN == TN + FP:
+            TNRList[i] = 1.0
+        else:
+            TNRList[i] = TN * 1.0 / (TN + FP + epsilon)  # specificity
+
         SumList[i] = ACCList[i] + TPRList[i] + TNRList[i]
 
     maxIndex = np.argmax(SumList)
@@ -283,8 +306,17 @@ def compute_Acc_TPR_TNR_Sum_WithLogits(gt,predictLogits, threshold):
 
     assert nTotal == TP + TN + FP + FN + nIgnore
     ACC = (TP + TN) * 1.0 / (TP + TN + FP + FN)
-    TPR = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
-    TNR = TN * 1.0 / (TN + FP + epsilon)  # specificity
+
+    if TP == TP+FN:
+        TPR = 1.0
+    else:
+        TPR = TP * 1.0 / (TP + FN + epsilon)  # sensitivity
+
+    if TN == TN +FP:
+        TNR = 1.0
+    else:
+        TNR = TN * 1.0 / (TN + FP + epsilon)  # specificity
+
     Sum = ACC + TPR + TNR
 
     return {"ACC": ACC, "TPR": TPR, "TNR": TNR, "Sum": Sum}

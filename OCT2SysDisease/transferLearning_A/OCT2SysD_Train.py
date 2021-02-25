@@ -131,7 +131,7 @@ def main():
             allTrainGTs = t if allTrainGTs is None else torch.cat((allTrainGTs, t))
 
             #debug
-            break
+            # break
 
         trAcc = computeClassificationAccuracyWithLogit(allTrainGTs, allTrainOutput)
 
@@ -158,7 +158,7 @@ def main():
                 allValidationGTs    = t if allValidationGTs    is None else torch.cat((allValidationGTs,    t))
 
                 # debug
-                break
+                # break
 
             validLoss /= validBatch
 
@@ -195,7 +195,7 @@ def main():
 
 
         # debug
-        print(f"smoke test: finish one epoch of training and  validation")
+        # print(f"smoke test: finish one epoch of training and  validation")
 
     print("============ End of Training 3D retina to  2 Binary Systemic Disease Prediction ===========")
 
