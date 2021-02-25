@@ -41,7 +41,7 @@ class OCT2SysD_Transform(object):
             data[torch.nonzero(saltMask, as_tuple=True)] = max
 
         # flip image:
-        if random.uniform(0, 1) < self.hps.augmentProb:
+        if self.hps.flipAugmentation and random.uniform(0, 1) < self.hps.augmentProb:
             data = torch.flip(data, dims=(2,))
 
 
