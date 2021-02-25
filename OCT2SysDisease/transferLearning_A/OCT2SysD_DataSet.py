@@ -113,15 +113,15 @@ class OCT2SysD_DataSet(data.Dataset):
         # convert to torch tensor
         self.m_targetLabels = torch.from_numpy(self.m_targetLabels).to(device=hps.device, dtype=torch.float32)
 
-        self.m_randomRangeH = hps.originalImageH - 2* hps.imageH
-        self.m_randomRangeW = hps.originalImageW - 2 * hps.imageW
+        self.m_rH = hps.originalImageH - 2 * hps.imageH  #  randomRangeH
+        self.m_rW = hps.originalImageW - 2 * hps.imageW  # randomRangeW
 
         # save log information:
         with open(hps.logMemoPath, "a") as file:
-            file.write(f"{mode} dataset feature selection: NVolumes={self.m_NVolumes}")
+            file.write(f"{mode} dataset in {hps.K_fold}CV_{hps.k}: NVolumes={self.m_NVolumes}\n")
             rate1 = self.m_labelTable[:, 1].sum() * 1.0 / self.m_NVolumes
             rate0 = 1 - rate1
-            file.write(f"{mode} dataset in {hps.K_fold}CV_{hps.k}: proportion of 0,1 = [{rate0},{rate1}]")
+            file.write(f"{mode} dataset in {hps.K_fold}CV_{hps.k}: proportion of 0,1 = [{rate0},{rate1}]\n")
 
     def __len__(self):
         return self.m_NVolumes
@@ -177,14 +177,45 @@ class OCT2SysD_DataSet(data.Dataset):
         data = np.load(self.m_volumePaths[index]).astype(np.float32)
         data =  torch.from_numpy(data).to(device=self.hps.device, dtype=torch.float32)
 
+        H2 = self.hps.imageH * 2
+        W2 = self.hps.imageW * 2
+
         if self.m_mode == "test":
             # 5-crop images and mirror -> 10 crops.
-            pass
+            '''
+            # Test-time augmentation:
+            # refer to AlexNet's idea,and ResNet also adapted this 10-crop TTA:
+            #  "At test time, the network makes a prediction by extracting five 224×224 patches
+            #  (the four corner patches and the center patch) as well as their horizontal reflections (hence ten patches in all),
+            #  and averaging the predictions made by the network’s softmax layer on the ten patches."
+            
+            crop locations: 
+            0   1
+              4
+            2   3
+            '''
+
+            data10Crops = torch.zeros((10,self.hps.inputChannels, self.hps.imageH, self.hps.imageW), dtype=torch.float32, device=self.hps.device)
+            crop0 = data[:, 0:H2, 0:W2][:,0::2, 0::2]
+            crop1 = data[:, 0:H2,  self.m_rW:self.m_rW + W2][:, 0::2, 0::2]
+            crop2 = data[:, self.m_rH:self.m_rH + H2,  0:W2][:, 0::2, 0::2]
+            crop3 = data[:, self.m_rH:self.m_rH + H2,  self.m_rW:self.m_rW + W2][:, 0::2, 0::2]
+            crop4 = data[:, self.m_rH // 2:self.m_rH // 2 + H2,  self.m_rW // 2:self.m_rW // 2 + W2][:, 0::2, 0::2]
+            data10Crops[0,] = crop0.clone()
+            data10Crops[1,] = crop1.clone()
+            data10Crops[2,] = crop2.clone()
+            data10Crops[3,] = crop3.clone()
+            data10Crops[4,] = crop4.clone()
+            data10Crops[5,] = crop0.flip(dims=(2,))
+            data10Crops[6,] = crop1.flip(dims=(2,))
+            data10Crops[7,] = crop2.flip(dims=(2,))
+            data10Crops[8,] = crop3.flip(dims=(2,))
+            data10Crops[9,] = crop4.flip(dims=(2,))
+            data = data10Crops
+
         else: # for validation and training data
-            H2 = self.hps.imageH *2
-            W2 = self.hps.imageW *2
-            h = np.random.randint(self.m_randomRangeH)
-            w = np.random.randint(self.m_randomRangeW)
+            h = np.random.randint(self.m_rH)
+            w = np.random.randint(self.m_rW)
             data = data[:,h:h+H2,w:w+W2]  # crop to H2xW2
             data = data[:,0::2, 0::2]   # halve the size in H, and W
 

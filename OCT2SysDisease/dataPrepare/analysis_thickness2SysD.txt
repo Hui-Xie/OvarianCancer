@@ -40,7 +40,7 @@ stdBscans = [0.14800051 0.14917299 0.14980883 0.1504818  0.15139771 0.15180002
    A  yaml config file.  --done
    B  dataLoad.  --done
    C  dataTransform.  --done
-   D  training main program.
+   D  training main program.  --done, pass smoke test.
    E  5-crop+mirror test program.
 
 

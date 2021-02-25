@@ -35,12 +35,18 @@ class Retina3D_HBP_Net(BasicModel):
                 self.ResNeXt.fc.weight.data[n,:] = fcWeightData[n%1000,:]
                 self.ResNeXt.fc.bias.data[n] = fcBiasData[n%1000]
 
-        print(f"finish load pretrained network from Pytorch website, and parameter modification")
+        with open(hps.logMemoPath, "a") as file:
+            file.write(f"finish load pretrained network from Pytorch website, and parameter modification.\n")
 
     def forward(self,x,t):
         x = self.ResNeXt(x)
         x = x.squeeze(dim=-1)  # B
-        criterion = nn.BCEWithLogitsLoss(pos_weight=self.posWeight)
-        loss = criterion(x, t)
+        if self.m_status == "test": # for 5 crops+ mirror test
+            loss = 0
+            assert 10 == x.shape[0]
+            x = x.sigmoid().mean(dim=0, keepdim=True)  # output x is prob
+        else:
+            criterion = nn.BCEWithLogitsLoss(pos_weight=self.posWeight)
+            loss = criterion(x, t)  # output x is logit
         return x, loss
 
