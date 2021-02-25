@@ -37,11 +37,11 @@ stdBscans = [0.14800051 0.14917299 0.14980883 0.1504818  0.15139771 0.15180002
 3  research how to change and input layer width and copy pretrained parameters;   --done
 4  use the radiomics 10-fold CV data.       -- ready.
 5  code network:
-   A  yaml config file.
-   B  dataLoad.
-   C  dataTransfer.
+   A  yaml config file.  --done
+   B  dataLoad.  --done
+   C  dataTransform.  --done
    D  training main program.
-   E  5-crop test program.
+   E  5-crop+mirror test program.
 
 
 

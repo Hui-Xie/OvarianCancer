@@ -11,15 +11,22 @@ import sys
 sys.path.append(".")
 from OCT2SysD_Tools import readBESClinicalCsv
 
-# use AddSample Augmentation
-
 class OCT2SysD_DataSet(data.Dataset):
     def __init__(self, mode, hps=None, transform=None):
         '''
-
         :param mode: training, validation, test
         :param hps:
         :param transform:
+
+        The inputData has done below:
+        A. Input: 31x496x512 in pixel space, where 31 is the number of B-scans.
+        B. Use segmented mask to exclude non-retina region, e.g. vitreous body and choroid etc, getting 31x496x512 filtered volume.
+        C. use (x-mu)/sigma to normalization in the whole data along each B-scan.
+
+        This dataSet need to do below:
+        A. Random crop the filtered 3D volume into 31x448x448 as data augmentation.
+        D. halve size in X and Y direction to scale down to 31x224x224 to feed into network.
+
         '''
         super().__init__()
         self.m_mode = mode
@@ -69,18 +76,16 @@ class OCT2SysD_DataSet(data.Dataset):
         else:
             for i,ID in enumerate(IDList):
                 # for OD and OS
-                ODResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_OD_*{hps.volumeSuffix}")
-                OSResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_OS_*{hps.volumeSuffix}")
-
-                if 1 == len(ODResultList) == len(OSResultList):
-                    self.m_volumePaths += ODResultList + OSResultList
-                    self.m_IDsCorrespondVolumes += [ID,]  # one ID for OD and OS
+                ODOSResultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_O[D,S]_*{hps.volumeSuffix}")
+                if len(ODOSResultList) > 0 :
+                    self.m_volumePaths += ODOSResultList
+                    self.m_IDsCorrespondVolumes += [ID,]*len(ODOSResultList)
                 else:
                     incorrectIDList.append(ID)
 
             if len(incorrectIDList) > 0:
                 with open(hps.logMemoPath, "a") as file:
-                    file.write(f"incorrect ID List of {hps.ODOS} in {mode}_{hps.K_fold}CV_{hps.k} (missing or redundant OD_OS match):\n {incorrectIDList}")
+                    file.write(f"incorrect ID List of {hps.ODOS} in {mode}_{hps.K_fold}CV_{hps.k} (missing):\n {incorrectIDList}")
 
             # save files
             with open(volumePathsFile, "w") as file:
@@ -90,97 +95,33 @@ class OCT2SysD_DataSet(data.Dataset):
                 for v in self.m_IDsCorrespondVolumes:
                     file.write(f"{v}\n")
 
-        self.m_NVolumes = len(self.m_IDsCorrespondVolumes)  # number of OD/OS matches
-        assert (self.m_NVolumes * 2 == len(self.m_volumePaths))
+        self.m_NVolumes = len(self.m_IDsCorrespondVolumes)  # number of OD and OS volumes
+        assert self.m_NVolumes  == len(self.m_volumePaths)
 
-        # load all volumes into memory
-        assert hps.imageW == 1
-        self.m_volumes = np.empty((self.m_NVolumes, 2, hps.inputChannels, hps.imageH), dtype=np.float)  # size:Nx2xlayerxH for OD/OS 9x9 sector array
-        for i in range(self.m_NVolumes):
-            ODVolume = np.load(self.m_volumePaths[i * 2]).astype(np.float)
-            OSVolume = np.load(self.m_volumePaths[i * 2 + 1]).astype(np.float)
-            self.m_volumes[i, 0, :] = ODVolume
-            self.m_volumes[i, 1, :] = OSVolume
-        self.m_volumes = self.m_volumes.reshape(-1, 2 * hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
+        # 3D volume is too big, it can not load all volumes into memory
 
         # read clinical features
-        fullLabels = readBESClinicalCsv(hps.GTPath)
+        fullLabels = self.m_labels
 
-        labelTable = np.empty((self.m_NVolumes, 22), dtype=np.float)  # size: Nx22
-        # labelTable head: patientID,                                          (0)
-        #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
-        # columnIndex:         1                           2        3       4          5             6          7             8              9                10
-        #              'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
-        # columnIndex:   11            12                           13                      14                       15                       16                  17
-        #              'TG$_Corrected2015',  BMI,   WaistHipRate,  LDL/HDL
-        # columnIndex:      18                 19       20         21
+        # get HBP labels
+        self.m_labelTable = np.empty((self.m_NVolumes, 2), dtype=np.int)  # size: Nx2 with (ID, Hypertension)
         for i in range(self.m_NVolumes):
             id = int(self.m_IDsCorrespondVolumes[i])
-            labelTable[i, 0] = id
-
-            # appKeys: ["hypertension_bp_plus_history$", "gender", "Age$", 'IOP$', 'AxialLength$', 'Height$', 'Weight$',
-            #          'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$', 'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',
-            #          'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015', 'TG$_Corrected2015']
-            for j, key in enumerate(hps.appKeys):
-                oneLabel = fullLabels[id][key]
-                if "gender" == key:
-                    oneLabel = oneLabel - 1
-                labelTable[i, 1 + j] = oneLabel
-
-            # compute BMI, WaistHipRate, LDL/HDL
-            if labelTable[i, 7] == -100 or labelTable[i, 6] == -100:
-                labelTable[i, 19] = -100  # emtpty value
-            else:
-                labelTable[i, 19] = labelTable[i, 7] / ((labelTable[i, 6] / 100.0) ** 2)  # weight is in kg, height is in cm.
-
-            if labelTable[i, 8] == -100 or labelTable[i, 9] == -100:
-                labelTable[i, 20] = -100
-            else:
-                labelTable[i, 20] = labelTable[i, 8] / labelTable[i, 9]  # both are in cm.
-
-            if labelTable[i, 17] == -100 or labelTable[i, 16] == -100:
-                labelTable[i, 21] = -100
-            else:
-                labelTable[i, 21] = labelTable[i, 17] / labelTable[i, 16]  # LDL/HDL, bigger means more risk to hypertension.
-
-        # concatenate selected thickness and clinical features, and then delete empty-feature patients
-        self.m_inputClinicalFeatures = hps.inputClinicalFeatures
-        clinicalFeatureColIndex = tuple(hps.clinicalFeatureColIndex)
-        nClinicalFtr = len(clinicalFeatureColIndex)
-        assert nClinicalFtr == hps.numClinicalFtr
-
-        clinicalFtrs = labelTable[:, clinicalFeatureColIndex]
-        # delete the empty value of "-100"
-        emptyRows = np.nonzero(clinicalFtrs == -100)
-        extraEmptyRows = np.nonzero(clinicalFtrs[:,self.m_inputClinicalFeatures.index("IOP")] == 99)  #missing IOP value
-        emptyRows = (np.concatenate((emptyRows[0], extraEmptyRows[0]), axis=0),)
-
-
-        # concatenate full sector thickness with multi variables:
-        self.m_volumes = np.concatenate((self.m_volumes, clinicalFtrs), axis=1)  # size: Nx(nThicknessFtr+nClinicalFtr)
-        assert self.m_volumes.shape[1] == hps.inputWidth
-
-        self.m_volumes = np.delete(self.m_volumes, emptyRows, 0)
-        self.m_targetLabels = np.delete(labelTable, emptyRows, 0)[:,1] # for hypertension
-
+            self.m_labelTable[i, 0] = id
+            self.m_labelTable[i, 1] = fullLabels[id][hps.targetKey]
+        self.m_targetLabels = self.m_labelTable[:, 1]  # for hypertension
         # convert to torch tensor
-        self.m_volumes = torch.from_numpy(self.m_volumes).to(device=hps.device, dtype=torch.float32)
         self.m_targetLabels = torch.from_numpy(self.m_targetLabels).to(device=hps.device, dtype=torch.float32)
 
-        emptyRows = tuple(emptyRows[0])
-        self.m_volumePaths = [path for index, path in enumerate(self.m_volumePaths) if index//2 not in emptyRows]
-        self.m_IDsCorrespondVolumes = [id for index, id in enumerate(self.m_IDsCorrespondVolumes) if index not in emptyRows]
-        assert (len(self.m_volumePaths) == len(self.m_IDsCorrespondVolumes)*2)
+        self.m_randomRangeH = hps.originalImageH - 2* hps.imageH
+        self.m_randomRangeW = hps.originalImageW - 2 * hps.imageW
 
-        # update the number of volumes.
-        self.m_NVolumes = len(self.m_volumes)
-
+        # save log information:
         with open(hps.logMemoPath, "a") as file:
-            file.write(f"{mode} dataset_{hps.K_fold}CV_{hps.k}: NVolumes={self.m_NVolumes}\n")
-            rate1 = self.m_targetLabels.sum()*1.0/self.m_NVolumes
-            rate0 = 1- rate1
-            file.write(f"{mode} dataset_{hps.K_fold}CV_{hps.k}: proportion of 0,1 = [{rate0},{rate1}]\n")
-
+            file.write(f"{mode} dataset feature selection: NVolumes={self.m_NVolumes}")
+            rate1 = self.m_labelTable[:, 1].sum() * 1.0 / self.m_NVolumes
+            rate0 = 1 - rate1
+            file.write(f"{mode} dataset in {hps.K_fold}CV_{hps.k}: proportion of 0,1 = [{rate0},{rate1}]")
 
     def __len__(self):
         return self.m_NVolumes
@@ -227,24 +168,28 @@ class OCT2SysD_DataSet(data.Dataset):
 
     def __getitem__(self, index):
         epsilon = 1.0e-8
-        volumePath = self.m_volumePaths[index*2] +"+++" + self.m_volumePaths[index*2+1]
+        volumePath = self.m_volumePaths[index]
 
         label = None
         if self.hps.existGTLabel:
             label = self.m_targetLabels[index]
 
-        data = self.m_volumes[index,].clone()  # clone is safer to avoid source data corrupted
+        data = np.load(self.m_volumePaths[index]).astype(np.float32)
+        data =  torch.from_numpy(data).to(device=self.hps.device, dtype=torch.float32)
 
-        # No transform for data augmentation
+        if self.m_mode == "test":
+            # 5-crop images and mirror -> 10 crops.
+            pass
+        else: # for validation and training data
+            H2 = self.hps.imageH *2
+            W2 = self.hps.imageW *2
+            h = np.random.randint(self.m_randomRangeH)
+            w = np.random.randint(self.m_randomRangeW)
+            data = data[:,h:h+H2,w:w+W2]  # crop to H2xW2
+            data = data[:,0::2, 0::2]   # halve the size in H, and W
 
-
-        # cancel normalization again, modified at Dec 30th, 2020
-        # as input volumes has been normlizated.
-
-        # std, mean = torch.std_mean(data, dim=(1, 2), keepdim=True)
-        # std = std.expand_as(data)
-        # mean = mean.expand_as(data)
-        # data = (data - mean) / (std + epsilon)  # size: CxHxW
+        if self.m_transform:
+            data = self.m_transform(data)
 
         result = {"images": data,
                   "GTs": label,

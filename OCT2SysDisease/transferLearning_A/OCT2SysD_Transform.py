@@ -17,7 +17,7 @@ class OCT2SysD_Transform(object):
 
         :param inputData:  a Tensor of size(C,H,W),
         :return:
-                a unnormalized tensor of size: (C,H,W)
+                a  tensor of size: (C,H,W)
         '''
 
         device = inputData.device
@@ -26,7 +26,7 @@ class OCT2SysD_Transform(object):
 
         # gaussian noise
         if random.uniform(0, 1) < self.hps.augmentProb:
-            data = data + torch.normal(0.0, self.hps.gaussianNoiseStd, size=data.size()).to(device=device,dtype=torch.float)
+            data = data + torch.normal(self.hps.gaussianNoiseMean, self.hps.gaussianNoiseStd, size=data.size()).to(device=device,dtype=torch.float)
 
         # salt-pepper noise
         if random.uniform(0, 1) < self.hps.augmentProb:
