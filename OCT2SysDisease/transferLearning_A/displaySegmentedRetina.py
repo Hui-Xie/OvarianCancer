@@ -9,7 +9,7 @@ from PIL import Image  # for Tiff image save
 import numpy as np
 import os
 
-volumePath = os.path.jion(srcDir, srcFile)
+volumePath = os.path.join(srcDir, srcFile)
 volume = np.load(volumePath)
 S, H,W = volume.shape
 
