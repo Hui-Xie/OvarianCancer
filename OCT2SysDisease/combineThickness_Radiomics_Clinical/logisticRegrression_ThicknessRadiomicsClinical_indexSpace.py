@@ -166,94 +166,6 @@ from OCT2SysD_Tools import readBESClinicalCsv
 import datetime
 import statsmodels.api as sm
 
-def retrieveImageData_label(mode):
-    '''
-    :param mode: "training", "validation", or "test"
-
-    '''
-    if mode == "training":
-        IDPath = trainingDataPath
-    elif mode == "validation":
-        IDPath = validationDataPath
-    elif mode == "test":
-        IDPath = testDataPath
-    else:
-        print(f"OCT2SysDiseaseDataSet mode error")
-        assert False
-
-    with open(IDPath, 'r') as idFile:
-        IDList = idFile.readlines()
-    IDList = [item[0:-1] for item in IDList]  # erase '\n'
-
-    # get all correct volume numpy path
-    allVolumesList = glob.glob(dataDir + f"/*{srcSuffix}")
-    nonexistIDList = []
-
-    # make sure volume ID and volume path has strict corresponding order
-    volumePaths = []  # number of volumes is about 2 times of IDList
-    IDsCorrespondVolumes = []
-
-    volumePathsFile = os.path.join(dataDir, mode + f"_{ODOS}_FeatureSelection_VolumePaths.txt")
-    IDsCorrespondVolumesPathFile = os.path.join(dataDir, mode + f"_{ODOS}_FeatureSelection_IDsCorrespondVolumes.txt")
-
-    # save related file in order to speed up.
-    if os.path.isfile(volumePathsFile) and os.path.isfile(IDsCorrespondVolumesPathFile):
-        with open(volumePathsFile, 'r') as file:
-            lines = file.readlines()
-        volumePaths = [item[0:-1] for item in lines]  # erase '\n'
-
-        with open(IDsCorrespondVolumesPathFile, 'r') as file:
-            lines = file.readlines()
-        IDsCorrespondVolumes = [item[0:-1] for item in lines]  # erase '\n'
-
-    else:
-        for i, ID in enumerate(IDList):
-            resultList = fnmatch.filter(allVolumesList, "*/" + ID + f"_O[D,S]_*{srcSuffix}")  # for OD or OS data
-            resultList.sort()
-            numVolumes = len(resultList)
-            if 0 == numVolumes:
-                nonexistIDList.append(ID)
-            else:
-                volumePaths += resultList
-                IDsCorrespondVolumes += [ID, ] * numVolumes  # multiple IDs
-
-        if len(nonexistIDList) > 0:
-            print(f"nonExistIDList of {ODOS} in {mode}:\n {nonexistIDList}")
-
-        # save files
-        with open(volumePathsFile, "w") as file:
-            for v in volumePaths:
-                file.write(f"{v}\n")
-        with open(IDsCorrespondVolumesPathFile, "w") as file:
-            for v in IDsCorrespondVolumes:
-                file.write(f"{v}\n")
-
-    NVolumes = len(volumePaths)
-    assert (NVolumes == len(IDsCorrespondVolumes))
-
-    # load all volumes into memory
-    volumes = np.empty((NVolumes, numRadiomics), dtype=np.float)  # size:NxnRadiomics
-    for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
-        volumes[i, :] = oneVolume[0, :]  # as oneVolume has a size [1, nRadiomics]
-
-    fullLabels = readBESClinicalCsv(clinicalGTPath)
-
-    # get HBP labels
-    labelTable = np.empty((NVolumes, 2), dtype=np.int)  # size: Nx2 with (ID, Hypertension)
-    for i in range(NVolumes):
-        id = int(IDsCorrespondVolumes[i])
-        labelTable[i, 0] = id
-        labelTable[i, 1] = fullLabels[id][keyName]
-
-    # save log information:
-    print(f"{mode} dataset feature selection: NVolumes={NVolumes}")
-    rate1 = labelTable[:, 1].sum() * 1.0 / NVolumes
-    rate0 = 1 - rate1
-    print(f"{mode} dataset {numRadiomics} feature selection: proportion of 0,1 = [{rate0},{rate1}]")
-
-    return volumes, labelTable
-
 
 def main():
     # prepare output file
@@ -279,8 +191,8 @@ def main():
         allIDList = allIDList+IDList
 
     # debug
-    allIDList = allIDList[0:2000:10]
-    print(f"choose a small ID set for debug: {len(allIDList)}")
+    # allIDList = allIDList[0:2000:10]
+    # print(f"choose a small ID set for debug: {len(allIDList)}")
 
     NVolumes = len(allIDList)
     print(f"From /home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV, extract total {NVolumes} IDs.")
