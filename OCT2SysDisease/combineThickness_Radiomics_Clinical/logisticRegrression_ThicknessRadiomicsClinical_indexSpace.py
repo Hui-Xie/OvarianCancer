@@ -277,6 +277,10 @@ def main():
         IDList = [item[0:-1] for item in IDList]  # erase '\n'
         allIDList = allIDList+IDList
 
+    # debug
+    allIDList = allIDList[0:2000:10]
+    print(f"choose a small ID set for debug: {len(allIDList)}")
+
     NVolumes = len(allIDList)
     print(f"From /home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV, extract total {NVolumes} IDs.")
 
