@@ -346,7 +346,7 @@ def main():
 
     # 4  Assemble clinical features, thickness features, and radiomics features.
     ftrArray = np.zeros((NVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
-    labels  = np.zeros(NVolumes, 2) # columns: id, HBP
+    labels  = np.zeros((NVolumes, 2), dtype=np.int) # columns: id, HBP
 
     radiomicsVolumesList = glob.glob(radiomicsDir + f"/*_Volume_100radiomics.npy")
     for i,id in enumerate(IDList2):
