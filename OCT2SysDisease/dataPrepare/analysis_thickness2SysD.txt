@@ -1,3 +1,26 @@
+#Feb 26th, Friday, 2021:
+Progress report:
+1  Now 10-fold crossing validation 3D transfer learning training has launched.
+2  Use pretrained ResNeXt (ResNeXt-101-32x8d) network in ImageNet:
+   A  This pretrained network was trained with ImageNet of over 14 million images. (http://image-net.org/)
+   B  Its top 1 classification accuracy is 79.31%, with an error rate 20.69%. (https://pytorch.org/docs/stable/torchvision/models.html)
+   C  This classification accuracy is the best in all Pytorch pretrained models.
+3  After training, on next Monday, I will do its 10-fold CV test. Before next Tuesday, I can report its test result.
+
+Methods:
+   A. Input: 31x496x512 in pixel space, where 31 is the number of B-scans.
+   B. Use segmented mask to exclude non-retina region, e.g. vitreous body and choroid etc, getting 31x496x512 filtered volume.
+   C. Random crop the filtered 3D volume into 31x448x448 as data augmentation.
+   D. halve size in X and Y direction to scale down to 31x224x224.
+   E. 31 as channels, 31x224x224 input to a trained network: ResNext101
+      ResNeXt network modification:
+      a.  copy pretrained 3-channel RGB weights to 31 channels.
+      b.  modify final fully-connected layer from 1000 to 1 for a binary HBP.
+      c.  preserve all other pretrained network parameters.
+   F. Fine-tune whole network parameters.
+   G. Test time uses 5-crop plus mirror flip probabilities average to get the final test accuracy.
+   
+
 #Feb 23rd, Tuesday, 2021:
 Discuss with professor:
 1  output a comprenhensive slide about HBP prediction, about radiomics design, implementation, and result.
@@ -43,6 +66,7 @@ stdBscans = [0.14800051 0.14917299 0.14980883 0.1504818  0.15139771 0.15180002
    D  training main program.  --done, pass smoke test.
    E  5-crop+mirror test program.   --done.
    Now 10-CV is training on skm2 server, at 5 min/epoch.
+
 
 
 
