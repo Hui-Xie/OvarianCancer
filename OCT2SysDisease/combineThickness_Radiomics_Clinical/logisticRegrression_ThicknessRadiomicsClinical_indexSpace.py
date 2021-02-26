@@ -357,7 +357,7 @@ def main():
         HBPLabel = labelTable[i,1]
         for radioVolumePath in resultList:
             volumeName = os.path.basename(radioVolumePath)  # 330_OD_680_Volume_100radiomics.npy
-            volumeName = radioVolumePath[0:radioVolumePath.find("_Volume_100radiomics.npy")]   # 330_OD_680
+            volumeName = volumeName[0:volumeName.find("_Volume_100radiomics.npy")]   # 330_OD_680
 
             thicknessPath = os.path.join(thicknessDir, f"{volumeName}_thickness9sector_9x9.npy") # dir + 330_OD_680_thickness9sector_9x9.npy
             ftrArray[i,0:numRadiomics] = np.load(radioVolumePath).flatten()
