@@ -406,8 +406,8 @@ def main():
         outlierIDs = outlierIDs + list(remainIDs[outlierRows,])  # must use comma
         remainIDs = np.delete(remainIDs, outlierRows, axis=0)
 
-    print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
-    print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
+    # print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
+    # print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
 
     y = labels[:, 1].copy()  # hypertension
     x = ftrArray.copy()
@@ -417,11 +417,12 @@ def main():
 
     # re-normalize x
     N = len(y)
-    # use original mean and std before deleting outlier.
+    print(f"After deleting outliers, there remains {N} observations.")
+    # use original mean and std before deleting outlier, otherwise there are always outliers with deleting once.
     xMean = np.mean(ftrArray, axis=0, keepdims=True)  # size: 1xnRadiomics+nThickness +nClinical
     xStd = np.std(ftrArray, axis=0, keepdims=True)
-    print(f"feature mean values for all data after deleting outliers: \n{xMean}")
-    print(f"feature std devs for all data after deleting outliers: \n{xStd}")
+    #print(f"feature mean values for all data after deleting outliers: \n{xMean}")
+    #print(f"feature std devs for all data after deleting outliers: \n{xStd}")
     xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
     xStd = np.tile(xStd, (N, 1))
     x = (x - xMean) / (xStd + 1.0e-8)  # Z-score
@@ -435,6 +436,7 @@ def main():
     print(clf.summary())
     predict = clf.predict(x)
     accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
+    print (f"\n==================================================")
     print(f"Accuracy of using {hintName} \n to predict hypertension with cutoff 0.5: {accuracy}")
     threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
     print("With a different cut off with max(ACC+TPR+TNR):")
