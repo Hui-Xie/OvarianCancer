@@ -152,6 +152,7 @@ inputClinicalFeatures= ['Age', 'IOP', 'AxialLength', 'Pulse', 'Drink', 'Glucose'
 clinicalFeatureColIndex= (3, 4, 5, 11, 12, 13, 15, 18, 19, 21)   # in label array index
 
 output2File = True
+deleteOutlierIterateOnce = True
 
 import glob
 import sys
@@ -345,7 +346,7 @@ def main():
 
     # 4  Assemble clinical features, thickness features, and radiomics features.
     ftrArray = np.zeros((NVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
-    labels  = np.zeros(NVolumes)
+    labels  = np.zeros(NVolumes, 2) # columns: id, HBP
 
     radiomicsVolumesList = glob.glob(radiomicsDir + f"/*_Volume_100radiomics.npy")
     for i,id in enumerate(IDList2):
@@ -363,14 +364,72 @@ def main():
             ftrArray[i,0:numRadiomics] = np.load(radioVolumePath).flatten()
             ftrArray[i,numRadiomics: numRadiomics+numThickness] = np.load(thicknessPath).flatten()
             ftrArray[i,numRadiomics+numThickness: ] = clinicalFtrs
-            labels[i] = HBPLabel
+            labels[i,0] = id
+            labels[i,1] = HBPLabel
 
     assert len(labels) == len(ftrArray)
     print(f"After assembling radiomics, thickness, and clinical features, total {len(labels)} records.")
 
-    # 5  logistic regression.
+    # 4.5  delete outliers:
+    # normalize x in each feature dimension
+    # normalization does not affect the data distribution
+    # as some features with big values will lead Logit overflow.
+    # But if there is outlier, normalization still lead overflow.
+    # delete outliers whose z-score abs value > 3.
+    outlierRowsList = []  # embedded outlier rows list, in which elements are tuples.
+    nDeleteOutLierIteration = 0
+    while True:
+        x = ftrArray.copy()
+        for outlierRows in outlierRowsList:
+            x = np.delete(x, outlierRows, axis=0)
+        N = len(x)
+        xMean = np.mean(x, axis=0, keepdims=True)  # size: 1xnRadiomics+nThickness +nClinical
+        xStd = np.std(x, axis=0, keepdims=True)
+
+        xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
+        xStd = np.tile(xStd, (N, 1))
+        xNorm = (x - xMean) / (xStd + 1.0e-8)  # Z-score
+
+        newOutlierRows = tuple(set(list(np.nonzero(np.abs(xNorm) >= 3.0)[0].astype(np.int))))
+        outlierRowsList.append(newOutlierRows)
+        if deleteOutlierIterateOnce:  # general only once.
+            break
+        if len(newOutlierRows) == 0:
+            break
+        else:
+            nDeleteOutLierIteration += 1
+
+    print(f"Deleting outlier used {nDeleteOutLierIteration + 1} iterations.")
+    outlierIDs = []
+    remainIDs = labels[:, 0].copy()
+    for outlierRows in outlierRowsList:
+        outlierIDs = outlierIDs + list(remainIDs[outlierRows,])  # must use comma
+        remainIDs = np.delete(remainIDs, outlierRows, axis=0)
+
+    print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
+    print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
+
+    y = labels[:, 1].copy()  # hypertension
     x = ftrArray.copy()
-    y = labels.copy()
+    for outlierRows in outlierRowsList:
+        y = np.delete(y, outlierRows, axis=0)
+        x = np.delete(x, outlierRows, axis=0)
+
+    # re-normalize x
+    N = len(y)
+    # use original mean and std before deleting outlier.
+    xMean = np.mean(ftrArray, axis=0, keepdims=True)  # size: 1xnRadiomics+nThickness +nClinical
+    xStd = np.std(ftrArray, axis=0, keepdims=True)
+    print(f"feature mean values for all data after deleting outliers: \n{xMean}")
+    print(f"feature std devs for all data after deleting outliers: \n{xStd}")
+    xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
+    xStd = np.tile(xStd, (N, 1))
+    x = (x - xMean) / (xStd + 1.0e-8)  # Z-score
+
+
+    # 5  logistic regression.
+    x = x.copy()
+    y = y.copy()
     clf = sm.Logit(y, x).fit(maxiter=200, method="bfgs", disp=0)
     #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
     print(clf.summary())
