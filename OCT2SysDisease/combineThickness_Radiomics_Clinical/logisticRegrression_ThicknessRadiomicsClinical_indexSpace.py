@@ -158,7 +158,7 @@ import sys
 import os
 import fnmatch
 import numpy as np
-sys.path.append("../../..")
+sys.path.append("../..")
 from framework.measure import search_Threshold_Acc_TPR_TNR_Sum_WithProb
 from OCT2SysD_Tools import readBESClinicalCsv
 
