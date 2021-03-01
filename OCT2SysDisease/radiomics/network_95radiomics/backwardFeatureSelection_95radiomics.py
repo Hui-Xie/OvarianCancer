@@ -302,8 +302,9 @@ def main():
 
     # re-normalize x
     N = len(y)
-    xMean = np.mean(x, axis=0, keepdims=True)  # size: 1xnRadiomics
-    xStd = np.std(x, axis=0, keepdims=True)
+    # use original mean and std before deleting outlier, otherwise there are always outliers with deleting once.
+    xMean = np.mean(volumes, axis=0, keepdims=True)  # size: 1xnRadiomics
+    xStd = np.std(volumes, axis=0, keepdims=True)
     print(f"feature mean values for all data after deleting outliers: \n{xMean}")
     print(f"feature std devs for all data after deleting outliers: \n{xStd}")
     xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
