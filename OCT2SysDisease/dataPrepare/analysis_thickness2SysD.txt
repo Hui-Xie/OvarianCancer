@@ -1,3 +1,35 @@
+# March 1st, Monday, 2021
+Summary:
+1  For 10-fold crossing validation, validation gets 57% average accuracy, and test gets 52% average accuracy.
+2  Reason analysis:
+   A  in less than 20 epochs, all folds start over-fitting. Training accuracy quickly gets 100%, but validation gets 40-60% oscillating accuracies.
+   B  This pretrained network ResNeXt has huge network parameters.
+   C  The input segmented OCT images does not has characteristic powerful enough to predict HBP,
+      so network automatically chooses some HBP-unrelated characteristics to fit the labels in the training data by the optimization mechanism of the network,
+      which lead high training accuracy but low validation and test accuracies.
+   D  This experiment result is consistent with our previous experiments with VGG, mobileNetv3 etc trained from scratch.
+      Big networks are easy over-fitting, while small networks can get 63% 10-fold cross validation average test accuracy.
+3  From all these deep learning experiment result, I intuitively think that using Tianbao Yang's loss design may not bring a big improvement.
+   The root reason of these experiments is that OCT image has not characteristics powerful enough to predict HBP.
+   If Professor thinks it is still worth to try, I can try it this week.
+4  Sky projects:
+   In deep learning community, there is a kind of project called "sky project".
+   Its common characteristic is that human man or domain experts cannot use input images (data) through knowledge/logic reasoning and judgement to get its corresponding label result,
+   while the offered label results are from another different mechanism and path.
+   If this kind of project has strong domain experiments to support, it will find unknown pattern from input to labels. It leads to a successful project.
+   If this kind of project has not strong domain experiments to support, networks will find label-unrelated characteristic to fit the label in the training data,
+   which is a over-fitting and a failed project.
+   Some people talk about sky projects usig "data quality" term in deep learning community.
+   A good data quality means there is a strong, human(domain experts) eye recognized patterns from the input image to label;
+   a bad data quality means there is not a strong, human(domain experts) eye recognized patterns from the input image to label.
+   I feel that current OCTtoHBP and ovarian cancer survival prediction both are belong to this kind of sky project.
+   From this aspect and our a lot of experiment results, I suggest to switch our work ont thickness and HBP association analysis, which is more effective way to use our time.
+
+Further plan:
+1  use radiomics, thickness, and clinical features together to do 10-fold cross validation with logistic regression.
+2  if above experiment still can not get a better result (>= 70% accuracy), I suggest to quickly switch our work to thickness and HBP association analysis.
+
+
 #Feb 26th, Friday, 2021:
 Progress report:
 1  Now 10-fold crossing validation 3D transfer learning training has launched.
@@ -6,6 +38,7 @@ Progress report:
    B  Its top 1 classification accuracy is 79.31%, with an error rate 20.69%. (https://pytorch.org/docs/stable/torchvision/models.html)
    C  This classification accuracy is the best in all Pytorch pretrained models.
 3  After training, on next Monday, I will do its 10-fold CV test. Before next Tuesday, I can report its test result.
+4  transfer learninng training from ResNeXt needs 11GB GPU memory for each fold, while test needs 2.18G GPU memory for each fold.
 
 Methods:
    A. Input: 31x496x512 in pixel space, where 31 is the number of B-scans.
