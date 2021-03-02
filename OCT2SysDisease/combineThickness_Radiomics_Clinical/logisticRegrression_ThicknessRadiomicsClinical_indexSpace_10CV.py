@@ -96,6 +96,7 @@ def main():
         elif fullLabels[ID][keyName] == 0:
             nHBP0 += 1
         else:
+            assert (False)
             continue
     nHBP01 = nHBP0 + nHBP1
     print(f"in IDFile: {IDPath}: {len(allIDList)} patients, taggedHBP0 = {nHBP0}, taggedHBP1 = {nHBP1}, total {nHBP01} patients.")
@@ -108,6 +109,47 @@ def main():
             ID_HBP_Array[i, 0] = int(ID)
             ID_HBP_Array[i, 1] = int(tag)
             i += 1
+
+    # read full label into labelTable according to ID
+    labelTable = np.empty((nHBP01, 22), dtype=np.float)  # size: Nx22
+    # labelTable head: patientID,                                          (0)
+    #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
+    # columnIndex:         1                           2        3       4          5             6          7             8              9                10
+    #              'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
+    # columnIndex:   11            12                           13                      14                       15                       16                  17
+    #              'TG$_Corrected2015',  BMI,   WaistHipRate,  LDL/HDL
+    # columnIndex:      18                 19       20         21
+    for i in range(nHBP01):
+        id = int(allIDList[i])
+        labelTable[i, 0] = id
+
+        # appKeys: ["hypertension_bp_plus_history$", "gender", "Age$", 'IOP$', 'AxialLength$', 'Height$', 'Weight$',
+        #          'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$', 'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',
+        #          'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015', 'TG$_Corrected2015']
+        for j, key in enumerate(appKeys):
+            oneLabel = fullLabels[id][key]
+            if "gender" == key:
+                oneLabel = oneLabel - 1
+            labelTable[i, 1 + j] = oneLabel
+
+        # compute BMI, WaistHipRate, LDL/HDL
+        if labelTable[i, 7] == -100 or labelTable[i, 6] == -100:
+            labelTable[i, 19] = -100  # emtpty value
+        else:
+            labelTable[i, 19] = labelTable[i, 7] / (
+                    (labelTable[i, 6] / 100.0) ** 2)  # weight is in kg, height is in cm.
+
+        if labelTable[i, 8] == -100 or labelTable[i, 9] == -100:
+            labelTable[i, 20] = -100
+        else:
+            labelTable[i, 20] = labelTable[i, 8] / labelTable[i, 9]  # both are in cm.
+
+        if labelTable[i, 17] == -100 or labelTable[i, 16] == -100:
+            labelTable[i, 21] = -100
+        else:
+            labelTable[i, 21] = labelTable[i, 17] / labelTable[i, 16]  # LDL/HDL, bigger means more risk to hypertension.
+
+    radiomicsVolumesList = glob.glob(radiomicsDir + f"/*_Volume_100radiomics.npy")
 
     # 3  according to HBP label, divide 1895 IDs into 10 folds.
     # K-Fold division
@@ -177,184 +219,76 @@ def main():
 
         print(f"CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
 
-    # 4  for 10 CV test:
-    #    4.1 Assemble clinical features, thickness features, and radiomics features.
+        # 4  for 10 CV test:
+        datasetNameList = ("training", "validaion", "test")
+        dataset_IDList = {"training": partitions["training"],  "validation": partitions["validation"],  "test": partitions["test"]}
+        ftrArray={}
+        labelArray={}
+        #    4.1 Assemble clinical features, thickness features, and radiomics features.
+        for datasetName, IDList in dataset_IDList.items():
+            # statistics the number of all ID volumes including OD/OS
+            radiomicsDataSetVolumeList =[]
+            for id in IDList:
+                radiomicsDataSetVolumeList += fnmatch.filter(radiomicsVolumesList, "*/" + id + f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
+            nVolumes = len(radiomicsDataSetVolumeList)
+            ftrArray[datasetName] =  np.zeros((nVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
+            labelArray[datasetName]= np.zeros((nVolumes, 2), dtype=np.int) # columns: id, HBP
+            for i, radiomicsPath in enumerate(radiomicsDataSetVolumeList):
+                basename = os.path.splitext(os.path.basename(radiomicsPath))[0]  # 34009_OD_17113_Volume_100radiomics
+                basename = basename[0: basename.find("_Volume_100radiomics")]  # 34009_OD_17113
+                id = int(basename[0: basename.find("_O")])  # 34009
+                thicknessPath = os.path.join(thicknessDir, f"{basename}_thickness9sector_9x9.npy")  # dir +34004_OD_16927_thickness9sector_9x9.npy
 
-    #    4.2 delete outliers.
+                labelTableindex =np.where(labelTable[:,0] == id)
+                clinicalFtrs = labelTable[labelTableindex, clinicalFeatureColIndex]
+                HBPLabel = labelTable[labelTableindex, 1]
 
+                ftrArray[datasetName][i, 0:numRadiomics] = np.load(radiomicsPath).flatten()
+                ftrArray[datasetName][i, numRadiomics: numRadiomics + numThickness] = np.load(thicknessPath).flatten()
+                ftrArray[datasetName][i, numRadiomics + numThickness:] = clinicalFtrs
+                labelArray[datasetName][i, 0] = id
+                labelArray[datasetName][i, 1] = HBPLabel
 
-    #    4.3 logistic regression.
+        #    4.2 delete outliers, and keep its z score.
+        allFtrArray = np.concatenate((ftrArray["training"], ftrArray["validation"], ftrArray["test"]),axis=0)
+        allFtrMean = np.mean(allFtrArray, axis=0, keepdims=True)  # size: 1x(nRadiomics+nThickness +nClinical)
+        allFtrStd = np.std(allFtrArray, axis=0, keepdims=True)
 
+        for datasetName in datasetNameList:
+            N = len(ftrArray[datasetName])
+            xMean = np.tile(allFtrMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
+            xStd = np.tile(allFtrStd, (N, 1))
+            xNorm = (ftrArray[datasetName] - xMean) / (xStd + 1.0e-8)  # Z-score
+            outlierRows = tuple(set(list(np.nonzero(np.abs(xNorm) >= 3.0)[0].astype(np.int))))
+            ftrArray[datasetName] = np.delete(xNorm, outlierRows, axis=0)
+            labelArray[datasetName] = np.delete(labelArray[datasetName], outlierRows, axis=0)
 
-    #    4.4 output result in csv format.
+        #    4.3 logistic regression.
+        x = x.copy()
+        y = y.copy()
+        clf = sm.Logit(y, x).fit(maxiter=200, method="bfgs", disp=0)
+        # clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
+        print(clf.summary())
+        predict = clf.predict(x)
+        accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
+        print(f"\n==================================================")
+        print(f"Accuracy of using {hintName} \n to predict hypertension with cutoff 0.5: {accuracy}")
+        threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
+        print("With a different cut off with max(ACC+TPR+TNR):")
+        print(threhold_ACC_TPR_TNR_Sum)
 
-
-
-
-
-    # debug
-    # allIDList = allIDList[0:2000:10]
-    # print(f"choose a small ID set for debug: {len(allIDList)}")
-
-    NVolumes = len(allIDList)
-    print(f"From /home/hxie1/data/BES_3K/GTs/radiomics_ODOS_10CV, extract total {NVolumes} IDs.")
-
-    # 2  read all clinical data into a fullTable-> labelTable;
-    fullLabels = readBESClinicalCsv(clinicalGTPath)
-
-    labelTable = np.empty((NVolumes, 22), dtype=np.float)  # size: Nx22
-    # labelTable head: patientID,                                          (0)
-    #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
-    # columnIndex:         1                           2        3       4          5             6          7             8              9                10
-    #              'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',  'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015',
-    # columnIndex:   11            12                           13                      14                       15                       16                  17
-    #              'TG$_Corrected2015',  BMI,   WaistHipRate,  LDL/HDL
-    # columnIndex:      18                 19       20         21
-    for i in range(NVolumes):
-        id = int(allIDList[i])
-        labelTable[i, 0] = id
-
-        # appKeys: ["hypertension_bp_plus_history$", "gender", "Age$", 'IOP$', 'AxialLength$', 'Height$', 'Weight$',
-        #          'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$', 'Pulse$', 'Drink_quanti_includ0$', 'Glucose$_Corrected2015', 'CRPL$_Corrected2015',
-        #          'Choles$_Corrected2015', 'HDL$_Corrected2015', 'LDL$_Correcetd2015', 'TG$_Corrected2015']
-        for j, key in enumerate(appKeys):
-            oneLabel = fullLabels[id][key]
-            if "gender" == key:
-                oneLabel = oneLabel - 1
-            labelTable[i, 1 + j] = oneLabel
-
-        # compute BMI, WaistHipRate, LDL/HDL
-        if labelTable[i, 7] == -100 or labelTable[i, 6] == -100:
-            labelTable[i, 19] = -100  # emtpty value
-        else:
-            labelTable[i, 19] = labelTable[i, 7] / (
-                        (labelTable[i, 6] / 100.0) ** 2)  # weight is in kg, height is in cm.
-
-        if labelTable[i, 8] == -100 or labelTable[i, 9] == -100:
-            labelTable[i, 20] = -100
-        else:
-            labelTable[i, 20] = labelTable[i, 8] / labelTable[i, 9]  # both are in cm.
-
-        if labelTable[i, 17] == -100 or labelTable[i, 16] == -100:
-            labelTable[i, 21] = -100
-        else:
-            labelTable[i, 21] = labelTable[i, 17] / labelTable[
-                i, 16]  # LDL/HDL, bigger means more risk to hypertension.
-
-    # 3  filter IDs with existed 10 clinical features.
-    #    save these ID for futher use.
-    assert NVolumes == len(labelTable)
-    IDList2 =[]  # this list guarantee all IDs have corresponding clinical features.
-    for i,id in enumerate(allIDList):
-        if -100 in labelTable[i, clinicalFeatureColIndex]:
-            pass
-        else:
-            IDList2.append(id)
-    NVolumes = len(IDList2)
-    print(f"After check the existance of corresponding {numClinicalFtr} features, it remains {NVolumes} IDs")
-    IDwith10ClinicalFtrPath = os.path.join(outputDir, "allIDwith10ClinicalFtrs.txt")
-    with open(IDwith10ClinicalFtrPath, "w") as file:
-        for v in IDList2:
-            file.write(f"{v}\n")
+        #    4.4 output result in csv format.
 
 
-    # 4  Assemble clinical features, thickness features, and radiomics features.
-    ftrArray = np.zeros((NVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
-    labels  = np.zeros((NVolumes, 2), dtype=np.int) # columns: id, HBP
-
-    radiomicsVolumesList = glob.glob(radiomicsDir + f"/*_Volume_100radiomics.npy")
-    for i,id in enumerate(IDList2):
-        resultList = fnmatch.filter(radiomicsVolumesList, "*/" + id + f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
-        resultList.sort()
-        numVolumes = len(resultList)
-        assert numVolumes > 0
-        clinicalFtrs = labelTable[i,clinicalFeatureColIndex]
-        HBPLabel = labelTable[i,1]
-        for radioVolumePath in resultList:
-            volumeName = os.path.basename(radioVolumePath)  # 330_OD_680_Volume_100radiomics.npy
-            volumeName = volumeName[0:volumeName.find("_Volume_100radiomics.npy")]   # 330_OD_680
-
-            thicknessPath = os.path.join(thicknessDir, f"{volumeName}_thickness9sector_9x9.npy") # dir + 330_OD_680_thickness9sector_9x9.npy
-            ftrArray[i,0:numRadiomics] = np.load(radioVolumePath).flatten()
-            ftrArray[i,numRadiomics: numRadiomics+numThickness] = np.load(thicknessPath).flatten()
-            ftrArray[i,numRadiomics+numThickness: ] = clinicalFtrs
-            labels[i,0] = id
-            labels[i,1] = HBPLabel
-
-    assert len(labels) == len(ftrArray)
-    print(f"After assembling radiomics, thickness, and clinical features, total {len(labels)} records.")
-
-    # 4.5  delete outliers:
-    # normalize x in each feature dimension
-    # normalization does not affect the data distribution
-    # as some features with big values will lead Logit overflow.
-    # But if there is outlier, normalization still lead overflow.
-    # delete outliers whose z-score abs value > 3.
-    outlierRowsList = []  # embedded outlier rows list, in which elements are tuples.
-    nDeleteOutLierIteration = 0
-    while True:
-        x = ftrArray.copy()
-        for outlierRows in outlierRowsList:
-            x = np.delete(x, outlierRows, axis=0)
-        N = len(x)
-        xMean = np.mean(x, axis=0, keepdims=True)  # size: 1xnRadiomics+nThickness +nClinical
-        xStd = np.std(x, axis=0, keepdims=True)
-
-        xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
-        xStd = np.tile(xStd, (N, 1))
-        xNorm = (x - xMean) / (xStd + 1.0e-8)  # Z-score
-
-        newOutlierRows = tuple(set(list(np.nonzero(np.abs(xNorm) >= 3.0)[0].astype(np.int))))
-        outlierRowsList.append(newOutlierRows)
-        if deleteOutlierIterateOnce:  # general only once.
-            break
-        if len(newOutlierRows) == 0:
-            break
-        else:
-            nDeleteOutLierIteration += 1
-
-    print(f"Deleting outlier used {nDeleteOutLierIteration + 1} iterations.")
-    outlierIDs = []
-    remainIDs = labels[:, 0].copy()
-    for outlierRows in outlierRowsList:
-        outlierIDs = outlierIDs + list(remainIDs[outlierRows,])  # must use comma
-        remainIDs = np.delete(remainIDs, outlierRows, axis=0)
-
-    # print(f"ID of {len(outlierIDs)} outliers: \n {outlierIDs}")
-    # print(f"ID of {len(remainIDs)} remaining IDs: \n {list(remainIDs)}")
-
-    y = labels[:, 1].copy()  # hypertension
-    x = ftrArray.copy()
-    for outlierRows in outlierRowsList:
-        y = np.delete(y, outlierRows, axis=0)
-        x = np.delete(x, outlierRows, axis=0)
-
-    # re-normalize x
-    N = len(y)
-    print(f"After deleting outliers, there remains {N} observations.")
-    # use original mean and std before deleting outlier, otherwise there are always outliers with deleting once.
-    xMean = np.mean(ftrArray, axis=0, keepdims=True)  # size: 1xnRadiomics+nThickness +nClinical
-    xStd = np.std(ftrArray, axis=0, keepdims=True)
-    #print(f"feature mean values for all data after deleting outliers: \n{xMean}")
-    #print(f"feature std devs for all data after deleting outliers: \n{xStd}")
-    xMean = np.tile(xMean, (N, 1))  # same with np.broadcast_to, or pytorch expand
-    xStd = np.tile(xStd, (N, 1))
-    x = (x - xMean) / (xStd + 1.0e-8)  # Z-score
 
 
-    # 5  logistic regression.
-    x = x.copy()
-    y = y.copy()
-    clf = sm.Logit(y, x).fit(maxiter=200, method="bfgs", disp=0)
-    #clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
-    print(clf.summary())
-    predict = clf.predict(x)
-    accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
-    print (f"\n==================================================")
-    print(f"Accuracy of using {hintName} \n to predict hypertension with cutoff 0.5: {accuracy}")
-    threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
-    print("With a different cut off with max(ACC+TPR+TNR):")
-    print(threhold_ACC_TPR_TNR_Sum)
+
+
+
+
+
+
+
 
     if output2File:
         logOutput.close()
