@@ -217,7 +217,7 @@ def main():
             for v in partitions["training"]:
                 file.write(f"{int(v)}\n")
 
-        print(f"CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
+        #print(f"CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
 
         # 4  for 10 CV test:
         datasetNameList = ("training", "validaion", "test")
@@ -264,21 +264,30 @@ def main():
             labelArray[datasetName] = np.delete(labelArray[datasetName], outlierRows, axis=0)
 
         #    4.3 logistic regression.
-        x = x.copy()
-        y = y.copy()
-        clf = sm.Logit(y, x).fit(maxiter=200, method="bfgs", disp=0)
+        clf = sm.Logit(labelArray["training"][:,1], ftrArray["training"]).fit(maxiter=100, method="bfgs", disp=0)
         # clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
         print(clf.summary())
-        predict = clf.predict(x)
-        accuracy = np.mean((predict >= 0.5).astype(np.int) == y)
-        print(f"\n==================================================")
-        print(f"Accuracy of using {hintName} \n to predict hypertension with cutoff 0.5: {accuracy}")
-        threhold_ACC_TPR_TNR_Sum = search_Threshold_Acc_TPR_TNR_Sum_WithProb(y, predict)
-        print("With a different cut off with max(ACC+TPR+TNR):")
-        print(threhold_ACC_TPR_TNR_Sum)
+        predict = clf.predict(ftrArray["training"])
+        trainAcc = np.mean((predict >= 0.5).astype(np.int) == labelArray["training"][:,1])
+
+        predict = clf.predict(ftrArray["validation"])
+        validationAcc = np.mean((predict >= 0.5).astype(np.int) == labelArray["validation"][:, 1])
+
+        predict = clf.predict(ftrArray["test"])
+        testAcc = np.mean((predict >= 0.5).astype(np.int) == labelArray["test"][:, 1])
+
 
         #    4.4 output result in csv format.
+        print("===============================================================================================================")
+        print("CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,")
+        nTrainingSamples = len(ftrArray["training"])
+        nValidSamples = len(ftrArray["validation"])
+        nTestSamples = len(ftrArray["test"])
+        print(f"{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc}, {validationAcc}, {testAcc},")
+        print("===============================================================================================================")
 
+        # debug
+        break
 
 
 
