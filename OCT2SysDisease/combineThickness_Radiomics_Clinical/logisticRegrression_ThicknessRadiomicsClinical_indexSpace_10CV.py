@@ -271,17 +271,12 @@ def main():
 
         #    4.3 logistic regression.
         #clf = sm.Logit(labelArray["training"][:,1], ftrArray["training"]).fit(maxiter=300, method="bfgs", disp=0)
+
+        # basinhopping method can guarantee converged, but has a lot of nan in summary.
         clf = sm.Logit(labelArray["training"][:, 1], ftrArray["training"]).fit(maxiter=50, method="basinhopping", disp=0,skip_hessian=True)
-        print(str("clf = sm.Logit(labelArray[\"training\"][:, 1], ftrArray[\"training\"]).fit(maxiter=50, method=\"basinhopping\", disp=0), skip_hessian=True"))
-        '''
-        basinhopping converged, but a lot of nan, with iteraion 300, or 200, 50.
-        
-        
-        
-        '''
 
         # clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
-        print(clf.summary())
+        #print(clf.summary())
         predict = clf.predict(ftrArray["training"])
         trainAcc = np.mean((predict >= 0.5).astype(np.int) == labelArray["training"][:,1])
 
@@ -296,9 +291,8 @@ def main():
         nTrainingSamples = len(ftrArray["training"])
         nValidSamples = len(ftrArray["validation"])
         nTestSamples = len(ftrArray["test"])
-        print(f"{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc:.4f}, {validationAcc:.4f}, {testAcc:.4f},")
+        print(f"fold_{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc:.4f}, {validationAcc:.4f}, {testAcc:.4f},")
 
-        break
 
     print(
         "===============================================================================================================")
