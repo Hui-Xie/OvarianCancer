@@ -105,6 +105,7 @@ def main():
     ID_HBP_Array = np.zeros((nHBP01, 2), dtype=np.uint32)  # ID and HBP
     i = 0
     for ID in allIDList:
+        ID = int(ID)
         tag = fullLabels[ID][keyName]
         if 1 == tag or 0 == tag:
             ID_HBP_Array[i, 0] = int(ID)
@@ -221,7 +222,7 @@ def main():
         #print(f"CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
 
         # 4  for 10 CV test:
-        datasetNameList = ("training", "validaion", "test")
+        datasetNameList = ("training", "validation", "test")
         dataset_IDList = {"training": partitions["training"],  "validation": partitions["validation"],  "test": partitions["test"]}
         ftrArray={}
         labelArray={}
@@ -230,7 +231,7 @@ def main():
             # statistics the number of all ID volumes including OD/OS
             radiomicsDataSetVolumeList =[]
             for id in IDList:
-                radiomicsDataSetVolumeList += fnmatch.filter(radiomicsVolumesList, "*/" + id + f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
+                radiomicsDataSetVolumeList += fnmatch.filter(radiomicsVolumesList, "*/" + str(id)+ f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
             nVolumes = len(radiomicsDataSetVolumeList)
             ftrArray[datasetName] =  np.zeros((nVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
             labelArray[datasetName]= np.zeros((nVolumes, 2), dtype=np.int) # columns: id, HBP
