@@ -285,7 +285,7 @@ def main():
         nTrainingSamples = len(ftrArray["training"])
         nValidSamples = len(ftrArray["validation"])
         nTestSamples = len(ftrArray["test"])
-        print(f"{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc:.4f}, {validationAcc:.4f}, {testAcc.4f},")
+        print(f"{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc:.4f}, {validationAcc:.4f}, {testAcc:.4f},")
         print("===============================================================================================================")
 
         # debug
