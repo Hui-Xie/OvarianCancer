@@ -91,6 +91,7 @@ def main():
     nHBP0 = 0  # statistics hypertension
     nHBP1 = 0
     for ID in allIDList:
+        ID = int(ID)
         if fullLabels[ID][keyName] == 1:
             nHBP1 += 1
         elif fullLabels[ID][keyName] == 0:
