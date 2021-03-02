@@ -266,7 +266,7 @@ def main():
             labelArray[datasetName] = np.delete(labelArray[datasetName], outlierRows, axis=0)
 
         #    4.3 logistic regression.
-        clf = sm.Logit(labelArray["training"][:,1], ftrArray["training"]).fit(maxiter=100, method="bfgs", disp=0)
+        clf = sm.Logit(labelArray["training"][:,1], ftrArray["training"]).fit(maxiter=200, method="bfgs", disp=0)
         # clf = sm.GLM(y, x[:, tuple(curIndexes)], family=sm.families.Binomial()).fit(maxiter=135, disp=0)
         print(clf.summary())
         predict = clf.predict(ftrArray["training"])
@@ -285,7 +285,7 @@ def main():
         nTrainingSamples = len(ftrArray["training"])
         nValidSamples = len(ftrArray["validation"])
         nTestSamples = len(ftrArray["test"])
-        print(f"{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc}, {validationAcc}, {testAcc},")
+        print(f"{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc:.4f}, {validationAcc:.4f}, {testAcc.4f},")
         print("===============================================================================================================")
 
         # debug
