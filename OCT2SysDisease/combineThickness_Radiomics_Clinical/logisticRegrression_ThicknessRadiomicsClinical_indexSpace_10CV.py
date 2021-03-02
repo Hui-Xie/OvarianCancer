@@ -271,10 +271,10 @@ def main():
 
         #    4.3 logistic regression.
         #clf = sm.Logit(labelArray["training"][:,1], ftrArray["training"]).fit(maxiter=300, method="bfgs", disp=0)
-        clf = sm.Logit(labelArray["training"][:, 1], ftrArray["training"]).fit(maxiter=200, method="basinhopping", disp=0)
-        print(str("clf = sm.Logit(labelArray[\"training\"][:, 1], ftrArray[\"training\"]).fit(maxiter=200, method=\"basinhopping\", disp=0)"))
+        clf = sm.Logit(labelArray["training"][:, 1], ftrArray["training"]).fit(maxiter=50, method="basinhopping", disp=0)
+        print(str("clf = sm.Logit(labelArray[\"training\"][:, 1], ftrArray[\"training\"]).fit(maxiter=50, method=\"basinhopping\", disp=0)"))
         '''
-        basinhopping converged, but a lot of nan, with iteraion 300.
+        basinhopping converged, but a lot of nan, with iteraion 300, or 200, 
         
         
         '''
