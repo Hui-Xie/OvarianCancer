@@ -1,3 +1,14 @@
+# March 2nd, Tuesday, 2021:
+Discuss with professor:
+1  output a detail report about radioimics experiment, before weekend.
+2  consider to use 5th thickness and 6th texture to generate radiomics.
+3  may consider to use row 10 int the deep learning summary table (31 thickness feature + 10 clinical features) to predict.
+4  Leixin's TAPMI paper modification, as soon as possible.
+5  Read Mathew's paper, do not use inversion in the optimization process.
+
+
+
+
 # March 1st, Monday, 2021
 Summary:
 1  For 10-fold crossing validation, validation gets 57% average accuracy, and test gets 52% average accuracy.
@@ -19,7 +30,7 @@ Summary:
    If this kind of project has strong domain experiments to support, it will find unknown pattern from input to labels. It leads to a successful project.
    If this kind of project has not strong domain experiments to support, networks will find label-unrelated characteristic to fit the label in the training data,
    which is a over-fitting and a failed project.
-   Some people talk about sky projects usig "data quality" term in deep learning community.
+   Some people talk about sky projects using "data quality" term in deep learning community.
    A good data quality means there is a strong, human(domain experts) eye recognized patterns from the input image to label;
    a bad data quality means there is not a strong, human(domain experts) eye recognized patterns from the input image to label.
    I feel that current OCTtoHBP and ovarian cancer survival prediction both are belong to this kind of sky project.
