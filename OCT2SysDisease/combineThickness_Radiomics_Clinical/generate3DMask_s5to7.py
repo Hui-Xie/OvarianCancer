@@ -27,7 +27,7 @@ import numpy as np
 import SimpleITK as sitk
 
 import sys
-sys.path.append("../../..")
+sys.path.append("../..")
 from OCTMultiSurfaces.dataPrepare_Tongren.TongrenFileUtilities import  getSurfacesArray
 import os
 
