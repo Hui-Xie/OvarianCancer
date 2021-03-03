@@ -35,7 +35,7 @@ outputDir = "/home/hxie1/data/BES_3K/log/logisticReg_thicknessRadiomicsClinical_
 
 ODOS = "ODOS"
 
-hintName= "3DThickRadioClinic_10CV"  # Thickness Radiomics Clinical
+hintName= "3DThickRadioClinic_IndexSpace_10CV"  # Thickness Radiomics Clinical
 
 # input radiomics size: [1,numRadiomics]
 numRadiomics = 100
@@ -71,7 +71,7 @@ def main():
         curTime = datetime.datetime.now()
         timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-        outputPath = os.path.join(outputDir, f"logisticRegression_{hintName}_{timeStr}.txt")
+        outputPath = os.path.join(outputDir, f"LR_{hintName}_{timeStr}.txt")
         print(f"Log output is in {outputPath}")
         logOutput = open(outputPath, "w")
         original_stdout = sys.stdout
@@ -210,18 +210,24 @@ def main():
                 partitions["training"] += patientsSubList[i]
 
         # save to file
-        with open(os.path.join(outputDir, f"testID_10Clinical_NoMGMDiseases_{K}CV_{k}.csv"), "w") as file:
-            for v in partitions["test"]:
-                file.write(f"{int(v)}\n")
-
-        if outputValidation:
-            with open(os.path.join(outputDir, f"validationID_10Clinical_NoMGMDiseases_{K}CV_{k}.csv"), "w") as file:
-                for v in partitions["validation"]:
+        testIDPath = os.path.join(outputDir, f"testID_10Clinical_NoMGMDiseases_{K}CV_{k}.csv")
+        if not os.path.isfile(testIDPath):
+            with open(testIDPath, "w") as file:
+                for v in partitions["test"]:
                     file.write(f"{int(v)}\n")
 
-        with open(os.path.join(outputDir, f"trainID_10Clinical_NoMGMDiseases_{K}CV_{k}.csv"), "w") as file:
-            for v in partitions["training"]:
-                file.write(f"{int(v)}\n")
+        if outputValidation:
+            validationIDPath = os.path.join(outputDir, f"validationID_10Clinical_NoMGMDiseases_{K}CV_{k}.csv")
+            if not os.path.isfile(validationIDPath):
+                with open(validationIDPath, "w") as file:
+                    for v in partitions["validation"]:
+                        file.write(f"{int(v)}\n")
+
+        trainIDPath = os.path.join(outputDir, f"trainID_10Clinical_NoMGMDiseases_{K}CV_{k}.csv")
+        if not os.path.isfile(trainIDPath):
+            with open(trainIDPath, "w") as file:
+                for v in partitions["training"]:
+                    file.write(f"{int(v)}\n")
 
         #print(f"CV: {k}/{K}: test: {len(partitions['test'])} patients;  validation: {len(partitions['validation'])} patients;  training: {len(partitions['training'])} patients;")
 
