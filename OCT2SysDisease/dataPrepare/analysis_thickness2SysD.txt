@@ -6,6 +6,26 @@ Discuss with professor:
 4  Leixin's TAPMI paper modification, as soon as possible.
 5  Read Mathew's paper, do not use inversion in the optimization process.
 
+Combination of 9x9 thickness + 100 radiomics + 10 clinical features with logistic regression to predict HBP:
+total 191 features as input.
+=======================================================================================================================
+CV	  #TrainningSamples	  #ValidationSamples	 #TestSamples	 #TrainingAccuracy	 #ValidationAccuray	 #TestAccuracy
+fold_0	2225	256	    275	    0.7007	0.6289	0.6291
+fold_1	2213	287	    256	    0.709	0.5784	0.6406
+fold_2	2187	282	    287	    0.7165	0.5816	0.5714
+fold_3	2209	265	    282	    0.7139	0.5434	0.5957
+fold_4	2202	289	    265	    0.7121	0.6055	0.5547
+fold_5	2198	269	    289	    0.7079	0.6208	0.6021
+fold_6	2210	277	    269	    0.7081	0.5921	0.6357
+fold_7	2190	289	    277	    0.7228	0.6055	0.5957
+fold_8	2200	267	    289	    0.6986	0.6667	0.5848
+fold_9	2214	275	    267	    0.6942	0.6582	0.6592
+Average	2204	275	    275	    0.7084	0.6081	0.6069
+========================================================================================================================
+Analysis:
+1  Training mean accuracy of 70.84% shows, in the logistic regression context, the best possible fit accuracy in training data.
+   It implies the limit of data prediction capability.
+
 
 
 
