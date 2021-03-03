@@ -313,7 +313,7 @@ def main():
     mean_validationAcc /= K
     mean_testAcc /= K
     print(
-        f"Average,{mean_nTrainingSamples:d}, {mean_nValidSamples:d}, {mean_nTestSamples:d}, {mean_trainAcc:.4f}, {mean_validationAcc:.4f}, {mean_testAcc:.4f},")
+        f"Average,{mean_nTrainingSamples:.0f}, {mean_nValidSamples:.0f}, {mean_nTestSamples:.0f}, {mean_trainAcc:.4f}, {mean_validationAcc:.4f}, {mean_testAcc:.4f},")
     print(
         "===============================================================================================================")
     if output2File:
