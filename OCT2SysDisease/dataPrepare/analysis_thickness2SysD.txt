@@ -7,6 +7,9 @@
   so it can get some thickness information.
 3 Logistics regression algoithm has some capabilities to put small weights on the not important features.
 4 Therefore, I suggest to use 5th and 6th layers together to extract radiomics information.
+5 feature choosing from 9x9 thickness sectors to 31 thickness sector, Logistic Regression improvement is not significant.
+  Therefore, I keep 9x9 thickness sectors.
+
 
 
 
