@@ -193,6 +193,7 @@ def main():
         "===============================================================================================================")
     print(
         "CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,")
+    mean_nTrainingSamples= mean_nValidSamples = mean_nTestSamples = mean_trainAcc = mean_validationAcc = mean_testAcc =0
     for k in range(0, K):
         partitions = {}
         partitions["test"] = patientsSubList[k]
@@ -298,8 +299,21 @@ def main():
         nValidSamples = len(ftrArray["validation"])
         nTestSamples = len(ftrArray["test"])
         print(f"fold_{k}, {nTrainingSamples}, {nValidSamples}, {nTestSamples}, {trainAcc:.4f}, {validationAcc:.4f}, {testAcc:.4f},")
+        mean_nTrainingSamples += nTrainingSamples
+        mean_nValidSamples += nValidSamples
+        mean_nTestSamples += nTestSamples
+        mean_trainAcc += trainAcc
+        mean_validationAcc += validationAcc
+        mean_testAcc += testAcc
 
-
+    mean_nTrainingSamples /= K
+    mean_nValidSamples /= K
+    mean_nTestSamples /= K
+    mean_trainAcc /= K
+    mean_validationAcc /= K
+    mean_testAcc /= K
+    print(
+        f"Average,{mean_nTrainingSamples:d}, {mean_nValidSamples:d}, {mean_nTestSamples:d}, {mean_trainAcc:.4f}, {mean_validationAcc:.4f}, {mean_testAcc:.4f},")
     print(
         "===============================================================================================================")
     if output2File:
