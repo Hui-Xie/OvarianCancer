@@ -62,6 +62,8 @@ Analysis:
    It implies the limit of data prediction capability.
 2  Different samples number in indexSpace and physicalspace is that different radiomics features from index and physical space generated different outliers excluded.
 3  Using isotropic physical space, the average test accuracy does not improve.
+4  here s3tos8 mean 3D region from surface 3 to surface 8.
+
 
 
 
