@@ -1,7 +1,7 @@
 # Sequential Backward feature selection on Thickness Radiomics Clinical in index space
 '''
 input: 100 3D radiomics feature in index space:
-           "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
+           "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_physicalSpace"
        9x9 thickness features:
            "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9"
        clinical data:
@@ -25,7 +25,7 @@ Algorithm:
    D output result in csv format.
 '''
 
-radiomicsDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
+radiomicsDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_physicalSpace"
 thicknessDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9"
 clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 IDPath = "/home/hxie1/data/BES_3K/log/logisticReg_thicknessRadiomicsClinical_10CV/allIDwith10ClinicalFtrs.txt"
@@ -35,7 +35,7 @@ outputDir = "/home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV"
 
 ODOS = "ODOS"
 
-hintName= "3DThickRadioClinic_IndexSpace_10CV"  # Thickness Radiomics Clinical
+hintName= "3DThickRadioClinic_PhysicalSpace_10CV"  # Thickness Radiomics Clinical
 
 # input radiomics size: [1,numRadiomics]
 numRadiomics = 100
