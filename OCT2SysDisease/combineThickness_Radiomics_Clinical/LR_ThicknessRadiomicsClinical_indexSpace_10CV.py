@@ -28,7 +28,7 @@ Algorithm:
 radiomicsDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
 thicknessDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9"
 clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
-IDPath = "/home/hxie1/data/BES_3K/log/logisticReg_thicknessRadiomicsClinical_10CV/allIDwith10ClinicalFtrs.txt"
+IDPath = "/home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV/allIDwith10ClinicalFtrs.txt"
 K = 10 # 10-fold Cross validation
 
 outputDir = "/home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV"
