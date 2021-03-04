@@ -7,6 +7,10 @@ outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/exp
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D_indexSpace.yaml"
 K = 100   # the number of extracted features.
 
+# surface index starting from zero.
+sStart = 5
+sEnd = 7
+
 import glob
 import numpy as np
 import random
@@ -31,7 +35,7 @@ def main():
     print(f"total {len(textureList)} texture files.")
     for texturePath in textureList:
         volumeName = os.path.basename(texturePath)  # 31118_OS_5069_Volume_texture.nrrd
-        maskName = volumeName.replace("_texture.nrrd", "_s5tos7_mask.nrrd") # 31118_OS_5069_Volume_s5tos7_mask.nrrd
+        maskName = volumeName.replace("_texture.nrrd", f"_s{sStart}tos{sEnd}_mask.nrrd") # 31118_OS_5069_Volume_s5tos7_mask.nrrd
         maskPath = os.path.join(maskDir, maskName)
 
         radiomicsArrayName =volumeName.replace("_texture.nrrd", f"_{K}radiomics.npy")

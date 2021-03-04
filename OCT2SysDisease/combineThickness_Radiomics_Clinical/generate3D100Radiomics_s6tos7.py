@@ -1,23 +1,15 @@
 # generate 95 radiomics
 
 textureDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_indexSpace/texture"
-maskDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_indexSpace/mask_s3tos8"
-outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
+maskDir ="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/texture3D_nrrd_indexSpace/mask_s6tos7"
+outputRadiomicsDir="/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s6tos7_100radiomics_indexSpace"
 
 radiomicsCfgPath = "/home/hxie1/projects/DeepLearningSeg/OCT2SysDisease/radiomics/testConfig/OCTLayerTextureCfg_100Radiomics_3D_indexSpace.yaml"
 K = 100   # the number of extracted features.
 
 # surface index starting from zero.
-sStart = 3
-sEnd = 8
-
-fastFold = 4
-# for example, a=[0,1,2,3,4,5,6,7,8,9] with N=10
-#  0: original order:  [0,1,2,3,4,5,6,7,8,9]
-#  1: reverse   [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
-#  2: middlefold  [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]
-#  3: middle_fold_reverse: b = a[0:N//2]; b.reverse(); b+a[N//2:]  => [4, 3, 2, 1, 0, 5, 6, 7, 8, 9]
-#  4: random.shuffle(a, random)
+sStart = 6
+sEnd = 7
 
 import glob
 import numpy as np
@@ -38,25 +30,12 @@ def main():
     # logger.addHandler(handler)
 
     textureList = glob.glob(textureDir + f"/*_Volume_texture.nrrd")
-    if 1 == fastFold: #reverseIterate:
-        textureList.reverse()
-    elif 2 == fastFold:  # middle fold
-        N = len(textureList)
-        textureList = textureList[N//2:] + textureList[0:N//2]
-    elif 3 == fastFold:  # middle_fold_reverse
-        N =  len(textureList)
-        temp = textureList[0:N//2]
-        temp.reverse()
-        textureList = temp+ textureList[N//2:]
-    elif 4 == fastFold:
-        random.shuffle(textureList)
-    else:
-        pass
+    random.shuffle(textureList)  # for multiple processes speed up.
 
     print(f"total {len(textureList)} texture files.")
     for texturePath in textureList:
         volumeName = os.path.basename(texturePath)  # 31118_OS_5069_Volume_texture.nrrd
-        maskName = volumeName.replace("_texture.nrrd", f"_s{sStart}tos{sEnd}_mask.nrrd") # 31118_OS_5069_Volume_s3tos8_mask.nrrd
+        maskName = volumeName.replace("_texture.nrrd", f"_s{sStart}tos{sEnd}_mask.nrrd") # 31118_OS_5069_Volume_s5tos7_mask.nrrd
         maskPath = os.path.join(maskDir, maskName)
 
         radiomicsArrayName =volumeName.replace("_texture.nrrd", f"_{K}radiomics.npy")

@@ -1,3 +1,28 @@
+# March 4th, Thursay, 2021:
+
+cat LR_3DThickRadioClinic_s5tos7_IndexSpace_10CV_20210304_091926.txt
+===============Logistic Regression for 3DThickRadioClinic_s5tos7_IndexSpace_10CV ================
+in IDFile: /home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV/allIDwith10ClinicalFtrs.txt: 1895 patients, taggedHBP0 = 820, taggedHBP1 = 1075, total 1895 patients.
+After erasing repeated ID: Num_response0 = 820, Num_response1= 1075, total=1895
+
+============== LR_3DThickRadioClinic_s5tos7_IndexSpace_10CV=================================================
+total 191 input featurs.
+===============================================================================================================
+CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,
+fold_0, 2188, 253, 275, 0.6952, 0.6324, 0.6691,
+fold_1, 2181, 282, 253, 0.7144, 0.5887, 0.5929,
+fold_2, 2159, 275, 282, 0.7170, 0.6036, 0.5816,
+fold_3, 2179, 262, 275, 0.7123, 0.5916, 0.6036,
+fold_4, 2165, 289, 262, 0.7155, 0.6228, 0.5611,
+fold_5, 2164, 263, 289, 0.7084, 0.5894, 0.6090,
+fold_6, 2186, 267, 263, 0.7159, 0.5880, 0.6198,
+fold_7, 2166, 283, 267, 0.7114, 0.5901, 0.5768,
+fold_8, 2166, 267, 283, 0.7018, 0.6517, 0.5972,
+fold_9, 2174, 275, 267, 0.6996, 0.6909, 0.6629,
+Average,2173, 272, 272, 0.7091, 0.6149, 0.6074,
+===============================================================================================================
+
+
 # March 3rd, Wednesday, 2021
 Consider to using the retina region from surface 5 to surface 7 to generate radiomics to analysis:
 =====================================================================

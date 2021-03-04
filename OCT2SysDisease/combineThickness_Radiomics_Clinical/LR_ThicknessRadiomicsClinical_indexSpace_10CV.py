@@ -189,6 +189,9 @@ def main():
 
     outputValidation = True
     print("")
+    print(f"====={hintName}======================")
+    print(
+        f"==========input features: radiomics={numRadiomics}, thickness={numThickness}, clinical={numClinicalFtr}==============")
     print(
         "===============================================================================================================")
     print(
