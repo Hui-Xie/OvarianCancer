@@ -1,5 +1,12 @@
 # March 4th, Thursay, 2021:
+Write a radioimics report slides:
+1  radiomics introduction;
+2  radiomics features;
+3  inputs;
+4  Result;
 
+
+========================
 cat LR_3DThickRadioClinic_s5tos7_IndexSpace_10CV_20210304_091926.txt
 ===============Logistic Regression for 3DThickRadioClinic_s5tos7_IndexSpace_10CV ================
 in IDFile: /home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV/allIDwith10ClinicalFtrs.txt: 1895 patients, taggedHBP0 = 820, taggedHBP1 = 1075, total 1895 patients.
