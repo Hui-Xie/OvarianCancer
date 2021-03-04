@@ -1,7 +1,9 @@
 # Sequential Backward feature selection on Thickness Radiomics Clinical in index space
 '''
 input: 100 3D radiomics feature in index space:
-           "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
+           "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s5tos6_100radiomics_indexSpace"
+       100 3D radiomics feature in index space:
+           "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s6tos7_100radiomics_indexSpace"
        9x9 thickness features:
            "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9"
        clinical data:
@@ -25,7 +27,8 @@ Algorithm:
    D output result in csv format.
 '''
 
-radiomicsDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s3tos8_100radiomics_indexSpace"
+radiomics1Dir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s5tos6_100radiomics_indexSpace"
+radiomics2Dir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/volume3D_s6tos7_100radiomics_indexSpace"
 thicknessDir = "/home/hxie1/data/BES_3K/W512NumpyVolumes/log/SurfacesNet/expBES3K_20201126A_genXml/testResult/thickness9Sector_9x9"
 clinicalGTPath = "/home/hxie1/data/BES_3K/GTs/BESClinicalGT_Analysis.csv"
 IDPath = "/home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV/allIDwith10ClinicalFtrs.txt"
@@ -35,10 +38,11 @@ outputDir = "/home/hxie1/data/BES_3K/log/LR_thicknessRadiomicsClinical_10CV"
 
 ODOS = "ODOS"
 
-hintName= "3DThickRadioClinic_IndexSpace_10CV"  # Thickness Radiomics Clinical
+hintName= "3DThickRadioClinic_s56_s67_IndexSpace_10CV"  # Thickness Radiomics Clinical
 
 # input radiomics size: [1,numRadiomics]
-numRadiomics = 100
+numRadiomics1 = 100  # s56
+numRadiomics2 = 100  # s67
 numThickness = 81
 numClinicalFtr=10
 keyName = "hypertension_bp_plus_history$"
@@ -58,7 +62,6 @@ import os
 import fnmatch
 import numpy as np
 sys.path.append("../..")
-from framework.measure import search_Threshold_Acc_TPR_TNR_Sum_WithProb
 from OCT2SysD_Tools import readBESClinicalCsv
 
 import datetime
@@ -151,7 +154,7 @@ def main():
         else:
             labelTable[i, 21] = labelTable[i, 17] / labelTable[i, 16]  # LDL/HDL, bigger means more risk to hypertension.
 
-    radiomicsVolumesList = glob.glob(radiomicsDir + f"/*_Volume_100radiomics.npy")
+    radiomics1VolumesList = glob.glob(radiomics1Dir + f"/*_Volume_100radiomics.npy")
 
     # 3  according to HBP label, divide 1895 IDs into 10 folds.
     # K-Fold division
@@ -190,8 +193,7 @@ def main():
     outputValidation = True
     print("")
     print(f"=====LogisticRegression: {hintName}======================")
-    print(
-        f"==========input features: radiomics={numRadiomics}, thickness={numThickness}, clinical={numClinicalFtr}==============")
+    print(f"==========input features: radiomicss_s56={numRadiomics1}, radiomicss_s67={numRadiomics2}, thickness={numThickness}, clinical={numClinicalFtr}==============")
     print(
         "===============================================================================================================")
     print(
@@ -245,12 +247,12 @@ def main():
             # statistics the number of all ID volumes including OD/OS
             radiomicsDataSetVolumeList =[]
             for id in IDList:
-                radiomicsDataSetVolumeList += fnmatch.filter(radiomicsVolumesList, "*/" + str(id)+ f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
+                radiomicsDataSetVolumeList += fnmatch.filter(radiomics1VolumesList, "*/" + str(id)+ f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
             nVolumes = len(radiomicsDataSetVolumeList)
-            ftrArray[datasetName] =  np.zeros((nVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
+            ftrArray[datasetName] =  np.zeros((nVolumes, numRadiomics1+ numRadiomics2+numThickness+numClinicalFtr), dtype=np.float)
             labelArray[datasetName]= np.zeros((nVolumes, 2), dtype=np.int) # columns: id, HBP
-            for i, radiomicsPath in enumerate(radiomicsDataSetVolumeList):
-                basename = os.path.splitext(os.path.basename(radiomicsPath))[0]  # 34009_OD_17113_Volume_100radiomics
+            for i, radiomics1Path in enumerate(radiomicsDataSetVolumeList):
+                basename = os.path.splitext(os.path.basename(radiomics1Path))[0]  # 34009_OD_17113_Volume_100radiomics
                 basename = basename[0: basename.find("_Volume_100radiomics")]  # 34009_OD_17113
                 id = int(basename[0: basename.find("_O")])  # 34009
                 thicknessPath = os.path.join(thicknessDir, f"{basename}_thickness9sector_9x9.npy")  # dir +34004_OD_16927_thickness9sector_9x9.npy
@@ -259,9 +261,12 @@ def main():
                 clinicalFtrs = labelTable[labelTableindex, clinicalFeatureColIndex]
                 HBPLabel = labelTable[labelTableindex, 1]
 
-                ftrArray[datasetName][i, 0:numRadiomics] = np.load(radiomicsPath).flatten()
-                ftrArray[datasetName][i, numRadiomics: numRadiomics + numThickness] = np.load(thicknessPath).flatten()
-                ftrArray[datasetName][i, numRadiomics + numThickness:] = clinicalFtrs
+                radiomics2Path = radiomics1Path.replace(radiomics1Dir, radiomics2Dir)
+
+                ftrArray[datasetName][i, 0:numRadiomics1] = np.load(radiomics1Path).flatten()
+                ftrArray[datasetName][i, numRadiomics1:numRadiomics1+numRadiomics2] = np.load(radiomics2Path).flatten()
+                ftrArray[datasetName][i, numRadiomics1+numRadiomics2: numRadiomics1+numRadiomics2 + numThickness] = np.load(thicknessPath).flatten()
+                ftrArray[datasetName][i, numRadiomics1+numRadiomics2 + numThickness:] = clinicalFtrs
                 labelArray[datasetName][i, 0] = id
                 labelArray[datasetName][i, 1] = HBPLabel
 
