@@ -1,4 +1,124 @@
-# March 4th, Thursay, 2021:
+# March 5th, Friday, 2021
+Suppose a data with input x and binary label y has below form, where y is not deduced through logic or knowledge, or human eye, directly by x.
+The y is offered by another mechanism or path. (a general sky project scene)
+x    y
+0    1
+0    0
+1    1
+1    0
+For this data pair(x,y), logistic regression can only get 50% accuracy on training data in the best computation.
+In other words, data pair is not powerful to predict label y result.
+
+All 10-fold CV logistic regression result on combination input: radiomics+thickness+clinical features.
+
+=====LogisticRegression: 3DThickRadioClinic_s56_s67_IndexSpace_10CV======================
+==========input features: radiomicss_s56=100, radiomicss_s67=100, thickness=81, clinical=10==============
+===============================================================================================================
+CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,
+fold_0, 2058, 236, 250, 0.7216, 0.6017, 0.6160,
+fold_1, 2041, 267, 236, 0.7281, 0.5655, 0.6102,
+fold_2, 2020, 257, 267, 0.7455, 0.5486, 0.5431,
+fold_3, 2047, 240, 257, 0.7386, 0.5833, 0.5642,
+fold_4, 2030, 274, 240, 0.7355, 0.6168, 0.5708,
+fold_5, 2022, 248, 274, 0.7290, 0.6008, 0.6058,
+fold_6, 2041, 255, 248, 0.7369, 0.5373, 0.6129,
+fold_7, 2023, 266, 255, 0.7405, 0.5752, 0.5686,
+fold_8, 2027, 251, 266, 0.7262, 0.6335, 0.5827,
+fold_9, 2043, 250, 251, 0.7234, 0.6200, 0.6653,
+Average,2035, 254, 254, 0.7325, 0.5883, 0.5940,
+===============================================================================================================
+
+=====3DThickRadioClinic_s6tos7_IndexSpace_10CV======================
+==========input features: radiomics=100, thickness=81, clinical=10==============
+===============================================================================================================
+CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,
+fold_0, 2223, 259, 271, 0.6995, 0.7066, 0.6716,
+fold_1, 2208, 286, 259, 0.7133, 0.6014, 0.6564,
+fold_2, 2190, 277, 286, 0.7196, 0.5740, 0.5769,
+fold_3, 2202, 274, 277, 0.7125, 0.5766, 0.5921,
+fold_4, 2182, 297, 274, 0.7195, 0.6364, 0.5766,
+fold_5, 2184, 272, 297, 0.7097, 0.5846, 0.6498,
+fold_6, 2207, 274, 272, 0.7213, 0.5876, 0.6176,
+fold_7, 2201, 278, 274, 0.7119, 0.5791, 0.5839,
+fold_8, 2210, 265, 278, 0.7127, 0.6642, 0.5863,
+fold_9, 2217, 271, 265, 0.6942, 0.6605, 0.6792,
+Average,2202, 275, 275, 0.7114, 0.6171, 0.6191,
+===============================================================================================================
+
+=====3DThickRadioClinic_s5tos6_IndexSpace_10CV======================
+==========input features: radiomics=100, thickness=81, clinical=10==============
+===============================================================================================================
+CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,
+fold_0, 2147, 247, 269, 0.6986, 0.6194, 0.6059,
+fold_1, 2139, 277, 247, 0.7050, 0.5596, 0.6275,
+fold_2, 2119, 267, 277, 0.7145, 0.5955, 0.5632,
+fold_3, 2147, 249, 267, 0.7122, 0.6064, 0.6255,
+fold_4, 2132, 282, 249, 0.6993, 0.6206, 0.6104,
+fold_5, 2126, 255, 282, 0.7041, 0.6235, 0.5993,
+fold_6, 2138, 270, 255, 0.7063, 0.5926, 0.6118,
+fold_7, 2109, 284, 270, 0.7136, 0.5739, 0.5889,
+fold_8, 2116, 263, 284, 0.6985, 0.6806, 0.6162,
+fold_9, 2131, 269, 263, 0.6922, 0.6171, 0.6844,
+Average,2130, 266, 266, 0.7044, 0.6089, 0.6133,
+===============================================================================================================
+
+============== LR_3DThickRadioClinic_s5tos7_IndexSpace_10CV=================================================
+total 191 input featurs.
+===============================================================================================================
+CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,
+fold_0, 2188, 253, 275, 0.6952, 0.6324, 0.6691,
+fold_1, 2181, 282, 253, 0.7144, 0.5887, 0.5929,
+fold_2, 2159, 275, 282, 0.7170, 0.6036, 0.5816,
+fold_3, 2179, 262, 275, 0.7123, 0.5916, 0.6036,
+fold_4, 2165, 289, 262, 0.7155, 0.6228, 0.5611,
+fold_5, 2164, 263, 289, 0.7084, 0.5894, 0.6090,
+fold_6, 2186, 267, 263, 0.7159, 0.5880, 0.6198,
+fold_7, 2166, 283, 267, 0.7114, 0.5901, 0.5768,
+fold_8, 2166, 267, 283, 0.7018, 0.6517, 0.5972,
+fold_9, 2174, 275, 267, 0.6996, 0.6909, 0.6629,
+Average,2173, 272, 272, 0.7091, 0.6149, 0.6074,
+===============================================================================================================
+
+
+Combination of 9x9 thickness + 100 radiomics s3tos8 in indexSpace + 10 clinical features with logistic regression to predict HBP:
+total 191 features as input.
+=======================================================================================================================
+CV	  #TrainningSamples	  #ValidationSamples	 #TestSamples	 #TrainingAccuracy	 #ValidationAccuray	 #TestAccuracy
+fold_0	2225	256	    275	    0.7007	0.6289	0.6291
+fold_1	2213	287	    256	    0.709	0.5784	0.6406
+fold_2	2187	282	    287	    0.7165	0.5816	0.5714
+fold_3	2209	265	    282	    0.7139	0.5434	0.5957
+fold_4	2202	289	    265	    0.7121	0.6055	0.5547
+fold_5	2198	269	    289	    0.7079	0.6208	0.6021
+fold_6	2210	277	    269	    0.7081	0.5921	0.6357
+fold_7	2190	289	    277	    0.7228	0.6055	0.5957
+fold_8	2200	267	    289	    0.6986	0.6667	0.5848
+fold_9	2214	275	    267	    0.6942	0.6582	0.6592
+Average	2204	275	    275	    0.7084	0.6081	0.6069
+========================================================================================================================
+
+Combination of 9x9 thickness + 100 radiomics s3tos8 in isotropic physicalSpace + 10 clinical features with logistic regression to predict HBP:
+total 191 features as input.
+(These isotropic physical space radiomics features spent 10 days to generate as resampling of 3D images)
+========================================================================================================================
+CV,  #TrainningSamples,  #ValidationSamples, #TestSamples, #TrainingAccuracy, #ValidationAccuray, #TestAccuracy,
+fold_0,     2188, 252, 273,     0.7016, 0.6310, 0.6410,
+fold_1,     2178, 283, 252,     0.7153, 0.5618, 0.6548,
+fold_2,     2146, 284, 283,     0.7176, 0.5915, 0.5512,
+fold_3,     2168, 261, 284,     0.7122, 0.5824, 0.6021,
+fold_4,     2170, 282, 261,     0.7143, 0.5745, 0.5594,
+fold_5,     2166, 265, 282,     0.7151, 0.5849, 0.5957,
+fold_6,     2176, 272, 265,     0.7160, 0.5882, 0.6151,
+fold_7,     2163, 278, 272,     0.7208, 0.6043, 0.5625,
+fold_8,     2172, 263, 278,     0.7086, 0.6654, 0.5683,
+fold_9,     2177, 273, 263,     0.6936, 0.6520, 0.6388,
+Average,    2170, 271, 271,	    0.7115,	0.6036,	0.5989,
+========================================================================================================================
+
+
+
+
+# March 4th, Thursday, 2021:
 Write a radioimics report slides:
 1  radiomics introduction;
 2  radiomics features;
