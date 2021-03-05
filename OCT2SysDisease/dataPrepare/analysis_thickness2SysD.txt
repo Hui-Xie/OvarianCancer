@@ -9,6 +9,24 @@ x    y
 For this data pair(x,y), logistic regression can only get 50% accuracy on training data in the best computation.
 In other words, data pair is not powerful to predict label y result.
 
+Note:
+1  All 10-fold crossing validation result is like below.
+    Here s6tos7 means the experiment uses a segmented texture region from surface6 to surfac7 (the 6th layer) to extract radiomic features.
+     s56_s67 means use separated 2 layers to extract radiomics separately.
+     All these experiment data have 55% HBP in the ground truth.
+
+2  Using different texture layers get a similar result of about 60% mean accuracy.
+
+3  3 attachment reports for your reference.
+     A. radiomics report slide.
+     B. an experiment summary.
+     C. previous multl-variable logistic regression slide.
+
+4  In past 3 months, I spent 80% time on this OCT to HBP project. But it looks that data is not powerful enough to predict HBP from OCT image.
+    I suggest quickly switch to association analysis. Some suggestions are listed in the attachment A.
+    From next week, I will invest my major time on SoftSeparation and MinCut projects.
+
+
 All 10-fold CV logistic regression result on combination input: radiomics+thickness+clinical features.
 
 =====LogisticRegression: 3DThickRadioClinic_s56_s67_IndexSpace_10CV======================
