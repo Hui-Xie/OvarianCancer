@@ -115,7 +115,6 @@ def main():
         testRFilePath = os.path.join(validationOuputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(testRFilePath, testR)
 
-        testGts = testGts.cpu().numpy()
         testGTPath = os.path.join(validationOuputDir, f"{datasetName}_thicknessGT_{hps.numSurfaces}surfaces.npy")
         np.save(testGTPath, testGts)
 

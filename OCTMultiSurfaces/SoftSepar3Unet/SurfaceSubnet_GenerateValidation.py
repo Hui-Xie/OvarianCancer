@@ -166,7 +166,7 @@ def main():
                 specificSurfError = computeSpecificSurfaceErrorForEachPatient(comparisonSurfaceIndex, testOutputs, testGts, slicesPerPatient=hps.slicesPerPatient,
                                                           hPixelSize=hps.hPixelSize, goodBScansInGtOrder=goodBScansInGtOrder)
 
-            testGts = testGts.cpu().numpy()
+
 
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
