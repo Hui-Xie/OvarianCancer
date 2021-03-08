@@ -14,6 +14,7 @@ from network.OCTDataSet import OCTDataSet
 from network.OCTOptimization import *
 from network.OCTTransform import *
 
+
 sys.path.append(".")
 from ThicknessSubnet_Z4 import ThicknessSubnet_Z4
 
@@ -26,6 +27,7 @@ from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
+from framework.NetTools import *
 
 datasetName = "validation"  # "test"
 
@@ -128,6 +130,9 @@ def main():
     testEndTime = time.time()
     B,S,W = testR.shape
 
+    if hps.existGTLabel:  # compute hausdorff distance
+        hausdorffD = columnHausdorffDist(testR, testGts).reshape(1, S)
+
     # final output result:
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
@@ -146,6 +151,7 @@ def main():
             file.write(f"muSurfaceError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
+            file.write(f"hausdorff Distance = {hausdorffD}\n")
 
 
 
