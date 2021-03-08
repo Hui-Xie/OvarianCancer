@@ -22,11 +22,15 @@ Prepare the final optimization on surface and thickness branch.
       A2. generate validation result.  --done
       output: /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/ThicknessSubnet_Z4/expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007/testResult/validation
 
-   B  generate all test set output on both branches.
+   B  generate all test set output on both branches.   -done.
+      surface output:
+      /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/test
+      thickness output:
+      /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/ThicknessSubnet_Z4/expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007/testResult/test
 
-   C  copy all data from c-iibi007 to xwu000
+   B  Sigma2 of surfaceNet need to save;
 
-
+   C  copy all data from c-iibi007 to xwu000:   --done
 
    D  modify the unconstrained optimization model;
    E  search Lambda on validaiton data;

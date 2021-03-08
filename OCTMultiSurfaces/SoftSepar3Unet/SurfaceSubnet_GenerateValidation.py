@@ -177,6 +177,10 @@ def main():
 
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
+        sigma2 = sigma2.cpu().numpy()
+
+        sigma2OutputPath = os.path.join(outputDir, f"{datasetName}_sigma2_{hps.numSurfaces}surfaces.npy")
+        np.save(sigma2OutputPath, sigma2)
 
         npyOutputPath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(npyOutputPath, testOutputs)
