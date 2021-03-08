@@ -32,8 +32,13 @@ Prepare the final optimization on surface and thickness branch.
 
    D  copy all data from c-iibi007 to xwu000:   --done
 
-   E  modify the unconstrained optimization model;
-   F  search Lambda on validation data;
+   E  modify the unconstrained optimization model;  --done:
+
+
+   F  search Lambda on validation data;    ----running
+      search lambda0: 0-5-0.01, lambda1: 0-5-0.01   --running.
+                      0-5-1 need 1 mins, 10000min/60/24 = 7 days.
+
    G  code to generate the final result script;
    H  get final predict result on test data;
 
