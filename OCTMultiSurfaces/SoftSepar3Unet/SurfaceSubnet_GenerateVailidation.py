@@ -4,7 +4,6 @@
 import sys
 from torch.utils import data
 
-
 sys.path.append("..")
 from network.OCTDataSet import *
 from network.OCTOptimization import *
@@ -26,6 +25,7 @@ import datetime
 sys.path.append("../dataPrepare_Tongren")
 from TongrenFileUtilities import *
 
+datasetName = "validation"  # "test"
 
 def printUsage(argv):
     print("============ Generate Validation Result =============")
@@ -55,14 +55,11 @@ def main():
     OnlyOutputGoodBscans =False
     needLegend = True
 
-
     # parse config file
     configFile = sys.argv[1]
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
     assert "IVUS" not in hps.experimentName
-
-    datasetName = "validation"  # "test"
 
     if hps.dataIn1Parcel:
         if -1==hps.k and 0==hps.K:  # do not use cross validation
@@ -137,9 +134,11 @@ def main():
             print(f"max of sigma2  = {torch.max(torch.max(sigma2, dim=0)[0], dim=-1)}")
 
         #output testID
-        with open(os.path.join(hps.outputDir, f"{datasetName}ID.txt"), "w") as file:
+        with open(os.path.join(hps.validationOutputDir, f"{datasetName}ID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
+
+
 
         # Error Std and mean
         if hps.groundTruthInteger:
@@ -172,9 +171,12 @@ def main():
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
 
+        npyOutputPath = os.path.join(hps.validationOutputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
+        np.save(npyOutputPath, testOutputs)
 
         if outputXmlSegFiles:
-            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir,
+            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames,
+                                           os.path.jion(hps.validationOutputDir, "xml"),
                                            refXMLFile=hps.refXMLFile,
                                            y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
 
@@ -342,7 +344,7 @@ def main():
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(hps.outputDir,f"output_{datasetName}_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(hps.validationOutputDir,f"output_{datasetName}_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,H,W = {B, S, H, W}\n")

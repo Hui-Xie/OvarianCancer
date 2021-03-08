@@ -96,6 +96,9 @@ def savePatientsPrediction(referFileDir, patientsDict, outputDir, y=496, voxelSi
     dateStr = f"{curTime.month:02d}/{curTime.day:02d}/{curTime.year}"
     timeStr = f"{curTime.hour:02d}:{curTime.minute:02d}:{curTime.second:02d}"
 
+    if not os.path.isdir(outputDir):
+        os.makedirs(outputDir)
+
     for patientID in patientsDict.keys():
 
         #read reference file
@@ -279,6 +282,8 @@ def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames,
     assert B == len(testIDs)
     assert 0 == B%numBscan
     # refXMLFile = "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+    if not os.path.isdir(outputDir):
+        os.makedirs(outputDir)
     i=0
     while i<B:
         predicition = testOutputs[i:i+numBscan,:,:]
