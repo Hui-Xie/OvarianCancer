@@ -61,6 +61,13 @@ def main():
     print(f"Experiment: {hps.experimentName}")
     assert "IVUS" not in hps.experimentName
 
+    if datasetName == "validation":
+        outputDir = hps.validationOutputDir
+    elif datasetName == "test":
+        outputDir = hps.testOutputDir
+    else:
+        assert False
+
     if hps.dataIn1Parcel:
         if -1==hps.k and 0==hps.K:  # do not use cross validation
             testImagesPath = os.path.join(hps.dataDir, datasetName, f"images.npy")
@@ -134,7 +141,7 @@ def main():
             print(f"max of sigma2  = {torch.max(torch.max(sigma2, dim=0)[0], dim=-1)}")
 
         #output testID
-        with open(os.path.join(hps.validationOutputDir, f"{datasetName}ID.txt"), "w") as file:
+        with open(os.path.join(outputDir, f"{datasetName}ID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 
@@ -171,16 +178,16 @@ def main():
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
 
-        npyOutputPath = os.path.join(hps.validationOutputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
+        npyOutputPath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(npyOutputPath, testOutputs)
 
         testGts = testGts.cpu().numpy()
-        testGTPath = os.path.join(hps.validationOutputDir, f"{datasetName}_GT_{hps.numSurfaces}surfaces.npy")
+        testGTPath = os.path.join(outputDir, f"{datasetName}_GT_{hps.numSurfaces}surfaces.npy")
         np.save(testGTPath, testGts)
 
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames,
-                                           os.path.join(hps.validationOutputDir, "xml"),
+                                           os.path.join(outputDir, "xml"),
                                            refXMLFile=hps.refXMLFile,
                                            y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
 
@@ -348,7 +355,7 @@ def main():
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(hps.validationOutputDir,f"output_{datasetName}_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(outputDir,f"output_{datasetName}_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,H,W = {B, S, H, W}\n")

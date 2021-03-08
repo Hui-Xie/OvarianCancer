@@ -48,7 +48,12 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    validationOutputDir = hps.validationOutputDir
+    if datasetName == "validation":
+        outputDir = hps.validationOutputDir
+    elif datasetName == "test":
+        outputDir = hps.testOutputDir
+    else:
+        assert False
 
     if hps.dataIn1Parcel:
         if -1 == hps.k and 0 == hps.K:  # do not use cross validation
@@ -110,18 +115,17 @@ def main():
                                                                                                      hPixelSize=hps.hPixelSize,
                                                                                                      goodBScansInGtOrder=goodBScansInGtOrder)
             testGts = testGts.cpu().numpy()
-            testGtsFilePath = os.path.join(validationOutputDir, f"validation_RiftGts.npy")
-            np.save(testGtsFilePath, testGts)
+            testGTPath = os.path.join(outputDir, f"{datasetName}_thicknessGT_{hps.numSurfaces}surfaces.npy")
+            np.save(testGTPath, testGts)
 
         testR = testR.cpu().numpy()
-        testRFilePath = os.path.join(validationOutputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
+        testRFilePath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(testRFilePath, testR)
 
-        testGTPath = os.path.join(validationOutputDir, f"{datasetName}_thicknessGT_{hps.numSurfaces}surfaces.npy")
-        np.save(testGTPath, testGts)
+
 
         # output testID
-        with open(os.path.join(validationOutputDir, f"{datasetName}ID.txt"), "w") as file:
+        with open(os.path.join(outputDir, f"{datasetName}ID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 
@@ -137,7 +141,7 @@ def main():
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(validationOutputDir, f"output_{datasetName}_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(outputDir, f"output_{datasetName}_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,W = {B, S, W}\n")
