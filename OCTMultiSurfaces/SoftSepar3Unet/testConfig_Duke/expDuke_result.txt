@@ -11,6 +11,8 @@ Prepare the final optimization on surface and thickness branch.
    B using searched lambda, get final result in test data.
 4  work plan:
    A  use 2 trained branches, to get its validation result. (make sure validation data does not do augmentation and in order.)
+      A1. modify the test code for generating validaton result.
+      A2. generate validation result.
    B  modify the unconstrained optimization model;
    C  search Lambda on validaiton data;
    D  get final predict result on test data;
