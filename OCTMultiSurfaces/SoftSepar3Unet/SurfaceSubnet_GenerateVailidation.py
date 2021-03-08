@@ -176,7 +176,7 @@ def main():
 
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames,
-                                           os.path.jion(hps.validationOutputDir, "xml"),
+                                           os.path.join(hps.validationOutputDir, "xml"),
                                            refXMLFile=hps.refXMLFile,
                                            y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
 
