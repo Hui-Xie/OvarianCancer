@@ -33,8 +33,9 @@ Prepare the final optimization on surface and thickness branch.
    D  copy all data from c-iibi007 to xwu000:   --done
 
    E  modify the unconstrained optimization model;
-   F  search Lambda on validaiton data;
-   G  get final predict result on test data;
+   F  search Lambda on validation data;
+   G  code to generate the final result script;
+   H  get final predict result on test data;
 
 5  further plan:
    if it get a better result on Duke data; use the this method on the Tongren data.
