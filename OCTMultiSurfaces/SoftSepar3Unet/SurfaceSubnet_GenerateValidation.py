@@ -25,7 +25,7 @@ import datetime
 sys.path.append("../dataPrepare_Tongren")
 from TongrenFileUtilities import *
 
-datasetName = "validation"  # "test"
+datasetName =   "test"            # "validation"  or "test"
 
 def printUsage(argv):
     print("============ Generate Validation Result =============")

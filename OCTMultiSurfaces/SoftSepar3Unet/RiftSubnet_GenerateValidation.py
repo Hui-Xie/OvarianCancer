@@ -29,7 +29,7 @@ from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.NetTools import *
 
-datasetName = "validation"  # "test"
+datasetName =   "test"            # "validation"  or "test"
 
 def printUsage(argv):
     print("============ Generate thickness on Validation data =============")
