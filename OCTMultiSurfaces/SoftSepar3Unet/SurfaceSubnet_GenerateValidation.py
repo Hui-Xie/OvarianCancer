@@ -175,7 +175,7 @@ def main():
         np.save(npyOutputPath, testOutputs)
 
         testGts = testGts.cpu().numpy()
-        testGTPath = os.path.join(hps.validationOuputDir, f"{datasetName}_GT_{hps.numSurfaces}surfaces.npy")
+        testGTPath = os.path.join(hps.validationOutputDir, f"{datasetName}_GT_{hps.numSurfaces}surfaces.npy")
         np.save(testGTPath, testGts)
 
         if outputXmlSegFiles:
