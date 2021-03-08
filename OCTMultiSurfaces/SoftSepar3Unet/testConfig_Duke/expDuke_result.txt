@@ -37,10 +37,12 @@ Prepare the final optimization on surface and thickness branch.
 
    F  search Lambda on validation data;    ----running
       search lambda0: 0-5-0.01, lambda1: 0-5-0.01   --running.
-                      0-5-1 need 1 mins, 10000min/60/24 = 7 days.
+      estimated time:   0-5-1 need 1 mins, 10000min/60/24 = 7 days.
 
-   G  code to generate the final result script;
-   H  get final predict result on test data;
+   G  code to generate the final result script;   --done
+      /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/afterLambda_UnconstrainedOpt.py
+
+   H  get final predict result on test data with searched lambda
 
 5  further plan:
    if it get a better result on Duke data; use the this method on the Tongren data.

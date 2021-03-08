@@ -34,11 +34,11 @@ N = 3  # surface number
 
 rSource = "predictR"  # "GTR": use R ground truth
 
-# todo
+# todo : fill lambda value with searched lambda from validation data.
 lambdaVec = torch.tensor([2.555, 3.9998], device=device, dtype=torch.float32)
 
 
-filename = f"muErr_{rSource}_fixLambda_lmd0_{lambdaVec[0]}_lmd1_{lambdaVec[1]}"
+filename = f"muErr_{rSource}_fixLambda_lmd0_{lambdaVec[0]:.3f}_lmd1_{lambdaVec[1]:.3f}"
 outputRecordFilename = os.path.join(outputDir, filename+"_log.txt")
 
 def unconstrainedSoftSeparation(Q, A, Lambda, Mu, R):
@@ -157,8 +157,8 @@ def main():
         file.write("===========================\n\n")
         file.write(f"rSource = {rSource}\n")
         file.write(f"lambda= {lambdaVec}, at test set\n")
-        file.write(f"min location mu error with optimizaiton on 2 branches = {muError}\n")
-        file.write(f"at min mu error,its Hausdorf distance(pixel) = {hausdorfD}\n")
+        file.write(f"mu error with optimization on 2 branches = {muError}\n")
+        file.write(f"its Hausdorf distance(pixel) = {hausdorfD}\n")
 
     print(f"output dir = {outputDir}")
     print(f"=== End of test with a fixed lambda ====")
