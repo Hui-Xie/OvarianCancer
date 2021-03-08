@@ -25,7 +25,7 @@ from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
 
-device = torch.device('cuda:0')
+device = torch.device('cuda:3')
 slicesPerPatient = 51
 hPixelSize = 3.24
 N = 3  # surface number
