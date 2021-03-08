@@ -28,13 +28,14 @@ Prepare the final optimization on surface and thickness branch.
       thickness output:
       /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/ThicknessSubnet_Z4/expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007/testResult/test
 
-   B  Sigma2 of surfaceNet need to save;
+   C  Sigma2 of surfaceNet need to save for both test and validaiton set: --done.
 
-   C  copy all data from c-iibi007 to xwu000:   --done
+   D  copy all data from c-iibi007 to xwu000:   --done
 
-   D  modify the unconstrained optimization model;
-   E  search Lambda on validaiton data;
-   F  get final predict result on test data;
+   E  modify the unconstrained optimization model;
+   F  search Lambda on validaiton data;
+   G  get final predict result on test data;
+
 5  further plan:
    if it get a better result on Duke data; use the this method on the Tongren data.
 
