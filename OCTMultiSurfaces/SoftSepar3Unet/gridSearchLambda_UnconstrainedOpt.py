@@ -75,7 +75,7 @@ def main():
 
     # get Sigma2, Mu, R, r, G
     sigma2 = np.load(sigma2Path) # size: 3009x3x361
-    mu = np.load(muPath)
+    mu = np.load(muPath).astype(np.float32)
     g  = np.load(gPath)
     r  = np.load(rPath)    # size:3009x2x361
     riftGT = np.load(riftGTPath)
