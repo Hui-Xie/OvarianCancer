@@ -33,8 +33,8 @@ N = 3  # surface number
 rSource = "predictR"  # "GTR": use R ground truth
 
 # Lambda search range:
-lambda0_min, lambda0_max, lambda0_step = 0, 5, 1
-lambda1_min, lambda1_max, lambda1_step = 0, 5, 1
+lambda0_min, lambda0_max, lambda0_step = 0, 5, 0.01
+lambda1_min, lambda1_max, lambda1_step = 0, 5, 0.01
 
 lambda0List = list(np.arange(lambda0_min, lambda0_max, lambda0_step))
 lambda1List = list(np.arange(lambda1_min, lambda1_max, lambda1_step))
