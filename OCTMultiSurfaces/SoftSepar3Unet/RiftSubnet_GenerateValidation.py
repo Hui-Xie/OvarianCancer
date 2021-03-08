@@ -1,4 +1,4 @@
-# Generaate Rift on Validation data
+# Generate Thickness on Validation data
 
 # need python package:  pillow(6.2.1), opencv, pytorch, torchvision, tensorboard
 
@@ -15,7 +15,7 @@ from network.OCTOptimization import *
 from network.OCTTransform import *
 
 sys.path.append(".")
-from RiftSubnet import RiftSubnet
+from ThicknessSubnet_Z4 import ThicknessSubnet_Z4
 
 import time
 import numpy as np
@@ -27,9 +27,10 @@ from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 
+datasetName = "validation"  # "test"
 
 def printUsage(argv):
-    print("============ Generate Rift on Validation data =============")
+    print("============ Generate thickness on Validation data =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
 
@@ -45,22 +46,20 @@ def main():
     hps = ConfigReader(configFile)
     print(f"Experiment: {hps.experimentName}")
 
-    validationOuputDir = os.path.join(hps.outputDir, "validation")
-    if not os.path.exists(validationOuputDir):
-        os.makedirs(validationOuputDir)  # recursive dir creation
+    validationOuputDir = hps.validationOutputDir
 
     if hps.dataIn1Parcel:
         if -1 == hps.k and 0 == hps.K:  # do not use cross validation
-            testImagesPath = os.path.join(hps.dataDir, "validation", f"images.npy")
-            testLabelsPath = os.path.join(hps.dataDir, "validation", f"surfaces.npy") if hps.existGTLabel else None
-            testIDPath = os.path.join(hps.dataDir, "validation", f"patientID.json")
+            testImagesPath = os.path.join(hps.dataDir, datasetName, f"images.npy")
+            testLabelsPath = os.path.join(hps.dataDir, datasetName, f"surfaces.npy") if hps.existGTLabel else None
+            testIDPath = os.path.join(hps.dataDir, datasetName, f"patientID.json")
         else:  # use cross validation
-            testImagesPath = os.path.join(hps.dataDir, "validation", f"images_CV{hps.k:d}.npy")
-            testLabelsPath = os.path.join(hps.dataDir, "validation", f"surfaces_CV{hps.k:d}.npy")
-            testIDPath = os.path.join(hps.dataDir, "validation", f"patientID_CV{hps.k:d}.json")
+            testImagesPath = os.path.join(hps.dataDir, datasetName, f"images_CV{hps.k:d}.npy")
+            testLabelsPath = os.path.join(hps.dataDir,datasetName, f"surfaces_CV{hps.k:d}.npy")
+            testIDPath = os.path.join(hps.dataDir, datasetName, f"patientID_CV{hps.k:d}.json")
     else:
         if -1 == hps.k and 0 == hps.K:  # do not use cross validation
-            testImagesPath = os.path.join(hps.dataDir, "validation", f"patientList.txt")
+            testImagesPath = os.path.join(hps.dataDir, datasetName, f"patientList.txt")
             testLabelsPath = None
             testIDPath = None
         else:
@@ -113,11 +112,15 @@ def main():
             np.save(testGtsFilePath, testGts)
 
         testR = testR.cpu().numpy()
-        testRFilePath = os.path.join(validationOuputDir, f"validation_Rift.npy")
+        testRFilePath = os.path.join(validationOuputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(testRFilePath, testR)
 
+        testGts = testGts.cpu().numpy()
+        testGTPath = os.path.join(validationOuputDir, f"{datasetName}_thicknessGT_{hps.numSurfaces}surfaces.npy")
+        np.save(testGTPath, testGts)
+
         # output testID
-        with open(os.path.join(validationOuputDir, f"validation_Rift_ID.txt"), "w") as file:
+        with open(os.path.join(validationOuputDir, f"{datasetName}ID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 
@@ -130,7 +133,7 @@ def main():
     curTime = datetime.datetime.now()
     timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
 
-    with open(os.path.join(validationOuputDir, f"validation_output_rift_{timeStr}.txt"), "w") as file:
+    with open(os.path.join(validationOuputDir, f"output_{datasetName}_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
         file.write(f"B,S,W = {B, S, W}\n")

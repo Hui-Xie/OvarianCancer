@@ -174,6 +174,10 @@ def main():
         npyOutputPath = os.path.join(hps.validationOutputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(npyOutputPath, testOutputs)
 
+        testGts = testGts.cpu().numpy()
+        testGTPath = os.path.join(hps.validationOuputDir, f"{datasetName}_GT_{hps.numSurfaces}surfaces.npy")
+        np.save(testGTPath, testGts)
+
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames,
                                            os.path.join(hps.validationOutputDir, "xml"),
