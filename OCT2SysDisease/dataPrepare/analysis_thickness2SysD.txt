@@ -1,3 +1,28 @@
+# March 10th, Wednesday, 2021
+Read Mathew Jacob's "MoDL: Model-based deep learning architecture for inverse problems"
+1  Recovery from few-parameter noised images is a ill-posed problem, the general method is to modify the objective function
+   using priors that penalizes solutions that fall outside the classes of natural images.
+
+
+Thinking:
+1  Is our OCT to HBP is a ill-posed problem?
+2  The problem in OCT to HBP using deep learning is overfitting, whose essence is it has too many input parameters,
+   and too many input parameters also lead too many learning parameters.
+   Putting the clinical data at ground truth to guide network, instead of putting them in input, will reduce network's overfitting,
+   and help network find medical related features, instead of not-generalized features.
+3  The low training accuracy (about 70%) of logistic regression shows that these thickness, hand-engineered-radiomics and clinical features are
+   not powerful enough to predict HBP.
+4  Between simple logistic regresson model and complex deep learning model, there maybe a model can generalize well
+   using more guides from clinical data as ground truth at the end of network.
+5  In detail method, it sill can use transfer learning.
+
+
+
+
+
+
+
+
 # March 5th, Friday, 2021
 Suppose a data with input x and binary label y has below form, where y is not deduced through logic or knowledge, or human eye, directly by x.
 The y is offered by another mechanism or path. (a general sky project scene)
