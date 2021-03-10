@@ -10,11 +10,49 @@ Thinking:
    and too many input parameters also lead too many learning parameters.
    Putting the clinical data at ground truth to guide network, instead of putting them in input, will reduce network's overfitting,
    and help network find medical related features, instead of not-generalized features.
+   The other features beside HBP as ground truth at the end of network act as a regulization.
 3  The low training accuracy (about 70%) of logistic regression shows that these thickness, hand-engineered-radiomics and clinical features are
    not powerful enough to predict HBP.
 4  Between simple logistic regresson model and complex deep learning model, there maybe a model can generalize well
    using more guides from clinical data as ground truth at the end of network.
 5  In detail method, it sill can use transfer learning.
+6  another method: use 30 slice to predict 1 slice may also help guide nework, use network redundancy information.
+
+
+
+
+
+Read Mathew Jacob's "MoDL: Model-based deep learning architecture for inverse problems"
+
+Following to professor Wu's suggestion, I reread the Mathew Jacob's paper.
+
+This paper constructed the image inverse problem as an optimization problem at one denoised input iteratively:
+argmin_x (measurement space consistence (Ax-b)^2 + lambda * denoising regularizaion(x-D(x))^2) (formula 10a).
+It use N convolution layers to implement denoising D(x), and use conjugate gradient method to solve the above quadratic optimization at the one iteration.
+And it used RNN architecture to implement iterative denoising and optimization (formula 10a).
+This paper uses a limited several iteration to solve CG, so it uses Tensorflow's auto backpropagation mechanism to get backward gradient.
+Actually, its theoretical backward gradient formula (16) while CG convergence has an error, it lacks a lambda in formula (16). But its implmentation does not use this formula, so it does not matter.
+
+Conjugate Gradient method can be used to solve unconstrained optimization problems such as energy minimization, when directly getting inverse of matrix A is expensive.
+The essence of CG method for energey min optimization argmin(1/2 x'Ax-bx) is to solve Ax=b (the first-order gradient formula) in iterative residual direction(negative gradient).
+In this paper, the x has a size of 256x232x208 before flatten for 3D MRI image, so its matrix A will be (256x232x208)x(256x232x208), whose inverse is unrealistic in any huge memory server.
+So it uses conjugate gradient method to bypass inverse through conjugating vectors inner product with respect matrix A.
+
+If our surface segmentation constructed as a constrained optimization, It can not directly use CG method.
+If we constructed our surface segmentation as an unconstrained qudratic optimization, and consider the whole 3D surface as optimization variable (10x31x512).
+This construction has a advantage of a real global, instead of a column of multi surface crossing points, optimization, and we may use CG method to solve.
+But CG method with a symmetric and postive definite matrix A in theory needs maximum N=10x31x512 iterations(in our surface segmentation case) to get convergence (this paper ignored this part),
+in reality, we can not guarantee to get converge in several ten or hundred iterations.
+Getting a reasonable convergence accuracy in far less than N iterations depends on different data with different condition number of matrix A.
+
+It is worth to research this direction, as it gets a real 3D surface global optimization.
+
+
+
+
+
+
+
 
 
 
