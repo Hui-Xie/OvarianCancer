@@ -85,9 +85,11 @@ def main():
     M = N - 1  # number of constraints
     q = 1.0/sigma2   # B, N, W
     '''
-    Q/2 min = 0.000174444867298007
-    Q/2 mean = 0.48962265253067017 
-    Q/2 max = 3.4920814037323
+    the coefficient of unary terms(Q = 1.0/(sigma^2)):
+    Q/2 min = 5.3471991122933105e-05
+    Q/2 mean = 0.6649723052978516
+    Q/2 max = 5.676419734954834
+
     '''
 
 

@@ -1,3 +1,68 @@
+# March 11th, Thursday, 2021:
+Lambda seerch result for softSeparation on validation data:
+1  Surface branch: expDuke_20200902A_SurfaceSubnet with filter=24, get meanError of surface 1.9812 um;
+2  Thickness branch: expDuke_20210204D_Thickness_YufanHe_iibi007, get meanError of thickness 3.6021 um.
+   YufanHe network Plus a full Height conv of [H,1], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01,
+   SmoothSurfaceLoss=False, smoothThicknessLoss=False.
+3  The mean error of thickness branch is bigger than the mean error of surface, because of 2 reason:
+   A  a surface error affect 2 thickness computations.
+   B  when average, mean thickness error is divided by (N-1), and mean surface error is divided by N.
+4  In our current softSeparation model, lambda is at equal position of 1/(2 simga^2).
+    the coefficient of unary terms(Q = 1.0/(sigma^2)):
+    Q/2 min = 5.3471991122933105e-05
+    Q/2 mean = 0.6649723052978516
+    Q/2 max = 5.676419734954834
+    which indiates that possible lambda mean at 0.6649.
+5  Grid lambda search range: lambda_0 in [0,5] with step 0.01, and lambda_1 in [0,5] with step 0.01. It searched 250K possible lambda combination.
+6  The result of grid lambda search: lambda_0=0, and lambda_1=0.
+   It shows that it get the best mean surface error without using pairwise terms in our current softSeparation model.
+
+Reason Analysis and further plan:
+1  The idea of using the predicted thickness(R) by another different network to improve surface location is not wrong.
+   but the pairwise terms (s_{i} -s_{i-1}-r_{i-1})^2 make 2 surfaces offset ground truth as error r_{i-1} is not ground truth.
+   And this pairwise terms does not consider the prediction confidence indicated by 1/sigma2.
+2  The reality of mean thickness error is about 2 times of mean surface error makes our current model to get the best lambda=0 by grid search.
+3  Further plan: modify the softSepartion model:
+      A inherit the idea of using the predicted thickness(R) by another different network to improve surface location prediction;
+      B use its above and below surface and thickness prediction to get the middle surface location,
+        average this surface prediction with the result of surface branch;
+      C put this average surface location into a new softSeparation model without the pairwise terms, as the thickness information has merged
+        into the average value.
+      D The other benefit of this design is that the thickness information is under the sigma2 affecting range in the unary terms,
+         which will make smaller thickness adjusting effect if sigma2 is very small.
+      E optimize this new softSeparation model.
+4  Pleas refer the document.
+
+
+
+cat muErr_predictR__lmd0_0_5_0.01__lmd1_0_5_0.01_log.txt
+======= Search Lambda in Soft Separation =========
+sigma2Path = /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/validation/validation_sigma2_3surfaces.npy
+muPath = /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/validation/validation_result_3surfaces.npy
+rPath = /home/hxie1/data/OCT_Duke/numpy_slices/log/ThicknessSubnet_Z4/expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007/testResult/validation/validation_result_3surfaces.npy
+gPath = /home/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet/expDuke_20200902A_SurfaceSubnet/testResult/validation/validation_GT_3surfaces.npy
+riftGTPath = /home/hxie1/data/OCT_Duke/numpy_slices/log/ThicknessSubnet_Z4/expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007/testResult/validation/validation_thicknessGT_3surfaces.npy
+the coefficient of unary terms(Q = 1.0/(sigma^2)):
+Q/2 min = 5.3471991122933105e-05
+Q/2 mean = 0.6649723052978516
+Q/2 max = 5.676419734954834
+===========================
+
+HausdorffDistance in pixel of surface branch = [[40. 64. 54.]]
+HausdorffDistance in physical size (micrometer) of surface branch = [[129.6  207.36 174.96]]
+muError of surface branch (lambda=0) = 2.1307780742645264
+at lambda0_min= 0, and lambda1_min = 0, with ReLU, muError = 2.130784511566162
+===========================
+
+rSource = predictR
+axis x: lambda0_min, lambda0_max, lambda0_step = 0, 5, 0.01
+axis y: lambda1_min, lambda1_max, lambda1_step = 0, 5, 0.01
+min location mu error with optimizaiton on 2 branches = 2.130784511566162
+at min mu error,its Hausdorf distance(pixel) = [40. 64. 54.]
+axis x: location: x= 0, lambda0 = 0.0
+axis y: location: y= 0, lambda1 = 0.0
+
+
 # March 06th, Saturday, 2021
 Prepare the final optimization on surface and thickness branch.
 1  surface branch: expDuke_20200902A_SurfaceSubnet with filter=24, get meanError of surface 1.9812 um;
