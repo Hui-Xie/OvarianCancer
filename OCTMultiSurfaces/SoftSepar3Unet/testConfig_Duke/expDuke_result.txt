@@ -19,8 +19,10 @@ Lambda seerch result for softSeparation on validation data:
 
 Reason Analysis and further plan:
 1  The idea of using the predicted thickness(R) by another different network to improve surface location is not wrong.
-   but the pairwise terms (s_{i} -s_{i-1}-r_{i-1})^2 make 2 surfaces offset ground truth as error r_{i-1} is not ground truth.
-   And this pairwise terms does not consider the prediction confidence indicated by 1/sigma2.
+   but the pairwise terms (s_{i} -s_{i-1}-r_{i-1})^2 make 2 surfaces offset ground truth as error r_{i-1} is not same with ground truth.
+   And according to our observation, it is not the case that a surface offsets from ground truth wholly.
+   The error case is that some points of a surface offsets ground truth, while other points fit ground truth very well. Therefore,
+   a lambda value for a whole surface may hurt the accuracy, and it is better to use a lambda of size (NxW) to adapt different surface positions.
 2  The reality of mean thickness error is about 2 times of mean surface error makes our current model to get the best lambda=0 by grid search.
 3  Further plan: modify the softSepartion model:
       A inherit the idea of using the predicted thickness(R) by another different network to improve surface location prediction;
