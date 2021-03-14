@@ -1,5 +1,5 @@
 # Surfaces Unet: support automatic input size.
-# directly use [H,5] conv to get N surface, and then deduce N-1 thickness, but use surface 0 ground truth only.
+# directly use [H,5] or [H,1]conv to get N surface, and then deduce N-1 thickness, but use surface 0 ground truth only.
 
 
 import sys
