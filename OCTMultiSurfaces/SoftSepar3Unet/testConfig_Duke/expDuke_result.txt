@@ -1,5 +1,26 @@
+# March 14th, Sunday, 2021
+For surface prediction network of expDuke_20200902A_SurfaceSubnet with filter=24:
+AMD and Control group statistics for surfaceSubnet on test data:
+========================================================================================================================================================
+ExpName                                         Group       muError             stdError            muSurfaceError              Hausdorff_Distance(pixel)
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+expDuke_20200902A_SurfaceSubnet                 AMD         2.202664852142334   2.2394497394561768  1.3282, 1.9938, 3.2859      50.     33.     30.
+expDuke_20200902A_SurfaceSubnet                 Control     1.4768062829971313  0.929665207862854   0.6202, 1.6550, 2.1552      28.     8.      8.
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+expDuke_20200902A_SurfaceSubnet               AMD+Control   1.9812164306640625  1.961887240409851   1.1122, 1.8904, 2.9410      50.     33.     30.
+========================================================================================================================================================
+
+For thickness prediction network of expDuke_20210204D_Thickness_YufanHe_iibi007 on test data:
+================================================================================================================================================================================================================
+Method_Name                                         meanErr StdError thickErr0 thickErr1 HausdfDist0 HausdfDist1 Note
+expDuke_20210204D_Thickness_YufanHe_iibi007         3.6021  2.2906    3.0053,   4.1989    53.1821    42.
+=================================================================================================================================
+
+
+
 # March 11th, Thursday, 2021:
-Lambda seerch result for softSeparation on validation data:
+Lambda search result for softSeparation on validation data:
 1  Surface branch: expDuke_20200902A_SurfaceSubnet with filter=24, get meanError of surface 1.9812 um;
 2  Thickness branch: expDuke_20210204D_Thickness_YufanHe_iibi007, get meanError of thickness 3.6021 um.
    YufanHe network Plus a full Height conv of [H,1], using N surfaces without its GT, and then deduce N-1 thickness, lr =0.01,
@@ -33,7 +54,10 @@ Reason Analysis and further plan:
       D The other benefit of this design is that the thickness information is under the sigma2 affecting range in the unary terms,
          which will make smaller thickness adjusting effect if sigma2 is very small.
       E optimize this new softSeparation model.
-4  Pleas refer the document.
+4  Pleas refer 2 attached documents:
+   A: previous old model.
+   B: the new whole image model: a whole image optimization model, instead a a local-column, model.
+
 
 
 
