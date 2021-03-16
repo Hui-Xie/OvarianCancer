@@ -1,3 +1,16 @@
+# March 16th, Tuesday, 2021:
+discussion with professor:
+1  For MICCAI paper, use model of mu and sigma2 to get more robust result;
+   A less training data;
+   B less hausdorf distance;
+   C add noise in data.
+2 look into the 2nd Duke data.
+3 summary Ovarian cancer previous experiments.
+4 add smooth terms into model 2.
+
+
+
+
 # March 14th, Sunday, 2021
 For surface prediction network of expDuke_20200902A_SurfaceSubnet with filter=24:
 AMD and Control group statistics for surfaceSubnet on test data:
@@ -16,8 +29,6 @@ For thickness prediction network of expDuke_20210204D_Thickness_YufanHe_iibi007 
 Method_Name                                         meanErr StdError thickErr0 thickErr1 HausdfDist0 HausdfDist1 Note
 expDuke_20210204D_Thickness_YufanHe_iibi007         3.6021  2.2906    3.0053,   4.1989    53.1821    42.
 =================================================================================================================================
-
-
 
 # March 11th, Thursday, 2021:
 Lambda search result for softSeparation on validation data:
