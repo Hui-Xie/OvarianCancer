@@ -119,41 +119,51 @@ def main():
                                                                                                      slicesPerPatient=hps.slicesPerPatient,
                                                                                                      hPixelSize=hps.hPixelSize,
                                                                                                      goodBScansInGtOrder=goodBScansInGtOrder)
-            testGts = testGts.cpu().numpy()
-            testGtsFilePath = os.path.join(hps.outputDir, f"testRiftGts.npy")
-            np.save(testGtsFilePath, testGts)
-
             # smooth predicted R
-            # define the smooth matrix
-            smoothM = torch.zeros((1,W,W),dtype=torch.float32, device=testGts.device) # 5-point smooth matrix
+            # define the 5-point center moving average smooth matrix
+            smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=testR.device)  # 5-point smooth matrix
             # 0th column and W-1 column
-            smoothM[0,0,0] = 1.0/2
-            smoothM[0,1,0] = 1.0/2
-            smoothM[0, W-2, W-1] = 1.0 / 2
-            smoothM[0, W-1, W-1] = 1.0 / 2
+            smoothM[0, 0, 0] = 1.0 / 2
+            smoothM[0, 1, 0] = 1.0 / 2
+            smoothM[0, W - 2, W - 1] = 1.0 / 2
+            smoothM[0, W - 1, W - 1] = 1.0 / 2
             # 1th column and W-2 column
             smoothM[0, 0, 1] = 1.0 / 3
             smoothM[0, 1, 1] = 1.0 / 3
             smoothM[0, 2, 1] = 1.0 / 3
-            smoothM[0, W-3, W-2] = 1.0 / 3
-            smoothM[0, W-2, W-2] = 1.0 / 3
-            smoothM[0, W-1, W-2] = 1.0 / 3
+            smoothM[0, W - 3, W - 2] = 1.0 / 3
+            smoothM[0, W - 2, W - 2] = 1.0 / 3
+            smoothM[0, W - 1, W - 2] = 1.0 / 3
             # columns from 2 to W-2
-            for i in range(2, W-2):
-                smoothM[0, i-2, i] = 1.0 / 5
-                smoothM[0, i-1, i] = 1.0 / 5
-                smoothM[0, i,   i] = 1.0 / 5
-                smoothM[0, i+1, i] = 1.0 / 5
-                smoothM[0, i+2, i] = 1.0 / 5
+            for i in range(2, W - 2):
+                smoothM[0, i - 2, i] = 1.0 / 5
+                smoothM[0, i - 1, i] = 1.0 / 5
+                smoothM[0, i, i] = 1.0 / 5
+                smoothM[0, i + 1, i] = 1.0 / 5
+                smoothM[0, i + 2, i] = 1.0 / 5
+            smoothM = smoothM.expand(B, W, W)  # size: BxWxW
+            testRSmooth = torch.bmm(testR, smoothM)  # size: BxSxW
 
+            stdSurfaceErrorSmooth, muSurfaceErrorSmooth, stdErrorSmooth, muErrorSmooth = computeErrorStdMuOverPatientDimMean(testRSmooth,
+                                                                                                           testGts,
+                                                                                                           slicesPerPatient=hps.slicesPerPatient,
+                                                                                                           hPixelSize=hps.hPixelSize,
+                                                                                                           goodBScansInGtOrder=goodBScansInGtOrder)
 
+            testGts = testGts.cpu().numpy()
+            testGtsFilePath = os.path.join(hps.outputDir, f"testRiftGts.npy")
+            np.save(testGtsFilePath, testGts)
 
         testR = testR.cpu().numpy()
         if hps.existGTLabel:
             hausdorffD = columnHausdorffDist(testR, testGts).reshape(1, -1)
+            hausdorffDSmooth = columnHausdorffDist(testRSmooth, testGts).reshape(1, -1)
 
         testRFilePath = os.path.join(hps.outputDir, f"testR.npy")
         np.save(testRFilePath, testR)
+
+        testRSmoothFilePath = os.path.join(hps.outputDir, f"testRSmooth.npy")
+        np.save(testRSmoothFilePath, testRSmooth)
 
         # output testID
         with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
@@ -186,6 +196,14 @@ def main():
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
             file.write(f"hausdorff distance(pixel) of Thickness = {hausdorffD}\n")
+
+            file.write(f"\n====Using 5-point center moving average to smooth predicted R, then compute accuracy===========")
+            file.write(f"stdThicknessErrorSmooth = {stdSurfaceErrorSmooth}\n")
+            file.write(f"muThicknessErrorSmooth = {muSurfaceErrorSmooth}\n")
+            file.write(f"stdErrorSmooth = {stdErrorSmooth}\n")
+            file.write(f"muErrorSmooth = {muErrorSmooth}\n")
+            file.write(f"hausdorff distance(pixel) Smooth of Thickness = {hausdorffDSmooth}\n")
+
 
 
 
