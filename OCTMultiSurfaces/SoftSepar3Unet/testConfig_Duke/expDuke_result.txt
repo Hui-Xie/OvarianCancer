@@ -1,11 +1,13 @@
 # March 19th, Friday, 2021:
 Code Plan on the Model 2:
 1  experiment on the predicted R: smooth it with its 5 neigbours, and then compare with ground truth;  --done
-   if the result of this experiment is good, it is reasonable to add smooth operation at final prediction module.
+   Notes: this smooth module didn't put into training process.
+   if the result of this experiment is good, it is reasonable to add smooth operation at training network.
+   muError and Hausdorff distance both improve after using smooth module which is not in training process.
 
 ExpName: expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007
    for test data:
-   ===============Formal Output Result ===========
+   ===============Formal Output Result  with smooth R ===========
 stdThicknessError = tensor([2.4242, 1.9958], device='cuda:0')
 muThicknessError = tensor([3.0053, 4.1989], device='cuda:0')
 stdError = 2.29067063331604
@@ -20,9 +22,19 @@ muErrorSmooth = 3.5900678634643555
 hausdorff distance(pixel) Smooth of Thickness = [[53.092457 34.422928]]
 
     for validation data:
+===============Formal Output Result without smooth R ===========
+stdSurfaceError = tensor([2.5337, 2.8460], device='cuda:0')
+muSurfaceError = tensor([3.2382, 4.6898], device='cuda:0')
+stdError = 2.780116081237793
+muError = 3.9639880657196045
+hausdorff Distance = [[88.08188 59.     ]]
 
-
-
+====Using 5-point center moving average to smooth predicted R, then compute accuracy===========
+stdThicknessErrorSmooth = tensor([2.5298, 2.8378], device='cuda:0')
+muThicknessErrorSmooth = tensor([3.2421, 4.6576], device='cuda:0')
+stdErrorSmooth = 2.7694501876831055
+muErrorSmooth = 3.9498488903045654
+hausdorff distance(pixel) Smooth of Thickness = [[87.20867 53.60678]]
 
 2  Code model 2 network:
    A  code lambda learning module;
