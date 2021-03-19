@@ -3,6 +3,27 @@ Code Plan on the Model 2:
 1  experiment on the predicted R: smooth it with its 5 neigbours, and then compare with ground truth;  --done
    if the result of this experiment is good, it is reasonable to add smooth operation at final prediction module.
 
+ExpName: expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007
+   for test data:
+   ===============Formal Output Result ===========
+stdThicknessError = tensor([2.4242, 1.9958], device='cuda:0')
+muThicknessError = tensor([3.0053, 4.1989], device='cuda:0')
+stdError = 2.29067063331604
+muError = 3.6021194458007812
+hausdorff distance(pixel) of Thickness = [[53.182144 42.      ]]
+
+====Using 5-point center moving average to smooth predicted R, then compute accuracy===========
+stdThicknessErrorSmooth = tensor([2.4196, 1.9861], device='cuda:0')
+muThicknessErrorSmooth = tensor([3.0116, 4.1685], device='cuda:0')
+stdErrorSmooth = 2.279327869415283
+muErrorSmooth = 3.5900678634643555
+hausdorff distance(pixel) Smooth of Thickness = [[53.092457 34.422928]]
+
+    for validation data:
+
+
+
+
 2  Code model 2 network:
    A  code lambda learning module;
    B  pretrain lambda;
