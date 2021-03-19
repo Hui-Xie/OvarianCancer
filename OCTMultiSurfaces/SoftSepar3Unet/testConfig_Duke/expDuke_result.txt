@@ -1,3 +1,15 @@
+# March 19th, Friday, 2021:
+Code Plan on the Model 2:
+1  experiment on the predicted R: smooth it with its 5 neigbours, and then compare with ground truth;
+2  Code model 2 network:
+   A  code lambda learning module;
+   B  pretrain lambda;
+   C  integrate refine 2 branch + lambda;
+3  get test result;
+4  use less-quantity and noise data to train;
+
+
+
 # March 16th, Tuesday, 2021:
 discussion with professor:
 1  For MICCAI paper, use model of mu and sigma2 to get more robust result;
