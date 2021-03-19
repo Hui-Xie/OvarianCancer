@@ -106,7 +106,7 @@ def main():
 
             testR = torch.cat((testR, R)) if testBatch != 1 else R
 
-
+        B, S, W = testR.shape
         if hps.existGTLabel:
             goodBScansInGtOrder = None
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testR,
@@ -114,6 +114,38 @@ def main():
                                                                                                      slicesPerPatient=hps.slicesPerPatient,
                                                                                                      hPixelSize=hps.hPixelSize,
                                                                                                      goodBScansInGtOrder=goodBScansInGtOrder)
+            # smooth predicted R
+            # define the 5-point center moving average smooth matrix
+            smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=testR.device)  # 5-point smooth matrix
+            # 0th column and W-1 column
+            smoothM[0, 0, 0] = 1.0 / 2
+            smoothM[0, 1, 0] = 1.0 / 2
+            smoothM[0, W - 2, W - 1] = 1.0 / 2
+            smoothM[0, W - 1, W - 1] = 1.0 / 2
+            # 1th column and W-2 column
+            smoothM[0, 0, 1] = 1.0 / 3
+            smoothM[0, 1, 1] = 1.0 / 3
+            smoothM[0, 2, 1] = 1.0 / 3
+            smoothM[0, W - 3, W - 2] = 1.0 / 3
+            smoothM[0, W - 2, W - 2] = 1.0 / 3
+            smoothM[0, W - 1, W - 2] = 1.0 / 3
+            # columns from 2 to W-2
+            for i in range(2, W - 2):
+                smoothM[0, i - 2, i] = 1.0 / 5
+                smoothM[0, i - 1, i] = 1.0 / 5
+                smoothM[0, i, i] = 1.0 / 5
+                smoothM[0, i + 1, i] = 1.0 / 5
+                smoothM[0, i + 2, i] = 1.0 / 5
+            smoothM = smoothM.expand(B, W, W)  # size: BxWxW
+            testRSmooth = torch.bmm(testR, smoothM)  # size: BxSxW
+
+            stdSurfaceErrorSmooth, muSurfaceErrorSmooth, stdErrorSmooth, muErrorSmooth = computeErrorStdMuOverPatientDimMean(
+                testRSmooth,
+                testGts,
+                slicesPerPatient=hps.slicesPerPatient,
+                hPixelSize=hps.hPixelSize,
+                goodBScansInGtOrder=goodBScansInGtOrder)
+
             testGts = testGts.cpu().numpy()
             testGTPath = os.path.join(outputDir, f"{datasetName}_thicknessGT_{hps.numSurfaces}surfaces.npy")
             np.save(testGTPath, testGts)
@@ -122,6 +154,8 @@ def main():
         testRFilePath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(testRFilePath, testR)
 
+        testRSmoothFilePath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces_smooth.npy")
+        np.save(testRSmoothFilePath, testRSmooth)
 
 
         # output testID
@@ -132,10 +166,11 @@ def main():
 
 
     testEndTime = time.time()
-    B,S,W = testR.shape
+
 
     if hps.existGTLabel:  # compute hausdorff distance
         hausdorffD = columnHausdorffDist(testR, testGts).reshape(1, S)
+        hausdorffDSmooth = columnHausdorffDist(testRSmooth, testGts).reshape(1, -1)
 
     # final output result:
     curTime = datetime.datetime.now()
@@ -156,6 +191,14 @@ def main():
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
             file.write(f"hausdorff Distance = {hausdorffD}\n")
+
+            file.write(
+                f"\n====Using 5-point center moving average to smooth predicted R, then compute accuracy===========")
+            file.write(f"stdThicknessErrorSmooth = {stdSurfaceErrorSmooth}\n")
+            file.write(f"muThicknessErrorSmooth = {muSurfaceErrorSmooth}\n")
+            file.write(f"stdErrorSmooth = {stdErrorSmooth}\n")
+            file.write(f"muErrorSmooth = {muErrorSmooth}\n")
+            file.write(f"hausdorff distance(pixel) Smooth of Thickness = {hausdorffDSmooth}\n")
 
 
 
