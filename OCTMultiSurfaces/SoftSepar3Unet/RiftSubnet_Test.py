@@ -155,6 +155,7 @@ def main():
             np.save(testGtsFilePath, testGts)
 
         testR = testR.cpu().numpy()
+        testRSmooth = testRSmooth.cpu().numpy()
         if hps.existGTLabel:
             hausdorffD = columnHausdorffDist(testR, testGts).reshape(1, -1)
             hausdorffDSmooth = columnHausdorffDist(testRSmooth, testGts).reshape(1, -1)

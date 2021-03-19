@@ -154,6 +154,7 @@ def main():
         testRFilePath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces.npy")
         np.save(testRFilePath, testR)
 
+        testRSmooth = testRSmooth.cpu().numpy()
         testRSmoothFilePath = os.path.join(outputDir, f"{datasetName}_result_{hps.numSurfaces}surfaces_smooth.npy")
         np.save(testRSmoothFilePath, testRSmooth)
 
