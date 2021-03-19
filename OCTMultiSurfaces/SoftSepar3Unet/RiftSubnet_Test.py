@@ -198,7 +198,7 @@ def main():
             file.write(f"muError = {muError}\n")
             file.write(f"hausdorff distance(pixel) of Thickness = {hausdorffD}\n")
 
-            file.write(f"\n====Using 5-point center moving average to smooth predicted R, then compute accuracy===========")
+            file.write(f"\n====Using 5-point center moving average to smooth predicted R, then compute accuracy===========\n")
             file.write(f"stdThicknessErrorSmooth = {stdSurfaceErrorSmooth}\n")
             file.write(f"muThicknessErrorSmooth = {muSurfaceErrorSmooth}\n")
             file.write(f"stdErrorSmooth = {stdErrorSmooth}\n")

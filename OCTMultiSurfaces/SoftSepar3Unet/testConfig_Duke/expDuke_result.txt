@@ -2,7 +2,7 @@
 Code Plan on the Model 2:
 1  experiment on the predicted R: smooth it with its 5 neigbours, and then compare with ground truth;  --done
    if the result of this experiment is good, it is reasonable to add smooth operation at final prediction module.
-   
+
 2  Code model 2 network:
    A  code lambda learning module;
    B  pretrain lambda;
