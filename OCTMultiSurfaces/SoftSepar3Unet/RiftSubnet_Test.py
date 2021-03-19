@@ -8,6 +8,7 @@ import random
 import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
+import torch
 
 sys.path.append("..")
 from network.OCTDataSet import OCTDataSet
@@ -110,7 +111,7 @@ def main():
 
             testR = torch.cat((testR, R)) if testBatch != 1 else R
 
-
+        B, S, W = testR.shape
         if hps.existGTLabel:
             goodBScansInGtOrder = None
             stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testR,
@@ -121,6 +122,31 @@ def main():
             testGts = testGts.cpu().numpy()
             testGtsFilePath = os.path.join(hps.outputDir, f"testRiftGts.npy")
             np.save(testGtsFilePath, testGts)
+
+            # smooth predicted R
+            # define the smooth matrix
+            smoothM = torch.zeros((1,W,W),dtype=torch.float32, device=testGts.device) # 5-point smooth matrix
+            # 0th column and W-1 column
+            smoothM[0,0,0] = 1.0/2
+            smoothM[0,1,0] = 1.0/2
+            smoothM[0, W-2, W-1] = 1.0 / 2
+            smoothM[0, W-1, W-1] = 1.0 / 2
+            # 1th column and W-2 column
+            smoothM[0, 0, 1] = 1.0 / 3
+            smoothM[0, 1, 1] = 1.0 / 3
+            smoothM[0, 2, 1] = 1.0 / 3
+            smoothM[0, W-3, W-2] = 1.0 / 3
+            smoothM[0, W-2, W-2] = 1.0 / 3
+            smoothM[0, W-1, W-2] = 1.0 / 3
+            # columns from 2 to W-2
+            for i in range(2, W-2):
+                smoothM[0, i-2, i] = 1.0 / 5
+                smoothM[0, i-1, i] = 1.0 / 5
+                smoothM[0, i,   i] = 1.0 / 5
+                smoothM[0, i+1, i] = 1.0 / 5
+                smoothM[0, i+2, i] = 1.0 / 5
+
+
 
         testR = testR.cpu().numpy()
         if hps.existGTLabel:
@@ -138,7 +164,7 @@ def main():
         
 
     testEndTime = time.time()
-    B,S,W = testR.shape
+
     # _,H,_ = images.shape
 
     # final output result:

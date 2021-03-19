@@ -104,3 +104,5 @@ softSeparation: False
 useReLUInPretrain: False
 
 goodBscans: []
+
+smoothPredictedR: True  #smooth predicted R before final comparison.
