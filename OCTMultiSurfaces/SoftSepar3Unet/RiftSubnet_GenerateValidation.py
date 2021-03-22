@@ -17,6 +17,7 @@ from network.OCTTransform import *
 
 sys.path.append(".")
 from ThicknessSubnet_Z4 import ThicknessSubnet_Z4
+from ThicknessSubnet_M import ThicknessSubnet_M
 
 import time
 import numpy as np
