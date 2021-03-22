@@ -16,7 +16,7 @@ from framework.ConvBlocks import *
 from framework.CustomizedLoss import SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
 from framework.ConfigReader import ConfigReader
 
-class SurfaceSubnet(BasicModel):
+class SurfaceSubnet_M(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: BxinputChaneels*H*W
