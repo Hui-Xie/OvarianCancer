@@ -16,6 +16,7 @@ from network.OCTTransform import *
 import time
 
 from SurfaceSubnet import SurfaceSubnet
+from SurfaceSubnet_M import SurfaceSubnet_M  # smooth module surface net
 from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 
 sys.path.append("../..")

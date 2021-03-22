@@ -40,6 +40,31 @@ class SurfaceSubnet(BasicModel):
         )  # output size:BxNxHxW
 
 
+        # define the 5-point center moving average smooth matrix
+        W = hps.inputWidth
+        self.m_smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=hps.device, requires_grad=False)  # 5-point smooth matrix
+        # 0th column and W-1 column
+        self.m_smoothM[0, 0, 0] = 1.0 / 2
+        self.m_smoothM[0, 1, 0] = 1.0 / 2
+        self.m_smoothM[0, W - 2, W - 1] = 1.0 / 2
+        self.m_smoothM[0, W - 1, W - 1] = 1.0 / 2
+        # 1th column and W-2 column
+        self.m_smoothM[0, 0, 1] = 1.0 / 3
+        self.m_smoothM[0, 1, 1] = 1.0 / 3
+        self.m_smoothM[0, 2, 1] = 1.0 / 3
+        self.m_smoothM[0, W - 3, W - 2] = 1.0 / 3
+        self.m_smoothM[0, W - 2, W - 2] = 1.0 / 3
+        self.m_smoothM[0, W - 1, W - 2] = 1.0 / 3
+        # columns from 2 to W-2
+        for i in range(2, W - 2):
+            self.m_smoothM[0, i - 2, i] = 1.0 / 5
+            self.m_smoothM[0, i - 1, i] = 1.0 / 5
+            self.m_smoothM[0, i, i] = 1.0 / 5
+            self.m_smoothM[0, i + 1, i] = 1.0 / 5
+            self.m_smoothM[0, i + 2, i] = 1.0 / 5
+
+
+
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         device = inputs.device
@@ -90,7 +115,9 @@ class SurfaceSubnet(BasicModel):
         else:  #No ReLU
             S = mu.clone()
 
-
+        # smooth predicted S
+        smoothM = self.m_smoothM.expand(B, W, W)  # size: BxWxW
+        S = torch.bmm(S, smoothM)  # size: BxSxW
 
         loss_div = 0.0
         loss_smooth = 0.0
