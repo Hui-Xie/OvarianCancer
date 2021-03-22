@@ -29,8 +29,8 @@ class LambdaModule(BasicModel):
         # Lambda branch:
         self.m_lambdas = nn.Sequential(
             Conv2dBlock(C, C//2),
-            Conv2dBlock(C//2, C//2),
-            nn.Conv2d(C // 2, N, kernel_size=[H,1], stride=[1, 1], padding=[0, 0]),  # 2D conv [H,1]
+            Conv2dBlock(C//2, C//4),
+            nn.Conv2d(C // 4, N, kernel_size=[H,1], stride=[1, 1], padding=[0, 0]),  # 2D conv [H,1]
             nn.Sigmoid(),  # Sigmoid makes lambda in [0,1]
         )  # output size:BxNxW
 
