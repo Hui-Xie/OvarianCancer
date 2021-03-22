@@ -1,13 +1,27 @@
+# March 22nd, Maonday, 2021:
+1  Add smooth moudule to surface subnet.
+
+
+# March 20th, Satursday, 2021:
+Updated Model 2:
+1  I added a fixed parameter 5-point moving average smooth module at final prediction surface,
+   I found that in Duke_1 data, both thickness mean error and Hausdorff distance improved in both validation and test data.
+2  Re-design soft separation network with a adding smooth module M;
+3  Added soft separation model into constrained model:
+   this soft separation model uses the consistence comparison of surface gradient and thickness gradient.
+4  For details, please refer the updated attachment. I also will give you detailed report at next Tuesday meeting.
+
+
 # March 19th, Friday, 2021:
 Code Plan on the Model 2:
 1  experiment on the predicted R: smooth it with its 5 neigbours, and then compare with ground truth;  --done
    Notes: this smooth module didn't put into training process.
-   if the result of this experiment is good, it is reasonable to add smooth operation at training network.
+   AS the result of this experiment is good, it is reasonable to add smooth operation at training network.
    muError and Hausdorff distance both improve after using smooth module which is not in training process.
 
 ExpName: expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007
    for test data:
-   ===============Formal Output Result  with smooth R ===========
+   ===============Formal Output Result  without smooth R ===========
 stdThicknessError = tensor([2.4242, 1.9958], device='cuda:0')
 muThicknessError = tensor([3.0053, 4.1989], device='cuda:0')
 stdError = 2.29067063331604
