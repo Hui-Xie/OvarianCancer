@@ -22,6 +22,7 @@ from framework.NetMgr import NetMgr
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
 from framework.ConfigReader import ConfigReader
+from torch import linalg as LA
 
 class SoftSeparationNet_A(BasicModel):
     def __init__(self, hps=None):
@@ -86,6 +87,53 @@ class SoftSeparationNet_A(BasicModel):
             NetMgr(self.m_lambdaModule, self.m_lambdaModule.hps.netPath, self.m_lDevice))
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode)
 
+        # define the constant matrix B of size NxN and C of size Nx(N-1)
+        N = self.m_surfaceSubnet.hps.numSurfaces
+        self.m_B = torch.zeros((1, N, N), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
+        self.m_B[0, 0, 1] = 1.0
+        self.m_B[0, N-1, N-2] = 1.0
+        for i in range(1, N - 1):
+            self.m_B[0, i, i-1] = 0.5
+            self.m_B[0, i, i+1] = 0.5
+
+        self.m_C = torch.zeros((1, N, N-1), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
+        self.m_C[0, 0, 0] = -1.0
+        self.m_C[0, N - 1, N - 1] = 1.0
+        for i in range(1, N - 1):
+            self.m_C[0, i, i - 1] = 0.5
+            self.m_C[0, i, i] = -0.5
+
+        self.m_smoothM = self.m_surfaceSubnet.m_smoothM.to(self.m_lDevice)
+
+        self.m_A = torch.zeros((1, N-1, N), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
+        for i in range(0, N - 1):
+            self.m_A[0, i, i] = 1.0
+            self.m_A[0, i, i+1] = -1.0
+
+        W = self.m_surfaceSubnet.inputWidth
+        self.m_D = torch.zeros((1, W, W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
+        # 0th column and W-1 column
+        self.m_D[0, 0, 0] = -25
+        self.m_D[0, 1, 0] = 48
+        self.m_D[0, 2, 0] = -36
+        self.m_D[0, 3, 0] = 16
+        self.m_D[0, 4, 0] = -3
+        self.m_D[0,1:6,1] = self.m_D[0,0:5,0]
+
+        self.m_D[0, W-5, W-1] = 3
+        self.m_D[0, W-4, W-1] = -16
+        self.m_D[0, W-3, W-1] = 36
+        self.m_D[0, W-2, W-1] = -48
+        self.m_D[0, W-1, W-1] = 25
+        self.m_D[0, W - 6: W-1, W - 2]  = self.m_D[0, W-5:W, W-1]
+        # columns from 2 to W-2
+        for i in range(2, W - 2):
+            self.m_D[0, i - 2, i] = 1.0
+            self.m_D[0, i - 1, i] = -8.0
+            self.m_D[0, i + 1, i] = 8.0
+            self.m_D[0, i + 2, i] = -1.0
+
+        self.m_alpha  = hps.alpha
 
     def getSubnetModes(self):
         if self.hps.status == "trainLambda":
@@ -105,36 +153,46 @@ class SoftSeparationNet_A(BasicModel):
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, thicknessGTs=None):
-        Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
+        Mu, Sigma2, surfaceLoss, surfaceX = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
                                      gaussianGTs=gaussianGTs.to(self.m_sDevice),
                                      GTs=GTs.to(self.m_sDevice))
 
-        if 0 == self.hps.replaceRwithGT:  # 0: use predicted R;
-            R, thicknessLoss = self.m_thicknessSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
+        # input channels: raw+Y+X  # todo
+        assert(False)
+        R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
                                                 thicknessGTs= thicknessGTs.to(self.m_rDevice))
 
-        if self.hps.useFixedLambda:
-            B, N, W = Mu.shape
-            # expand Lambda into Bx(N-1)xW dimension
-            Lambda = self.m_lambdaVec.view((1, (N - 1), 1)).expand((B, (N - 1), W)).to(self.m_lDevice)
-        else:
-            Lambda = self.m_lambdaModule.forward(inputs.to(self.m_lDevice))
+        X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
+        Lambda = self.m_lambdaModule.forward(X)
 
-        separationIPM = SoftSeparationIPMModule()
-        l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
+        B,C,H,W = X.shape
+        N = self.m_surfaceSubnet.hps.numSurfaces
+        B = self.m_B.expand(B, N, N)
+        C = self.m_C.expand(B, N, N - 1)
+        M = self.m_smoothM.expand(B, W, W)
+        A = self.m_A.expand(B,N-1,N)
+        D = self.m_D.expand(B, W, W)
+
+        G = GTs.to(self.m_lDevice)
+        Q = (1.0/Sigma2).to(self.m_lDevice)
+
+        #separationIPM = SoftSeparationIPMModule()
+        #l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
         # smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
 
         if self.hps.status == "trainLambda":
             R_detach = R.clone().detach().to(self.m_lDevice)
             Mu_detach = Mu.clone().detach().to(self.m_lDevice)
             Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
-            S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
-                              learningPairWeight=Lambda)
-            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
-            #loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
-            loss = surfaceL1Loss
+            S = torch.bmm(Lambda*Mu_detach+(1.0-Lambda)*(torch.bmm(B, Mu_detach)+torch.bmm(C,R_detach)), M)
+            for i in range(1, N):  #ReLU
+                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+            Unary = (S - G) * Q
+            Pair = self.m_alpha*torch.bmm(R_detach+torch.bmm(A,S),D)
+            loss = torch.mean(LA.norm(Unary,ord='fro', dim=(1,2), keepdim=False) \
+                             +LA.norm(Pair,ord='fro', dim=(1,2), keepdim=False))  # size: B-> scalar
 
-        elif self.hps.status == "fineTuneSurfacethickness":
+        elif self.hps.status == "fineTune":
             R = R.to(self.m_lDevice)
             Mu = Mu.to(self.m_lDevice)
             Sigma2 = Sigma2.to(self.m_lDevice)

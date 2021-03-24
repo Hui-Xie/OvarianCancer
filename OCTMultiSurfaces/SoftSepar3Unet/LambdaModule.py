@@ -38,5 +38,5 @@ class LambdaModule(BasicModel):
 
     def forward(self, inputs):
         # N is numSurfaces
-        lambdas = self.m_lambdas(inputs)  # output size: BxNxW
-        return lambdas  # return lambdas  in (B,N,W) dimension
+        lambdas = self.m_lambdas(inputs)  # output size: BxNx1xW
+        return lambdas.squeeze(dim=-2)  # return lambdas  in (B,N,W) dimension

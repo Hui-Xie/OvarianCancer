@@ -99,7 +99,7 @@ def main():
         net.m_epoch = net.m_runParametersDict['epoch']
         for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
             testBatch += 1
-            R, loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs=batchData['GTs'],
+            R, loss,_x = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs=batchData['GTs'],
                                         layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
             batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
             # images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages  # for output result

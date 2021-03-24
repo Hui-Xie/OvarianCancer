@@ -257,7 +257,7 @@ class ThicknessSubnet_M(BasicModel):  #
 
         loss = loss_layer +  loss_thicknessL1
 
-        return thickness, loss  # return surfaceLocation S in (B,N,W) dimension and loss
+        return thickness, loss, x  # return surfaceLocation S in (B,N,W) dimension, loss , thicknessX
 
 
 

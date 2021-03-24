@@ -112,7 +112,7 @@ def main():
         for batchData in data.DataLoader(testData, batch_size=hps.batchSize, shuffle=False, num_workers=0):
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
-            S, sigma2, _loss = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+            S, sigma2, _loss, _x = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
             testSigma2 = torch.cat((testSigma2, sigma2)) if testBatch != 1 else sigma2
             if hps.existGTLabel:

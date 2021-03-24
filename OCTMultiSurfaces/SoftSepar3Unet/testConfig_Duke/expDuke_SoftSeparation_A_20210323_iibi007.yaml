@@ -27,6 +27,7 @@ lambdaModule: "LambdaModule"
 lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
 lambdaModuleLr: 0.01  # todo
+alpha: 0.001  # weight of pairwise term
 
 netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
