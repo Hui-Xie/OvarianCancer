@@ -111,7 +111,7 @@ def computeMuVarianceWithSquare(x, layerMu=None, layerConf=None): # with square 
 
     # very important, otherwise sigma2 will increase to make the loss small
     # all sigma2 back propogation give better test result in the IVUS data.
-    # at March 23rd, 2021 sigma2 should not backward in any optmization module. 
+    # at March 23rd, 2021 sigma2 should not backward in any optmization module.
     sigma2 = sigma2.detach()
 
     return mu.squeeze(dim=-2), sigma2

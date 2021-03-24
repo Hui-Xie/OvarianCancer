@@ -1,0 +1,26 @@
+# surfaceUnet + thicknessUnet+ learning Lamba
+
+debug: False # debug mark
+dataIn1Parcel: False
+# Duke data is not in one parcel, while Tongren, JHU are in one parcel.
+# dataIn1Parcel means each patient has a volume file.
+
+status: "test" #"fineTuneSurfaceRift" # "trainLambda" #"test"
+
+net: "SoftSeparationNet_A"
+
+# for 2 Unets + learning Lambda
+surfaceSubnet: "SurfaceSubnet_M"
+surfaceSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322_SurfaceSubnet_M_iibi007.yaml"
+surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
+surfaceSubnetLr: 0.005  # pretain at epoch 121  # todo 
+
+thicknessSubnet: "ThicknessSubnet_M"
+thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322A_Thickness_M_iibi007.yaml"
+thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
+thicknessSubnetLr: 0.01  # pretrain at epoch 54  # todo
+
+lambdaModule: "LambdaModule"
+lambdaModuleYaml: ""
+lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
+lambdaModuleLr: 0.01  # todo
