@@ -183,9 +183,9 @@ class SoftSeparationNet_A(BasicModel):
         for i in range(1, N):  #ReLU
             S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
         Unary = (S - G) * Q
-        Pair = self.m_alpha*torch.bmm(R_detach+torch.bmm(A,S),D)
+        Pair =torch.bmm(R_detach+torch.bmm(A,S),D)
         loss = torch.mean(LA.norm(Unary,ord='fro', dim=(1,2), keepdim=False) \
-                         +LA.norm(Pair,ord='fro', dim=(1,2), keepdim=False))  # size: B-> scalar
+                         + self.m_alpha*LA.norm(Pair,ord='fro', dim=(1,2), keepdim=False))  # size: B-> scalar
 
         return S, loss
 
