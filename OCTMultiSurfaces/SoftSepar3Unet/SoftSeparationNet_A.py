@@ -174,74 +174,18 @@ class SoftSeparationNet_A(BasicModel):
         D = self.m_D.expand(B, W, W)
 
         G = GTs.to(self.m_lDevice)
-        Q = (1.0/Sigma2).to(self.m_lDevice)
+        Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
+        Q = (1.0/Sigma2_detach).to(self.m_lDevice)
 
-        #separationIPM = SoftSeparationIPMModule()
-        #l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
-        # smoothSurfaceLoss = SmoothSurfaceLoss(mseLossWeight=10.0)
-
-        if self.hps.status == "trainLambda":
-            R_detach = R.clone().detach().to(self.m_lDevice)
-            Mu_detach = Mu.clone().detach().to(self.m_lDevice)
-            Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
-            S = torch.bmm(Lambda*Mu_detach+(1.0-Lambda)*(torch.bmm(B, Mu_detach)+torch.bmm(C,R_detach)), M)
-            for i in range(1, N):  #ReLU
-                S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-            Unary = (S - G) * Q
-            Pair = self.m_alpha*torch.bmm(R_detach+torch.bmm(A,S),D)
-            loss = torch.mean(LA.norm(Unary,ord='fro', dim=(1,2), keepdim=False) \
-                             +LA.norm(Pair,ord='fro', dim=(1,2), keepdim=False))  # size: B-> scalar
-
-        elif self.hps.status == "fineTune":
-            R = R.to(self.m_lDevice)
-            Mu = Mu.to(self.m_lDevice)
-            Sigma2 = Sigma2.to(self.m_lDevice)
-            Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
-            S = separationIPM(Mu, Sigma2, R=R, fixedPairWeight=self.hps.fixedPairWeight,
-                              learningPairWeight=Lambda_detach)
-            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
-            # loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
-            # at final finetune stage, accurate R and Mu does not give benefits.
-            loss = surfaceL1Loss
-
-        elif self.hps.status == "test":
-            if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
-                R_detach = R.clone().detach().to(self.m_lDevice)
-                #print("use predicted R")
-            elif 1 == self.hps.replaceRwithGT: #1: use thicknessGT without smoothness;
-                R_detach = (GTs[:,1:, :] - GTs[:,0:-1, :]).detach().to(self.m_lDevice)
-                #print("use No-smooth ground truth R")
-            elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed thicknessGT;
-                R_detach = thicknessGTs.clone().detach().to(self.m_lDevice)
-                #print("use smooth ground truth R")
-            else:
-                print(f"Wrong value of self.hps.replaceRwithGT")
-                assert False
-
-            Mu_detach = Mu.clone().detach().to(self.m_lDevice)
-            Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
-            Lambda_detach = Lambda.clone().detach().to(self.m_lDevice)
-            
-            if self.hps.debug== True:
-                reciprocalTwoSigma2 = 1.0/Sigma2_detach
-                print(f"reciprocalTwoSigma2.shape = {reciprocalTwoSigma2.shape}")
-                print(f"mean of reciprocalTwoSigma2 = {torch.mean(reciprocalTwoSigma2, dim=[0, 2])}")
-                print(f"min of reciprocalTwoSigma2  = {torch.min(torch.min(reciprocalTwoSigma2, dim=0)[0], dim=-1)}")
-                print(f"max of reciprocalTwoSigma2  = {torch.max(torch.max(reciprocalTwoSigma2, dim=0)[0], dim=-1)}")
-
-                print(f"Lambda_detach.shape = {Lambda_detach.shape}")
-                print(f"mean of Lambda_detach = {torch.mean(Lambda_detach, dim=[0, 2])}")
-                print(f"min of Lambda_detach  = {torch.min(torch.min(Lambda_detach, dim=0)[0], dim=-1)}")
-                print(f"max of Lambda_detach  = {torch.max(torch.max(Lambda_detach, dim=0)[0], dim=-1)}")
-            
-            S = separationIPM(Mu_detach, Sigma2_detach, R=R_detach, fixedPairWeight=self.hps.fixedPairWeight,
-                              learningPairWeight=Lambda_detach)
-            surfaceL1Loss = l1Loss(S, GTs.to(self.m_lDevice))
-            #loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
-            loss = surfaceL1Loss
-
-        else:
-            assert False
+        R_detach = R.clone().detach().to(self.m_lDevice)
+        Mu_detach = Mu.clone().detach().to(self.m_lDevice)
+        S = torch.bmm(Lambda*Mu_detach+(1.0-Lambda)*(torch.bmm(B, Mu_detach)+torch.bmm(C,R_detach)), M)
+        for i in range(1, N):  #ReLU
+            S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        Unary = (S - G) * Q
+        Pair = self.m_alpha*torch.bmm(R_detach+torch.bmm(A,S),D)
+        loss = torch.mean(LA.norm(Unary,ord='fro', dim=(1,2), keepdim=False) \
+                         +LA.norm(Pair,ord='fro', dim=(1,2), keepdim=False))  # size: B-> scalar
 
         return S, loss
 
