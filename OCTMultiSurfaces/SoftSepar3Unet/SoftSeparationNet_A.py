@@ -38,7 +38,7 @@ class SoftSeparationNet_A(BasicModel):
         # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
         # Parameters of a model after .cuda() will be different objects with those before the call.
 
-        surfaceMode, riftMode, lambdaMode = self.getSubnetModes()
+        surfaceMode, thicknessMode, lambdaMode = self.getSubnetModes()
 
         # surface Subnet
         self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
@@ -52,74 +52,73 @@ class SoftSeparationNet_A(BasicModel):
         self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.m_sDevice))
         self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode) # loadNet will load saved learning rate
 
-        # rift Subnet
-        self.m_rDevice = eval(self.hps.riftSubnetDevice)
-        self.m_riftSubnet = eval(self.hps.riftSubnet)(hps=self.hps.riftSubnetYaml)
-        self.m_riftSubnet.to(self.m_rDevice)
-        self.m_riftSubnet.m_optimizer = None
-        if "test" != riftMode:
-            self.m_riftSubnet.setOptimizer(
-                optim.Adam(self.m_riftSubnet.parameters(), lr=self.hps.riftSubnetLr, weight_decay=0))
-            self.m_riftSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_riftSubnet.m_optimizer, \
+        # thickness Subnet, where r means thickness
+        self.m_rDevice = eval(self.hps.thicknessSubnetDevice)
+        self.m_thicknessSubnet = eval(self.hps.thicknessSubnet)(hps=self.hps.thicknessSubnetYaml)
+        self.m_thicknessSubnet.to(self.m_rDevice)
+        self.m_thicknessSubnet.m_optimizer = None
+        if "test" != thicknessMode:
+            self.m_thicknessSubnet.setOptimizer(
+                optim.Adam(self.m_thicknessSubnet.parameters(), lr=self.hps.thicknessSubnetLr, weight_decay=0))
+            self.m_thicknessSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_thicknessSubnet.m_optimizer, \
                                                                                  mode="min", factor=0.5, patience=20,
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
-        self.m_riftSubnet.setNetMgr(NetMgr(self.m_riftSubnet, self.m_riftSubnet.hps.netPath, self.m_rDevice))
-        self.m_riftSubnet.m_netMgr.loadNet(riftMode) # loadNet will load saved learning rate
+        self.m_thicknessSubnet.setNetMgr(NetMgr(self.m_thicknessSubnet, self.m_thicknessSubnet.hps.netPath, self.m_rDevice))
+        self.m_thicknessSubnet.m_netMgr.loadNet(thicknessMode) # loadNet will load saved learning rate
         
-        # lambda Subnet
-        self.m_lDevice = eval(self.hps.lambdaSubnetDevice)
-        self.m_lambdaSubnet = None
-        if self.hps.useFixedLambda:
-            self.m_lambdaVec = torch.tensor(self.hps.fixedLambda, dtype=torch.float, device=self.m_lDevice)
-        else:
-            self.m_lambdaSubnet = eval(self.hps.lambdaSubnet)(hps=self.hps.lambdaSubnetYaml)
-            self.m_lambdaSubnet.to(self.m_lDevice)
-            self.m_lambdaSubnet.m_optimizer = None
-            if "test" != lambdaMode:
-                self.m_lambdaSubnet.setOptimizer(
-                    optim.Adam(self.m_lambdaSubnet.parameters(), lr=self.hps.lambdaSubnetLr, weight_decay=0))
-                self.m_lambdaSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaSubnet.m_optimizer, \
-                                                                                  mode="min", factor=0.5, patience=20,
-                                                                                  min_lr=1e-8, threshold=0.02,
-                                                                                  threshold_mode='rel'))
-            self.m_lambdaSubnet.setNetMgr(
-                NetMgr(self.m_lambdaSubnet, self.m_lambdaSubnet.hps.netPath, self.m_lDevice))
-            self.m_lambdaSubnet.m_netMgr.loadNet(lambdaMode)
+        # lambda Module
+        self.m_lDevice = eval(self.hps.lambdaModuleDevice)
+        self.m_lambdaModule = eval(self.hps.lambdaModule)(self.m_surfaceSubnet.hps.startFilters+self.m_thicknessSubnet.startFilters,\
+                                                          self.m_surfaceSubnet.hps.numSurfaces,\
+                                                          self.m_surfaceSubnet.hps.inputHeight, \
+                                                          self.m_surfaceSubnet.hps.inputWidth)
+        self.m_lambdaModule.to(self.m_lDevice)
+        self.m_lambdaModule.m_optimizer = None
+        if "test" != lambdaMode:
+            self.m_lambdaModule.setOptimizer(
+                optim.Adam(self.m_lambdaModule.parameters(), lr=self.hps.lambdaModuleLr, weight_decay=0))
+            self.m_lambdaModule.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaModule.m_optimizer, \
+                                                                              mode="min", factor=0.5, patience=20,
+                                                                              min_lr=1e-8, threshold=0.02,
+                                                                              threshold_mode='rel'))
+        self.m_lambdaModule.setNetMgr(
+            NetMgr(self.m_lambdaModule, self.m_lambdaModule.hps.netPath, self.m_lDevice))
+        self.m_lambdaModule.m_netMgr.loadNet(lambdaMode)
 
 
     def getSubnetModes(self):
         if self.hps.status == "trainLambda":
             surfaceMode = "test"
-            riftMode = "test"
+            thicknessMode = "test"
             lambdaMode = "train"
-        elif self.hps.status == "fineTuneSurfaceRift":
+        elif self.hps.status == "fineTune":
             surfaceMode = "train"
-            riftMode = "train"
-            lambdaMode = "test"
+            thicknessMode = "train"
+            lambdaMode = "train"
         else:
             surfaceMode = "test"
-            riftMode = "test"
+            thicknessMode = "test"
             lambdaMode = "test"
 
-        return surfaceMode, riftMode, lambdaMode
+        return surfaceMode, thicknessMode, lambdaMode
 
 
-    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
+    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, thicknessGTs=None):
         Mu, Sigma2, surfaceLoss = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
                                      gaussianGTs=gaussianGTs.to(self.m_sDevice),
                                      GTs=GTs.to(self.m_sDevice))
 
         if 0 == self.hps.replaceRwithGT:  # 0: use predicted R;
-            R, riftLoss = self.m_riftSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
-                                                riftGTs= riftGTs.to(self.m_rDevice))
+            R, thicknessLoss = self.m_thicknessSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=None,
+                                                thicknessGTs= thicknessGTs.to(self.m_rDevice))
 
         if self.hps.useFixedLambda:
             B, N, W = Mu.shape
             # expand Lambda into Bx(N-1)xW dimension
             Lambda = self.m_lambdaVec.view((1, (N - 1), 1)).expand((B, (N - 1), W)).to(self.m_lDevice)
         else:
-            Lambda = self.m_lambdaSubnet.forward(inputs.to(self.m_lDevice))
+            Lambda = self.m_lambdaModule.forward(inputs.to(self.m_lDevice))
 
         separationIPM = SoftSeparationIPMModule()
         l1Loss = nn.SmoothL1Loss().to(self.m_lDevice)
@@ -135,7 +134,7 @@ class SoftSeparationNet_A(BasicModel):
             #loss_smooth = smoothSurfaceLoss(S, GTs.to(self.m_lDevice))
             loss = surfaceL1Loss
 
-        elif self.hps.status == "fineTuneSurfaceRift":
+        elif self.hps.status == "fineTuneSurfacethickness":
             R = R.to(self.m_lDevice)
             Mu = Mu.to(self.m_lDevice)
             Sigma2 = Sigma2.to(self.m_lDevice)
@@ -151,11 +150,11 @@ class SoftSeparationNet_A(BasicModel):
             if 0 == self.hps.replaceRwithGT: # 0: use predicted R;
                 R_detach = R.clone().detach().to(self.m_lDevice)
                 #print("use predicted R")
-            elif 1 == self.hps.replaceRwithGT: #1: use riftGT without smoothness;
+            elif 1 == self.hps.replaceRwithGT: #1: use thicknessGT without smoothness;
                 R_detach = (GTs[:,1:, :] - GTs[:,0:-1, :]).detach().to(self.m_lDevice)
                 #print("use No-smooth ground truth R")
-            elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed riftGT;
-                R_detach = riftGTs.clone().detach().to(self.m_lDevice)
+            elif 2 == self.hps.replaceRwithGT:  # 2: use smoothed thicknessGT;
+                R_detach = thicknessGTs.clone().detach().to(self.m_lDevice)
                 #print("use smooth ground truth R")
             else:
                 print(f"Wrong value of self.hps.replaceRwithGT")
@@ -191,46 +190,46 @@ class SoftSeparationNet_A(BasicModel):
     def zero_grad(self):
         if None != self.m_surfaceSubnet.m_optimizer:
             self.m_surfaceSubnet.m_optimizer.zero_grad()
-        if None != self.m_riftSubnet.m_optimizer:
-            self.m_riftSubnet.m_optimizer.zero_grad()
-        if (None != self.m_lambdaSubnet) and (None != self.m_lambdaSubnet.m_optimizer):
-            self.m_lambdaSubnet.m_optimizer.zero_grad()
+        if None != self.m_thicknessSubnet.m_optimizer:
+            self.m_thicknessSubnet.m_optimizer.zero_grad()
+        if (None != self.m_lambdaModule) and (None != self.m_lambdaModule.m_optimizer):
+            self.m_lambdaModule.m_optimizer.zero_grad()
 
 
     def optimizerStep(self):
         if self.hps.status == "trainLambda":
-            self.m_lambdaSubnet.m_optimizer.step()
-        elif self.hps.status == "fineTuneSurfaceRift":
+            self.m_lambdaModule.m_optimizer.step()
+        elif self.hps.status == "fineTuneSurfacethickness":
             self.m_surfaceSubnet.m_optimizer.step()
-            self.m_riftSubnet.m_optimizer.step()
+            self.m_thicknessSubnet.m_optimizer.step()
         else:
             pass
 
     def lrSchedulerStep(self, validLoss):
         if self.hps.status == "trainLambda":
-            self.m_lambdaSubnet.m_lrScheduler.step(validLoss)
-        elif self.hps.status == "fineTuneSurfaceRift":
+            self.m_lambdaModule.m_lrScheduler.step(validLoss)
+        elif self.hps.status == "fineTuneSurfacethickness":
             self.m_surfaceSubnet.m_lrScheduler.step(validLoss)
-            self.m_riftSubnet.m_lrScheduler.step(validLoss)
+            self.m_thicknessSubnet.m_lrScheduler.step(validLoss)
         else:
             pass
 
     def saveNet(self):
         if self.hps.status == "trainLambda":
-            self.m_lambdaSubnet.m_netMgr.saveNet()
-        elif self.hps.status == "fineTuneSurfaceRift":
+            self.m_lambdaModule.m_netMgr.saveNet()
+        elif self.hps.status == "fineTuneSurfacethickness":
             self.m_surfaceSubnet.m_netMgr.saveNet()
-            self.m_riftSubnet.m_netMgr.saveNet()
+            self.m_thicknessSubnet.m_netMgr.saveNet()
         else:
             pass
 
     def getLearningRate(self, subnetName):
-        if subnetName == "lambdaSubnet":
-            lr = self.m_lambdaSubnet.m_optimizer.param_groups[0]['lr']
+        if subnetName == "lambdaModule":
+            lr = self.m_lambdaModule.m_optimizer.param_groups[0]['lr']
         elif subnetName == "surfaceSubnet":
             lr = self.m_surfaceSubnet.m_optimizer.param_groups[0]['lr']
-        elif subnetName == "riftSubnet":
-            lr = self.m_riftSubnet.m_optimizer.param_groups[0]['lr']
+        elif subnetName == "thicknessSubnet":
+            lr = self.m_thicknessSubnet.m_optimizer.param_groups[0]['lr']
         else:
             assert False
 

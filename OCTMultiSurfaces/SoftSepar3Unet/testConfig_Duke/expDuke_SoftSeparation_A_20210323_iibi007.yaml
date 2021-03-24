@@ -5,7 +5,10 @@ dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
 
-status: "test" #"fineTuneSurfaceRift" # "trainLambda" #"test"
+status: "test" # 3 status: #"fineTune" # "trainLambda" #"test"
+
+dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
+existGTLabel: True
 
 net: "SoftSeparationNet_A"
 
@@ -24,3 +27,9 @@ lambdaModule: "LambdaModule"
 lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
 lambdaModuleLr: 0.01  # todo
+
+netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log"
+refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
