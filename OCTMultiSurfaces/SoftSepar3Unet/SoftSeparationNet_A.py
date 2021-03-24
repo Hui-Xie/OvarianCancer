@@ -199,27 +199,30 @@ class SoftSeparationNet_A(BasicModel):
     def optimizerStep(self):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_optimizer.step()
-        elif self.hps.status == "fineTuneSurfacethickness":
+        elif self.hps.status == "fineTune":
             self.m_surfaceSubnet.m_optimizer.step()
             self.m_thicknessSubnet.m_optimizer.step()
+            self.m_lambdaModule.m_optimizer.step()
         else:
             pass
 
     def lrSchedulerStep(self, validLoss):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_lrScheduler.step(validLoss)
-        elif self.hps.status == "fineTuneSurfacethickness":
+        elif self.hps.status == "fineTune":
             self.m_surfaceSubnet.m_lrScheduler.step(validLoss)
             self.m_thicknessSubnet.m_lrScheduler.step(validLoss)
+            self.m_lambdaModule.m_lrScheduler.step(validLoss)
         else:
             pass
 
     def saveNet(self):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_netMgr.saveNet()
-        elif self.hps.status == "fineTuneSurfacethickness":
+        elif self.hps.status == "fineTune":
             self.m_surfaceSubnet.m_netMgr.saveNet()
             self.m_thicknessSubnet.m_netMgr.saveNet()
+            self.m_lambdaModule.m_netMgr.saveNet()
         else:
             pass
 
