@@ -1,6 +1,9 @@
-# March 22nd, Maonday, 2021:
-1  Add smooth moudule to surface subnet.
+# March 23rd, Tuesday, 2021:
+The main program of learning lambda:
+1  
 
+# March 22nd, Monday, 2021:
+1  Add smooth moudule to surface subnet, and surface subnet. --done.
 
 # March 20th, Satursday, 2021:
 Updated Model 2:
