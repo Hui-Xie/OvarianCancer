@@ -1,6 +1,12 @@
+# March 25th, Thursday, 2021
+
+SurfaceSubnet_M on 20210322: at epoch 81, get validation error 2.20 um with lr-0.005. This network added smooth module.
+SurfaceSubnet   on 20200902A: at epoch 77, get validation error 2.23 um with  lr=0.005
+
+
+
 # March 23rd, Tuesday, 2021:
-The main program of learning lambda:
-1  
+The main program of learning lambda:  --done
 
 # March 22nd, Monday, 2021:
 1  Add smooth moudule to surface subnet, and surface subnet. --done.
