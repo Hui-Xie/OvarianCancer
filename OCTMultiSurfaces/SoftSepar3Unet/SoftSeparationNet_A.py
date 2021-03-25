@@ -160,13 +160,13 @@ class SoftSeparationNet_A(BasicModel):
         X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
         Lambda = self.m_lambdaModule.forward(X)
 
-        B,C,H,W = X.shape
+        nB,nC,H,W = X.shape
         N = self.m_surfaceSubnet.hps.numSurfaces
-        B = self.m_B.expand(B, N, N)
-        C = self.m_C.expand(B, N, N - 1)
-        M = self.m_smoothM.expand(B, W, W)
-        A = self.m_A.expand(B,N-1,N)
-        D = self.m_D.expand(B, W, W)
+        B = self.m_B.expand(nB, N, N)
+        C = self.m_C.expand(nB, N, N - 1)
+        M = self.m_smoothM.expand(nB, W, W)
+        A = self.m_A.expand(nB,N-1,N)
+        D = self.m_D.expand(nB, W, W)
 
         G = GTs.to(self.m_lDevice)
         Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
