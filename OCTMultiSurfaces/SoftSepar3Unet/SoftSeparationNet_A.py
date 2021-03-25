@@ -84,7 +84,7 @@ class SoftSeparationNet_A(BasicModel):
                                                                               min_lr=1e-8, threshold=0.02,
                                                                               threshold_mode='rel'))
         self.m_lambdaModule.setNetMgr(
-            NetMgr(self.m_lambdaModule, self.m_lambdaModule.hps.netPath, self.m_lDevice))
+            NetMgr(self.m_lambdaModule, self.hps.netPath, self.m_lDevice))
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode)
 
         # define the constant matrix B of size NxN and C of size Nx(N-1)
