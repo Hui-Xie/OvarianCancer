@@ -70,7 +70,7 @@ class SoftSeparationNet_A(BasicModel):
         
         # lambda Module
         self.m_lDevice = eval(self.hps.lambdaModuleDevice)
-        self.m_lambdaModule = eval(self.hps.lambdaModule)(self.m_surfaceSubnet.hps.startFilters+self.m_thicknessSubnet.startFilters,\
+        self.m_lambdaModule = eval(self.hps.lambdaModule)(self.m_surfaceSubnet.hps.startFilters+self.m_thicknessSubnet.hps.startFilters,\
                                                           self.m_surfaceSubnet.hps.numSurfaces,\
                                                           self.m_surfaceSubnet.hps.inputHeight, \
                                                           self.m_surfaceSubnet.hps.inputWidth)
