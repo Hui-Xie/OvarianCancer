@@ -166,6 +166,9 @@ def main():
             preErrorMean = muError
             net.saveNet()
 
+        #debug
+        print("passed smoke test")
+        break
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 
