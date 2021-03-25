@@ -110,7 +110,7 @@ class SoftSeparationNet_A(BasicModel):
             self.m_A[0, i, i] = 1.0
             self.m_A[0, i, i+1] = -1.0
 
-        W = self.m_surfaceSubnet.inputWidth
+        W = self.m_surfaceSubnet.hps.inputWidth
         self.m_D = torch.zeros((1, W, W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
         # 0th column and W-1 column
         self.m_D[0, 0, 0] = -25
