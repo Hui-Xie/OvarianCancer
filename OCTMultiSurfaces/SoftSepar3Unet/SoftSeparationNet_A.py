@@ -98,7 +98,7 @@ class SoftSeparationNet_A(BasicModel):
 
         self.m_C = torch.zeros((1, N, N-1), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
         self.m_C[0, 0, 0] = -1.0
-        self.m_C[0, N - 1, N - 1] = 1.0
+        self.m_C[0, N - 1, N - 2] = 1.0
         for i in range(1, N - 1):
             self.m_C[0, i, i - 1] = 0.5
             self.m_C[0, i, i] = -0.5
