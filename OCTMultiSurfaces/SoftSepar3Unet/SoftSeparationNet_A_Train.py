@@ -152,7 +152,7 @@ def main():
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
         if hps.status == "trainLambda":
-            writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaSubnet"), epoch)
+            writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaModule"), epoch)
         else:
             pass
 
