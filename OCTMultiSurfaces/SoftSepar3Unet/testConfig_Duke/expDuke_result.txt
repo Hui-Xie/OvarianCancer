@@ -3,6 +3,12 @@
 SurfaceSubnet_M on 20210322: at epoch 81, get validation error 2.20 um with lr-0.005. This network added smooth module.
 SurfaceSubnet   on 20200902A: at epoch 77, get validation error 2.23 um with  lr=0.005
 
+expDuke_20210322A_Thickness_M_iibi007: at epoch 50, muThickError is 20; ErrorThickness1 keeps at 37um without decreasing.
+expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi00: at  at epoch 53, muThickError is 4.08; ErrorThickness1 decrease to 4.9um.
+
+
+
+
 
 
 # March 23rd, Tuesday, 2021:
