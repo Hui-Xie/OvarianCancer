@@ -269,6 +269,7 @@ class OCTDataSet(data.Dataset):
         H, W = data.shape
         N, W1 = label.shape
         assert W==W1
+        assert N == self.hps.numSurfaces
         if ("YufanHe" not in self.hps.network) and (0 != self.hps.gradChannels):
             grads = self.generateGradientImage(data, self.hps.gradChannels)
         else:

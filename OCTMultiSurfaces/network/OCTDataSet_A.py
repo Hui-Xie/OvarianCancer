@@ -272,6 +272,7 @@ class OCTDataSet_A(data.Dataset):
         H, W = data.shape
         N, W1 = label.shape
         assert W==W1
+        assert N == self.hps.numSurfaces
         if ("YufanHe" not in self.hps.network) and (0 != self.hps.gradChannels):
             grads = self.generateGradientImage(data, self.hps.gradChannels)
         else:
@@ -281,7 +282,7 @@ class OCTDataSet_A(data.Dataset):
         if ("YufanHe" in self.hps.network) or self.hps.addCoordinatesXYChannels:  # YufanHe uses x,y index as extra channel.
             X = torch.arange(W).view((1, W)).expand(data.size()).to(device=self.hps.device, dtype=torch.float).unsqueeze(dim=0)/W
             Y = torch.arange(H).view((H, 1)).expand(data.size()).to(device=self.hps.device, dtype=torch.float).unsqueeze(dim=0)/H
-            image = torch.cat((image, Y, X), dim=0)
+            imageYX = torch.cat((image, Y, X), dim=0)
 
         if grads is not None:
             for grad in grads:
@@ -298,6 +299,7 @@ class OCTDataSet_A(data.Dataset):
                 riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
 
         result = {"images": image,
+                  "imageYX": imageYX,
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": imageID,

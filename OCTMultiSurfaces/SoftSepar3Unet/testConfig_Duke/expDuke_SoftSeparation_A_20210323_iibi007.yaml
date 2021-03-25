@@ -4,13 +4,29 @@ debug: False # debug mark
 dataIn1Parcel: False
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
+dataInSlice: True
 
 status: "test" # 3 status: #"fineTune" # "trainLambda" #"test"
 
 dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
 existGTLabel: True
 
-net: "SoftSeparationNet_A"
+network: "SoftSeparationNet_A"
+
+# some physical parameter of images
+slicesPerPatient: 51  # for test and validation set
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
+numSurfaces: 3  # num of surfaces in an image
+gradChannels: 7   # the added gradient channels beside raw image channel
+addCoordinatesXYChannels: True
+useRift: True
+smoothRift: False  # smooth Rift in ground truth
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+scaleNumerator: 1
+scaleDenominator: 1
+
 
 # for 2 Unets + learning Lambda
 surfaceSubnet: "SurfaceSubnet_M"
