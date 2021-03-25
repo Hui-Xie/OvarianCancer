@@ -48,6 +48,8 @@ surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
 surfaceSubnetLr: 0.005  # pretain at epoch 121  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_M"
+# todo: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_iibi007.yaml"
+# for a new trained network.
 thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322A_Thickness_M_iibi007.yaml"
 thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
 thicknessSubnetLr: 0.01  # pretrain at epoch 54   # in test status, it does not care
