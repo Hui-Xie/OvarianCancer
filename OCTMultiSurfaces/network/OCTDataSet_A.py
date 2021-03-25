@@ -1,5 +1,5 @@
 # OCTDataSet for parallel surface and thickness networks.
-# this dataSet offer gradient Image and imageYX
+# this dataSet offer gradient Image and imageYX at same time
 
 from torch.utils import data
 import numpy as np
