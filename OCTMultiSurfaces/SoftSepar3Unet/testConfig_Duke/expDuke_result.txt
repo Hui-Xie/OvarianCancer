@@ -5,6 +5,7 @@ SurfaceSubnet   on 20200902A: at epoch 77, get validation error 2.23 um with  lr
 
 expDuke_20210322A_Thickness_M_iibi007:
    at epoch 50, muThickError is 20; ErrorThickness1 keeps at 37um without decreasing. validation loss 5.9.
+   [H,1] leads inconverge of surface error.
 
 expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi00:
   at  at epoch 53, muThickError is 4.08; ErrorThickness1 decrease to 4.9um. valiation loss 0.97
