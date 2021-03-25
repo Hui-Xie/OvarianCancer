@@ -17,6 +17,7 @@ from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import  GeneralizedDiceLoss, MultiSurfaceCrossEntropyLoss, SmoothSurfaceLoss, logits2Prob, MultiLayerCrossEntropyLoss
+from framework.ConfigReader import ConfigReader
 
 # YufanHe network + 1D H dimension convolution to predict thickness
 class ThicknessSubnet_M(BasicModel):  #
@@ -34,6 +35,8 @@ class ThicknessSubnet_M(BasicModel):  #
         :param N: startFilters
         '''
         super().__init__()
+        if isinstance(hps, str):
+            hps = ConfigReader(hps)
         self.hps = hps
 
         self.m_inputHeight = hps.inputHeight
