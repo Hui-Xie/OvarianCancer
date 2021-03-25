@@ -148,14 +148,14 @@ class SoftSeparationNet_A(BasicModel):
         return surfaceMode, thicknessMode, lambdaMode
 
 
-    def forward(self, images, imageYX, gaussianGTs=None, GTs=None, layerGTs=None, thicknessGTs=None):
+    def forward(self, images, imageYX, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         Mu, Sigma2, surfaceLoss, surfaceX = self.m_surfaceSubnet.forward(images.to(self.m_sDevice),
                                      gaussianGTs=gaussianGTs.to(self.m_sDevice),
                                      GTs=GTs.to(self.m_sDevice))
 
         # input channels: raw+Y+X
         R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
-                                                thicknessGTs= thicknessGTs.to(self.m_rDevice))
+                                                riftGTs= riftGTs.to(self.m_rDevice))
 
         X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
         Lambda = self.m_lambdaModule.forward(X)
