@@ -12,12 +12,15 @@ dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
 existGTLabel: True
 
 network: "SoftSeparationNet_A"
+device: torch.device('cuda:1')   #GPU ID
+sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 
 # some physical parameter of images
 slicesPerPatient: 51  # for test and validation set
 hPixelSize: 3.24  # unit: micrometer, in y/height direction
 numSurfaces: 3  # num of surfaces in an image
 gradChannels: 7   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
 addCoordinatesXYChannels: True
 useRift: True
 smoothRift: False  # smooth Rift in ground truth
@@ -26,6 +29,7 @@ TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 scaleNumerator: 1
 scaleDenominator: 1
+useLayerDice: True
 
 
 # for 2 Unets + learning Lambda
