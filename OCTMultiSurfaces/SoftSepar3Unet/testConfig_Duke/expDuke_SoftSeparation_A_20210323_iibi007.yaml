@@ -6,10 +6,11 @@ dataIn1Parcel: False
 # dataIn1Parcel means each patient has a volume file.
 dataInSlice: True
 
-status: "test" # 3 status: #"fineTune" # "trainLambda" #"test"
+status: "trainLambda" # only 2 status: # "trainLambda" #"test"
 
 dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
 existGTLabel: True
+groundTruthInteger: True
 
 network: "SoftSeparationNet_A"
 device: torch.device('cuda:1')   #GPU ID
@@ -24,29 +25,37 @@ bothSideGrad: True # False use singleSideGrad
 addCoordinatesXYChannels: True
 useRift: True
 smoothRift: False  # smooth Rift in ground truth
-TTA: False       #TestTime Augmentation
-TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
-lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 scaleNumerator: 1
 scaleDenominator: 1
 useLayerDice: True
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 
 
 # for 2 Unets + learning Lambda
 surfaceSubnet: "SurfaceSubnet_M"
 surfaceSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322_SurfaceSubnet_M_iibi007.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
-surfaceSubnetLr: 0.005  # pretain at epoch 121  # todo 
+surfaceSubnetLr: 0.005  # pretain at epoch 121  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_M"
 thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322A_Thickness_M_iibi007.yaml"
 thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
-thicknessSubnetLr: 0.01  # pretrain at epoch 54  # todo
+thicknessSubnetLr: 0.01  # pretrain at epoch 54   # in test status, it does not care
 
 lambdaModule: "LambdaModule"
 lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
-lambdaModuleLr: 0.01  # todo
+lambdaModuleLr: 0.01
 alpha: 0.001  # weight of pairwise term
 
 netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename

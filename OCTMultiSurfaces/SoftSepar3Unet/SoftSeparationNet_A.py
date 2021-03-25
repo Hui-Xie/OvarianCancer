@@ -140,10 +140,6 @@ class SoftSeparationNet_A(BasicModel):
             surfaceMode = "test"
             thicknessMode = "test"
             lambdaMode = "train"
-        elif self.hps.status == "fineTune":
-            surfaceMode = "train"
-            thicknessMode = "train"
-            lambdaMode = "train"
         else:
             surfaceMode = "test"
             thicknessMode = "test"
@@ -152,14 +148,13 @@ class SoftSeparationNet_A(BasicModel):
         return surfaceMode, thicknessMode, lambdaMode
 
 
-    def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, thicknessGTs=None):
-        Mu, Sigma2, surfaceLoss, surfaceX = self.m_surfaceSubnet.forward(inputs.to(self.m_sDevice),
+    def forward(self, images, imageYX, gaussianGTs=None, GTs=None, layerGTs=None, thicknessGTs=None):
+        Mu, Sigma2, surfaceLoss, surfaceX = self.m_surfaceSubnet.forward(images.to(self.m_sDevice),
                                      gaussianGTs=gaussianGTs.to(self.m_sDevice),
                                      GTs=GTs.to(self.m_sDevice))
 
-        # input channels: raw+Y+X  # todo
-        assert(False)
-        R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(inputs.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
+        # input channels: raw+Y+X
+        R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
                                                 thicknessGTs= thicknessGTs.to(self.m_rDevice))
 
         X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
@@ -201,29 +196,17 @@ class SoftSeparationNet_A(BasicModel):
     def optimizerStep(self):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_optimizer.step()
-        elif self.hps.status == "fineTune":
-            self.m_surfaceSubnet.m_optimizer.step()
-            self.m_thicknessSubnet.m_optimizer.step()
-            self.m_lambdaModule.m_optimizer.step()
         else:
             pass
 
     def lrSchedulerStep(self, validLoss):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_lrScheduler.step(validLoss)
-        elif self.hps.status == "fineTune":
-            self.m_surfaceSubnet.m_lrScheduler.step(validLoss)
-            self.m_thicknessSubnet.m_lrScheduler.step(validLoss)
-            self.m_lambdaModule.m_lrScheduler.step(validLoss)
         else:
             pass
 
     def saveNet(self):
         if self.hps.status == "trainLambda":
-            self.m_lambdaModule.m_netMgr.saveNet()
-        elif self.hps.status == "fineTune":
-            self.m_surfaceSubnet.m_netMgr.saveNet()
-            self.m_thicknessSubnet.m_netMgr.saveNet()
             self.m_lambdaModule.m_netMgr.saveNet()
         else:
             pass
