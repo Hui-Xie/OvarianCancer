@@ -221,7 +221,7 @@ class ThicknessSubnet_M2(BasicModel):  #
         x = self.m_up1AfterCat(x)
         x = self.m_up1(x) + x
 
-        xs = self.m_surface(x)  # output size: B*(numSurfaces)*H*W, xt mean x_thickness, and xs mean x_surface
+        xs = self.m_surfaces(x)  # output size: B*(numSurfaces)*H*W, xt mean x_thickness, and xs mean x_surface
 
 
         surfaceProb = logits2Prob(xs, dim=-2)
