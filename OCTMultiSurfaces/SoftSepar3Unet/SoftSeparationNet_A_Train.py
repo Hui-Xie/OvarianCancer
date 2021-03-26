@@ -160,8 +160,7 @@ def main():
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
-            net.updateRunParameter("learningRate_Surface", net.getLearningRate("surfaceSubnet"))
-            net.updateRunParameter("learningRate_Rift", net.getLearningRate("riftSubnet"))
+            net.updateRunParameter("learningRate_Lambda", net.getLearningRate("lambdaModule"))
             preValidLoss = validLoss
             preErrorMean = muError
             net.saveNet()
