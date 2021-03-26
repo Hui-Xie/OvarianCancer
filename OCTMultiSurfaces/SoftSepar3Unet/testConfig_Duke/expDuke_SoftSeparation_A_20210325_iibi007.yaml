@@ -21,6 +21,8 @@ device: torch.device('cuda:1')   #GPU ID
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 
 # some physical parameter of images
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
 slicesPerPatient: 51  # for test and validation set
 hPixelSize: 3.24  # unit: micrometer, in y/height direction
 numSurfaces: 3  # num of surfaces in an image

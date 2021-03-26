@@ -160,7 +160,7 @@ def main():
     with open(os.path.join(hps.outputDir,f"output_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
-        file.write(f"B,S,W = {B, S, W}\n")
+        file.write(f"B,S,H,W = {B, S,hps.inputHeight, W}\n")
         file.write(f"Test time: {testEndTime-testStartTime} seconds.\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
