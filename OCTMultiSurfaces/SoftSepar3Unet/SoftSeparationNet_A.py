@@ -170,7 +170,7 @@ class SoftSeparationNet_A(BasicModel):
 
         G = GTs.to(self.m_lDevice)
         Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
-        Q = (1.0/Sigma2_detach).to(self.m_lDevice)
+        Q = (1.0/Sigma2_detach).to(self.m_lDevice).sqrt()    # square root as Frobenious norm.
 
         R_detach = R.clone().detach().to(self.m_lDevice)
         Mu_detach = Mu.clone().detach().to(self.m_lDevice)
