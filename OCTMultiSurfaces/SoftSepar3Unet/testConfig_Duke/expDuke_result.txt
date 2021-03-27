@@ -13,6 +13,7 @@ ReLU_NoRift_OurMethod(64)   45GB                2.003045082092285   2.1352300643
 
 
 
+
 # March 25th, Thursday, 2021
 
 SurfaceSubnet_M on 20210322: at epoch 81, get validation error 2.20 um with lr-0.005. This network added smooth module.
