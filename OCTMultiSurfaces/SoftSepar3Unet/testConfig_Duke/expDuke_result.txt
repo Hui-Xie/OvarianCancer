@@ -1,3 +1,18 @@
+# March 27th, Saturday, 2021
+Surface subnet experiment result:
+Different methods on Duke_AMD test data for pure surface net, without softSeparation at all:
+======================================================================================================================================================================================================
+Method                      trainingGPUMemory   muError             stdError           Hausdorff_Distance(pixel)            expName
+JHU(YufanHe)                18GB                1.9699755907058716  2.110976219177246  153.         40.         71.         expDuke_20201208A_SurfaceNet_YufanHe_iibi007, all layers have same filters=64
+NoReLU_NoRift_ourMethod     10GB                2.0391054153442383  2.2191126346588135 65.          123.        54.         expDuke_20201117A_SurfaceSubnet_NoReLU with start filters=24
+ReLU_NoRift_OurMethod(24)   10GB                1.9812164306640625  1.961887240409851  50.          33.         30.         expDuke_20200902A_SurfaceSubnet with start filters=24
+ReLU_NoRift_OurMethod(64)   45GB                2.003045082092285   2.13523006439209   63.          60.         57.         expDuke_20201215A_SurfaceSubnet_iibi007 with start filters=64
+0902Model+smoothModule      11GB                2.0496156215667725  2.122194290161133  71.          96.         49.         expDuke_20210322_SurfaceSubnet_M_iibi007 with filter=24
+======================================================================================================================================================================================================
+
+
+
+
 # March 25th, Thursday, 2021
 
 SurfaceSubnet_M on 20210322: at epoch 81, get validation error 2.20 um with lr-0.005. This network added smooth module.
@@ -8,7 +23,12 @@ expDuke_20210322A_Thickness_M_iibi007:
    [H,1] leads inconverge of surface error.
 
 expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi00:
-  at  at epoch 53, muThickError is 4.08; ErrorThickness1 decrease to 4.9um. valiation loss 0.97
+  at epoch 53, muThickError is 4.08; ErrorThickness1 decrease to 4.9um. valiation loss 0.97
+
+expDuke_20210325A_Thickness_M2_iibi007: use softmax for surfaces, and then git its thickness.
+  at epoch 34, valiation loss 0.94, and meanThicknessError 4.008, ErrorThickness1 decrease to 4.622um.
+
+
 
 
 

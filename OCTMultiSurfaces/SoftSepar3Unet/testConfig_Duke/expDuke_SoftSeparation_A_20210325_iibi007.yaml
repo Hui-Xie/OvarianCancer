@@ -51,7 +51,7 @@ lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate sege
 surfaceSubnet: "SurfaceSubnet_M"
 surfaceSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322_SurfaceSubnet_M_iibi007.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
-surfaceSubnetLr: 0.005  # pretain at epoch 121  # in test status, it does not care
+surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_M"
 # todo: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_iibi007.yaml"
