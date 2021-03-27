@@ -29,14 +29,20 @@ class LambdaModule(BasicModel):
         # Lambda branch:
         self.m_lambdas = nn.Sequential(
             Conv2dBlock(C, C//2),
-            Conv2dBlock(C//2, C//4),
-            nn.Conv2d(C // 4, N, kernel_size=[H,1], stride=[1, 1], padding=[0, 0]),  # 2D conv [H,1]
-            nn.Sigmoid(),  # Sigmoid makes lambda in [0,1]
-        )  # output size:BxNxW
+            Conv2dBlock(C//2, C//4), # size: BxC//4xHxW
+            nn.Conv2d(C // 4, N, kernel_size=[1,1], stride=[1, 1], padding=[0, 0]),
+        )  # output size:BxNxHxW
+
+        '''
+        using mean after 1x1 conv without norm to reduce H to 1 is better than [H,1] convolution,
+        as [H,1] convolution has too much parameters, it is easy to lead not converge. 
+        '''
 
 
 
     def forward(self, inputs):
         # N is numSurfaces
-        lambdas = self.m_lambdas(inputs)  # output size: BxNx1xW
-        return lambdas.squeeze(dim=-2)  # return lambdas  in (B,N,W) dimension
+        x = self.m_lambdas(inputs)  # output size: BxNxHxW
+        x = torch.mean(x,dim=-2, keepdim=False) # outputsize: BxNxW
+        lambdas = torch.sigmoid(x)   # output in [0,1] with size of BxNxW
+        return lambdas  # return lambdas  in (B,N,W) dimension
