@@ -12,7 +12,7 @@ from network.OCTAugmentation import *
 
 sys.path.append(".")
 from SurfaceSubnet_M import SurfaceSubnet_M
-from ThicknessSubnet_M import ThicknessSubnet_M
+from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from LambdaModule import LambdaModule
 
 sys.path.append("../..")
