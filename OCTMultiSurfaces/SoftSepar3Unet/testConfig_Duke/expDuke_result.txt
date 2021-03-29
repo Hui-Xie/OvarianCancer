@@ -1,3 +1,19 @@
+# March 29th, Monday, 2021:
+training progress of thickness nework:
+expDuke_20210325A_Thickness_M2_iibi007:
+    softmax + argMax
+    at epoch 60, validation error get 3.90um.  at epoch 30, validation error is 4.1um.
+expDuke_20210327A_Thickness_M3_iibi007:
+    mean after conv.
+    at epcoh 30, valiation error still get 20 um. It looks diverge.
+
+It looks that softmax is better than [H,1] or mean over H Dimension.
+
+expDuke_20210204D_Thickness_YufanHe_FullHeightConv_iibi007:
+    at epoch 54, get valiation error of 4.0 um.
+
+
+
 # March 27th, Saturday, 2021
 Surface subnet experiment result:
 Different methods on Duke_AMD test data for pure surface net, without softSeparation at all:
