@@ -30,12 +30,16 @@ class LambdaModule(BasicModel):
         self.m_lambdas = nn.Sequential(
             Conv2dBlock(C, C//2),
             Conv2dBlock(C//2, C//4), # size: BxC//4xHxW
-            nn.Conv2d(C // 4, N, kernel_size=[1,1], stride=[1, 1], padding=[0, 0]),
+            nn.Conv2d(C // 4, N, kernel_size=[1,1], stride=[1, 1], padding=[0, 0],bias=False),
         )  # output size:BxNxHxW
 
+        self.m_sizeFinalConvFilter = C//4
+
         '''
-        using mean after 1x1 conv without norm to reduce H to 1 is better than [H,1] convolution,
-        as [H,1] convolution has too much parameters, it is easy to lead not converge. 
+        There are 3 methods to reduce H to 1: 
+        A   softmax  on dimension H, and then use softargmax;
+        B   using mean after 1x1 conv without norm to reduce H to 1; it looks also diverge in thickness network.
+        C   use [H,1] convolution: as [H,1] convolution has too much parameters, it is easy to lead diverge. 
         '''
 
 
@@ -43,6 +47,7 @@ class LambdaModule(BasicModel):
     def forward(self, inputs):
         # N is numSurfaces
         x = self.m_lambdas(inputs)  # output size: BxNxHxW
-        x = torch.mean(x,dim=-2, keepdim=False) # outputsize: BxNxW
-        lambdas = torch.sigmoid(x)   # output in [0,1] with size of BxNxW
+        x = x/self.m_sizeFinalConvFilter   # average the output of conv to make the value small near zero.
+        x = torch.sigmoid(x)   # first sigmoid, than mean to express voting mechanism.
+        lambdas = torch.mean(x,dim=-2, keepdim=False) # outputsize: BxNxW
         return lambdas  # return lambdas  in (B,N,W) dimension
