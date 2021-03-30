@@ -200,8 +200,8 @@ def main():
         print(" ")
         for (keyIndex, colIndex) in enumerate(binaryAppKeyColIndex):
             figureName = f"sector{sectorIndex}_{binaryAppKeys[keyIndex]}_{layerName}_bin"
-            fig = plt.figure()
-
+            fig, ax = plt.subplots()
+           
             y = labels[:,colIndex]
             x = volumes[:,sectorIndex]
 
@@ -246,9 +246,9 @@ def main():
             pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink','tab:red', 'tab:cyan', 'tab:blue']
             for i in range(nBins):
                 circle0 = plt.Circle((binCenter[i], 0), radius=x0BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
-                plt.gca().add_patch(circle0)
+                ax.add_patch(circle0)
                 circle1 = plt.Circle((binCenter[i], 1), radius=x1BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
-                plt.gca().add_patch(circle1)
+                ax.add_patch(circle1)
 
             # for single feature
             x = x.reshape(-1,1)
