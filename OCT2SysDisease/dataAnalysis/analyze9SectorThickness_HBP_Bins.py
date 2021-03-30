@@ -216,7 +216,7 @@ def main():
             #if len(emptyRows[0]) > 0:
             #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
 
-            plt.scatter(x, y, label='original data', linewidths=0.5)  # original draw
+            # plt.scatter(x, y, label='original data', linewidths=0.5)  # original draw
             # divide x into 10 bins;
             nBins = 10
             x0 = x[np.nonzero(y==0)]
