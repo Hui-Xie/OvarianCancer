@@ -216,7 +216,7 @@ def main():
             #if len(emptyRows[0]) > 0:
             #    print(f"{figureName}: deleted {len(emptyRows[0])} IDs with empty value or missing values.")
 
-            #plt.scatter(x, y, label='original data', linewidths=0.5)  # original draw
+            plt.scatter(x, y, label='original data', linewidths=0.5)  # original draw
             # divide x into 10 bins;
             nBins = 10
             x0 = x[np.nonzero(y==0)]
@@ -244,8 +244,11 @@ def main():
                 x1BinRadius[i] = x1BinSize[i] / maxBinSize * maxR
             # draw circles
             pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink','tab:red', 'tab:cyan', 'tab:blue']
-
-
+            for i in range(nBins):
+                circle0 = plt.Circle((binCenter[i], 0), x0BinRadius[i], color=pltColors[i])
+                plt.gca().add_patch(circle0)
+                circle1 = plt.Circle((binCenter[i], 1), x1BinRadius[i], color=pltColors[i])
+                plt.gca().add_patch(circle1)
 
             # for single feature
             x = x.reshape(-1,1)
