@@ -235,7 +235,7 @@ def main():
             for i in range(nBins):
                 x0BinSize[i] = len(x0[(binCenter[i] - binGap / 2 <= x0) * (x0< binCenter[i] + binGap / 2)])
                 x1BinSize[i] = len(x1[(binCenter[i] - binGap / 2 <= x1) * (x1< binCenter[i] + binGap / 2)])
-            maxBinSize = max(x0BinSize.max(), x1BinSize.max())
+            maxBinSize = max(np.array(x0BinSize).max(), np.array(x1BinSize).max())
             maxR = 0.3
             x0BinRadius = [0, ] * nBins
             x1BinRadius = [0, ] * nBins
