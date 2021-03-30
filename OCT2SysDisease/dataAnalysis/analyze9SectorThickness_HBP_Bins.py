@@ -201,7 +201,7 @@ def main():
         for (keyIndex, colIndex) in enumerate(binaryAppKeyColIndex):
             figureName = f"sector{sectorIndex}_{binaryAppKeys[keyIndex]}_{layerName}_bin"
             fig, ax = plt.subplots()
-           
+
             y = labels[:,colIndex]
             x = volumes[:,sectorIndex]
 
@@ -245,10 +245,19 @@ def main():
             # draw circles
             pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink','tab:red', 'tab:cyan', 'tab:blue']
             for i in range(nBins):
-                circle0 = plt.Circle((binCenter[i], 0), radius=x0BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
+                #circle0 = plt.Circle((binCenter[i], 0), radius=x0BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
+                #ax.add_patch(circle0)
+                #circle1 = plt.Circle((binCenter[i], 1), radius=x1BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
+                #ax.add_patch(circle1)
+
+                # use fixed circle with text
+                circle0 = plt.Circle((binCenter[i], 0), radius=0.2, facecolor=None, alpha=0.5, edgecolor=pltColors[i], fill=False)
+                plt.text(binCenter[i]-binGap/4,0, f"{x0BinSize[i]:d}",fontsize=6)
                 ax.add_patch(circle0)
-                circle1 = plt.Circle((binCenter[i], 1), radius=x1BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
+                circle1 = plt.Circle((binCenter[i], 1), radius=0.2, facecolor=None, alpha=0.5, edgecolor=pltColors[i], fill=False)
+                plt.text(binCenter[i] - binGap / 4, 1, f"{x1BinSize[i]:d}", fontsize=6)
                 ax.add_patch(circle1)
+
 
             # for single feature
             x = x.reshape(-1,1)
