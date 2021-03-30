@@ -245,10 +245,10 @@ def main():
             # draw circles
             pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink','tab:red', 'tab:cyan', 'tab:blue']
             for i in range(nBins):
-                plt.circles((binCenter[i], 0), x0BinRadius[i], color=pltColors[i], alpha=0.5, edgecolor='none')
-                #plt.gca().add_patch(circle0)
-                plt.circles((binCenter[i], 1), x1BinRadius[i], color=pltColors[i], alpha=0.5, edgecolor='none')
-                #plt.gca().add_patch(circle1)
+                circle0 = plt.Circle((binCenter[i], 0), radius=x0BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
+                plt.gca().add_patch(circle0)
+                circle1 = plt.Circle((binCenter[i], 1), radius=x1BinRadius[i], facecolor=pltColors[i], alpha=0.5, edgecolor=None)
+                plt.gca().add_patch(circle1)
 
             # for single feature
             x = x.reshape(-1,1)
