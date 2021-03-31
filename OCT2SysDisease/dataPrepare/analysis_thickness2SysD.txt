@@ -4,20 +4,32 @@ Time: 08:00 pm -09:30 pm (CDT), March 30th, Tuesday, 2021
 Participants: Professor Wang, Professor Wu, Hui.
 Minutes:
 Hui reported the progress of project using OCT to predict HBP. We discussed the further directions of this project.
-1  The prediction accuracy from OCT to HBP may lie not in the  methods we used, but in 
-1  The OD/OS eyes in most practices are not symmetric, like myopia eyes normally have different diopter(curve degree) in OD/OS.
-   Therefore, in research it is better to choose uniformly one eye.
+1  The low prediction accuracy(63%) from OCT to HBP may lie not in the  methods we used,
+   but in the data essence that different phase HBP (early, middle, late), disease history, and current blood pressures may have different manifestation in the OCT,
+   which leads the prediction difficult for a broad and complex disease phenomenon.
 2  It is very meaningful to analyze relationship between thickness of different layers with respect to age/gender/axisLengh/HBP.
    These analysis will reveal the retina layer thickness change mechanism in aging, gender, myopia, and HBP damage.
-   It will be very valuable medical discovery.
-   First we can consider to analyze the natural population, and then hypertension population.
+   It will be very valuable medical discovery and medical explanation.
+   First we can consider to analyze the natural normal population, and then hypertension population.
+   In natural normal population, we can discard the high myopia, glaucoma, and macular disease cases.
+   Current 9x31x25 image size with 9 sector division is reasonable for current disease research.
    A. Along aging, what is the thickness change trend in different layers?
    B. Comparing with female and male, what is thickness comparison along different age group.
-   C. what is the thickness change trend  in different layers with respect to different axis length?
-   D. What is the thickness change trend  in different layers with respect to HBP and no-HBP?
+   C. what is the thickness change trend in different layers with respect to different axis length?
+   D. What is the thickness change trend in different layers with respect to HBP and no-HBP?
       and the effect of the phase of HBP(early, middle, late) on the thickness changes.
-3  RNFL as the first layer ophthalmologist can see is also meaningful to do some analysis.
-4  It is possible that HBP has bigger damage effect on the outside sectors of eye, than the fovea sector.
+   E. RNFL as the first layer ophthalmologist can see is also meaningful to do some analysis,
+      as some initial research reveals that some defects of RNFL relates with some diseases.
+   F. Further we can explore the effect of retina thickness with respect to smoke, diabetes ect other risk factors.
+3  Some notes:
+   A. The OD/OS eyes in most practices are not symmetric, like myopia eyes normally have different diopter(curve degree) in OD/OS.
+      Therefore, in research it is better to choose uniformly one eye.
+   B. It is possible that HBP has bigger damage effect on the outside sectors than the fovea sector of eyes.
+   C. If we use intensity to analyze the HBP, it is important to understand the physical meaning of intensity or patten.
+   D. Current 31-slice OCT has some blood vessel terminals information only, which is not good to blood vessel analysis.
+      We can ignore these blood vessel information.
+4  Hui needs to tide thickness data as a table(database) for Beijing researchers to do some other analysis.
+5  The attachement is the project report slide for backup.
 
 
 
