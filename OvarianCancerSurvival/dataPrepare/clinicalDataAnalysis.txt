@@ -1,3 +1,31 @@
+# March 31th, Wednesday, 2021
+A new idea for ovarian cancer prediction: 3D volume image as input, all weakly segmented labels and clinical data as ground truth.
+It is not the case that clinical data as input to deduce the survival label, which is like to use clinical data to directly predict result.
+It limits the use of clinical data as direct factors for final survival result.  If this method could succeed, it should have succeed earlier.
+For this unknown pattern to predict survival, we hope to use clinical data to guide network to generate some unknown features,
+and then use these unknown features to predict our final label.
+In other words, these clinical data is to explore features, rather than just a direct contributing factor to the final prediction.
+
+Benefits of this new idea:
+A. It adds the number of ground truth, which effectively alleviates overfitting on the small data set with a binary label.
+B. In a single survival target ground truth context, it is easy to overfit.
+   This new idea is like to add disturbations or noises to the easy-overfitting single survival network to get a better generalization.
+
+
+Some design considerations:
+A. How to weight different kinds of features pointing different label categories, or different kinds of loss:
+   Each kind of loss needs a super parameter weight. We can initialize them all as 1.0.
+   a1. if a loss decreases too quick, reduce its weight.
+   a2. design a mechanism to measure loss's normalized acceleration,e.g. (2(a2-a1)/(a1+a2))
+       and reduce the weight of bigger acceleration, increase the weight of small acceleration.
+   a3. Hope this dynamic weight adjustment to find real valuable features.
+   a4. remember to save these dynamic weight.
+     
+B. How to design an organic network to effective to support different kinds of ground truth.
+C.
+
+
+====================================
 cell type: 12 types.
 High grade serous,
 Micropapillary low grade serous,
