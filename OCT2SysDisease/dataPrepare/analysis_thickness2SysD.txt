@@ -1,3 +1,34 @@
+# March 31th, Wednesday, 2021
+Minutes of Project OCT to HBP on March 30th, 2021
+Time: 08:00 pm -09:30 pm (CDT), March 30th, Tuesday, 2021
+Participants: Professor Wang, Professor Wu, Hui.
+Minutes:
+Hui reported the progress of project using OCT to predict HBP. We discussed the further directions of this project.
+1  The prediction accuracy from OCT to HBP may lie not in the  methods we used, but in 
+1  The OD/OS eyes in most practices are not symmetric, like myopia eyes normally have different diopter(curve degree) in OD/OS.
+   Therefore, in research it is better to choose uniformly one eye.
+2  It is very meaningful to analyze relationship between thickness of different layers with respect to age/gender/axisLengh/HBP.
+   These analysis will reveal the retina layer thickness change mechanism in aging, gender, myopia, and HBP damage.
+   It will be very valuable medical discovery.
+   First we can consider to analyze the natural population, and then hypertension population.
+   A. Along aging, what is the thickness change trend in different layers?
+   B. Comparing with female and male, what is thickness comparison along different age group.
+   C. what is the thickness change trend  in different layers with respect to different axis length?
+   D. What is the thickness change trend  in different layers with respect to HBP and no-HBP?
+      and the effect of the phase of HBP(early, middle, late) on the thickness changes.
+3  RNFL as the first layer ophthalmologist can see is also meaningful to do some analysis.
+4  It is possible that HBP has bigger damage effect on the outside sectors of eye, than the fovea sector.
+
+
+
+
+
+
+
+
+
+
+
 # March 10th, Wednesday, 2021
 Read Mathew Jacob's "MoDL: Model-based deep learning architecture for inverse problems"
 1  Recovery from few-parameter noised images is a ill-posed problem, the general method is to modify the objective function
