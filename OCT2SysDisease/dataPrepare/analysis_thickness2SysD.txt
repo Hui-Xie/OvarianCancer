@@ -4,13 +4,13 @@ Time: 08:00 pm -09:30 pm (CDT), March 30th, Tuesday, 2021
 Participants: Professor Wang, Professor Wu, Hui.
 Minutes:
 Hui reported the progress of project using OCT to predict HBP. We discussed the further directions of this project.
-1  The low prediction accuracy(63%) from OCT to HBP may lie not in the  methods we used,
+1  The low prediction accuracy(63%) from OCT to HBP may lie not in the methods we used,
    but in the data essence that different phase HBP (early, middle, late), disease history, and current blood pressures may have different manifestation in the OCT,
    which leads the prediction difficult for a broad and complex disease phenomenon.
 2  It is very meaningful to analyze relationship between thickness of different layers with respect to age/gender/axisLengh/HBP.
-   These analysis will reveal the retina layer thickness change mechanism in aging, gender, myopia, and HBP damage.
+   These analysises will reveal the retina layer thickness change mechanism in aging, gender, myopia, and HBP damage.
    It will be very valuable medical discovery and medical explanation.
-   First we can consider to analyze the natural normal population, and then hypertension population.
+   First we can consider to analyz the natural normal population, and then hypertension population.
    In natural normal population, we can discard the high myopia, glaucoma, and macular disease cases.
    Current 9x31x25 image size with 9 sector division is reasonable for current disease research.
    A. Along aging, what is the thickness change trend in different layers?
@@ -27,17 +27,9 @@ Hui reported the progress of project using OCT to predict HBP. We discussed the 
    B. It is possible that HBP has bigger damage effect on the outside sectors than the fovea sector of eyes.
    C. If we use intensity to analyze the HBP, it is important to understand the physical meaning of intensity or patten.
    D. Current 31-slice OCT has some blood vessel terminals information only, which is not good to blood vessel analysis.
-      We can ignore these blood vessel information.
+      We can ignore this blood vessel information.
 4  Hui needs to tide thickness data as a table(database) for Beijing researchers to do some other analysis.
-5  The attachement is the project report slide for backup.
-
-
-
-
-
-
-
-
+5  The attachment is the project report slide for backup.
 
 
 
