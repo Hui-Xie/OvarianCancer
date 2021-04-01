@@ -7,9 +7,26 @@ I need (a) the surface positioning errors, (b) Hausdroff distances, and
 each including original image, ground truth, and the computed
 segmentation. For the Duke dataset, please choose ADM cases.
 =================================================================
-For BES dataset of 10 surfaces (um):
-meanError, stdError, surface0, surface1, surface2,surface3, surface4, surface5, surface6, surface7, surface8, surface9
-1.993,     0.8652,   0.9598,   2.4900,   3.7846,  2.1917,   2.1953,   2.2003,   1.2041,   2.3540,   1.3879,    1.1690
+expTongren_20201117B_SurfaceNet_CV5: 10 surfaces.
+patientIDList =['6783_OD_17761_Volume', '6418_OD_20692_Volume', '2627_OD_7904_Volume', '440_OD_5194_Volume', '1437_OD_11147_Volume']
+stdSurfaceError = tensor([0.1231, 0.2644, 0.7765, 0.1290, 0.3949, 0.2266, 0.1202, 0.3366, 0.2118,   0.1743], device='cuda:2')
+muSurfaceError = tensor([0.9598, 2.4901, 3.7844, 2.1916, 2.1953, 2.2003, 1.2041, 2.3540, 1.3879,  1.1692], device='cuda:2')
+stdError = 0.8652421832084656
+muError = 1.9936552047729492
+hausdorff Distance (in pixels) = [[ 4.  8.  7. 10.  7.  7.  7.  4. 32. 27.]]
+pixel number of violating surface-separation constraints: 0
+
+expDuke_20210322_SurfaceSubnet_M_iibi007: 3 surfaces:
+stdSurfaceError = tensor([2.9135, 1.0423, 1.5831], device='cuda:1')
+muSurfaceError = tensor([1.2327, 1.9303, 2.9859], device='cuda:1')
+stdError = 2.122194290161133
+muError = 2.0496156215667725
+hausdorff Distance = [[71. 96. 49.]]
+pixel number of violating surface-separation constraints: 0
+
+
+
+
 
 
 
