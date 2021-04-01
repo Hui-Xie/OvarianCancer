@@ -44,7 +44,7 @@ class ConfigReader(object):
         #Add a log path for some log memo output
         self.logMemoPath = os.path.join(self.outputDir, f"logMemo.txt")
 
-        self.imagesOutputDir = os.path.join(self.outputDir,"images")
+        self.imagesOutputDir = os.path.join(self.outputDir, "images")
         self.xmlOutputDir = os.path.join(self.outputDir, "xml")
         self.validationOutputDir = os.path.join(self.outputDir, "validation")
         self.testOutputDir = os.path.join(self.outputDir, "test")

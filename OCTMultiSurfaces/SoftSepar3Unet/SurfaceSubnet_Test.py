@@ -290,7 +290,7 @@ def main():
             subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
             subplot2.imshow(images[b,].squeeze(), cmap='gray')
             for s in range(0, S):
-                subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
+                subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
             if needLegend:
                 if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
                     subplot2.legend(surfaceNames, loc='lower center', ncol=4)
@@ -315,16 +315,16 @@ def main():
             PredictionColor= ['tab:orange', 'tab:pink', 'tab:red',]
             legendList = []
             for s in range(ls, hs):
-                subplot3.plot(range(0, W), testGts[b, s, :].squeeze(), GTColor[s%3], linewidth=0.9)
+                subplot3.plot(range(0, W), testGts[b, s, :].squeeze(), GTColor[s%3], linewidth=1.5)
                 legendList.append(f"GT_s{s}")
             for s in range(ls, hs):
-                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), PredictionColor[s%3], linewidth=0.9)
+                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), PredictionColor[s%3], linewidth=1.5)
                 legendList.append(f"Prediction_s{s}")
             if needLegend:
                 subplot3.legend(legendList, loc='lower center', ncol=2)
         else:
             for s in range(0, S):
-                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=0.9)
+                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
             if needLegend:
                 if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
                     subplot3.legend(surfaceNames, loc='lower center', ncol=4)

@@ -24,6 +24,31 @@ muError = 2.0496156215667725
 hausdorff Distance = [[71. 96. 49.]]
 pixel number of violating surface-separation constraints: 0
 
+python3 ./computeAMD_ControlAccuracy.py
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_M/expDuke_20210322_SurfaceSubnet_M_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.4673, 1.0152, 1.7696])
+muSurfaceError = tensor([1.5077, 2.0325, 3.3369])
+HausdorffDistance in pixel = [[71. 96. 49.]]
+HausdorffDistance in physical size (micrometer) = [[230.04 311.04 158.76]]
+stdError = 2.4295005798339844
+muError = 2.2923755645751953
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.2768, 1.0950, 0.4570])
+muSurfaceError = tensor([0.6063, 1.6975, 2.1862])
+HausdorffDistance in pixel = [[11.  7.  9.]]
+HausdorffDistance in physical size (micrometer) = [[35.64 22.68 29.16]]
+stdError = 0.9594738483428955
+muError = 1.4966628551483154
+===============
+
+
 
 
 
