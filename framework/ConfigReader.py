@@ -32,7 +32,7 @@ class ConfigReader(object):
         if ("logDir" not in self.__dict__) or ("" == self.logDir):
             self.logDir = os.path.join(self.dataDir, "log", self.network, self.experimentName)
         else:
-            self.logDir = os.path.join(self.logDir, self.network,self.experimentName)
+            self.logDir = os.path.join(self.logDir, self.network, self.experimentName)
         if not os.path.exists(self.logDir):
             os.makedirs(self.logDir)  # recursive dir creation
 

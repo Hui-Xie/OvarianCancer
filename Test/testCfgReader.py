@@ -7,7 +7,7 @@ import os
 import torch
 
 
-cfgFilePath = "/home/hxie1/Projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20201117A_SurfaceSubnet_NoReLU.yaml"
+cfgFilePath = "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322_SurfaceSubnet_M_iibi007.yaml"
 
 hps = ConfigReader(cfgFilePath)
 
@@ -21,7 +21,7 @@ print(f"hps.plane = {hps.plane}")
 goodBscans= hps.goodBscans
 #print(goodBscans['2639'])
 
-with open("/home/hxie1/temp/output_test.txt", "w") as file:
+with open("/localscratch/Users/hxie1/temp/output_test.txt", "w") as file:
     hps.printTo(file)
 
 
