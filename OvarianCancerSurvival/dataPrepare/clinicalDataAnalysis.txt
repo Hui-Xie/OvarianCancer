@@ -20,7 +20,7 @@ A. How to weight different kinds of features pointing different label categories
        and reduce the weight of bigger acceleration, increase the weight of small acceleration.
    a3. Hope this dynamic weight adjustment to find real valuable features.
    a4. remember to save these dynamic weight.
-     
+
 B. How to design an organic network to effective to support different kinds of ground truth.
 C.
 

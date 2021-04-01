@@ -22,6 +22,7 @@ from utilities.FilesUtilities import *
 from utilities.TensorUtilities import *
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
+from framework.NetTools import  *
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -49,7 +50,7 @@ def main():
 
     outputXmlSegFiles = True
 
-    OutputNumImages = 2
+    OutputNumImages = 3
     # choose from 0, 1,2,3:----------
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
@@ -174,15 +175,19 @@ def main():
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
 
+        B, H, W = images.shape
+        B, S, W = testOutputs.shape
+
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir,
                                            y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
 
+            hausdorffD = columnHausdorffDist(testOutputs, testGts).reshape(1, S)
+
     testEndTime = time.time()
 
     #generate predicted images
-    B,H,W = images.shape
-    B, S, W = testOutputs.shape
+
     patientIDList = []
 
     pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan', 'tab:blue']
@@ -354,6 +359,7 @@ def main():
             file.write(f"muSurfaceError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
+            file.write(f"hausdorff Distance (in pixels) = {hausdorffD}\n")
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
         if comparisonSurfaceIndex is not None:

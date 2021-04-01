@@ -1,3 +1,19 @@
+# April 1st, Thursday, 2021
+Summary previous OCT surface segmentation of
+(1) BES dataset
+(2) Duke dataset
+I need (a) the surface positioning errors, (b) Hausdroff distances, and
+(c) illustrative segmentation results of two cases for each dataset,
+each including original image, ground truth, and the computed
+segmentation. For the Duke dataset, please choose ADM cases.
+=================================================================
+For BES dataset of 10 surfaces (um):
+meanError, stdError, surface0, surface1, surface2,surface3, surface4, surface5, surface6, surface7, surface8, surface9
+1.993,     0.8652,   0.9598,   2.4900,   3.7846,  2.1917,   2.1953,   2.2003,   1.2041,   2.3540,   1.3879,    1.1690
+
+
+
+
 # March 30th, Tuesday, 2021:
 expDuke_20210322_SurfaceSubnet_M_iibi007.yaml:
      its best validaiton error: 2.243 at epoch 98
