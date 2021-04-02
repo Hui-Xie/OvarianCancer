@@ -48,6 +48,11 @@ stdError = 0.9594738483428955
 muError = 1.4966628551483154
 ===============
 
+1   In 41 AMD test samples, we have 6 patients with non-smooth / broken  surface 0: AMD_1087, 1121, 1127, 1151, 1198, 1257.
+2   if we exclude these outliers in the test set, our test accuracy will improve a lot.
+3   For this kind of surface 0 error,  I feel that soft separation still does not have too much help to improve this kind of error, as its error pattern is beyond smooth.
+     In other words, smoothing mechanism may not help improve error.
+
 
 
 
