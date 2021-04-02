@@ -20,29 +20,38 @@ A. How to weight different kinds of features pointing different label categories
        and reduce the weight of bigger acceleration, increase the weight of small acceleration.
    a3. Hope this dynamic weight adjustment to find real valuable and balanced features.
    a4. remember to save these dynamic weight.
-
 B. How to design an organic network to effective to support different kinds of ground truth.
+C. Does it still has the overfitting risk?
+   c1. use a small network with conv and averagePooling to reduce parameters.
+   c2. not use Unet to do pixel segmentation as Unet always has huge parameter,
+      but to predict the abstract information of cancer: location, volume, size, proportion,etc.
+      We may ask experts which abstract information may help predict survival.
+D. Ask Douglas supply the full clinical information as some patient lacks part clinical information.
 
 Basic methods we tried in 2019 for ovarian cancer prediction project:
-1  segment weak annotated slices.
-2  segment fully expand marked 3D slices, with my manually expand ground truth.
-3  use latent vector of U-Net to predict survival: FC classifier, Vote classifier.
-4  use logistic regression to cherry-pick features in the latent vector, and then predict survival.
-5  use latent vector from high-dice segmentation result to predict survival.
-6  use 2D MobileNetV3 with slice as channel to directly predict survival.
-7  use 3D Conv net directly to predict survival.
+1  segment weak annotated slices. Nov2019. dice 67% on weakly annotated slices.
+2  segment fully expand marked 3D slices, with my manually expand ground truth.  Dec2019. average test dice 60%.
+3  use latent vector of U-Net to predict survival: Dec2019, 10F-CV, 84 patient of primary cancer with 65% are 1s.
+   FC classifier: accuracy 59%
+   Vote classifie: accuracy 57%
+4  use logistic regression to cherry-pick features in the latent vector, and then predict survival. average accuracy 58% on validation data.
+5  use latent vector from high-dice segmentation result to predict survival. Dec2019, 10f-CV, accuracy 60% on the 35-patient data with 57% of 1.
+6  use 2D MobileNetV3 with slice as channel to directly predict survival. Oct2020.  Overfitting.
+7  use 3D Conv net directly to predict survival.  accuracy 70% on validation data.
 
-Some lessons in the experiments before:
+
+Some lessons from the experiments before:
 1  Do not reduce/select patient samples, as the whole sample is already too small(less than 200).
 2  try to fully use all samples, and all clinical data information to help train network.
 3  AI basing on huge training samples may be smarter than human,
    but don't expect a deep learning on a small number of training samples is smarter than human.
-3  Do not expect too high accuracy expectation as this project is more possible a sky-project than OCT to HBP project.
+4  Do not expect too high accuracy expectation as this project is more possible a sky-project than OCT to HBP project.
    As this project perfectly fits characteristic of a sky project:
    A.  ground truth come from another mechanism instead of input images.
-   B.  domain experts can not deduce the ground truth using logic and domain knowledge from the input images.
-4  A reasonable goal is that predict test accuracy >70%, and then we need to consider to write a paper.
-5  I do not want to waste another 5 months like the OCT to HBP project, without a paper out.
+   B.  domain experts can not deduce the ground truth using their logic and domain knowledge from the input images.
+5  A reasonable goal is that predict test accuracy >70%, and then we need to consider to write a paper.
+   A 70% accuracy is already a big jump from the reality that domain experts can not deduce the groundd truth using logic and domain knowledge from the input images.
+6  I do not want to waste another 5 months like the OCT to HBP project, without a paper out.
 
 
 
