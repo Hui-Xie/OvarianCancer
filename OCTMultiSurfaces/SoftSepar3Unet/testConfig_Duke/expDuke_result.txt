@@ -38,7 +38,8 @@ Summary:
    C  In AMD data, surface 2 error with learning lambda is bigger than pure surface branch,
       which implies sometime thikness information may worse the correct surface information.
    These observations give a problem: NxW learning lambda method has better performance in control data, instead of more ill data?
-4  Further plan:
+4  Currrent method has bright points: NxW learning lambda, Smooth module, surfance and thickness gradient consistent pairwise terms.
+5  Further plan:
    A  work on reduce sample data and noise data;
    B  work on Duke 2 data.
 
