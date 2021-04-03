@@ -27,6 +27,7 @@ from framework.NetTools import *
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime
+import os
 
 sys.path.append("../dataPrepare_Tongren")
 from TongrenFileUtilities import *
@@ -45,7 +46,21 @@ def main():
         return -1
 
     # output config
+    MarkGTDisorder = False
+    MarkPredictDisorder = False
+
     outputXmlSegFiles = True
+
+    OutputNumImages = 3
+    # choose from 0, 1,2,3:----------
+    # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
+    # 4: Raw, GT, Prediction with GT superpose in one image
+    comparisonSurfaceIndex = None
+    # comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
+    # GT uses red, while prediction uses green
+
+    OnlyOutputGoodBscans = False
+    needLegend = True
 
     # parse config file
     configFile = sys.argv[1]
@@ -152,6 +167,7 @@ def main():
     if hps.existGTLabel:
         hausdorffD = columnHausdorffDist(testOutputs, testGts).reshape(1, -1)
     B,S,W = testOutputs.shape
+    H = hps.inputHeight
 
     # final output result:
     curTime = datetime.datetime.now()
@@ -160,7 +176,7 @@ def main():
     with open(os.path.join(hps.outputDir,f"output_{timeStr}.txt"), "w") as file:
         hps.printTo(file)
         file.write("\n=======net running parameters=========\n")
-        file.write(f"B,S,H,W = {B, S,hps.inputHeight, W}\n")
+        file.write(f"B,S,H,W = {B, S,H, W}\n")
         file.write(f"Test time: {testEndTime-testStartTime} seconds.\n")
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
@@ -182,6 +198,149 @@ def main():
             for s in violateConstraintSlices:
                 file.write(f"\t{testIDs[s]}\n")
 
+    # output images
+    #=======================================================
+    for b in range(B):
+        if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
+            # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
+            # example: "/home/hxie1/data/OCT_Tongren/Glaucoma/209_OD_1554_Volume/30.jpg"  for glaucoma
+            patientPath, filename = os.path.split(testIDs[b])
+            patientID = os.path.basename(patientPath)
+            if patientID not in patientIDList:
+                patientIDList.append(patientID)
+            volumePath = hps.imagesOutputDir+"/"+patientID
+            if not os.path.exists(volumePath):
+                os.makedirs(volumePath)  # recursive dir creation
+            index = os.path.splitext(filename)[0]
+            patientID_Index = patientID +"_" +index
+
+        if "OCT_JHU" in hps.dataDir:
+            # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
+            patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_19
+            patient = patientID_Index[0:4] # e.g. hc01
+            if "_s1_R_19" in patientID_Index and patient not in patientIDList:
+                patientIDList.append(patient)
+
+        if "OCT_Duke" in hps.dataDir:
+            a = testIDs[b]
+            if hps.dataInSlice:
+                # testID[i] = /home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1031_images_s04.npy
+                patientID_Index = a[0:a.find(".npy")]
+            else:
+                # testIDs[0] = /home/hxie1/data/OCT_Duke/numpy/training/AMD_1089_images.npy.OCT39
+                #patientVolumePath = a[0:-6]
+                patientID_Index = a[0:a.rfind("_images.npy")] +"_"+a[a.rfind(".")+1:]
+
+
+
+        if OutputNumImages ==0:
+            continue
+
+        f = plt.figure(frameon=False)
+        DPI = f.dpi
+
+        if OutputNumImages==2:
+            if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
+                subplotRow = 1
+                subplotCol = 2
+            else:
+                subplotRow = 2
+                subplotCol = 1
+            imageFileName = patientID_Index + "_GT_Predict.png"
+
+        elif OutputNumImages==1:
+            subplotRow = 1
+            subplotCol = 1
+            imageFileName = patientID_Index + "_Predict.png"
+        else:
+            if W/H > 16/9:  # normal screen resolution rate is 16:9
+                subplotRow = 3
+                subplotCol = 1
+            else:
+                subplotRow = 1
+                subplotCol = 3
+            if OutputNumImages == 4:
+                imageFileName = patientID_Index + f"_Raw_GT_Comparison_3S_center{comparisonSurfaceIndex:d}.png"
+            else:
+                imageFileName = patientID_Index + "_Raw_GT_Predict.png"
+        f.set_size_inches(W * subplotCol / float(DPI), H * subplotRow / float(DPI))
+
+        plt.margins(0)
+        plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
+
+        subplotIndex = 0
+
+        if OutputNumImages>=3 and hps.existGTLabel:
+            subplotIndex += 1
+
+            subplot1 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+            subplot1.imshow(images[b,].squeeze(), cmap='gray')
+            if MarkGTDisorder:
+                gt0 = testGts[b, 0:-1, :]
+                gt1 = testGts[b, 1:,   :]
+                errorLocations = np.nonzero(gt0>gt1)  # return as tuple
+                if len(errorLocations[0]) > 0:
+                    subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')  # red for gt disorder
+            if MarkPredictDisorder:
+                predict0 = testOutputs[b, 0:-1, :]
+                predict1 = testOutputs[b, 1:,   :]
+                errorLocations = np.nonzero(predict0 > predict1)  # return as tuple
+                if len(errorLocations[0]) > 0:
+                    subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
+            subplot1.axis('off')
+
+        if OutputNumImages >=2 and hps.existGTLabel:
+            subplotIndex += 1
+            subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+            subplot2.imshow(images[b,].squeeze(), cmap='gray')
+            for s in range(0, S):
+                subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
+            if needLegend:
+                if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
+                    subplot2.legend(surfaceNames, loc='lower center', ncol=4)
+                else:
+                    subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+            subplot2.axis('off')
+
+        subplotIndex += 1
+        if 1 == subplotRow and 1 == subplotCol:
+            subplot3 = plt
+        else:
+            subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
+        subplot3.imshow(images[b,].squeeze(), cmap='gray')
+        if OutputNumImages==4:
+            ls = comparisonSurfaceIndex -1 # low index for comparison surface index
+            if ls <0:
+                ls =0
+            hs =  comparisonSurfaceIndex +2 # high index
+            if hs > S:
+                hs = S
+            GTColor = ['tab:blue', 'tab:brown', 'tab:olive']
+            PredictionColor= ['tab:orange', 'tab:pink', 'tab:red',]
+            legendList = []
+            for s in range(ls, hs):
+                subplot3.plot(range(0, W), testGts[b, s, :].squeeze(), GTColor[s%3], linewidth=1.5)
+                legendList.append(f"GT_s{s}")
+            for s in range(ls, hs):
+                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), PredictionColor[s%3], linewidth=1.5)
+                legendList.append(f"Prediction_s{s}")
+            if needLegend:
+                subplot3.legend(legendList, loc='lower center', ncol=2)
+        else:
+            for s in range(0, S):
+                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
+            if needLegend:
+                if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
+                    subplot3.legend(surfaceNames, loc='lower center', ncol=4)
+                else:
+                    subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+        subplot3.axis('off')
+
+        if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
+            plt.savefig(os.path.join(volumePath,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+        else:
+            plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+        plt.close()
 
     print(f"============ End of Cross valiation test for OCT Multisurface Network: {hps.experimentName} ===========")
 
