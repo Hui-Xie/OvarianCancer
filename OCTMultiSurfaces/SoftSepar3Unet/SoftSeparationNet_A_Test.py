@@ -97,8 +97,9 @@ def main():
     net.to(device=hps.device)
 
     # Load network
-    netMgr = NetMgr(net, hps.netPath, hps.device)
-    netMgr.loadNet("test")
+    # as all subnet has load by itself.
+    # netMgr = NetMgr(net, hps.netPath, hps.device)
+    # netMgr.loadNet("test")
 
 
     if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
