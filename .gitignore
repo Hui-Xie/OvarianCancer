@@ -124,6 +124,7 @@ dmypy.json
 
 # PyCharm Config
 .idea/
+.idea/misc.xml
 
 # Latex intermediate files
 *.aux
@@ -134,3 +135,6 @@ dmypy.json
 
 # matlab process files
 *.m~
+
+
+
