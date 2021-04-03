@@ -201,6 +201,10 @@ def main():
 
     # output images
     #=======================================================
+    pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple', 'tab:olive', 'tab:brown', 'tab:pink', 'tab:red',
+                 'tab:cyan', 'tab:blue']
+    assert S <= len(pltColors)
+    
     for b in range(B):
         if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
             # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
