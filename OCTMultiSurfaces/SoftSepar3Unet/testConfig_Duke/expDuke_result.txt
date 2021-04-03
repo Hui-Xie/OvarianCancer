@@ -26,6 +26,24 @@ expDuke_SoftSeparation_A_20210329_iibi007   1.4489  0.9255    0.5830, 1.6062, 2.
 expDuke_20210322_SurfaceSubnet_M_iibi007    1.4966  0.9594    0.6063, 1.6975, 2.1862    0.2768, 1.0950, 0.4570      11.  7.  9.               Pure Surface branch
 ============================================================================================================================================================================
 
+Summary:
+1  The pure surface network only has achieved 62% of a pixel error,
+   which means major surface locations are perfect fit with ground truth, and only a small part locations have error.
+2  NxW-size lambdas try to capture the small part error locations.
+   In theory and in experiments, it is better than one lambda for one surface,
+   as previous one lambda for one surface cannot see improvement on muError.
+3  NxW learning lambdas can improve the accuracy:
+   A  muError improvement in Control group is bigger than in AMD group.
+   B  Hausdorf distance improvement in AMD group is bigger than in Control group.
+   C  In AMD data, surface 2 error with learning lambda is bigger than pure surface branch,
+      which implies sometime thikness information may worse the correct surface information.
+   These observations give a problem: NxW learning lambda method has better performance in control data, instead of more ill data?
+4  Further plan:
+   A  work on reduce sample data and noise data;
+   B  work on Duke 2 data.
+
+We can discuss more in Tuesday meeting.
+
 
 expDuke_SoftSeparation_A_20210329_iibi007 with learning lambda:
 ===============Formal Output Result ===========
