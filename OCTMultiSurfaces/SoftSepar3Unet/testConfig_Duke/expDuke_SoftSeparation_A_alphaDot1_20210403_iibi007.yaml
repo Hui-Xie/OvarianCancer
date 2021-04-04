@@ -1,0 +1,72 @@
+# surfaceUnet + thicknessUnet+ learning Lamba
+
+debug: False # debug mark
+dataIn1Parcel: False
+# Duke data is not in one parcel, while Tongren, JHU are in one parcel.
+# dataIn1Parcel means each patient has a volume file.
+dataInSlice: True
+
+status: "trainLambda" # only 2 status: # "trainLambda" #"test"
+
+dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
+existGTLabel: True
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K: 0  # Kfold cross validation
+k: -1   # the fold k test
+batchSize: 8
+groundTruthInteger: True
+
+network: "SoftSeparationNet_A"
+device: torch.device('cuda:0')   #GPU ID
+sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+
+# some physical parameter of images
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
+slicesPerPatient: 51  # for test and validation set
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
+numSurfaces: 3  # num of surfaces in an image
+gradChannels: 7   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+addCoordinatesXYChannels: True
+useRift: True
+smoothRift: False  # smooth Rift in ground truth
+scaleNumerator: 1
+scaleDenominator: 1
+useLayerDice: True
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+
+
+# for 2 Unets + learning Lambda
+surfaceSubnet: "SurfaceSubnet_M"
+surfaceSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210322_SurfaceSubnet_M_iibi007.yaml"
+surfaceSubnetDevice: torch.device('cuda:0')   #GPU ID
+surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not care
+
+thicknessSubnet: "ThicknessSubnet_M2"
+# for a new trained network.
+thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_iibi007.yaml"
+thicknessSubnetDevice: torch.device('cuda:0')   #GPU ID
+thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
+
+lambdaModule: "LambdaModule"
+lambdaModuleYaml: ""
+lambdaModuleDevice: torch.device('cuda:0')   #GPU ID
+lambdaModuleLr: 0.01
+alpha: 0.1  # weight of pairwise term
+
+netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log"
+refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"

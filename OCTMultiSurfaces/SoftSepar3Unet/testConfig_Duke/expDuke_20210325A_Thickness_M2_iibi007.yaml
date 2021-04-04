@@ -39,7 +39,7 @@ k: -1   # the fold k test
 
 groundTruthInteger: True
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:0')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8
 # phased training with different learning rate
