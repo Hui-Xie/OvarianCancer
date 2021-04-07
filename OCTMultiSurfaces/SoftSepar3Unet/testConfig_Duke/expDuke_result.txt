@@ -1,50 +1,92 @@
 # April 7th, Wednesday, 2021
-1  use student t test to measure the mean error of pure surface net and SoftSeparationNet:
-   A  In all surfaces of control group, both signed errors and absolute errors show significant difference of mean errors;
+Measure the significance of improvement of SoftSeparation with NxW learning lambda over pure surface network model.
+1 Use Student t test to measure the mean error of pure surface net and SoftSeparationNet:
+   A  In all surfaces of control group, both signed errors and absolute errors show significant difference among mean errors of 2 models;
    B  In surface 0 of AMD group, both signed errors and absolute errors show mean errors are not significant different;
-   C  In surface 1 and 2 of AMD group,  both signed errors and absolute errors show significant difference of mean errors;
+   C  In surface 1 and 2 of AMD group,  both signed errors and absolute errors show significant difference among mean errors of 2 models;
+2 Use MSE to analyze:
+   A  In all surfaces of control group, softSeparation model with NxW learning lambda improves both bias and variance, comparing with pure surface network;
+   B  in all surfaces of AMD group, softSepaation with NxW learning lambda improves both bias and variance, comparing with pure surface network,
+      except the only bias of surface 2.
+3 Summary: SoftSeparation with NxW learning lambda improvement is significant in statistic, comparing with pure surface Net model.
 
-
-============================
-python3 ./compareModelError.py
+]#python3 ./compareModelError.py
 Compare model accuracy in AMD and Control group separately
 predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_M/expDuke_20210322_SurfaceSubnet_M_iibi007/testResult/xml
 predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_20210329_iibi007/testResult/xml
 gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
 ============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 GroupName: AMD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 case number = 41
 ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
 ttestResult for 3 surfaces signed errors:
 modleError shape = (3, 754851)
-			 testStatistic 		 pValue 	 degreeFreedom
+			               testStatistic 		 pValue 	 degreeFreedom
 ttestResult for surface 0: (-1.5249858908131386, 0.1272628263293013, 1509700.0)
 ttestResult for surface 1: (-14.048829834561527, 7.882934600527656e-45, 1509700.0)
 ttestResult for surface 2: (11.052834536324205, 2.1293478181264976e-28, 1509700.0)
 ------------------------------------------------
 ttestResult for 3 surfaces absolute errors:
 modleError shape = (3, 754851)
-			 testStatistic 		 pValue 	 degreeFreedom
+			                testStatistic 		 pValue 	 degreeFreedom
 ttestResult for surface 0: (1.4747109646859955, 0.1402904754903738, 1509700.0)
 ttestResult for surface 1: (-5.9687127144998, 2.3918579079038144e-09, 1509700.0)
 ttestResult for surface 2: (6.012688996932414, 1.8251255732470017e-09, 1509700.0)
+------------------------------------------------
+
+MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					                        MSE 			 BiasSquare 			 Variance
+surface 0 in        PureSurfaceModel:	 30.94676142232045	0.8349289396927091	    30.11183248262774
+surface 0 in NxWLambdaSoftSeparation:	 28.984532631737924	0.8106194883163447	    28.17391314342158
+-----------------------------------
+surface 1 in        PureSurfaceModel:	 22.12102908150086	0.0593689595318736	    22.061660121968988
+surface 1 in NxWLambdaSoftSeparation:	 21.286423356132534	0.018828930578234093	21.2675944255543
+-----------------------------------
+surface 2 in        PureSurfaceModel:	 31.932798842685532	0.06744727950799856	    31.865351563177533
+surface 2 in NxWLambdaSoftSeparation:	 30.948889170445568	0.1299081939918345	    30.818980976453734
+-----------------------------------
 =======================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 GroupName: Control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 case number = 18
 ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
 ttestResult for 3 surfaces signed errors:
 modleError shape = (3, 331398)
-			 testStatistic 		 pValue 	 degreeFreedom
+			                   testStatistic 		 pValue 	 degreeFreedom
 ttestResult for surface 0: (-15.536728140688782, 2.00108705478247e-54, 662794.0)
 ttestResult for surface 1: (10.158520331114895, 3.0489529518444594e-24, 662794.0)
 ttestResult for surface 2: (-7.161074660321802, 8.012954458506069e-13, 662794.0)
 ------------------------------------------------
 ttestResult for 3 surfaces absolute errors:
 modleError shape = (3, 331398)
-			 testStatistic 		 pValue 	 degreeFreedom
+		                 	 testStatistic 		 pValue 	 degreeFreedom
 ttestResult for surface 0: (6.433599910512417, 1.247010216717301e-10, 662794.0)
 ttestResult for surface 1: (13.474567752163713, 2.2356681321931167e-41, 662794.0)
 ttestResult for surface 2: (4.716023696655209, 2.405472821599382e-06, 662794.0)
+------------------------------------------------
+
+MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+				                        	 MSE 			 BiasSquare 			 Variance
+surface 0 in        PureSurfaceModel:	 2.5852950953234473	0.024847457827648967	2.5604476374957983
+surface 0 in NxWLambdaSoftSeparation:	 2.4462659931562656	0.00946696973873662	    2.436799023417529
+-----------------------------------
+surface 1 in        PureSurfaceModel:	 10.711512856444516	0.07154687887127942	    10.639965977573237
+surface 1 in NxWLambdaSoftSeparation:	 9.959539318885447	0.03514112819479642	    9.92439819069065
+-----------------------------------
+surface 2 in        PureSurfaceModel:	 10.847722730976043	0.23059714171307633	    10.617125589262967
+surface 2 in NxWLambdaSoftSeparation:	 10.72294815056216	0.17891369871397345	    10.544034451848187
+-----------------------------------
 =======================================
 
 
