@@ -7,6 +7,9 @@ predictDir1 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceS
 predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_20210329_iibi007/testResult/xml"
 gtDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test"
 
+model1Name ="       PureSurfaceModel"
+model2Name ="NxWLambdaSoftSeparation"
+
 N = 3
 W = 361
 B = 51  #Bscan number for each volume
@@ -89,8 +92,18 @@ for groupName, xmlList in twoGroupDict.items():
 
 
     # MSE(predict-gt)= bias^2(predict, gt) + variance(predict)
-    mse1 = sm.tools.eval_measures.mse(predict1All, gtAll)
-    print(f"mse1 = {mse1}")
+    print(f"\t\t MSE \t\t BiasSquare \t\t Variance ")
+    for n in range(N):
+        mse1 = sm.tools.eval_measures.mse(predict1All[n], gtAll[n])
+        var1  = np.var(predict1All[n])
+        biasSquare1 = mse1 - var1
+
+        mse2 = sm.tools.eval_measures.mse(predict2All[n], gtAll[n])
+        var2 = np.var(predict2All[n])
+        biasSquare2 = mse2 - var2
+        print(f"surface {n} in {model1Name}:\t {mse1}\t{biasSquare1}\t{var1}")
+        print(f"surface {n} in {model2Name}:\t {mse2}\t{biasSquare2}\t{var2}")
+        print(f"-----------------------------------")
     print(f"=======================================")
 
 
