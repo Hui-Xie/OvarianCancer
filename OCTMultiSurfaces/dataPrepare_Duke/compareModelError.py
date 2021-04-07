@@ -42,7 +42,9 @@ print("============================================================")
 twoGroupDict = {"AMD":AMDXmlList1, "Control":ControlXmlList1}
 for groupName, xmlList in twoGroupDict.items():
     Num = len(xmlList)
+    print("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55")
     print(f"GroupName: {groupName}")
+    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55")
     print(f"case number = {Num}")
 
     predict1All = np.empty([Num*B,N,W])
@@ -91,10 +93,10 @@ for groupName, xmlList in twoGroupDict.items():
         print(f"ttestResult for surface {n}: {ttestResult}")
 
 
-    # MSE(predict-gt)= bias^2(predict, gt) + variance(predict)
+    print("MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)")
     print(f"\n\n================MSE measure===============")
 
-    print(f"\t\t\t\t MSE \t\t BiasSquare \t\t Variance ")
+    print(f"\t\t\t\t\t MSE \t\t\t BiasSquare \t\t\t Variance ")
     for n in range(N):
         mse1 = sm.tools.eval_measures.mse(predict1All[n], gtAll[n])
         var1  = np.var(predict1All[n]-gtAll[n])
