@@ -19,57 +19,59 @@ import torch
 import sys
 sys.path.append("..")
 from dataPrepare_Tongren.TongrenFileUtilities import getSurfacesArray
-from network.OCTOptimization import computeErrorStdMuOverPatientDimMean
 sys.path.append("../..")
 from framework.NetTools import  columnHausdorffDist
+import statsmodels.api as sm
 
+AMDXmlList1 = glob.glob(predictDir1 + f"/AMD_*_images_Sequence_Surfaces_Prediction.xml")
+ControlXmlList1 = glob.glob(predictDir1 + f"/Control_*_images_Sequence_Surfaces_Prediction.xml")
 
-AMDXmlList = glob.glob(predictDir + f"/AMD_*_images_Sequence_Surfaces_Prediction.xml")
-ControlXmlList = glob.glob(predictDir + f"/Control_*_images_Sequence_Surfaces_Prediction.xml")
+# the xml file list of model 2 uses replacing dir1 with dir2 to get.
+#AMDXmlList2 = glob.glob(predictDir2 + f"/AMD_*_images_Sequence_Surfaces_Prediction.xml")
+#ControlXmlList2 = glob.glob(predictDir2 + f"/Control_*_images_Sequence_Surfaces_Prediction.xml")
 
-print("Compute performance in AMD and Control group separately")
-print(f"predictDir= {predictDir}")
+print("Compare model accuracy in AMD and Control group separately")
+print(f"predictDir1= {predictDir1}")
+print(f"predictDir2= {predictDir2}")
 print(f"gtDir = {gtDir}")
-print("===============")
+print("============================================================")
 
-
-twoGroupDict = {"AMD":AMDXmlList, "Control":ControlXmlList}
+twoGroupDict = {"AMD":AMDXmlList1, "Control":ControlXmlList1}
 for groupName, xmlList in twoGroupDict.items():
     Num = len(xmlList)
-    predictAll = np.empty([Num*B,N,W])
+    predict1All = np.empty([Num*B,N,W])
+    predict2All = np.empty([Num*B,N,W])
     gtAll = np.empty([Num*B,N, W])
     i = 0
-    for xmlPath in xmlList:
-        volumeSurfaces = getSurfacesArray(xmlPath)
-        predictAll[i:i+B,] = volumeSurfaces
-        _, stemname = os.path.split(xmlPath)
+    for xmlPath1 in xmlList:
+        xmlPath2 = xmlPath1.replace(predictDir1, predictDir2)
+        predict1All[i:i + B, ] = getSurfacesArray(xmlPath1)
+        predict2All[i:i + B, ] = getSurfacesArray(xmlPath2)
+
+        _, stemname = os.path.split(xmlPath1)
         volumeName = stemname[0: stemname.find("_images_Sequence_Surfaces_Prediction.xml")]
         gtSliceList = glob.glob(gtDir +f"/{volumeName}_surfaces_s[0-5][0-9].npy")
         assert len(gtSliceList) == B
         gtSliceList.sort()
         for slicePath in gtSliceList:
-            bscanSurface = np.load(slicePath)
-            gtAll[i,] = bscanSurface
+            gtAll[i,] = np.load(slicePath)
             i = i+1
 
-    assert predictAll.shape == gtAll.shape
-    # use numpy for computing Hausdorff distance
-    columnHausdorffD = columnHausdorffDist(predictAll, gtAll).reshape((1, N))
-    # use torch.tensor for segmenation accuracy
-    predictAll = torch.from_numpy(predictAll)
-    gtAll = torch.from_numpy(gtAll)
-    stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(predictAll, gtAll,
-                                                          slicesPerPatient=B,  hPixelSize=hPixelSize, goodBScansInGtOrder=None)
+    assert predict1All.shape == gtAll.shape
+    assert predict2All.shape == gtAll.shape
 
+    model1Error = predict1All -gtAll
+    model2Error = predict2All -gtAll
+    model1Error = np.swapaxes(model1Error, 0, 1) # size: Nx(NumxB)xW
+    model2Error = np.swapaxes(model2Error, 0, 1)
+    model1Error = np.reshape(model1Error, (N,-1)) # size: Nx(NumxBxW)
+    model2Error = np.reshape(model2Error, (N, -1))
+
+    ttestResult = sm.stats.ttest_ind(model1Error, model2Error)
     print(f"GroupName: {groupName}")
     print(f"case number = {Num}")
-    print(f"stdSurfaceError = {stdSurfaceError}")
-    print(f"muSurfaceError = {muSurfaceError}")
-    print(f"HausdorffDistance in pixel = {columnHausdorffD}")
-    print(f"HausdorffDistance in physical size (micrometer) = {columnHausdorffD*hPixelSize}")
-    print(f"stdError = {stdError}")
-    print(f"muError = {muError}")
-    print(f"===============")
+    print(f"ttestResult for {N} surfaces:\n {ttestResult}")
+    print(f"=======================================")
 
 
 
