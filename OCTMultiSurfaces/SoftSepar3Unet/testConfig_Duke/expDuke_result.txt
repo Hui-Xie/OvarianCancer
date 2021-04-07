@@ -1,3 +1,15 @@
+# April 6th, Tuesday, 2021:
+Professor recommend a paper: Semantic Implicit Neural Scene RepresentationsWith Semi-Supervised Training
+Discussion with professor:
+1  do a statistic on the softSeparation experiment result.
+2  change current model into independent model to make us outstaning from JHU method.
+3  AMD_1127_s47 may has artifacts.
+
+
+
+
+
+
 # April 3rd, Satursday, 2021
 ===========================================================================================================================================================================
 Test Result on Duke test data with AMD and Control group together. total image size (3009, 3, 512, 361), case number = 59 patients.
