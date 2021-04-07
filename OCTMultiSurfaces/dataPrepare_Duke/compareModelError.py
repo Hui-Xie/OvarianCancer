@@ -70,12 +70,19 @@ for groupName, xmlList in twoGroupDict.items():
     model1Error = np.reshape(model1Error, (N,-1)) # size: Nx(NumxBxW)
     model2Error = np.reshape(model2Error, (N, -1))
 
-    print(f"ttestResult for {N} surfaces:");
-    print("\t testStatistic \t pValue \t degreeFreedom")
+    print(f"ttestResult for {N} surfaces error:");
+    print(f"modleError shape = {model1Error.shape}")
+    print("\t\t\t testStatistic \t pValue \t degreeFreedom")
     for n in range(N):
         ttestResult = sm.stats.ttest_ind(model1Error[n,], model2Error[n,])
         print(f"ttestResult for surface {n}: {ttestResult}")
 
+    print(f"ttestResult for {N} surfaces absolute error:");
+    print(f"modleError shape = {model1Error.shape}")
+    print("\t\t\t testStatistic \t pValue \t degreeFreedom")
+    for n in range(N):
+        ttestResult = sm.stats.ttest_ind(np.absolute(model1Error[n,]), np.absolute(model2Error[n,]))
+        print(f"ttestResult for surface {n}: {ttestResult}")
 
     print(f"=======================================")
 
