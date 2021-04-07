@@ -1,3 +1,54 @@
+# April 7th, Wednesday, 2021
+1  use student t test to measure the mean error of pure surface net and SoftSeparationNet:
+   A  In all surfaces of control group, both signed errors and absolute errors show significant difference of mean errors;
+   B  In surface 0 of AMD group, both signed errors and absolute errors show mean errors are not significant different;
+   C  In surface 1 and 2 of AMD group,  both signed errors and absolute errors show significant difference of mean errors;
+
+
+============================
+python3 ./compareModelError.py
+Compare model accuracy in AMD and Control group separately
+predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_M/expDuke_20210322_SurfaceSubnet_M_iibi007/testResult/xml
+predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_20210329_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+============================================================
+GroupName: AMD
+case number = 41
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-1.5249858908131386, 0.1272628263293013, 1509700.0)
+ttestResult for surface 1: (-14.048829834561527, 7.882934600527656e-45, 1509700.0)
+ttestResult for surface 2: (11.052834536324205, 2.1293478181264976e-28, 1509700.0)
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (1.4747109646859955, 0.1402904754903738, 1509700.0)
+ttestResult for surface 1: (-5.9687127144998, 2.3918579079038144e-09, 1509700.0)
+ttestResult for surface 2: (6.012688996932414, 1.8251255732470017e-09, 1509700.0)
+=======================================
+GroupName: Control
+case number = 18
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-15.536728140688782, 2.00108705478247e-54, 662794.0)
+ttestResult for surface 1: (10.158520331114895, 3.0489529518444594e-24, 662794.0)
+ttestResult for surface 2: (-7.161074660321802, 8.012954458506069e-13, 662794.0)
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (6.433599910512417, 1.247010216717301e-10, 662794.0)
+ttestResult for surface 1: (13.474567752163713, 2.2356681321931167e-41, 662794.0)
+ttestResult for surface 2: (4.716023696655209, 2.405472821599382e-06, 662794.0)
+=======================================
+
+
+
 # April 6th, Tuesday, 2021:
 Professor recommend a paper: Semantic Implicit Neural Scene RepresentationsWith Semi-Supervised Training
 Discussion with professor:
