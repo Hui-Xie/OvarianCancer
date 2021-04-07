@@ -39,6 +39,9 @@ print("============================================================")
 twoGroupDict = {"AMD":AMDXmlList1, "Control":ControlXmlList1}
 for groupName, xmlList in twoGroupDict.items():
     Num = len(xmlList)
+    print(f"GroupName: {groupName}")
+    print(f"case number = {Num}")
+
     predict1All = np.empty([Num*B,N,W])
     predict2All = np.empty([Num*B,N,W])
     gtAll = np.empty([Num*B,N, W])
@@ -67,10 +70,13 @@ for groupName, xmlList in twoGroupDict.items():
     model1Error = np.reshape(model1Error, (N,-1)) # size: Nx(NumxBxW)
     model2Error = np.reshape(model2Error, (N, -1))
 
-    ttestResult = sm.stats.ttest_ind(model1Error, model2Error)
-    print(f"GroupName: {groupName}")
-    print(f"case number = {Num}")
-    print(f"ttestResult for {N} surfaces:\n {ttestResult}")
+    print(f"ttestResult for {N} surfaces:");
+    print("\t testStatistic \t pValue \t degreeFreedom")
+    for n in range(N):
+        ttestResult = sm.stats.ttest_ind(model1Error[n,], model2Error[n,])
+        print(f"ttestResult for surface {n}: {ttestResult}")
+
+
     print(f"=======================================")
 
 
