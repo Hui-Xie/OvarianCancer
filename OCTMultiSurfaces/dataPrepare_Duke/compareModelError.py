@@ -70,14 +70,18 @@ for groupName, xmlList in twoGroupDict.items():
     model1Error = np.reshape(model1Error, (N,-1)) # size: Nx(NumxBxW)
     model2Error = np.reshape(model2Error, (N, -1))
 
-    print(f"ttestResult for {N} surfaces error:");
+    print(f"ttest tests the null hypothesis that the population means related to two independent, "
+          f"random samples from an approximately normal distribution are equal. ")
+
+    print(f"ttestResult for {N} surfaces signed errors:");
     print(f"modleError shape = {model1Error.shape}")
     print("\t\t\t testStatistic \t\t pValue \t degreeFreedom")
     for n in range(N):
         ttestResult = sm.stats.ttest_ind(model1Error[n,], model2Error[n,])
         print(f"ttestResult for surface {n}: {ttestResult}")
 
-    print(f"ttestResult for {N} surfaces absolute error:");
+    print("------------------------------------------------")
+    print(f"ttestResult for {N} surfaces absolute errors:");
     print(f"modleError shape = {model1Error.shape}")
     print("\t\t\t testStatistic \t\t pValue \t degreeFreedom")
     for n in range(N):
