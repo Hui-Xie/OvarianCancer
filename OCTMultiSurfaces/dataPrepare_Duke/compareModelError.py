@@ -92,14 +92,16 @@ for groupName, xmlList in twoGroupDict.items():
 
 
     # MSE(predict-gt)= bias^2(predict, gt) + variance(predict)
-    print(f"\t\t MSE \t\t BiasSquare \t\t Variance ")
+    print(f"\n\n================MSE measure===============")
+
+    print(f"\t\t\t\t MSE \t\t BiasSquare \t\t Variance ")
     for n in range(N):
         mse1 = sm.tools.eval_measures.mse(predict1All[n], gtAll[n])
-        var1  = np.var(predict1All[n])
+        var1  = np.var(predict1All[n]-gtAll[n])
         biasSquare1 = mse1 - var1
 
         mse2 = sm.tools.eval_measures.mse(predict2All[n], gtAll[n])
-        var2 = np.var(predict2All[n])
+        var2 = np.var(predict2All[n]-gtAll[n])
         biasSquare2 = mse2 - var2
         print(f"surface {n} in {model1Name}:\t {mse1}\t{biasSquare1}\t{var1}")
         print(f"surface {n} in {model2Name}:\t {mse2}\t{biasSquare2}\t{var2}")
