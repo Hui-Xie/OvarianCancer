@@ -92,7 +92,7 @@ for groupName, xmlList in twoGroupDict.items():
         ttestResult = sm.stats.ttest_ind(np.absolute(model1Error[n,]), np.absolute(model2Error[n,]))
         print(f"ttestResult for surface {n}: {ttestResult}")
 
-
+    print("------------------------------------------------\n")
     print("MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)")
     print(f"\n\n================MSE measure in physical size (um) ===============")
 
