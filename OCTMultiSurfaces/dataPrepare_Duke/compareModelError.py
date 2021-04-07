@@ -13,7 +13,7 @@ model2Name ="NxWLambdaSoftSeparation"
 N = 3
 W = 361
 B = 51  #Bscan number for each volume
-hPixelSize =  3.24
+hPixelSize =  3.24 # um
 
 import glob
 import numpy as np
@@ -94,16 +94,16 @@ for groupName, xmlList in twoGroupDict.items():
 
 
     print("MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)")
-    print(f"\n\n================MSE measure===============")
+    print(f"\n\n================MSE measure in physical size (um) ===============")
 
     print(f"\t\t\t\t\t MSE \t\t\t BiasSquare \t\t\t Variance ")
     for n in range(N):
-        mse1 = sm.tools.eval_measures.mse(predict1All[n], gtAll[n])
-        var1  = np.var(predict1All[n]-gtAll[n])
+        mse1 = sm.tools.eval_measures.mse(predict1All[n]*hPixelSize, gtAll[n]*hPixelSize)
+        var1  = np.var(predict1All[n]*hPixelSize-gtAll[n]*hPixelSize)
         biasSquare1 = mse1 - var1
 
-        mse2 = sm.tools.eval_measures.mse(predict2All[n], gtAll[n])
-        var2 = np.var(predict2All[n]-gtAll[n])
+        mse2 = sm.tools.eval_measures.mse(predict2All[n]*hPixelSize, gtAll[n]*hPixelSize)
+        var2 = np.var(predict2All[n]*hPixelSize-gtAll[n]*hPixelSize)
         biasSquare2 = mse2 - var2
         print(f"surface {n} in {model1Name}:\t {mse1}\t{biasSquare1}\t{var1}")
         print(f"surface {n} in {model2Name}:\t {mse2}\t{biasSquare2}\t{var2}")
