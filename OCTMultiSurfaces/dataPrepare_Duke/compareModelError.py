@@ -63,13 +63,12 @@ for groupName, xmlList in twoGroupDict.items():
     assert predict1All.shape == gtAll.shape
     assert predict2All.shape == gtAll.shape
 
+    predict1All = np.swapaxes(predict1All,0,1).reshape((N,-1))   # size: Nx(NumxB)xW -> Nx(NumxBxW)
+    predict2All = np.swapaxes(predict2All, 0, 1).reshape((N,-1))
+    gtAll       = np.swapaxes(gtAll, 0, 1).reshape((N,-1))
+
     model1Error = predict1All -gtAll
     model2Error = predict2All -gtAll
-    model1Error = np.swapaxes(model1Error, 0, 1) # size: Nx(NumxB)xW
-    model2Error = np.swapaxes(model2Error, 0, 1)
-    model1Error = np.reshape(model1Error, (N,-1)) # size: Nx(NumxBxW)
-    model2Error = np.reshape(model2Error, (N, -1))
-
     print(f"ttest tests the null hypothesis that the population means related to two independent, "
           f"random samples from an approximately normal distribution are equal. ")
 
@@ -88,6 +87,10 @@ for groupName, xmlList in twoGroupDict.items():
         ttestResult = sm.stats.ttest_ind(np.absolute(model1Error[n,]), np.absolute(model2Error[n,]))
         print(f"ttestResult for surface {n}: {ttestResult}")
 
+
+    # MSE(predict-gt)= bias^2(predict, gt) + variance(predict)
+    mse1 = sm.tools.eval_measures.mse(predict1All, gtAll)
+    print(f"mse1 = {mse1}")
     print(f"=======================================")
 
 
