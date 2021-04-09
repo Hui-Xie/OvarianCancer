@@ -37,7 +37,7 @@ ttestResult for surface 1: (-5.9687127144998, 2.3918579079038144e-09, 1509700.0)
 ttestResult for surface 2: (6.012688996932414, 1.8251255732470017e-09, 1509700.0)
 ------------------------------------------------
 
-MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)
+MSE(predict-gt,0)= bias^2(predict-gt, 0) + variance(predict-gt)
 
 
 ================MSE measure in physical size (um) ===============
@@ -73,7 +73,7 @@ ttestResult for surface 1: (13.474567752163713, 2.2356681321931167e-41, 662794.0
 ttestResult for surface 2: (4.716023696655209, 2.405472821599382e-06, 662794.0)
 ------------------------------------------------
 
-MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)
+MSE(predict-gt,0)= bias^2(predict-gt, 0) + variance(predict-gt)
 
 
 ================MSE measure in physical size (um) ===============
