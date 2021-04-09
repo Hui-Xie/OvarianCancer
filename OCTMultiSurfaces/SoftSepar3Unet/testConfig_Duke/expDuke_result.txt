@@ -1,3 +1,37 @@
+# April 9th, Friday, 2021:
+Test different alpha in the model 2 of softSeparation, where alpha indicates the weight of pairwise terms.
+===========================================================================================================================================================================
+Test Result on Duke test data with AMD and Control group together. total image size (3009, 3, 512, 361), case number = 59 patients.
+===========================================================================================================================================================================
+ExperimentName                                      muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)  Notes:
+expDuke_SoftSeparation_A_20210329_iibi007           2.0312  2.1182    1.2168, 1.9307, 2.9464    2.8617, 1.1857, 1.5761      61. 59. 39.               LearningLambda in size (N,W),
+                                                                                                                                                        alpha =0.001
+                                                                                                                                                        with surface and thickness branch.
+expDuke_SoftSeparation_A_alpha0_20210403_iibi007    2.0363  2.1189    1.2162, 1.9251, 2.9679    2.8419, 1.1753, 1.6085      65. 61. 34.               NxW learningLambda, alpha=0.0
+
+expDuke_20210322_SurfaceSubnet_M_iibi007            2.0496  2.1221    1.2327, 1.9303, 2.9859    2.9135, 1.0423, 1.5831      71. 96. 49.               Pure Surface branch
+===========================================================================================================================================================================
+
+===========================================================================================================================================================================
+Test Result on Duke test data with AMD data only. case number = 41.
+===========================================================================================================================================================================
+ExperimentName                              muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)  Notes:
+expDuke_SoftSeparation_A_20210329_iibi007   2.2869  2.4259    1.4951, 2.0731, 3.2927    3.4036, 1.2344, 1.7648      61. 59. 39.               LearningLambda in size (N,W)
+                                                                                                                                              with surface and thickness branch.
+expDuke_20210322_SurfaceSubnet_M_iibi007    2.2923  2.4295    1.5077, 2.0325, 3.3369    3.4673, 1.0152, 1.7696      71. 96. 49.               Pure Surface branch
+============================================================================================================================================================================
+
+===========================================================================================================================================================================
+Test Result on Duke test data with Control data only. case number = 18.
+===========================================================================================================================================================================
+ExperimentName                              muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)  Notes:
+expDuke_SoftSeparation_A_20210329_iibi007   1.4489  0.9255    0.5830, 1.6062, 2.1577    0.2647, 1.0250, 0.4453      11.  7.  8.               LearningLambda in size (N,W)
+                                                                                                                                              with surface and thickness branch.
+expDuke_20210322_SurfaceSubnet_M_iibi007    1.4966  0.9594    0.6063, 1.6975, 2.1862    0.2768, 1.0950, 0.4570      11.  7.  9.               Pure Surface branch
+============================================================================================================================================================================
+
+
+
 # April 7th, Wednesday, 2021
 Measure the significance of improvement of SoftSeparation with NxW learning lambda over pure surface network model.
 1 Use Student t test to measure the mean error of pure surface net and SoftSeparationNet:
