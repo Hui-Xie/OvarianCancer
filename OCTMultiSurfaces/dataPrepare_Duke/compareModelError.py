@@ -93,7 +93,7 @@ for groupName, xmlList in twoGroupDict.items():
         print(f"ttestResult for surface {n}: {ttestResult}")
 
     print("------------------------------------------------\n")
-    print("MSE(predict-gt)= bias^2(predict, gt) + variance(predict-gt)")
+    print("MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)")
     print(f"\n\n================MSE measure in physical size (um) ===============")
 
     print(f"\t\t\t\t\t MSE \t\t\t BiasSquare \t\t\t Variance ")
