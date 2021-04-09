@@ -105,14 +105,35 @@ class SoftSeparationNet_A(BasicModel):
             self.m_C[0, i, i - 1] = 0.5
             self.m_C[0, i, i] = -0.5
 
-        self.m_smoothM = self.m_surfaceSubnet.m_smoothM.to(self.m_lDevice)
+        # define the 5-point center moving average smooth matrix
+        W = hps.inputWidth
+        self.m_smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=hps.device,
+                                     requires_grad=False)  # 5-point smooth matrix
+        # 0th column and W-1 column
+        self.m_smoothM[0, 0, 0] = 1.0 / 2
+        self.m_smoothM[0, 1, 0] = 1.0 / 2
+        self.m_smoothM[0, W - 2, W - 1] = 1.0 / 2
+        self.m_smoothM[0, W - 1, W - 1] = 1.0 / 2
+        # 1th column and W-2 column
+        self.m_smoothM[0, 0, 1] = 1.0 / 3
+        self.m_smoothM[0, 1, 1] = 1.0 / 3
+        self.m_smoothM[0, 2, 1] = 1.0 / 3
+        self.m_smoothM[0, W - 3, W - 2] = 1.0 / 3
+        self.m_smoothM[0, W - 2, W - 2] = 1.0 / 3
+        self.m_smoothM[0, W - 1, W - 2] = 1.0 / 3
+        # columns from 2 to W-2
+        for i in range(2, W - 2):
+            self.m_smoothM[0, i - 2, i] = 1.0 / 5
+            self.m_smoothM[0, i - 1, i] = 1.0 / 5
+            self.m_smoothM[0, i, i] = 1.0 / 5
+            self.m_smoothM[0, i + 1, i] = 1.0 / 5
+            self.m_smoothM[0, i + 2, i] = 1.0 / 5
 
         self.m_A = torch.zeros((1, N-1, N), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
         for i in range(0, N - 1):
             self.m_A[0, i, i] = 1.0
             self.m_A[0, i, i+1] = -1.0
 
-        W = self.m_surfaceSubnet.hps.inputWidth
         self.m_D = torch.zeros((1, W, W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
         # 0th column and W-1 column
         self.m_D[0, 0, 0] = -25
