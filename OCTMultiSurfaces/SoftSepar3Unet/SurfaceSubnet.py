@@ -117,7 +117,7 @@ class SurfaceSubnet(BasicModel):
             print(f"Error: find NaN loss at epoch {self.m_epoch}")
             assert False
 
-        return S, sigma2, loss  # return surfaceLocation S in (B,S,W) dimension, sigma2, and loss
+        return S, sigma2, loss, x  # return surfaceLocation S in (B,S,W) dimension, sigma2, and loss, UnetFetures x.
 
 
 

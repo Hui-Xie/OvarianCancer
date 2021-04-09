@@ -33,6 +33,7 @@ expDuke_20210322_SurfaceSubnet_M_iibi007            1.4966  0.9594    0.6063, 1.
 Analysis:
 1  alpha indicates the weight of gradient smooth pair terms.
    A Gradient smooth pair terms with proper alpha reduces the hausdorff distances, especially for AMD cases.
+   B But a bigger alpha may worst the accuracy.
 2  NxW learning lambda improves the muError, especially in the Control cases.
 3  a proper alpha and NxW learning lambda may make improvements.
 
