@@ -59,7 +59,7 @@ thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMult
 thicknessSubnetDevice: torch.device('cuda:0')   #GPU ID
 thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
 
-lambdaModule: "LambdaModule"
+lambdaModule: "LambdaModule_B"
 lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:0')   #GPU ID
 lambdaModuleLr: 0.01

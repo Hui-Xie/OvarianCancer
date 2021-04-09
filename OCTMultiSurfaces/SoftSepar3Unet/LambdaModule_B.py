@@ -30,6 +30,7 @@ class LambdaModule_B(BasicModel):
         # Lambda branch:
         self.m_lambdas = nn.Sequential(
             Conv2dBlock(C, C//2),
+            Conv2dBlock(C//2, C // 2),
             Conv2dBlock(C//2, C//4), # size: BxC//4xHxW
             nn.Conv2d(C // 4, N, kernel_size=[1,1], stride=[1, 1], padding=[0, 0],bias=False),
         )  # output size:BxNxHxW
