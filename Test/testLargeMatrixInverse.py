@@ -17,7 +17,13 @@ identityM = torch.eye(S*W,S*W, device=device)*0.01
 identityM = identityM.unsqueeze(dim=0)
 identityM = identityM.expand_as(M)
 M = M+identityM
+
+# for pytorch 1.8
 MInv = torch.linalg.inv(M)  # pytorch 1.9 Replacing MAGMA with cuSOLVER to speed up
+
+# for pytorch 1.7
+# MInv = torch.inverse(M)
+
 memorysummary = torch.cuda.max_memory_allocated(device=device)
 runTime = time.time()-startTime
 print(f"Matrix shape: {M.shape}")
@@ -56,7 +62,7 @@ verify[0, 1000,1000] (should be 1) =0.9999899864196777
 verify[0, 1000,100] (should be 0)  =-1.238885033671977e-05 
 
 
-# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632  with torch.inverse
+# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632  with torch.inverse in prtorch 1.7
 python3 ./testLargeMatrixInverse.py
 =========================================================================================
    WARNING batched routines are designed for small sizes. It might be better to use the
