@@ -1,3 +1,20 @@
+#April 13th, Tuesday, 2021:
+for  Duke data: B= 8, S=3, W=361. Its maximum matrix size: BxSWxSW: 8x1083x1083
+Matrix shape: torch.Size([8, 1083, 1083])
+===Matrix Inverse running time: 2.44 seconds.
+memory usage:  155,686,912 byte
+
+# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632
+python3 ./testLargeMatrixInverse.py
+=========================================================================================
+   WARNING batched routines are designed for small sizes. It might be better to use the
+   Native/Hybrid classical routines if you want good performance.
+=========================================================================================
+Matrix shape: torch.Size([4, 5632, 5632])
+===Matrix Inverse running time: 5.98 seconds.
+memory usage:  2,157,969,408 byte
+
+
 # April 9th, Friday, 2021:
 Test different alpha in the model 2 of softSeparation, where alpha indicates the weight of gradient smooth pairwise terms.
 =================================================================================================================================================================================================
