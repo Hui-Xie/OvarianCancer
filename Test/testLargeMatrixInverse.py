@@ -22,7 +22,7 @@ memorysummary = torch.cuda.max_memory_allocated(device=device)
 runTime = time.time()-startTime
 print(f"Matrix shape: {M.shape}")
 print(f"===Matrix Inverse running time: {runTime:.2f} seconds.")  # about 3.9 seconds.
-print(f"memory usage:  {memorysummary} byte\n")  #1.6GB
+print(f"memory usage:  {memorysummary:,} byte\n")  #1.6GB
 verify =  torch.mm(M, MInv)
 
 print(f"verify[0, 1000,1000] (should be 1) ={verify[1000,1000]} ")
