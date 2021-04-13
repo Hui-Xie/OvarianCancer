@@ -23,7 +23,7 @@ runTime = time.time()-startTime
 print(f"Matrix shape: {M.shape}")
 print(f"===Matrix Inverse running time: {runTime:.2f} seconds.")  # about 3.9 seconds.
 print(f"memory usage:  {memorysummary:,} byte\n")  #1.6GB
-verify =  torch.mm(M, MInv)
+verify =  torch.bmm(M, MInv)
 
 print(f"verify[0, 1000,1000] (should be 1) ={verify[1000,1000]} ")
 print(f"verify[0, 1000,100] (should be 0)  ={verify[1000,100]} ")
