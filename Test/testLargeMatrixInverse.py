@@ -6,9 +6,9 @@
 import torch
 import time
 
-B=8  # batch size
-S=3  # number of surfaces
-W=361  # number of image column
+B=4  # batch size
+S=11  # number of surfaces
+W=512  # number of image column
 device = torch.device("cuda:3")
 
 startTime = time.time()
@@ -45,5 +45,17 @@ memory usage:  2419064832 byte
 
 verify[1000,1000] =0.9997560977935791 
 verify[1000,100] =5.3988151194062084e-05 
+
+
+for  Duke data: B= 8, S=3, W=361. Its maximum matrix size: BxSWxSW: 8x1083x1083
+Matrix shape: torch.Size([8, 1083, 1083])
+===Matrix Inverse running time: 2.44 seconds.
+memory usage:  155,686,912 byte
+
+verify[0, 1000,1000] (should be 1) =0.9999899864196777 
+verify[0, 1000,100] (should be 0)  =-1.238885033671977e-05 
+
+
+
 
 '''
