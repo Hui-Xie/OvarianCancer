@@ -1,27 +1,37 @@
 # Test large matrix inverse
 
+# for Duke data: B= 8, S=3, W=361. Its maximum matrix size: BxSWxSW: 8x1083x1083
+# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632
+
 import torch
 import time
 
-N = 12*1024
+B=8  # batch size
+S=3  # number of surfaces
+W=361  # number of image column
 device = torch.device("cuda:3")
 
 startTime = time.time()
-M = torch.rand((N,N), device=device,requires_grad=True)
-identityM = torch.eye(N, device=device)*0.01
+M = torch.rand((B,S*W,S*W), device=device,requires_grad=True)
+identityM = torch.eye(S*W,S*W, device=device)*0.01
+identityM = identityM.unsqueeze(dim=0)
+identityM = identityM.expand_as(M)
 M = M+identityM
 MInv = torch.inverse(M)
 memorysummary = torch.cuda.max_memory_allocated(device=device)
 runTime = time.time()-startTime
 print(f"Matrix shape: {M.shape}")
-print(f"===Matrix Inverse running time: {runTime} seconds.")  # about 3.9 seconds.
+print(f"===Matrix Inverse running time: {runTime:.2f} seconds.")  # about 3.9 seconds.
 print(f"memory usage:  {memorysummary} byte\n")  #1.6GB
 verify =  torch.mm(M, MInv)
 
-print(f"verify[1000,1000] ={verify[1000,1000]} ")
-print(f"verify[1000,100] ={verify[1000,100]} ")
+print(f"verify[0, 1000,1000] (should be 1) ={verify[1000,1000]} ")
+print(f"verify[0, 1000,100] (should be 0)  ={verify[1000,100]} ")
+
+
 
 '''
+# general matrix inverse result:
 Matrix shape: torch.Size([10240, 10240])
 ===Matrix Inverse running time: 3.9061315059661865 seconds.
 memory usage:  1680343040 byte
