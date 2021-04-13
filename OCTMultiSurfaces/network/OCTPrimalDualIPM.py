@@ -57,7 +57,7 @@ class MuQIPMFunction(torch.autograd.Function):
                 dim=-2)  # in size: B,W,2N-1,2N-1
 
             try:
-                J_Inv = torch.inverse(J)
+                J_Inv = torch.linalg.inv(J)
             except RuntimeError as err:
                 if "singular U" in str(err):
                     # use pseudo-inverse to handle singular square matrix, but pinverse costs 10-20 times of time of inverse.

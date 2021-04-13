@@ -75,6 +75,16 @@ memory usage:  2,157,969,408 byte
 verify[0, 1000,1000] (should be 1) =1.000077724456787 
 verify[0, 1000,100] (should be 0)  =2.776595465547871e-05 
 
+# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632  with torch.linalg.inv in prtorch 1.8
+=========================================================================================
+   WARNING batched routines are designed for small sizes. It might be better to use the
+   Native/Hybrid classical routines if you want good performance.
+=========================================================================================
+Matrix shape: torch.Size([4, 5632, 5632])
+===Matrix Inverse running time: 6.20 seconds.
+memory usage:  2,157,970,432 byte
+
+
 
 
 

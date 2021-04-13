@@ -10,7 +10,7 @@ print(f"A = \n{A}")
 print(f"A.det = {A.det()}")
 
 try:
-    AInv = torch.inverse(A)
+    AInv = torch.linalg.inv(A)
 except RuntimeError as err:
     print(err)
     if "singular U" in str(err):
@@ -30,7 +30,7 @@ device = torch.device('cuda:0')
 A = torch.rand(B,W,N,N).to(device)
 
 startTime = time.time()
-AInv = torch.inverse(A)
+AInv = torch.linalg.inv(A)
 dualTime = time.time()-startTime
 print(f"Inverse time: {dualTime} seconds")
 
