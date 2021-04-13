@@ -19,10 +19,10 @@ identityM = identityM.expand_as(M)
 M = M+identityM
 
 # for pytorch 1.8
-MInv = torch.linalg.inv(M)  # pytorch 1.9 Replacing MAGMA with cuSOLVER to speed up
+# MInv = torch.linalg.inv(M)  # pytorch 1.9 Replacing MAGMA with cuSOLVER to speed up
 
 # for pytorch 1.7
-# MInv = torch.inverse(M)
+MInv = torch.inverse(M)
 
 memorysummary = torch.cuda.max_memory_allocated(device=device)
 runTime = time.time()-startTime
@@ -75,7 +75,7 @@ memory usage:  2,157,969,408 byte
 verify[0, 1000,1000] (should be 1) =1.000077724456787 
 verify[0, 1000,100] (should be 0)  =2.776595465547871e-05 
 
-# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632  with torch.linalg.inv in prtorch 1.8
+# for Tongren data: B=4, S=11, W=512. Its maximum matrix size: BxSWxSW: 4x5632x5632  with torch.inverse in prtorch 1.8
 =========================================================================================
    WARNING batched routines are designed for small sizes. It might be better to use the
    Native/Hybrid classical routines if you want good performance.

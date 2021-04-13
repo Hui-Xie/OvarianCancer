@@ -61,7 +61,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
                  dim=-2)  # in size: B,W,N+M,N+M
 
             try:
-                J_Inv = torch.linalg.inv(J)  # in size: B,W,N+M,N+M
+                J_Inv = torch.inverse(J)  # in size: B,W,N+M,N+M
             except RuntimeError as err:
                 if "singular U" in str(err):
                     # use pseudo-inverse to handle singular square matrix, but pinverse costs 10-20 times of time of inverse.
@@ -74,7 +74,7 @@ class ConstrainedIPMFunction(torch.autograd.Function):
             if torch.isnan(J_Inv.sum()):
                 turbulence = (1e-4*J.mean().abs()*torch.eye(N+M, device=device)).unsqueeze(dim=0).unsqueeze(dim=0).expand(B,W,N+M, N+M) # size: BxWx(N+M)x(N+M)
                 J += turbulence
-                J_Inv = torch.linalg.inv(J)
+                J_Inv = torch.inverse(J)
                 if torch.isnan(J_Inv.sum()):
                     print(f"**Error**: in IPM forward, the inverse of Jacobian can not converge even adding small turbulence.")
                     ctx.svdError = True

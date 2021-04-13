@@ -62,7 +62,7 @@ class SeparationPrimalDualIPMFunction(torch.autograd.Function):
                 dim=-2)  # in size: B,W,2N-1,2N-1
 
             try:
-                MInv = torch.linalg.inv(M)
+                MInv = torch.inverse(M)
             except RuntimeError as err:
                 if "singular U" in str(err):
                     # use pseudo-inverse to handle singular square matrix, but pinverse costs 10-20 times of time of inverse.

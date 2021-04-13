@@ -29,7 +29,7 @@ A = A.unsqueeze(dim=0).unsqueeze(dim=0)  # H size: 1x1x2x2
 A = A.expand(B, W, M, N)
 d = torch.zeros((B,W,M, 1),device=device)
 
-S0 = torch.matmul(torch.linalg.inv(A),d-2)  # this is a good method to get initial value.
+S0 = torch.matmul(torch.inverse(A),d-2)  # this is a good method to get initial value.
 '''
 
 
@@ -49,7 +49,7 @@ A = A.expand(B, W, M, N)
 d = torch.tensor([[2],[3]], dtype=dtype, device=device)
 d = d.unsqueeze(dim=0).unsqueeze(dim=0)  # d size: 1x1x2x1
 
-S0 = torch.matmul(torch.linalg.inv(A),d)  # this is a good method to get initial value.
+S0 = torch.matmul(torch.inverse(A),d)  # this is a good method to get initial value.
 
 '''
 
@@ -68,7 +68,7 @@ A = A.expand(B, W, M, N)
 d = torch.tensor([[2],[3]], dtype=dtype, device=device)
 d = d.unsqueeze(dim=0).unsqueeze(dim=0)  # d size: 1x1x2x1
 
-S0 = torch.matmul(torch.linalg.inv(A),d)  # this is a good method to get initial value.
+S0 = torch.matmul(torch.inverse(A),d)  # this is a good method to get initial value.
 
 
 # a bigger lambda may increase IPM step(alpha)
