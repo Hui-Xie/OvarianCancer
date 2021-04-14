@@ -3,12 +3,12 @@
 # model 2: SoftSeparation model 2 with gradient paitwise term.
 
 
-predictDir1 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_M/expDuke_20210322_SurfaceSubnet_M_iibi007/testResult/xml"
-predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_20210329_iibi007/testResult/xml"
+predictDir1 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml"
+predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007/testResult/xml"
 gtDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test"
 
-model1Name ="       PureSurfaceModel"
-model2Name ="NxWLambdaSoftSeparation"
+model1Name ="       JHU_YufanHeModel"
+model2Name ="LossModelSoftSeparation"
 
 N = 3
 W = 361
