@@ -3,6 +3,18 @@
 Summary:
 1   Further improved Loss model of soft separation: NxW lambda learning module, smooth module, gradient pairwise terms.
 2   Soft separation model got better result than JHU method in muError and Hausdorff distance. The muError improvement is on the control group.
+3   Measure the statistics significance of improvement beween expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007(loss model) and JHU model:
+    For AMD group:
+    A   for signed error,   JHU model is statisticallly significant better than loss model.
+    B   for absolute error, surface 0 and 1 have no statistic difference between loss model and JHU model, while in sufrace 3, JHU model is better than our loss model.
+    C   for MSE error,      our loss model is better than JHU model.
+    For Control group:
+    A  for signed error, absolute error, and MSE, our loss model is statistically significant better than JHU model.
+4  Observing all MSE errors, we found that biasSquare is less than 5% of total MSE. In other words, error variance occupies 95% of MSE error.
+   It implies that most errors are from segmentation variance, while most location(bias) is correct, which also from another way implies that NXW learning lambda is better for this varianc error.
+5  Further work on the indepentd optimization model.
+
+
 
 =========================================================================================================================================================================================================================
 Test different alpha in the model 2 of softSeparation, where alpha indicates the weight of gradient smooth pairwise terms.
@@ -32,6 +44,88 @@ expDuke_20201208A_SurfaceNet_YufanHe_iibi007                1.4781  1.0525    0.
 expDuke_SoftSeparation_A_alpha001_20210409_iibi007          1.4410  0.9144    0.5966, 1.5957, 2.1309    0.5966, 1.5957, 2.1309      24.  7.  8.               NxW learningLambda, alpha=0.001, voteLambda, lossModel
 expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007  1.4397  0.9193    0.5938, 1.5922, 2.1331    0.3751, 1.0068, 0.4348      22.  8.  8.               NxW learningLambda, alpha=0.001, SoftmaxLambda, lossModel
 =========================================================================================================================================================================================================================
+
+
+Cpmpare error result of 2 models: JHU model and expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007:
+===================================================================================================================================================================================
+Compare model accuracy in AMD and Control group separately
+predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml
+predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GroupName: AMD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+case number = 41
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 754851)
+			                    testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (4.47630933050901, 7.594997389452498e-06, 1509700.0)
+ttestResult for surface 1: (-33.610808209428356, 1.441064192434929e-247, 1509700.0)
+ttestResult for surface 2: (45.013024703175184, 0.0, 1509700.0)
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 754851)
+			                     testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-0.18611761023390205, 0.852352557228728, 1509700.0)
+ttestResult for surface 1: (1.4242056140012391, 0.15438716694208443, 1509700.0)
+ttestResult for surface 2: (-4.1857089761358415, 2.8429345539546058e-05, 1509700.0)
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					                            MSE 			 BiasSquare 			 Variance
+surface 0 in        JHU_YufanHeModel:	 26.047503155987076	0.34434480176734894	25.703158354219727
+surface 0 in LossModelSoftSeparation:	 19.871484759773782	0.3861914845871013	19.48529327518668
+-----------------------------------
+surface 1 in        JHU_YufanHeModel:	 24.71557455020926	0.10073611029736895	24.614838439911892
+surface 1 in LossModelSoftSeparation:	 21.130513655277664	0.0031077931912584233	21.127405862086405
+-----------------------------------
+surface 2 in        JHU_YufanHeModel:	 36.884666724426424	0.05677292889908614	36.82789379552734
+surface 2 in LossModelSoftSeparation:	 30.974602937003468	0.03542959345062968	30.939173343552838
+-----------------------------------
+=======================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: Control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 18
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 331398)
+		                	 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (6.364870592076411, 1.955813976524771e-10, 662794.0)
+ttestResult for surface 1: (-16.65200465892839, 3.013048898033164e-62, 662794.0)
+ttestResult for surface 2: (45.83741895573928, 0.0, 662794.0)
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 331398)
+			                     testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (8.760196448674698, 1.953550454145454e-18, 662794.0)
+ttestResult for surface 1: (5.480550985952324, 4.241570947281473e-08, 662794.0)
+ttestResult for surface 2: (-4.8578010188650165, 1.1872361711076143e-06, 662794.0)
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+				                        	 MSE 			 BiasSquare 			 Variance
+surface 0 in        JHU_YufanHeModel:	 47.11572416490144	0.025849848958280575	47.089874315943156
+surface 0 in LossModelSoftSeparation:	 3.574337167997392	0.006738063725476806	3.567599104271915
+-----------------------------------
+surface 1 in        JHU_YufanHeModel:	 10.633619814241486	0.0019150071945066571	10.63170480704698
+surface 1 in LossModelSoftSeparation:	 9.978672054749879	0.03061958228296824	9.94805247246691
+-----------------------------------
+surface 2 in        JHU_YufanHeModel:	 10.717563109010916	0.00616648463631897	10.711396624374597
+surface 2 in LossModelSoftSeparation:	 10.629691901580575	0.0832844862362645	10.54640741534431
+-----------------------------------
+=======================================
+
 
 
 
