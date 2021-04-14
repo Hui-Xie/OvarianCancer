@@ -1,3 +1,46 @@
+#April 14th, Wednesday, 2021
+
+Further improved NxW lambda learning module.
+
+=============================================================================================================================
+Test different alpha in the model 2 of softSeparation, where alpha indicates the weight of gradient smooth pairwise terms.
+===============================================================================================================================================================================================================
+Test Result on Duke test data with AMD and Control group together. total image size (3009, 3, 512, 361), case number = 59 patients.
+===============================================================================================================================================================================================================
+ExperimentName                                              muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)     Notes:
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007                1.9699  2.1109    1.1345, 1.8918, 2.8836    2.5991, 1.5675, 1.6567      153.  40.  71.               Exact JHU YufanHe method, filters=64
+expDuke_SoftSeparation_A_20210329_iibi007                   2.0312  2.1182    1.2168, 1.9307, 2.9464    2.8617, 1.1857, 1.5761      61.   59.  39.               NxW learningLambda, alpha=0.001
+expDuke_SoftSeparation_A_alpha0_20210403_iibi007            2.0363  2.1189    1.2162, 1.9251, 2.9679    2.8419, 1.1753, 1.6085      65.   61.  34.               NxW learningLambda, alpha=0.0
+expDuke_SoftSeparation_A_alphaDot1_20210403_iibi007         2.0864  2.1095    1.2522, 2.0413, 2.9659    2.7406, 1.3922, 1.5994      51.   56.  41.               NxW learningLambda, alpha=0.1
+expDuke_20210322_SurfaceSubnet_M_iibi007                    2.0496  2.1221    1.2327, 1.9303, 2.9859    2.9135, 1.0423, 1.5831      71.   96.  49.               Pure Surface branch
+expDuke_SoftSeparation_A_alpha001_20210409_iibi007          1.9643  1.9642    1.1021, 1.8762, 2.9147    2.4212, 1.1604, 1.6781      50.   36.  25.               NxW learningLambda, alpha=0.001, voteLambda
+expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007  1.9638  1.9726    1.1027, 1.8734, 2.9155    2.3903, 1.2326, 1.7005      50.   33.  26.               NxW learningLambda, alpha=0.001, SoftmaxLambda
+===============================================================================================================================================================================================================
+
+==================================================================================================================================================================================================
+Test Result on Duke test data with AMD data only. case number = 41.
+==================================================================================================================================================================================================
+ExperimentName                                      muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)  Notes:
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+expDuke_SoftSeparation_A_20210329_iibi007           2.2869  2.4259    1.4951, 2.0731, 3.2927    3.4036, 1.2344, 1.7648      61. 59. 39.               LearningLambda in size (N,W), alpha=0.001
+expDuke_SoftSeparation_A_alpha0_20210403_iibi007    2.2925  2.4262    1.4928, 2.0642, 3.3206    3.3798, 1.2204, 1.8026      65. 61. 34.               NxW learningLambda, alpha=0.0
+expDuke_SoftSeparation_A_alphaDot1_20210403_iibi007 2.3647  2.4081    1.5416, 2.2326, 3.3199    3.2527, 1.5018, 1.7901      51. 56. 41.               NxW learningLambda, alpha=0.1
+expDuke_20210322_SurfaceSubnet_M_iibi007            2.2923  2.4295    1.5077, 2.0325, 3.3369    3.4673, 1.0152, 1.7696      71. 96. 49.               Pure Surface branch
+==================================================================================================================================================================================================
+
+==================================================================================================================================================================================================
+Test Result on Duke test data with Control data only. case number = 18.
+==================================================================================================================================================================================================
+ExperimentName                                      muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)  Notes:
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+expDuke_SoftSeparation_A_20210329_iibi007           1.4489  0.9255    0.5830, 1.6062, 2.1577    0.2647, 1.0250, 0.4453      11.  7.  8.               LearningLambda in size (N,W),, alpha=0.001
+expDuke_SoftSeparation_A_alpha0_20210403_iibi007    1.4529  0.9276    0.5860, 1.6083, 2.1644    0.2690, 1.0274, 0.4447      11.  7.  8                NxW learningLambda, alpha=0.0
+expDuke_SoftSeparation_A_alphaDot1_20210403_iibi007 1.4526  0.9165    0.5929, 1.6055, 2.1596    0.2623, 1.0084, 0.4437      11.  8.  8                NxW learningLambda, alpha=0.1
+expDuke_20210322_SurfaceSubnet_M_iibi007            1.4966  0.9594    0.6063, 1.6975, 2.1862    0.2768, 1.0950, 0.4570      11.  7.  9.               Pure Surface branch
+==================================================================================================================================================================================================
+
+
+
 #April 13th, Tuesday, 2021:
 for  Duke data: B= 8, S=3, W=361. Its maximum matrix size: BxSWxSW: 8x1083x1083
 Matrix shape: torch.Size([8, 1083, 1083])
