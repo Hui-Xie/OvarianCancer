@@ -17,7 +17,7 @@ batchSize: 8
 groundTruthInteger: True
 
 network: "SoftSeparationNet_A"
-device: torch.device('cuda:0')   #GPU ID
+device: torch.device('cuda:1')   #GPU ID
 sigma: 20.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 
 # some physical parameter of images
@@ -50,18 +50,18 @@ lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate sege
 # for 2 Unets + learning Lambda
 surfaceSubnet: "SurfaceSubnet"
 surfaceSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_SurfaceSubnet_iibi007.yaml"
-surfaceSubnetDevice: torch.device('cuda:0')   #GPU ID
+surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
 surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_M2"
 # for a new trained network.
 thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_iibi007.yaml"
-thicknessSubnetDevice: torch.device('cuda:0')   #GPU ID
+thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
 thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
 
 lambdaModule: "LambdaModule"
 lambdaModuleYaml: ""
-lambdaModuleDevice: torch.device('cuda:0')   #GPU ID
+lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
 lambdaModuleLr: 0.01
 alpha: 0.001  # weight of pairwise term
 
