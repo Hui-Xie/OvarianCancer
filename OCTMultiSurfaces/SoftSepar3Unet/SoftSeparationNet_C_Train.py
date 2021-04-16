@@ -171,7 +171,7 @@ def main():
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        writer.add_scalars("LearningRate", {'Lambda':net.getLearningRate("lambdaModule"), "surface":net.getLearningRate("surfaceSubnet"), "thickness": net.getLearningRate("thickSubnet")}, epoch)
+        writer.add_scalars("LearningRate", {'Lambda':net.getLearningRate("lambdaModule"), "surface":net.getLearningRate("surfaceSubnet"), "thickness": net.getLearningRate("thicknessSubnet")}, epoch)
 
         if validLambdaLoss < preValidLoss or muError < preErrorMean:
             net.updateRunParameter("validationLambdaLoss", validLambdaLoss)
@@ -181,7 +181,7 @@ def main():
             net.updateRunParameter("errorMean", muError)
             net.updateRunParameter("learningRate_Lambda", net.getLearningRate("lambdaModule"))
             net.updateRunParameter("learningRate_Surface", net.getLearningRate("surfaceSubnet"))
-            net.updateRunParameter("learningRate_Thickness", net.getLearningRate("thickSubnet"))
+            net.updateRunParameter("learningRate_Thickness", net.getLearningRate("thicknessSubnet"))
             preValidLoss = validLambdaLoss
             preErrorMean = muError
             net.saveNet()

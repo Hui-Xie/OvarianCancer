@@ -323,6 +323,3 @@ class SoftSeparationNet_C(BasicModel):
         self.hps.lambdaUpdatePath = os.path.join(netPath, "lambdaSubnet")
         if not os.path.exists(self.hps.lambdaUpdatePath):
             os.makedirs(self.hps.lambdaUpdatePath)  # recursive dir creation
-
-
-
