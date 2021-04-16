@@ -116,8 +116,6 @@ def main():
             trThicknessLoss += float(thicknessLoss)
             trLambdaLoss += float(lambdaLoss)
 
-            print(f"training: epoch: {epoch}, batch index={trBatch}")
-
             # debug
             # break
 

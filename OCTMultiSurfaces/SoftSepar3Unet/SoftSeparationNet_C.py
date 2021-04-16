@@ -243,11 +243,12 @@ class SoftSeparationNet_C(BasicModel):
         # intermediate variable Z with size: nBxNWx(N-1)W
         Z = bmm(bigA.transpose(-1,-2),bmm(bigD.transpose(-1,-2),bmm(diagAlpha,bigD)))
         del bigD
+        del diagAlpha
         # soft separation optimization model 3
         vS = bmm( torch.inverse(diagQ+bmm(Z,bigA)),(bmm(diagQ,vS0)-bmm(Z,vR)) ) #size: nBxNWx1
         del Z
         del bigA
-
+        del diagQ
 
         S = vS.view(nB,N,W)
 
