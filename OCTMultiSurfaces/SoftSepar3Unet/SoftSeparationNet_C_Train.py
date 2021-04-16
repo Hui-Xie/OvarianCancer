@@ -14,7 +14,7 @@ from network.OCTOptimization import *
 from network.OCTTransform import *
 
 sys.path.append(".")
-from SoftSeparationNet_A import SoftSeparationNet_A
+from SoftSeparationNet_C import SoftSeparationNet_C
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *

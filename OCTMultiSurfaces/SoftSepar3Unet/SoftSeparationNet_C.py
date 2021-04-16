@@ -57,7 +57,10 @@ class SoftSeparationNet_C(BasicModel):
             self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
                                             mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
         self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.m_sDevice))
-        self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode) # loadNet will load saved learning rate
+        surfaceNetPath = self.hps.surfaceUpdatePath
+        if len(os.listdir(surfaceNetPath)) == 0:
+            surfaceNetPath = None  # network will load from default directory
+        self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode, netPath=surfaceNetPath) # loadNet will load saved learning rate
 
         # thickness Subnet, where r means thickness
         self.m_rDevice = eval(self.hps.thicknessSubnetDevice)
@@ -72,7 +75,10 @@ class SoftSeparationNet_C(BasicModel):
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
         self.m_thicknessSubnet.setNetMgr(NetMgr(self.m_thicknessSubnet, self.m_thicknessSubnet.hps.netPath, self.m_rDevice))
-        self.m_thicknessSubnet.m_netMgr.loadNet(thicknessMode) # loadNet will load saved learning rate
+        thicknessNetPath = self.hps.surfaceUpdatePath
+        if len(os.listdir(thicknessNetPath)) == 0:
+            thicknessNetPath = None  # network will load from default directory
+        self.m_thicknessSubnet.m_netMgr.loadNet(thicknessMode, netPath=thicknessNetPath) # loadNet will load saved learning rate
         
         # lambda Module
         self.m_lDevice = eval(self.hps.lambdaModuleDevice)
@@ -89,9 +95,11 @@ class SoftSeparationNet_C(BasicModel):
                                                                               mode="min", factor=0.5, patience=20,
                                                                               min_lr=1e-8, threshold=0.02,
                                                                               threshold_mode='rel'))
-        self.m_lambdaModule.setNetMgr(
-            NetMgr(self.m_lambdaModule, self.hps.netPath, self.m_lDevice))
-        self.m_lambdaModule.m_netMgr.loadNet(lambdaMode)
+        self.m_lambdaModule.setNetMgr(NetMgr(self.m_lambdaModule, self.hps.netPath, self.m_lDevice))
+        lambdaNetPath = self.hps.surfaceUpdatePath
+        if len(os.listdir(lambdaNetPath)) == 0:
+            lambdaNetPath = None  # network will load from default directory
+        self.m_lambdaModule.m_netMgr.loadNet(lambdaMode,netPath=lambdaNetPath)
 
         # define the constant matrix B of size NxN and C of size Nx(N-1)
         N = self.m_surfaceSubnet.hps.numSurfaces
@@ -202,8 +210,16 @@ class SoftSeparationNet_C(BasicModel):
         R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
+        # detach from surfaceSubnet and thicknessSubnet
+        if self.hps.status == "trainLambda":
+            surfaceX = surfaceX.clone().detach().to(self.m_lDevice)
+            thinknessX = thinknessX.clone().detach().to(self.m_lDevice)
+            R = R.clone().detach().to(self.m_lDevice)
+            Mu = Mu.clone().detach().to(self.m_lDevice)
+            Sigma2 = Sigma2.clone().detach().to(self.m_lDevice)  # size: nBxNxW
+
         # Lambda return backward propagation
-        X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
+        X = torch.cat((surfaceX, thinknessX), dim=1)
         Lambda = self.m_lambdaModule.forward(X)  # size: nBxNxW
 
         nB,nC,H,W = X.shape
@@ -213,21 +229,16 @@ class SoftSeparationNet_C(BasicModel):
         M = self.m_smoothM.expand(nB, W, W)
         bigA = self.m_bigA.expand(nB,(N-1)*W, N*W)
         bigD = self.m_bigD.expand(nB,(N-1)*W, (N-1)*W)
+        diagQ = torch.diag_embed(Sigma2.view(nB,-1),offset=0) # size: nBxNWxNW
 
+        Alpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2.0 # size: nBxN-1xW
+        diagAlpha = torch.diag_embed(Alpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
 
-        Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice) # size: nBxNxW
-        diagQ = torch.diag_embed(Sigma2_detach.view(nB,-1),offset=0) # size: nBxNWxNW
+        bmm = torch.bmm  # for concise notation
 
-        diagAlpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2.0 # size: nBxN-1xW
-        diagAlpha = torch.diag_embed(diagAlpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
-
-        bmm = torch.bmm
-
-        R_detach = R.clone().detach().to(self.m_lDevice)
-        Mu_detach = Mu.clone().detach().to(self.m_lDevice)
-        S0 = bmm(Lambda*Mu_detach+(1.0-Lambda)*(bmm(B, Mu_detach)+bmm(C,R_detach)), M) # size:nBxNxW
+        S0 = bmm(Lambda*Mu+(1.0-Lambda)*(bmm(B, Mu)+bmm(C,R)), M) # size:nBxNxW
         vS0 = S0.view(nB,N*W,1)
-        vR  = R_detach.view(nB,(N-1)*W, 1)
+        vR  = R.view(nB,(N-1)*W, 1)
 
         # intermediate variable Z with size: nBxNWx(N-1)W
         Z = bmm(bigA.transpose(-1,-2),bmm(bigD.transpose(-1,-2),bmm(diagAlpha,bigD)))

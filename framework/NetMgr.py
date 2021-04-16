@@ -38,18 +38,20 @@ class NetMgr:
             os.makedirs(realTimeNetPath)  # for recursive make dirs.
         self.saveNet(realTimeNetPath)
 
-    def loadNet(self, mode):
+    def loadNet(self, mode, netPath=None):
         # Save on GPU, Load on GPU
-        if os.path.exists(os.path.join(self.m_netPath, "Net.pt")):
-            self.m_net.load_state_dict(torch.load(os.path.join(self.m_netPath, "Net.pt"), map_location=self.m_device), strict=True)
-            print(f"Network load from  {self.m_netPath}")
+        if netPath==None:
+            netPath = self.m_netPath
+        if os.path.exists(os.path.join(netPath, "Net.pt")):
+            self.m_net.load_state_dict(torch.load(os.path.join(netPath, "Net.pt"), map_location=self.m_device), strict=True)
+            print(f"Network load from  {netPath}")
 
-            if os.path.exists(os.path.join(self.m_netPath, "ConfigParameters.pt")):
-                self.m_net.m_runParametersDict = torch.load(os.path.join(self.m_netPath, "ConfigParameters.pt"), map_location=self.m_device)
+            if os.path.exists(os.path.join(netPath, "ConfigParameters.pt")):
+                self.m_net.m_runParametersDict = torch.load(os.path.join(netPath, "ConfigParameters.pt"), map_location=self.m_device)
             if mode == "train":
                 # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
-                if os.path.exists(os.path.join(self.m_netPath, "Optimizer.pt")):
-                    self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(self.m_netPath, "Optimizer.pt"), map_location=self.m_device))
+                if os.path.exists(os.path.join(netPath, "Optimizer.pt")):
+                    self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(netPath, "Optimizer.pt"), map_location=self.m_device))
                 self.m_net.train()
             elif mode == "test":   # eval
                 self.m_net.eval()
@@ -57,7 +59,7 @@ class NetMgr:
                 print("Error: loadNet mode is incorrect.")
                 assert False
         else:
-            print(f"Net starts training from scratch, and save at {self.m_netPath}")
+            print(f"Net starts training from scratch, and save at {netPath}")
 
     # Deprecated as configParameterDict can save any config parameter.
     def saveBestTestPerf(self, testPerf, netPath=None):
