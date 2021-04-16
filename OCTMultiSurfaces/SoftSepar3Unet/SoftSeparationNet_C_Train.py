@@ -116,6 +116,8 @@ def main():
             trThicknessLoss += thicknessLoss
             trLambdaLoss += lambdaLoss
 
+            print(f"training: epoch: {epoch}")
+
             # debug
             # break
 
