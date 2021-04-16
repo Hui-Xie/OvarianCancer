@@ -194,31 +194,40 @@ class SoftSeparationNet_C(BasicModel):
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
-        Lambda = self.m_lambdaModule.forward(X)
+        Lambda = self.m_lambdaModule.forward(X)  # size: nBxNxW
 
         nB,nC,H,W = X.shape
         N = self.m_surfaceSubnet.hps.numSurfaces
         B = self.m_B.expand(nB, N, N)
         C = self.m_C.expand(nB, N, N - 1)
         M = self.m_smoothM.expand(nB, W, W)
-        A = self.m_A.expand(nB,N-1,N)
-        D = self.m_D.expand(nB, W, W)
+        #A = self.m_A.expand(nB,N-1,N)
+        #D = self.m_D.expand(nB, W, W)
+        bigA = self.m_bigA.expand(nB,(N-1)*W, N*W)
+        bigD = self.m_bigD.expand(nB,(N-1)*W, (N-1)*W)
 
         G = GTs.to(self.m_lDevice)
-        Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice)
-        Q = (1.0/Sigma2_detach).to(self.m_lDevice).sqrt()    # square root as Frobenious norm.
+        Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice) # size: nBxNxW
+        diagQ = torch.diag_embed(Sigma2_detach.view(nB,-1),offset=0) # size: nBxNWxNW
+
+        diagAlpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2 # size: nBxN-1xW
+        diagAlpha = torch.diag_embed(diagAlpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
+
 
         R_detach = R.clone().detach().to(self.m_lDevice)
         Mu_detach = Mu.clone().detach().to(self.m_lDevice)
-        S = torch.bmm(Lambda*Mu_detach+(1.0-Lambda)*(torch.bmm(B, Mu_detach)+torch.bmm(C,R_detach)), M)
+        S0 = torch.bmm(Lambda*Mu_detach+(1.0-Lambda)*(torch.bmm(B, Mu_detach)+torch.bmm(C,R_detach)), M)
+
+
+
         for i in range(1, N):  #ReLU
-            S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-        Unary = (S - G) * Q
-        Pair =torch.bmm(R_detach+torch.bmm(A,S),D)
+            S0[:, i, :] = torch.where(S0[:, i, :] < S0[:, i - 1, :], S0[:, i - 1, :], S0[:, i, :])
+        Unary = (S0 - G) * Q
+        Pair =torch.bmm(R_detach+torch.bmm(A,S0),D)
         lambaLoss = torch.mean(LA.norm(Unary,ord='fro', dim=(1,2), keepdim=False) \
                          + self.m_alpha*LA.norm(Pair,ord='fro', dim=(1,2), keepdim=False))  # size: B-> scalar
 
-        return S, lambaLoss
+        return S0, lambaLoss
 
     def zero_grad(self):
         if None != self.m_surfaceSubnet.m_optimizer:
