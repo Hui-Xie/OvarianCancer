@@ -103,35 +103,48 @@ def main():
 
         net.train()
         trBatch = 0
-        trLoss = 0.0
+        trSurfaceLoss=0
+        trThicknessLoss=0
+        trLambdaLoss = 0
         for batchData in data.DataLoader(trainData, batch_size=hps.batchSize, shuffle=True, num_workers=0, drop_last=True):
             trBatch += 1
             S, surfaceLoss, thicknessLoss, lambdaLoss = net.forward(batchData['images'], batchData['imageYX'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
             net.zero_grad()
             net.backward(surfaceLoss, thicknessLoss, lambdaLoss)
             net.optimizerStep()
-            trLoss += loss
+            trSurfaceLoss += surfaceLoss
+            trThicknessLoss += thicknessLoss
+            trLambdaLoss += lambdaLoss
 
-        trLoss = trLoss / trBatch
+        trSurfaceLoss /= trBatch
+        trThicknessLoss /= trBatch
+        trLambdaLoss /= trBatch
         #lrScheduler.step(trLoss)
         # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
 
         net.eval()
         with torch.no_grad():
             validBatch = 0  # valid means validation
-            validLoss = 0.0
+            validSurfaceLoss = 0
+            validThicknessLoss = 0
+            validLambdaLoss = 0
             net.setStatus("validation")
             for batchData in data.DataLoader(validationData, batch_size=hps.batchSize, shuffle=False,
                                                               num_workers=0):
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
-                S, loss  = net.forward(batchData['images'], batchData['imageYX'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-                validLoss += loss
+                S, surfaceLoss, thicknessLoss, lambdaLoss  = net.forward(batchData['images'], batchData['imageYX'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
+                validSurfaceLoss += surfaceLoss
+                validThicknessLoss += thicknessLoss
+                validLambdaLoss += lambdaLoss
+
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
-            validLoss = validLoss / validBatch
+            validSurfaceLoss /= validBatch
+            validThicknessLoss /= validBatch
+            validLambdaLoss /= validBatch
             if hps.groundTruthInteger:
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # print(f"epoch:{epoch}; validLoss ={validLoss}\n")
@@ -142,26 +155,28 @@ def main():
                                                                                                  hPixelSize=hps.hPixelSize,
                                                                                                  goodBScansInGtOrder=goodBScansInGtOrder)
 
-        net.lrSchedulerStep(validLoss)
+        net.lrSchedulerStep(validSurfaceLoss, validThicknessLoss, validLambdaLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
-        writer.add_scalars('Loss', {"train": trLoss, "validation": validLoss}, epoch)
+        writer.add_scalars('Loss', {"trainSurface": trSurfaceLoss, "trainThickness":trThicknessLoss, "trainLambda":trLambdaLoss,
+                                    "validationSurface": validSurfaceLoss, "validationThickness": validThicknessLoss, "validationLambda":validLambdaLoss}, epoch)
         writer.add_scalar('ValidationError/mean', muError, epoch)
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        if hps.status == "trainLambda":
-            writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaModule"), epoch)
-        else:
-            pass
+        writer.add_scalars("LearningRate", {'Lambda':net.getLearningRate("lambdaModule"), "surface":net.getLearningRate("surfaceSubnet"), "thickness": net.getLearningRate("thickSubnet")}, epoch)
 
-        if validLoss < preValidLoss or muError < preErrorMean:
-            net.updateRunParameter("validationLoss", validLoss)
+        if validLambdaLoss < preValidLoss or muError < preErrorMean:
+            net.updateRunParameter("validationLambdaLoss", validLambdaLoss)
+            net.updateRunParameter("validationSurfaceLoss", validSurfaceLoss)
+            net.updateRunParameter("validationThicknessLoss", validThicknessLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
             net.updateRunParameter("learningRate_Lambda", net.getLearningRate("lambdaModule"))
-            preValidLoss = validLoss
+            net.updateRunParameter("learningRate_Surface", net.getLearningRate("surfaceSubnet"))
+            net.updateRunParameter("learningRate_Thickness", net.getLearningRate("thickSubnet"))
+            preValidLoss = validLambdaLoss
             preErrorMean = muError
             net.saveNet()
 
