@@ -214,9 +214,14 @@ class SoftSeparationNet_C(BasicModel):
 
         # Lambda return backward propagation
         X = torch.cat((surfaceX, thinknessX), dim=1)
+        nB, nC, H, W = X.shape
         Lambda = self.m_lambdaModule.forward(X)  # size: nBxNxW
 
-        nB,nC,H,W = X.shape
+        # free memory
+        del surfaceX
+        del thinknessX
+        del X
+
         N = self.m_surfaceSubnet.hps.numSurfaces
         B = self.m_B.expand(nB, N, N)
         C = self.m_C.expand(nB, N, N - 1)
@@ -224,6 +229,7 @@ class SoftSeparationNet_C(BasicModel):
         bigA = self.m_bigA.expand(nB,(N-1)*W, N*W)
         bigD = self.m_bigD.expand(nB,(N-1)*W, (N-1)*W)
         diagQ = torch.diag_embed(Sigma2.view(nB,-1),offset=0) # size: nBxNWxNW
+        del Sigma2
 
         Alpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2.0 # size: nBxN-1xW
         diagAlpha = torch.diag_embed(Alpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
