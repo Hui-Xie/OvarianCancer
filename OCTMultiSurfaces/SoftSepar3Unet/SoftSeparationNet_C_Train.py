@@ -171,7 +171,10 @@ def main():
         writer.add_scalar('ValidationError/std', stdError, epoch)
         writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalars('ValidationError/stdSurface', convertTensor2Dict(stdSurfaceError), epoch)
-        writer.add_scalars("LearningRate", {'Lambda':net.getLearningRate("lambdaModule"), "surface":net.getLearningRate("surfaceSubnet"), "thickness": net.getLearningRate("thicknessSubnet")}, epoch)
+        if hps.status == "fineTune":
+            writer.add_scalars("LearningRate", {'Lambda':net.getLearningRate("lambdaModule"), "surface":net.getLearningRate("surfaceSubnet"), "thickness": net.getLearningRate("thicknessSubnet")}, epoch)
+        else:
+            writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaModule"), epoch)
 
         if validLambdaLoss < preValidLoss or muError < preErrorMean:
             net.updateRunParameter("validationLambdaLoss", validLambdaLoss)
@@ -179,9 +182,12 @@ def main():
             net.updateRunParameter("validationThicknessLoss", validThicknessLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
-            net.updateRunParameter("learningRate_Lambda", net.getLearningRate("lambdaModule"))
-            net.updateRunParameter("learningRate_Surface", net.getLearningRate("surfaceSubnet"))
-            net.updateRunParameter("learningRate_Thickness", net.getLearningRate("thicknessSubnet"))
+            if hps.status == "fineTune":
+                net.updateRunParameter("learningRate_Lambda", net.getLearningRate("lambdaModule"))
+                net.updateRunParameter("learningRate_Surface", net.getLearningRate("surfaceSubnet"))
+                net.updateRunParameter("learningRate_Thickness", net.getLearningRate("thicknessSubnet"))
+            else:
+                net.updateRunParameter("learningRate_Lambda", net.getLearningRate("lambdaModule"))
             preValidLoss = validLambdaLoss
             preErrorMean = muError
             net.saveNet()
