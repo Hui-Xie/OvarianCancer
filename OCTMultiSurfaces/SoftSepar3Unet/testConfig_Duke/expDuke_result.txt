@@ -4,7 +4,7 @@ Summary:
 1   Further improved Loss model of soft separation: NxW lambda learning module, smooth module, gradient pairwise terms.
 2   Our 2 loss models further improve its design of learning lambda moduels.
 3   Soft separation model got better result than JHU method in muError and Hausdorff distance. The muError improvement is on the control group.
-4   Measure the statistics significance of improvement beween expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007(loss model) and JHU model:
+4   Measure the statistics significance of improvement between expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007(loss model) and JHU model:
     For AMD group:
     A   for signed error,   JHU model is statisticallly significant better than loss model.
     B   for absolute error, surface 0 and 1 have no statistic difference between loss model and JHU model, while in sufrace 3, JHU model is better than our loss model.
@@ -12,7 +12,7 @@ Summary:
     For Control group:
     A  for signed error, absolute error, and MSE, our loss model is statistically significant better than JHU model.
 5  Observing all MSE errors, we found that biasSquare is less than 5% of total MSE. In other words, error variance occupies 95% of MSE error.
-   It implies that most errors are from segmentation variance, while most location(bias) is correct, which also from another way implies that NXW learning lambda is better for this varianc error.
+   It implies that most errors are from segmentation variance, while most location(bias) is correct, which also from another way implies that NXW learning lambda is better for this variance error.
 6  Further work on the independent optimization model.
 
 
