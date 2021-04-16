@@ -180,6 +180,7 @@ class SoftSeparationNet_A(BasicModel):
         R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
+        # Lambda module return backward propagation
         X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
         Lambda = self.m_lambdaModule.forward(X)
 

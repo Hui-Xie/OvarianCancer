@@ -27,6 +27,9 @@ from framework.CustomizedLoss import SmoothSurfaceLoss, logits2Prob, WeightedDiv
 from framework.ConfigReader import ConfigReader
 from torch import linalg as LA
 
+import os
+
+
 class SoftSeparationNet_C(BasicModel):
     def __init__(self, hps=None):
         '''
@@ -176,6 +179,12 @@ class SoftSeparationNet_C(BasicModel):
             surfaceMode = "test"
             thicknessMode = "test"
             lambdaMode = "train"
+            self.generateSubnetUpdatePaths()
+        elif self.hps.status == "fineTune":
+            surfaceMode = "train"
+            thicknessMode = "train"
+            lambdaMode = "train"
+            self.generateSubnetUpdatePaths()
         else:
             surfaceMode = "test"
             thicknessMode = "test"
@@ -193,6 +202,7 @@ class SoftSeparationNet_C(BasicModel):
         R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
+        # Lambda return backward propagation
         X = torch.cat((surfaceX.to(self.m_lDevice), thinknessX.to(self.m_lDevice)), dim=1)
         Lambda = self.m_lambdaModule.forward(X)  # size: nBxNxW
 
@@ -217,7 +227,7 @@ class SoftSeparationNet_C(BasicModel):
         Mu_detach = Mu.clone().detach().to(self.m_lDevice)
         S0 = bmm(Lambda*Mu_detach+(1.0-Lambda)*(bmm(B, Mu_detach)+bmm(C,R_detach)), M) # size:nBxNxW
         vS0 = S0.view(nB,N*W,1)
-        vR  = R.view(nB,(N-1)*W, 1)
+        vR  = R_detach.view(nB,(N-1)*W, 1)
 
         # intermediate variable Z with size: nBxNWx(N-1)W
         Z = bmm(bigA.transpose(-1,-2),bmm(bigD.transpose(-1,-2),bmm(diagAlpha,bigD)))
@@ -233,7 +243,7 @@ class SoftSeparationNet_C(BasicModel):
         lossFunc = torch.nn.SmoothL1Loss()  # L1 loss to avoid outlier exploding gradient.
         lambdaLoss = lossFunc(S,G)
 
-        return S, lambdaLoss
+        return S, surfaceLoss, thicknessLoss, lambdaLoss
 
     def zero_grad(self):
         if None != self.m_surfaceSubnet.m_optimizer:
@@ -243,22 +253,42 @@ class SoftSeparationNet_C(BasicModel):
         if (None != self.m_lambdaModule) and (None != self.m_lambdaModule.m_optimizer):
             self.m_lambdaModule.m_optimizer.zero_grad()
 
+    def backward(self, surfaceLoss, thickLoss, lambdaLoss):
+       if self.hps.status == "trainLambda":
+            lambdaLoss.backward(gradient=torch.ones(lambdaLoss.shape).to(lambdaLoss.device))
+       elif self.hps.status == "fineTune":
+           loss = surfaceLoss + thickLoss + lambdaLoss
+           loss.backward(gradient=torch.ones(loss.shape).to(loss.device))
+       else:
+           pass
 
     def optimizerStep(self):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_optimizer.step()
+        elif  self.hps.status == "fineTune":
+            self.m_lambdaModule.m_optimizer.step()
+            self.m_surfaceSubnet.m_optimizer.step()
+            self.m_thicknessSubnet.m_optimizer.step()
         else:
             pass
 
-    def lrSchedulerStep(self, validLoss):
+    def lrSchedulerStep(self, surfaceLoss, thickLoss, lambdaLoss):
         if self.hps.status == "trainLambda":
-            self.m_lambdaModule.m_lrScheduler.step(validLoss)
+            self.m_lambdaModule.m_lrScheduler.step(lambdaLoss)
+        elif self.hps.status == "fineTune":
+            self.m_lambdaModule.m_lrScheduler.step(lambdaLoss)
+            self.m_surfaceSubnet.m_lrScheduler.step(surfaceLoss)
+            self.m_thicknessSubnet.m_lrScheduler.step(thickLoss)
         else:
             pass
 
     def saveNet(self):
         if self.hps.status == "trainLambda":
-            self.m_lambdaModule.m_netMgr.saveNet()
+            self.m_lambdaModule.m_netMgr.saveNet(netPath=self.hps.lambdaUpdatePath)
+        elif self.hps.status == "fineTune":
+            self.m_lambdaModule.m_netMgr.saveNet(netPath=self.hps.lambdaUpdatePath)
+            self.m_surfaceSubnet.m_netMgr.saveNet(netPath=self.hps.surfaceUpdatePath)
+            self.m_thicknessSubnet.m_netMgr.saveNet(netPath=self.hps.thickUpdatePath)
         else:
             pass
 
@@ -273,4 +303,21 @@ class SoftSeparationNet_C(BasicModel):
             assert False
 
         return lr
+
+    def generateSubnetUpdatePaths(self):
+        netPath = self.hps.netPath
+
+        self.hps.surfaceUpdatePath = os.path.join(netPath, "surfaceSubnet")
+        if not os.path.exists(self.hps.surfaceUpdatePath):
+            os.makedirs(self.hps.surfaceUpdatePath)  # recursive dir creation
+
+        self.hps.thickUpdatePath = os.path.join(netPath, "thickSubnet")
+        if not os.path.exists(self.hps.thickUpdatePath):
+            os.makedirs(self.hps.thickUpdatePath)  # recursive dir creation
+
+        self.hps.lambdaUpdatePath = os.path.join(netPath, "lambdaSubnet")
+        if not os.path.exists(self.hps.lambdaUpdatePath):
+            os.makedirs(self.hps.lambdaUpdatePath)  # recursive dir creation
+
+
 
