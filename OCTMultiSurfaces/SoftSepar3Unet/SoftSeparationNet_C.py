@@ -201,8 +201,6 @@ class SoftSeparationNet_C(BasicModel):
         B = self.m_B.expand(nB, N, N)
         C = self.m_C.expand(nB, N, N - 1)
         M = self.m_smoothM.expand(nB, W, W)
-        #A = self.m_A.expand(nB,N-1,N)
-        #D = self.m_D.expand(nB, W, W)
         bigA = self.m_bigA.expand(nB,(N-1)*W, N*W)
         bigD = self.m_bigD.expand(nB,(N-1)*W, (N-1)*W)
 
@@ -210,18 +208,18 @@ class SoftSeparationNet_C(BasicModel):
         Sigma2_detach = Sigma2.clone().detach().to(self.m_lDevice) # size: nBxNxW
         diagQ = torch.diag_embed(Sigma2_detach.view(nB,-1),offset=0) # size: nBxNWxNW
 
-        diagAlpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2 # size: nBxN-1xW
+        diagAlpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2.0 # size: nBxN-1xW
         diagAlpha = torch.diag_embed(diagAlpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
 
+        bmm = torch.bmm
 
         R_detach = R.clone().detach().to(self.m_lDevice)
         Mu_detach = Mu.clone().detach().to(self.m_lDevice)
-        S0 = torch.bmm(Lambda*Mu_detach+(1.0-Lambda)*(torch.bmm(B, Mu_detach)+torch.bmm(C,R_detach)), M) # size:nBxNxW
+        S0 = bmm(Lambda*Mu_detach+(1.0-Lambda)*(bmm(B, Mu_detach)+bmm(C,R_detach)), M) # size:nBxNxW
         vS0 = S0.view(nB,N*W,1)
         vR  = R.view(nB,(N-1)*W, 1)
 
-        bmm= torch.bmm        
-        # intemeidiate variable with size: nBxNWx(N-1)W
+        # intermediate variable Z with size: nBxNWx(N-1)W
         Z = bmm(bigA.transpose(-1,-2),bmm(bigD.transpose(-1,-2),bmm(diagAlpha,bigD)))
         # soft separation optimization model 3
         vS = bmm( torch.inverse(diagQ+bmm(Z,bigA)),(bmm(diagQ,vS0)-bmm(Z,vR)) ) #size: nBxNWx1
@@ -232,7 +230,8 @@ class SoftSeparationNet_C(BasicModel):
 
         # compute loss
         G = GTs.to(self.m_lDevice)
-        lambdaLoss = torch.pow(S - G, 2.0).mean()
+        lossFunc = torch.nn.SmoothL1Loss()  # L1 loss to avoid outlier exploding gradient.
+        lambdaLoss = lossFunc(S,G)
 
         return S, lambdaLoss
 
