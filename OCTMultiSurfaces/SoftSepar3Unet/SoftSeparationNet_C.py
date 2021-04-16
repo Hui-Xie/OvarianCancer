@@ -205,7 +205,7 @@ class SoftSeparationNet_C(BasicModel):
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         # detach from surfaceSubnet and thicknessSubnet
-        if self.hps.status == "trainLambda": # do not clone(), otherwise memory is huge.
+        if self.hps.status == "trainLambda"  and False: # do not clone(), otherwise memory is huge.
             surfaceX = surfaceX.detach().to(self.m_lDevice)
             thinknessX = thinknessX.detach().to(self.m_lDevice)
             R = R.detach().to(self.m_lDevice)
