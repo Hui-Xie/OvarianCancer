@@ -17,7 +17,7 @@ existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
 k: -1   # the fold k test
-batchSize: 6
+batchSize: 4
 groundTruthInteger: True
 
 network: "SoftSeparationNet_C"
