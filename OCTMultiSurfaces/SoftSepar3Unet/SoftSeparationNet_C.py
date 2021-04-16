@@ -12,20 +12,16 @@ from network.QuadraticIPMOpt import *
 from network.OCTAugmentation import *
 
 sys.path.append(".")
-from SurfaceSubnet_M import SurfaceSubnet_M
 from SurfaceSubnet import SurfaceSubnet
 from ThicknessSubnet_M2 import ThicknessSubnet_M2
-from LambdaModule import LambdaModule
 from LambdaModule_B import LambdaModule_B
 
 sys.path.append("../..")
 from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.NetMgr import NetMgr
-from framework.ConvBlocks import *
-from framework.CustomizedLoss import SmoothSurfaceLoss, logits2Prob, WeightedDivLoss
 from framework.ConfigReader import ConfigReader
-from torch import linalg as LA
+
 
 import os
 
