@@ -164,8 +164,6 @@ class SoftSeparationNet_C(BasicModel):
             self.m_D[0, i + 1, i] = 8.0
             self.m_D[0, i + 2, i] = -1.0
 
-        self.m_alpha  = hps.alpha
-
         # define some matrix for model 3
         self.m_bigA = torch.zeros((1, (N-1)*W, N*W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
         for i in range(0, (N - 1)*W):
