@@ -205,12 +205,12 @@ class SoftSeparationNet_C(BasicModel):
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         # detach from surfaceSubnet and thicknessSubnet
-        if self.hps.status == "trainLambda":
-            surfaceX = surfaceX.clone().detach().to(self.m_lDevice)
-            thinknessX = thinknessX.clone().detach().to(self.m_lDevice)
-            R = R.clone().detach().to(self.m_lDevice)
-            Mu = Mu.clone().detach().to(self.m_lDevice)
-            Sigma2 = Sigma2.clone().detach().to(self.m_lDevice)  # size: nBxNxW
+        if self.hps.status == "trainLambda": # do not clone(), otherwise memory is huge.
+            surfaceX = surfaceX.detach().to(self.m_lDevice)
+            thinknessX = thinknessX.detach().to(self.m_lDevice)
+            R = R.detach().to(self.m_lDevice)
+            Mu = Mu.detach().to(self.m_lDevice)
+            Sigma2 = Sigma2.detach().to(self.m_lDevice)  # size: nBxNxW
 
         # Lambda return backward propagation
         X = torch.cat((surfaceX, thinknessX), dim=1)
