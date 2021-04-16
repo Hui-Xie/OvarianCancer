@@ -112,9 +112,9 @@ def main():
             net.zero_grad()
             net.backward(surfaceLoss, thicknessLoss, lambdaLoss)
             net.optimizerStep()
-            trSurfaceLoss += surfaceLoss
-            trThicknessLoss += thicknessLoss
-            trLambdaLoss += lambdaLoss
+            trSurfaceLoss += float(surfaceLoss)
+            trThicknessLoss += float(thicknessLoss)
+            trLambdaLoss += float(lambdaLoss)
 
             print(f"training: epoch: {epoch}, batch index={trBatch}")
 
@@ -139,9 +139,9 @@ def main():
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
                 S, surfaceLoss, thicknessLoss, lambdaLoss  = net.forward(batchData['images'], batchData['imageYX'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-                validSurfaceLoss += surfaceLoss
-                validThicknessLoss += thicknessLoss
-                validLambdaLoss += lambdaLoss
+                validSurfaceLoss += float(surfaceLoss)
+                validThicknessLoss += float(thicknessLoss)
+                validLambdaLoss += float(lambdaLoss)
 
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs

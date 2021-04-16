@@ -205,7 +205,7 @@ class SoftSeparationNet_C(BasicModel):
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         # detach from surfaceSubnet and thicknessSubnet
-        if self.hps.status == "trainLambda"  and False: # do not clone(), otherwise memory is huge.
+        if self.hps.status == "trainLambda": # do not clone(), otherwise memory is huge.
             surfaceX = surfaceX.detach().to(self.m_lDevice)
             thinknessX = thinknessX.detach().to(self.m_lDevice)
             R = R.detach().to(self.m_lDevice)
@@ -242,8 +242,13 @@ class SoftSeparationNet_C(BasicModel):
 
         # intermediate variable Z with size: nBxNWx(N-1)W
         Z = bmm(bigA.transpose(-1,-2),bmm(bigD.transpose(-1,-2),bmm(diagAlpha,bigD)))
+        del bigD
         # soft separation optimization model 3
         vS = bmm( torch.inverse(diagQ+bmm(Z,bigA)),(bmm(diagQ,vS0)-bmm(Z,vR)) ) #size: nBxNWx1
+        del Z
+        del bigA
+
+
         S = vS.view(nB,N,W)
 
         for i in range(1, N):  #ReLU
