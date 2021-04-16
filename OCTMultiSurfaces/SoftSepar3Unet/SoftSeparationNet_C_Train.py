@@ -116,6 +116,9 @@ def main():
             trThicknessLoss += thicknessLoss
             trLambdaLoss += lambdaLoss
 
+            # debug
+            break
+
         trSurfaceLoss /= trBatch
         trThicknessLoss /= trBatch
         trLambdaLoss /= trBatch
@@ -141,6 +144,9 @@ def main():
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
+
+                #debug
+                break
 
             validSurfaceLoss /= validBatch
             validThicknessLoss /= validBatch
@@ -181,8 +187,8 @@ def main():
             net.saveNet()
 
         #debug
-        #print("passed smoke test")
-        #break
+        print("passed smoke test")
+        break
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 
