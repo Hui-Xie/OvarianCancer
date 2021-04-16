@@ -117,7 +117,7 @@ def main():
             trLambdaLoss += lambdaLoss
 
             # debug
-            break
+            # break
 
         trSurfaceLoss /= trBatch
         trThicknessLoss /= trBatch
@@ -146,7 +146,7 @@ def main():
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
 
                 #debug
-                break
+                # break
 
             validSurfaceLoss /= validBatch
             validThicknessLoss /= validBatch
@@ -193,8 +193,8 @@ def main():
             net.saveNet()
 
         #debug
-        print("passed smoke test")
-        break
+        # print("passed smoke test")
+        # break
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")
 
