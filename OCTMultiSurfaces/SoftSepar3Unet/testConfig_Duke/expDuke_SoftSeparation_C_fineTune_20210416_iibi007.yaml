@@ -39,6 +39,8 @@ scaleNumerator: 1
 scaleDenominator: 1
 useLayerDice: True
 
+careLambdaLossOnly: False  # True: only backward lambdaLoss; False: backward 3 losses.
+
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0

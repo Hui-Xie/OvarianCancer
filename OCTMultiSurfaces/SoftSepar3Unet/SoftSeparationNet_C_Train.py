@@ -110,7 +110,10 @@ def main():
             trBatch += 1
             S, surfaceLoss, thicknessLoss, lambdaLoss = net.forward(batchData['images'], batchData['imageYX'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
             net.zero_grad()
-            net.backward(surfaceLoss, thicknessLoss, lambdaLoss)
+            if hps.careLambdaLossOnly:
+                net.backward(0, 0, lambdaLoss)
+            else:
+                net.backward(surfaceLoss, thicknessLoss, lambdaLoss)
             net.optimizerStep()
             trSurfaceLoss += float(surfaceLoss)
             trThicknessLoss += float(thicknessLoss)
