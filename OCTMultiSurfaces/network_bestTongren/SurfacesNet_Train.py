@@ -122,7 +122,7 @@ def main():
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
-            trLoss += loss
+            trLoss += float(loss)
 
 
         trLoss = trLoss / trBatch
@@ -141,7 +141,7 @@ def main():
                 validBatch += 1
                 # S is surface location in (B,S,W) dimension, the predicted Mu
                 S, sigma2, loss  = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-                validLoss += loss
+                validLoss += float(loss)
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images

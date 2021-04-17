@@ -126,7 +126,7 @@ def main():
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
 
-            trLoss += loss
+            trLoss += float(loss)
             trBatch += 1
 
             allTrainOutput = x if allTrainOutput is None else torch.cat((allTrainOutput, x))
@@ -153,7 +153,7 @@ def main():
                 t = batchData['GTs'].to(device=hps.device, dtype=torch.float)  # target
 
                 x, loss = net.forward(inputs, t)
-                validLoss += loss
+                validLoss += float(loss)
                 validBatch += 1
 
                 allValidationOutput = x if allValidationOutput is None else torch.cat((allValidationOutput, x))

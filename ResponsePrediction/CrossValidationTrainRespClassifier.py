@@ -130,7 +130,7 @@ def main():
             optimizer.zero_grad()
             loss.backward(gradient=torch.ones(loss.shape).to(device))
             optimizer.step()
-            trLoss += loss
+            trLoss += float(loss)
             trOutputs = torch.cat((trOutputs, outputs)) if trBatch != 1 else outputs
             trGts = torch.cat((trGts, gts)) if trBatch != 1 else gts
 
@@ -151,7 +151,7 @@ def main():
                 inputs = inputs.to(device, dtype=torch.float)
                 gts = labels.to(device, dtype=torch.float)
                 outputs, loss = net.forward(inputs, gts=gts)
-                validLoss += loss
+                validLoss += float(loss)
                 validOutputs = torch.cat((validOutputs, outputs)) if validBatch != 1 else outputs
                 validGts = torch.cat((validGts, gts)) if validBatch != 1 else gts
                 

@@ -113,7 +113,7 @@ def main():
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
 
-            trLoss += loss
+            trLoss += float(loss)
             trResidualLoss += residualLoss
             trChemoLoss += chemoLoss
             trAgeLoss += ageLoss
@@ -186,7 +186,7 @@ def main():
                 loss = hps.lossWeights[0]*residualLoss + hps.lossWeights[1]*chemoLoss + hps.lossWeights[2]*ageLoss \
                         + hps.lossWeights[3]*survivalLoss  + hps.lossWeights[4]*optimalLoss
                 # if loss >= 1e-8:
-                validLoss += loss
+                validLoss += float(loss)
                 validResidualLoss += residualLoss
                 validChemoLoss += chemoLoss
                 validAgeLoss += ageLoss
