@@ -12,7 +12,7 @@ status: "fineTune" # only 3 status: # "trainLambda" #"test"  "fineTune"
 # trainLambda: only lambda module uses backward propagation.
 
 
-dataDir: "/home/hxie1/data/OCT_Duke/numpy_slices"
+dataDir: "/raid001/users/hxie1/data/OCT_Duke/numpy_slices"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
@@ -55,13 +55,13 @@ lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate sege
 
 # for 2 Unets + learning Lambda
 surfaceSubnet: "SurfaceSubnet"
-surfaceSubnetYaml: "/home/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_SurfaceSubnet_skm2.yaml"
+surfaceSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_SurfaceSubnet_skm2.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
 surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_M2"
 # for a new trained network.
-thicknessSubnetYaml: "/home/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_skm2.yaml"
+thicknessSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_skm2.yaml"
 thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
 thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
 
@@ -71,8 +71,8 @@ lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
 lambdaModuleLr: 0.01
 # alpha: 0.001  # use learning alpha deduced from lambda
 
-netPath: "/home/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/raid001/users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
-logDir: "/home/hxie1/data/OCT_Duke/numpy_slices/log"
-refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+logDir: "/raid001/users/hxie1/data/OCT_Duke/numpy_slices/log"
+refXMLFile: "/raid001/users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
