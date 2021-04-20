@@ -1,4 +1,6 @@
 # Arpil 20th, Tuesday, 2021
+Attendees: Wu, Ying Hsu, Hui.
+Time: 11:00-12:00 am, April 20th, Tuesday, 2021
 Minutes of mouse OCT segmentation:
 1  Ying Hsu is a postdoc researching on gene therapy of mouse's degenerative diseases.
    This project uses mouse's OCT segmentation result to measure gene therapy effect, and inference human's treatment.
