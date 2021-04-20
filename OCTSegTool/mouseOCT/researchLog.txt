@@ -1,0 +1,7 @@
+# Arpil 20th, Tuesday, 2021
+Minutes of mouse OCT segmentation:
+1  Ying Hsu is a postdoc researching on gene therapy of mouse's degenerative diseases.
+   This project uses mouse's OCT segmentation result to measure gene therapy effect, and inference human's treatment.
+2  It focuses on cones/rods of retina, and at its slide, instead of fovea part.
+3  Ying offers initial 30-40 volume mouse images, we can do initial segmentation, and Ying can correct them.
+4  Based on corrected data, we can further trian network to get final segmentation result.
