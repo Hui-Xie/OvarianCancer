@@ -14,7 +14,7 @@ from network.OCTAugmentation import *
 sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
 from ThicknessSubnet_M2 import ThicknessSubnet_M2
-from LambdaModule_B import LambdaModule_B
+from LambdaModule_D import LambdaModule_D
 
 sys.path.append("../..")
 from framework.NetTools import *
@@ -215,7 +215,7 @@ class SoftSeparationNet_C(BasicModel):
         # Lambda return backward propagation
         X = torch.cat((surfaceX, thinknessX), dim=1)
         nB, nC, H, W = X.shape
-        Lambda = self.m_lambdaModule.forward(X)  # size: nBxNxW
+        Lambda = self.m_lambdaModule.forward(X)  # size: nBx(N-1)xW
 
         # free memory
         del surfaceX
