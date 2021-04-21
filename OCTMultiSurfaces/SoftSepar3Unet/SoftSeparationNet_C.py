@@ -42,6 +42,7 @@ class SoftSeparationNet_C(BasicModel):
         # Parameters of a model after .cuda() will be different objects with those before the call.
 
         surfaceMode, thicknessMode, lambdaMode = self.getSubnetModes()
+        self.generateSubnetUpdatePaths()
 
         # surface Subnet
         self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
@@ -181,12 +182,12 @@ class SoftSeparationNet_C(BasicModel):
             surfaceMode = "test"
             thicknessMode = "test"
             lambdaMode = "train"
-            self.generateSubnetUpdatePaths()
+
         elif self.hps.status == "fineTune":
             surfaceMode = "train"
             thicknessMode = "train"
             lambdaMode = "train"
-            self.generateSubnetUpdatePaths()
+
         else:
             surfaceMode = "test"
             thicknessMode = "test"
