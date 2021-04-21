@@ -72,7 +72,7 @@ class SoftSeparationNet_C(BasicModel):
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
         self.m_thicknessSubnet.setNetMgr(NetMgr(self.m_thicknessSubnet, self.m_thicknessSubnet.hps.netPath, self.m_rDevice))
-        thicknessNetPath = self.hps.surfaceUpdatePath
+        thicknessNetPath = self.hps.thickUpdatePath
         if len(os.listdir(thicknessNetPath)) == 0:
             thicknessNetPath = None  # network will load from default directory
         self.m_thicknessSubnet.m_netMgr.loadNet(thicknessMode, netPath=thicknessNetPath) # loadNet will load saved learning rate
@@ -93,7 +93,7 @@ class SoftSeparationNet_C(BasicModel):
                                                                               min_lr=1e-8, threshold=0.02,
                                                                               threshold_mode='rel'))
         self.m_lambdaModule.setNetMgr(NetMgr(self.m_lambdaModule, self.hps.netPath, self.m_lDevice))
-        lambdaNetPath = self.hps.surfaceUpdatePath
+        lambdaNetPath = self.hps.lambdaUpdatePath
         if len(os.listdir(lambdaNetPath)) == 0:
             lambdaNetPath = None  # network will load from default directory
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode,netPath=lambdaNetPath)
