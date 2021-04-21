@@ -54,7 +54,9 @@ def computeMuVariance(x, layerMu=None, layerConf=None): # without square weight
     #                      expUnetJHU_Surface_Layer_20200206/expUnetJHU_SurfaceNet_Sigma0_NoBPSigma_20200302_2.yaml
     # for IVUS data, Not backpropagating simga does not give better result;
     # At March 23rd, 2021, sigma2 should not backward in any optmization module.
-    sigma2 = sigma2.detach()
+    # At April 21st, 2021, allow sigma2 backward propagation. Application layers decide how to use sigma2.
+    # At optiModel, opt variable is not sigma2, so it is not the case that optiModel will add simga2.
+    # sigma2 = sigma2.detach()
 
     return mu.squeeze(dim=-2),sigma2
 
@@ -112,7 +114,8 @@ def computeMuVarianceWithSquare(x, layerMu=None, layerConf=None): # with square 
     # very important, otherwise sigma2 will increase to make the loss small
     # all sigma2 back propogation give better test result in the IVUS data.
     # at March 23rd, 2021 sigma2 should not backward in any optmization module.
-    sigma2 = sigma2.detach()
+    # At April 21st, 2021, allow sigma2 backward propagation. Application layers decide how to use sigma2.
+    # sigma2 = sigma2.detach()
 
     return mu.squeeze(dim=-2), sigma2
 
