@@ -187,7 +187,7 @@ class SoftSeparationNet_C(BasicModel):
             surfaceMode = "train"
             thicknessMode = "train"
             lambdaMode = "train"
-            
+
         else:
             surfaceMode = "test"
             thicknessMode = "test"
