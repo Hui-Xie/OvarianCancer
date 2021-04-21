@@ -44,7 +44,7 @@ class LambdaModule_B(BasicModel):
         C   use [H,1] convolution: as [H,1] convolution has too much parameters, it is easy to lead diverge. 
         '''
         # use method A
-        #  in column, a prob distribution [0,0.1,...0.9,.1, 0.9, .....0 ] in H dimension.
+        #  in column, a prob distribution [0,0.1,...0.9,1.0, 0.9, .....0 ] in H dimension.
         self.m_probDistr = (1.0-torch.arange(-1,1, step= 2/H).abs()).view((1, 1, H, 1))
 
 
