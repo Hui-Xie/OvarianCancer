@@ -1,5 +1,5 @@
 # surfaceUnet + thicknessUnet + learning Lambda
-# Model 3: NXW learning lambda, Smooth, Gradient pairwise terms, and learning alpha deduced from Lambda.
+# Model 4: Smooth, Gradient pairwise terms, and learning alpha deduced from Lambda.
 
 
 import sys
@@ -223,21 +223,22 @@ class SoftSeparationNet_C(BasicModel):
         del X
 
         N = self.m_surfaceSubnet.hps.numSurfaces
-        B = self.m_B.expand(nB, N, N)
-        C = self.m_C.expand(nB, N, N - 1)
-        M = self.m_smoothM.expand(nB, W, W)
+        #B = self.m_B.expand(nB, N, N)
+        #C = self.m_C.expand(nB, N, N - 1)
+        #M = self.m_smoothM.expand(nB, W, W)
         bigA = self.m_bigA.expand(nB,(N-1)*W, N*W)
         bigD = self.m_bigD.expand(nB,(N-1)*W, (N-1)*W)
         diagQ = torch.diag_embed(Sigma2.view(nB,-1),offset=0) # size: nBxNWxNW
         del Sigma2
 
-        Alpha = 1.0- (Lambda[:,0:N-1,:] + Lambda[:,1:N,:])/2.0 # size: nBxN-1xW
+        Alpha = Lambda # size: nBxN-1xW
         diagAlpha = torch.diag_embed(Alpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
 
         bmm = torch.bmm  # for concise notation
 
-        S0 = bmm(Lambda*Mu+(1.0-Lambda)*(bmm(B, Mu)+bmm(C,R)), M) # size:nBxNxW
-        vS0 = S0.view(nB,N*W,1)
+        #S0 = bmm(Lambda*Mu+(1.0-Lambda)*(bmm(B, Mu)+bmm(C,R)), M) # size:nBxNxW
+        #vS0 = S0.view(nB,N*W,1)
+        vMu = Mu.view(nB, N*W,1)
         vR  = R.view(nB,(N-1)*W, 1)
 
         # intermediate variable Z with size: nBxNWx(N-1)W
@@ -245,7 +246,7 @@ class SoftSeparationNet_C(BasicModel):
         del bigD
         del diagAlpha
         # soft separation optimization model 3
-        vS = bmm( torch.inverse(diagQ+bmm(Z,bigA)),(bmm(diagQ,vS0)-bmm(Z,vR)) ) #size: nBxNWx1
+        vS = bmm( torch.inverse(diagQ+bmm(Z,bigA)),(bmm(diagQ,vMu)-bmm(Z,vR)) ) #size: nBxNWx1
         del Z
         del bigA
         del diagQ

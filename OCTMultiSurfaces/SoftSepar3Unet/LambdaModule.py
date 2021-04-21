@@ -15,7 +15,7 @@ from framework.CustomizedLoss import  logits2Prob
 from framework.ConfigReader import ConfigReader
 
 class LambdaModule(BasicModel):
-    def __init__(self, C,N, H, W):
+    def __init__(self, C,N, H, W, hps=None):
         '''
         inputSize: Bx(SurfaceSubnetChannel+ ThicknessSubnetChannel)xHxW
         C: the number of input channels

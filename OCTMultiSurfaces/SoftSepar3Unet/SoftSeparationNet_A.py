@@ -75,7 +75,7 @@ class SoftSeparationNet_A(BasicModel):
         self.m_lambdaModule = eval(self.hps.lambdaModule)(self.m_surfaceSubnet.hps.startFilters+self.m_thicknessSubnet.hps.startFilters,\
                                                           self.m_surfaceSubnet.hps.numSurfaces,\
                                                           self.m_surfaceSubnet.hps.inputHeight, \
-                                                          self.m_surfaceSubnet.hps.inputWidth)
+                                                          self.m_surfaceSubnet.hps.inputWidth,hps=hps)
         self.m_lambdaModule.to(self.m_lDevice)
         self.m_lambdaModule.m_optimizer = None
         if "test" != lambdaMode:

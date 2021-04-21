@@ -15,7 +15,7 @@ from framework.ConvBlocks import *
 from framework.CustomizedLoss import  logits2Prob
 from framework.ConfigReader import ConfigReader
 
-class LambdaModule_B(BasicModel):
+class LambdaModule_D(BasicModel):
     def __init__(self, C,N, H, W, hps=None):
         '''
         inputSize: Bx(SurfaceSubnetChannel+ ThicknessSubnetChannel)xHxW
@@ -28,14 +28,19 @@ class LambdaModule_B(BasicModel):
         super().__init__()
 
         # Lambda branch:
-        self.m_lambdas = nn.Sequential(
-            Conv2dBlock(C, C//2),
-            Conv2dBlock(C//2, C // 2),
-            Conv2dBlock(C//2, C//4), # size: BxC//4xHxW
-            nn.Conv2d(C // 4, N, kernel_size=[1,1], stride=[1, 1], padding=[0, 0],bias=False),
-        )  # output size:BxNxHxW
+        self.m_lambdas0 = nn.Sequential(
+            Conv2dBlock(C, C // 2),
+        )
 
-        self.m_sizeFinalConvFilter = C//4
+        self.m_lambdas1 = nn.Sequential(  # residual module.
+            Conv2dBlock(C//2, C // 2),
+            Conv2dBlock(C // 2, C // 2),
+            Conv2dBlock(C // 2, C // 2),
+        )
+
+        self.m_lambdas2 = nn.Sequential(
+            nn.Conv2d(C // 2, hps.lambdaOutputC, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], bias=False),
+        )# output size:BxlambaOutputCxHxW
 
         '''
         There are 3 methods to reduce H to 1: 
@@ -44,14 +49,15 @@ class LambdaModule_B(BasicModel):
         C   use [H,1] convolution: as [H,1] convolution has too much parameters, it is easy to lead diverge. 
         '''
         # use method A
-        #  in column, a prob distribution [0,0.1,...0.9,1.0, 0.9, .....0 ] in H dimension.
-        self.m_probDistr = (1.0-torch.arange(-1,1, step= 2/H).abs()).view((1, 1, H, 1))
-
+        #  in column, a prob distribution [0,0.001, 0.002, ..., maxAlpha ] in H dimension.
+        self.m_probDistr = torch.arange(0, hps.maxAlpha, step= hps.maxAlpha/H).view(1, 1, H, 1)
 
     def forward(self, inputs):
         # N is numSurfaces
-        x = self.m_lambdas(inputs)  # output size: BxNxHxW
-        x = logits2Prob(x, dim=-2)  # size: BxNxHxW in softmax prob
+        x = self.m_lambdas0(inputs)
+        x = x + self.m_lambdas1(x)  # residual module
+        x = self.m_lambdas2(x)     # output size: Bxhps.LambdaOutputCxHxW
+        x = logits2Prob(x, dim=-2)  # size: Bxhps.LambdaOutputCxHxW in softmax prob
         probLoc = self.m_probDistr.to(device=x.device).expand(x.size())  # prob locations
         lambdas = torch.sum(x*probLoc, dim=-2, keepdim=False)
-        return lambdas  # return lambdas  in (B,N,W) dimension
+        return lambdas  # return lambdas  in (B,hps.LambdaOutputC,W) dimension
