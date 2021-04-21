@@ -26,7 +26,7 @@ from framework.ConfigReader import ConfigReader
 import os
 
 
-class SoftSeparationNet_C(BasicModel):
+class SoftSeparationNet_D(BasicModel):
     def __init__(self, hps=None):
         '''
         inputSize: BxinputChaneels*H*W
