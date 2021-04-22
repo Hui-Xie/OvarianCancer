@@ -1,3 +1,18 @@
+#April 22nd, Thursday, 2021
+Training result on validation data:
+=============================================================================================================================================================
+ExperimentName                                                  bestValidationError(um) Epoch     Notes
+expDuke_20201208A_SurfaceNet_YufanHe_iibi007                    2.11                    47        YufanHe Network
+expDuke_20200902A_SurfaceSubnet                                 2.196                   74        Our Surface Subnet
+expDuke_SoftSeparation_A_alpha001_20210409_iibi007              2.153                   26        validaitonError oscillates.  VoteLambda.LossModel
+expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007      2.147                   56        validationError deseasing. SoftmaxLambda. LossModel.
+expDuke_SoftSeparation_C_fineTune_20210416_iibi007              2.242                   9         after epoch 9,  validationError increasing. OptModel.
+expDuke_SoftSeparation_C_trainLambda_20210416_iibi007           2.183                   53        after epoch 53, validationError stable.OptModel.
+expDuke_SoftSeparation_C_fineTune_LambdaLossOnly_20210418_skm2  2.252                   5         validationError increases.OptModel.
+expDuke_SoftSeparation_D_trainLambda_01_20210421_iibi007        2.161                   19        Pure alpha learning, maxAlpha=0.01
+expDuke_SoftSeparation_D_trainLambda_005_20210421_iibi007       2.165                   3         Pure alpha learning, maxAlpha=0.005, error oscillating.
+=============================================================================================================================================================
+
 #April 21th, Wednesday, 2021
 
 =========================================================================================================================================================================================================================
