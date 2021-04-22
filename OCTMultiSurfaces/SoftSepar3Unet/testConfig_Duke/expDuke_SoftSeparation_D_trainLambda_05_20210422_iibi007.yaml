@@ -1,4 +1,5 @@
 # surfaceUnet + thicknessUnet+ learning Lamba
+# For SoftSeparationNet D: no NxW learning lambda, directly learn alpha.
 
 debug: False # debug mark
 dataIn1Parcel: False
