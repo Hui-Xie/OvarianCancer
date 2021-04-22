@@ -16,6 +16,7 @@ from network.OCTTransform import *
 import time
 
 from SoftSeparationNet_C import SoftSeparationNet_C
+from SoftSeparationNet_D import SoftSeparationNet_D
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
