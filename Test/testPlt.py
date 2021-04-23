@@ -15,4 +15,4 @@ subplot1 = plt.subplot(1, 1, 1)
 subplot1.imshow(image, cmap='gray')
 subplot1.axis('off')
 
-plt.savefig("~/temp/testPlt.png",dpi='figure', bbox_inches='tight', pad_inches=0)
+plt.savefig("./testPlt.png", dpi='figure', bbox_inches='tight', pad_inches=0)
