@@ -245,20 +245,22 @@ class ThicknessSubnet_M(BasicModel):  #
         layerProb = logits2Prob(xl, dim=1)
 
         loss_layer = 0.0
-        if hps.useLayerDice:
-            generalizedDiceLoss = GeneralizedDiceLoss()
-            loss_layer = generalizedDiceLoss(layerProb, layerGTs)
-            # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
+        loss = 0.0
+        if self.getStatus() != "test":
+            if hps.useLayerDice:
+                generalizedDiceLoss = GeneralizedDiceLoss()
+                loss_layer = generalizedDiceLoss(layerProb, layerGTs)
+                # layerMu, layerConf = layerProb2SurfaceMu(layerProb)  # use layer segmentation to refer surface mu.
 
-            # add layer CE loss
-            multiLayerCE = MultiLayerCrossEntropyLoss()
-            loss_layer += multiLayerCE(layerProb, layerGTs)
+                # add layer CE loss
+                multiLayerCE = MultiLayerCrossEntropyLoss()
+                loss_layer += multiLayerCE(layerProb, layerGTs)
 
 
-        thicknessL1Loss = nn.SmoothL1Loss().to(device)
-        loss_thicknessL1  = thicknessL1Loss(thickness, riftGTs)
+            thicknessL1Loss = nn.SmoothL1Loss().to(device)
+            loss_thicknessL1  = thicknessL1Loss(thickness, riftGTs)
 
-        loss = loss_layer +  loss_thicknessL1
+            loss = loss_layer +  loss_thicknessL1
 
         return thickness, loss, x  # return surfaceLocation S in (B,N,W) dimension, loss , thicknessX
 

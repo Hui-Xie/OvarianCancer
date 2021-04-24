@@ -89,6 +89,8 @@ class SoftSeparationNet_A(BasicModel):
             NetMgr(self.m_lambdaModule, self.hps.netPath, self.m_lDevice))
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode)
 
+        self.setSubnetsStatus(surfaceMode, thicknessMode, lambdaMode)
+
         # define the constant matrix B of size NxN and C of size Nx(N-1)
         N = self.m_surfaceSubnet.hps.numSurfaces
         self.m_B = torch.zeros((1, N, N), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
@@ -169,6 +171,11 @@ class SoftSeparationNet_A(BasicModel):
             lambdaMode = "test"
 
         return surfaceMode, thicknessMode, lambdaMode
+
+    def setSubnetsStatus(self,surfaceMode, thicknessMode, lambdaMode):
+        self.m_surfaceSubnet.setStatus(surfaceMode)
+        self.m_thicknessSubnet.setStatus(thicknessMode)
+        self.m_lambdaModule.setStatus(lambdaMode)
 
 
     def forward(self, images, imageYX, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):

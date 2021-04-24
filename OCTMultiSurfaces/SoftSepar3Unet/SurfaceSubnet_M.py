@@ -121,7 +121,8 @@ class SurfaceSubnet_M(BasicModel):
 
         loss_div = 0.0
         loss_smooth = 0.0
-        if self.hps.existGTLabel:
+
+        if (self.getStatus() != "test") and self.hps.existGTLabel:
             # hps.useWeightedDivLoss:
             surfaceWeight = None
             _, C, _, _ = inputs.shape

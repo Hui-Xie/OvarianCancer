@@ -48,7 +48,7 @@ class NetMgr:
 
             if os.path.exists(os.path.join(netPath, "ConfigParameters.pt")):
                 self.m_net.m_runParametersDict = torch.load(os.path.join(netPath, "ConfigParameters.pt"), map_location=self.m_device)
-            if mode == "train":
+            if mode == "train" or mode=="training":
                 # Moves all model parameters and buffers to the GPU.So it should be called before constructing optimizer if the module will live on GPU while being optimized.
                 if os.path.exists(os.path.join(netPath, "Optimizer.pt")):
                     self.m_net.m_optimizer.load_state_dict(torch.load(os.path.join(netPath, "Optimizer.pt"), map_location=self.m_device))
