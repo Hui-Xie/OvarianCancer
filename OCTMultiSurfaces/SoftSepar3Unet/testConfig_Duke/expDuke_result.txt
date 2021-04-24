@@ -30,8 +30,8 @@ expDuke_SoftSeparation_C_trainLambda_20210416_iibi007           1.9904  1.9732  
 expDuke_SoftSeparation_C_fineTune_20210416_iibi007              2.0200  1.9454    1.1282, 1.9259, 3.0059    2.2716, 1.2881, 1.6909      51.   33.  24.              NxW learningLambda, alpha= 1-lambda, softmaxLambda, OptModel, fullOpt
 expDuke_SoftSeparation_C_fineTune_LambdaLossOnly_20210418_skm2  2.0889  2.0485    1.1651, 2.0392, 3.0626    2.3929, 1.3626, 1.8212      49.   39.  32.              NxW learningLambda, alpha= 1-lambda, softmaxLambda, OptModel, fullOpt, lambdaLossOnly
 expDuke_SoftSeparation_D_trainLambda_005_20210421_iibi007       1.9753  1.9641    1.1063, 1.8780, 2.9419    2.4532, 1.0721, 1.6764      50.   33.  30.              pureLearningAlpha, maxAlpha=0.005. OptModel
-expDuke_SoftSeparation_D_trainLambda_01_20210421_iibi007             Pure alpha learning, maxAlpha=0.01, error oscillating.
-expDuke_SoftSeparation_D_trainLambda_05_20210422_iibi007        1.9704  1.9655    1.1006, 1.8696, 2.9413    2.4534, 1.0758, 1.6759      50.   33.  30.              Pure alpha learning, maxAlpha=0.05, OptModel
+expDuke_SoftSeparation_D_trainLambda_01_20210421_iibi007        1.9727  1.9650    1.1031, 1.8733, 2.9419    2.4534, 1.0738, 1.6765      50.   33.  30.              Pure (N-1)xW alpha learning, maxAlpha=0.01, OptModel
+expDuke_SoftSeparation_D_trainLambda_05_20210422_iibi007        1.9704  1.9655    1.1006, 1.8696, 2.9413    2.4534, 1.0758, 1.6759      50.   33.  30.              Pure (N-1)xW alpha learning, maxAlpha=0.05, OptModel
 =========================================================================================================================================================================================================================
 
 It looks the independent Opt module does not bring benefits.
