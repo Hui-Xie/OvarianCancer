@@ -9,9 +9,13 @@ expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007      2.147           
 expDuke_SoftSeparation_C_fineTune_20210416_iibi007              2.242                   9         after epoch 9,  validationError increasing. OptModel.
 expDuke_SoftSeparation_C_trainLambda_20210416_iibi007           2.183                   53        after epoch 53, validationError stable.OptModel.
 expDuke_SoftSeparation_C_fineTune_LambdaLossOnly_20210418_skm2  2.252                   5         validationError increases.OptModel.
-expDuke_SoftSeparation_D_trainLambda_01_20210421_iibi007        2.161                   19        Pure alpha learning, maxAlpha=0.01
 expDuke_SoftSeparation_D_trainLambda_005_20210421_iibi007       2.165                   3         Pure alpha learning, maxAlpha=0.005, error oscillating.
+expDuke_SoftSeparation_D_trainLambda_01_20210421_iibi007        2.161                   19        Pure alpha learning, maxAlpha=0.01
 expDuke_SoftSeparation_D_trainLambda_05_20210422_iibi007        2.16                    21        Pure alpha learning, maxAlpha=0.05, error oscillating.
+expDuke_SoftSeparation_D_trainLambda_dot1_20210424_iibi007      2.157                   27        Pure alpha learning, maxAlpha=0.1, error oscillating.
+expDuke_SoftSeparation_D_trainLambda_dot5_20210424_iibi007      2.159                   49        Pure alpha learning, maxAlpha=0.5, error oscillating.
+expDuke_SoftSeparation_D_trainLambda_1dot_20210424_iibi007      2.162                   48        Pure alpha learning, maxAlpha=1.0, error oscillating.
+expDuke_SoftSeparation_D_trainLambda_5dot_20210424_iibi007      2.164                   50        Pure alpha learning, maxAlpha=5.0, error oscillating.
 =============================================================================================================================================================
 
 #April 21th, Wednesday, 2021
