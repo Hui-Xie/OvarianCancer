@@ -12,8 +12,31 @@ expDuke_20200902A_SurfaceSubnet                                 1.9812  1.9618  
 expDuke_SoftSeparation_A_alpha001_20210409_iibi007              1.9643  1.9642    1.1021, 1.8762, 2.9147    2.4212, 1.1604, 1.6781      50.   36.  25.              NxW learningLambda, alpha=0.001, voteLambda, lossModel
 expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007      1.9638  1.9726    1.1027, 1.8734, 2.9155    2.3903, 1.2326, 1.7005      50.   33.  26.              NxW learningLambda, alpha=0.001, SoftmaxLambda, lossModel
 expDuke_SoftSeparation_D_trainLambda_dot1_20210424_iibi007      1.9689  1.9659    1.0992, 1.8674, 2.9404    2.4530, 1.0777, 1.6763      50.   33.  30.              Pure alpha learning without alpha, maxAlpha=0.1. OptModel
+expDuke_SoftSeparation_D_trainLambda_dot5_20210424_iibi007      1.9698  1.9664    1.1022, 1.8664, 2.9409    2.4539, 1.0808, 1.6759      50.   33.  30.              Pure alpha learning without alpha, maxAlpha=0.5. OptModel
+
 
 =========================================================================================================================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
