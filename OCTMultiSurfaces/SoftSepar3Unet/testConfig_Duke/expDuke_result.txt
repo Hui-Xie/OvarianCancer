@@ -3,6 +3,35 @@ Meeting minutes:
 1  consider to use 95% Hausdorff distance.
 
 
+OCT_DME data: www.duke.edu/~sf59/Chiu_BOE_2014_dataset.htm
+To learn our DME classifier, we obtained training data separate from our validation data set.
+We used the Duke Enterprise Data Unified Content Explorer search engine to retrospectively identify patients within
+the Duke Eye Center Medical Retina practice with a billing code for DME (ICD-9 362.07) associated with their visit.
+An ophthalmologist then identified six patients imaged in clinic using the standard Spectralis (Heidelberg Engineering,
+ Heidelberg, Germany) 61-line volume scan protocol with severe DME pathology and varying image quality.
+ Averaging of the B-scans was determined by the photographer, and ranged from 9 to 21 raw images per averaged B-scan.
+ The volumetric scans were Q = 61 B-scans × N = 768 A-scans with an axial resolution ri = 3.87 µm/pixel,
+ lateral resolution (rj) ranging from 11.07 – 11.59 µm/pixel, and azimuthal resolution (rk) ranging from 118 – 128 µm/pixel.
+
+ ssh://hxie1@c-xwu000.iibi.uiowa.edu:22/home/hxie1/anaconda3/bin/python3.8 -u /tmp/pycharm_project_465/OCTMultiSurfaces/dataPrepare_Duke2/readMatVolume.py
+__header__ = b'MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Sat Mar 07 12:13:13 2015'
+__version__ = 1.0
+__globals__ = []
+images.size = (496, 768, 61)
+automaticFluidDME.size = (496, 768, 61)
+manualFluid1.size = (496, 768, 61)
+manualFluid2.size = (496, 768, 61)
+automaticLayersDME.size = (8, 768, 61)
+automaticLayersNormal.size = (8, 768, 61)
+manualLayers1.size = (8, 768, 61)   # target ground truth
+manualLayers2.size = (8, 768, 61)
+
+
+The images selected consisted of the foveal scan k fov and scans k fov ± 2, k fov ± 5, fov k ± 10, k fov +-20
+
+
+
+
 
 # April 27th, Tueday, 2021
 SoftSeparation Result on Test data

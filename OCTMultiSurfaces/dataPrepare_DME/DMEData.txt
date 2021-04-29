@@ -1,0 +1,24 @@
+__header__ = b'MATLAB 5.0 MAT-file, Platform: PCWIN64, Created on: Sat Mar 07 12:12:42 2015'
+__version__ = 1.0
+__globals__ = []
+images.size = (496, 768, 61)
+automaticFluidDME.size = (496, 768, 61)
+manualFluid1.size = (496, 768, 61)
+manualFluid2.size = (496, 768, 61)
+automaticLayersDME.size = (8, 768, 61)
+automaticLayersNormal.size = (8, 768, 61)
+manualLayers1.size = (8, 768, 61)
+manualLayers2.size = (8, 768, 61)
+
+The Duke DME OCT data (Duke2 data) of 8 surfaces:
+1  ground truth haa a lof conitinous NaN in the surface locations.
+2  to fit these NaNs, our program needs a lot of modifications:
+   A   Gaussian distribution.
+   B   ReLU constrains.
+   C   thickness computation and thickness pairwise terms.
+   D   Optimization model.
+   E   Loss computation.
+3  As these NaNs, I decided to find a new public OCT segmenataion data fro our further experiments.
+
+
+

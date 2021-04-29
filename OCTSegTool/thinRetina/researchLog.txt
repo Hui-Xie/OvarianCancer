@@ -1,0 +1,43 @@
+
+# April 29th,Thursday, 2021:
+Questions needing discussions:
+1  I want to know the knowledge and logic from the OCT image which leads you to determine this is a thin RNFL, and the surface RNFL/GCL is very close to or overlaps with the surface ILM.
+   If we can express this knowledge and logic as a model or constraint into our network, it may get better accuracy and a more valuable paper.
+
+2   And what are other characteristics of this special disease OCT images?
+
+3   A possible way is to involve a prior knowledge about the normal subject range:
+    If this is a case, do we need to add normal/control OCT images with ground truth to help network
+    distinguish normal and disease OCT Images.
+
+
+# April 28th, Wednesday, 2021
+
+
+Meeting: Wu, Ray, Hui
+Details of the segmentation method, including setting up ground truth, network structure, ect..
+IRB
+Working load/hours/updates
+Potential conferences that we can aim for
+
+
+# Ray email on April 23rd, 2021:
+Current issue:
+• Currently, the layer segmentation is done by the graph-search algorithm. For most of the healthy
+subjects, the macular scans can be segmented correctly. However, for some glaucoma subjects,
+due to damage of the optic nerve, the retinal nerve fiber layer (RNFL) and ganglion cell + inner
+plexiform layer (GCIPL) start to get thinning [please see the figures above]. Due to the graph-
+search inter-surface constrains, the algorithm has a good chance to miss the "invisible" RNFL and
+sees the thinning GCIPL as a part of the unreal thick RNFL. Consequently, the GCIPL segmentation
+outcome gets to push down to another layer.
+
+Goal:
+• We first would like to develop a relatively straightforward deep-learning-based tool to overcome
+this segmentation problem for these thin retinas. We hope that the deep learning neural network
+can label interested layers correctly and robustly. To make this problem more manageable, we
+currently only needs to segment a few layers/surfaces that contains the key information that we
+want to measure [e.g., the GCIPL, the internal limiting membrane (ILM), the lower surface of the
+outer plexiform layer and the RPE complex. Furthermore, we would like the developing deep
+neural network could have the ability to output a projected-view pixel-based layer segmentation
+confidence map. So, for a large amount of scan processing, we could only focus on a small portion
+of images that need attention for quality control.
