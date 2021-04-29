@@ -24,7 +24,7 @@ dataIn1Parcel: True
 # Duke data is not in one parcel, while Tongren and JHU are in one parcel.
 # Not dataIn1Parcel means each patient has a volume file.
 dataInSlice: False
-existGTLable: True
+existGTLabel: True
 
 dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
