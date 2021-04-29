@@ -15,13 +15,13 @@ sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
 from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from LambdaModule_D import LambdaModule_D
+from LambdaModule_E import LambdaModule_E
 
 sys.path.append("../..")
 from framework.NetTools import *
 from framework.BasicModel import BasicModel
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
-
 
 import os
 
@@ -46,7 +46,9 @@ class SoftSeparationNet_D(BasicModel):
 
         # surface Subnet
         self.m_sDevice = eval(self.hps.surfaceSubnetDevice)
-        self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=self.hps.surfaceSubnetYaml)
+        surfaceHps = ConfigReader(self.hps.surfaceSubnetYaml)
+        surfaceHps.device = self.m_sDevice
+        self.m_surfaceSubnet = eval(self.hps.surfaceSubnet)(hps=surfaceHps)
         self.m_surfaceSubnet.to(self.m_sDevice)
         self.m_surfaceSubnet.m_optimizer = None
         if "test" != surfaceMode:
@@ -61,7 +63,9 @@ class SoftSeparationNet_D(BasicModel):
 
         # thickness Subnet, where r means thickness
         self.m_rDevice = eval(self.hps.thicknessSubnetDevice)
-        self.m_thicknessSubnet = eval(self.hps.thicknessSubnet)(hps=self.hps.thicknessSubnetYaml)
+        thicknessHps = ConfigReader(self.hps.thicknessSubnetYaml)
+        thicknessHps.device = self.m_rDevice
+        self.m_thicknessSubnet = eval(self.hps.thicknessSubnet)(hps=thicknessHps)
         self.m_thicknessSubnet.to(self.m_rDevice)
         self.m_thicknessSubnet.m_optimizer = None
         if "test" != thicknessMode:
