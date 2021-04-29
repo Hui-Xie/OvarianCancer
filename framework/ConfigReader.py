@@ -36,7 +36,7 @@ class ConfigReader(object):
         if not os.path.exists(self.logDir):
             os.makedirs(self.logDir)  # recursive dir creation
 
-        if self.outputDir == "":
+        if len(self.outputDir) < 3:
             self.outputDir = os.path.join(self.logDir,"testResult")
         if not os.path.exists(self.outputDir):
             os.makedirs(self.outputDir)  # recursive dir creation
