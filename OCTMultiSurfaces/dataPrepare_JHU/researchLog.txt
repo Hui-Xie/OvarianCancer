@@ -1,0 +1,16 @@
+
+
+# JHU data introduction on April 29th, 2021
+This public JHU retinal OCT data includes 35 human retina scans acquired
+on a Heidelberg Spectralis OCT system, 14 of which are healthy controls (HC)
+and 21 have a diagnosis of multiple sclerosis (MS). Each patient has 49 B-scans
+with pixel size 496*1024, and 9 ground truth surfaces each
+B-Scan. The axial resolution in each A-scan is 3.9 micrometer. Raw image were
+manually delineated with 21 control points on each surface, and then were cubic
+interpolated into 1024 points crossing all A-scan to form ground truth by a
+Matlab script. Raw images then crop center 128 rows into 128*1024 feeding
+into network. We use same data config and input with of training on the last 6
+HC and last 9 MS subjects, and test on the other 20 subjects. In our experiment,
+we used a fixed σ = 8 to generate Gaussian ground truth, and used gaussian
+noise and pepper&salt noise on raw image for data augmentation. Visual result of
+this experiment are in appendix C.
