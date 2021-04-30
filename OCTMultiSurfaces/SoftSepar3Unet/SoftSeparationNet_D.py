@@ -122,7 +122,7 @@ class SoftSeparationNet_D(BasicModel):
 
         # define the 5-point center moving average smooth matrix
         W = hps.inputWidth
-        self.m_smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=hps.device,
+        self.m_smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=self.m_lDevice,
                                      requires_grad=False)  # 5-point smooth matrix
         # 0th column and W-1 column
         self.m_smoothM[0, 0, 0] = 1.0 / 2
@@ -213,25 +213,33 @@ class SoftSeparationNet_D(BasicModel):
                                      GTs=GTs.to(self.m_sDevice))
 
         # input channels: raw+Y+X
-        R, thicknessLoss, thinknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
+        R, thicknessLoss, thicknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         # detach from surfaceSubnet and thicknessSubnet
         if self.hps.status == "trainLambda": # do not clone(), otherwise memory is huge.
-            surfaceX = surfaceX.detach().to(self.m_lDevice)
-            thinknessX = thinknessX.detach().to(self.m_lDevice)
-            R = R.detach().to(self.m_lDevice)
-            Mu = Mu.detach().to(self.m_lDevice)
-            Sigma2 = Sigma2.detach().to(self.m_lDevice)  # size: nBxNxW
+            surfaceX = surfaceX.detach()
+            thicknessX = thicknessX.detach()
+            R = R.detach()
+            Mu = Mu.detach()
+            Sigma2 = Sigma2.detach()  # size: nBxNxW
+
+        surfaceX = surfaceX.to(self.m_lDevice)
+        thicknessX = thicknessX.to(self.m_lDevice)
+        R = R.to(self.m_lDevice)
+        Mu = Mu.to(self.m_lDevice)
+        Sigma2 = Sigma2.to(self.m_lDevice)
+        surfaceLoss = surfaceLoss.to(self.m_lDevice)
+        thicknessLoss = thicknessLoss.to(self.m_lDevice)
 
         # Lambda return backward propagation
-        X = torch.cat((surfaceX, thinknessX), dim=1)
+        X = torch.cat((surfaceX, thicknessX), dim=1)
         nB, nC, H, W = X.shape
         Lambda = self.m_lambdaModule.forward(X)  # size: nBx(N-1)xW
 
         # free memory
         del surfaceX
-        del thinknessX
+        del thicknessX
         del X
 
         N = self.m_surfaceSubnet.hps.numSurfaces
