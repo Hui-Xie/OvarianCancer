@@ -22,7 +22,7 @@ batchSize: 4
 groundTruthInteger: False
 
 network: "SoftSeparationNet_D"
-device: torch.device('cuda:3')   # same with lambda device
+device: torch.device('cuda:1')   # same with lambda device
 sigma: 8.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
 
 # some physical parameter of images
@@ -63,12 +63,12 @@ surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not car
 thicknessSubnet: "ThicknessSubnet_M2"
 # for a new trained network.
 thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210429_Thickness_M2_fullData_A_iibi007.yaml"
-thicknessSubnetDevice: torch.device('cuda:2')   #GPU ID
+thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
 thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
 
 lambdaModule: "LambdaModule_E"
 lambdaModuleYaml: ""
-lambdaModuleDevice: torch.device('cuda:3')   #GPU ID
+lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
 lambdaModuleLr: 0.1
 # alpha: 0.001  # use learning alpha deduced from lambda
 maxAlpha: 0.1
