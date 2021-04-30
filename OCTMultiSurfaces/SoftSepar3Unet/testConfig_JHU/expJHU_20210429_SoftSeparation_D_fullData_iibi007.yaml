@@ -13,7 +13,7 @@ status: "trainLambda" # only 3 status: # "trainLambda" #"test"  "fineTune"
 # trainLambda: only lambda module uses backward propagation.
 
 
-dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices"
+dataDir: "/home/hxie1/data/OCT_JHU/numpy"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
@@ -56,13 +56,13 @@ lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate sege
 
 # for 2 Unets + learning Lambda
 surfaceSubnet: "SurfaceSubnet"
-surfaceSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20200902A_SurfaceSubnet_iibi007.yaml"
+surfaceSubnetYaml: "/home/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210429_SurfaceSubnet_fullData_A.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
 surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_M2"
 # for a new trained network.
-thicknessSubnetYaml: "/localscratch/Users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_Duke/expDuke_20210325A_Thickness_M2_iibi007.yaml"
+thicknessSubnetYaml: "/home/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210429_Thickness_M2_fullData_A.yaml"
 thicknessSubnetDevice: torch.device('cuda:2')   #GPU ID
 thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
 
@@ -74,8 +74,8 @@ lambdaModuleLr: 0.01
 maxAlpha: 0.1
 lambdaOutputC: 2  # output Channel.
 
-netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/home/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
 outputDir: ""
-logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log"
-refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+logDir: "/home/hxie1/data/OCT_JHU/numpy/log"
+refXMLFile: "/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"

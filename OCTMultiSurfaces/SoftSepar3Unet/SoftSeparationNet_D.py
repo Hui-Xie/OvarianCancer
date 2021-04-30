@@ -54,7 +54,7 @@ class SoftSeparationNet_D(BasicModel):
         if "test" != surfaceMode:
             self.m_surfaceSubnet.setOptimizer(optim.Adam(self.m_surfaceSubnet.parameters(), lr=self.hps.surfaceSubnetLr, weight_decay=0))
             self.m_surfaceSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_surfaceSubnet.m_optimizer, \
-                                            mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
+                                            mode="min", factor=0.5, patience=10, min_lr=1e-8, threshold=0.02, threshold_mode='rel'))
         self.m_surfaceSubnet.setNetMgr(NetMgr(self.m_surfaceSubnet, self.m_surfaceSubnet.hps.netPath, self.m_sDevice))
         surfaceNetPath = self.hps.surfaceUpdatePath
         if len(os.listdir(surfaceNetPath)) == 0:
@@ -72,7 +72,7 @@ class SoftSeparationNet_D(BasicModel):
             self.m_thicknessSubnet.setOptimizer(
                 optim.Adam(self.m_thicknessSubnet.parameters(), lr=self.hps.thicknessSubnetLr, weight_decay=0))
             self.m_thicknessSubnet.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_thicknessSubnet.m_optimizer, \
-                                                                                 mode="min", factor=0.5, patience=20,
+                                                                                 mode="min", factor=0.5, patience=10,
                                                                                  min_lr=1e-8, threshold=0.02,
                                                                                  threshold_mode='rel'))
         self.m_thicknessSubnet.setNetMgr(NetMgr(self.m_thicknessSubnet, self.m_thicknessSubnet.hps.netPath, self.m_rDevice))
@@ -93,7 +93,7 @@ class SoftSeparationNet_D(BasicModel):
             self.m_lambdaModule.setOptimizer(
                 optim.Adam(self.m_lambdaModule.parameters(), lr=self.hps.lambdaModuleLr, weight_decay=0))
             self.m_lambdaModule.setLrScheduler(optim.lr_scheduler.ReduceLROnPlateau(self.m_lambdaModule.m_optimizer, \
-                                                                              mode="min", factor=0.5, patience=20,
+                                                                              mode="min", factor=0.5, patience=10,
                                                                               min_lr=1e-8, threshold=0.02,
                                                                               threshold_mode='rel'))
         self.m_lambdaModule.setNetMgr(NetMgr(self.m_lambdaModule, self.hps.netPath, self.m_lDevice))
