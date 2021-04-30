@@ -1,6 +1,6 @@
 # extract HC and MS training data from full training set:
 nHC = 1
-nMS = 1
+nMS = 2
 srcDir = "/home/hxie1/data/OCT_JHU/numpy/training"
 dstDir = f"/home/hxie1/data/OCT_JHU/numpy_{nHC:1d}HC_{nMS:1d}MS/training"
 B = 49  # 49 bscans per patient
