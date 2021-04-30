@@ -2,7 +2,7 @@
 nHC = 1
 nMS = 1
 srcDir = "/home/hxie1/data/OCT_JHU/numpy/training"
-dstDir = f"/home/hxie1/data/OCT_JHU/numpy_{nHC:1d}HC_{nMS:1d}MS"
+dstDir = f"/home/hxie1/data/OCT_JHU/numpy_{nHC:1d}HC_{nMS:1d}MS/training"
 B = 49  # 49 bscans per patient
 H = 128
 W = 1024
@@ -54,7 +54,7 @@ if not os.path.exists(dstDir):
 dstImagesPath = os.path.join(dstDir, "images.npy")
 dstSurfacesPath = os.path.join(dstDir,"surfaces.npy" )
 dstPatientIDPath = os.path.join(dstDir, "patientID.json")
-np.save(dstPatientIDPath, dstImages)
+np.save(dstImagesPath, dstImages)
 np.save(dstSurfacesPath,  dstSurfaces)
 with open(dstPatientIDPath, 'w') as fp:
     json.dump(dstPatientID, fp)
