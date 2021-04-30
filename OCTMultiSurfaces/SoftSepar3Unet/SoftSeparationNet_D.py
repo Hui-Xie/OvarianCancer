@@ -229,8 +229,10 @@ class SoftSeparationNet_D(BasicModel):
         R = R.to(self.m_lDevice)
         Mu = Mu.to(self.m_lDevice)
         Sigma2 = Sigma2.to(self.m_lDevice)
-        surfaceLoss = surfaceLoss.to(self.m_lDevice)
-        thicknessLoss = thicknessLoss.to(self.m_lDevice)
+        if not isinstance(surfaceLoss,float):
+            surfaceLoss = surfaceLoss.to(self.m_lDevice)
+        if not isinstance(thicknessLoss, float):
+            thicknessLoss = thicknessLoss.to(self.m_lDevice)
 
         # Lambda return backward propagation
         X = torch.cat((surfaceX, thicknessX), dim=1)
