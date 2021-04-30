@@ -180,7 +180,7 @@ def main():
         else:
             writer.add_scalar('learningRateLambda', net.getLearningRate("lambdaModule"), epoch)
 
-        if validLambdaLoss < preValidLoss or muError < preErrorMean:
+        if muError < preErrorMean:
             net.updateRunParameter("validationLambdaLoss", validLambdaLoss)
             net.updateRunParameter("validationSurfaceLoss", validSurfaceLoss)
             net.updateRunParameter("validationThicknessLoss", validThicknessLoss)

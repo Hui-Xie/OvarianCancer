@@ -177,7 +177,7 @@ def main():
         writer.add_scalars('ValidationError/stdThickness', convertTensor2Dict(stdSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
-        if validLoss < preValidLoss or muError < preErrorMean:
+        if muError < preErrorMean:
             net.updateRunParameter("validationLoss", validLoss)
             net.updateRunParameter("epoch", net.m_epoch)
             net.updateRunParameter("errorMean", muError)
