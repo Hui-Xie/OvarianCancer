@@ -69,10 +69,10 @@ thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not 
 lambdaModule: "LambdaModule_E"
 lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:3')   #GPU ID
-lambdaModuleLr: 0.01
+lambdaModuleLr: 0.1
 # alpha: 0.001  # use learning alpha deduced from lambda
 maxAlpha: 0.1
-lambdaOutputC: 2  # output Channel.
+lambdaOutputC: 8  # output Channel = numSurface -1
 
 netPath: "/home/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
