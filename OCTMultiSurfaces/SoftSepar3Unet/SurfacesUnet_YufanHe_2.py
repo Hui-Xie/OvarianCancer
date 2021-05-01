@@ -227,7 +227,7 @@ class SurfacesUnet_YufanHe_2(BasicModel):  #
 
         loss = loss_layer + loss_surface + loss_L1
 
-        return S, sigma2, loss  # return surfaceLocation S in (B,N,W) dimension and loss
+        return S, sigma2, loss, x  # return surfaceLocation S in (B,N,W) dimension and loss
 
 
 

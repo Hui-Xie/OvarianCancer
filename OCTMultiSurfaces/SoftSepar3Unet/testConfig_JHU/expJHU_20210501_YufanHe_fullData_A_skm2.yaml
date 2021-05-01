@@ -26,7 +26,7 @@ dataIn1Parcel: True
 dataInSlice: False
 existGTLabel: True
 
-dataDir: "/localscratch/Users/hxie1/data/OCT_JHU/numpy"
+dataDir: "/raid001/users/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0
 k: -1   # -1 means do not use cross validation
@@ -57,25 +57,25 @@ k: -1   # -1 means do not use cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-sigma: 8.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or do not use Gaussian
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 learningRate: 0.01
 
-network: "SurfaceSubnet"
+network: "SurfacesUnet_YufanHe_2"
 inputHeight: 128   # original height
 inputWidth: 1024   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # rawImage + gradChannels
-nLayers: 7
+inputChannels: 3 # rawImage + Y + X
+nLayers: 5
 numSurfaces: 9  # num of surfaces in an image
-startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+startFilters: 64  # the num of filters in first layer of Unet
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
-addCoordinatesXYChannels: False
+addCoordinatesXYChannels: True
 
 # some physical parameter of images
 slicesPerPatient: 49
@@ -93,13 +93,13 @@ TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/localscratch/Users/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
-# below loadNetPath is copied from "/localscratch/Users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
+# below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
 loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
-logDir: "/localscratch/Users/hxie1/data/OCT_JHU/numpy/log"
-refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+logDir: "/raid001/users/hxie1/data/OCT_JHU/numpy/log"
+refXMLFile: "/raid001/users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 # Proximal IPM Optimization
 useProxialIPM: False
@@ -109,14 +109,14 @@ criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations
 
 useDynamicProgramming: False
 usePrimalDualIPM: False
-useLayerDice: False
+useLayerDice: True
 useReferSurfaceFromLayer: False
-useLayerCE: False
+useLayerCE: True
 useCEReplaceKLDiv: False
-useSmoothSurfaceLoss: True
-useWeightedDivLoss: True
+useSmoothSurfaceLoss: False
+useWeightedDivLoss: False
 useRift: False
-smoothRift: True  # smooth Rift in ground truth
+smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
@@ -130,6 +130,6 @@ gradientRiftConvGoBack: False
 # 0: NoReLU; 1: ReLU;  2: IPM;
 hardSeparation: 1
 softSeparation: False
-useReLUInPretrain: True
+useReLUInPretrain: False
 
 goodBscans: []
