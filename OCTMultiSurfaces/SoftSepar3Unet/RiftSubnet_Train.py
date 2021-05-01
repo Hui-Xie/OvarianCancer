@@ -29,6 +29,7 @@ from ThicknessSubnet_Z4 import ThicknessSubnet_Z4
 from ThicknessSubnet_M import ThicknessSubnet_M
 from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from ThicknessSubnet_M3 import ThicknessSubnet_M3
+from ThicknessSubnet_M5 import ThicknessSubnet_M5
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
