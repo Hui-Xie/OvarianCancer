@@ -2,9 +2,17 @@
 Test error(meean patient absolute error) on reduced training data on JHU data:
 ===========================================================================================================================
 DataContent    TrainingRate     YufanHe_2Network(um)    SurfaceSubnet_M5(um)      Thickness_M5(um)     SoftSeparation_D(um)
-6HC_9MS        100%
-1HC_2MS        20%
-1HC_1MS        13%
+6HC_9MS        100%             2.805                   2.822                     3.757
+1HC_2MS        20%              3.002                   3.548                     4.181
+1HC_1MS        13%              3.367                   3.769                     4.333
+===========================================================================================================================
+
+Test error standand deviation (meean patient absolute error) on reduced training data on JHU data:
+===========================================================================================================================
+DataContent    TrainingRate     YufanHe_2Network(um)    SurfaceSubnet_M5(um)      Thickness_M5(um)     SoftSeparation_D(um)
+6HC_9MS        100%             1.037                   1.033                     0.7127
+1HC_2MS        20%              1.054                   1.52                      1.174
+1HC_1MS        13%              1.456                   1.501                     1.262
 ===========================================================================================================================
 
 Notes:
