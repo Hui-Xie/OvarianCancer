@@ -24,8 +24,8 @@ In skm2 GPU Server:
 ========================================================================================
           SurfaceUnet_YufanHe_2    SufaceSubnet_M5   Thickness_M5   SoftSeparation_D
 6HC_9MS:    GPU2                   GPU1               GPU4
-1HC_1MS:
-1HC-2MS:
+1HC_1MS:    GPU2                   GPU1               GPU4
+1HC-2MS:    GPU3                   GPU1               GPU5
 =========================================================================================
 
 
