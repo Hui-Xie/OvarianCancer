@@ -20,11 +20,13 @@ Now numpy_1HC_1MS and numpy_1HC_1MS data are ready.
 
 compare with YufanHe network: SurfacesUnet_YufanHe_2
 
-          SurfaceUnet_YufanHe_2    SufaceSubnet   Thickness_M2   SoftSeparation_D
-6HC_9MS:
+In skm2 GPU Server:
+========================================================================================
+          SurfaceUnet_YufanHe_2    SufaceSubnet_M5   Thickness_M5   SoftSeparation_D
+6HC_9MS:    GPU2                   GPU1               GPU4
 1HC_1MS:
 1HC-2MS:
-
+=========================================================================================
 
 
 
