@@ -1,4 +1,22 @@
-# April 30th, Friday, 2021
+# May 1st, Saturday, 2021
+Test error(meean patient absolute error) on reduced training data on JHU data:
+===========================================================================================================================
+DataContent    TrainingRate     YufanHe_2Network(um)    SurfaceSubnet_M5(um)      Thickness_M5(um)     SoftSeparation_D(um)
+6HC_9MS        100%
+1HC_2MS        20%
+1HC_1MS        13%
+===========================================================================================================================
+
+Notes:
+1  JHU OCT data set:
+    training set: 6 health control patients(HC), 9 multiple sclerosis patients(MS).
+    test     set: 8 health control patients(HC), 12 mulitple sclerosis patients(MS)
+2  JHU OCT data set: 9 surfaces, H=128, W = 1024, 49 Bscan/volume, 3.86725 um/pixel in A scan direction.
+3  Soft Separation involves matrix inverse operation of size of 9216x9216, very slow.
+
+
+
+
 JHU experiment on validation data:
 ======================================================================================================================
 expName                                         validationError(um)     std     epoch    Notes
