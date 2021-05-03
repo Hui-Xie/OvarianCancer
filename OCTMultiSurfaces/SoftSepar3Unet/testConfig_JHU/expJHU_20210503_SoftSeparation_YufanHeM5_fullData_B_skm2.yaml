@@ -31,7 +31,7 @@ inputWidth: 1024   # rawImageWidth
 slicesPerPatient: 49  # for test and validation set
 hPixelSize: 3.86725  # unit: micrometer, in y/height direction
 numSurfaces: 9  # num of surfaces in an image
-gradChannels: 7   # the added gradient channels beside raw image channel
+gradChannels: 0   # YufanHe network does not use gradient channel
 bothSideGrad: True # False use singleSideGrad
 addCoordinatesXYChannels: True
 useRift: True

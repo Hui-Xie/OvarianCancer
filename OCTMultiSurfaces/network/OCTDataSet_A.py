@@ -287,6 +287,9 @@ class OCTDataSet_A(data.Dataset):
         if grads is not None:
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)), dim=0)
+        else:
+            if self.hps.addCoordinatesXYChannels:
+                image = imageYX
 
         layerGT = []
         if self.hps.useLayerDice and label is not None:
