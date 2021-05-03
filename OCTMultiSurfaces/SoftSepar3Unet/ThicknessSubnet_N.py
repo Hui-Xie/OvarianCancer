@@ -217,15 +217,9 @@ class ThicknessSubnet_N(BasicModel):  #
 
         maxThickness = self.hps.inputHeight/(self.hps.numSurfaces)
 
-
-        thicknessProb = logits2Prob(xt, dim=-2)
-        mu, sigma2 = computeMuVariance(thicknessProb, layerMu=None, layerConf=None)
-        B,N,W = mu.shape  # here N = numSurface -1
-        S = mu
-        # ReLU to guarantee layer order
-        for i in range(1, N):
-            S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-        thickness = S[:, 1:, :] - S[:, 0:-1, :]  # size: B,N-1,W
+        thicknessProb = logits2Prob(xt, dim=-2) # Bx(N-1)xHxW
+        thickness, sigma2 = computeMuVariance(thicknessProb, layerMu=None, layerConf=None, rangeH= maxThickness)
+        B,_,W = thickness.shape  # here N = numSurface
 
         # smooth predicted thickness
         smoothM = self.m_smoothM.expand(B, W, W)  # size: BxWxW
@@ -248,7 +242,7 @@ class ThicknessSubnet_N(BasicModel):  #
                 loss_layer += multiLayerCE(layerProb, layerGTs)
 
             multiSurfaceCE = MultiSurfaceCrossEntropyLoss()
-            loss_ce = multiSurfaceCE(thicknessProb, GTs)  # CrossEntropy is a kind of KLDiv
+            loss_ce = multiSurfaceCE(thicknessProb, riftGTs)  # CrossEntropy is a kind of KLDiv
 
             thicknessL1Loss = nn.SmoothL1Loss().to(device)
             loss_thicknessL1  = thicknessL1Loss(thickness, riftGTs)
