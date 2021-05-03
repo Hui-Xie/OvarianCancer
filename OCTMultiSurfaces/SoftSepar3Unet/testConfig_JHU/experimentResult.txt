@@ -1,3 +1,25 @@
+# May 3rd, Monday, 2021:
+Waiting for test result:
+1  expJHU_20210430_SoftSeparation_D_fullData_A_iibi007
+
+
+waiting for test result:
+(base) [sxm2:hxie1]#ps 24333 121466 121703 81697 122322 122566 104498 121944 122093
+   PID TTY      STAT   TIME COMMAND
+ 24333 ?        Rl   5105:53 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_SurfaceSubnetM5_fullData_A_skm2.yaml
+ 81697 ?        Rl   14805:24 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_YufanHe_fullData_A_skm2.yaml
+104498 ?        Rl   17790:17 python3 ./RiftSubnet_Train.py ./testConfig_JHU/expJHU_20210501_ThicknessM5_fullData_A_skm2.yaml
+121466 ?        Rl   5578:51 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_SurfaceSubnetM5_1HC1MS_A_skm2.yaml
+121703 ?        Rl   5425:21 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_SurfaceSubnetM5_1HC2MS_A_skm2.yaml
+121944 ?        Rl   19544:20 python3 ./RiftSubnet_Train.py ./testConfig_JHU/expJHU_20210501_ThicknessM5_1HC1MS_A_skm2.yaml
+122093 ?        Sl   21132:16 python3 ./RiftSubnet_Train.py ./testConfig_JHU/expJHU_20210501_ThicknessM5_1HC2MS_A_skm2.yaml
+122322 ?        Rl   18251:46 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_YufanHe_1HC1MS_A_skm2.yaml
+122566 ?        Rl   19559:18 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_YufanHe_1HC2MS_A_skm2.yaml
+(base) [sxm2:hxie1]#
+
+
+
+
 # May 1st, Saturday, 2021
 Test error(meean patient absolute error) on reduced training data on JHU data:
 ===========================================================================================================================
@@ -21,6 +43,7 @@ Notes:
     test     set: 8 health control patients(HC), 12 mulitple sclerosis patients(MS)
 2  JHU OCT data set: 9 surfaces, H=128, W = 1024, 49 Bscan/volume, 3.86725 um/pixel in A scan direction.
 3  Soft Separation involves matrix inverse operation of size of 9216x9216, very slow.
+4  YufanHe's paper reported the 100% training got muError 2.83 um, higher than my implementation.
 
 
 
