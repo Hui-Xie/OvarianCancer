@@ -19,15 +19,16 @@ waiting for test result:
 
 JHU test data on surface prediction
 ===============================================================================================================================
-ExperimentName  muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)    Notes
-
+ExperimentName                                          muError stdError    muSurfaceError(0-8)                                                         stdSurfaceError(0-8)                                                    HausdorffDistance(pixel)             Notes
+expJHU_20210429_SurfaceSubnet_fullData_A_iibi007        2.8055  1.0587      2.3776, 2.9819, 2.8236, 3.1029, 2.7316, 2.6560, 2.0537, 3.4722, 3.0501      0.3840, 0.6973, 0.4049, 0.4542, 0.6341, 0.6381, 0.9800, 0.8224, 2.3743  54  44  35  32  28 17  12  11  12
+expJHU_20210430_SoftSeparation_D_fullData_A_iibi007     2.8025  1.0590      2.3736, 2.9787, 2.8208, 3.1000, 2.7249, 2.6556, 2.0523, 3.4682, 3.0486      0.3840, 0.6980, 0.4051, 0.4547, 0.6342, 0.6382, 0.9809, 0.8235, 2.3750  54  44  35  32  28 17  12  11  12
 
 
 
 
 JHU test data on Thickness
 ==============================================================================================================================
-ExperimentName  muError stdError  muSurfaceError(0-2)       stdSurfaceError(0-2)        HausdorffDistance(pixel)    Notes
+ExperimentName  muError stdError  muSurfaceError(0-8)       stdSurfaceError(0-8)        HausdorffDistance(pixel)    Notes
 
 
 
