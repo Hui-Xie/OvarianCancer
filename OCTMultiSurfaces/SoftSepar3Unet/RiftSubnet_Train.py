@@ -114,7 +114,7 @@ def main():
     epochs = 1360000
     preTrainingLoss = 999999.0
     preValidLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 2041  # float 16 has maxvalue: 2048
-    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 4.3
+    preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 10.0
     if net.training:
         initialEpoch = net.getRunParameter("epoch") if "epoch" in net.m_runParametersDict else 0
     else:

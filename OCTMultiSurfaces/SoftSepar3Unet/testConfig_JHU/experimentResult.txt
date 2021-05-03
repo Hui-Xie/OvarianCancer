@@ -1,12 +1,12 @@
 # May 3rd, Monday, 2021:
 Waiting for test result:
-1  expJHU_20210430_SoftSeparation_D_fullData_A_iibi007
+1  expJHU_20210430_SoftSeparation_D_fullData_A_iibi007: test running.
 
 
 waiting for test result:
 (base) [sxm2:hxie1]#ps 24333 121466 121703 81697 122322 122566 104498 121944 122093
    PID TTY      STAT   TIME COMMAND
- 24333 ?        Rl   5105:53 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_SurfaceSubnetM5_fullData_A_skm2.yaml
+ 24333 ?        Rl   5105:53 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_SurfaceSubnetM5_fullData_A_skm2.yaml     test Running.
  81697 ?        Rl   14805:24 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_YufanHe_fullData_A_skm2.yaml
 104498 ?        Rl   17790:17 python3 ./RiftSubnet_Train.py ./testConfig_JHU/expJHU_20210501_ThicknessM5_fullData_A_skm2.yaml
 121466 ?        Rl   5578:51 python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210501_SurfaceSubnetM5_1HC1MS_A_skm2.yaml

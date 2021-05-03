@@ -346,7 +346,7 @@ def main():
         if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
             plt.savefig(os.path.join(volumePath,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         else:
-            plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+            plt.savefig(os.path.join(hps.imagesOutputDir, imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     print(f"============ End of Cross valiation test for OCT Multisurface Network: {hps.experimentName} ===========")
