@@ -4,13 +4,14 @@
 import torch
 import math
 
-def computeMuVariance(x, layerMu=None, layerConf=None): # without square weight
+def computeMuVariance(x, layerMu=None, layerConf=None, rangeH=None): # without square weight
     '''
     Compute the mean and variance along H direction of each surface.
 
     :param x: in (BatchSize, NumSurface, H, W) dimension, the value is probability (after Softmax) along each Height direction
            LayerMu: the referred surface mu from LayerProb, in size(B,N,W); where N = NumSurface.
            LayerConf: the referred surface confidence from LayerProb, in size(B,N,W)
+           rangeH: the maximum mu computed.
     :return: mu:     mean in (BatchSize, NumSurface, W) dimension
              sigma2: variance in (BatchSize, Numsurface, W) dimension
     '''
@@ -18,9 +19,11 @@ def computeMuVariance(x, layerMu=None, layerConf=None): # without square weight
 
     device = x.device
     B,N,H,W = x.size() # Num is the num of surface for each patient
+    if rangeH is None:
+        rangeH = H
 
     # compute mu
-    Y = torch.arange(H).view((1,1,H,1)).expand(x.size()).to(device=device, dtype=torch.int16)
+    Y = torch.arange(0, rangeH, step=rangeH/H).view((1,1,H,1)).expand(x.size()).to(device=device, dtype=torch.float32)
     # mu = torch.sum(x*Y, dim=-2, keepdim=True)
     # use slice method to compute P*Y
     for b in range(B):
