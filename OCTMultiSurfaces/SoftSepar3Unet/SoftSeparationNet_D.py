@@ -18,6 +18,7 @@ from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from ThicknessSubnet_M5 import ThicknessSubnet_M5
 from LambdaModule_D import LambdaModule_D
 from LambdaModule_E import LambdaModule_E
+from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 
 
 sys.path.append("../..")

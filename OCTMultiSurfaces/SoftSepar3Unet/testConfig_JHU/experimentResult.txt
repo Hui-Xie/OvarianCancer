@@ -34,7 +34,6 @@ Analysis:
 3  Combine surfaceSubnet_M5 and ThicknessM5 together to do softSepearation.
     A.  Combine surfaceSubnet_M5 and ThicknessM5
     B.  combine YufanHe  and ThicknessM5.
-    
 4  In fullData, the HD distance in thickness network is less than surfaceSubnet, it predict that softSeparation will improves the result.
 
 
