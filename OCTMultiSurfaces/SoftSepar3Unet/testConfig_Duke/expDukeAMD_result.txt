@@ -16,6 +16,8 @@ Comapre with diffferent data sets:
 3 OCT_JHU data:
     training set: 6 health control patients(HC), 9 multiple sclerosis patients(MS).
     test     set: 8 health control patients(HC), 12 mulitple sclerosis patients(MS)
+    49 Bcans / volume.
+
 
 
 # May 03th, Monday, 2021
@@ -49,8 +51,8 @@ expDuke_20210204A_H5_Thickness_YufanHe_skm2         4.7477   2.3756    5.2286,  
 
 expDuke_20210325A_Thickness_M2_iibi007              3.4882   2.4069    2.8775,   4.0990    46.7938    52.8766     YufanHe Network(expDuke_20210121C)+ smooth Module.
 
-expDuke_20210503_Thickness_M5_iibi007               is training.
-expDuke_20210503_Thickness_N_iibi007                is training.
+expDuke_20210503_Thickness_M5_iibi007               is training, may get result on May 6th.
+expDuke_20210503_Thickness_N_iibi007                is training. may get result on May 6th.
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
