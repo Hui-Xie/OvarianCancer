@@ -1,3 +1,23 @@
+# May 04th, Tuesday, 2021
+
+Comapre with diffferent data sets:
+============================================
+1 Duke AMD data statistics:
+  training set: 266 volumes x 51 slices per volume, where 187 AMD + 79 control = 266 volumes;
+  validation set: 59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
+  test set:  59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
+
+  For training set:  10% of total data is 27 volumes x 51 Bscan/volume, total 27x51 = 1377 Bscans.
+
+2 OCT_Tongren Control data:
+  test: 5 patients;  validation: 5 patients;  training: 36 patients,
+  total Bscan in training: 36x31 = 1116 Bscans.
+
+3 OCT_JHU data:
+    training set: 6 health control patients(HC), 9 multiple sclerosis patients(MS).
+    test     set: 8 health control patients(HC), 12 mulitple sclerosis patients(MS)
+
+
 # May 03th, Monday, 2021
 Use ThicknessSubnet_M5 to do Duke AMD thickness data again.
 
