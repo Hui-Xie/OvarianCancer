@@ -1,6 +1,5 @@
 # May 04th, Tuesday, 2021
-
-Comapre with diffferent data sets:
+Compare with diffferent data sets:
 ============================================
 1 Duke AMD data statistics:  51 Bscan / volume.
   training set: 266 volumes x 51 slices per volume, where 187 AMD + 79 control = 266 volumes;
