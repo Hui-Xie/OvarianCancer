@@ -8,18 +8,20 @@ sys.path.append("..")
 from network.OCTAugmentation import *
 
 class OCTDataTransform(object):
-    def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False):
+    def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False, flippingProb=0.0):
         super().__init__()
         self.m_prob = prob
         self.m_noiseStd = noiseStd
         self.m_saltPepperRate = saltPepperRate
         self.m_saltRate = saltRate
         self.m_rotation = rotation
+        self.m_flippingProb = flippingProb
 
     def __call__(self, inputData, inputLabel=None):
         '''
 
         :param inputData:  a normalized Tensor of size(H,W),
+               intputLabel: NxW
         :return:
         '''
         H,W = inputData.shape
@@ -53,6 +55,11 @@ class OCTDataTransform(object):
         if self.m_rotation and inputLabel is not None:
             rotation = random.randint(0,359)
             data, label = polarImageLabelRotate_Tensor(data, label, rotation=rotation)
+
+        if random.uniform(0, 1) < self.m_flippingProb:
+            data = torch.flip(data, [1])  # flip horizontal
+            if label is not None:
+                label = torch.flip(label, [1])
 
         if inputLabel is None:
             return data

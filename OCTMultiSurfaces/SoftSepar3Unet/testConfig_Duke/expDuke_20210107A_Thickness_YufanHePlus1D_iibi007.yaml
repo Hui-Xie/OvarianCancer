@@ -70,6 +70,7 @@ gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 rotation: False
+flippingProb: 0.3
 lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
