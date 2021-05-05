@@ -1,3 +1,18 @@
+# May 05th, Wednesday, 2021:
+Best Surface Subnet design:
+1  use MultiSurfaceCrossEntropyLoss on surface locations probability.
+2  use SmoothL1Loss on surface locations.
+3  After all losses, use ReLU to correct surface order.
+
+Best Thickness Subnet design:
+1  From surface locaiton to refer the thickness.
+2  use MultiSurfaceCrossEntropyLoss on surface locations probability.
+3  use SmoothL1Loss on thickness.
+4  do not use ReLU.
+
+
+
+
 # May 04th, Tuesday, 2021
 Compare with diffferent data sets:
 ============================================

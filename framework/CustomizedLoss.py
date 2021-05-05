@@ -483,6 +483,12 @@ class GeneralizedDiceLoss():
         return GDL
 
 class SmoothSurfaceLoss():
+    '''
+    This kind of loss leads prediction offset ground truth in a same side.
+    ((s0-s1) -(g0-g1))^2 = ((s0-g0)-(s1-g1))^2 = (s0-g0)^2 + (s1-g1)^2 - 2(s0-g0)(s1-g1)
+    the final term at above formula forces s0 and s1 at the same direction of g0 and g1.
+
+    '''
     def __init__(self, mseLossWeight=10.0):
         self.mseLossWeight = mseLossWeight  # weight for embedded MSE loss
 

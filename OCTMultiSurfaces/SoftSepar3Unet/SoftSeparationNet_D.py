@@ -14,8 +14,10 @@ from network.OCTAugmentation import *
 sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
 from SurfaceSubnet_M5 import SurfaceSubnet_M5
+from SurfaceSubnet_P import SurfaceSubnet_P
 from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from ThicknessSubnet_M5 import ThicknessSubnet_M5
+from ThicknessSubnet_P import ThicknessSubnet_P
 from LambdaModule_D import LambdaModule_D
 from LambdaModule_E import LambdaModule_E
 from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
