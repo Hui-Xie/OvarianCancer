@@ -1,3 +1,16 @@
+#May 5th, Wednesday, 2021:
+Meeting time: 10am -11am May 5th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: about the OCT segmentation tool.
+Minutes:
+1 In the thin RNFL case, there is still some boundary information of low boundary of the thin RNFL.
+2 Some time, the Ophthalmologist needs to use other Bscan information to infer the surface boundary of the current Bscan.
+3 The dataset for glaucoma:
+  diseased cases: about 25, control case: about 25,   with size of 200x200x1024, where X: #Ascans, Y:#Bscans, Z, Penetration depth.
+  number of surfaces: about 5.
+  OCT may have different dimension size, we need to unify them into one same size.
+4 further thinking: Use volume OCT image with VAE to detect Bruch membrane opening (BMO).
+
 
 # April 29th,Thursday, 2021:
 Questions needing discussions:

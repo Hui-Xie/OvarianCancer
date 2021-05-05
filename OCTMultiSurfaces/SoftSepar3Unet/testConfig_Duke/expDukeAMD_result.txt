@@ -1,4 +1,34 @@
 # May 04th, Tuesday, 2021
+Use semi-supervised method  on Duke_AMD data
+some risks:
+1   The lambda formula after the formula 3 in page 5 is incorrect:  when T=3, lambda=2e-9; we need found a correct lambda formula.
+2   In the inference stage, does the final test use student model or teacher model? This paper didn't explicitly express it. It may be the student network.
+    If the final inference uses the student network, the teacher network acts a data augment network in training stage
+    to give new augmented samples to the student network to learn, and the teacher is improving from student's progress.
+    But if for unlabeled sample, student network makes mistakes, and then the mistakes will spread to the teacher network by teaching learning.
+    This is also one of reason that leads learning very slow.
+
+3   Its 2 experiments used 8K epochs and 9K epochs respectively for training, which is a huge time risk for us. Our AMD data need about 40 min/epoch, as its huge number.
+4   What is the initial parameters for teacher network? If it is initalized randomly, and alpha=0.999,
+    which means it slowly(0.001 every batch) accumulate weight from  the student network. It will lead training very slow.
+    Maybe this is the reason why it need 8K and 9K epochs for training.
+
+Work plan for Duke_AMD data:
+1   write script to cut training set in parts: 1d
+2   rewrite dataset to load half labeled data and half unlabeled data in each batch: 1d
+3   implement input and output transform:   1d.
+4   implement semi supervised learning algorithm and network, optimizing mechanism: 3d
+5   write new training script:  1d;
+6   write new test script: 1d;
+7   training with labeled data and unlabeled data (two networks, and total data): 7d
+8   adjust different rate of labeled data for training: 2d.
+9   currently unknown risk buffer: 2d.
+
+
+Total time: 19 working days = 3 weeks for 6 day/week.
+
+
+
 
 Compare with diffferent data sets:
 ============================================
