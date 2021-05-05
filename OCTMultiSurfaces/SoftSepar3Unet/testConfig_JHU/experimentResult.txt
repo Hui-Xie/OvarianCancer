@@ -8,7 +8,8 @@ Best Thickness Subnet design:
 1  From surface locaiton to refer the thickness.
 2  use MultiSurfaceCrossEntropyLoss on surface locations probability.
 3  use SmoothL1Loss on thickness.
-4  do not use ReLU.
+4  do not use ReLU, as a negative thickness does not hurt some thing.
+
 
 
 
