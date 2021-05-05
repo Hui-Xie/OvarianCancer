@@ -78,14 +78,14 @@ class SurfaceSubnet_P(BasicModel):
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
 
-        S = mu
+        S = mu.clone()
         loss = 0.0
         if (self.getStatus() != "test") and self.hps.existGTLabel:
             multiSurfaceCE = MultiSurfaceCrossEntropyLoss()
             loss_ce = multiSurfaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
             l1Loss = nn.SmoothL1Loss().to(device)
-            loss_L1 = l1Loss(S, GTs)
+            loss_L1 = l1Loss(mu, GTs)
 
             loss =  loss_ce + loss_L1
 
