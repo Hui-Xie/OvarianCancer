@@ -55,6 +55,9 @@ class SurfaceSubnet_M5(BasicModel):
                 x = inputs
             else:
                 x = skipxs[i-1]
+            print(f"network.device = {self.device}")
+            print(f"x.device  = {x.device}")
+            print(f"self.m_downPoolings = {self.m_downPoolings[i]}")
             x = self.m_downPoolings[i](x)
             skipxs[i] = self.m_downLayers[i](x) + x
 
