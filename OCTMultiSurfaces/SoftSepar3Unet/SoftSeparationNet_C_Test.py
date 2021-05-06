@@ -95,7 +95,9 @@ def main():
     # Important:
     # If you need to move a model to GPU via .cuda(), please do so before constructing optimizers for it.
     # Parameters of a model after .cuda() will be different objects with those before the call.
-    net.to(device=hps.device)
+
+    # network inside has manage device.
+    # net.to(device=hps.device)
 
     # Load network
     # as all subnet has load by itself.
