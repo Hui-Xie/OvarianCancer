@@ -1,3 +1,8 @@
+# May 06th, Thursday, 2021:
+1  When model size doubles, test error decreases.  But there is double descent phenomenon.
+2  When prunning network, as features are correlated, retraining or finetune is very important.
+
+
 # May 05th, Wednesday, 2021:
 Best Surface Subnet design:
 1  use MultiSurfaceCrossEntropyLoss on surface locations probability.
