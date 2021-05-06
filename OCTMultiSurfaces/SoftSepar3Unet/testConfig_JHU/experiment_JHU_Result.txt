@@ -56,12 +56,18 @@ expJHU_20210503_SoftSeparation_YufanHeM5_fullData_B_skm2    2.7998  1.0310      
 
 Summary:
 1  YufanHe's paper report result on above JHU data: muError=2.83 um.
-2  expJHU_20210503_SoftSeparation_M5_fullData_A_skm2: use surfaceSubnet expJHU_20210501_SurfaceSubnetM5_fullData_A_skm2, and thicknessSubnet expJHU_20210501_ThicknessM5_fullData_A_skm2;
+2  OCT_JHU data: 49 Bcans / volume.
+    training set: 6 health control patients(HC), 9 multiple sclerosis patients(MS).
+    test     set: 8 health control patients(HC), 12 mulitple sclerosis patients(MS)
+3  expJHU_20210503_SoftSeparation_M5_fullData_A_skm2: use surfaceSubnet expJHU_20210501_SurfaceSubnetM5_fullData_A_skm2, and thicknessSubnet expJHU_20210501_ThicknessM5_fullData_A_skm2;
    expJHU_20210503_SoftSeparation_YufanHeM5_fullData_B_skm2:  use surfaeSubnet  expJHU_20210501_YufanHe_fullData_A_skm2, and thicknessSubnet expJHU_20210501_ThicknessM5_fullData_A_skm2.
-3  The accuracy of surfaceSubnet decides the final accuracy of softSeparation.
+   Both softSeparation networks improve a little over its corresponding surface subnet.
+4  The accuracy of surfaceSubnet decides the final accuracy of softSeparation.
    When sufaceError=2.8 um, and thicknessError 3.72 um (=1.33  x surafceError), in the context of pixel size = 3.87um, softSeparation improvement is not significant.
-   In this JHU data, soft Separation method does not explict improve the Hausdorff distance.
-4   
+   In this JHU data, soft Separation method does not explicitly improve the Hausdorff distance.
+5  In reduced data design of JHU data, (maybe 1 HC and 1 MS patient is too extreme), reduced data does not keep same accuracy.
+   As Duke_AMD data is big (266 patient for training), reudced data of 10%  is still bigger than JHU full data. It may will be ok.
+
 
 
 
