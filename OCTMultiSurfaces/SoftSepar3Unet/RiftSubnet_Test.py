@@ -33,6 +33,7 @@ from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from ThicknessSubnet_M3 import ThicknessSubnet_M3
 from ThicknessSubnet_M5 import ThicknessSubnet_M5
 from ThicknessSubnet_P import ThicknessSubnet_P
+from ThicknessSubnet_Q import ThicknessSubnet_Q
 from ThicknessSubnet_N  import ThicknessSubnet_N
 
 import time

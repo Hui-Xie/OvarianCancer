@@ -74,9 +74,9 @@ Summary:
    expJHU_20210503_SoftSeparation_YufanHeM5_fullData_B_skm2:  use surfaeSubnet  expJHU_20210501_YufanHe_fullData_A_skm2, and thicknessSubnet expJHU_20210501_ThicknessM5_fullData_A_skm2.
    Both softSeparation networks improve a little over its corresponding surface subnet.
 4  The accuracy of surfaceSubnet decides the final accuracy of softSeparation.
-   When sufaceError=2.8 um, and thicknessError 3.72 um (=1.33  x surafceError), in the context of pixel size = 3.87um, softSeparation improvement is not significant.
+   When sufaceError=2.8 um, and thicknessError 3.72 um (=1.33  x surafceError), in the context of pixel size = 3.87um, softSeparation improvement is still not significant.
 5  In reduced data design of JHU data, (maybe 1 HC and 1 MS patient is too extreme), reduced data does not keep same accuracy.
-   As Duke_AMD data is big (266 patient for training), reudced data of 10%  is still bigger than JHU full data. It may will be ok.
+   As Duke_AMD data is big (266 patient for training), reuducing data to 10% is still bigger than JHU full data. It may will be ok.
 6  This result is similar with Duke_AMD result: softSeparation improve surface error a little.
    In this JHU data, soft Separation method does not explicitly improve the Hausdorff distance.
    While in Duke_AMD data, our surfaceNet, instead of softSeparation, improves Hausdorff distance.

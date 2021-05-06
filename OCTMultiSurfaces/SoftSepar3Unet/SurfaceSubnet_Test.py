@@ -20,6 +20,7 @@ from SurfaceSubnet_M import SurfaceSubnet_M  # smooth module surface net
 from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 from SurfaceSubnet_M5 import SurfaceSubnet_M5
 from SurfaceSubnet_P import SurfaceSubnet_P
+from SurfaceSubnet_Q import SurfaceSubnet_Q
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *
