@@ -57,7 +57,7 @@ class SurfaceSubnet_M5(BasicModel):
                 x = skipxs[i-1]
             print(f"self.hps.device = {self.hps.device}")
             print(f"x.device  = {x.device}")
-            print(f"self.m_downPoolings = {self.m_downPoolings[i]}")
+            print(f"self.m_downPoolings.m_conv.weight.device = {self.m_downPoolings[i].m_conv.weight.device}")
             x = self.m_downPoolings[i](x)
             skipxs[i] = self.m_downLayers[i](x) + x
 
