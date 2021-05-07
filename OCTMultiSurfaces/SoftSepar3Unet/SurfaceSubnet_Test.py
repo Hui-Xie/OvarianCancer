@@ -325,7 +325,7 @@ def main():
                 subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), PredictionColor[s%3], linewidth=1.5)
                 legendList.append(f"Prediction_s{s}")
             if needLegend:
-                subplot3.legend(legendList, loc='lower center', ncol=2)
+                subplot3.legend(legendList, loc='lower center', ncol=2, fontsize='x-small')
         else:
             for s in range(0, S):
                 subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
