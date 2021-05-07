@@ -114,8 +114,8 @@ class MergeNet_Q(BasicModel):
         if len(os.listdir(lambdaNetPath)) == 0:
             lambdaNetPath = None  # network will load from default directory
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode,netPath=lambdaNetPath)
-        if lambdaMode=="train" and hps.lambdaSubnetLrReset:
-            self.m_lambdaSubnet.resetLrScheduler(hps.lambdaSubnetLr)
+        if lambdaMode=="train" and hps.lambdaModuleLrReset:
+            self.m_lambdaModule.resetLrScheduler(hps.lambdaModuleLr)
 
         self.setSubnetsStatus(surfaceMode, thicknessMode, lambdaMode)
 
