@@ -137,7 +137,7 @@ class MergeNet_Q(BasicModel):
 
     def forward(self, images, imageYX, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         Mu, Sigma2, surfaceLoss, surfaceX = self.m_surfaceSubnet.forward(images.to(self.m_sDevice),
-                                     gaussianGTs=gaussianGTs.to(self.m_sDevice),
+                                     gaussianGTs=gaussianGTs.to(self.m_sDevice) if isinstance(gaussianGTs, torch.Tensor) else None,
                                      GTs=GTs.to(self.m_sDevice), layerGTs=layerGTs.to(self.m_sDevice))
 
         # input channels: raw+Y+X
