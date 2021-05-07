@@ -219,7 +219,7 @@ class SoftSeparationNet_D(BasicModel):
                                      GTs=GTs.to(self.m_sDevice), layerGTs=layerGTs.to(self.m_sDevice))
 
         # input channels: raw+Y+X
-        R, thicknessLoss, thicknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=None, layerGTs=layerGTs.to(self.m_rDevice),
+        R, thicknessLoss, thicknessX = self.m_thicknessSubnet.forward(imageYX.to(self.m_rDevice), gaussianGTs=None,GTs=GTs.to(self.m_rDevice), layerGTs=layerGTs.to(self.m_rDevice),
                                                 riftGTs= riftGTs.to(self.m_rDevice))
 
         # detach from surfaceSubnet and thicknessSubnet
