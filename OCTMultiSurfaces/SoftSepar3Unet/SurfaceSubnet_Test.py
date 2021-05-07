@@ -237,7 +237,8 @@ def main():
             continue
 
         f = plt.figure(frameon=False)
-        DPI = f.dpi
+        # DPI = f.dpi
+        DPI = 100.0
 
         if OutputNumImages==2:
             if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
