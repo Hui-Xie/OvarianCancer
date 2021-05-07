@@ -38,8 +38,14 @@ class segmentModule_Q(BasicModel):
             nn.Conv2d(segC, N, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:BxNxHxW
 
-    def copyWeight(self, convBlock1, convBlock2, conv2d):
-
+    def copyWeightFrom(self, surfaceSeq, thickSeq):
+        assert (len(surfaceSeq) == len(thickSeq))
+        with torch.no_grad():
+            self.m_mergeSurfaces[0].m_conv.weight.data = torch.cat((surfaceSeq[0].m_conv.weight.data.clone(),
+                                                               thickSeq[0].m_conv.weight.data.clone()), dim=1)
+            self.m_mergeSurfaces[0].m_conv.bias.data = 0.5*(surfaceSeq[0].m_conv.bias.data.clone()+thickSeq[0].m_conv.bias.data.clone())
+            self.m_mergeSurfaces[1].weight.data = 0.5*(surfaceSeq[1].weight.data.clone()+ thickSeq[1].weight.data.clone())
+            self.m_mergeSurfaces[1].bias.data = 0.5 * (surfaceSeq[1].bias.data.clone() + thickSeq[1].bias.data.clone())
 
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):

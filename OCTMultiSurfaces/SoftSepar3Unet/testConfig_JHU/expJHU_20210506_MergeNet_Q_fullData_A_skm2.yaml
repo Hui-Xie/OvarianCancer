@@ -70,7 +70,7 @@ thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not 
 lambdaModule: "segmentModule_Q"
 lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
-lambdaModuleLr: 0.1
+lambdaModuleLr: 0.001
 
 netPath: "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""
