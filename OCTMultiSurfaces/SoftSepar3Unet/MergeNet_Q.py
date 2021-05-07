@@ -108,88 +108,7 @@ class MergeNet_Q(BasicModel):
             lambdaNetPath = None  # network will load from default directory
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode,netPath=lambdaNetPath)
 
-
-
         self.setSubnetsStatus(surfaceMode, thicknessMode, lambdaMode)
-
-        # define the constant matrix B of size NxN and C of size Nx(N-1)
-        N = self.m_surfaceSubnet.hps.numSurfaces
-        self.m_B = torch.zeros((1, N, N), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
-        self.m_B[0, 0, 1] = 1.0
-        self.m_B[0, N-1, N-2] = 1.0
-        for i in range(1, N - 1):
-            self.m_B[0, i, i-1] = 0.5
-            self.m_B[0, i, i+1] = 0.5
-
-        self.m_C = torch.zeros((1, N, N-1), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
-        self.m_C[0, 0, 0] = -1.0
-        self.m_C[0, N - 1, N - 2] = 1.0
-        for i in range(1, N - 1):
-            self.m_C[0, i, i - 1] = 0.5
-            self.m_C[0, i, i] = -0.5
-
-        # define the 5-point center moving average smooth matrix
-        W = hps.inputWidth
-        self.m_smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=self.m_lDevice,
-                                     requires_grad=False)  # 5-point smooth matrix
-        # 0th column and W-1 column
-        self.m_smoothM[0, 0, 0] = 1.0 / 2
-        self.m_smoothM[0, 1, 0] = 1.0 / 2
-        self.m_smoothM[0, W - 2, W - 1] = 1.0 / 2
-        self.m_smoothM[0, W - 1, W - 1] = 1.0 / 2
-        # 1th column and W-2 column
-        self.m_smoothM[0, 0, 1] = 1.0 / 3
-        self.m_smoothM[0, 1, 1] = 1.0 / 3
-        self.m_smoothM[0, 2, 1] = 1.0 / 3
-        self.m_smoothM[0, W - 3, W - 2] = 1.0 / 3
-        self.m_smoothM[0, W - 2, W - 2] = 1.0 / 3
-        self.m_smoothM[0, W - 1, W - 2] = 1.0 / 3
-        # columns from 2 to W-2
-        for i in range(2, W - 2):
-            self.m_smoothM[0, i - 2, i] = 1.0 / 5
-            self.m_smoothM[0, i - 1, i] = 1.0 / 5
-            self.m_smoothM[0, i, i] = 1.0 / 5
-            self.m_smoothM[0, i + 1, i] = 1.0 / 5
-            self.m_smoothM[0, i + 2, i] = 1.0 / 5
-
-        self.m_A = torch.zeros((1, N-1, N), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
-        for i in range(0, N - 1):
-            self.m_A[0, i, i] = 1.0
-            self.m_A[0, i, i+1] = -1.0
-
-        self.m_D = torch.zeros((1, W, W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
-        # 0th column and W-1 column
-        self.m_D[0, 0, 0] = -25
-        self.m_D[0, 1, 0] = 48
-        self.m_D[0, 2, 0] = -36
-        self.m_D[0, 3, 0] = 16
-        self.m_D[0, 4, 0] = -3
-        self.m_D[0,1:6,1] = self.m_D[0,0:5,0]
-
-        self.m_D[0, W-5, W-1] = 3
-        self.m_D[0, W-4, W-1] = -16
-        self.m_D[0, W-3, W-1] = 36
-        self.m_D[0, W-2, W-1] = -48
-        self.m_D[0, W-1, W-1] = 25
-        self.m_D[0, W - 6: W-1, W - 2]  = self.m_D[0, W-5:W, W-1]
-        # columns from 2 to W-2
-        for i in range(2, W - 2):
-            self.m_D[0, i - 2, i] = 1.0
-            self.m_D[0, i - 1, i] = -8.0
-            self.m_D[0, i + 1, i] = 8.0
-            self.m_D[0, i + 2, i] = -1.0
-
-        # define some matrix for model 3
-        self.m_bigA = torch.zeros((1, (N-1)*W, N*W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
-        for i in range(0, (N - 1)*W):
-            self.m_bigA[0, i, i] = 1.0
-            self.m_bigA[0, i, i+W] = -1.0
-
-        self.m_bigD = torch.zeros((1, (N-1)*W, (N-1)*W), dtype=torch.float32, device=self.m_lDevice, requires_grad=False)
-        Dt = self.m_D.transpose(-1,-2) # size: 1xWxW
-        for i in range(0,N-1):
-            self.m_bigD[0,i*W:(i+1)*W,i*W:(i+1)*W] = Dt
-
 
     def getSubnetModes(self):
         if self.hps.status == "trainLambda":
@@ -234,64 +153,25 @@ class MergeNet_Q(BasicModel):
 
         surfaceX = surfaceX.to(self.m_lDevice)
         thicknessX = thicknessX.to(self.m_lDevice)
-        R = R.to(self.m_lDevice)
-        Mu = Mu.to(self.m_lDevice)
-        Sigma2 = Sigma2.to(self.m_lDevice)
-        if not isinstance(surfaceLoss,float):
-            surfaceLoss = surfaceLoss.to(self.m_lDevice)
-        if not isinstance(thicknessLoss, float):
-            thicknessLoss = thicknessLoss.to(self.m_lDevice)
+        # R = R.to(self.m_lDevice)
+        # Mu = Mu.to(self.m_lDevice)
+        # Sigma2 = Sigma2.to(self.m_lDevice)
+        #if not isinstance(surfaceLoss,float):
+        #    surfaceLoss = surfaceLoss.to(self.m_lDevice)
+        #if not isinstance(thicknessLoss, float):
+        #    thicknessLoss = thicknessLoss.to(self.m_lDevice)
 
         # Lambda return backward propagation
         X = torch.cat((surfaceX, thicknessX), dim=1)
-        nB, nC, H, W = X.shape
-        Lambda = self.m_lambdaModule.forward(X)  # size: nBx(N-1)xW
+        # nB, nC, H, W = X.shape
+        S, lambdaSigma2, lambdaLoss = self.m_lambdaModule.forward(X, GTs=GTs.to(self.m_lDevice))  # size: nBxNxW
 
         # free memory
         del surfaceX
         del thicknessX
         del X
 
-        N = self.m_surfaceSubnet.hps.numSurfaces
-        #B = self.m_B.expand(nB, N, N)
-        #C = self.m_C.expand(nB, N, N - 1)
-        #M = self.m_smoothM.expand(nB, W, W)
-        bigA = self.m_bigA.expand(nB,(N-1)*W, N*W)
-        bigD = self.m_bigD.expand(nB,(N-1)*W, (N-1)*W)
-        diagQ = torch.diag_embed(Sigma2.view(nB,-1),offset=0) # size: nBxNWxNW
-        del Sigma2
-
-        Alpha = Lambda # size: nBxN-1xW
-        diagAlpha = torch.diag_embed(Alpha.view(nB,-1),offset=0) # size: nBx(N-1)Wx(N-1)W
-
-        bmm = torch.bmm  # for concise notation
-
-        #S0 = bmm(Lambda*Mu+(1.0-Lambda)*(bmm(B, Mu)+bmm(C,R)), M) # size:nBxNxW
-        #vS0 = S0.view(nB,N*W,1)
-        vMu = Mu.view(nB, N*W,1)
-        vR  = R.view(nB,(N-1)*W, 1)
-
-        # intermediate variable Z with size: nBxNWx(N-1)W
-        Z = bmm(bigA.transpose(-1,-2),bmm(bigD.transpose(-1,-2),bmm(diagAlpha,bigD)))
-        del bigD
-        del diagAlpha
-        # soft separation optimization model 3
-        vS = bmm( torch.inverse(diagQ+bmm(Z,bigA)),(bmm(diagQ,vMu)-bmm(Z,vR)) ) #size: nBxNWx1
-        del Z
-        del bigA
-        del diagQ
-
-        S = vS.view(nB,N,W)
-
-        for i in range(1, N):  #ReLU
-            S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
-
-        # compute loss
-        G = GTs.to(self.m_lDevice)
-        lossFunc = torch.nn.SmoothL1Loss()  # L1 loss to avoid outlier exploding gradient.
-        lambdaLoss = lossFunc(S,G)
-
-        return S, surfaceLoss, thicknessLoss, lambdaLoss
+        return S, 0, 0, lambdaLoss  # return S, surfaceLoss, thicknessLoss, lambdaLoss
 
     def zero_grad(self):
         if None != self.m_surfaceSubnet.m_optimizer:
@@ -324,9 +204,10 @@ class MergeNet_Q(BasicModel):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_lrScheduler.step(lambdaLoss)
         elif self.hps.status == "fineTune":
-            self.m_lambdaModule.m_lrScheduler.step(lambdaLoss)
-            self.m_surfaceSubnet.m_lrScheduler.step(surfaceLoss)
-            self.m_thicknessSubnet.m_lrScheduler.step(thickLoss)
+            loss = surfaceLoss + thickLoss + lambdaLoss
+            self.m_lambdaModule.m_lrScheduler.step(loss)
+            self.m_surfaceSubnet.m_lrScheduler.step(loss)
+            self.m_thicknessSubnet.m_lrScheduler.step(loss)
         else:
             pass
 

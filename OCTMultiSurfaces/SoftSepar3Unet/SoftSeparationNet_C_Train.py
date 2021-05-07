@@ -16,6 +16,7 @@ from network.OCTTransform import *
 sys.path.append(".")
 from SoftSeparationNet_C import SoftSeparationNet_C
 from SoftSeparationNet_D import SoftSeparationNet_D
+from MergeNet_Q import MergeNet_Q
 
 sys.path.append("../..")
 from utilities.FilesUtilities import *

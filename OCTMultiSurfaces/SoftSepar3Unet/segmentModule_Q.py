@@ -40,13 +40,13 @@ class segmentModule_Q(BasicModel):
 
     def copyWeightFrom(self, surfaceSeq, thickSeq):
         assert (len(surfaceSeq) == len(thickSeq))
+        device = self.hps.device
         with torch.no_grad():
-            self.m_mergeSurfaces[0].m_conv.weight.data = torch.cat((surfaceSeq[0].m_conv.weight.data.clone(),
-                                                               thickSeq[0].m_conv.weight.data.clone()), dim=1)
-            self.m_mergeSurfaces[0].m_conv.bias.data = 0.5*(surfaceSeq[0].m_conv.bias.data.clone()+thickSeq[0].m_conv.bias.data.clone())
-            self.m_mergeSurfaces[1].weight.data = 0.5*(surfaceSeq[1].weight.data.clone()+ thickSeq[1].weight.data.clone())
-            self.m_mergeSurfaces[1].bias.data = 0.5 * (surfaceSeq[1].bias.data.clone() + thickSeq[1].bias.data.clone())
-
+            self.m_mergeSurfaces[0].m_conv.weight.data = torch.cat((surfaceSeq[0].m_conv.weight.data.to(device),
+                                                               thickSeq[0].m_conv.weight.data.to(device)), dim=1)
+            self.m_mergeSurfaces[0].m_conv.bias.data = 0.5*(surfaceSeq[0].m_conv.bias.data.to(device)+thickSeq[0].m_conv.bias.data.to(device))
+            self.m_mergeSurfaces[1].weight.data = 0.5*(surfaceSeq[1].weight.data.to(device)+ thickSeq[1].weight.data.to(device))
+            self.m_mergeSurfaces[1].bias.data = 0.5 * (surfaceSeq[1].bias.data.to(device) + thickSeq[1].bias.data.to(device))
 
     def forward(self, inputs, gaussianGTs=None, GTs=None, layerGTs=None, riftGTs=None):
         # N is numSurfaces

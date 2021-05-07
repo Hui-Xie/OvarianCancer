@@ -322,9 +322,10 @@ class SoftSeparationNet_D(BasicModel):
         if self.hps.status == "trainLambda":
             self.m_lambdaModule.m_lrScheduler.step(lambdaLoss)
         elif self.hps.status == "fineTune":
-            self.m_lambdaModule.m_lrScheduler.step(lambdaLoss)
-            self.m_surfaceSubnet.m_lrScheduler.step(surfaceLoss)
-            self.m_thicknessSubnet.m_lrScheduler.step(thickLoss)
+            loss = surfaceLoss + thickLoss + lambdaLoss
+            self.m_lambdaModule.m_lrScheduler.step(loss)
+            self.m_surfaceSubnet.m_lrScheduler.step(loss)
+            self.m_thicknessSubnet.m_lrScheduler.step(loss)
         else:
             pass
 
