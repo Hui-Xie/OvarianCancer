@@ -59,13 +59,13 @@ lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate sege
 surfaceSubnet: "SurfaceSubnet_Q"
 surfaceSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210506_SurfaceSubnetQ_fullData_A_skm2.yaml"
 surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
-surfaceSubnetLr: 0.005  # pretain at epoch 81  # in test status, it does not care
+surfaceSubnetLr: 0.01  # pretain at epoch 26  # in test status, it does not care
 
 thicknessSubnet: "ThicknessSubnet_Q"
 # for a new trained network.
 thicknessSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210506_ThicknessQ_fullData_A_skm2.yaml"
 thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
-thicknessSubnetLr: 0.05  # pretrain at epoch 60   # in test status, it does not care
+thicknessSubnetLr: 0.1  # pretrain at epoch 37   # in test status, it does not care
 
 lambdaModule: "segmentModule_Q"
 lambdaModuleYaml: ""
