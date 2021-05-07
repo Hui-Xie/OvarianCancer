@@ -297,9 +297,9 @@ def main():
                 subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
             if needLegend:
                 if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
-                    subplot2.legend(surfaceNames, loc='lower center', ncol=4)
+                    subplot2.legend(surfaceNames, loc='lower center', ncol=4, fontsize='x-small')
                 else:
-                    subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+                    subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors),  fontsize='x-small')
             subplot2.axis('off')
 
         subplotIndex += 1
@@ -331,9 +331,9 @@ def main():
                 subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
             if needLegend:
                 if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
-                    subplot3.legend(surfaceNames, loc='lower center', ncol=4)
+                    subplot3.legend(surfaceNames, loc='lower center', ncol=4, fontsize='x-small')
                 else:
-                    subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors))
+                    subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors), fontsize='x-small')
         subplot3.axis('off')
 
         if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
