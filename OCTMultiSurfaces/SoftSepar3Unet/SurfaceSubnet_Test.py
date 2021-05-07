@@ -138,6 +138,7 @@ def main():
 
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
+
         if hps.debug == True:
             print(f"sigma2.shape = {sigma2.shape}")
             print(f"mean of sigma2 = {torch.mean(sigma2, dim=[0,2])}")
