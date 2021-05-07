@@ -26,7 +26,7 @@ dataIn1Parcel: True
 dataInSlice: False
 existGTLabel: True
 
-dataDir: "/raid001/users/hxie1/data/OCT_JHU/numpy"
+dataDir: "/localscratch/Users/hxie1/data/OCT_JHU/numpy"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0
 k: -1   # -1 means do not use cross validation
@@ -95,13 +95,13 @@ TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/localscratch/Users/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
-# below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
+# below loadNetPath is copied from "/localscratch/Users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
 loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
-logDir: "/raid001/users/hxie1/data/OCT_JHU/numpy/log"
-refXMLFile: "/raid001/users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+logDir: "/localscratch/Users/hxie1/data/OCT_JHU/numpy/log"
+refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 # Proximal IPM Optimization
 useProxialIPM: False
