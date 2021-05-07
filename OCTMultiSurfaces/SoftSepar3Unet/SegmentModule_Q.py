@@ -17,7 +17,7 @@ from framework.ConfigReader import ConfigReader
 
 from framework.CustomizedLoss import logits2Prob, MultiSurfaceCrossEntropyLoss
 
-class segmentModule_Q(BasicModel):
+class SegmentModule_Q(BasicModel):
     def __init__(self, inputC,segC, hps=None):
         '''
         inputSize: BxinputCxHxW

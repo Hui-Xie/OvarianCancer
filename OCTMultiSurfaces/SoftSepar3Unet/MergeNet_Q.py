@@ -13,6 +13,7 @@ from network.OCTAugmentation import *
 sys.path.append(".")
 from SurfaceSubnet_Q import SurfaceSubnet_Q
 from ThicknessSubnet_Q import ThicknessSubnet_Q
+from SegmentModule_Q import SegmentModule_Q
 
 sys.path.append("../..")
 from framework.NetTools import *
