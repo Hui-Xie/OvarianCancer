@@ -7,6 +7,7 @@ ExperimentName                                                  muError stdError
 expDuke_20201208A_SurfaceNet_YufanHe_iibi007                    1.9699  2.1109    1.1345, 1.8918, 2.8836    2.5991, 1.5675, 1.6567      153.  40.  71.              Exact JHU YufanHe method, filters=64
 expDuke_20200902A_SurfaceSubnet                                 1.9812  1.9618    1.1122, 1.8904, 2.9410    2.4530, 1.0670, 1.6765      50.   33.  30.              Pure surfaceSubnet.
 expDuke_20210507A_SurfaceSubnetQ64_iibi007                      training, May 11th will have result                                                                 Add segChannel=64
+expDuke_20210507A_SurfaceSubnetQ128_iibi007                     training, May 11th will have result                                                                 Add segChannel=128
 =====================================================================================================================================================================================================================
 
 
@@ -94,6 +95,8 @@ expDuke_20210325A_Thickness_M2_iibi007              3.4882   2.4069    2.8775,  
 
 expDuke_20210503_Thickness_M5_iibi007               3.4299   2.1810    2.9082, 3.9517      90         30
 expDuke_20210503_Thickness_N_iibi007                5.1346   3.3735    3.7237, 6.5455      42         80
+expDuke_20210507_ThicknessQ64_skm2                  training, May 10th get result
+expDuke_20210507_ThicknessQ128_skm2                 training, May 10th get result
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
