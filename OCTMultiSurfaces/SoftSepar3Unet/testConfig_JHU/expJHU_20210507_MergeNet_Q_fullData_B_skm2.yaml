@@ -74,6 +74,7 @@ lambdaModuleYaml: ""
 lambdaModuleDevice: torch.device('cuda:3')   #GPU ID
 lambdaModuleLr: 0.1
 lambdaModuleLrReset: True
+copyWeightFromSubnets: True  # copy weights from the pretrain surface and thickness subnets.
 
 netPath: "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath: ""

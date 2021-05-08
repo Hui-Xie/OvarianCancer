@@ -92,7 +92,8 @@ class MergeNet_Q(BasicModel):
                                                           hps=hps)
         self.m_lambdaModule.to(self.m_lDevice)
         # =============== copy weight from pretrained surfaceSubnet and thicknessSubnet=============================
-        self.m_lambdaModule.copyWeightFrom(self.m_surfaceSubnet.m_surfaces, self.m_thicknessSubnet.m_surfaces)
+        if hps.copyWeightFromSubnets:
+            self.m_lambdaModule.copyWeightFrom(self.m_surfaceSubnet.m_surfaces, self.m_thicknessSubnet.m_surfaces)
         # ==========================================================================================================
         self.m_lambdaModule.m_optimizer = None
         if "test" != lambdaMode:

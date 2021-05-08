@@ -7,7 +7,7 @@ dataIn1Parcel: True
 # dataIn1Parcel means each patient has a volume file.
 dataInSlice: False
 
-status: "fineTune" # only 3 status: # "trainLambda" #"test"  "fineTune"
+status: "trainLambda" # only 3 status: # "trainLambda" #"test"  "fineTune"
 # test: pure test, no any backward propagation
 # fineTune: all networks support backward propagation
 # trainLambda: only lambda module uses backward propagation.
@@ -22,7 +22,7 @@ batchSize: 4
 groundTruthInteger: False
 
 network: "MergeNet_Q"
-device: torch.device('cuda:1')   # same with lambda device
+device: torch.device('cuda:3')   # same with lambda device
 sigma: 0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma or do not use sigma.
 
 # some physical parameter of images
@@ -57,22 +57,22 @@ lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate sege
 
 # for 2 Unets + learning Lambda
 surfaceSubnet: "SurfaceSubnet_Q"
-surfaceSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210506_SurfaceSubnetQ_fullData_A_skm2.yaml"
-surfaceSubnetDevice: torch.device('cuda:1')   #GPU ID
-surfaceSubnetLr: 0.01  # pretain at epoch 26  # in test status, it does not care
+surfaceSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2.yaml"
+surfaceSubnetDevice: torch.device('cuda:3')   #GPU ID
+surfaceSubnetLr: 0.1  # pretain at epoch 26  # in test status, it does not care
 surfaceSubnetLrReset: False
 
 thicknessSubnet: "ThicknessSubnet_Q"
 # for a new trained network.
-thicknessSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210506_ThicknessQ_fullData_A_skm2.yaml"
-thicknessSubnetDevice: torch.device('cuda:1')   #GPU ID
+thicknessSubnetYaml: "/raid001/users/hxie1/projects/DeepLearningSeg/OCTMultiSurfaces/SoftSepar3Unet/testConfig_JHU/expJHU_20210507_ThicknessQ64_fullData_A_skm2.yaml"
+thicknessSubnetDevice: torch.device('cuda:3')   #GPU ID
 thicknessSubnetLr: 0.1  # pretrain at epoch 37   # in test status, it does not care
 thicknessSubnetLrReset: False
 
 lambdaModule: "SegmentModule_Q"
 lambdaModuleYaml: ""
-lambdaModuleDevice: torch.device('cuda:1')   #GPU ID
-lambdaModuleLr: 0.001
+lambdaModuleDevice: torch.device('cuda:3')   #GPU ID
+lambdaModuleLr: 0.1
 lambdaModuleLrReset: True
 copyWeightFromSubnets: True  # copy weights from the pretrain surface and thickness subnets.
 
