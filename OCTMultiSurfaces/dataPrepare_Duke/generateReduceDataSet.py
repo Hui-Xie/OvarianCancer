@@ -5,21 +5,21 @@ Cut Duke_AMD data into 10% and 20%.
   validation set: 59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
   test set:  59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
 2 cut into 10%:
-  training: 19 AMD + 8 control. (19+8)/266 = 10.1%.  Size: 26*51*496*512*4 = 1.35 GB
-  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*496*512*4  = 0.3 GB
-  test set:   41 AMD + 18 control.                   size: 59*51*496*512*4 = 3.1 GB
+  training: 19 AMD + 8 control. (19+8)/266 = 10.1%.  Size: 27*51*512*361*4 = 1 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
 3 cut into 20%:
-  training:  38 AMD + 16 control. (38+16)/266 = 20.3%.  Size: 54*51*496*512*4 = 2.8 GB
-  validation: 8 AMD + 4 control. (8+4)/59  =   20.3%   size: 12*51*496*512*4  = 0.6 GB
-  test set:   41 AMD + 18 control.                     size: 59*51*496*512*4 = 3.1 GB
+  training:  38 AMD + 16 control. (38+16)/266 = 20.3%.  Size: 54*51*512*361*4 = 2. GB
+  validation: 8 AMD + 4 control. (8+4)/59  =   20.3%   size: 12*51*512*361*4  = 0.6 GB
+  test set:   41 AMD + 18 control.                     size: 59*51*512*361*4 = 2.3 GB
 4 test set is same for full dataset.
 5 output format:
   images.npy  patientID.json  surfaces.npy in test / validation /training directory.
   where: json file: ID->imageFileFullPath
 
 '''
-H = 496
-W = 512
+H = 512
+W = 361
 B = 51  # number of Bscans per volume
 S = 3   # number of surfaces
 
@@ -77,6 +77,7 @@ def cutDataset(cutDict):
         amdSamples = random.sample(list(range(0, cutDict["totalAMD"])), cutDict["AMD"])
         controlSamples = random.sample(list(range(cutDict["totalAMD"], cutDict["totalN"])), cutDict["Control"])
         cutSamples = amdSamples+ controlSamples
+        cutSamples.sort()
 
     assert (cutDict["N"] == len(cutSamples))
     N = cutDict["N"]
@@ -89,7 +90,7 @@ def cutDataset(cutDict):
     for vIndex in cutSamples:
         volumePath = totalIDList[vIndex]
         surfacePath = volumePath[0:volumePath.find("_images.npy")] + "_surfaces.npy"
-        patientID = volumePath[volumePath.rfind("/") : volumePath.find(".npy")]
+        patientID = volumePath[volumePath.rfind("/")+1 : volumePath.find(".npy")]
 
         images[i*B:(i+1)*B,] = np.load(volumePath).astype(np.float32)
         surfaces[i*B:(i+1)*B,] = np.load(surfacePath).astype(np.float32)
