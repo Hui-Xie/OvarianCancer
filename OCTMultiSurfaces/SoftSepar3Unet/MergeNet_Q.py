@@ -85,13 +85,6 @@ class MergeNet_Q(BasicModel):
             self.m_thicknessSubnet.resetLrScheduler(hps.thicknessSubnetLr)
 
         
-        # construct  merged segmentation part.
-        assert (surfaceHps.segChannels == thicknessHps.segChannels)
-        self.m_mergeSurfaces = nn.Sequential(
-            Conv2dBlock(surfaceHps.startFilters+thicknessHps.startFilters, surfaceHps.segChannels),
-            nn.Conv2d(surfaceHps.segChannels, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
-        )  # output size:BxNxHxW
-
         # lambda Module
         self.m_lDevice = eval(self.hps.lambdaModuleDevice)
         self.m_lambdaModule = eval(self.hps.lambdaModule)(self.m_surfaceSubnet.hps.startFilters+self.m_thicknessSubnet.hps.startFilters,\

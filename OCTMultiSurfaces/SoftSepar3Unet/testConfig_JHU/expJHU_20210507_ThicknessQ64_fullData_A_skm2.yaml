@@ -57,25 +57,26 @@ k: -1   # -1 means do not use cross validation
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: False
-sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:2')   #GPU ID
+sigma: 0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:4')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 learningRate: 0.1
 
-network: "SurfaceSubnet_Q"
+network: "ThicknessSubnet_Q"  # YufanHe network +1D conv+ smooth
 inputHeight: 128   # original height
 inputWidth: 1024   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # rawImage + gradChannels
-nLayers: 7
+inputChannels: 3 # rawImage + Y+X
+nLayers: 5
 numSurfaces: 9  # num of surfaces in an image
-startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+startFilters: 64  # the num of filters in first layer of Unet
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
-addCoordinatesXYChannels: False
+addCoordinatesXYChannels: True
+filterWidthFullHConv: 1 # [H,5] or [H,1]
 segChannels: 64  # number of channel in the segmentation part.
 
 # some physical parameter of images
@@ -91,7 +92,7 @@ saltRate: 0.5  # saltRate = salt/(salt+pepper)
 rotation: False
 flippingProb: 0.3
 lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
-TTA: False       #Test-Time Augmentation
+TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
@@ -103,21 +104,14 @@ outputDir:  ""
 logDir: "/raid001/users/hxie1/data/OCT_JHU/numpy/log"
 refXMLFile: "/raid001/users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
-# Proximal IPM Optimization
-useProxialIPM: False
-learningStepIPM: 0.1
-maxIterationIPM: 100
-criterionIPM: 0.1 # the criterion of average difference of 2 adjacent iterations in IPM: less than this value, IPM exits.
-
-useDynamicProgramming: False
 usePrimalDualIPM: False
-useLayerDice: False
+useLayerDice: True
 useReferSurfaceFromLayer: False
-useLayerCE: False
+useLayerCE: True
 useCEReplaceKLDiv: False
 useSmoothSurfaceLoss: False
 useWeightedDivLoss: False
-useRift: False
+useRift: True
 smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
@@ -132,6 +126,8 @@ gradientRiftConvGoBack: False
 # 0: NoReLU; 1: ReLU;  2: IPM;
 hardSeparation: 1
 softSeparation: False
-useReLUInPretrain: True
+useReLUInPretrain: False
 
 goodBscans: []
+
+smoothPredictedR: True  #smooth predicted R before final comparison.

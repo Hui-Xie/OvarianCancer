@@ -76,7 +76,7 @@ gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False
-segChannels: 64  # number of channel in the segmentation part.
+segChannels: 128  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 49

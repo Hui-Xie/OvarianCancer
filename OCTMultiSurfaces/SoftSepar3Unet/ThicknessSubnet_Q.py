@@ -151,8 +151,8 @@ class ThicknessSubnet_Q(BasicModel):  #
 
         # refer the design of ThicknessSubnet_E
         self.m_surfaces = nn.Sequential(
-            Conv2dBlock(N, N // 2),
-            nn.Conv2d(N // 2, hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
+            Conv2dBlock(N, hps.segChannels),
+            nn.Conv2d(hps.segChannels, hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:numSurfaces*H*W
 
         self.m_layers = nn.Sequential(
