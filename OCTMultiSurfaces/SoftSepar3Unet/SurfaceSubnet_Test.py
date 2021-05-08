@@ -197,6 +197,46 @@ def main():
     if hps.existGTLabel:  # compute hausdorff distance
         hausdorffD = columnHausdorffDist(testOutputs, testGts).reshape(1, S)
 
+    # check testOutputs whether violate surface-separation constraints
+    testOutputs0 = testOutputs[:, 0:-1, :]
+    testOutputs1 = testOutputs[:, 1:, :]
+    violateConstraintErrors = np.nonzero(testOutputs0 > testOutputs1)
+
+    # final output result:
+    curTime = datetime.datetime.now()
+    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
+
+    with open(os.path.join(hps.outputDir, f"output_{timeStr}.txt"), "w") as file:
+        hps.printTo(file)
+        file.write("\n=======net running parameters=========\n")
+        file.write(f"B,S,H,W = {B, S, H, W}\n")
+        file.write(f"Test time: {testEndTime - testStartTime} seconds.\n")
+        file.write(f"net.m_runParametersDict:\n")
+        [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
+
+        file.write(f"\n\n===============Formal Output Result ===========\n")
+        file.write(f"patientIDList ={patientIDList}\n")
+        if hps.existGTLabel:
+            file.write(f"stdSurfaceError = {stdSurfaceError}\n")
+            file.write(f"muSurfaceError = {muSurfaceError}\n")
+            file.write(f"stdError = {stdError}\n")
+            file.write(f"muError = {muError}\n")
+            file.write(f"hausdorff Distance = {hausdorffD}\n")
+
+        file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
+
+        if comparisonSurfaceIndex is not None:
+            file.write(f"comparisonSurfaceIndex = {comparisonSurfaceIndex}\n")
+            file.write(f"specificSurfError = {specificSurfError}\n")
+
+        if 0 != len(violateConstraintErrors[0]):
+            violateConstraintSlices = set(violateConstraintErrors[0])
+            file.write(f"slice number of violating surface-separation constraints: {len(violateConstraintSlices)}\n")
+            file.write("slice list of violating surface-separation constraints:\n")
+            for s in violateConstraintSlices:
+                file.write(f"\t{testIDs[s]}\n")
+
+    # output images
     pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan', 'tab:blue']
     assert S <= len(pltColors)
 
@@ -342,47 +382,6 @@ def main():
         else:
             plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
-
-    # check testOutputs whether violate surface-separation constraints
-    testOutputs0 = testOutputs[:,0:-1,:]
-    testOutputs1 = testOutputs[:, 1:, :]
-    violateConstraintErrors = np.nonzero(testOutputs0 > testOutputs1)
-
-    # final output result:
-    curTime = datetime.datetime.now()
-    timeStr = f"{curTime.year}{curTime.month:02d}{curTime.day:02d}_{curTime.hour:02d}{curTime.minute:02d}{curTime.second:02d}"
-
-    with open(os.path.join(hps.outputDir,f"output_{timeStr}.txt"), "w") as file:
-        hps.printTo(file)
-        file.write("\n=======net running parameters=========\n")
-        file.write(f"B,S,H,W = {B, S, H, W}\n")
-        file.write(f"Test time: {testEndTime-testStartTime} seconds.\n")
-        file.write(f"net.m_runParametersDict:\n")
-        [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
-
-        file.write(f"\n\n===============Formal Output Result ===========\n")
-        file.write(f"patientIDList ={patientIDList}\n")
-        if hps.existGTLabel:
-            file.write(f"stdSurfaceError = {stdSurfaceError}\n")
-            file.write(f"muSurfaceError = {muSurfaceError}\n")
-            file.write(f"stdError = {stdError}\n")
-            file.write(f"muError = {muError}\n")
-            file.write(f"hausdorff Distance = {hausdorffD}\n")
-
-        file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
-
-        if comparisonSurfaceIndex is not None:
-            file.write(f"comparisonSurfaceIndex = {comparisonSurfaceIndex}\n")
-            file.write(f"specificSurfError = {specificSurfError}\n")
-
-        if 0 != len(violateConstraintErrors[0]):
-            violateConstraintSlices = set(violateConstraintErrors[0])
-            file.write(f"slice number of violating surface-separation constraints: {len(violateConstraintSlices)}\n")
-            file.write("slice list of violating surface-separation constraints:\n")
-            for s in violateConstraintSlices:
-                file.write(f"\t{testIDs[s]}\n")
-
-
 
     print(f"============ End of Cross valiation test for OCT Multisurface Network: {hps.experimentName} ===========")
 
