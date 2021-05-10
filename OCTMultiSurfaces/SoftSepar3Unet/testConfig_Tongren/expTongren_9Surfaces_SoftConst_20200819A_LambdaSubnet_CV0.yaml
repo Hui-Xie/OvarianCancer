@@ -12,6 +12,7 @@
 
 debug: False # debug mark
 dataIn1Parcel: True
+useIndependentValidation: True
 # Duke data is not in one parcel, while Tongren, JHU are in one parcel.
 # dataIn1Parcel means each patient has a volume file.
 
