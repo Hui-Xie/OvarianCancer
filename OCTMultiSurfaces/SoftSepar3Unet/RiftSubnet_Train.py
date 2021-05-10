@@ -64,9 +64,15 @@ def main():
             trainLabelsPath = os.path.join(hps.dataDir, "training", f"surfaces.npy")
             trainIDPath = os.path.join(hps.dataDir, "training", f"patientID.json")
 
-            validationImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
-            validationLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
-            validationIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
+            if hps.useIndependentValidation:
+                validationImagesPath = os.path.join(hps.dataDir, "validation", f"images.npy")
+                validationLabelsPath = os.path.join(hps.dataDir, "validation", f"surfaces.npy")
+                validationIDPath = os.path.join(hps.dataDir, "validation", f"patientID.json")
+            else:
+                validationImagesPath = os.path.join(hps.dataDir, "test", f"images.npy")
+                validationLabelsPath = os.path.join(hps.dataDir, "test", f"surfaces.npy")
+                validationIDPath = os.path.join(hps.dataDir, "test", f"patientID.json")
+
         else:  # use cross validation
             trainImagesPath = os.path.join(hps.dataDir,"training", f"images_CV{hps.k:d}.npy")
             trainLabelsPath  = os.path.join(hps.dataDir,"training", f"surfaces_CV{hps.k:d}.npy")

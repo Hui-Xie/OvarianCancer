@@ -12,7 +12,7 @@ expDuke_20210507A_SurfaceSubnetQ128_iibi007 (best)              1.8392  1.8936  
 Summary:
 1  Our pure surface branch is beter than YufanHe's result (our implementation) on Duke_AMD data, improving 13.1%.
 2  Method improvement in expDuke_20210507A_SurfaceSubnetQ128_iibi007: cancel fixed guasssian distribution, no regional seg branch, ReLU after loss, bigger seg head.
-   And our method only need about 1/2 GPU memory of YufanHe's method.
+   And our method only need about 15GB GPU memory for training, 1/2 GPU memory of YufanHe's method.
 
 
 
