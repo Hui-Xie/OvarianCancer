@@ -263,10 +263,8 @@ def main():
                 patientIDList.append(patient)
 
         if "OCT_Duke" in hps.dataDir:
-            # testIDs[0] = /home/hxie1/data/OCT_Duke/numpy/training/AMD_1089_images.npy.OCT39
             a = testIDs[b]
-            # patientVolumePath = a[0:-6]
-            patientID_Index = a[0:a.rfind("_images.npy")] + "_" + a[a.rfind(".") + 1:]
+            patientID_Index = os.path.splitext(os.path.basename(a))[0]  # get file name stem, like "Control_1014_images_s50"
 
         if OutputNumImages == 0:
             continue

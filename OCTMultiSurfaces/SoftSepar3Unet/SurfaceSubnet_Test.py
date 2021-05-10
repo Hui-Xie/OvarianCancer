@@ -263,14 +263,7 @@ def main():
 
         if "OCT_Duke" in hps.dataDir:
             a = testIDs[b]
-            if hps.dataInSlice:
-                # testID[i] = /home/hxie1/data/OCT_Duke/numpy_slices/test/AMD_1031_images_s04.npy
-                patientID_Index = a[0:a.find(".npy")]
-            else:
-                # testIDs[0] = /home/hxie1/data/OCT_Duke/numpy/training/AMD_1089_images.npy.OCT39
-                #patientVolumePath = a[0:-6]
-                patientID_Index = a[0:a.rfind("_images.npy")] +"_"+a[a.rfind(".")+1:]
-
+            patientID_Index = os.path.splitext(os.path.basename(a))[0]  # get file name stem, like "Control_1014_images_s50"
 
 
         if OutputNumImages ==0:

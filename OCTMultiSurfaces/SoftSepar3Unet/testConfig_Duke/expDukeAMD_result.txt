@@ -11,7 +11,8 @@ expDuke_20210510_SurfaceSubnetQ64_10percent_A_iibi007           training, may ge
 expDuke_20210510_SurfaceSubnetQ64_20percent_A_iibi007           training, may get result on May 12th
 expDuke_20210510_SurfaceSubnetQ128_10percent_A_iibi007          training, may get result on May 12th
 expDuke_20210510_SurfaceSubnetQ128_20percent_A_iibi007          training, may get result on May 12th
-expDuke_20210510_SurfaceSubnetQ192_10percent_A_iibi007
+expDuke_20210510_SurfaceSubnetQ192_10percent_A_skm2             training, may get result on May 12th
+expDuke_20210510_SurfaceSubnetQ192_20percent_A_skm2             training, may get result on May 12th
 =====================================================================================================================================================================================================================
 
 Summary:
