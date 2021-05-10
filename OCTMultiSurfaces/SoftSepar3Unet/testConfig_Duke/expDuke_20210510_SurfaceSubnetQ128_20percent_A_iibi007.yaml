@@ -7,7 +7,7 @@ useIndependentValidation: True
 # Not dataIn1Parcel means each patient has a volume file.
 dataInSlice: False
 
-dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_10Percent"
+dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_20Percent"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
@@ -78,10 +78,10 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_10Percent/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_20Percent/netParameters"  # net is saved at netpath / network / self_filename
 loadNetPath:  ""
 outputDir:  ""
-logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_10Percent/log"
+logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_20Percent/log"
 refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 usePrimalDualIPM: False
