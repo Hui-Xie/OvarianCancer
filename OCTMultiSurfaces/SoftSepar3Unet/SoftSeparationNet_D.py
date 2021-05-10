@@ -15,9 +15,13 @@ sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
 from SurfaceSubnet_M5 import SurfaceSubnet_M5
 from SurfaceSubnet_P import SurfaceSubnet_P
+from SurfaceSubnet_Q import SurfaceSubnet_Q
+
 from ThicknessSubnet_M2 import ThicknessSubnet_M2
 from ThicknessSubnet_M5 import ThicknessSubnet_M5
 from ThicknessSubnet_P import ThicknessSubnet_P
+from ThicknessSubnet_Q import ThicknessSubnet_Q
+
 from LambdaModule_D import LambdaModule_D
 from LambdaModule_E import LambdaModule_E
 from LambdaModule_F import LambdaModule_F
