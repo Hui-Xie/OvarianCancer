@@ -7,8 +7,11 @@ expDuke_20201208A_SurfaceNet_YufanHe_iibi007                    1.9699  2.1109  
 expDuke_20200902A_SurfaceSubnet                                 1.9812  1.9618    1.1122, 1.8904, 2.9410    2.4530, 1.0670, 1.6765      50.   33.  30.              Pure surfaceSubnet.
 expDuke_20210507A_SurfaceSubnetQ64_iibi007                      1.9124  2.1480    1.2497, 1.7414, 2.7462    3.1326, 1.0828, 1.3534      127. 186.  70.              Add segChannel=64
 expDuke_20210507A_SurfaceSubnetQ128_iibi007 (best)              1.8392  1.8936    1.0754, 1.6992, 2.7431    2.5610, 0.9663, 1.3942      52.  105.  79.              Add segChannel=128
+expDuke_20210510_SurfaceSubnetQ64_10percent_A_iibi007           training, may get result on May 12th
+expDuke_20210510_SurfaceSubnetQ64_20percent_A_iibi007           training, may get result on May 12th
 expDuke_20210510_SurfaceSubnetQ128_10percent_A_iibi007          training, may get result on May 12th
 expDuke_20210510_SurfaceSubnetQ128_20percent_A_iibi007          training, may get result on May 12th
+expDuke_20210510_SurfaceSubnetQ192_10percent_A_iibi007
 =====================================================================================================================================================================================================================
 
 Summary:
