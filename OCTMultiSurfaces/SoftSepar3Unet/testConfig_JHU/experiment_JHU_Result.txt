@@ -70,13 +70,10 @@ expJHU_20210503_SoftSeparation_M5_fullData_A_skm2           2.8053  1.0323      
 expJHU_20210503_SoftSeparation_YufanHeM5_fullData_B_skm2    2.7998  1.0310      2.3583, 3.0135, 2.8629, 3.1510, 2.7786, 2.5730, 1.9971, 3.3685, 3.0955      0.3946, 0.7454, 0.4257, 0.3863, 0.6282, 0.7640, 0.7370, 0.7816, 2.2996  47. 20. 22. 21. 27. 11. 10.  9. 11.
 =============================================================================================================================================================================================================================================================================
 expJHU_20210506_MergeNet_Q_fullData_A_skm2                  2.8265  0.9536      2.4391, 2.9108, 2.9738, 3.2146, 2.6689, 2.5798, 2.1065, 3.4344, 3.1109      0.3726, 0.6802, 0.3877, 0.4843, 0.6129, 0.7101, 0.7003, 0.9323, 1.9713  44. 36. 24. 23. 27. 18.  9. 10. 13.
-expJHU_20210507_MergeNet_Q_fullData_B_skm2                  2.8134  0.9921      2.3299, 3.0354, 2.9659, 3.1641, 2.7615, 2.6223, 2.0128, 3.4466, 2.9827      0.3254, 0.7967, 0.4261, 0.4020, 0.6487, 0.7788, 0.7029, 0.8746, 2.0698  46. 42. 26.8 25.30. 17. 10.  9. 12.
-expJHU_20210508_MergeNet_Q64_lambda_fullData_A_skm2         training at GPU3, May 10th get result.
-expJHU_20210508_MergeNet_Q64_lambda_fullData_B_skm2         training at GPU2, May 10th get result.
+expJHU_20210507_MergeNet_Q_fullData_B_skm2                  2.8134  0.9921      2.3299, 3.0354, 2.9659, 3.1641, 2.7615, 2.6223, 2.0128, 3.4466, 2.9827      0.3254, 0.7967, 0.4261, 0.4020, 0.6487, 0.7788, 0.7029, 0.8746, 2.0698  46. 42. 26. 25. 30. 17. 10.  9. 12.
+expJHU_20210508_MergeNet_Q64_lambda_fullData_A_skm2         2.7295  1.0098      2.3261, 2.8895, 2.8053, 3.0739, 2.6260, 2.5598, 1.9520, 3.4000, 2.9329      0.3242, 0.6606, 0.4342, 0.5264, 0.5728, 0.6545, 0.7011, 0.8048, 2.2760  69. 62. 53. 50. 43. 35. 30. 24. 13.
+expJHU_20210508_MergeNet_Q64_lambda_fullData_B_skm2         2.7251  0.9884      2.3302, 2.8596, 2.7987, 3.0803, 2.6458, 2.5834, 1.9465, 3.4083, 2.8733      0.3517, 0.6666, 0.4044, 0.4818, 0.5955, 0.7384, 0.7050, 0.8214, 2.1604  69. 59. 50. 47. 40. 32. 27. 21. 12.
 =============================================================================================================================================================================================================================================================================
-
-
-
 
 Summary:
 1  YufanHe's paper report result on above JHU data: muError=2.83 um.
@@ -94,6 +91,12 @@ Summary:
    In this JHU data, soft Separation method does not explicitly improve the Hausdorff distance.
    While in Duke_AMD data, our surfaceNet, instead of softSeparation, improves Hausdorff distance.
 7  bigger channel number is sigmentation layer helps.
+8  The best result: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2, which uses pure surface segmentation network, and whichg improved 4.2% over the YufanHe's paper best result.
+9  MergeNet uses the extracted features from both pretrained surfaceNet and thicknessNet, and concatenate these features followed a segmentation head similar with surfaceSubnet to get a segmentation result.
+   It is in concept equivalent with softseparation, but in convolution implementation.
+   MergeNet also didn't improve the result of surfaceNet, which in an alernative aspect shows the softSeparation mayb not improve the surface prediction result.
+
+
 
 
 

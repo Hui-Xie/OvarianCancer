@@ -20,6 +20,7 @@ from ThicknessSubnet_M5 import ThicknessSubnet_M5
 from ThicknessSubnet_P import ThicknessSubnet_P
 from LambdaModule_D import LambdaModule_D
 from LambdaModule_E import LambdaModule_E
+from LambdaModule_F import LambdaModule_F
 from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 
 
