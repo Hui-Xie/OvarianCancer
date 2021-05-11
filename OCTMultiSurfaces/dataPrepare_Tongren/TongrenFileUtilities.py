@@ -294,7 +294,7 @@ def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames,
                 print(f"Error: testID is not continous in {testIDs[j]} against {dirPath}")
                 assert False
                 return
-        if dataInSlice:
+        if dataInSlice or dirPath=="":
             patientID = fileName[0:fileName.find("_s00.npy")]
         else: # data in volume
             patientID = os.path.basename(dirPath)
