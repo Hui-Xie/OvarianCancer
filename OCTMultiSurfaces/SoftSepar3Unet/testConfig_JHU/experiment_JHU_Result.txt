@@ -1,3 +1,11 @@
+# May 11th, Tuesday, 2021
+Meeting with professor:
+1  Haunsdorff distance uses 95% measurement.
+2  Keep the AMD validation data same with full data.
+3  Try SurfaceSubnetQ64 network with reduced data and noised data;
+4  Go the pure surface branch method for a paper.
+
+
 # May 06th, Thursday, 2021:
 1  When model size doubles, test error decreases.  But there is double descent phenomenon.
 2  When prunning network, as features are correlated, retraining or finetune is very important.
