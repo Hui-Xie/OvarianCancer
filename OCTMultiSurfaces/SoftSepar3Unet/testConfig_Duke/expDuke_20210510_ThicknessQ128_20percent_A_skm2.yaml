@@ -58,7 +58,7 @@ bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: True
 filterWidthFullHConv: 1 # [H,5] or [H,1]
-segChannels: 64  # number of channel in the segmentation part.
+segChannels: 128  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 49

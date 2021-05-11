@@ -7,7 +7,7 @@ useIndependentValidation: True
 dataInSlice: False
 existGTLabel: True
 
-dataDir: "/raid001/users/hxie1/data/OCT_Duke/numpy_20Percent"
+dataDir: "/raid001/users/hxie1/data/OCT_Duke/numpy_10Percent"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0
 k: -1   # -1 means do not use cross validation
@@ -39,7 +39,7 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: True
 sigma: 0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8
 learningRate: 0.1
@@ -58,7 +58,7 @@ bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: True
 filterWidthFullHConv: 1 # [H,5] or [H,1]
-segChannels: 64  # number of channel in the segmentation part.
+segChannels: 128  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 49
@@ -77,12 +77,12 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/raid001/users/hxie1/data/OCT_Duke/numpy_20Percent/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/raid001/users/hxie1/data/OCT_Duke/numpy_10Percent/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 # below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_Duke/numpy_10Percent/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
 loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
-logDir: "/raid001/users/hxie1/data/OCT_Duke/numpy_20Percent/log"
+logDir: "/raid001/users/hxie1/data/OCT_Duke/numpy_10Percent/log"
 refXMLFile: "/raid001/users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 usePrimalDualIPM: False
