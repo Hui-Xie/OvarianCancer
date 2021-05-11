@@ -35,6 +35,7 @@ for groupName, xmlList in twoGroupDict.items():
     Num = len(xmlList)
     predictAll = np.empty([Num*B,N,W])
     gtAll = np.empty([Num*B,N, W])
+    assert predictAll.shape[0] == Num*B
     i = 0
     for xmlPath in xmlList:
         volumeSurfaces = getSurfacesArray(xmlPath)
