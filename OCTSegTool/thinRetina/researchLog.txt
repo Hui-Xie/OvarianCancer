@@ -1,3 +1,24 @@
+#May 11th, research VAE
+1  Generative Adversarial Networks (GANs) and Variational Autoencoders (VAEs) arr both generative models.
+   a VAE is an autoencoder whose encodings distribution is regularised during the training in order to
+   ensure that its latent space has good properties allowing us to generate some new data.
+
+autoencoders cannot be used to generate new data and will introduce Variational Autoencoders that are
+ regularised versions of autoencoders making the generative process possible.
+
+Encoder extracts/compresses feature into encoded space or latent space,
+ which is a kind of loosy dimensionality reduction.
+
+ the autoencoder is solely trained to encode and decode
+  with as few loss as possible, no matter how the latent space is organised.
+
+  satisfying this way the expected continuity and completeness conditions.
+  Naturally, as for any regularisation term, this comes at the price of a higher reconstruction error
+   on the training data
+
+
+
+
 #May 5th, Wednesday, 2021:
 Meeting time: 10am -11am May 5th, Wednesday, 2021
 Attendee:  Jui Kai, Hui
