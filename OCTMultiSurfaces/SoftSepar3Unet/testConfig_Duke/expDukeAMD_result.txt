@@ -24,17 +24,16 @@ Summary:
           Leixin's method uses 10% training data, and 100% validation data.
 
 ==================================================================10% training data==================================================
-                    Surface0Control   Surface1_Control     Surface2_Control    Surface0_AMD         Surface1_AMD   Surface2_AMD
-Leixin's method       NoReport          2.87_1.41           2.77_0.87          NoReport             4.06_2.63      6.28_3.81
-Hui' method          0.80_0.67          2.30_1.89           2.35_0.49          1.60_3.87            2.11_0.97      3.84_2.25
+                   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
+Leixin's method       NoReport          2.87_1.41           2.77_0.87        NoReport           4.06_2.63      6.28_3.81
+Hui's method         0.80_0.67          2.30_1.89           2.35_0.49        1.60_3.87          2.11_0.97      3.84_2.25
 =====================================================================================================================================
 
 ==================================================================100% training data==================================================
-                    Surface0Control   Surface1_Control     Surface2_Control    Surface0_AMD         Surface1_AMD   Surface2_AMD
-Leixin's method       NoReport                                                  NoReport
-Hui' method
+                   Surface0_Control  Surface1_Control   Surface2_Control    Surface0_AMD      Surface1_AMD   Surface2_AMD
+Leixin's method      NoReport         1.89_0.68            2.55_0.40          NoReport           2.96_1.91      4.29_1.71
+Hui's method        0.53_0.22         1.59_1.07            2.07_0.41          1.31_3.04          1.74_0.92      3.03_1.56
 =====================================================================================================================================
-
 
 10% reduced data AMD and Control statsitics
 =====================================================================================================================================================================
@@ -60,9 +59,30 @@ HausdorffDistance in physical size (micrometer) = [[139.32  48.6   38.88]]
 stdError = 1.3783279657363892
 muError = 1.8191168308258057
 =======================================================================================================================================================================
-
 100% data AMD and Control Statistics
 =======================================================================================================================================================================
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.0493, 0.9248, 1.5671])
+muSurfaceError = tensor([1.3130, 1.7464, 3.0361])
+HausdorffDistance in pixel = [[ 52. 105.  79.]]
+HausdorffDistance in physical size (micrometer) = [[168.48 340.2  255.96]]
+stdError = 2.162001609802246
+muError = 2.0318236351013184
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.2290, 1.0750, 0.4188])
+muSurfaceError = tensor([0.5344, 1.5918, 2.0756])
+HausdorffDistance in pixel = [[12. 13.  9.]]
+HausdorffDistance in physical size (micrometer) = [[38.88 42.12 29.16]]
+stdError = 0.9304662942886353
+muError = 1.4005963802337646
+===============
 
 
 
