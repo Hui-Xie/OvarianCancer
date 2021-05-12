@@ -17,15 +17,15 @@ RiftError           muError                 HausdorffDistance(in pixel)     Lamb
 NoRift/No Optimize  2.383660316467285   38.474457   66.437805   68.57501    0.0      0.0    (No ReLU, No optimization)
 -------------------------------------------------------------------------------------------------------------------------
 
-Gauassian simulation analysis:
+Gaussian simulation analysis:
 1  The above experiment is grid searching lambda on validation data, with a pure surface prediction error 2.38 um.
 2  the 2.34 um error result is not explict improvement, we can ignore it.
 3  In this AMD validation set, RiftError/surfaceError = 2.97/2.38 = 1.24, we can see an explict improvement on muError.
    In the  AMD test set, we has achieved a pure surface error 1.83 um, so an expected-improving thickness error should be 1.83*1.24 = 2.27 um.
    But in reality, the best thickness error we can get is 3.4 um, which is far from the expected 2.27 um.
    This maybe the root reason that we can not improve surface error by this softSeparation method.
-4  The above Guassian noise simulation is an exhaust search lambda with knowing the ground truth in validation data.
-   In test case, the lambda can not achieve the best optimal, the rifError/surface rate should be smaller than 1.24 to get improvement.
+4  The above Gaussian noise simulation is an exhaust search lambda with knowing the ground truth in validation data.
+   In test case, the lambda can not achieve the best optimal, the rifError/surface rate should be smaller than 1.24 to get significant improvement.
    In other words, the thickness error should be same level accurate with surface error, it can really improve.
    like a grade-B student hoping to improve his grade may refer answers of a grade-A student,
        or at least a grade-B student with cautions.
@@ -49,7 +49,9 @@ Analysis:
    E  use conv module to replace softSeparation module according to network equivalent principle.
    All these tries and a lot of coding and experiments pointed to failure or to a little accuracy improvement.
    Especially, the little accuracy improvement on softSeparation is quickly exceeded by the improvement of surface subnet.
-5  A conclusion: The grade-B student may get a better grade by working hard by himself, instead of referring to others' answers.
+5  A conclusion: The grade-B student may get a better grade by working hard by himself, instead of referring to others' answers,
+                 as there is no a better-grade student around him.
+
 
 
 
