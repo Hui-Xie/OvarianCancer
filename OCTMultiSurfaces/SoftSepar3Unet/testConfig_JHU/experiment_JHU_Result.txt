@@ -2,7 +2,7 @@
 Meeting with professor:
 1  Haunsdorff distance uses 95% measurement.
 2  Keep the AMD validation data same with full data.
-3  Try SurfaceSubnetQ64 network with reduced data and noised data with JHU data.
+3  Try SurfaceSubnetQ64 network with reduced data and noised data with JHU data.  --done for reduced data.
 4  Go the pure surface branch method for a paper.
 
 
