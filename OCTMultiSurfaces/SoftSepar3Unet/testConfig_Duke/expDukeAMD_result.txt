@@ -1,3 +1,60 @@
+# May 12th, Wednesday,
+Revisit the simulation experiment using Guassian noise on the thickness error on the validation data:
+========================================================================================================================
+Experiment Time: Dec 7th, 2020
+at lambda0_min= 0, and lambda1_min = 0, with ReLU, muError = 2.383739471435547
+# below the best result of grid searching lambda for guassian noise + perfect thickness(rift) on validation data:
+# blank means no measurement in that programs.
+-------------------------------------------------------------------------------------------------------------------------
+RiftError           muError                 HausdorffDistance(in pixel)     Lambda_0 Lambda_1
+-------------------------------------------------------------------------------------------------------------------------
+0.0                 1.6399389505386353                                      2.06     3.99   (this perfect R case)
+2.197073459625244   1.90798819065094    49.196      52.69426    39.68515    0.1      0.25   (gaussian noise + perfect R)
+2.4565892219543457  1.9342775344848633  49.261276   53.30031    37.779327   0.08     0.2    (gaussian noise + perfect R)
+2.7137765884399414  1.9585803747177124  48.728424   54.165863   35.518845   0.07     0.16   (gaussian noise + perfect R)
+2.972208023071289   1.9796805381774902  49.18547    54.445984   34.13138    0.06     0.14   (gaussian noise + perfect R)
+5.921670913696289   2.3492398262023926                                      0.004    0.004  (current predicted R case)
+NoRift/No Optimize  2.383660316467285   38.474457   66.437805   68.57501    0.0      0.0    (No ReLU, No optimization)
+-------------------------------------------------------------------------------------------------------------------------
+
+Gauassian simulation analysis:
+1  The above experiment is grid searching lambda on validation data, with a pure surface prediction error 2.38 um.
+2  the 2.34 um error result is not explict improvement, we can ignore it.
+3  In this AMD validation set, RiftError/surfaceError = 2.97/2.38 = 1.24, we can see an explict improvement on muError.
+   In the  AMD test set, we has achieved a pure surface error 1.83 um, so an expected-improving thickness error should be 1.83*1.24 = 2.27 um.
+   But in reality, the best thickness error we can get is 3.4 um, which is far from the expected 2.27 um.
+   This maybe the root reason that we can not improve surface error by this softSeparation method.
+4  The above Guassian noise simulation is an exhaust search lambda with knowing the ground truth in validation data.
+   In test case, the lambda can not achieve the best optimal, the rifError/surface rate should be smaller than 1.24 to get improvement.
+   In other words, the thickness error should be same level accurate with surface error, it can really improve.
+   like a grade-B student hoping to improve his grade may refer answers of a grade-A student,
+       or at least a grade-B student with cautions.
+
+Analysis:
+1  A perfect predicted thickness will help improve surface prediction accuracy.
+   Like a grade-B student hoping to improve his grade may refer answers of a grade-A student.
+2  A reality: the predicted thickness accuracy is worse than the predicted surface accuracy.
+   Like a grade-B student hoping to improve his grade has a refer source only: the answers of a grade-C student, .
+   In some rare cases with a good luck (that grade-C is exactly correct at places where grade-B has incorrect answers,
+          and grade-B can know his correct answers should not be changed by incorrect answers of grade-C student),
+          the answers of grade-C student may help improve the answers of the grade-B student.
+   But in mose cases, the answers of grade-C student will deteriorate the answers of grade-B student.
+3  The basic idea SoftSeperation is similar that the grade-B student wants to improve his grade by referring to the answers of others(grade-C or grade-A student).
+4  In past one year, we tried different solutions hoping to achieve a good luck.
+   A  try different network architectures to improve thickness prediction.
+   B  fixed lambda.
+   C  grid search lambda.
+   D  learning lambda.
+   E  introduce smoothness.
+   E  use conv module to replace softSeparation module according to network equivalent principle.
+   All these tries and a lot of coding and experiments pointed to failure or to a little accuracy improvement.
+   Especially, the little accuracy improvement on softSeparation is quickly exceeded by the improvement of surface subnet.
+5  A conclusion: The grade-B student may get a better grade by working hard by himself, instead of referring to others' answers.
+
+
+
+
+
 # May 10th, Monday, 2021
 =========================================================================================================================================================================================================================
 Test Result on Duke test data with AMD and Control group together. total image size (3009, 3, 512, 361), case number = 59 patients.
@@ -25,13 +82,13 @@ Summary:
    Notes: Hui's method uses both 10% training and validaiton dataset. while test dataset is same with full data set case for a fair comparison.
           Leixin's method uses 10% training data, and 100% validation data.
 
-==================================================================10% training data==================================================
+===================================== =========Surface mean error 10% training data==================================================
                    Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
 Leixin's method       NoReport          2.87_1.41           2.77_0.87        NoReport           4.06_2.63      6.28_3.81
 Hui's method         0.80_0.67          2.30_1.89           2.35_0.49        1.60_3.87          2.11_0.97      3.84_2.25
 =====================================================================================================================================
 
-==================================================================100% training data==================================================
+================================================Surface mean error 100% training data==================================================
                    Surface0_Control  Surface1_Control   Surface2_Control    Surface0_AMD      Surface1_AMD   Surface2_AMD
 Leixin's method      NoReport         1.89_0.68            2.55_0.40          NoReport           2.96_1.91      4.29_1.71
 Hui's method        0.53_0.22         1.59_1.07            2.07_0.41          1.31_3.04          1.74_0.92      3.03_1.56
