@@ -1,3 +1,25 @@
+# May 12th, Wednesday, 2021
+Meeting time: 10am -11am May 12th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: About BMO prediction and VAE project
+Minutes:
+1  BMO prediction project:
+   We can first use 2D Bscans as input to predict the middle-broken low boundaries of RPE complex.
+   The 2 opening points of BMO are usually corresponding around the swelling peak on ILM, which can give some information to help prediction.
+   Each patient may have 3 Bscans for our data.
+2  Use VAE to detect segmentation map.
+   The output of VAE is not the recovery image as the traditional VAE, but the low dimension surface segmentation.
+   The final goal of this project is to manipulate the latent vector to get different surface shape, which expresses the disease manifestations.
+
+1 In the thin RNFL case, there is still some boundary information of low boundary of the thin RNFL.
+2 Some time, the Ophthalmologist needs to use other Bscan information to infer the surface boundary of the current Bscan.
+3 The dataset for glaucoma:
+  diseased cases: about 25, control case: about 25,   with size of 200x200x1024, where X: #Ascans, Y:#Bscans, Z, Penetration depth.
+  number of surfaces: about 5.
+  OCT may have different dimension size, we need to unify them into one same size.
+4 further thinking: Use volume OCT image with VAE to detect Bruch membrane opening (BMO).
+
+
 #May 11th, research VAE
 1  Generative Adversarial Networks (GANs) and Variational Autoencoders (VAEs) arr both generative models.
    a VAE is an autoencoder whose encodings distribution is regularised during the training in order to
