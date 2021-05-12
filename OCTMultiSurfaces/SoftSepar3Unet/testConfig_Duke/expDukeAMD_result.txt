@@ -19,6 +19,54 @@ Summary:
 1  Our pure surface branch is beter than YufanHe's result (our implementation) on Duke_AMD data, improving 13.1%.
 2  Method improvement in expDuke_20210507A_SurfaceSubnetQ128_iibi007: cancel fixed guasssian distribution, no regional seg branch, ReLU after loss, bigger seg head.
    And our method only need about 15GB GPU memory for training, 1/2 GPU memory of YufanHe's method.
+3  In 10% reduced data training, Comparison with Leixin's 10% best experiment(w/ learned) in muError_Std formation.
+   Notes: Hui's method uses both 10% training and validaiton dataset. while test dataset is same with full data set case for a fair comparison.
+          Leixin's method uses 10% training data, and 100% validation data.
+
+==================================================================10% training data==================================================
+                    Surface0Control   Surface1_Control     Surface2_Control    Surface0_AMD         Surface1_AMD   Surface2_AMD
+Leixin's method       NoReport          2.87_1.41           2.77_0.87          NoReport             4.06_2.63      6.28_3.81
+Hui' method          0.80_0.67          2.30_1.89           2.35_0.49          1.60_3.87            2.11_0.97      3.84_2.25
+=====================================================================================================================================
+
+==================================================================100% training data==================================================
+                    Surface0Control   Surface1_Control     Surface2_Control    Surface0_AMD         Surface1_AMD   Surface2_AMD
+Leixin's method       NoReport                                                  NoReport
+Hui' method
+=====================================================================================================================================
+
+
+10% reduced data AMD and Control statsitics
+=====================================================================================================================================================================
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_10Percent/log/SurfaceSubnet_Q/expDuke_20210510_SurfaceSubnetQ128_10percent_A_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.8723, 0.9783, 2.2594])
+muSurfaceError = tensor([1.6029, 2.1107, 3.8421])
+HausdorffDistance in pixel = [[46. 41. 57.]]
+HausdorffDistance in physical size (micrometer) = [[149.04 132.84 184.68]]
+stdError = 2.7982425689697266
+muError = 2.5185577869415283
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.6749, 1.8934, 0.4996])
+muSurfaceError = tensor([0.8055, 2.3011, 2.3507])
+HausdorffDistance in pixel = [[43. 15. 12.]]
+HausdorffDistance in physical size (micrometer) = [[139.32  48.6   38.88]]
+stdError = 1.3783279657363892
+muError = 1.8191168308258057
+=======================================================================================================================================================================
+
+100% data AMD and Control Statistics
+=======================================================================================================================================================================
+
+
+
+=======================================================================================================================================================================
 
 
 
