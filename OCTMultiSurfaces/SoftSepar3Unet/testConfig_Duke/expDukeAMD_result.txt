@@ -13,6 +13,8 @@ expDuke_20210510_SurfaceSubnetQ128_10percent_A_iibi007          2.3051  2.4706  
 expDuke_20210510_SurfaceSubnetQ128_20percent_A_iibi007          2.2444  2.5041    1.3425, 2.0245, 3.3662    1.3425, 2.0245, 3.3662      120. 113.  82.
 expDuke_20210510_SurfaceSubnetQ192_10percent_A_skm2             2.4377  2.8940    1.4592, 2.1079, 3.7463    3.4904, 1.4847, 2.8639      262. 208. 199.
 expDuke_20210510_SurfaceSubnetQ192_20percent_A_skm2             2.3916  2.6171    1.5836, 2.2086, 3.3827    3.5221, 1.4567, 2.1355      142. 146. 107.
+expDuke_20210512_SurfaceNet_YufanHe_10percent_iibi007           start training at May 12th, May 13th get result.
+expDuke_20210512_SurfaceNet_YufanHe_20percent_iibi007           start training at May 12th, May 13th get result.
 =====================================================================================================================================================================================================================
 
 Summary:
