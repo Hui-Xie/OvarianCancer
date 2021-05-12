@@ -145,11 +145,11 @@ expDuke_20210325A_Thickness_M2_iibi007              3.4882   2.4069    2.8775,  
 
 expDuke_20210503_Thickness_M5_iibi007               3.4299   2.1810    2.9082, 3.9517      90         30
 expDuke_20210503_Thickness_N_iibi007                5.1346   3.3735    3.7237, 6.5455      42         80
-expDuke_20210507_ThicknessQ64_skm2                  training, May 13th get result
-expDuke_20210507_ThicknessQ128_skm2                 training, May 13th get result
-expDuke_20210510_ThicknessQ64_10percent_A_skm2      training, May 13th get result
-expDuke_20210510_ThicknessQ64_20percent_A_skm2      training, May 13th get result
-expDuke_20210510_ThicknessQ128_10percent_A_skm2     training, May 13th get result
+expDuke_20210507_ThicknessQ64_skm2                  training, May 14th get result
+expDuke_20210507_ThicknessQ128_skm2                 training, May 14th get result
+expDuke_20210510_ThicknessQ64_10percent_A_skm2      5.4025   2.9072    4.5352, 6.2700      67         72
+expDuke_20210510_ThicknessQ64_20percent_A_skm2      training, May 14th get result
+expDuke_20210510_ThicknessQ128_10percent_A_skm2     5.3493   3.7429    4.7545, 5.9442      259        210
 expDuke_20210510_ThicknessQ128_20percent_A_skm2     start at May 11th, will get result on May 14th.
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
