@@ -297,6 +297,15 @@ def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames,
         if dataInSlice or dirPath=="":
             patientID = fileName[0:fileName.find("_s00.npy")]
         else: # data in volume
-            patientID = os.path.basename(dirPath)
+            if "/OCT_Tongren/" in dirPath:
+                patientID = os.path.basename(dirPath)
+            elif "/OCT_JHU/" in dirPath:
+                patientID = fileName[0:fileName.rfind("_")]
+            else:
+                print(f"dirPath: {dirPath}")
+                print(f"fileName: {fileName}")
+                print(f"Program can not extract volume name correttly")
+                assert False
+
         saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile, y=y, voxelSizeY=voxelSizeY)
         i += numBscan
