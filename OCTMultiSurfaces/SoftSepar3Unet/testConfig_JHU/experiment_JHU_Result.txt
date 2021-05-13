@@ -22,6 +22,8 @@ Analysis:
 1  YufanHe's reported result in his paper is 2.83 um in full data, while our implementation of YufanHe's method gets better result 2.80 um.
 2  Our method exhibits better results in all 100%, 20%, and 13% of training data context, comparing with YufanHe's method in our implementaion.
 3  The improvement of SoftSeparation over pure surface network is just 0.0048 um, very small.
+4  Notes: 13% JHU data means just one health control patient, and one multiple sclerosis (MS) disease patient, which is very extreme one-shot training.
+   But our result still get 3.22/3.87 =0.83 pixel accuracy.
 
 
 # May 11th, Tuesday, 2021
