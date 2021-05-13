@@ -87,7 +87,7 @@ Summary:
 ===================================== =========Surface mean error 10% training data==================================================
                    Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
 Leixin's method       NoReport          2.87_1.41           2.77_0.87        NoReport           4.06_2.63      6.28_3.81
-Yufan's method
+Yufan's method       1.62_3.86          2.48_2.10           2.46_0.69        1.87_3.93          2.27_1.17      4.62_3.41
 Hui's method         0.80_0.67          2.30_1.89           2.35_0.49        1.60_3.87          2.11_0.97      3.84_2.25
 =====================================================================================================================================
 
@@ -152,6 +152,31 @@ muError = 1.4005963802337646
 =======================================================================================================================================================================
 
 
+10% data, YufanHe's method.
+==========================================================================================================================================================================
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_10Percent/log/SurfacesUnet_YufanHe_2/expDuke_20210512_SurfaceNet_YufanHe_10percent_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.9386, 1.1795, 3.4124])
+muSurfaceError = tensor([1.8769, 2.2703, 4.6202])
+HausdorffDistance in pixel = [[288.  81.  76.]]
+HausdorffDistance in physical size (micrometer) = [[933.12 262.44 246.24]]
+stdError = 3.2922823429107666
+muError = 2.922497510910034
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([3.8663, 2.1064, 0.6981])
+muSurfaceError = tensor([1.6220, 2.4854, 2.4614])
+HausdorffDistance in pixel = [[97. 63. 67.]]
+HausdorffDistance in physical size (micrometer) = [[314.28 204.12 217.08]]
+stdError = 2.5570223331451416
+muError = 2.1896040439605713
+===============
+==============================================================================================================================================================================
 
 
 
