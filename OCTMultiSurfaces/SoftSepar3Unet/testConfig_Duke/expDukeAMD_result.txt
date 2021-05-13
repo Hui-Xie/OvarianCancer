@@ -94,7 +94,7 @@ Hui's method         0.80_0.67          2.30_1.89           2.35_0.49        1.6
 ================================================Surface mean error 100% training data==================================================
                    Surface0_Control  Surface1_Control   Surface2_Control    Surface0_AMD      Surface1_AMD   Surface2_AMD
 Leixin's method      NoReport         1.89_0.68            2.55_0.40          NoReport           2.96_1.91      4.29_1.71
-Yufan's method
+Yufan's method      0.70_1.04         1.62_1.04            2.10_0.44          1.32_3.03          2.00_1.74      3.22_1.87
 Hui's method        0.53_0.22         1.59_1.07            2.07_0.41          1.31_3.04          1.74_0.92      3.03_1.56
 =====================================================================================================================================
 
@@ -178,7 +178,31 @@ muError = 2.1896040439605713
 ===============
 ==============================================================================================================================================================================
 
-
+100% dataset, Yufan He's method.
+==============================================================================================================================================================================
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.0343, 1.7488, 1.8714])
+muSurfaceError = tensor([1.3248, 2.0069, 3.2261])
+HausdorffDistance in pixel = [[153.  40.  71.]]
+HausdorffDistance in physical size (micrometer) = [[495.72 129.6  230.04]]
+stdError = 2.406925916671753
+muError = 2.1859207153320312
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([1.0478, 1.0402, 0.4431])
+muSurfaceError = tensor([0.7013, 1.6296, 2.1034])
+HausdorffDistance in pixel = [[92. 15. 13.]]
+HausdorffDistance in physical size (micrometer) = [[298.08  48.6   42.12]]
+stdError = 1.0525134801864624
+muError = 1.478100061416626
+===============
+======================================================================================================================================================================================
 
 
 
