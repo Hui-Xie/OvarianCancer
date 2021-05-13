@@ -25,7 +25,7 @@ Gaussian simulation analysis:
    But in reality, the best thickness error we can get is 3.4 um, which is far from the expected 2.27 um.
    This maybe the root reason that we can not improve surface error by this softSeparation method.
 4  The above Gaussian noise simulation is an exhaust search lambda with knowing the ground truth in validation data.
-   In test case, the lambda can not achieve the best optimal, the rifError/surface rate should be smaller than 1.24 to get significant improvement.
+   In test case, the lambda can not achieve the best optimal, the rifError/surface rate should be smaller than 1.24 to get a significant improvement.
    In other words, the thickness error should be same level accurate with surface error, it can really improve.
    like a grade-B student hoping to improve his grade may refer answers of a grade-A student,
        or at least a grade-B student with cautions.
@@ -325,12 +325,12 @@ expDuke_20210325A_Thickness_M2_iibi007              3.4882   2.4069    2.8775,  
 
 expDuke_20210503_Thickness_M5_iibi007               3.4299   2.1810    2.9082, 3.9517      90         30
 expDuke_20210503_Thickness_N_iibi007                5.1346   3.3735    3.7237, 6.5455      42         80
-expDuke_20210507_ThicknessQ64_skm2                  training, May 14th get result
-expDuke_20210507_ThicknessQ128_skm2                 training, May 14th get result
+expDuke_20210507_ThicknessQ64_skm2 (Best)           3.4127   2.2291    2.8350, 3.9906      82         35
+expDuke_20210507_ThicknessQ128_skm2                 3.6561   2.3872    3.0945, 4.2178      100        97
 expDuke_20210510_ThicknessQ64_10percent_A_skm2      5.4025   2.9072    4.5352, 6.2700      67         72
-expDuke_20210510_ThicknessQ64_20percent_A_skm2      training, May 14th get result
+expDuke_20210510_ThicknessQ64_20percent_A_skm2      4.9641   2.8017    4.0989, 5.8294      318        249
 expDuke_20210510_ThicknessQ128_10percent_A_skm2     5.3493   3.7429    4.7545, 5.9442      259        210
-expDuke_20210510_ThicknessQ128_20percent_A_skm2     start at May 11th, will get result on May 14th.
+expDuke_20210510_ThicknessQ128_20percent_A_skm2     4.9189   3.3770    4.0071, 5.8309      306        275
 =================================================================================================================================================================================================================
 Notes: the above Hausdorff distances are in unit of pixel. Other error are in unit of um. 1 pixel = 3.24 um in Duke data.
 =================================================================================================================================================================================================================
