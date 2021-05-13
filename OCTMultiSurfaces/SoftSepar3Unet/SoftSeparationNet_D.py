@@ -71,6 +71,9 @@ class SoftSeparationNet_D(BasicModel):
         if len(os.listdir(surfaceNetPath)) == 0:
             surfaceNetPath = None  # network will load from default directory
         self.m_surfaceSubnet.m_netMgr.loadNet(surfaceMode, netPath=surfaceNetPath) # loadNet will load saved learning rate
+        if surfaceMode=="train" and hps.surfaceSubnetLrReset:
+            self.m_surfaceSubnet.resetLrScheduler(hps.surfaceSubnetLr)
+
 
         # thickness Subnet, where r means thickness
         self.m_rDevice = eval(self.hps.thicknessSubnetDevice)
@@ -91,7 +94,10 @@ class SoftSeparationNet_D(BasicModel):
         if len(os.listdir(thicknessNetPath)) == 0:
             thicknessNetPath = None  # network will load from default directory
         self.m_thicknessSubnet.m_netMgr.loadNet(thicknessMode, netPath=thicknessNetPath) # loadNet will load saved learning rate
-        
+        if thicknessMode=="train" and hps.thicknessSubnetLrReset:
+            self.m_thicknessSubnet.resetLrScheduler(hps.thicknessSubnetLr)
+
+
         # lambda Module
         self.m_lDevice = eval(self.hps.lambdaModuleDevice)
         self.m_lambdaModule = eval(self.hps.lambdaModule)(self.m_surfaceSubnet.hps.startFilters+self.m_thicknessSubnet.hps.startFilters,\
@@ -112,6 +118,8 @@ class SoftSeparationNet_D(BasicModel):
         if len(os.listdir(lambdaNetPath)) == 0:
             lambdaNetPath = None  # network will load from default directory
         self.m_lambdaModule.m_netMgr.loadNet(lambdaMode,netPath=lambdaNetPath)
+        if lambdaMode=="train" and hps.lambdaModuleLrReset:
+            self.m_lambdaModule.resetLrScheduler(hps.lambdaModuleLr)
 
         self.setSubnetsStatus(surfaceMode, thicknessMode, lambdaMode)
 

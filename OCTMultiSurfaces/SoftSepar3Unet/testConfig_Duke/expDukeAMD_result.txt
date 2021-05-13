@@ -65,7 +65,7 @@ ExperimentName                                                  muError stdError
 expDuke_20201208A_SurfaceNet_YufanHe_iibi007                    1.9699  2.1109    1.1345, 1.8918, 2.8836    2.5991, 1.5675, 1.6567      153.  40.  71.              Exact JHU YufanHe method, filters=64
 expDuke_20200902A_SurfaceSubnet                                 1.9812  1.9618    1.1122, 1.8904, 2.9410    2.4530, 1.0670, 1.6765      50.   33.  30.              Pure surfaceSubnet.
 expDuke_20210507A_SurfaceSubnetQ64_iibi007                      1.9124  2.1480    1.2497, 1.7414, 2.7462    3.1326, 1.0828, 1.3534      127. 186.  70.              Add segChannel=64
-expDuke_20210507A_SurfaceSubnetQ128_iibi007 (best)              1.8392  1.8936    1.0754, 1.6992, 2.7431    2.5610, 0.9663, 1.3942      52.  105.  79.              Add segChannel=128
+expDuke_20210507A_SurfaceSubnetQ128_iibi007 (Best)              1.8392  1.8936    1.0754, 1.6992, 2.7431    2.5610, 0.9663, 1.3942      52.  105.  79.              Add segChannel=128
 expDuke_20210510_SurfaceSubnetQ64_10percent_A_iibi007           2.2653  2.5946    1.3014, 2.0853, 3.4093    3.2740, 1.3397, 2.3676      155.  34.  56.
 expDuke_20210510_SurfaceSubnetQ64_20percent_A_iibi007           2.5584  3.3820    1.9145, 2.2198, 3.5411    5.1004, 1.3066, 2.3381      155. 174. 106.
 expDuke_20210510_SurfaceSubnetQ128_10percent_A_iibi007          2.3051  2.4706    1.3596, 2.1688, 3.3871    3.2575, 1.3110, 2.0183      46.   41.  57.
@@ -237,7 +237,7 @@ ExperimentName                                                  muError stdError
 expDuke_20201208A_SurfaceNet_YufanHe_iibi007                    1.9699  2.1109    1.1345, 1.8918, 2.8836    2.5991, 1.5675, 1.6567      153.  40.  71.              Exact JHU YufanHe method, filters=64
 expDuke_20200902A_SurfaceSubnet                                 1.9812  1.9618    1.1122, 1.8904, 2.9410    2.4530, 1.0670, 1.6765      50.   33.  30.              Pure surfaceSubnet.
 expDuke_20210507A_SurfaceSubnetQ64_iibi007                      1.9124  2.1480    1.2497, 1.7414, 2.7462    3.1326, 1.0828, 1.3534      127. 186.  70.              Add segChannel=64
-expDuke_20210507A_SurfaceSubnetQ128_iibi007                     1.8392  1.8936    1.0754, 1.6992, 2.7431    2.5610, 0.9663, 1.3942      52.  105.  79.               Add segChannel=128
+expDuke_20210507A_SurfaceSubnetQ128_iibi007  (Best)             1.8392  1.8936    1.0754, 1.6992, 2.7431    2.5610, 0.9663, 1.3942      52.  105.  79.               Add segChannel=128
 =====================================================================================================================================================================================================================
 
 
