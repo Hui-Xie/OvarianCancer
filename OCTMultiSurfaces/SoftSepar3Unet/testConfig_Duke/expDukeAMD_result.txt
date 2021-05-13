@@ -54,10 +54,10 @@ Analysis:
 3  The basic idea SoftSeperation is similar that the grade-B student wants to improve his grade by referring to the answers of others(grade-C or grade-A student).
 4  Geting high-accuracy thickness error is at least equivalent difficult with, or harder than, the getting high-accuracy surface error.
    This statement can be proved by a contradiction.
-   If thickness prediction can get a higher accuracy than surface location prediction,
+   If there exists a thickness prediction which can get a higher accuracy than any surface location prediction,
    then this higher accuracy thickness prediction combining general the highest accuracy surface 0 prediction can get a higher-accuracy surface prediction,
-   which implies there exists a method to get a higher-accuracy surface prediction than thickness prediction,
-   which is conflicting with the presumption in the beginning of this contradiction that thickness prediction has a higher accuracy than surface prediction.
+   which implies there exists a method to get a higher-accuracy surface prediction than the thickness prediction,
+   which is conflicting with the presumption in the beginning of this contradiction that a thickness prediction has a higher accuracy than any surface prediction.
    Therefore, the grade-B student looks around, and he can not find a better-grade student.
 5  In past one year, we tried different solutions hoping to achieve a good luck.
    A  try different network architectures to improve thickness prediction.
