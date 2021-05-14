@@ -1,0 +1,50 @@
+# May 14th, Friday, 2021
+Prepare IVUS data for sufraceSubnet_Q experiment:
+This IVUS (Intravascular Ultrasound) data set is a public dataset B from IVUS challenge 2011 \cite{IVUSChallenge2011}.
+Its goal is to segment the inner wall(lumen) and outer wall(media) of vessels in intra-vascular ultrasound images obtained by 20 MHz IVUS scanner from 10 patients.
+Training set includes 109 images, in which we randomly choose 9 images for validation in training process;
+and test data includes 326 images. The raw IVUS image has pixel size of 384*384 with in-frame resolution of 0.026*0.026mm.
+We convert them into polar coordinate images of size 192*360 pixels, around the center point of the raw image, where 192 is maximum radial coordinate,
+and 360 is the maximum angular coordinate in degree.
+We feed these polar images into our deep learning network, and directly evaluate our prediction result using a Matlab script published in IVUS Chanellenge \cite{IVUSChallenge2011}.
+The Matlab scrip evaluates the average Jaccard similarity measurement(Jacc), Dice, Hausdorff Distance(HD), and Percentage of Area Difference (PAD) referred from \cite{IVUSChallenge2011}.
+In our experiment, we used dynamic $\vec{\sigma}$ from $\vec{\mu}/\vec{\sigma}$ computation module to generate Gaussian ground truth,
+and used gaussian noise, pepper\&salt noise, and arbitrary degree rotation on raw image for data augmentation.
+Test used TTA(Test-Time Augmentation) in \SI{20}{\degree} step rotation, and then average 18 rotated back result as our final result.
+FBBR-2 and our method use same data augmentationa and TTA.
+
+IVUS data set:
+training: 100 images.
+validaiton: 9 images.
+test:     326 images.
+
+image size: 192x360 in HxW in polar coordination.
+numSurface: 2
+
+Experiment design:
+1  100% training set.
+2  10%  training set.
+3  Methods: our method, YufanHe's method.
+
+Tasks:
+1  prepare 10% data in training set. validation and test set keep same with 100% data.
+2  IVUS dataset class:
+   data augmentation.(shift+ flip+ noise+ saltPepper)
+3  config yaml:
+4  IVUS training script:
+   A  output format, and save
+   B  measurement.
+   C  data augmentation. (shift)
+   D  TTA.
+
+5  IVUS test script:
+   A  output format, and save
+   B  measurement.
+   C  data augmentation. (shift)
+   D  TTA.
+
+
+
+
+
+
