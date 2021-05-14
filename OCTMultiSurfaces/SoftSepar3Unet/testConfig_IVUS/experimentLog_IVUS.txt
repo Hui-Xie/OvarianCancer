@@ -32,21 +32,29 @@ Experiment design:
 3  Methods: our method, YufanHe's method.
 
 Tasks:
-1  prepare 10% data in training set. validation and test set keep same with 100% data.
-2  IVUS dataset class:
+1  prepare 10% data in training set. validation and test set keep same with 100% data.  --done.
+2  copy data to skm2, and iibi007, and modify path name.
+   src: /home/hxie1/data/IVUS/polarNumpy
+        /home/hxie1/data/IVUS/polarNumpy_10percent
+        /home/hxie1/data/IVUS/Training_Set
+   dst: skm2, c-iibi007   --done.
+   modify path name: -- done.
+
+3  IVUS dataset class:
    data augmentation.(shift+ flip+ noise+ saltPepper)
-3  config yaml:
-4  IVUS training script:
+4  config yaml:
+5  IVUS training script:
    A  output format, and save
    B  measurement.
    C  data augmentation in training and validation.
-   D  TTA.
 
-5  IVUS test script:
+
+6  IVUS test script:
    A  output format, and save
    B  measurement.
    C  no data augmentation.
-   D  TTA.
+   D  output restore into tube shape back.
+
 
 
 
