@@ -1,6 +1,6 @@
 
 
-dataSetDir = "/home/hxie1/data/IVUS/polarNumpy/test"
+dataSetDir = "/home/hxie1/data/IVUS/polarNumpy_10percent/training"
 outputDir = "/home/hxie1/data/temp"
 
 import numpy as np
@@ -16,15 +16,19 @@ assert NSlice1 ==NSlice2
 assert W1==W2
 W = W1
 
+print(f"images shape: {images.shape}")
+print(f"surfaces shape: {surfaces.shape}")
+
 with open(os.path.join(dataSetDir,"patientID.json")) as json_file:
     patientIDs = json.load(json_file)
 
-k= 129 # random test number
+k= 6 # random test number
 
 patientID = os.path.splitext(os.path.basename(patientIDs[str(k)]))[0]
 
 f = plt.figure(frameon=False)
-DPI = f.dpi
+# DPI = f.dpi
+DPI = 100
 rowSubplot= 1
 colSubplot= 2
 f.set_size_inches(W*colSubplot/ float(DPI), H*rowSubplot/ float(DPI))
