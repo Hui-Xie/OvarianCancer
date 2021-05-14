@@ -65,6 +65,7 @@ hPixelSize: 0.026 #Each image frame is 384 × 384 pixels in size, with in-frame 
 #size_image is 0.026 mm in Volcano Data-set;
 
 # data augmentation
+# validation supports data augmentation.
 augmentProb: 0.95  #  data augmentation rate, a high augmentation prob for polar image.
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 # for salt-pepper noise

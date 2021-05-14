@@ -29,7 +29,7 @@ numSurface: 2
 Experiment design:
 1  100% training set.
 2  10%  training set.
-3  Methods: our method, YufanHe's method.
+3  Methods: our method, YufanHe's method.  total 4 experiments.
 
 Tasks:
 1  prepare 10% data in training set. validation and test set keep same with 100% data.  --done.
@@ -46,16 +46,16 @@ Tasks:
    data augmentation.(shift/rotation first + flip+ noise+ saltPepper)   --done.
 
 5  IVUS training script:
-   A  output format, and save
-   B  measurement.
-   C  data augmentation in training and validation.
+   A  output format, and save  __same with OCT, --done.
+   C  data augmentation in training and validation.  --done
 
-
-6  IVUS test script:
-   A  output format, and save
+6  a new IVUS test script:
+   refer previous: /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/network/CVTestSurfaces_PolarImage.py
+   A  output format, path name, and save file name.
    B  measurement.
    C  no data augmentation.
-   D  output restore into tube shape back.
+   D  output lumen and media txt files.
+   F  output restore into tube shape back.
 
 
 
