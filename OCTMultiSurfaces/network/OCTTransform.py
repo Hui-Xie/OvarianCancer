@@ -19,6 +19,7 @@ class OCTDataTransform(object):
 
     def __call__(self, inputData, inputLabel=None):
         '''
+         # normalization should put outside of transform, as validation may not use transform
 
         :param inputData:  a normalized Tensor of size(H,W),
                intputLabel: NxW
@@ -27,11 +28,23 @@ class OCTDataTransform(object):
         H,W = inputData.shape
         device = inputData.device
         dirt =False
+        # not contaminate memory data.
         data = inputData.clone()
         if inputLabel is not None:
             label = inputLabel.clone()
         else:
             label = None
+
+        # rotation is first
+        if self.m_rotation and inputLabel is not None:
+            rotation = random.randint(0, 359)
+            data, label = polarImageLabelRotate_Tensor(data, label, rotation=rotation)
+
+        # flip is second.
+        if random.uniform(0, 1) < self.m_flippingProb:
+            data = torch.flip(data, [1])  # flip horizontal
+            if label is not None:
+                label = torch.flip(label, [1])
 
         # gaussian noise
         if random.uniform(0, 1) < self.m_prob:
@@ -50,16 +63,6 @@ class OCTDataTransform(object):
             data[torch.nonzero(pepperMask, as_tuple=True)] = min
             data[torch.nonzero(saltMask,   as_tuple=True)] = max
             dirt =True
-
-        # rotation
-        if self.m_rotation and inputLabel is not None:
-            rotation = random.randint(0,359)
-            data, label = polarImageLabelRotate_Tensor(data, label, rotation=rotation)
-
-        if random.uniform(0, 1) < self.m_flippingProb:
-            data = torch.flip(data, [1])  # flip horizontal
-            if label is not None:
-                label = torch.flip(label, [1])
 
         if inputLabel is None:
             return data

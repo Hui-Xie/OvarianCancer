@@ -40,9 +40,11 @@ Tasks:
    dst: skm2, c-iibi007   --done.
    modify path name: -- done.
 
-3  IVUS dataset class:
-   data augmentation.(shift+ flip+ noise+ saltPepper)
-4  config yaml:
+3  config yaml:  --done.
+
+4  IVUS dataset class:
+   data augmentation.(shift/rotation first + flip+ noise+ saltPepper)   --done.
+
 5  IVUS training script:
    A  output format, and save
    B  measurement.
