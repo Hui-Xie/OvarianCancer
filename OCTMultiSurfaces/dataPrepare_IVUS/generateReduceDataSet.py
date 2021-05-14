@@ -53,8 +53,8 @@ def cutDataset(cutDict):
     originalImagesPath = os.path.join(srcDir,"images.npy")
     originalSurfacesPath = os.path.join(srcDir, "surfaces.npy")
 
-    images = np.load(originalImagesPath).astype(np.float32)[cutDict,:,:]
-    surfaces = np.load(originalSurfacesPath).astype(np.float32)[cutDict,:,:]
+    images = np.load(originalImagesPath).astype(np.float32)[cutSamples,:,:]
+    surfaces = np.load(originalSurfacesPath).astype(np.float32)[cutSamples,:,:]
 
     i =0
     for x in cutSamples:
