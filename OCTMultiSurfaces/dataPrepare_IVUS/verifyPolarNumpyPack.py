@@ -46,6 +46,8 @@ for s in range(0, S):
     subplot2.plot(range(0, W), surfaces[k, s, :], linewidth=0.9)
 subplot2.axis('off')
 
-plt.savefig(os.path.join(outputDir, patientID + "_Raw_GT_PolarNumpyVerify.png"), dpi='figure', bbox_inches='tight', pad_inches=0)
+outImagePath = os.path.join(outputDir, patientID + "_Raw_GT_PolarNumpyVerify.png")
+plt.savefig(outImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
+print(f"output image: {outImagePath}")
 
