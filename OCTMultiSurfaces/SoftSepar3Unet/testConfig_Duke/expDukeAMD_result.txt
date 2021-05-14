@@ -102,7 +102,7 @@ Summary:
 2  Method improvement in expDuke_20210507A_SurfaceSubnetQ128_iibi007: cancel fixed guasssian distribution, no regional seg branch, ReLU after loss, bigger seg head.
    And our method only need about 15GB GPU memory for training, 1/2 GPU memory of YufanHe's method.
 3  In 10% reduced data training, Comparison with Leixin's 10% best experiment(w/ learned) in muError_Std formation.
-   Notes: Hui's method uses both 10% training and validaiton dataset. while test dataset is same with full data set case for a fair comparison.
+   Notes: Hui's and Yufan's methods use both 10% training and validaiton dataset. while test dataset is same with full data set case for a fair comparison.
           Leixin's method uses 10% training data, and 100% validation data.
 
 ===========================================Surface mean error(um)_std for 10% training data of Duke AMD data=======================================
