@@ -13,8 +13,13 @@ and used gaussian noise, pepper\&salt noise, and arbitrary degree rotation on ra
 Test used TTA(Test-Time Augmentation) in \SI{20}{\degree} step rotation, and then average 18 rotated back result as our final result.
 FBBR-2 and our method use same data augmentationa and TTA.
 
-IVUS data set:
+IVUS data set(100%):
 training: 100 images.
+validaiton: 9 images.
+test:     326 images.
+
+IVUS data set(10%):
+training: 10 images.
 validaiton: 9 images.
 test:     326 images.
 
@@ -34,13 +39,13 @@ Tasks:
 4  IVUS training script:
    A  output format, and save
    B  measurement.
-   C  data augmentation. (shift)
+   C  data augmentation in training and validation.
    D  TTA.
 
 5  IVUS test script:
    A  output format, and save
    B  measurement.
-   C  data augmentation. (shift)
+   C  no data augmentation.
    D  TTA.
 
 
