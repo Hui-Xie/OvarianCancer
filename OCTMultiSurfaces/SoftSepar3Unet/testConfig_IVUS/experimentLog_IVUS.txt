@@ -19,6 +19,20 @@ Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUne
 >> Lumen:	>> 0.84±0.16	0.90±0.15	0.45±0.48	0.11±0.17	>>
    Media:	>> 0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15	>>
 
+Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_10percent_A_skm2/testResult/text
+>> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+>> >> >> >> >> Jacc		    Dice		 HD		     PAD
+>> Lumen:	>> 0.82±0.12	0.89±0.11	0.58±0.39	0.12±0.15	>>
+   Media:	>> 0.79±0.22	0.86±0.21	0.89±0.51	0.14±0.21	>>
+
+Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_10percent_A_skm2/testResult/text
+>> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+>> >> >> >> >> Jacc		     Dice		   HD		  PAD
+>> Lumen:	>> 0.83±0.09	0.91±0.07	0.45±0.30	0.11±0.10	>>
+   Media:	>> 0.83±0.10	0.90±0.06	0.74±0.39	0.11±0.09	>>
+
+
+
 
 
 
