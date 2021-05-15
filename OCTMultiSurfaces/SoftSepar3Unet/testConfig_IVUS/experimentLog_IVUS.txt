@@ -1,9 +1,19 @@
+
 # May 15th, Satursday, 2021:
 trained 4 networks:
 40650 ?        Rl   2019:14 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_SurfaceSubnetQ64_10percent_A_skm2.yaml
 51171 ?        Rl   15549:49 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_YufanHe_10percent_A_skm2.yaml
 59848 ?        Rl   13972:27 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_YufanHe_100percent_A_skm2.yaml
 75457 ?        Rl   1935:45 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2.yaml
+
+Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text
+>> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+              Jacc		   Dice		   HD		   PAD
+>> Lumen:	 0.84±0.15	0.90±0.13	0.53±0.52	0.11±0.16	>>
+   Media:	 0.86±0.14	0.92±0.12	0.67±0.56	0.09±0.14	>>
+
+
+
 
 
 

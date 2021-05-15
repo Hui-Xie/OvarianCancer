@@ -1,12 +1,21 @@
 %{
 code is borrowed from Leixin Zhou batch_metric.m, courtesy to Leixn Zhou.
 compute luemen and media performance of IVUS data set
+
+If you need to execute a matlab script you can do matlab -nodisplay < script.m.
+If you want to call a matlab function, you can do matlab -nodisplay -r "foo(); quit".
+IIRC, in both cases matlab should exit once it is done.
+
+
+
+
 %}
 
 clear all
 clc
 
-predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text';
+% predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text';
+predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_100percent_A_skm2/testResult/text'
 % predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_Sigma0_20200302/realtime_testResult/text';
 %gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
 gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
