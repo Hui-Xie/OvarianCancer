@@ -15,8 +15,11 @@ clear all
 clc
 
 % predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text';
-predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_100percent_A_skm2/testResult/text'
+% predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_100percent_A_skm2/testResult/text'
 % predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_Sigma0_20200302/realtime_testResult/text';
+predDir = "/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_10percent_A_skm2/testResult/text"
+% predDir = "/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_10percent_A_skm2/testResult/text"
+
 %gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
 gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
 %gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
