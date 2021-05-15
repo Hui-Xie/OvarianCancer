@@ -1,3 +1,12 @@
+# May 15th, Satursday, 2021:
+trained 4 networks:
+40650 ?        Rl   2019:14 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_SurfaceSubnetQ64_10percent_A_skm2.yaml
+51171 ?        Rl   15549:49 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_YufanHe_10percent_A_skm2.yaml
+59848 ?        Rl   13972:27 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_YufanHe_100percent_A_skm2.yaml
+75457 ?        Rl   1935:45 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2.yaml
+
+
+
 # May 14th, Friday, 2021
 Prepare IVUS data for sufraceSubnet_Q experiment:
 This IVUS (Intravascular Ultrasound) data set is a public dataset B from IVUS challenge 2011 \cite{IVUSChallenge2011}.
