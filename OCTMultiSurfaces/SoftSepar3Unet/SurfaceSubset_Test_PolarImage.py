@@ -55,7 +55,7 @@ def main():
     # debug:
     MarkGTDisorder = False
     MarkPredictDisorder = False
-    OutputPredictImages = False
+    OutputPredictImages = True
     Output2Images = False  # False means output 3 images.
 
     # parse config file
@@ -141,12 +141,11 @@ def main():
     pltColors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:purple',  'tab:olive', 'tab:brown', 'tab:pink', 'tab:red', 'tab:cyan']
     assert S <= len(pltColors)
 
+
+    outputImageDir = hps.imagesOutputDir
     outputTxtDir = os.path.join(hps.outputDir, "text")
-    outputImageDir = os.path.join(hps.outputDir, "images")
     if not os.path.exists(outputTxtDir):
         os.makedirs(outputTxtDir)  # recursive dir creation
-    if not os.path.exists(outputImageDir):
-        os.makedirs(outputImageDir)  # recursive dir creation
 
     polarConverter = PolarCartesianConverter((384,384),192, 192, 192, 360)
 
