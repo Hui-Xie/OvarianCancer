@@ -60,11 +60,11 @@ Tasks:
 
 6  a new IVUS test script:
    refer previous: /home/sheen/projects/DeepLearningSeg/OCTMultiSurfaces/network/CVTestSurfaces_PolarImage.py
-   A  output format, path name, and save file name.
+   A  output format, path name, and save file name.   --done
    B  measurement.
-   C  no data augmentation.
-   D  output lumen and media txt files.
-   F  output restore into tube shape back.
+   C  no data augmentation.   --done
+   D  output lumen and media txt files.  --done
+   F  output restore into tube shape back.  --done
 
 
 
