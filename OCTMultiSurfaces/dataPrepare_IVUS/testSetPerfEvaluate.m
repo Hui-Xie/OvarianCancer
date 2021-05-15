@@ -6,11 +6,11 @@ compute luemen and media performance of IVUS data set
 clear all
 clc
 
-predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe/expUnetIVUS_20200314_YufanHe/testResult/text';
-% predDir = '/home/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_Sigma0_20200302/realtime_testResult/text';
-%gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
-gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
-%gtDir = '/home/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
+predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text';
+% predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet/expUnetIVUS_Sigma0_20200302/realtime_testResult/text';
+%gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs1';
+gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1'; %Leixin used. It is best.
+%gtDir = '/raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v2';
 predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
 predictLumenFiles = {predictLumenFiles.name}';
 N = numel(predictLumenFiles);
