@@ -39,7 +39,7 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 5
 learningRate: 1.0e-5
@@ -49,20 +49,19 @@ momentum: 0.9
 maxLr:  0.1
 epochs: 8000
 
-
-network: "SurfaceSubnet_Q"
+network: "SurfacesUnet_YufanHe_2"
 inputHeight: 192   # original height
 inputWidth: 360   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # rawImage + gradChannels
-nLayers: 7
+inputChannels: 3 # rawImage + Y + X
+nLayers: 5
 numSurfaces: 2  # num of surfaces in an image
-startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+startFilters: 64  # the num of filters in first layer of Unet
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
-addCoordinatesXYChannels: False
+addCoordinatesXYChannels: True
 segChannels: 64  # number of channel in the segmentation part.
 
 # some physical parameter of images

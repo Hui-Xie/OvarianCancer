@@ -115,7 +115,6 @@ def main():
     netMgr = NetMgr(net, hps.netPath, hps.device)
     netMgr.loadNet("train")
 
-
     writer = SummaryWriter(log_dir=hps.logDir)
 
     # train
