@@ -1,3 +1,20 @@
+# May 17th, Monday, 2021:
+Dauphin et al argue that the difficulty in minimizing the loss arises from saddle points rather than poor local minima.
+So increasing learning rate at this time is not a bad idea.
+
+discriminative fine tuning: the ealier layers has smaller learning rate.
+The intuition behind this method of configuration is that the first few layers would typically contain very granular
+details of the data, such as the lines and the edges — of which we normally wouldn’t want to change much and like to
+ retain it’s information. As such, there’s not much need to change their weights by a big amount.
+
+
+A rule of thumb here is to double the learning rate as you double the batch size.
+One of the downsides of using large batch sizes, however, is that they might lead to solutions that
+generalize worse than those trained with smaller batches.
+
+torch.tensor() always copies data. If you have a numpy array that you want to convert, use torch.as_tensor() or torch.from_numpy() to avoid copying the data.
+
+
 
 # May 15th, Satursday, 2021:
 trained 4 networks:
@@ -30,6 +47,16 @@ Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/S
 >> >> >> >> >> Jacc		     Dice		   HD		  PAD
 >> Lumen:	>> 0.83±0.09	0.91±0.07	0.45±0.30	0.11±0.10	>>
    Media:	>> 0.83±0.10	0.90±0.06	0.74±0.39	0.11±0.09	>>
+
+Rethink LearningRate and SGD:
+1  OneCycleLR + SGD is beter than Adam.
+2  critizon for save network pararmeter.
+3  Why Adam is not match ReduceLrOnPlateau
+4  IVUS use about 6.5K iteration.
+5  Lr_finder()
+
+
+
 
 
 
