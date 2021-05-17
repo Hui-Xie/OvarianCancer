@@ -15,6 +15,21 @@ generalize worse than those trained with smaller batches.
 torch.tensor() always copies data. If you have a numpy array that you want to convert, use torch.as_tensor() or torch.from_numpy() to avoid copying the data.
 
 
+Current: learningR = 0.1, patience=20, reduceLrOnPlateau:
+
+If use OneCycleLR:  minLr = 1.0e-5, maxLr = 0.1.
+Task:
+1  write a separate training for IVUS, use OneCycleLR + SGD
+2  pixel size chaneg to um unit.
+3  use validation loss min to save network parameters.
+4  add L1Loss weight in Q nework.
+   need to modify other config.
+5  not use muError measurement.
+
+
+
+
+
 
 # May 15th, Satursday, 2021:
 trained 4 networks:

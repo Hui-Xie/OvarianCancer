@@ -87,7 +87,12 @@ class SurfaceSubnet_Q(BasicModel):
             l1Loss = nn.SmoothL1Loss().to(device)
             loss_L1 = l1Loss(mu, GTs)
 
-            loss =  loss_ce + loss_L1
+            if "weightL1Loss" in self.hps.__dict__:
+                weightL1 = self.hps.weightL1Loss
+            else:
+                weightL1 = 1.0
+
+            loss =  loss_ce + loss_L1*weightL1
 
             #if torch.isnan(loss.sum()): # detect NaN
             #    print(f"Error: find NaN loss at epoch {self.m_epoch}")
