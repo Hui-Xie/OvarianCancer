@@ -19,12 +19,12 @@ Current: learningR = 0.1, patience=20, reduceLrOnPlateau:
 
 If use OneCycleLR:  minLr = 1.0e-5, maxLr = 0.1.
 Task:
-1  write a separate training for IVUS, use OneCycleLR + SGD
-2  pixel size chaneg to um unit.
-3  use validation loss min to save network parameters.
-4  add L1Loss weight in Q nework.
-   need to modify other config.
-5  not use muError measurement.
+1  write a separate training for IVUS, use OneCycleLR + SGD   --done
+2  pixel size chaneg to um unit.   --cancel.
+3  use validation loss min to save network parameters.  --done
+4  add L1Loss weight in Q nework.   --done.
+   need to modify other config.     --done
+5  not use muError measurement.      --done
 
 
 

@@ -127,9 +127,9 @@ def main():
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
 
-    stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
-                                                                                             slicesPerPatient=hps.slicesPerPatient,
-                                                                                             hPixelSize=hps.hPixelSize)
+    muSurfaceError = torch.mean((testOutputs - testGts) ** 2, dim=(0, 2), ).sqrt()
+    muError = torch.mean(muSurfaceError)
+
     #generate predicted images
     images = images.cpu().numpy().squeeze()
     B,H,W = images.shape
@@ -245,12 +245,10 @@ def main():
         file.write(f"net.m_runParametersDict:\n")
         [file.write(f"\t{key}:{value}\n") for key, value in net.m_runParametersDict.items()]
         file.write(f"\n\n===============Formal Output Result ===========\n")
-        file.write(f"stdSurfaceError = {stdSurfaceError}\n")
         file.write(f"muSurfaceError = {muSurfaceError}\n")
         file.write(f"patientIDList ={patientIDList}\n")
         #file.write(f"stdPatientError = {stdPatientError}\n")
         #file.write(f"muPatientError = {muPatientError}\n")
-        file.write(f"stdError = {stdError}\n")
         file.write(f"muError = {muError}\n")
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
         if 0 != len(violateConstraintErrors[0]):

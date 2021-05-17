@@ -42,7 +42,13 @@ sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or n
 device: torch.device('cuda:1')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 5
-learningRate: 0.1
+learningRate: 1.0e-5
+momentum: 0.9
+
+# for OneCycleLR
+maxLr:  0.1
+epochs: 8000
+
 
 network: "SurfaceSubnet_Q"
 inputHeight: 192   # original height
