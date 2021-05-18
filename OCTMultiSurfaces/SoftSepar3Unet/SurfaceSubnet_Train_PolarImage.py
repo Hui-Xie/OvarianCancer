@@ -180,8 +180,8 @@ def main():
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalars('Loss', {"train":trLoss, "validation": validLoss}, epoch)
-        writer.add_scalar('ValidationError/mean', muError, epoch)
-        writer.add_scalars('ValidationError/muSurface', convertTensor2Dict(muSurfaceError), epoch)
+        writer.add_scalar('ValidationError/mean (pixel)', muError, epoch)
+        writer.add_scalars('ValidationError/muSurface(pixel)', convertTensor2Dict(muSurfaceError), epoch)
         writer.add_scalar('learningRate', optimizer.param_groups[0]['lr'], epoch)
 
         if validLoss < preValidLoss:
@@ -195,7 +195,7 @@ def main():
         #break
 
 
-    print("============ End of Cross valiation training for OCT Multisurface Network ===========")
+    print(f"============  End of Test: {hps.experimentName} ===========")
 
 
 
