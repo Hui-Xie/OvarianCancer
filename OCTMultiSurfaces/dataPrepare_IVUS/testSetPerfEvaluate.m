@@ -36,9 +36,10 @@ function result=evaluePred(predDir)
     predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
     predictLumenFiles = {predictLumenFiles.name}';
     N = numel(predictLumenFiles);
-    fprintf("===============================================================================================================")
+    fprintf("===============================================================================================================\n")
     fprintf("PredictionDir: %s\n", predDir)
-    fprintf("Test set has %d images comparing with ground truth at %s.\n", N, gtDir)
+    fprintf("GroundTruthDir: %s\n", gtDir)
+    fprintf("Test set size: %d images \n", N)
 
     % result data tables
     lumenDataTable = zeros(N, 4);
@@ -66,7 +67,7 @@ function result=evaluePred(predDir)
     lumenStd = std(lumenDataTable,1);
     mediaMean = mean(mediaDataTable,1);
     mediaStd = std(mediaDataTable,1);
-    fprintf("\tJacc\t\tDice\t\tHD\t\tPAD\n")
+    fprintf("\t\tJacc\t\tDice\t\tHD\t\tPAD\n")
     fprintf("Lumen:\t")
     for i=1:4
         fprintf("%.2f%c%.2f\t", lumenMean(i), char(177),lumenStd(i))
@@ -76,7 +77,7 @@ function result=evaluePred(predDir)
         fprintf("%.2f%c%.2f\t", mediaMean(i), char(177),mediaStd(i))
     end
     fprintf("\n\n")
-    fprintf("================================================================================================================")
+    fprintf("================================================================================================================\n\n")
 
 end
 
