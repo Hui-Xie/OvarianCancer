@@ -10,7 +10,19 @@ IIRC, in both cases matlab should exit once it is done.
 
 
 %}
+clc
+predDirList=["/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_10percent_C_skm2/testResult/text", ...
+"/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_10percent_C_skm2/testResult/text"];
+NPred = length(predDirList);
+
+for i= 1:NPred
+    predDir = predDirList(i);
+    evaluePred(predDir);
+end
+
+
 function result=evaluePred(predDir)
+    result = 0;
 
     % predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text';
     % predDir = '/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_100percent_A_skm2/testResult/text'
@@ -24,8 +36,8 @@ function result=evaluePred(predDir)
     predictLumenFiles = dir(fullfile(predDir,'lum_*_003.txt'));
     predictLumenFiles = {predictLumenFiles.name}';
     N = numel(predictLumenFiles);
-    fprintf("==========================================================")
-    fprintf("Prediction result dir: \n%s\n", predDir)
+    fprintf("===============================================================================================================")
+    fprintf("PredictionDir: %s\n", predDir)
     fprintf("Test set has %d images comparing with ground truth at %s.\n", N, gtDir)
 
     % result data tables
@@ -64,22 +76,10 @@ function result=evaluePred(predDir)
         fprintf("%.2f%c%.2f\t", mediaMean(i), char(177),mediaStd(i))
     end
     fprintf("\n\n")
-    fprintf("==========================================================")
+    fprintf("================================================================================================================")
 
 end
 
-clear all
-clc
-predDirList=[
-'/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_10percent_C_skm2/testResult/text',
-'/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_10percent_C_skm2/testResult/text',
-];
-NPred = length(predDirList);
-
-for i= 1:NPred
-    predDir = predDirList(i);
-    evaluePred(predDir);
-end
 
 
 
