@@ -1,19 +1,34 @@
 '''
 Cut Duke_AMD data into 10% and 20%.
-1 Duke AMD data statistics:  51 Bscan / volume.
+1 100% Duke AMD data statistics:  51 Bscan / volume.
   training set: 266 volumes x 51 slices per volume, where 187 AMD + 79 control = 266 volumes;
   validation set: 59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
   test set:  59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
-2 cut into 10%:
-  training: 19 AMD + 8 control. (19+8)/266 = 10.1%.  Size: 27*51*512*361*4 = 1 GB
-  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB
-  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
-3 cut into 20%:
+
+2 cut into 20%:
   training:  38 AMD + 16 control. (38+16)/266 = 20.3%.  Size: 54*51*512*361*4 = 2. GB
   validation: 8 AMD + 4 control. (8+4)/59  =   20.3%   size: 12*51*512*361*4  = 0.6 GB
   test set:   41 AMD + 18 control.                     size: 59*51*512*361*4 = 2.3 GB
-4 test set is same for full dataset.
-5 output format:
+
+3 cut into 10%:
+  training: 19 AMD + 8 control. (19+8)/266 = 10.1%.  Size: 27*51*512*361*4 = 1 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
+
+4 cut into 5%:
+  training: 10 AMD + 4 control. (10+4)/266 = 5.2 %.  Size: 14*51*512*361*4 = 0.5 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB  (same with 10% case)
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
+
+5 cut into 1%:
+  training:   2 AMD + 1 control. (2+1)/266 =  1.1 %.  Size: 3*51*512*361*4 = 0.1 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB  (same with 10% case)
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
+
+6 all test sets are same for full dataset.
+
+
+7 output format:
   images.npy  patientID.json  surfaces.npy in test / validation /training directory.
   where: json file: ID->imageFileFullPath
 
@@ -28,8 +43,10 @@ validationSrcDir = "/home/hxie1/data/OCT_Duke/numpy/validation"
 testSrcDir = "/home/hxie1/data/OCT_Duke/numpy/test"
 
 # 10%
-outputDir10Percent = "/home/hxie1/data/OCT_Duke/numpy_10Percent"
 outputDir20Percent = "/home/hxie1/data/OCT_Duke/numpy_20Percent"
+outputDir10Percent = "/home/hxie1/data/OCT_Duke/numpy_10Percent"
+outputDir05Percent = "/home/hxie1/data/OCT_Duke/numpy_05Percent"
+outputDir01Percent = "/home/hxie1/data/OCT_Duke/numpy_01Percent"
 
 import os
 import random
@@ -60,6 +77,16 @@ testCutDict ={"srcDir": testSrcDir,
               "totalN": 59, "totalAMD":41, "totalControl": 18,
               "N": 59,        "AMD":41,      "Control":18,
               "outputDir": os.path.join(outputDir10Percent, "test") }  # 10% and 20% has same test set.
+
+trainCutDict_05={"srcDir": trainSrcDir,
+              "totalN": 266, "totalAMD":187, "totalControl": 79,
+              "N": 14,        "AMD":10,      "Control":4,
+              "outputDir": os.path.join(outputDir05Percent, "training") }
+
+trainCutDict_01={"srcDir": trainSrcDir,
+              "totalN": 266, "totalAMD":187, "totalControl": 79,
+              "N": 3,        "AMD":2,      "Control":1,
+              "outputDir": os.path.join(outputDir01Percent, "training") }
 
 
 def cutDataset(cutDict):
@@ -109,12 +136,15 @@ def cutDataset(cutDict):
 
 
 def main():
-    cutDataset(trainCutDict_10)
-    cutDataset(trainCutDict_20)
-    cutDataset(validationCutDict_10)
-    cutDataset(validationCutDict_20)
-    cutDataset(testCutDict)
+    # cutDataset(trainCutDict_10)
+    # cutDataset(trainCutDict_20)
+    # cutDataset(validationCutDict_10)
+    # cutDataset(validationCutDict_20)
+    # cutDataset(testCutDict)
+    cutDataset(trainCutDict_05)
+    cutDataset(trainCutDict_01)
     print(f"for the test directory, you need to copy from 10% to 20%")
+    print("=======================END===============================")
 
 
 if __name__ == "__main__":

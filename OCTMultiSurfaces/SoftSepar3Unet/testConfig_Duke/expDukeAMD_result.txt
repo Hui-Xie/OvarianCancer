@@ -1,6 +1,10 @@
 # May 18th, Tuesday, 2021
 Task:
 1  divide Duke data into 5% and 1%:
+    5%, 1% training set script.
+    copy 5% and 1% to skm2, iibi007,
+    copy test and validation to 5%, 1%.
+
 2  Experiment design:
    My method, YufanHe's mehod
    Adam+ReduceLrOnPlateau,   SGD+OneCycleLR
