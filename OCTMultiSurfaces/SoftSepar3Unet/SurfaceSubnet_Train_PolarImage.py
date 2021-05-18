@@ -141,6 +141,7 @@ def main():
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
             trLoss += float(loss)
+            lrScheduler.step()  # for OneCycleLR
 
             #break
 
@@ -174,7 +175,7 @@ def main():
 
 
 
-        lrScheduler.step()  # for OneCycleLR
+
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
