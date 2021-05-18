@@ -43,7 +43,7 @@ device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 5
 learningRate: 1.0e-5
-momentum: 0.9
+momentum: 0.9 # exponential weighted average, normally 0.9
 
 # for OneCycleLR
 maxLr:  0.1

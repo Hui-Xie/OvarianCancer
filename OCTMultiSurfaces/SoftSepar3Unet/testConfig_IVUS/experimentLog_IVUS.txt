@@ -14,6 +14,11 @@ generalize worse than those trained with smaller batches.
 
 torch.tensor() always copies data. If you have a numpy array that you want to convert, use torch.as_tensor() or torch.from_numpy() to avoid copying the data.
 
+Momentum or SGD with momentum is method which helps accelerate gradients vectors in the right directions, thus leading to faster converging.
+Instead, we’re estimating it on a small batch. Which means we’re not always going in the optimal direction, because our derivatives are ‘noisy’.
+Just like in my graphs above. So, exponentially weighed averages can provide us a better estimate which is closer to the actual derivate than our noisy calculations.
+This is one reason why momentum might work better than classic SGD.
+
 
 Current: learningR = 0.1, patience=20, reduceLrOnPlateau:
 

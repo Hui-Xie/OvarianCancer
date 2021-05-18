@@ -99,7 +99,7 @@ def main():
     net.to(device=hps.device)
 
     # use OneCycleLR, for IVUS
-    optimizer = torch.optim.SGD(net.parameters(), lr=hps.learningRate, momentum=0.9)
+    optimizer = torch.optim.SGD(net.parameters(), lr=hps.learningRate, momentum=hps.momentum)
     stepsPerEpoch = trainData.__len__()//hps.batchSize
     lrScheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=hps.maxLr, steps_per_epoch=stepsPerEpoch, epochs=hps.epochs)
 

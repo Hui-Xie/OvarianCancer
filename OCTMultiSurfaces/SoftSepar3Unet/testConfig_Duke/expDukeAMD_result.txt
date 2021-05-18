@@ -1,4 +1,21 @@
 # May 18th, Tuesday, 2021
+Task:
+1  divide Duke data into 5% and 1%:
+2  Experiment design:
+   My method, YufanHe's mehod
+   Adam+ReduceLrOnPlateau,   SGD+OneCycleLR
+   5% dataset, 1% data set.
+3  decide minLr and maxLr for SGD+ momentum + OneCycleLR.
+   minLr =1.0e-4
+   maxLr =1.0e-1
+4  trainCode support 2 method: SGD, Adam
+
+
+
+
+
+
+# May 18th, Tuesday, 2021
 Meeting with professor:
 1   try Duke_AMD with 5% and 1% reduced training data.
 2   think the differences of JHU method and our method:
