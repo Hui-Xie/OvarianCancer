@@ -1,3 +1,9 @@
+# May 18th, Tuesday, 2021
+Meeting with professor:
+1   try Duke_AMD with 5% and 1% reduced training data.
+2   think the differences of JHU method and our method:
+    input, architecture, loss design, advantage on which reduced data.
+
 # May 13th, Thursday, 2021
 Next Plan:
 1  do IVUS experiment.
