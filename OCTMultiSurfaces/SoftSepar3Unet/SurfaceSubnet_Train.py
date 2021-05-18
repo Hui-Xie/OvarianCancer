@@ -97,9 +97,15 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
 
-    optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+    if hps.optim == "AdamPlateau":
+        optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+        lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    if hps.optim == "SGDOneCycle":
+        optimizer = torch.optim.SGD(net.parameters(), lr=hps.learningRate, momentum=hps.momentum)
+        stepsPerEpoch = trainData.__len__() // hps.batchSize
+        lrScheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=hps.maxLr, steps_per_epoch=stepsPerEpoch, epochs=hps.epochs)
+
     net.setOptimizer(optimizer)
-    lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
     net.setLrScheduler(lrScheduler)
 
     # Load network
@@ -111,7 +117,7 @@ def main():
     writer = SummaryWriter(log_dir=hps.logDir)
 
     # train
-    epochs = 1360000
+    epochs = hps.epochs
     preTrainingLoss = 999999.0
     preValidLoss = net.getRunParameter("validationLoss") if "validationLoss" in net.m_runParametersDict else 2041  # float 16 has maxvalue: 2048
     preErrorMean = net.getRunParameter("errorMean") if "errorMean" in net.m_runParametersDict else 10.0
@@ -135,6 +141,9 @@ def main():
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
             trLoss += float(loss)
+
+            if hps.optim == "SGDOneCycle":
+                lrScheduler.step()  # for OneCycleLR
 
             #break
 
@@ -182,7 +191,8 @@ def main():
                                                                                                  hPixelSize=hps.hPixelSize,
                                                                                                  goodBScansInGtOrder=goodBScansInGtOrder)
 
-        lrScheduler.step(validLoss)
+        if hps.optim == "AdamPlateau":
+            lrScheduler.step(validLoss)
         # debug
         # print(f"epoch {epoch} ends...")  # for smoke debug
 

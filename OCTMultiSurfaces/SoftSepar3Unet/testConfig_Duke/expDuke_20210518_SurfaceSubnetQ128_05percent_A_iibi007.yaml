@@ -1,0 +1,121 @@
+# Duke data
+
+debug: False # debug mark
+dataIn1Parcel: True
+useIndependentValidation: True
+# Full Duke data is not in one parcel, while Tongren, JHU, 10%-20%Duke_AMD are in one parcel.
+# Not dataIn1Parcel means each patient has a volume file.
+dataInSlice: False
+
+dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent"
+existGTLabel: True
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K: 0  # Kfold cross validation
+k: -1   # the fold k test
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+
+# when do not use cross validation:
+# training data:  dataDir + training + images.npy
+#         label: dataDir + training + surfaces.npy
+#         IDs  : dataDir + training + patientID.json
+
+# validation data:  dataDir + validation + images.npy
+#           label: dataDir + validation + surfaces.npy
+#           IDs  : dataDir + validation + patientID.json
+
+# test data:  dataDir + test + images.npy
+#     label: dataDir + test + surfaces.npy
+#     IDs  : dataDir + test + patientID.json
+
+groundTruthInteger: True
+sigma: 0.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma or not use sigma
+device: torch.device('cuda:1')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 8
+# phased training with different learning rate
+learningRate: 1.0e-4
+momentum: 0.9 # exponential weighted average, normally 0.9
+
+# for OneCycleLR
+maxLr:  0.1
+epochs: 8000
+
+optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+
+network: "SurfaceSubnet_Q"
+inputHeight: 512   # original height
+inputWidth: 361   # rawImageWidth
+scaleNumerator: 1
+scaleDenominator: 1
+inputChannels: 8 # rawImage + gradChannels
+nLayers: 7
+numSurfaces: 3  # num of surfaces in an image
+startFilters: 24  # the num of filters in first layer of Unet
+gradChannels: 7   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+addCoordinatesXYChannels: False
+segChannels: 128  # number of channel in the segmentation part.
+
+# some physical parameter of images
+slicesPerPatient: 51  # for test and validation set
+hPixelSize: 3.24  # unit: micrometer, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+flippingProb: 0.3
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #TestTime Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+# data augmentation
+
+netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath:  ""
+outputDir:  ""
+logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent/log"
+refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
+
+usePrimalDualIPM: False
+useLayerDice: False
+useReferSurfaceFromLayer: False
+useLayerCE: False
+useCEReplaceKLDiv: False
+useSmoothSurfaceLoss: False
+useWeightedDivLoss: False
+useRift: False
+smoothRift: False  # smooth Rift in ground truth
+smoothHalfWidth: 15  # 5% of image width
+smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
+smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
+weightL1Loss: 10.0
+
+gradientRiftConvGoBack: False
+
+useCalibrate: False  # Calibrate mu according to r and sigma2
+useMergeMuRift: False #  update mu according to r and sigma2
+useLearningPairWeight: False  # learning pairwise weight
+fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
+
+
+
+# constrained model, both False meaning RelU
+hardSeparation: 1
+softSeparation: False
+useReLUInPretrain: False
+
+goodBscans: []

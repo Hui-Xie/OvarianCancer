@@ -1,19 +1,20 @@
 # May 18th, Tuesday, 2021
 Task:
 1  divide Duke data into 5% and 1%:
-    5%, 1% training set script.
-    copy 5% and 1% to skm2, iibi007,
-    copy test and validation to 5%, 1%.
+    5%, 1% training set script.   --done.
+    copy 5% and 1% to skm2, iibi007,  --done
+    copy test and validation to 5%, 1%.  --done.
 
 2  Experiment design:
    My method, YufanHe's mehod
    Adam+ReduceLrOnPlateau,   SGD+OneCycleLR
    5% dataset, 1% data set.
-3  decide minLr and maxLr for SGD+ momentum + OneCycleLR.
+3  decide minLr and maxLr for SGD+ momentum + OneCycleLR.   --done.
    minLr =1.0e-4
    maxLr =1.0e-1
-4  trainCode support 2 method: SGD, Adam
+4  trainCode support 2 method: SGD, Adam   --done.
 
+5 prepare config file.
 
 
 
