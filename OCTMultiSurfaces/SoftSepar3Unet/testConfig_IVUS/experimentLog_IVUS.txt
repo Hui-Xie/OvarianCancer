@@ -1,3 +1,72 @@
+# May 19th, Wednesday, 2021
+Analysis:
+1  it looks that Adam+ReduceLROnPlateau get better result and SGD+OneCycleLR.
+2  Observing Leixin's result, it looks that pure surface nework without OSInet gets the best result in W/O, W/0 W/learn, especially in Lumen.
+3  Futher improvement on IVUS network:
+   A  use smooth;
+   B  reduce width of segHead;
+   C  use Adam+ ReducedLRonPlateau.
+   D  Use SGD+OneCycleLR, but maxLR is 1.0;
+4  In previous MICCAI paper, IVUS result: expUnetIVUS_Ablation_withLayerDice_20200304_1
+
+
+
+
+Leixin Result on IVUS data with its best W/Learned on 10% data:
+		Jacc		Dice		HD		    PAD
+Lumen:	0.87±0.07	NoReport	0.31±0.18	0.08±0.07
+Media:	0.87±0.10 	NoReport	0.48±0.37	0.10±0.10
+
+Leixin Result on IVUS data with its best W/Learned on 100% data:
+		Jacc		Dice		HD		    PAD
+Lumen:	0.88±0.06	NoReport	0.28±0.19	0.07±0.09
+Media:	0.89±0.10	NoReport	0.40±0.29	0.08±0.08
+
+
+
+Use SGD+ momentum+OneCycleLR:
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_10percent_C_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.77±0.19	0.85±0.18	0.83±0.68	0.20±0.28
+Media:	0.76±0.24	0.84±0.23	1.05±0.65	0.16±0.24
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_100percent_C_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.80±0.25	0.85±0.26	0.63±0.68	0.15±0.26
+Media:	0.83±0.18	0.89±0.17	0.87±0.63	0.11±0.17
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_10percent_C_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.81±0.15	0.88±0.13	0.68±0.55	0.14±0.18
+Media:	0.82±0.14	0.89±0.12	0.86±0.49	0.10±0.13
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_100percent_C_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.83±0.22	0.88±0.22	0.45±0.45	0.13±0.22
+Media:	0.81±0.22	0.87±0.22	0.82±0.59	0.14±0.23
+
+================================================================================================================
+
+
+
 # May 17th, Monday, 2021:
 Dauphin et al argue that the difficulty in minimizing the loss arises from saddle points rather than poor local minima.
 So increasing learning rate at this time is not a bad idea.
@@ -32,27 +101,6 @@ Task:
 5  not use muError measurement.      --done
 
 
-===============================================================================================================
-PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_10percent_C_skm2/testResult/text
-GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
-Test set size: 326 images
-		Jacc		Dice		HD		PAD
-Lumen:	0.77±0.19	0.85±0.18	0.83±0.68	0.20±0.28
-Media:	0.76±0.24	0.84±0.23	1.05±0.65	0.16±0.24
-
-================================================================================================================
-
-===============================================================================================================
-PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_10percent_C_skm2/testResult/text
-GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
-Test set size: 326 images
-		Jacc		Dice		HD		PAD
-Lumen:	0.81±0.15	0.88±0.13	0.68±0.55	0.14±0.18
-Media:	0.82±0.14	0.89±0.12	0.86±0.49	0.10±0.13
-
-================================================================================================================
-
-
 
 # May 15th, Satursday, 2021:
 trained 4 networks:
@@ -61,30 +109,33 @@ trained 4 networks:
 59848 ?        Rl   13972:27 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_YufanHe_100percent_A_skm2.yaml
 75457 ?        Rl   1935:45 python3 ./SurfaceSubnet_Train.py ./testConfig_IVUS/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2.yaml
 
-Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text
->> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
-              Jacc		   Dice		   HD		   PAD
->> Lumen:	 0.84±0.15	0.90±0.13	0.53±0.52	0.11±0.16	>>
-   Media:	 0.86±0.14	0.92±0.12	0.67±0.56	0.09±0.14	>>
-
-
-Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_100percent_A_skm2/testResult/text
->> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
->> >> >> >> 	Jacc		Dice		HD		     PAD
->> Lumen:	>> 0.84±0.16	0.90±0.15	0.45±0.48	0.11±0.17	>>
-   Media:	>> 0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15	>>
-
+Use Adam+ ReduceLrOnPlateau:
+====================================================================================================================================================
 Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_10percent_A_skm2/testResult/text
->> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
 >> >> >> >> >> Jacc		    Dice		 HD		     PAD
 >> Lumen:	>> 0.82±0.12	0.89±0.11	0.58±0.39	0.12±0.15	>>
    Media:	>> 0.79±0.22	0.86±0.21	0.89±0.51	0.14±0.21	>>
 
+
+Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210514_SurfaceSubnetQ64_100percent_A_skm2/testResult/text
+Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+              Jacc		   Dice		   HD		   PAD
+>> Lumen:	 0.84±0.15	0.90±0.13	0.53±0.52	0.11±0.16	>>
+   Media:	 0.86±0.14	0.92±0.12	0.67±0.56	0.09±0.14	>>
+
 Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_10percent_A_skm2/testResult/text
->> Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
 >> >> >> >> >> Jacc		     Dice		   HD		  PAD
 >> Lumen:	>> 0.83±0.09	0.91±0.07	0.45±0.30	0.11±0.10	>>
    Media:	>> 0.83±0.10	0.90±0.06	0.74±0.39	0.11±0.09	>>
+
+Prediction result dir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210514_YufanHe_100percent_A_skm2/testResult/text
+Test set has 326 images comparing with ground truth at /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1.
+>> >> >> >> 	Jacc		Dice		HD		     PAD
+>> Lumen:	>> 0.84±0.16	0.90±0.15	0.45±0.48	0.11±0.17	>>
+   Media:	>> 0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15	>>
+=================================================================================================================================================================
 
 Rethink LearningRate and SGD:
 1  OneCycleLR + SGD is beter than Adam.

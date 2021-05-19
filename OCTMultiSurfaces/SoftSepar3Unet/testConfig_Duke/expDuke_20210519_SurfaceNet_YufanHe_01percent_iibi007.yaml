@@ -1,13 +1,13 @@
-# Duke data
+# Duke data without ReLU constraint
 
 debug: False # debug mark
 dataIn1Parcel: True
 useIndependentValidation: True
-# Full Duke data is not in one parcel, while Tongren, JHU, 10%-20%Duke_AMD are in one parcel.
+# Duke data is not in one parcel, while Tongren and JHU are in one parcel.
 # Not dataIn1Parcel means each patient has a volume file.
 dataInSlice: False
 
-dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent"
+dataDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_01Percent"
 existGTLabel: True
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0  # Kfold cross validation
@@ -38,12 +38,12 @@ k: -1   # the fold k test
 #     IDs  : dataDir + test + patientID.json
 
 groundTruthInteger: True
-sigma: 0.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma or not use sigma
-device: torch.device('cuda:1')   #GPU ID
+sigma: 0.0  # For gaussian  ground truth, in float, 0 means use dynamic Sigma
+device: torch.device('cuda:0')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8
 # phased training with different learning rate
-learningRate: 1.0e-4
+learningRate: 0.01
 momentum: 0.9 # exponential weighted average, normally 0.9
 
 # for OneCycleLR
@@ -52,20 +52,19 @@ epochs: 8000
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 
-network: "SurfaceSubnet_Q"
+network: "SurfacesUnet_YufanHe_2"
 inputHeight: 512   # original height
 inputWidth: 361   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # rawImage + gradChannels
-nLayers: 7
+inputChannels: 3 # rawImage + Y+X
+nLayers: 5
 numSurfaces: 3  # num of surfaces in an image
-startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+startFilters: 64  # the num of filters in first layer of Unet
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
-addCoordinatesXYChannels: False
-segChannels: 128  # number of channel in the segmentation part.
+addCoordinatesXYChannels: True
 
 # some physical parameter of images
 slicesPerPatient: 51  # for test and validation set
@@ -84,16 +83,16 @@ TTA: False       #TestTime Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent/netParameters"  # net is saved at netpath / network / self_filename
-loadNetPath:  ""
-outputDir:  ""
-logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent/log"
+netPath: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_01Percent/netParameters"  # net is saved at netpath / network / self_filename
+loadNetPath: ""
+outputDir: ""
+logDir: "/localscratch/Users/hxie1/data/OCT_Duke/numpy_01Percent/log"
 refXMLFile: "/localscratch/Users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 usePrimalDualIPM: False
-useLayerDice: False
+useLayerDice: True
 useReferSurfaceFromLayer: False
-useLayerCE: False
+useLayerCE: True
 useCEReplaceKLDiv: False
 useSmoothSurfaceLoss: False
 useWeightedDivLoss: False
@@ -102,19 +101,11 @@ smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
-weightL1Loss: 10.0
 
 gradientRiftConvGoBack: False
 
-useCalibrate: False  # Calibrate mu according to r and sigma2
-useMergeMuRift: False #  update mu according to r and sigma2
-useLearningPairWeight: False  # learning pairwise weight
-fixedPairWeight: False  # in soft constraint, pairwise terms add weight $\sigma_i^2/(\sigma_i^2 + \sigma_{i-1}^2)$
-
-
-
 # constrained model, both False meaning RelU
-hardSeparation: 1
+hardSeparation: 1 # 0: NoReLU; 1: ReLU;  2: hardSeparation;
 softSeparation: False
 useReLUInPretrain: False
 

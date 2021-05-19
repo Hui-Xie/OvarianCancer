@@ -14,7 +14,42 @@ Task:
    maxLr =1.0e-1
 4  trainCode support 2 method: SGD, Adam   --done.
 
-5 prepare config file.
+5   prepare config file.  --done.
+
+=================================================================================
+
+Cut Duke_AMD data into 10% and 20%.
+1 100% Duke AMD data statistics:  51 Bscan / volume.
+  training set: 266 volumes x 51 slices per volume, where 187 AMD + 79 control = 266 volumes;
+  validation set: 59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
+  test set:  59 volumes x 51 slice per volume, where 41 AMD + 18 control  =  59 volumes;
+
+2 cut into 20%:
+  training:  38 AMD + 16 control. (38+16)/266 = 20.3%.  Size: 54*51*512*361*4 = 2. GB
+  validation: 8 AMD + 4 control. (8+4)/59  =   20.3%   size: 12*51*512*361*4  = 0.6 GB
+  test set:   41 AMD + 18 control.                     size: 59*51*512*361*4 = 2.3 GB
+
+3 cut into 10%:
+  training: 19 AMD + 8 control. (19+8)/266 = 10.1%.  Size: 27*51*512*361*4 = 1 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
+
+4 cut into 5%:
+  training: 10 AMD + 4 control. (10+4)/266 = 5.2 %.  Size: 14*51*512*361*4 = 0.5 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB  (same with 10% case)
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
+
+5 cut into 1%:
+  training:   2 AMD + 1 control. (2+1)/266 =  1.1 %.  Size: 3*51*512*361*4 = 0.1 GB
+  validation: 4 AMD + 2 control. (4+2)/59  = 10.1%   size: 6*51*512*361*4  = 0.3 GB  (same with 10% case)
+  test set:   41 AMD + 18 control.                   size: 59*51*512*361*4 = 2.3 GB
+
+6 all test sets are same for full dataset.
+
+
+7 output format:
+  images.npy  patientID.json  surfaces.npy in test / validation /training directory.
+  where: json file: ID->imageFileFullPath
 
 
 
