@@ -50,6 +50,18 @@ Cut Duke_AMD data into 10% and 20%.
 7 output format:
   images.npy  patientID.json  surfaces.npy in test / validation /training directory.
   where: json file: ID->imageFileFullPath
+  ==================================================================================================================
+
+  Now 5% and 1% Duke_AMD on our method and Yufan's method are running
+  (base) [c-iibi007:SoftSepar3Unet]#ps 26527 26643 26742 26835 73304
+   PID TTY      STAT   TIME COMMAND
+ 26527 pts/0    Rl    40:18 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_05percent_iibi007.yaml
+ 26643 pts/0    Rl    34:07 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_01percent_iibi007.yaml
+ 26742 pts/0    Rl     6:35 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_05percent_A_iibi007.yaml
+ 26835 pts/0    Rl     3:11 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_01percent_A_iibi007.yaml
+ 73304 ?        Rl   73205:07 python3 ./SoftSeparationNet_C_Train.py ./testConfig_Duke/expDuke_20210513_SoftSeparation_D_trainLambda_dot1_iibi007.yaml
+
+
 
 
 
