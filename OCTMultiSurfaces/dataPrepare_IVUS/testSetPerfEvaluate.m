@@ -12,7 +12,9 @@ IIRC, in both cases matlab should exit once it is done.
 %}
 clc
 predDirList=["/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_10percent_C_skm2/testResult/text", ...
-"/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_10percent_C_skm2/testResult/text"];
+"/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q/expIVUS_20210518_SurfaceSubnetQ64_100percent_C_skm2/testResult/text", ...
+"/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_10percent_C_skm2/testResult/text", ...
+"/raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfacesUnet_YufanHe_2/expIVUS_20210518_YufanHe_100percent_C_skm2/testResult/text"];
 NPred = length(predDirList);
 
 for i= 1:NPred
