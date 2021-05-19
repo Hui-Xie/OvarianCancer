@@ -1,3 +1,21 @@
+# May 19th, Wednesday, 2021
+Meeting time: 10am -10:40 am May 19th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: About BMO prediction and VAE project
+Minutes:
+1  The project using VAE to detect BMO:
+    A  It has 3 surfaces each B-scan, 3 segmented B-scan per patient, total has 100+ patients.
+    B  Segmentation of Less-one pixel accuracy is not very important as ground truth self may has errors bigger than one pixel.
+       A reasonable result even with 3-5 pixels error is more important.
+    C  For the manual segmentation tool, we need further improve its UI function for easier using.
+    D  After the improving manual segmentation tools, a NewYork doctor may help us to get more ground truth.
+2  For the thin retina project:
+    A  Jui will offer segmentation ground truth for 5 patients.
+    B  Basing on this 5 patient ground truth, we will use an initial segmentation network to generate more ground truth for further manual correction.
+    C  Getting the thickness percent of diseased patients vs normal patients is more important publication.
+3  Jui will give some Dicom images with irregular axis orientation to Hui, and then Hui help convert them into raw format for further use.
+
+
 # May 12th, Wednesday, 2021
 Meeting time: 10am -11am May 12th, Wednesday, 2021
 Attendee:  Jui Kai, Hui
