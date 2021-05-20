@@ -98,14 +98,14 @@ def main():
     # Parameters of a model after .cuda() will be different objects with those before the call.
     net.to(device=hps.device)
 
-    # use OneCycleLR, for IVUS
-    optimizer = torch.optim.SGD(net.parameters(), lr=hps.learningRate, momentum=hps.momentum)
-    stepsPerEpoch = trainData.__len__()//hps.batchSize
-    lrScheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=hps.maxLr, steps_per_epoch=stepsPerEpoch, epochs=hps.epochs)
 
-    # use Adam+ REduceLROnPlateau, for OCT images
-    # optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
-    # lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    if hps.optim == "AdamPlateau":
+        optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
+        lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+    if hps.optim == "SGDOneCycle":
+        optimizer = torch.optim.SGD(net.parameters(), lr=hps.learningRate, momentum=hps.momentum)
+        stepsPerEpoch = trainData.__len__() // hps.batchSize
+        lrScheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=hps.maxLr, steps_per_epoch=stepsPerEpoch, epochs=hps.epochs)
 
     net.setOptimizer(optimizer)
     net.setLrScheduler(lrScheduler)
@@ -141,12 +141,14 @@ def main():
             loss.backward(gradient=torch.ones(loss.shape).to(hps.device))
             optimizer.step()
             trLoss += float(loss)
-            lrScheduler.step()  # for OneCycleLR
+            if hps.optim == "SGDOneCycle":
+                lrScheduler.step()  # for OneCycleLR
+
 
             #break
 
         trLoss = trLoss / trBatch
-        #lrScheduler.step(trLoss)
+
         # print(f"epoch:{epoch}; trLoss ={trLoss}\n")
 
         net.eval()
@@ -177,6 +179,8 @@ def main():
 
 
         # debug
+        if hps.optim == "AdamPlateau":
+            lrScheduler.step(validLoss)
         # print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalars('Loss', {"train":trLoss, "validation": validLoss}, epoch)

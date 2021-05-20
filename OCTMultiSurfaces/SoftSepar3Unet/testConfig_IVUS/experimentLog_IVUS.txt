@@ -4,9 +4,13 @@ Analysis:
 2  Observing Leixin's result, it looks that pure surface nework without OSInet gets the best result in W/O, W/0 W/learn, especially in Lumen.
 3  Futher improvement on IVUS network:
    A  use smooth;
-   B  reduce width of segHead;
-   C  use Adam+ ReducedLRonPlateau.
-   D  Use SGD+OneCycleLR, but maxLR is 1.0;
+       bidirecitional exponential moving average:
+       a.  design WxW matrix formula.
+       b.  a new class.
+       
+   B  reduce width of segHead;   to 32. --done.
+   C  use Adam+ ReducedLRonPlateau.  to. --done.
+   D  Use SGD+OneCycleLR, but maxLR is 1.0;  --done.
 4  In previous MICCAI paper, IVUS result: expUnetIVUS_Ablation_withLayerDice_20200304_1
 
 
