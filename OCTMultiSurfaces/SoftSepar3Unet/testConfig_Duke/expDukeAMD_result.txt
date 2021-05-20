@@ -1,3 +1,46 @@
+# May 20th, Thursday, 2021
+
+
+==========================================Surface mean error(um)_std for 100% training data of Duke AMD data=======================================
+                   totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control    Surface0_AMD      Surface1_AMD   Surface2_AMD
+Leixin's method      NoReport           NoReport         1.89_0.68            2.55_0.40         NoReport          2.96_1.91      4.29_1.71
+Yufan's method      1.96_2.11          0.70_1.04         1.62_1.04            2.10_0.44        1.32_3.03          2.00_1.74      3.22_1.87
+Hui's method        1.83_1.89          0.53_0.22         1.59_1.07            2.07_0.41        1.31_3.04          1.74_0.92      3.03_1.56
+===================================================================================================================================================
+
+===========================================Surface mean error(um)_std for 10% training data of Duke AMD data=======================================
+                   totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
+Leixin's method      NoReport           NoReport          2.87_1.41           2.77_0.87        NoReport           4.06_2.63      6.28_3.81
+Yufan's method      2.69_3.09          1.62_3.86          2.48_2.10           2.46_0.69        1.87_3.93          2.27_1.17      4.62_3.41
+Hui's method        2.30_2.47          0.80_0.67          2.30_1.89           2.35_0.49        1.60_3.87          2.11_0.97      3.84_2.25
+===================================================================================================================================================
+
+===========================================Surface mean error(um)_std for 05% training data of Duke AMD data=======================================
+                   totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
+Yufan's method
+Hui's method
+===================================================================================================================================================
+
+===========================================Surface mean error(um)_std for 01% training data of Duke AMD data=======================================
+                   totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
+Yufan's method
+Hui's method
+===================================================================================================================================================
+
+
+Note:
+1  Experiment names:
+26527 ?        Rl   5279:46 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_05percent_iibi007.yaml
+26643 ?        Rl   6563:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_01percent_iibi007.yaml
+26742 ?        Rl   1581:36 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_05percent_A_iibi007.yaml
+26835 ?        Rl   1712:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_01percent_A_iibi007.yaml
+
+
+
+
+
+
+
 # May 18th, Tuesday, 2021
 Task:
 1  divide Duke data into 5% and 1%:
@@ -171,7 +214,7 @@ expDuke_20210510_SurfaceSubnetQ192_20percent_A_skm2             2.3916  2.6171  
 expDuke_20210512_SurfaceNet_YufanHe_10percent_iibi007           2.6989  3.0978    1.7992, 2.3359, 3.9616    3.8851, 1.5066, 3.0296      288.  81.  76.
 expDuke_20210512_SurfaceNet_YufanHe_20percent_iibi007           2.5848  2.6991    1.6738, 2.3712, 3.7095    3.4533, 1.3414, 2.4909      201. 108. 111.
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-expDuke_20210513_SoftSeparation_D_trainLambda_dot1_iibi007      start training at May 13th, may get result on May 20th.
+expDuke_20210513_SoftSeparation_D_trainLambda_dot1_iibi007      start training at May 13th, may get result on May 20th.                                            300 epochs for 7 days.
 =====================================================================================================================================================================================================================
 
 Summary:
