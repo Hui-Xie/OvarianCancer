@@ -17,7 +17,7 @@ Hui's method        2.30_2.47          0.80_0.67          2.30_1.89           2.
 
 ===========================================Surface mean error(um)_std for 05% training data of Duke AMD data=======================================
                    totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
-Yufan's method
+Yufan's method     3.98_5.30
 Hui's method
 ===================================================================================================================================================
 
@@ -30,10 +30,10 @@ Hui's method
 
 Note:
 1  Experiment names:
-26527 ?        Rl   5279:46 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_05percent_iibi007.yaml
-26643 ?        Rl   6563:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_01percent_iibi007.yaml
-26742 ?        Rl   1581:36 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_05percent_A_iibi007.yaml
-26835 ?        Rl   1712:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_01percent_A_iibi007.yaml
+26527 ?        Rl   5279:46 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_05percent_iibi007.yaml       test
+26643 ?        Rl   6563:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceNet_YufanHe_01percent_iibi007.yaml       test
+26742 ?        Rl   1581:36 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_05percent_A_iibi007.yaml      test
+26835 ?        Rl   1712:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_01percent_A_iibi007.yaml      test
 
 
 

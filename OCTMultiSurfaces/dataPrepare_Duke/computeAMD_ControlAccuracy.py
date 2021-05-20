@@ -1,7 +1,7 @@
 # compute AMD and control group accuracy separately
 
 #predictDir ="/home/hxie1/data/OCT_Duke/numpy_slices/log/SoftSepar3Unet/expDuke_20201113A_FixLambda2Unet/testResult/xml"
-predictDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml"
+predictDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent/log/SurfacesUnet_YufanHe_2/expDuke_20210519_SurfaceNet_YufanHe_05percent_iibi007/testResult/xml"
 gtDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test"
 
 N = 3
