@@ -20,15 +20,13 @@ Analysis:
 3  Futher improvement on IVUS network:
    A  use smooth;
        bidirecitional exponential moving average:
-       a.  design WxW matrix formula.
-       b.  a new class.
-       c.  need add L1loss weight.
+       a.  design WxW matrix formula.   --done
+       b.  a new class.   --done
+       c.  need reduce L1loss weight.  weightL1loss = 0.1 --done.
    B  reduce width of segHead;   to 32. --done.
    C  use Adam+ ReducedLRonPlateau.  to. --done.
    D  Use SGD+OneCycleLR, but maxLR is 1.0;  --done.
-4  In previous MICCAI paper, IVUS result: expUnetIVUS_Ablation_withLayerDice_20200304_1
-
-
+4  In previous MICCAI paper, IVUS result: expUnetIVUS_Ablation_withLayerDice_20200304_1     --ok
 
 
 Leixin Result on IVUS data with its best W/Learned on 10% data:

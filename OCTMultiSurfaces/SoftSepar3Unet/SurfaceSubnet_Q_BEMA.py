@@ -46,7 +46,7 @@ class SurfaceSubnet_Q_BEMA(BasicModel):
         # define the Bidirectional Exponential Moving Average smooth matrix for IVUS circle surface.
         # S <-  S*M, each column of M denotes a BEMA.
         W = hps.inputWidth
-        b = hps.BEMAMomentum  # momentum, beta, which denotes the prevous weight of momentum.
+        b = hps.BEMAMomentum  # momentum, beta, which denotes the previous weight of momentum.
         self.m_smoothM = torch.zeros((1, W, W), dtype=torch.float32, device=hps.device,  requires_grad=False)  #smooth matrix
 
         colM = torch.zeros((W, 1), dtype=torch.float32, device=hps.device,  requires_grad=False)  # a column of smooth matrix

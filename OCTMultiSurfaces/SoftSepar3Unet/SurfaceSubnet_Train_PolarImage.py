@@ -22,6 +22,7 @@ sys.path.append(".")
 from SurfaceSubnet import SurfaceSubnet
 from SurfaceSubnet_P import SurfaceSubnet_P
 from SurfaceSubnet_Q import SurfaceSubnet_Q
+from SurfaceSubnet_Q_BEMA import SurfaceSubnet_Q_BEMA
 from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
 
 sys.path.append("../..")

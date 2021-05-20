@@ -7,7 +7,7 @@ useIndependentValidation: True
 dataInSlice: False
 existGTLabel: True
 
-dataDir: "/raid001/users/hxie1/data/IVUS/polarNumpy"
+dataDir: "/raid001/users/hxie1/data/IVUS/polarNumpy_10percent"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0
 k: -1   # -1 means do not use cross validation
@@ -51,7 +51,7 @@ epochs: 8000
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 
-network: "SurfaceSubnet_Q"
+network: "SurfaceSubnet_Q_BEMA"
 inputHeight: 192   # original height
 inputWidth: 360   # rawImageWidth
 scaleNumerator: 1
@@ -74,7 +74,7 @@ hPixelSize: 0.026 #Each image frame is 384 × 384 pixels in size, with in-frame 
 
 # data augmentation
 # validation supports data augmentation.
-augmentProb: 0.80  #  data augmentation rate, a high augmentation prob for polar image.
+augmentProb: 0.70  #  data augmentation rate, a high augmentation prob for polar image.
 gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 # for salt-pepper noise
 saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
@@ -86,12 +86,12 @@ TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/raid001/users/hxie1/data/IVUS/polarNumpy/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 # below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
 loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
-logDir: "/raid001/users/hxie1/data/IVUS/polarNumpy/log"
+logDir: "/raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log"
 refXMLFile: "/raid001/users/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml"
 
 useDynamicProgramming: False
@@ -107,7 +107,7 @@ smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
-weightL1Loss: 1.0
+weightL1Loss: 0.1
 
 gradientRiftConvGoBack: False
 
