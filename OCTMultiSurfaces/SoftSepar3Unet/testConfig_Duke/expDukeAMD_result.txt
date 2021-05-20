@@ -16,6 +16,8 @@ Task:
 
 5   prepare config file.  --done.
 
+6   Our method only use 75% GPU memory of YufanHe's method, at same batchSize, experiment config.
+
 =================================================================================
 
 Cut Duke_AMD data into 10% and 20%.
