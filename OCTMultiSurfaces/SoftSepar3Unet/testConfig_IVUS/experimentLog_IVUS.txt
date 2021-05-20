@@ -7,7 +7,7 @@ Analysis:
        bidirecitional exponential moving average:
        a.  design WxW matrix formula.
        b.  a new class.
-       
+       c.  need add L1loss weight.
    B  reduce width of segHead;   to 32. --done.
    C  use Adam+ ReducedLRonPlateau.  to. --done.
    D  Use SGD+OneCycleLR, but maxLR is 1.0;  --done.
