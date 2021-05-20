@@ -1,6 +1,21 @@
 # May 19th, Wednesday, 2021
 Analysis:
 1  it looks that Adam+ReduceLROnPlateau get better result and SGD+OneCycleLR.
+   compare my method and YufanHe's method on 100% IVUS on different Optimizer.
+
+   Jacc in Media
+                        Adam+Plateau     SGD+OneCycle
+   Hui method:          0.86             0.83
+   YufanHe method:      0.86             0.81
+
+   Jacc in Lumen:
+                        Adam+Plateau     SGD+OneCycle
+   Hui method:          0.84             0.80
+   YufanHe method:      0.84             0.83
+
+   WeightL1Loss = 1.0 may be a better solution.  surface location error should pay more attention to cross entropy.
+   
+
 2  Observing Leixin's result, it looks that pure surface nework without OSInet gets the best result in W/O, W/0 W/learn, especially in Lumen.
 3  Futher improvement on IVUS network:
    A  use smooth;
