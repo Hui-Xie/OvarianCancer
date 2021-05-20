@@ -1,6 +1,18 @@
 # May 20th, Thursday, 2021
+Summary 3 data set best result so far:
+========================================================================================================================================================================
+                    meanError_std(um)   pixelSize(um)   meanError(pixel)  #trainVolumes   Bscan/volume    #trainBscan  diseaseRate  #surfaces   inputSize_HxW(pixel)
+BES Data            1.99_0.86           3.87            0.51              37              31              1147               0%         10            496x512
+JHU Data            2.70_0.89           3.87            0.69              15              49              735               60%          9            128x1024
+Duke_AMD data       1.83_1.89           3.24            0.56              266             51              13566             70%          3            512x361
+=========================================================================================================================================================================
+
+Notes:
+1  All BES data are health control group. The dissease in JHU data is multiple sclerosis (MS), and the disease in Duke_AMD is age-related macular degeneration.
+2  As Duke_AMD is a huge dataset, it with 70% disease cases still get 0.56 pixel of mean error, which is close the control group accuracy of BES data.
 
 
+# May 20th, Thursday, 2021
 ==========================================Surface mean error(um)_std for 100% training data of Duke AMD data=======================================
                    totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control    Surface0_AMD      Surface1_AMD   Surface2_AMD
 Leixin's method      NoReport           NoReport         1.89_0.68            2.55_0.40         NoReport          2.96_1.91      4.29_1.71

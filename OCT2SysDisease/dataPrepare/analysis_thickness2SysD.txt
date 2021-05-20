@@ -1,3 +1,23 @@
+# Tongren data summary:
+
+The BJE data set:
+A .  31 Bscan/volume(patient)
+B.   test: 5 patients;  validation: 4 patients;  training: 37 patients,   (total training Bscans 1147 )
+C.   A scan resolution: 3.87 um/ pixel
+D.  input image size:  496x 512 pixel
+
+E.  Bscan resolution:
+       <voxel_size>
+            <unit>mm</unit>
+            <x>0.013708</x>    B-scan-X
+            <y>0.003870</y>    A-scan
+            <z>0.292068</z>    Slice gap
+        </voxel_size>
+F.   Total BES data:
+      We have 6565 OD/OS volumes totally, about 3200+ patients.
+
+
+
 # March 31th, Wednesday, 2021
 Minutes of Project OCT to HBP on March 30th, 2021
 Time: 08:00 pm -09:30 pm (CDT), March 30th, Tuesday, 2021
