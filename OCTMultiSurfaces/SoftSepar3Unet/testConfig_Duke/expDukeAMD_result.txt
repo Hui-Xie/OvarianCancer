@@ -17,8 +17,8 @@ Hui's method        2.30_2.47          0.80_0.67          2.30_1.89           2.
 
 ===========================================Surface mean error(um)_std for 05% training data of Duke AMD data=======================================
                    totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
-Yufan's method     3.98_5.30
-Hui's method
+Yufan's method     3.98_5.30        1.75_3.33         2.13_0.98          2.74_0.71          2.63_4.59          3.29_2.76       8.37_7.93
+Hui's method       3.86_6.74
 ===================================================================================================================================================
 
 ===========================================Surface mean error(um)_std for 01% training data of Duke AMD data=======================================
@@ -36,6 +36,28 @@ Note:
 26835 ?        Rl   1712:50 python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210519_SurfaceSubnetQ128_01percent_A_iibi007.yaml      test
 
 
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_05Percent/log/SurfacesUnet_YufanHe_2/expDuke_20210519_SurfaceNet_YufanHe_05percent_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([4.5998, 2.7612, 7.9305])
+muSurfaceError = tensor([2.6335, 3.2963, 8.3741])
+HausdorffDistance in pixel = [[268. 222. 224.]]
+HausdorffDistance in physical size (micrometer) = [[868.32 719.28 725.76]]
+stdError = 6.056962966918945
+muError = 4.7679924964904785
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([3.3367, 0.9853, 0.7166])
+muSurfaceError = tensor([1.7570, 2.1383, 2.7410])
+HausdorffDistance in pixel = [[129.  37.  50.]]
+HausdorffDistance in physical size (micrometer) = [[417.96 119.88 162.  ]]
+stdError = 2.052903652191162
+muError = 2.2121100425720215
+===============
 
 
 
