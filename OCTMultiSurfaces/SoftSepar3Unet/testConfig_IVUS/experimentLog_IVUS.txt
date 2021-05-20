@@ -14,7 +14,7 @@ Analysis:
    YufanHe method:      0.84             0.83
 
    WeightL1Loss = 1.0 may be a better solution.  surface location error should pay more attention to cross entropy.
-   
+
 
 2  Observing Leixin's result, it looks that pure surface nework without OSInet gets the best result in W/O, W/0 W/learn, especially in Lumen.
 3  Futher improvement on IVUS network:

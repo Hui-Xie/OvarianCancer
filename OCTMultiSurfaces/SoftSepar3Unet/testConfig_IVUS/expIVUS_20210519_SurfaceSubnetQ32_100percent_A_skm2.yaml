@@ -65,6 +65,7 @@ bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False
 segChannels: 32  # number of channel in the segmentation part.
+BEMAMomentum: 0.9 # Bidirectional Exponential Moving Average momentum.
 
 # some physical parameter of images
 slicesPerPatient: 1
