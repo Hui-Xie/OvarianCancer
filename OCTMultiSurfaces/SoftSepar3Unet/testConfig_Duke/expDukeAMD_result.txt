@@ -23,8 +23,8 @@ Hui's method       3.86_6.74        1.08_0.89         2.14_1.32          2.61_0.
 
 ===========================================Surface mean error(um)_std for 01% training data of Duke AMD data=======================================
                    totalMeanError   Surface0_Control  Surface1_Control   Surface2_Control   Surface0_AMD       Surface1_AMD   Surface2_AMD
-Yufan's method     6.14_10.78
-Hui's method
+Yufan's method     6.14_10.78       2.00_1.76         2.80_1.17           3.15_0.62         7.51_19.61         5.56_4.91      9.93_8.17
+Hui's method       5.37_6.94
 ===================================================================================================================================================
 
 
@@ -82,6 +82,30 @@ HausdorffDistance in physical size (micrometer) = [[741.96 492.48 463.32]]
 stdError = 1.1809375286102295
 muError = 1.9490435123443604
 ===============
+
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_01Percent/log/SurfacesUnet_YufanHe_2/expDuke_20210519_SurfaceNet_YufanHe_01percent_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([19.6175,  4.9163,  8.1772])
+muSurfaceError = tensor([7.5194, 5.5627, 9.9307])
+HausdorffDistance in pixel = [[254. 122. 105.]]
+HausdorffDistance in physical size (micrometer) = [[822.96 395.28 340.2 ]]
+stdError = 12.619214057922363
+muError = 7.670909881591797
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([1.7657, 1.1796, 0.6246])
+muSurfaceError = tensor([2.0000, 2.8029, 3.1572])
+HausdorffDistance in pixel = [[92. 98. 30.]]
+HausdorffDistance in physical size (micrometer) = [[298.08 317.52  97.2 ]]
+stdError = 1.3454536199569702
+muError = 2.6533777713775635
+===============
+
 
 
 
