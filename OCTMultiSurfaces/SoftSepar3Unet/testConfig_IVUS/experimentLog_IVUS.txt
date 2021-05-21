@@ -3,17 +3,25 @@ The below programs are running. Friday we will get reuslt.
 
 ps 33452 155765 14312 26593
    PID TTY      STAT   TIME COMMAND
- 14312 pts/0    Rl     1:50 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_B_skm2.yaml
+ 14312 pts/0    Rl     1:50 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_B_skm2.yaml  test done
  26593 pts/0    Dl     0:51 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_10percent_B_skm2.yaml   test done.
  33452 pts/0    Rl     0:38 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_10percent_A_skm2.yaml   test done.
-155765 pts/0    Rl     3:05 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_A_skm2.yaml
- 6528 pts/0    Rl     3:56 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_C_skm2.yaml
+155765 pts/0    Rl     3:05 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_A_skm2.yaml  test done
+ 6528 pts/0    Rl     3:56 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_C_skm2.yaml   test done
   6782 pts/0    Rl     2:24 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_10percent_C_skm2.yaml   test done
- 24847 pts/0    Rl     2:35 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_D_skm2.yaml
+ 24847 pts/0    Rl     2:35 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_100percent_D_skm2.yaml   test done.
  30831 pts/0    Rl     1:44 python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210520_SurfaceSubnetQ32_BEMA_10percent_D_skm2.yaml    test done
 
 
 IVUS experiment Comparison:
+
+====================================================100% IVUS training data======================================================
+                                     Lumen                       |                       Media
+                    Jacc		Dice		HD		   PAD       |        Jacc	      Dice	    	HD		   PAD
+Lexin's Method    0.88±0.06	  NoReport	0.28±0.19	0.07±0.09           0.89±0.10	NoReport	0.40±0.29	0.08±0.08
+Yufan's Method    0.84±0.16   0.90±0.15	0.45±0.48	0.11±0.17           0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15
+Hui's   Method
+==================================================================================================================================
 
 =====================================================10% IVUS training data======================================================
                                      Lumen                       |                       Media
@@ -24,13 +32,7 @@ Hui's   Method
 ==================================================================================================================================
 
 
-====================================================100% IVUS training data======================================================
-                                     Lumen                       |                       Media
-                    Jacc		Dice		HD		   PAD       |        Jacc	      Dice	    	HD		   PAD
-Lexin's Method    0.88±0.06	  NoReport	0.28±0.19	0.07±0.09           0.89±0.10	NoReport	0.40±0.29	0.08±0.08
-Yufan's Method    0.84±0.16   0.90±0.15	0.45±0.48	0.11±0.17           0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15
-Hui's   Method
-==================================================================================================================================
+
 
 
 Notes:
