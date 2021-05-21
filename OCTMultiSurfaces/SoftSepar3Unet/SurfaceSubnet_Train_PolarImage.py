@@ -102,7 +102,7 @@ def main():
 
     if hps.optim == "AdamPlateau":
         optimizer = optim.Adam(net.parameters(), lr=hps.learningRate, weight_decay=0)
-        lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=20, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
+        lrScheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=100, min_lr=1e-8, threshold=0.02, threshold_mode='rel')
     if hps.optim == "SGDOneCycle":
         optimizer = torch.optim.SGD(net.parameters(), lr=hps.learningRate, momentum=hps.momentum)
         stepsPerEpoch = trainData.__len__() // hps.batchSize

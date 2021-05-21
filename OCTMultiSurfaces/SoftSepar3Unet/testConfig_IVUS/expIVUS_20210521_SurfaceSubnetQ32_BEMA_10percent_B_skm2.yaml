@@ -39,7 +39,7 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:3')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 5
 learningRate: 0.1
@@ -47,7 +47,7 @@ momentum: 0.9  # exponential weighted average, normally 0.9
 
 # for OneCycleLR
 maxLr:  1.0
-epochs: 8000
+epochs: 1500
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 
@@ -65,7 +65,7 @@ bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False
 segChannels: 32  # number of channel in the segmentation part.
-BEMAMomentum: 0.98 # Bidirectional Exponential Moving Average momentum.
+BEMAMomentum: 0.7 # Bidirectional Exponential Moving Average momentum.
 
 # some physical parameter of images
 slicesPerPatient: 1
@@ -107,7 +107,7 @@ smoothRift: False  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
-weightL1Loss: 0.1
+weightL1Loss: 1.0
 useMultiSurfaceCEWeight: False
 
 gradientRiftConvGoBack: False
