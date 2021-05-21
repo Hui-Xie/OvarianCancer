@@ -1,4 +1,34 @@
 # May 21th, Friday, 2021:
+
+IVUS experiment Comparison:
+
+====================================================100% IVUS training data=======================================================
+                                     Lumen                       |                       Media
+                    Jacc		Dice		HD		   PAD       |        Jacc	      Dice	    	HD		   PAD
+Lexin's Method    0.88±0.06	  NoReport	0.28±0.19	0.07±0.09           0.89±0.10	NoReport	0.40±0.29	0.08±0.08
+Yufan's Method    0.84±0.16   0.90±0.15	0.45±0.48	0.11±0.17           0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15
+Hui's   Method    0.88±0.07	  0.94±0.04	0.34±0.28	0.07±0.08           0.89±0.09	0.94±0.06	0.48±0.41	0.07±0.08
+==================================================================================================================================
+
+=====================================================10% IVUS training data=======================================================
+                                     Lumen                       |                       Media
+                    Jacc		Dice		HD		   PAD       |        Jacc	      Dice	    	HD		   PAD
+Lexin's Method    0.87±0.07	  NoReport	0.31±0.18	0.08±0.07           0.87±0.10   NoReport	0.48±0.37	0.10±0.10
+Yufan's Method    0.83±0.09	  0.91±0.07	0.45±0.30	0.11±0.10           0.83±0.10	0.90±0.06	0.74±0.39	0.11±0.09
+Hui's   Method    0.86±0.08	  0.92±0.05	0.44±0.31	0.10±0.10           0.83±0.12	0.90±0.08	0.78±0.54	0.11±0.11
+==================================================================================================================================
+
+Notes:
+1  Yufan's method from experiments: expIVUS_20210514_YufanHe_10percent_A_skm2, expIVUS_20210514_YufanHe_100percent_A_skm2
+2  Lexin's method is his W/learned result.
+3  Hui's method:
+   expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_dot9W_skm2
+   expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_dot9W_skm2
+4  Hui's method improvement:
+   A  Bidirectional Exponential Moving Average momentum=0.9,
+   B  use H directional gradient weighted multisurface cross entropy.
+
+
 Now these 10 programs are training:
 -rw-r--r-- 1 hxie1 hxie1 4702 May 21 11:42 ./testConfig_IVUS/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_AW_skm2.yaml
 -rw-r--r-- 1 hxie1 hxie1 4672 May 21 11:42 ./testConfig_IVUS/expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_dot9W_skm2.yaml
@@ -13,6 +43,110 @@ Now these 10 programs are training:
 
 All finished test.
 
+====100% traing data===
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_AW_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.87±0.08	0.93±0.05	0.44±0.41	0.09±0.11
+Media:	0.88±0.10	0.93±0.06	0.59±0.48	0.07±0.08
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_BW_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.87±0.07	0.93±0.05	0.39±0.37	0.09±0.10
+Media:	0.87±0.10	0.93±0.06	0.59±0.42	0.08±0.08
+
+================================================================================================================
+
+===============================================================================================================best
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_dot9W_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.88±0.07	0.94±0.04	0.34±0.28	0.07±0.08
+Media:	0.89±0.09	0.94±0.06	0.48±0.41	0.07±0.08
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_A_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.88±0.07	0.93±0.04	0.38±0.33	0.08±0.08
+Media:	0.89±0.08	0.94±0.05	0.51±0.40	0.07±0.07
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_B_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.87±0.07	0.93±0.04	0.38±0.31	0.08±0.08
+Media:	0.88±0.09	0.93±0.06	0.53±0.40	0.08±0.08
+
+================================================================================================================
+
+====10% traing data===
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_AW_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.84±0.08	0.91±0.05	0.52±0.43	0.11±0.12
+Media:	0.84±0.11	0.91±0.07	0.79±0.49	0.10±0.09
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_BW_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.81±0.11	0.89±0.08	0.72±0.56	0.16±0.18
+Media:	0.86±0.09	0.92±0.06	0.84±0.52	0.09±0.09
+
+================================================================================================================
+
+===============================================================================================================Best===
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_dot9W_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.86±0.08	0.92±0.05	0.44±0.31	0.10±0.10
+Media:	0.83±0.12	0.90±0.08	0.78±0.54	0.11±0.11
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_A_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.80±0.13	0.88±0.10	0.74±0.68	0.20±0.33
+Media:	0.81±0.12	0.89±0.08	0.97±0.58	0.11±0.11
+
+================================================================================================================
+
+===============================================================================================================
+PredictionDir: /raid001/users/hxie1/data/IVUS/polarNumpy_10percent/log/SurfaceSubnet_Q_BEMA/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_B_skm2/testResult/text
+GroundTruthDir: /raid001/users/hxie1/data/IVUS/Test_Set/Data_set_B/LABELS_obs2_v1
+Test set size: 326 images
+		Jacc		Dice		HD		PAD
+Lumen:	0.83±0.09	0.90±0.06	0.60±0.42	0.12±0.14
+Media:	0.86±0.10	0.92±0.06	0.78±0.50	0.09±0.09
+
+================================================================================================================
+
+>>
 
 
 
@@ -35,15 +169,16 @@ ps 33452 155765 14312 26593
 
 IVUS experiment Comparison:
 
-====================================================100% IVUS training data======================================================
+====================================================100% IVUS training data=======================================================
                                      Lumen                       |                       Media
                     Jacc		Dice		HD		   PAD       |        Jacc	      Dice	    	HD		   PAD
 Lexin's Method    0.88±0.06	  NoReport	0.28±0.19	0.07±0.09           0.89±0.10	NoReport	0.40±0.29	0.08±0.08
 Yufan's Method    0.84±0.16   0.90±0.15	0.45±0.48	0.11±0.17           0.86±0.15	0.91±0.14	0.62±0.44	0.09±0.15
 Hui's   Method    0.88±0.08	  0.93±0.05	0.36±0.35	0.08±0.09           0.89±0.08	0.94±0.05	0.49±0.38	0.07±0.08
+
 ==================================================================================================================================
 
-=====================================================10% IVUS training data======================================================
+=====================================================10% IVUS training data=======================================================
                                      Lumen                       |                       Media
                     Jacc		Dice		HD		   PAD       |        Jacc	      Dice	    	HD		   PAD
 Lexin's Method    0.87±0.07	  NoReport	0.31±0.18	0.08±0.07           0.87±0.10   NoReport	0.48±0.37	0.10±0.10
