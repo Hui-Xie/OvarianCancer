@@ -19,6 +19,18 @@ Hui's   Method    0.86±0.08	  0.92±0.05	0.44±0.31	0.10±0.10           0.83±
 ==================================================================================================================================
 
 Notes:
+1 IVUS data
+  ======Number of 2D Images in Data set========
+   Rate     Training   Validation   Test
+   100%     100         9           326
+   10%      10          9           326
+  =============================================
+2 In 100% IVUS data, our method get a similar accuracy with Leixin's method, and a better result than Yufan's method.
+  From network architecture, our method has a simpler network architecture than both Leixin's and Yufan's methods.
+3 In 10% IVUS data, Leixin's method is better than our method, and our method is better and Yufan's method.
+4 10% IVUS data has only 10 images, far less than the 1% of Duke_AMD data which has 3x51 = 153 Bscans.
+
+Notes backend:
 1  Yufan's method from experiments: expIVUS_20210514_YufanHe_10percent_A_skm2, expIVUS_20210514_YufanHe_100percent_A_skm2
 2  Lexin's method is his W/learned result.
 3  Hui's method:
@@ -27,6 +39,7 @@ Notes:
 4  Hui's method improvement:
    A  Bidirectional Exponential Moving Average momentum=0.9,
    B  use H directional gradient weighted multisurface cross entropy.
+
 
 
 Now these 10 programs are training:
