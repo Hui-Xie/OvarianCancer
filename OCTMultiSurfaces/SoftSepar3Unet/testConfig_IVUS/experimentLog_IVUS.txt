@@ -11,7 +11,8 @@ Now these 10 programs are training:
 -rw-r--r-- 1 hxie1 hxie1 4703 May 21 11:42 ./testConfig_IVUS/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_B_skm2.yaml
 -rw-r--r-- 1 hxie1 hxie1 4703 May 21 11:42 ./testConfig_IVUS/expIVUS_20210521_SurfaceSubnetQ32_BEMA_10percent_A_skm2.yaml
 
-The above 100% config have finished test.
+All finished test.
+
 
 
 
