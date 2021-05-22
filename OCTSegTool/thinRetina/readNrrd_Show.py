@@ -44,7 +44,7 @@ def main():
         printUsage(sys.argv)
         return -1
 
-    readNrrd(sys.argv[1], int(sys.arv[2]))
+    readNrrd(sys.argv[1], int(sys.argv[2]))
 
 
 
