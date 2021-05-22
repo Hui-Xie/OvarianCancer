@@ -1,4 +1,3 @@
-f
 import sys
 import SimpleITK as sitk
 import matplotlib.pyplot as plt
