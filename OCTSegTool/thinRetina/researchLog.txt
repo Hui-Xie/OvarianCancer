@@ -1,3 +1,14 @@
+# May 22nd, Saturday, 2021
+1  Use Slicer on X11 forwarding. use ssh -X instead of ssh -Y option.  --done.
+2  convert Dicom to Nrrd.
+3  write a script of Nrrd read program.
+4  connect vpn.healthcare.uiowa.edu.
+
+/home/hxie1/data/Ophthalmology/3Dicom/Test/Orig_Output_from_Zeiss/01082671/2017-02-13   : Macular cube 200x200_2   
+
+
+
+
 # May 21th, Friday, 2021
 Dicom file analysis:
 1  there are 3 patient Dicom.
@@ -6,6 +17,7 @@ Dicom file analysis:
 4  OCT volume size: 200x1024x200 in #AScans x PenetrationDepth x #Bscans format.
 5  Convert each date record as a Raw file or Nrrd file?
 6  Save a volume or a series separate Bscan?
+
 
 
 
