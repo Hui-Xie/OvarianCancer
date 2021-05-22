@@ -19,7 +19,9 @@ def readNrrd(nrrdPath, indexBscan):
     npImage = sitk.GetArrayFromImage(itkImage)
 
     S,H,W = npImage.shape
-    print(f"{nrrdPath} has a shape: {npImage.shape} in #Bscan x PenetrationDepth x #Ascan format.")
+    print("Volume Information:")
+    print(f"Volume name: {nrrdPath}")
+    print(f"Volume shape in #Bscan x PenetrationDepth x #Ascan format: {npImage.shape}")
 
     f = plt.figure(frameon=False)
     DPI = 100
@@ -35,7 +37,8 @@ def readNrrd(nrrdPath, indexBscan):
 
     plt.savefig(outputPath, dpi='figure', bbox_inches='tight', pad_inches=0)
     plt.close()
-    print(f"output Bscan {indexBscan} at: {outputPath}")
+    print("\nOutput:")
+    print(f"output the Bscan {indexBscan} at: {outputPath}")
 
 def main():
     if len(sys.argv) != 3:
