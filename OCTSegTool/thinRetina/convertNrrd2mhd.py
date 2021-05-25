@@ -24,6 +24,7 @@ def main():
 
     # get files list
     nrrdList = glob.glob(nrrdDir + f"/*.nrrd")
+    print(f"start to convert nrrd......\n")
     for nrrdPath in nrrdList:
         basename = os.path.splitext(os.path.basename(nrrdPath))[0]
         mhdPath = os.path.join(nrrdDir, f"{basename}.mhd")
