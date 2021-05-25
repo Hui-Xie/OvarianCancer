@@ -42,11 +42,26 @@ Now I have more confidence that predicting benign or malignant tumor using deep 
 For this kind of dichotomous classification, more patient cases ,better prediction result we can get.
 And we do not need tedious segmentation, just collecting more raw patient CT images and his benign and malignant label is enough.
 
+==================================================================================================================
+
+Deep learniing is not an super-machine which can do anything.
+A better deep learning network always mimics domain knowledge to better locate features or ROI, especially at a small number of training cases.
+
+The answers to belows questions will help us better design network adaptive to our application.
 
 Further questions:
-How is a pathologist to judge a tumor tissue sample is benign and malignant?
-The pathologist just observe the tumor tissue form, or dose he need to do some bio-chemo experiments to culture the tissue cells and then observe the result?
-What is the major factors to let a pathologist to judge a tumor tissue sample is benign or malignant?
+1   What is the principle of choosing tumor tissue sample after surgery to send to pathology check?
+    For example, one sample from primary cancer, one sample from the metastasis, or one sample near ovaries.
+    Or tumor tissue color/texture is some consideration to send to pathology check? Or something else.
+
+
+2   How is a pathologist to judge a tumor tissue sample is benign and malignant?
+    The pathologist just observes the tumor tissue morphology, or dose he need to do some bio-chemo experiments to culture the tissue cells and then observe the reproductive result?
+    What is the major factors to let a pathologist judge a tumor tissue sample is benign or malignant?
+    Size, color, texture, morphology, or something else?
+========================================================================================================================
+
+
 
 
 
