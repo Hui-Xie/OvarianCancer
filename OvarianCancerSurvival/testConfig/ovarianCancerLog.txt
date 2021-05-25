@@ -1,3 +1,107 @@
+n# May 24th, Monday, 2021
+Micorsoft Azure Cloud Service.
+DSVM:
+https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/overview
+
+A new idea:
+1  Use VAE model to reconstruct abdominal CT images.
+   Use the space compress algorithm of VAE to get size-reduced latent space,  in order to reduce overfitting.
+2  the latent vector of the VAE model is regularized.
+   The size of latent vector should be less than the numbers of training sample.
+3  Use the latent vector to predict all possible cancer clinical label and OC and benign masses.
+   Here the clinical label acts as some regualization facgtors over latent space input.
+
+A question:
+In your medical knowledge, how do determine a CT image is a benign mass, instead of an ovarian cancer?
+In other words, how do get the benign mass label or ovarian cancer label for all abdominal CT images?
+
+I think the benign mass vs ovarian caner labels are different from the surgical optimal survival result which I have worked last year.
+The surgical optimal survival result is decided by 3 factors: survival 3 months, positive chemo response, and optimal cytoreduction.
+I guess that it may exist a case that surgical optimal is good, but this patient dies after 6 months as it is a real ovarian cancer, instead of benign mass.
+It may also exist a case that an aged patient has a benign mass, but he dies within 3 months after sugery as serious complication and side effect of the surgery.
+
+In some sense, I think predicting the benign mass and ovarian cancer is more feasible than predicting the surgical optimal result which really is decided by a lot of extra factors.
+
+Gonzalez Jesus Relied in May 25th, 2021:
+A benign mass is decided when we do surgery and the pathologist say is benign. Is a dichotomous classification: benign vs malignant.
+The problem: there is only imaging clues and symptoms before surgery that are suggestive of benign vs malignant, not a good method.
+This has not changed for the last 20 years. Now we have a possibility to do so.
+
+Thank you very much, professor Jesus.
+
+Your answer is very informative.
+
+It shows that the traditional method uses the pathology check of the tissue samples excised from heavy surgeries
+to determine the tumor is benign or malignant. It is very expensive in medical cost and very onerous in patient's life quality.
+
+Now, we hope to use the tumor distribution in body, texture, pattern, location, size etc information directly from the abdominal CT image without expensive surgeries to
+judge whether the tumor is benign or malignant. It is very valuable in medical application.
+
+Now I have more confidence that predicting benign or malignant tumor using deep learning is more feasible than predicting the surgical optimal result like before.
+
+For this kind of dichotomous classification, more patient cases ,better prediction result we can get.
+And we do not need tedious segmentation, just collecting more raw patient CT images and his benign and malignant label is enough.
+
+
+Further questions:
+How is a pathologist to judge a tumor tissue sample is benign and malignant?
+The pathologist just observe the tumor tissue form, or dose he need to do some bio-chemo experiments to culture the tissue cells and then observe the result?
+What is the major factors to let a pathologist to judge a tumor tissue sample is benign or malignant?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Note that we should handle 200 OC + 400 benign cases:
+total 600 cases.
+case size: 600x600x200  pixels,   600*600*200*4 = 300 MB
+storage space: 300MB/case * 600 case/experiment *20 experiment =  4TB
+memory requirement: 300 MB/case * 16 case/batch * 8   = 40GB, where 8 is considering input,network architecture of VAE
+
+
+Yes. The Data Science Virtual Machine (DSVM) for Linux from Microsoft Azure will upgrade our current bottle-neck
+computing resource and data access speed. As our input abdominal volume CT image has a image size of 600x600x200 in pixel,
+which needs 300 MB each case for loading into memory.  Considering a batch size 16 for deep learning training,
+it needs  300MB x16 = 4.7GB for input space only. Plus outpace space, network tensor space,  and back propagation space,
+it needs about 40GB GPU memory for training.  We have total 600 cases, but it can not load into memory for all at one time.
+The SSD offered by Azure will accelerate the batch loading speed about 10 times (1.2GB/s in SSD vs 100MB/s in HDD general),
+ which will explicitly improve our training speed.
+
+at Aug 9th, 2019, merge the 1st and 2nd batch data, excluding the non-standard data:
+
+Statistics Information of Images:
+Image Directories:
+    /home/hxie1/data/OvarianCancerCT/rawNrrd/images
+Totally compute 220  image files
+Dimension = 3
+Dimension     X      Y    Z
+MinSize:    399   493   38
+MaxSize:    736   736   633
+MeanSize:    515   518   198
+MinOrigin:    -275.7   -494.012   -937.3
+MaxOrigin:    -142.198   -18.3321   1904.63
+MeanOrigin:    -192.097   -280.586   56.2154
+MinSpacing:    0.585938   0.585938   0.699982
+MaxSpacing:    1   1   5
+MeanSpacing:    0.747252   0.747255   2.90267
+MinPhysicalSize:    300   300   190
+MaxPhysicalSize:    502.018   508   700.247
+MeanPhysicalSize:    384.633   387.387   435.725
+=======End of Image Files Statistics==============
+
+
+
+
 # March 27th, Saturday, 2021
 =========Summary Ovarian Cancer Experiments================
 
