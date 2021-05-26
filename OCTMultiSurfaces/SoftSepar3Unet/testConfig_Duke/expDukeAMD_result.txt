@@ -1,3 +1,26 @@
+# May 26th, Wednesday, 2021:
+Write segmentation paper.
+Paper outline:
+title: A simple and high-efficient surface segmentation neural network
+1  introduction:
+   high accuracy, reduced data.
+   simple network architecture, quick training speed.
+2  method:
+   A gradient input.
+   B Unet;
+   C weighted multiple-surface cross entropy.
+   D ReLU after loss;
+   E No region seg branch;
+   F bigger Seg head.
+   For IVUS:
+   E Bidirecitonal Exponential Moving Average smooth.
+3  experiments:
+   JHU, Duke_AMD, IVUS all 3 public data set.
+   all data set comparison.
+4  conclusion:
+
+
+
 # May 20th, Thursday, 2021
 Summary 3 data set best result so far:
 ========================================================================================================================================================================
