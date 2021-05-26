@@ -22,6 +22,7 @@ It may also exist a case that an aged patient has a benign mass, but he dies wit
 
 In some sense, I think predicting the benign mass and ovarian cancer is more feasible than predicting the surgical optimal result which really is decided by a lot of extra factors.
 
+===================================================================================================
 Gonzalez Jesus Relied in May 25th, 2021:
 A benign mass is decided when we do surgery and the pathologist say is benign. Is a dichotomous classification: benign vs malignant.
 The problem: there is only imaging clues and symptoms before surgery that are suggestive of benign vs malignant, not a good method.
@@ -60,6 +61,54 @@ Further questions:
     What is the major factors to let a pathologist judge a tumor tissue sample is benign or malignant?
     Size, color, texture, morphology, or something else?
 ========================================================================================================================
+
+Douglas replied on May 25th, 2021:
+We always send tissue for pathology of the main specimen. For instance if it is an ovarian mass that we are removing,
+we will always send that ovary for pathology. We will often send other nearby structures for pathology as well if those were removed.
+For instance if there's an ovarian mass removed but we do a full hysterectomy the uterus will also be sent for pathology.
+Occasionally there is an additional "suspicious" piece of tissue sent for pathology - that would often be just based on
+ how it visually looks during surgery. For instance it might be friable tissue or plaque-like.
+ For "full staging" procedures that are performed once a primary malignancy is identified on frozen pathology
+ we take the following in ovarian cancer: peritoneal cytology, multiple peritoneal biopsies, omentectomy, pelvic and para-aortic lymph node samples.
+
+The pathologist uses their experience to check the morphology under the microscope.
+This is somewhat subjective but there are specific signs and features that they are looking for that can often be subtle.
+The changes are exactly as you said - size, shape, color of cells and their intracellular components.
+How the cells interact with each other - for instance if it's invading surrounding areas, involving nerves, etc.
+So primarily morphology - but sometimes will also do immunostaining or other molecular testing as you alluded to,
+often to either to make a more specific diagnosis or when the morphology is equivocal.
+It takes an entire residency to become competent in this so I'm afraid I don't have more information specifically
+but maybe could put you in touch with our pathologist who does to answer this in more detail if needed.
+=========================================================================================================================
+
+Hui answer on May 26th, 2021.
+
+n other words, the samples sent to pathology include main ovarian mass, ovary, uterus, suspicious tissues(friable tissue, plaque tissue),  peritoneum, omentum, pelvic and periaortic lymph nodes, etc.
+They include broad tissues in the abdomen. The sample choice implies that the whole CT abdominal volume, instead of the primary cancer region, as input to a deep learning network is a better choice.
+And a Hi-resolution volume image may help, as it needs some subtle information on the peritoneum, omentum, peri-aorta.
+
+Now the microscope pathology will give us a big challenge. Our CT image physical resolution is 0.7mm x 0.7mm x 3 mm in general for each voxel, while the cancer cell has a size of about 10 um,
+ which means one CT voxel may contain 1.47 million cancer cells (700x700x3000/(10x10x10)), which can not give us information about the cancer cell morphology, shape, interaction, invading, etc information.
+ Especially, when the morphology is equivocal, more molecular tests are needed, which is unreachable by CT image information.
+
+In other words, CT images can not offer molecular-level information which is exactly the basis of pathology analysis for benign or malignant judgement.
+While CT images offer possible cancer distribution, region shape, abnormal tissue in a human-naked-eye resolution.
+This information in the CT image may only offer a low-accuracy prediction to the benign or malignant prediction, as it lacks molecular-level information.
+
+Now I have an initial prediction accuracy estimation on ovarian cancer projects, as deep learning is not a super machine exceeding human intelligence.
+Project C: use pathology microscope images of ovarian mass tissues to predict benign or malignant. Directly use cell patterns and interaction to do predict. I estimate prediction accuracy can get about 80-90%.
+Project B: use abdominal CT image to predict benign or malignant. Predict current status by rough CT information. I estimate the prediction accuracy can get about 60%-70%.
+Project A: use abdominal CT image to predict the surgical optimal result. Predict the future by rough CT information. I estimate the prediction accuracy can get about 50-60%.
+
+For project B, I think we need to put some effort into the medical knowledge or history medical experiments. Some questions are:
+A.  Does the CT image information plus some clinical data have enough information to predict the benign or malignant tumor?
+B.  What are the medical experiments or history knowledge to support the logic deducing judgment from abdominal CT images to benign/malignant judgment?
+I suspect the review experts in the OCRA may also ask these questions in the grant review process.
+If the answers to the above 2 questions are not solid, I suspect the prediction result will be a low-accuracy whatever we spend a lot of efforts on it.
+========================================================================================================================
+
+
+
 
 
 

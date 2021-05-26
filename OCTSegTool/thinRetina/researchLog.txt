@@ -1,3 +1,18 @@
+# May 26th, Wednesday, 2021
+Meeting time: 10am -10:40 am May 26th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: About Dicom converter and ground truth.
+Minutes:
+1  For the Cirrus HD-OCT 6000 instrument, we need to decode all Dicom information to mhd/raw format or pdf, not just the OCT volume.
+   There are some risks that the manufacture may encrypt the dicom data in order to sell its value-added software.
+   We will try to decode the format. Hui will do this in the first week of June.
+2  Ray will generate the ground truth of 5 patients for the VIP OCT data in the first week of June.
+   HUi will use the 5 ground truth to generate 25 initial ground truth by deep learning network, and then Ray will manually modify it.
+3  The current OCT viewer needs to add support multi-Bscan browse function.  Hui will help Ray to modify it.
+
+
+
+
 # May 22nd, Saturday, 2021
 1  Use Slicer on X11 forwarding. use ssh -X instead of ssh -Y option.  --done.
 2  convert Dicom to Nrrd.
@@ -33,6 +48,9 @@ Minutes:
     A  It has 3 surfaces each B-scan, 3 segmented B-scan per patient, total has 100+ patients.
     B  Segmentation of Less-one pixel accuracy is not very important as ground truth self may has errors bigger than one pixel.
        A reasonable result even with 3-5 pixels error is more important.
+       Ray: Yes, a reliable segmentation globally is the focus here; so far, these layers are more important:
+       RNFL, GCIPL, RPE complex, maybe also include the lower bounding surface of the OPL [i.e., Surface: 0, 1, 3, 5, 6, 10]
+
     C  For the manual segmentation tool, we need further improve its UI function for easier using.
     D  After the improving manual segmentation tools, a NewYork doctor may help us to get more ground truth.
 2  For the thin retina project:
