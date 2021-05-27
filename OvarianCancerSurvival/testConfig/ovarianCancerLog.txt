@@ -131,7 +131,7 @@ B.  According to your experience, what is the prediction accuracy of tumor (beni
 C.  When you use your naked eyes to judge the tumor(benign or malignant), do you use the age, BMI, blood type, blood pressure, etc clinical information in your thinking? Or what is other information for your thinking in the judgment?
    This answer will help us on how to integrate the clinical information into our network.
 
-
+=============================================================================================================================================================================================================================================
 
 
 
