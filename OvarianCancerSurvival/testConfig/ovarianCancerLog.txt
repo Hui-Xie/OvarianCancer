@@ -107,6 +107,40 @@ I suspect the review experts in the OCRA may also ask these questions in the gra
 If the answers to the above 2 questions are not solid, I suspect the prediction result will be a low-accuracy whatever we spend a lot of efforts on it.
 ========================================================================================================================
 
+Jesus answered on May 27th, 2021
+
+You are overthinking this.
+
+The main objective would be to differentiate benign from malignant. Project B, if you will.
+
+We will not use microscopic at this time, because there are many types of tumors (benign and malignant) and that only could complicate things without any specific gain.
+=========================================================================================================================================================================
+Yes. Professor Jesus. You are right that we do not use the microscope image as input at this time.
+
+I just gave an assumed context as project C. If an assumed deep learning network taking input of tumor microscope images would directly learn the experience and knowledge of a pathologist to get a high prediction accuracy.
+
+At this time, we can assume that abdominal CT images have similar resolution with human-naked eyes. CT image has a 3D gray 0.7mm x0.7mm x3mm resolution volume images,
+while when a surgeon opens the abdomen of a woman, he can also see 3D color 1mm x1 mm x1mm resolution volume images in front of his eyes.  The advantage of CT images is we can get similar image resolution without the expensive surgery.
+
+Now the deep learning network of our project B needs to learn and mimic the knowledge and experience of the ovarian cancer surgeon.
+Professor Jesus, as an ovarian cancer expert and surgeon, your experience and knowledge on the below questions will help us better understand and design our project B network.
+
+A.  What is your criterion with your naked eyes to judge the tumor(benign or malignant) before sending the removing samples to pathology? For example, tissue color, mass distribution, tissue texture, tumor size, or something else? More details, more helpful.
+B.  According to your experience, what is the prediction accuracy of tumor (benign or malignant) just using your naked eyes, comparing with the return result from pathology?
+     My intuition is that our final successful network prediction accuracy will be similar to your prediction accuracy with your naked eyes.
+C.  When you use your naked eyes to judge the tumor(benign or malignant), do you use the age, BMI, blood type, blood pressure, etc clinical information in your thinking? Or what is other information for your thinking in the judgment?
+   This answer will help us on how to integrate the clinical information into our network.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
