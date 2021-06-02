@@ -1,3 +1,32 @@
+# June 2nd, Wednesday, 2021
+Meeting time: 10am -10:40 am June 2nd, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: About the thin retina sementation
+Minutes:
+1  After getting the initial ground truth corrected by Ray from graph search result, we need to do:
+   A rescaling image to uniform dimension;
+   B flip all OS eyes into OD eyes;
+   C a slight smooth the ground truth before using.
+2  Note: in the deep learning augmentaion, do not use flip as the nasal and temporal direction is not symmtric in OD/OS eye.
+
+Ray's comments:
+Notes for manual tracing:
+Surface 0, 1, 3, 6, 10 in the surface xml file → I will add surface 5 soon
+My tracing: at the end of the xml filename with "_Ray"
+Graph search: the regular filename
+Try to read the OCT image and match the surfaces in your own system
+
+A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the manual tracing artifact
+Check the smoothing results again in the images to make sure they still look reasonable
+Make sure the top surface of GCIPL (i.e., surface_1) is NOT above ILM (surface_0)
+
+I also added some scans with acceptable graph search results
+Flip the OS to the OD orientation
+It's acceptable (doesn't have to) that the ILM and GCIPL surfaces touch each other at the fovea
+It's also acceptable that ILM and top GCIPL surface very close to each other
+
+
+
 # May 26th, Wednesday, 2021
 Meeting time: 10am -10:40 am May 26th, Wednesday, 2021
 Attendee:  Jui Kai, Hui
