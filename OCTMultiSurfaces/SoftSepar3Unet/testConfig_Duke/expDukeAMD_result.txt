@@ -1,4 +1,18 @@
-0# May 31th, Monday, 2021
+# Jun 3th, Thursday, 2021:
+For Duke_AMD, Leixin has different processing with Hui.
+1  original paper use Ascan resolution 3.24 um, my experiments also use 3.24 um, Leixin uses 3.23 um.
+2  original dataset (http://people.duke.edu/~sf59/RPEDC_Ophth_2013_dataset.htm)
+   has 384 samples  (115 control+269 AMD), my experiment uses 384 samples  (115 control+269 AMD), Leixin uses 382 sample (114 control +268 AMD).
+3  Original data volume has 100x512x1000 in slice x height x width dimension.
+   I cropped  into 51x512x361 around foveas.
+   Leixin cropped into 61x512x400.
+   A  Lexin's cropping includes more flat surface Bscan, and more wide in Bscan, which inclines to reduce meanError;
+   B  For same data scale of original data set at 10%, 100%,  lexin's data has 17.6% more B-scan number than Hui's processing.
+
+
+
+
+# May 31th, Monday, 2021
 Add totalMeanError for Control and AMD separately for different training rates in Duke_AMD data
 
 ==========================================Surface mean error(um)_std for 100% training data of Duke AMD data============================================================================
