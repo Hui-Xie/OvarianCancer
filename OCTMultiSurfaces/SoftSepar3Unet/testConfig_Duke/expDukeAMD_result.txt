@@ -8,9 +8,7 @@ For Duke_AMD, Leixin has different processing with Hui.
    Leixin cropped into 61x512x400.
    A  Lexin's cropping includes more flat surface Bscan, and more wide in Bscan, which inclines to reduce meanError;
    B  For same data scale of original data set at 10%, 100%,  lexin's data has 17.6% more B-scan number than Hui's processing.
-
-
-
+4  In 10% scale of training data, I use 10% vadlidation data, while Leixin uses 100% validation data
 
 # May 31th, Monday, 2021
 Add totalMeanError for Control and AMD separately for different training rates in Duke_AMD data
