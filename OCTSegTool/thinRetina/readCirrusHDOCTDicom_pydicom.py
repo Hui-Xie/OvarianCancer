@@ -49,6 +49,15 @@ DimSize = 200 1024 200
 ElementType = MET_UCHAR
 ElementDataFile = 01082671_20200219.raw
 
+
+# need below package to support pydicom
+GDCM - this is the package that supports most compressed formats
+Pillow, ideally with jpeg and jpeg2000 plugins
+jpeg_ls: CharLS
+pylibjpeg, with the -libjpeg, -openjpeg and -rle plugins
+
+
+
 '''
 
 def printUsage(argv):
