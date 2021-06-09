@@ -77,7 +77,7 @@ def readDicomVisitDir(visitDir, outputDir):
 
         if hasattr(dicomData, "Laterality"):
             ODOS = dicomData.Laterality
-        elif hasattr(dicomData, 'ImageLaterality')
+        elif hasattr(dicomData, 'ImageLaterality'):
             ODOS = dicomData.ImageLaterality
         else:
             ODOS = "ODOS"
