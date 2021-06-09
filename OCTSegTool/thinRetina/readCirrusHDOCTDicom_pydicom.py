@@ -107,11 +107,21 @@ def readDicomVisitDir(visitDir, outputDir):
                 mhdFile.write(f"BinaryData = True\n")
                 mhdFile.write(f"BinaryDataByteOrderMSB = False\n")
                 mhdFile.write(f"CompressedData = False\n")
-
-                mhdFile.write(f"ElementSpacing =");
+                mhdFile.write(f"TransformMatrix = 1 0 0 0 1 0 0 0 1\n")
+                mhdFile.write(f"Offset = 0 0 0\n")
+                mhdFile.write(f"CenterOfRotation = 0 0 0\n")
+                mhdFile.write(f"AnatomicalOrientation = RAI\n")
+                mhdFile.write(f"ElementSpacing =")
                 for x in pixelSpacing:
                     mhdFile.write(f" {x} ")
-                mhdFile.write(f"\n")
+                mhdFile.write(f"ITK_InputFilterName = NrrdImageIO\n")
+
+                mhdFile.write(f"ITK_original_direction = 1 0 0 0 1 0 0 0 1\n")
+                mhdFile.write(f"ITK_original_spacing = 1 1 1\n")
+                mhdFile.write(f"NRRD_kinds[0] = domain\n")
+                mhdFile.write(f"NRRD_kinds[1] = domain\n")
+                mhdFile.write(f"NRRD_kinds[2] = domain\n")
+                mhdFile.write(f"NRRD_space = left-posterior-superior\n")
 
                 mhdFile.write(f"DimSize = ")
                 for x in pixelData.shape:

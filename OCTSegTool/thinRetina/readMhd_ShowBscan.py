@@ -29,8 +29,8 @@ def readMhd(mhdPath, indexBscan):
     colSubplot= 1
     f.set_size_inches(W*colSubplot/ float(DPI), H*rowSubplot/ float(DPI))
 
-    plt.margins(0)
-    plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
+    #plt.margins(0)
+    # plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
     plt.imshow(npImage[indexBscan,], cmap='gray')
     plt.axis('off')
@@ -47,8 +47,6 @@ def main():
         return -1
 
     readMhd(sys.argv[1], int(sys.argv[2]))
-
-
 
 if __name__ == "__main__":
     main()
