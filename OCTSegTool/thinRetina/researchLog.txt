@@ -15,7 +15,7 @@ Minutes:
 For Cirrus HD-OCT data extraction:
    A  think possible technologies to explore the CapeCode Raw data.
    B  use code tag, output the fundus and SLO 2D image (664x512) with meaning names;
-   C  output filenames need to record time for repeated case.
+   C  output filenames need to record time for repeated cases.   --done.
 For thin retina segmentation:
    A  merge 5 graph search result + 5 Ray corrected result. 8 for training, 2 for validation.
    B  Input image has different sizes, so we need to downsample the high resolution images and ground truth into a smaller size.

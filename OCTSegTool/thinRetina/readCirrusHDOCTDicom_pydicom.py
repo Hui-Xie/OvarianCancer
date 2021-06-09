@@ -3,6 +3,7 @@
 
 import glob as glob
 import pydicom
+from PIL import Image
 import os
 import sys
 
@@ -70,16 +71,19 @@ def readDicomVisitDir(visitDir, outputDir):
     dicomFileList.sort()
     outputFileList = []
     errorFileList = []
-
+    nFundus = 0
     for dicomPath in dicomFileList:
         dicomData = pydicom.filereader.dcmread(dicomPath)
         patientID = dicomData.PatientID
         if hasattr(dicomData, 'ContentDate'):
             visitDate = dicomData.ContentDate
+            visitTime = dicomData.ContentTime.replace(".", "")
         elif hasattr(dicomData, 'InstanceCreationDate'):
             visitDate = dicomData.InstanceCreationDate
+            visitTime = dicomData.InstanceCreationTime.replace(".", "")
         elif hasattr(dicomData, 'PerformedProcedureStepStartDate'):
             visitDate = dicomData.PerformedProcedureStepStartDate
+            visitTime = dicomData.PerformedProcedureStepStartTime.replace(".", "")
         else:
             print(f"Error: {patientID} does not has visitDate")
             assert  False
@@ -91,64 +95,98 @@ def readDicomVisitDir(visitDir, outputDir):
         else:
             ODOS = "ODOS"
 
+        #  (0x2201, 0x1000) in dicomData judge key exist or not
+
+
         modality = dicomData.Modality
-        typeTag = dicomData[((0x2201, 0x1000))].value
+        try:
+            typeTag = dicomData[(0x2201, 0x1000)].value
+        except:
+            sopClassUID = dicomData[(0x0008, 0x0016)].value
+            if sopClassUID == "1.2.840.10008.5.1.4.1.1.104.1":
+                typeTag = "EncapsulatedPdf"
+            elif sopClassUID == "1.2.840.10008.5.1.4.1.1.7":
+                typeTag = "FundusImage"
 
         if typeTag == "OphthalmicPhotography8BitImage" \
            or  typeTag == "OphthalmicTomographyImage"  \
-           or  typeTag == "HfaPerimetryOphthalmicPhotography8BitImage":
+           or  typeTag == "HfaPerimetryOphthalmicPhotography8BitImage"\
+           or  typeTag == "FundusImage":
 
-            if hasattr(dicomData,'SeriesDescription'):
-                seriesDescription = dicomData.SeriesDescription.replace(" ", "")
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}_{seriesDescription}"
-            else:
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}"
-            outputMhd = outputName + ".mhd"
-            outputRaw = outputName + ".raw"
-            pixelData = dicomData.pixel_array
-            pixelSpacing = (1, 1, 1)
-            if hasattr(dicomData,'PixelSpacing'):
-                pixelSpacing = dicomData.PixelSpacing
+            if dicomData.NumberOfFrames == 1:
+                if dicomData.SamplesPerPixel == 1: # SLO image
+                    typeTag = "SLO"
+                    outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}.png"
+                    pixelData = dicomData.pixel_array
+                    Image.fromarray(pixelData).save(os.path.join(outputDir, outputName))
+                    outputFileList.append(outputName)
 
-            with open(os.path.join(outputDir,outputMhd), "w") as mhdFile:
-                mhdFile.write(f"ObjectType = Image\n")
-                mhdFile.write(f"NDims = {pixelData.ndim}\n")
-                mhdFile.write(f"BinaryData = True\n")
-                mhdFile.write(f"BinaryDataByteOrderMSB = False\n")
-                mhdFile.write(f"CompressedData = False\n")
-                mhdFile.write(f"TransformMatrix = 1 0 0 0 1 0 0 0 1\n")
-                mhdFile.write(f"Offset = 0 0 0\n")
-                mhdFile.write(f"CenterOfRotation = 0 0 0\n")
-                mhdFile.write(f"AnatomicalOrientation = RAI\n")
-                mhdFile.write(f"ElementSpacing =")
-                for x in pixelSpacing:
-                    mhdFile.write(f" {x} ")
-                mhdFile.write(f"ITK_InputFilterName = NrrdImageIO\n")
+                elif dicomData.SamplesPerPixel == 3: # color fundus image
+                    typeTag = "Fundus"
+                    # Speciral color interpretation:
+                    # (0028, 0004) Photometric Interpretation          CS: 'YBR_FULL_422'
+                    outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}_{nFundus:02d}.png"
+                    nFundus +=1
+                    pixelData = dicomData.pixel_array
+                    pixelData = pydicom.pixel_data_handlers.util.convert_color_space(pixelData, dicomData[(0x0028, 0x0004)].value, "RGB")
+                    Image.fromarray(pixelData).save(os.path.join(outputDir, outputName))
+                    outputFileList.append(outputName)
+                else:
+                    assert False
+                    print(f"Error something wrong with frame=1 ==============")
 
-                mhdFile.write(f"ITK_original_direction = 1 0 0 0 1 0 0 0 1\n")
-                mhdFile.write(f"ITK_original_spacing = 1 1 1\n")
-                mhdFile.write(f"NRRD_kinds[0] = domain\n")
-                mhdFile.write(f"NRRD_kinds[1] = domain\n")
-                mhdFile.write(f"NRRD_kinds[2] = domain\n")
-                mhdFile.write(f"NRRD_space = left-posterior-superior\n")
+            else: # OCT volume
+                if hasattr(dicomData,'SeriesDescription'):
+                    seriesDescription = dicomData.SeriesDescription.replace(" ", "")
+                    outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}_{seriesDescription}"
+                else:
+                    outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}"
+                outputMhd = outputName + ".mhd"
+                outputRaw = outputName + ".raw"
+                pixelData = dicomData.pixel_array
+                pixelSpacing = (1, 1, 1)
+                if hasattr(dicomData,'PixelSpacing'):
+                    pixelSpacing = dicomData.PixelSpacing
 
-                mhdFile.write(f"DimSize = ")
-                for x in pixelData.shape:
-                    mhdFile.write(f" {x} ")
-                mhdFile.write(f"\n")
+                with open(os.path.join(outputDir,outputMhd), "w") as mhdFile:
+                    mhdFile.write(f"ObjectType = Image\n")
+                    mhdFile.write(f"NDims = {pixelData.ndim}\n")
+                    mhdFile.write(f"BinaryData = True\n")
+                    mhdFile.write(f"BinaryDataByteOrderMSB = False\n")
+                    mhdFile.write(f"CompressedData = False\n")
+                    mhdFile.write(f"TransformMatrix = 1 0 0 0 1 0 0 0 1\n")
+                    mhdFile.write(f"Offset = 0 0 0\n")
+                    mhdFile.write(f"CenterOfRotation = 0 0 0\n")
+                    mhdFile.write(f"AnatomicalOrientation = RAI\n")
+                    mhdFile.write(f"ElementSpacing =")
+                    for x in pixelSpacing:
+                        mhdFile.write(f" {x} ")
+                    mhdFile.write(f"ITK_InputFilterName = NrrdImageIO\n")
 
-                mhdFile.write(f"ElementType = MET_UCHAR\n")
-                mhdFile.write(f"ElementDataFile = {outputRaw}\n")
-            pixelData.astype('uint8').tofile(os.path.join(outputDir, outputRaw))
-            outputFileList.append(outputMhd)
+                    mhdFile.write(f"ITK_original_direction = 1 0 0 0 1 0 0 0 1\n")
+                    mhdFile.write(f"ITK_original_spacing = 1 1 1\n")
+                    mhdFile.write(f"NRRD_kinds[0] = domain\n")
+                    mhdFile.write(f"NRRD_kinds[1] = domain\n")
+                    mhdFile.write(f"NRRD_kinds[2] = domain\n")
+                    mhdFile.write(f"NRRD_space = left-posterior-superior\n")
+
+                    mhdFile.write(f"DimSize = ")
+                    for x in pixelData.shape:
+                        mhdFile.write(f" {x} ")
+                    mhdFile.write(f"\n")
+
+                    mhdFile.write(f"ElementType = MET_UCHAR\n")
+                    mhdFile.write(f"ElementDataFile = {outputRaw}\n")
+                pixelData.astype('uint8').tofile(os.path.join(outputDir, outputRaw))
+                outputFileList.append(outputMhd)
         elif typeTag[-3:] == "Pdf":
             documentTitle = dicomData.DocumentTitle.replace(" ", "")
             pdfData = dicomData.EncapsulatedDocument
             if hasattr(dicomData, 'seriesDescription'):
                 seriesDescription = dicomData.SeriesDescription.replace(" ", "")
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}_{seriesDescription}_{documentTitle}.pdf"
+                outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}_{seriesDescription}_{documentTitle}.pdf"
             else:
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}_{documentTitle}.pdf"
+                outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}_{documentTitle}.pdf"
             outputPath = os.path.join(outputDir, outputName)
             pdfFile = open(outputPath,"wb")
             pdfFile.write(pdfData)
@@ -157,9 +195,9 @@ def readDicomVisitDir(visitDir, outputDir):
         elif typeTag == "HfaOphthalmicVisualFieldStaticPerimetryMeasurements":
             if hasattr(dicomData, 'seriesDescription'):
                 seriesDescription = dicomData.SeriesDescription.replace(" ", "")
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}_{seriesDescription}.raw"
+                outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}_{seriesDescription}.raw"
             else:
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}.raw"
+                outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}.raw"
 
             if hasattr(dicomData, "pixel_array"):
                  print(f"Warning: {outputName} need process.")
@@ -169,9 +207,9 @@ def readDicomVisitDir(visitDir, outputDir):
         elif typeTag[-7:] == "RawData":
             if hasattr(dicomData, 'seriesDescription'):
                 seriesDescription = dicomData.SeriesDescription.replace(" ", "")
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}_{seriesDescription}.raw"
+                outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}_{seriesDescription}.raw"
             else:
-                outputName = f"{patientID}_{visitDate}_{ODOS}_{modality}_{typeTag}.raw"
+                outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}.raw"
 
             if hasattr(dicomData,"pixel_array"):
                 print(f"Warning: {outputName} need process.")
