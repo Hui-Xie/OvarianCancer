@@ -172,7 +172,7 @@ def main():
         print("Error: input parameters error.")
         printUsage(sys.argv)
         return -1
-    readDicomVisitDir(sys.argv[1], int(sys.argv[2]))
+    readDicomVisitDir(sys.argv[1], sys.argv[2])
     print("=================END=========================")
 
 if __name__ == "__main__":
