@@ -8,6 +8,18 @@ There are some remaining issues:
 1  how to distinguish LSO, fundus image, png.
 2  It looks Rui can dump some raw format.
 
+Meeting time: 10am -11:30 am June 9th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: Cirrus HD-OCT raw data, and segmentation project.
+Minutes:
+For Cirrus HD-OCT data extraction:
+   A  think possible technologies to explore the CapeCode Raw data.
+   B  use code tag, output the fundus and SLO 2D image (664x512) with meaning names;
+   C  output filenames need to record time for repeated case.
+For thin retina segmentation:
+   A  merge 5 graph search result + 5 Ray corrected result. 8 for training, 2 for validation.
+   B  Input image has different sizes, so we need to downsample the high resolution images and ground truth into a smaller size.
+
 
 
 
@@ -68,13 +80,13 @@ o    CapeCodMacularCubeRawData
 # June 2nd, Wednesday, 2021
 Meeting time: 10am -10:40 am June 2nd, Wednesday, 2021
 Attendee:  Jui Kai, Hui
-Topic: About the thin retina sementation
+Topic: About the thin retina segmentation
 Minutes:
 1  After getting the initial ground truth corrected by Ray from graph search result, we need to do:
    A rescaling image to uniform dimension;
    B flip all OS eyes into OD eyes;
    C a slight smooth the ground truth before using.
-2  Note: in the deep learning augmentaion, do not use flip as the nasal and temporal direction is not symmtric in OD/OS eye.
+2  Note: in the deep learning augmentation, do not use flip as the nasal and temporal direction is not symmetric in OD/OS eye.
 
 Ray's comments:
 Notes for manual tracing:
