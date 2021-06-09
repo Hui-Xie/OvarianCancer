@@ -25,7 +25,7 @@ Now the Dicom reader program is ready:
 2  For CapeCod Raw data, as it is manufacturer-inside private tag data, we can not read it. Please refer to further explanation below.
 3  Before using this program, you need to install GDCM, Pillow, CharLS, pdlibjpeg python packages needed by pydicom.
 
-Pythonn code:
+Pythonn code:\\garvinlab.storage.iibi.uiowa.edu\garvinlab_prof_wu/code/readCirrusHDOCTDicom.py
 
 CapeCodeRawData are all belong to Private tag data, which is for manufacturer-inside private using for device data management and self-diagnosis.
 So all CapeCodRawData have no any protocols explanation in the "Zeiss DICOM Conformance Statement" guide book. It is intentional to make these raw data private, instead public.
@@ -36,12 +36,6 @@ Other search about Cape Code:
 Cape Cod is a geographic cape extending into the Atlantic Ocean from the southeastern corner of mainland Massachusetts.
 CAPE COD: Cirrus Study Repeatability and Reproducibility of RNFL Thickness and Macular thickness measurements of Cirrus Phot and Cirrus Model 4000 in subjects with Retinal Disease.
 The National Glaucoma Symposium will not be held as a live event on Cape Cod in 2021.
-
-
-
-
-
-
 
 # Jun 8th, 2021
 share dir:
