@@ -13,12 +13,32 @@ Attendee:  Jui Kai, Hui
 Topic: Cirrus HD-OCT raw data, and segmentation project.
 Minutes:
 For Cirrus HD-OCT data extraction:
-   A  think possible technologies to explore the CapeCode Raw data.
-   B  use code tag, output the fundus and SLO 2D image (664x512) with meaning names;
+   A  think possible technologies to explore the CapeCode Raw data.   --done
+   B  use code tag, output the fundus and SLO 2D image (664x512) with meaning names;  --done
    C  output filenames need to record time for repeated cases.   --done.
 For thin retina segmentation:
    A  merge 5 graph search result + 5 Ray corrected result. 8 for training, 2 for validation.
    B  Input image has different sizes, so we need to downsample the high resolution images and ground truth into a smaller size.
+
+Now the Dicom reader program is ready:
+1  It can output all OCT volume, SLO, Fundus, and analysis pdf report files with meaningful file names.
+2  For CapeCod Raw data, as it is manufacturer-inside private tag data, we can not read it. Please refer to further explanation below.
+3  Before using this program, you need to install GDCM, Pillow, CharLS, pdlibjpeg python packages needed by pydicom.
+
+Pythonn code:
+
+CapeCodeRawData are all belong to Private tag data, which is for manufacturer-inside private using for device data management and self-diagnosis.
+So all CapeCodRawData have no any protocols explanation in the "Zeiss DICOM Conformance Statement" guide book. It is intentional to make these raw data private, instead public.
+Except we sign a NDA with Zeiss and Zeiss would like to cooperate with us in its further device research and development, I don't think we can get its CapeCodeRawData interface protocol.
+Trying, even knowledgeable-guess, is not a solution to decode CapeCod protocol.
+
+Other search about Cape Code:
+Cape Cod is a geographic cape extending into the Atlantic Ocean from the southeastern corner of mainland Massachusetts.
+CAPE COD: Cirrus Study Repeatability and Reproducibility of RNFL Thickness and Macular thickness measurements of Cirrus Phot and Cirrus Model 4000 in subjects with Retinal Disease.
+The National Glaucoma Symposium will not be held as a live event on Cape Cod in 2021.
+
+
+
 
 
 
