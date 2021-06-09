@@ -74,7 +74,14 @@ def readDicomVisitDir(visitDir, outputDir):
         else:
             print(f"Error: {patientID} does not has visitDate")
             assert  False
-        ODOS = dicomData.Laterality
+
+        if hasattr(dicomData, "Laterality"):
+            ODOS = dicomData.Laterality
+        elif hasattr(dicomData, 'ImageLaterality')
+            ODOS = dicomData.ImageLaterality
+        else:
+            ODOS = "ODOS"
+
         modality = dicomData.Modality
         typeTag = dicomData[((0x2201, 0x1000))].value
 
