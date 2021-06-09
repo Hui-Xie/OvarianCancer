@@ -1,3 +1,16 @@
+# June 9th, Wednesday, 2021
+Progress of Converting CirrusHDOCT Dicom files:
+1  all image format, pdf can be extracted out.
+2  rawData and Measurements can not bee read as its pixel_array is not available, maybe their protocol is private with the manufacture.
+   Therefore pydicom can not decode its data.
+
+There are some remaining issues:
+1  how to distinguish LSO, fundus image, png.
+2  It looks Rui can dump some raw format.
+
+
+
+
 # Jun 8th, 2021
 share dir:
 
@@ -8,97 +21,47 @@ share dir:
 Summary:
 
 ·         Basically, my program can access Zeiss' dicom files and read the tags in these files
-
 ·         However, there so many types of files in their system and the not all the tags can be found in all the files.
-
 ·         Currently, I rename the files to the format that human can read rather than their internal coding system
-
 ·         For some image files, I still can't directly access the pixel values. I will work with Hui and see how to deal with them.
-
 ·         Following are the files that I can convert [and access the data]:
 
 o    .PDF
-
 ·         Cirrus_OU_ONH and RNFL OU Analysis.pdf
-
 ·         Guided Progression Analysis.pdf
-
 ·         Macular Thickness Analysis.pdf
-
 ·         OU Ganglion Cell OU Analysis.pdf
-
 ·         HD 5 Line Raster.pdf
-
 ·         HD 21 Line.pdf
-
 ·         HD Radial.pdf
-
-
-
 ·         Visual Field.pdf
-
 ·         GOLDMANN VISUAL FIELDM.pdf
-
 ·         COMBINED_REPORT_24-2_RNFL.pdf
-
 ·         GPAL3F.pdf
-
 ·         GPA_SUMMARY_SITA_STANDARD.pdf
-
 ·         SFA.pdf
-
-
-
 ·         All_Color_Fundus_Photo.pdf
 
-
-
 o    .PNG
-
 ·         LSO.png [Line Scanning Ophthalmoscope]
-
 ·         ColorFundus.png
 
-
-
 o    .RAW
-
 ·         Macular-Cube-200x200.raw
-
 ·         HD-5-Line-Raster.raw
-
 ·         5-Line-Raster.raw
-
 ·         RASTER_RADIAL.raw
-
 ·         RASTER_21_LINES.raw
 
 
-
-
-
 ·         Following are the format that I need to work with Hui and see if we can figure out [otherwise, we may need help from Zeiss] [maybe for some of them, we have .pdf and these are just their raw data format.]
-
 o    HfaVisualFieldRawData
-
 o    HfaPerimetryOphthalmicPhotography8BitImage
-
-
-
 o    CapeCodGuidedProgressionAnalysisRawData
-
 o    HfaOphthalmicVisualFieldStaticPerimetryMeasurements
-
-
-
 o    CapeCodOpticDiscCubeRawData
-
 o    CapeCodOpticDiscAnalysisRawData
-
-
-
 o    CapeCodMacularCubeAnalysisRawData
-
 o    CapeCodMacularCubeRawData
 
 
