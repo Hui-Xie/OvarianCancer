@@ -168,7 +168,7 @@ def readDicomVisitDir(visitDir, outputDir):
     for file in outputFileList:
         print(file)
     print("==================================================")
-    print(f"Below files can not output as program can not read pixel_array")
+    print(f"Below files can not output as program can not read pixel_array:")
     for file in errorFileList:
         print(file)
     print("==================================================")
