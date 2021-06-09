@@ -4,9 +4,7 @@ DicomDir= "/home/hxie1/data/Ophthalmology/3Dicom/Test/Orig_Output_from_Zeiss/010
 outputDir = "/home/hxie1/temp/"
 
 import glob as glob
-import pydicom
-from PIL import Image
-from io import BytesIO
+import gdcm
 import os
 
 
@@ -14,6 +12,16 @@ dicomFileList = glob.glob(DicomDir + f"/*.dcm")
 dicomFileList.sort()
 
 for dicomPath in dicomFileList:
+    reader = gdcm.Reader()
+    reader.SetFileName(dicomPath)
+    file = reader.GetFile()
+    # Retrieve header information
+    fileMetaInformation = file.GetHeader()
+    # Retrieve data set
+    dataSet = file.GetDataSet()
+
+
+
     dicomData = pydicom.filereader.dcmread(dicomPath)
     patientID = dicomData.PatientID
     visitDate = dicomData.ContentDate

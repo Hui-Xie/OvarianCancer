@@ -4,23 +4,23 @@ import matplotlib.pyplot as plt
 import os
 
 def printUsage(argv):
-    print("============ Read Nrrd and output one Bscan in current directory =============")
+    print("============ Read Mhd and output one Bscan in current directory =============")
     print("Usage:")
     print(argv[0], "  NrrdFilePath   IndexBscan")
 
 
-def readNrrd(nrrdPath, indexBscan):
+def readMhd(mhdPath, indexBscan):
     outputDir = os.getcwd()
-    fileName = os.path.splitext(os.path.basename(nrrdPath))[0]
+    fileName = os.path.splitext(os.path.basename(mhdPath))[0]
     fileName = fileName+f"_{indexBscan:03d}.png"
     outputPath = os.path.join(outputDir, fileName)
 
-    itkImage = sitk.ReadImage(nrrdPath)
+    itkImage = sitk.ReadImage(mhdPath)
     npImage = sitk.GetArrayFromImage(itkImage)
 
     S,H,W = npImage.shape
     print("\nVolume Information:")
-    print(f"Volume name: {nrrdPath}")
+    print(f"Volume name: {mhdPath}")
     print(f"Volume shape in #Bscan x PenetrationDepth x #Ascan format: {npImage.shape}")
 
     f = plt.figure(frameon=False)
@@ -46,7 +46,7 @@ def main():
         printUsage(sys.argv)
         return -1
 
-    readNrrd(sys.argv[1], int(sys.argv[2]))
+    readMhd(sys.argv[1], int(sys.argv[2]))
 
 
 
