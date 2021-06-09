@@ -1,3 +1,9 @@
+# Jun 8th, 2021
+share dir:
+
+\\garvinlab.storage.iibi.uiowa.edu\garvinlab_prof_wu
+
+
 # June 8th, Dicom convert:
 Summary:
 

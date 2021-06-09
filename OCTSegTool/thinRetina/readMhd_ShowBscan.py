@@ -6,7 +6,7 @@ import os
 def printUsage(argv):
     print("============ Read Mhd and output one Bscan in current directory =============")
     print("Usage:")
-    print(argv[0], "  NrrdFilePath   IndexBscan")
+    print(argv[0], "  MhdFilePath   IndexBscan")
 
 
 def readMhd(mhdPath, indexBscan):
