@@ -1,3 +1,10 @@
+#June 10th, Thursday, 2021
+below images may have problems:
+HD5LineRaster
+5LineRaster
+
+
+
 # June 9th, Wednesday, 2021
 Progress of Converting CirrusHDOCT Dicom files:
 1  all image format, pdf can be extracted out.
@@ -24,15 +31,17 @@ Now the Dicom reader program is ready:
 1  It can output all OCT volume, SLO, Fundus, and analysis pdf report files with meaningful file names.
 2  For CapeCod Raw data, as it is manufacturer-inside private tag data, we can not read it. Please refer to further explanation below.
 3  Before using this program, you need to install GDCM, Pillow, CharLS, pdlibjpeg python packages needed by pydicom.
+4  I tested it in 3 dicom files you shared. Maybe other cases need special tag, please let me know. I can modify it.
 
-Pythonn code:\\garvinlab.storage.iibi.uiowa.edu\garvinlab_prof_wu/code/readCirrusHDOCTDicom.py
+Python code:\\garvinlab.storage.iibi.uiowa.edu/garvinlab_prof_wu/code/readCirrusHDOCTDicom.py
+              or attached.
 
 CapeCodeRawData are all belong to Private tag data, which is for manufacturer-inside private using for device data management and self-diagnosis.
 So all CapeCodRawData have no any protocols explanation in the "Zeiss DICOM Conformance Statement" guide book. It is intentional to make these raw data private, instead public.
 Except we sign a NDA with Zeiss and Zeiss would like to cooperate with us in its further device research and development, I don't think we can get its CapeCodeRawData interface protocol.
 Trying, even knowledgeable-guess, is not a solution to decode CapeCod protocol.
 
-Other search about Cape Code:
+Other search about Cape Cod:
 Cape Cod is a geographic cape extending into the Atlantic Ocean from the southeastern corner of mainland Massachusetts.
 CAPE COD: Cirrus Study Repeatability and Reproducibility of RNFL Thickness and Macular thickness measurements of Cirrus Phot and Cirrus Model 4000 in subjects with Retinal Disease.
 The National Glaucoma Symposium will not be held as a live event on Cape Cod in 2021.

@@ -144,9 +144,14 @@ def readDicomVisitDir(visitDir, outputDir):
                 outputMhd = outputName + ".mhd"
                 outputRaw = outputName + ".raw"
                 pixelData = dicomData.pixel_array
-                pixelSpacing = (1, 1, 1)
+
                 if hasattr(dicomData,'PixelSpacing'):
                     pixelSpacing = dicomData.PixelSpacing
+                elif hasattr(dicomData,"AlongScanSpatialResolution") and hasattr(dicomData,"DepthSpatialResolution") and hasattr(dicomData,"AcrossScanSpatialResolution"):
+                    pixelSpacing = (dicomData.AlongScanSpatialResolution/1000.0, dicomData.DepthSpatialResolution/1000.0, dicomData.AcrossScanSpatialResolution/1000.0)
+                    # in Width,Height,Slice dimension. and from microns to mm.
+                else:
+                    pixelSpacing = (1, 1, 1)
 
                 with open(os.path.join(outputDir,outputMhd), "w") as mhdFile:
                     mhdFile.write(f"ObjectType = Image\n")
@@ -161,6 +166,7 @@ def readDicomVisitDir(visitDir, outputDir):
                     mhdFile.write(f"ElementSpacing =")
                     for x in pixelSpacing:
                         mhdFile.write(f" {x} ")
+                    mhdFile.write(f"\n")
                     mhdFile.write(f"ITK_InputFilterName = NrrdImageIO\n")
 
                     mhdFile.write(f"ITK_original_direction = 1 0 0 0 1 0 0 0 1\n")
