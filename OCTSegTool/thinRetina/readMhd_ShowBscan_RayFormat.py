@@ -22,8 +22,8 @@ def readMhd(mhdPath, indexBscan):
     npImage = sitk.GetArrayFromImage(itkImage)
 
     # change Ray format to SHW format
-    npImage = np.swapaxes(npImage,0,2)  # now it is BHW
-    npImage = npImage[:,::-1,::-1]  # flip H and W
+    # npImage = np.swapaxes(npImage,0,2)  # now it is BHW
+    # npImage = npImage[:,::-1,::-1]  # flip H and W
 
 
     S,H,W = npImage.shape

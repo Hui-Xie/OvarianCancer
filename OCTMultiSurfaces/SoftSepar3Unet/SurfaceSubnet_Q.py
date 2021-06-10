@@ -81,7 +81,14 @@ class SurfaceSubnet_Q(BasicModel):
         S = mu.clone()
         loss = 0.0
         if (self.getStatus() != "test") and self.hps.existGTLabel:
-            multiSurfaceCE = MultiSurfaceCrossEntropyLoss()
+            multiSurfaceCEWeight = None
+            if self.hps.useMultiSurfaceCEWeight:
+                multiSurfaceCEWeight = torch.abs(inputs[:, 1, :, :])  # B,H,W,use GradH
+                multiSurfaceCEWeight = logits2Prob(multiSurfaceCEWeight, dim=-2)  # along H normalization
+                multiSurfaceCEWeight = multiSurfaceCEWeight.unsqueeze(dim=1)  # Bx1xHxW
+                multiSurfaceCEWeight = multiSurfaceCEWeight.expand(xs.shape)  # BxNxHxW
+
+            multiSurfaceCE = MultiSurfaceCrossEntropyLoss(weight=multiSurfaceCEWeight)
             loss_ce = multiSurfaceCE(surfaceProb, GTs)  # CrossEntropy is a kind of KLDiv
 
             l1Loss = nn.SmoothL1Loss().to(device)

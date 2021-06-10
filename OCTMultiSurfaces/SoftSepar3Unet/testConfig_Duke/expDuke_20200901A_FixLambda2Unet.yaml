@@ -116,6 +116,7 @@ smoothRift: True  # smooth Rift in ground truth
 smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
+useMultiSurfaceCEWeight:  False
 
 gradientRiftConvGoBack: False
 
