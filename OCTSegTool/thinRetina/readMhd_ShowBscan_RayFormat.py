@@ -3,6 +3,9 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import os
 
+import numpy as np
+
+
 def printUsage(argv):
     print("============ Read Mhd and output one Bscan in current directory =============")
     print("Usage:")
@@ -15,8 +18,13 @@ def readMhd(mhdPath, indexBscan):
     fileName = fileName+f"_{indexBscan:03d}.png"
     outputPath = os.path.join(outputDir, fileName)
 
-    itkImage = sitk.ReadImage(mhdPath)  # itk will switch the axis 0 and axis 2 of original data.
+    itkImage = sitk.ReadImage(mhdPath)
     npImage = sitk.GetArrayFromImage(itkImage)
+
+    # change Ray format to SHW format
+    npImage = np.swapaxes(npImage,0,2)  # now it is BHW
+    npImage = npImage[:,::-1,::-1]  # flip H and W
+
 
     S,H,W = npImage.shape
     print("\nVolume Information:")
@@ -32,7 +40,7 @@ def readMhd(mhdPath, indexBscan):
     plt.margins(0)
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
 
-    plt.imshow(npImage[indexBscan,], cmap='gray')
+    plt.imshow(npImage[indexBscan,:,:], cmap='gray')
     plt.axis('off')
 
     plt.savefig(outputPath, dpi='figure', bbox_inches='tight', pad_inches=0)

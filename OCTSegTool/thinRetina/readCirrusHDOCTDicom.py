@@ -2,6 +2,8 @@
 # it need install openjpeg-2.4.0 and pydicom
 
 import glob as glob
+
+import numpy as np
 import pydicom
 from PIL import Image
 import os
@@ -65,6 +67,8 @@ The length, angle and spacing between the lines can be adjusted to acquire the b
 
 
 '''
+
+useWHS = True # axial order WidthBscan x HeightBscan x Slice in raw file.
 
 def printUsage(argv):
     print("============ Read Dicom Visit directory, extract information =============")
@@ -148,12 +152,17 @@ def readDicomVisitDir(visitDir, outputDir):
                     outputName = f"ID{patientID}_D{visitDate}_T{visitTime}_{ODOS}_{modality}_{typeTag}"
                 outputMhd = outputName + ".mhd"
                 outputRaw = outputName + ".raw"
-                pixelData = dicomData.pixel_array
+                pixelData = dicomData.pixel_array # default axial order: Slice x HeightBscan x WidthBscan or SHW order
+                if useWHS:
+                    pixelData = np.swapaxes(pixelData,0,2)
 
                 if hasattr(dicomData,'PixelSpacing'):
                     pixelSpacing = dicomData.PixelSpacing
                 elif hasattr(hasattr(dicomData,"AcrossScanSpatialResolution") and hasattr(dicomData,"DepthSpatialResolution") and dicomData,"AlongScanSpatialResolution") :
-                    pixelSpacing = (dicomData.AcrossScanSpatialResolution/1000.0, dicomData.DepthSpatialResolution/1000.0, dicomData.AlongScanSpatialResolution/1000.0)
+                    if useWHS:
+                        pixelSpacing = (dicomData.AlongScanSpatialResolution/1000.0, dicomData.DepthSpatialResolution/1000.0, dicomData.AcrossScanSpatialResolution/1000.0)
+                    else: # SHW
+                        pixelSpacing = (dicomData.AcrossScanSpatialResolution/1000.0, dicomData.DepthSpatialResolution/1000.0, dicomData.AlongScanSpatialResolution/1000.0)
                     # dicom pixel array dimension: Slice x Height x Width or Frames x Rows x Columns
                     # the unit of dicom resolution is microns, needing to convert microns to mm by 1/1000.
                 else:
@@ -180,8 +189,10 @@ def readDicomVisitDir(visitDir, outputDir):
                     mhdFile.write(f"NRRD_kinds[0] = domain\n")
                     mhdFile.write(f"NRRD_kinds[1] = domain\n")
                     mhdFile.write(f"NRRD_kinds[2] = domain\n")
-                    #mhdFile.write(f"NRRD_space = left-posterior-superior\n")
-                    mhdFile.write(f"NRRD_space = inferior-posterior-left\n") # for slice x Height x Width dimension.
+                    if useWHS:
+                        mhdFile.write(f"NRRD_space = left-posterior-superior\n")
+                    else:
+                        mhdFile.write(f"NRRD_space = inferior-posterior-left\n") # for slice x Height x Width dimension.
                     mhdFile.write(f"DimSize = ")
                     for x in pixelData.shape:
                         mhdFile.write(f" {x} ")
