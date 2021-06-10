@@ -58,6 +58,11 @@ jpeg_ls: CharLS
 pylibjpeg, with the -libjpeg, -openjpeg and -rle plugins
 
 
+The 5-line raster scan is the Cirrus HD-OCT's highest density scan. 
+It consists of 4,096 A-scans in each of the five lines. 
+The length, angle and spacing between the lines can be adjusted to acquire the best view of the area of interest.
+
+
 
 '''
 
@@ -147,9 +152,10 @@ def readDicomVisitDir(visitDir, outputDir):
 
                 if hasattr(dicomData,'PixelSpacing'):
                     pixelSpacing = dicomData.PixelSpacing
-                elif hasattr(dicomData,"AlongScanSpatialResolution") and hasattr(dicomData,"DepthSpatialResolution") and hasattr(dicomData,"AcrossScanSpatialResolution"):
-                    pixelSpacing = (dicomData.AlongScanSpatialResolution/1000.0, dicomData.DepthSpatialResolution/1000.0, dicomData.AcrossScanSpatialResolution/1000.0)
-                    # in Width,Height,Slice dimension. and from microns to mm.
+                elif hasattr(hasattr(dicomData,"AcrossScanSpatialResolution") and hasattr(dicomData,"DepthSpatialResolution") and dicomData,"AlongScanSpatialResolution") :
+                    pixelSpacing = (dicomData.AcrossScanSpatialResolution/1000.0, dicomData.DepthSpatialResolution/1000.0, dicomData.AlongScanSpatialResolution/1000.0)
+                    # dicom pixel array dimension: Slice x Height x Width or Frames x Rows x Columns
+                    # the unit of dicom resolution is microns, needing to convert microns to mm by 1/1000.
                 else:
                     pixelSpacing = (1, 1, 1)
 
@@ -174,8 +180,8 @@ def readDicomVisitDir(visitDir, outputDir):
                     mhdFile.write(f"NRRD_kinds[0] = domain\n")
                     mhdFile.write(f"NRRD_kinds[1] = domain\n")
                     mhdFile.write(f"NRRD_kinds[2] = domain\n")
-                    mhdFile.write(f"NRRD_space = left-posterior-superior\n")
-
+                    #mhdFile.write(f"NRRD_space = left-posterior-superior\n")
+                    mhdFile.write(f"NRRD_space = inferior-posterior-left\n") # for slice x Height x Width dimension.
                     mhdFile.write(f"DimSize = ")
                     for x in pixelData.shape:
                         mhdFile.write(f" {x} ")

@@ -1,8 +1,6 @@
 #June 10th, Thursday, 2021
 below images may have problems:
-HD5LineRaster
-5LineRaster
-
+Current OCT volume axis order: Slice x Height x Width.
 
 
 # June 9th, Wednesday, 2021
