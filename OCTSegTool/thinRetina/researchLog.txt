@@ -1,3 +1,39 @@
+# June 11th, Friday, 2021
+Notes:
+1  Ray's raw data dimension:  200x200x1024, where X: #Ascans, Y:#Bscans, Z, Penetration depth.
+2  surface number: 5;
+3  ray's trace with _ray
+
+ProProcessing:
+1  OCT may have different dimension size, we need to scale down the bigger ones into one same size.
+2  flip all OS eyes into OD eyes;
+3  a slight smooth the ground truth before using:
+    A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the manual tracing artifact
+    Check the smoothing results again in the images to make sure they still look reasonable
+4  Make sure the top surface of GCIPL (i.e., surface_1) is NOT above ILM (surface_0)
+5  Try to read the OCT image and match the surfaces in your own system
+
+data augmentation:
+1  do not flip withd direction, as the nasal and temporal direction is not symmetric in OD/OS eye.
+
+Question:
+1  what is rate for control and glaucoma coase in current 10 patients?
+   Current 10 patients are all glocoma.
+2  current 10 data has same data orientation.
+
+Dicusss with Ray at 13:00-14:00, Friday, June 11th, 2021
+1  current Ray's axial order is 200x1024x200, where 1024 is penetration depth.
+   Ray's flip the data in its Width and Height direction.
+2  Refer Ray's writer code to figure out Ray's image orientation.
+3  CapeCoeMacularCubeRawData may contain ONH scan, the scan near cup place:
+    It has almost same dimension with fovea OCT volume scan.
+    It may has data in hexidecimal format. We can read it and estimate its dimension.
+
+
+
+
+
+
 #June 10th, Thursday, 2021
 below images may have problems:
 Current OCT volume axis order: Slice x Height x Width.
