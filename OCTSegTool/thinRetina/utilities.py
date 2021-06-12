@@ -110,7 +110,7 @@ def get3PointSmoothMatrix(B,W):
     :param W:
     :return:
     '''
-    M = np.zeros(W,W)
+    M = np.zeros((W,W))
     M[0,0] = 0.5
     M[1,0] = 0.5
     M[W-2, W-1] = 0.5
