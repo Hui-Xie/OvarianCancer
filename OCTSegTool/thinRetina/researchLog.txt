@@ -5,6 +5,7 @@ Notes:
 3  ray's trace with _ray
 
 ProProcessing:
+0  convert Ray's special raw and xml format to stardard BxHxW for image and BxSxW format for surface.
 1  OCT may have different dimension size, we need to scale down the bigger ones into one same size.
 2  flip all OS eyes into OD eyes;
 3  a slight smooth the ground truth before using:
@@ -30,7 +31,77 @@ Dicusss with Ray at 13:00-14:00, Friday, June 11th, 2021
     It may has data in hexidecimal format. We can read it and estimate its dimension.
 
 
+xml file:
+/home/sheen/temp/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml
 
+In Ray's format: x = W, y = S, z = H.
+Zeiss image resolution: BxHxW(200x1024x200): 30.150749um x 1.955034um x 30.150749um
+Zeisss image resolution:BxHxW(128x1024x512): 47.244091um x 1.955034um x 11.741680um
+
+Bscan image 1024x512 will reduce to 1024x200. extract column 6,7,8,9, 10,....,501,502,503,504,505, each original 5 columens becomes 2  new columns.
+Its surface ground truth 11x512 will reduce to 11x200,:
+
+define a 500x200 matrix, col1= [1,1,0.5,0,0,...]^T, col2=[0,0,0,0,0.5,1,1,0,0,... ], and col1 and col2 down shift 10 rows,copy
+[1
+ 1
+ 0.5 0.5
+      1
+      1
+        1
+        1
+        0.5 0.5
+              1
+              1
+             ......]*(1/2.5)
+
+1  first extract original matrix [6:506] in W direction;
+2  construct M matrix of size 500x200;
+3  use np.matmul support batch matrix muliplication get result.
+
+
+Ray Note:
+Check Surface 0, 1, 3, 5, 6, 10 in the surface xml file
+See the surface/layer definition in the figure
+My tracing: at the end of the xml filename with "_Ray"
+Graph search: the regular filename
+
+needing surface index [0, 1, 3, 5, 6, 10]
+its surface names: ["ILM", "RNFL-GCL", "IPL-INL", "OPL-ONL", "PR-RPE", "BM"]
+
+<scan_characteristics>
+        <manufacturer>Carl Zeiss Meditec, Inc.</manufacturer>
+        <size>
+            <unit>voxel</unit>
+            <x>200</x>
+            <y>200</y>
+            <z>1024</z>
+        </size>
+        <voxel_size>
+            <unit>um</unit>
+            <x>30.150749</x>
+            <y>30.150749</y>
+            <z>1.955034</z>
+        </voxel_size>
+        <laterality>NA</laterality>
+        <center_type>NA</center_type>
+
+<scan_characteristics>
+        <manufacturer>Carl Zeiss Meditec, Inc.</manufacturer>
+        <size>
+            <unit>voxel</unit>
+            <x>512</x>
+            <y>128</y>
+            <z>1024</z>
+        </size>
+        <voxel_size>
+            <unit>um</unit>
+            <x>11.741680</x>
+            <y>47.244091</y>
+            <z>1.955034</z>
+        </voxel_size>
+        <laterality>NA</laterality>
+        <center_type>NA</center_type>
+    </scan_characteristics>
 
 
 
