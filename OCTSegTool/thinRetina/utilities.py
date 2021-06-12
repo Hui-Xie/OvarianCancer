@@ -44,6 +44,28 @@ def getSurfacesArray(segFile):
                            surfacesArray[s,n,w] = int(item.text)
     return surfacesArray
 
+def getAllSurfaceNames(segFile):
+    """
+        Return all surface name defined by OCTExplorer readable xml file.
+
+        :param segFile in xml format
+        :return: a list of strings.
+        """
+    xmlTree = ET.parse(segFile)
+    xmlTreeRoot = xmlTree.getroot()
+
+    surface_num = int(xmlTreeRoot.find('surface_num').text)
+    print(f"total {surface_num} surfaces.")
+    namesList = []
+
+    for surface in xmlTreeRoot:
+        if surface.tag == 'surface':
+            for name in surface:
+                if name.tag == 'name':
+                    namesList.append(name.text)
+
+    return namesList
+
 def scaleMatrix(B,W1,W2):
     '''
     return a scale matrix with W1xW2 size with batch B.

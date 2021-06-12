@@ -3,17 +3,17 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import os
 
-from utilities import  getSurfacesArray
+from utilities import  getSurfacesArray, scaleMatrix, getAllSurfaceNames
 
 import numpy as np
 
+W=200  # targe image width
+extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
 
 def printUsage(argv):
     print("============ Read Mhd and its XML, and output one Bscan in current directory =============")
     print("Usage:")
     print(argv[0], "  MhdFilePath   SegXmlPathPath   IndexBscan")
-
-
 
 def readMhdXml(mhdPath, segXmlPath, indexBscan):
     outputDir = os.getcwd()
@@ -27,34 +27,25 @@ def readMhdXml(mhdPath, segXmlPath, indexBscan):
     # Ray mhd format in BxHxW dimension, but it flip the H and W dimension.
     # for 200x1024x200 image, and 128x1024x512 in BxHxW direction.
     npImage = np.flip(npImage, (1,2)) # as ray's format filp H and W dimension.
-    B, H, W = npImage.shape
+    B, H, curW = npImage.shape
     print("\nVolume Information:")
     print(f"Volume name: {mhdPath}")
     print(f"Volume shape in #Bscan x PenetrationDepth x #Ascan format: {npImage.shape}")
 
+    # read segmentation xml file:
+    surfaces = getSurfacesArray(segXmlPath)  # size: SxNxW, where N is number of surfacres.
+    allSurfaceNames = getAllSurfaceNames(segXmlPath)
+    print(f"allSurfaceNames = {allSurfaceNames}")
+    surfaces = surfaces[:,extractIndexs,:]
+    _, N, _ = surfaces.shape
+    print(f"After extraction, surface dimension: {surfaces.shape}")
 
     if npImage.shape==(128,1024,512): # scale image to 1024x200.
-        npImage = npImage[:,:,6:506]
-        M= np.zeros((500,200))  # scale matrix
-        col2 = np.zeros((500,2))
-        col2[0,0] = 1.0/2.5
-        col2[1,0] = 1.0/2.5
-        col2[2,0] = 0.5/2.5
-        col2[2, 1] = 0.5 / 2.5
-        col2[3, 1] = 1.0 / 2.5
-        col2[4, 1] = 1.0 / 2.5
-        for c in range(0,200, 2):
-
-
-
-
-
-
-
-
-    # read segmentation xml file:
-    surfaces = getSurfacesArray(segXmlPath) # size: SxNxW, where N is number of surfacres.
-    _,N,_ = surfaces.shape
+        scaleM = scaleMatrix(B,curW, W)
+        npImage = np.matmul(npImage, scaleM)
+        surfaces = np.matmul(surfaces, scaleM)
+    else:
+        assert curW == W
 
     f = plt.figure(frameon=False)
     DPI = 100
