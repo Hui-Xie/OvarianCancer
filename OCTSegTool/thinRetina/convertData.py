@@ -61,6 +61,8 @@ allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float)
 allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of JHU data is float
 patientIDDict = {}
 
+
+print(f"Program is outputing raw_GT images in {outputImageDir}, please wait ......")
 s = 0 # initial slice index
 for patientDir in patientDirList:
     # get volumePath and surfacesXmlPath
@@ -143,9 +145,9 @@ for patientDir in patientDirList:
         subplot2 = plt.subplot(rowSubplot, colSubplot, 2)
         subplot2.imshow(npImage[i, :, :], cmap='gray')
         for n in range(0, N):
-            subplot2.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.5)
+            subplot2.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
         if needLegend:
-            subplot2.legend(surfaceNames, loc='lower left', ncol=3, fontsize='x-small')
+            subplot2.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
         subplot2.axis('off')
 
         curImagePath = os.path.join(outputImageDir, basename+f"_s{i:03d}_raw_GT.png")
