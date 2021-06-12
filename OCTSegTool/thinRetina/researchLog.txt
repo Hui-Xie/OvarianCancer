@@ -3,6 +3,12 @@ Convert all data into
 1 packed Numpy array in training and validation.
 2 ouput all images with raw and GT.
 
+conda list:
+conda list --revisions   # list history version.
+conda install --revision N  #  If you want to revert to a previous revision
+
+matplotlib 3.3.4 has segment fault problem. You must use matplotlib 3.4.2
+
 
 
 
