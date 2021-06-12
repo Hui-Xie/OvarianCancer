@@ -7,7 +7,7 @@ from utilities import  getSurfacesArray, scaleMatrix, getAllSurfaceNames
 
 import numpy as np
 
-W=200  # targe image width
+W=200  # target image width
 extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
 
 def printUsage(argv):

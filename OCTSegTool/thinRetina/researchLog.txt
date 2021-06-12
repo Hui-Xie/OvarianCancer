@@ -1,7 +1,15 @@
+# June 12th, Satursday, 2021
+Convert all data into
+1 packed Numpy array in training and validation.
+2 ouput all images with raw and GT.
+
+
+
+
 # June 11th, Friday, 2021
 Notes:
-1  Ray's raw data dimension:  200x200x1024, where X: #Ascans, Y:#Bscans, Z, Penetration depth.
-2  surface number: 5;
+1  Ray's raw data dimension:  200x200x1024, where #Bscans x  PenetrationDepth x #Ascans.
+2  surface number: 6;
 3  ray's trace with _ray
 
 ProProcessing:

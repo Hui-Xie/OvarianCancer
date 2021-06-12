@@ -102,3 +102,23 @@ def scaleMatrix(B,W1,W2):
     M = np.expand_dims(M,axis=0) # 1xW1xW2
     M = np.repeat(M,B,axis=0)
     return M  # BxW1xW2
+
+def get3PointSmoothMatrix(B,W):
+    '''
+    return a 3-point Smooth matrix for smoothing ground truth.
+    :param B:
+    :param W:
+    :return:
+    '''
+    M = np.zeros(W,W)
+    M[0,0] = 0.5
+    M[1,0] = 0.5
+    M[W-2, W-1] = 0.5
+    M[W-1, W-1] = 0.5
+    for i in range(1, W-1):
+        M[i-1,i] = 1.0/3.0
+        M[i, i]  = 1.0/3.0
+        M[i+1,i]  = 1.0/3.0
+    M = np.expand_dims(M, axis=0)  # 1xWxW
+    M = np.repeat(M, B, axis=0)  # BxWxW
+    return M  # BxWxW
