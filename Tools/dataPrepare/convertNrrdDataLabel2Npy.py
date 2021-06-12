@@ -40,11 +40,11 @@ for patientID in fileIDList:
     image3d = sitk.GetArrayFromImage(image)
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
-    image3d = image3d.astype(np.float32)   # this is very important, otherwise, normalization will be meaningless.
+    image3d = image3d.astype(float)   # this is very important, otherwise, normalization will be meaningless.
 
     label = sitk.ReadImage(labelFile)
     label3d = sitk.GetArrayFromImage(label)
-    label3d = label3d.astype(np.float32)  # this is very important
+    label3d = label3d.astype(float)  # this is very important
 
     if image3d.shape != label3d.shape:
         print(f"imageFile: {imageFile} \n labelFile: {labelFile}\n \t have different shapes.")
@@ -98,9 +98,9 @@ for patientID in fileIDList:
         x1 = (x - X) // 2
         x2 = x1 + X
 
-    imageWall = np.zeros((Z, Y, X), dtype=np.float32)
+    imageWall = np.zeros((Z, Y, X), dtype=float)
     imageWall[Z1:Z2, Y1:Y2,X1:X2] = image3d[z1:z2, y1:y2, x1:x2]
-    labelWall = np.zeros((Z, Y, X), dtype=np.float32)
+    labelWall = np.zeros((Z, Y, X), dtype=float)
     labelWall[Z1:Z2, Y1:Y2, X1:X2] = label3d[z1:z2, y1:y2, x1:x2]
 
 

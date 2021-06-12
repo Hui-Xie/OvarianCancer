@@ -18,7 +18,7 @@ for nrrdFile in nrrdList:
     npVolume = sitk.GetArrayFromImage(itkImage)
     S,H,W = npVolume.shape
 
-    resultVolume = np.zeros((S,dH,dW),dtype=np.float32)
+    resultVolume = np.zeros((S,dH,dW),dtype=float)
     for i in range(S):
         image = npVolume[i,:,:]
         resultVolume[i,:,:] = resize(image, (dH, dW), order=3, anti_aliasing=True)

@@ -91,14 +91,14 @@ def retrieveImageData_label(mode, hps):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=np.float) # size:NxCxHxW
+    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=float) # size:NxCxHxW
     for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
+        oneVolume = np.load(volumePath).astype(float)
         volumes[i,] = oneVolume
 
     fullLabels = readBESClinicalCsv(hps.GTPath)
 
-    observationTable = np.empty((NVolumes, 22), dtype=np.float) #  size: Nx22
+    observationTable = np.empty((NVolumes, 22), dtype=float) #  size: Nx22
     # table head: patientID,                                          (0)
     #             thicknessMean0,thicknessMean1,... thicknessMean8,   (1:10)
     #             thicknessStd0,thicknessStd1,... thicknessStd8,      (10:19)
@@ -170,11 +170,11 @@ def main():
         ageDelimiters = [50, 55, 60, 65, 70, 80, 95,]
         nAgeSections = len(ageDelimiters)-1
         hyt0_AgeSubGroups = []
-        hyt0_AgeSubGroups_mean = np.empty((nAgeSections, nLayers),dtype=np.float)
-        hyt0_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=np.float)
+        hyt0_AgeSubGroups_mean = np.empty((nAgeSections, nLayers),dtype=float)
+        hyt0_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=float)
         hyt1_AgeSubGroups = []
-        hyt1_AgeSubGroups_mean =np.empty((nAgeSections, nLayers),dtype=np.float)
-        hyt1_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=np.float)
+        hyt1_AgeSubGroups_mean =np.empty((nAgeSections, nLayers),dtype=float)
+        hyt1_AgeSubGroups_std = np.empty((nAgeSections, nLayers),dtype=float)
 
         for i in range(nAgeSections):
             hyt0_AgeSubGroups.append(dataSet[0][np.nonzero((ageDelimiters[i] <= dataSet[0][:,20]) & (dataSet[0][:,20]< ageDelimiters[i+1]))])

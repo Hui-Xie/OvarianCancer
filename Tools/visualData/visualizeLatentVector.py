@@ -29,8 +29,8 @@ for i in range(N):
 print(f"\nFor all latent vectors, response 1 has {nCount1}, and response 0 has {nCount0}.\n")
 
 # read all latent vector into arrays.
-array0 = np.empty([lenLV, nCount0], dtype=np.float)
-array1 = np.empty([lenLV, nCount1], dtype=np.float)
+array0 = np.empty([lenLV, nCount0], dtype=float)
+array1 = np.empty([lenLV, nCount1], dtype=float)
 patientID0List = []
 patientID1List = []
 c0=0

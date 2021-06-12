@@ -178,7 +178,7 @@ def main():
         if not OutputPredictImages:
             continue
         cartesianLabel = np.concatenate((cartesianLabel, np.expand_dims(cartesianLabel[:,0,:],axis=1)),axis=1)  # close curve.
-        imageb = imread(testIDs[b]).astype(np.float32)
+        imageb = imread(testIDs[b]).astype(float)
 
         lumenGTLabel = genfromtxt(lumenGTFile, delimiter=',')
         mediaGTLabel = genfromtxt(mediaGTFile, delimiter=',')

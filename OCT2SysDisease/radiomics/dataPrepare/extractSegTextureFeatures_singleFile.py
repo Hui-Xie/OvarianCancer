@@ -104,7 +104,7 @@ def generateRadiomics(imagePath, maskPath, radiomicsCfgPath):
     print(f"\nPrint original features:")
     nFeatures = 0
     sortedFeatureKeys = sorted(featureVector.keys())  # make sure the output value in dictionary order.
-    radiomicsArray = np.zeros((1,K), dtype=np.float32)
+    radiomicsArray = np.zeros((1,K), dtype=float)
     for featureName in sortedFeatureKeys:
         if "original_" == featureName[0:9]:
             print(f"{featureName}:{featureVector[featureName]}")

@@ -116,7 +116,7 @@ def main():
             i += 1
 
     # read full label into labelTable according to ID
-    labelTable = np.empty((nHBP01, 22), dtype=np.float)  # size: Nx22
+    labelTable = np.empty((nHBP01, 22), dtype=float)  # size: Nx22
     # labelTable head: patientID,                                          (0)
     #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
     # columnIndex:         1                           2        3       4          5             6          7             8              9                10
@@ -249,7 +249,7 @@ def main():
             for id in IDList:
                 radiomicsDataSetVolumeList += fnmatch.filter(radiomics1VolumesList, "*/" + str(id)+ f"_O[D,S]_*_Volume_100radiomics.npy")  # for OD or OS data
             nVolumes = len(radiomicsDataSetVolumeList)
-            ftrArray[datasetName] =  np.zeros((nVolumes, numRadiomics1+ numRadiomics2+numThickness+numClinicalFtr), dtype=np.float)
+            ftrArray[datasetName] =  np.zeros((nVolumes, numRadiomics1+ numRadiomics2+numThickness+numClinicalFtr), dtype=float)
             labelArray[datasetName]= np.zeros((nVolumes, 2), dtype=np.int) # columns: id, HBP
             for i, radiomics1Path in enumerate(radiomicsDataSetVolumeList):
                 basename = os.path.splitext(os.path.basename(radiomics1Path))[0]  # 34009_OD_17113_Volume_100radiomics

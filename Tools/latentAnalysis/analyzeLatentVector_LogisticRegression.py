@@ -75,7 +75,7 @@ def main():
         averageDiceSamples.append(dices/N)
 
         # get response vector and assemble latent Vectors
-        X = np.empty((F, H, W, N), dtype=np.float)  # latent vectors
+        X = np.empty((F, H, W, N), dtype=float)  # latent vectors
         Y01 = np.empty((1, N), dtype=np.int)  # response in 0, 1 range
         for i, key in enumerate(list(patientDice)):
             Y01[0, i] = patientResponse[key]

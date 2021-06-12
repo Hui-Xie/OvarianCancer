@@ -40,7 +40,7 @@ for file in filesList:
 
     image3d = np.clip(image3d, -135, 215)  # standard window level 350/40 in 3D slicer.
 
-    image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
+    image3d = image3d.astype(float)  # this is very important, otherwise, normalization will be meaningless.
     imageShape = image3d.shape
 
     if imageShape != goalSize:
@@ -63,7 +63,7 @@ for file in filesList:
     label = sitk.ReadImage(labelFile)
     label3d = sitk.GetArrayFromImage(label)
     # repress label 2, only keep label 1. As some primary cancer is neighboring with label 2 metastases which is also in ROI.
-    label3d = (label3d ==1).astype(np.float32) # this is very important
+    label3d = (label3d ==1).astype(float) # this is very important
     labelShape = label3d.shape
     if labelShape != imageShape:
         print(f"Error: images shape != label shape for {file} and {labelFile} ")

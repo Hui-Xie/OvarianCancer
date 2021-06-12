@@ -33,7 +33,7 @@ for xmlSegPath in xmlVolumeList:
     _, H, _ = volume.shape
 
     # define output empty array
-    textureEnfaceVolume = np.empty((N - 1, B, W), dtype=np.float)
+    textureEnfaceVolume = np.empty((N - 1, B, W), dtype=float)
     # fill the output texture enface map
     # get (N-1)xBxW enface map.
     surface0 = volumeSeg[:, 0:-1, :]  # Bx(N-1)xW

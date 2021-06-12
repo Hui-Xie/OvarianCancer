@@ -93,7 +93,7 @@ class OVDataSet(data.Dataset):
         # read nrrd image
         #volumePath = self.m_imagesPath+"/" +MRN+"_CT.nrrd"
         #itkImage = sitk.ReadImage(volumePath)
-        #npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=np.float32)
+        #npVolume = sitk.GetArrayFromImage(itkImage).astype(dtype=float)
 
         volumePath = self.m_imagesPath+"/" +MRN+"_CT.npy"
         npVolume = np.load(volumePath)

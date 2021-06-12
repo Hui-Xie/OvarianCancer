@@ -22,7 +22,7 @@ patientsListFile = os.path.join(outputDir, "patientsList.txt")
 
 def saveOneVolumeToNumpy(volumePath, goalImageFile):
     # image in slices, Height, Width axis order
-    imageArray = np.empty((NumSlices, H, W), dtype=np.float)
+    imageArray = np.empty((NumSlices, H, W), dtype=float)
     # read image data and clip
     imagesList = glob.glob(volumePath + f"/*[0-9][0-9].jpg")
     imagesList.sort()

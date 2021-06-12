@@ -30,21 +30,21 @@ hPixelSize= 3.870
 workNumpyGTDir = os.path.join(numpyGTDir, "training")
 surfacesFile = os.path.join(workNumpyGTDir, "surfaces_CV0.npy")
 patientIDFile = os.path.join(workNumpyGTDir, "patientID_CV0.json")
-trainingSurfaces = torch.from_numpy(np.load(surfacesFile).astype(np.float32)).to(device, dtype=torch.float)  # slice, H, W
+trainingSurfaces = torch.from_numpy(np.load(surfacesFile).astype(float)).to(device, dtype=torch.float)  # slice, H, W
 with open(patientIDFile) as f:
     trainingPatientIDs = list(json.load(f).values())
 
 workNumpyGTDir = os.path.join(numpyGTDir, "validation")
 surfacesFile = os.path.join(workNumpyGTDir, "surfaces_CV0.npy")
 patientIDFile = os.path.join(workNumpyGTDir, "patientID_CV0.json")
-validationSurfaces = torch.from_numpy(np.load(surfacesFile).astype(np.float32)).to(device, dtype=torch.float)  # slice, H, W
+validationSurfaces = torch.from_numpy(np.load(surfacesFile).astype(float)).to(device, dtype=torch.float)  # slice, H, W
 with open(patientIDFile) as f:
     validationPatientIDs = list(json.load(f).values())
 
 workNumpyGTDir = os.path.join(numpyGTDir, "test")
 surfacesFile = os.path.join(workNumpyGTDir, "surfaces_CV0.npy")
 patientIDFile = os.path.join(workNumpyGTDir, "patientID_CV0.json")
-testSurfaces = torch.from_numpy(np.load(surfacesFile).astype(np.float32)).to(device, dtype=torch.float)  # slice, H, W
+testSurfaces = torch.from_numpy(np.load(surfacesFile).astype(float)).to(device, dtype=torch.float)  # slice, H, W
 with open(patientIDFile) as f:
     testPatientIDs = list(json.load(f).values())
 

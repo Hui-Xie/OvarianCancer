@@ -20,7 +20,7 @@ class OCTDataSet_20201031(data.Dataset):
         if imagesPath is not None:
             if self.hps.dataIn1Parcel:
                 # image uses float32
-                images = torch.from_numpy(np.load(imagesPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
+                images = torch.from_numpy(np.load(imagesPath).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, H, W
                 # normalize images for each slice
                 std,mean = torch.std_mean(images, dim=(1,2))
                 self.m_images = TF.Normalize(mean, std)(images)
@@ -33,7 +33,7 @@ class OCTDataSet_20201031(data.Dataset):
                 self.m_labels = [item.replace("_images.npy", "_surfaces.npy") for item in self.m_images]
 
         if labelPath is not None:
-            self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
+            self.m_labels = torch.from_numpy(np.load(labelPath).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
 
         if IDPath is not None:
             with open(IDPath) as f:
@@ -225,19 +225,19 @@ class OCTDataSet_20201031(data.Dataset):
                 imagesRoot, imageExt = os.path.splitext(self.m_IDs[volumeIndex])
                 imageID = imagesRoot + f"_s{offset:02d}" + imageExt
                 lableID = imageID.replace("_images_", "_surfaces_")
-                data = torch.from_numpy(np.load(imageID).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # H, W
-                label = torch.from_numpy(np.load(lableID).astype(np.float32)).to(self.hps.device, dtype=torch.float) # N, W
+                data = torch.from_numpy(np.load(imageID).astype(float)).to(self.hps.device, dtype=torch.float)  # H, W
+                label = torch.from_numpy(np.load(lableID).astype(float)).to(self.hps.device, dtype=torch.float) # N, W
 
             else:
 
                 # image uses float32
-                images = torch.from_numpy(np.load(self.m_images[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, H, W
+                images = torch.from_numpy(np.load(self.m_images[volumeIndex]).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, H, W
                 # normalize images for each slice, which has done in converting from mat to numpy
                 # std, mean = torch.std_mean(images, dim=(1, 2))
                 # images = TF.Normalize(mean, std)(images)
                 data = images[offset,]
 
-                labels = torch.from_numpy(np.load(self.m_labels[volumeIndex]).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
+                labels = torch.from_numpy(np.load(self.m_labels[volumeIndex]).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
                 label = labels[offset,]
 
                 imageID = self.m_IDs[volumeIndex]+f".OCT{offset:2d}"

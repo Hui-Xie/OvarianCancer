@@ -109,8 +109,8 @@ def cutDataset(cutDict):
     assert (cutDict["N"] == len(cutSamples))
     N = cutDict["N"]
 
-    images = np.empty((N*B, H,W),dtype=np.float32)
-    surfaces = np.empty((N*B, S,W),dtype=np.float32)
+    images = np.empty((N*B, H,W),dtype=float)
+    surfaces = np.empty((N*B, S,W),dtype=float)
     patientIDDict = dict()
 
     i =0
@@ -119,8 +119,8 @@ def cutDataset(cutDict):
         surfacePath = volumePath[0:volumePath.find("_images.npy")] + "_surfaces.npy"
         patientID = volumePath[volumePath.rfind("/")+1 : volumePath.find(".npy")]
 
-        images[i*B:(i+1)*B,] = np.load(volumePath).astype(np.float32)
-        surfaces[i*B:(i+1)*B,] = np.load(surfacePath).astype(np.float32)
+        images[i*B:(i+1)*B,] = np.load(volumePath).astype(float)
+        surfaces[i*B:(i+1)*B,] = np.load(surfacePath).astype(float)
         for s in range(i*B, (i+1)*B):
             patientIDDict[str(s)] = patientID+f"_s{s-i*B:02d}.npy"
         i += 1

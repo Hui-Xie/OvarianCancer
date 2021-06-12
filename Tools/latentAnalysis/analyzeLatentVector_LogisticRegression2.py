@@ -101,7 +101,7 @@ def main():
         averageDiceSamples.append(dices/N)
 
         # get response vector and assemble latent Vectors
-        X = np.empty((F, N), dtype=np.float)  # latent vectors
+        X = np.empty((F, N), dtype=float)  # latent vectors
         Y01 = np.empty((1, N), dtype=np.int)  # response in 0, 1 range
         for i, key in enumerate(list(patientDice)):
             if len(key) > 8:
@@ -240,7 +240,7 @@ def main():
         for i in range(0,k):
             f = topKIndices[i] # feature index
             #drawM: draw Matrix row 0 to 2: x, sigmoid(w0+w1*), y
-            drawM = np.zeros((3, N), dtype=np.float)
+            drawM = np.zeros((3, N), dtype=float)
             drawM[0,] = X[f,]
             drawM[1,] = 1.0 / (1.0 + np.exp(-(W0[f] + W1[f] * X[f,])))
             drawM[2,] = Y01

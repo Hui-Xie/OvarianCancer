@@ -204,9 +204,9 @@ def retrieveImageData_label(mode):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, numRadiomics), dtype=np.float)  # size:NxnRadiomics
+    volumes = np.empty((NVolumes, numRadiomics), dtype=float)  # size:NxnRadiomics
     for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
+        oneVolume = np.load(volumePath).astype(float)
         volumes[i, :] = oneVolume[0, :]  # as oneVolume has a size [1, nRadiomics]
 
     fullLabels = readBESClinicalCsv(clinicalGTPath)

@@ -87,9 +87,9 @@ def retrieveImageData_label(mode, hps):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=np.float) # size:NxCxHxW
+    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=float) # size:NxCxHxW
     for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
+        oneVolume = np.load(volumePath).astype(float)
         volumes[i,] = oneVolume
 
     # for thickness map

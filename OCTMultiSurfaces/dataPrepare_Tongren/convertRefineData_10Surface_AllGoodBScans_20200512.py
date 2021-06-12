@@ -58,7 +58,7 @@ def saveVolumeSurfaceToNumpy(volumesList, goalImageFile, goalSurfaceFile, goalPa
     else:
         totalNumSlices = len(volumesList)*NumSlices
 
-    allPatientsImageArray = np.empty((totalNumSlices, H, W), dtype=np.float)
+    allPatientsImageArray = np.empty((totalNumSlices, H, W), dtype=float)
     allPatientsSurfaceArray = np.empty((totalNumSlices, N, W),dtype=np.int)
     patientIDDict = {}
 

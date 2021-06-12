@@ -130,7 +130,7 @@ class OVDataSet(data.Dataset):
         if self.m_preLoadData:
            for i, dataID in enumerate(self.m_dataIDs):
                filename = self.m_dataPartitions.m_inputFilesList[dataID]
-               data = np.load(filename).astype(np.float32)
+               data = np.load(filename).astype(float)
                self.m_loadData = np.concatenate((self.m_loadData, data)) if i!=0 else data
            self.m_loadData = self.m_loadData.reshape((i+1,-1))
 
@@ -155,7 +155,7 @@ class OVDataSet(data.Dataset):
         if self.m_preLoadData:
             data = self.m_loadData[index,]
         else:
-            data = np.load(filename).astype(np.float32)
+            data = np.load(filename).astype(float)
         label = self.m_labels[index]
         if isinstance(label, list):
             label = torch.tensor(label).t()

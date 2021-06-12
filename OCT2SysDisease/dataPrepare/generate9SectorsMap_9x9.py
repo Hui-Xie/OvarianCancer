@@ -33,7 +33,7 @@ def generatePolarMap(H, W):
     recMap[0,] = np.repeat(np.arange(-(W//2), W//2+1).reshape(1, W), H, axis=0)
     recMap[1,] = np.repeat(np.arange(H // 2, -(H // 2) - 1, -1).reshape(H, 1), W, axis=1)  # Y coordinate upward.
     # convert to polar coordinates
-    polarMap = np.ones((2,H,W), dtype=np.float)*(-1)
+    polarMap = np.ones((2,H,W), dtype=float)*(-1)
     for i in range(H):
         for j in range(W):
             polarMap[0,i,j], polarMap[1,i,j] = cmath.polar(complex(recMap[0,i,j], recMap[1,i,j])) # phase is in range(-Pi,Pi]
@@ -159,7 +159,7 @@ def main():
         outputFilename = outputFilename.replace(inputFileSuffix, outputFileSuffix)
         outputPath = os.path.join(outputDir, outputFilename)
 
-        sectorMap = np.empty((nLayers, nSectors), dtype=np.float)
+        sectorMap = np.empty((nLayers, nSectors), dtype=float)
         # read volume
         thicknessMap = np.load(thickessPath)  # BxHxW
         assert (nLayers, H, W) == thicknessMap.shape

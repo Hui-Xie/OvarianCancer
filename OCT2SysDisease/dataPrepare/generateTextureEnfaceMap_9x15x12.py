@@ -38,7 +38,7 @@ for xmlSegPath in xmlVolumeList:
 
 
     # define output empty array of size (N-1)xBxW
-    textureEnfaceVolume = np.empty((N - 1, B, W), dtype=np.float)
+    textureEnfaceVolume = np.empty((N - 1, B, W), dtype=float)
 
     # get (N-1)xBxW enface map.
     surface0 = volumeSeg[:, 0:-1, :]  # Bx(N-1)xW
@@ -52,7 +52,7 @@ for xmlSegPath in xmlVolumeList:
     # reduce image size:
     newB = B // stepB
     newW = math.ceil(W / stepW)
-    reducedTextureEnfaceVolume = np.empty((N - 1, newB, newW), dtype=np.float)
+    reducedTextureEnfaceVolume = np.empty((N - 1, newB, newW), dtype=float)
     for i in range(newB):
         for j in range(newW):
             i1 = i*stepB

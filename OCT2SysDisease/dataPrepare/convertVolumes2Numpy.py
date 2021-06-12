@@ -46,7 +46,7 @@ def saveVolumeToNumpy():
            print(f"Error: at {volume}, the slice number does not match jpg files.")
            return
 
-        imagesArray = np.empty((NumSlices,H, W), dtype=np.float)
+        imagesArray = np.empty((NumSlices,H, W), dtype=float)
         for s in range(0, NumSlices):
             imagesArray[s,] = imread(imagesList[s])[:,128:640]
 

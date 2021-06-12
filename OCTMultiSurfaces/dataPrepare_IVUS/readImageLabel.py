@@ -12,7 +12,7 @@ from imageio import imread
 import os
 from numpy import genfromtxt
 
-image = imread(imagePath).astype(np.float32)
+image = imread(imagePath).astype(float)
 H,W = image.shape
 
 lumenLabel = genfromtxt(lumenLabelPath, delimiter=',')

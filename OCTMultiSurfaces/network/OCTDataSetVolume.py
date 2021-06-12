@@ -24,7 +24,7 @@ class OCTDataSetVolume(data.Dataset):
             self.m_imagesList.sort()
 
         if labelPath is not None:
-            self.m_labels = torch.from_numpy(np.load(labelPath).astype(np.float32)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
+            self.m_labels = torch.from_numpy(np.load(labelPath).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
 
         if IDPath is not None:
             with open(IDPath) as f:
@@ -239,7 +239,7 @@ class OCTDataSetVolume(data.Dataset):
 
     def __getitem__(self, index):
         volumePath = self.m_imagesList[index]
-        data = torch.from_numpy(np.load(volumePath).astype(np.float32)).to(self.hps.device, dtype=torch.float)
+        data = torch.from_numpy(np.load(volumePath).astype(float)).to(self.hps.device, dtype=torch.float)
         B,H,W = data.shape
 
         # normalize images for each slice

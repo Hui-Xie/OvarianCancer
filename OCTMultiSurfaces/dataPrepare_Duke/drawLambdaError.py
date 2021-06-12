@@ -16,8 +16,8 @@ with open(csvPath, newline='') as csvfile:
     csvList = list(csv.reader(csvfile, delimiter=',', quotechar='|'))
     csvList = csvList[1:]
     csvArray = np.asarray(csvList)
-    meanError = csvArray[:,1].astype(np.float)
-    lambdaValue = csvArray[:,3].astype(np.float)
+    meanError = csvArray[:,1].astype(float)
+    lambdaValue = csvArray[:,3].astype(float)
 
 plt.plot(lambdaValue, meanError)
 plt.xlabel('lambda')

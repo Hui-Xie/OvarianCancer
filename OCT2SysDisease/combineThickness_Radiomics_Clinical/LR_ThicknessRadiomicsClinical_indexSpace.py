@@ -200,7 +200,7 @@ def main():
     # 2  read all clinical data into a fullTable-> labelTable;
     fullLabels = readBESClinicalCsv(clinicalGTPath)
 
-    labelTable = np.empty((NVolumes, 22), dtype=np.float)  # size: Nx22
+    labelTable = np.empty((NVolumes, 22), dtype=float)  # size: Nx22
     # labelTable head: patientID,                                          (0)
     #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
     # columnIndex:         1                           2        3       4          5             6          7             8              9                10
@@ -257,7 +257,7 @@ def main():
 
 
     # 4  Assemble clinical features, thickness features, and radiomics features.
-    ftrArray = np.zeros((NVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=np.float)
+    ftrArray = np.zeros((NVolumes, numRadiomics+numThickness+numClinicalFtr), dtype=float)
     labels  = np.zeros((NVolumes, 2), dtype=np.int) # columns: id, HBP
 
     radiomicsVolumesList = glob.glob(radiomicsDir + f"/*_Volume_100radiomics.npy")

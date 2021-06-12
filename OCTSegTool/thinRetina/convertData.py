@@ -57,8 +57,8 @@ outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")
 outputNumpySurfacesPath = os.path.join(outputNumpyDir, f"surfaces.npy")
 outputPatientIDPath = os.path.join(outputNumpyDir, "patientID.json")
 
-allPatientsImageArray = np.empty((totalSlices , H, W), dtype=np.float)
-allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=np.float) # the ground truth of JHU data is float
+allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float)
+allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of JHU data is float
 patientIDDict = {}
 
 s = 0 # initial slice index

@@ -26,8 +26,8 @@ def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPat
     if len(imagesList) ==0:
         return
 
-    allPatientsImageArray = np.empty((len(imagesList) , H, W), dtype=np.float)
-    allPatientsSurfaceArray = np.empty((len(imagesList), NumSurfaces, W), dtype=np.float) # the ground truth of JHU data is float
+    allPatientsImageArray = np.empty((len(imagesList) , H, W), dtype=float)
+    allPatientsSurfaceArray = np.empty((len(imagesList), NumSurfaces, W), dtype=float) # the ground truth of JHU data is float
     patientIDDict = {}
 
     s = 0 # initial slice index

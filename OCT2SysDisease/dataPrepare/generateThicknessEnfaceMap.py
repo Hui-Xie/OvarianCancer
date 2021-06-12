@@ -16,7 +16,7 @@ xmlVolumeList.sort()
 nXmlVolumes = len(xmlVolumeList)
 print(f"total {nXmlVolumes} volumes")
 
-#kernel = np.ones((3, 3), np.float32) / 9.0 # for 2D smooth filter
+#kernel = np.ones((3, 3), float) / 9.0 # for 2D smooth filter
 
 for xmlSegPath in xmlVolumeList:
     basename, ext = os.path.splitext(os.path.basename(xmlSegPath))
@@ -29,7 +29,7 @@ for xmlSegPath in xmlVolumeList:
 
     surface0 = volumeSeg[:, 0:-1, :]  # Bx(N-1)xW
     surface1 = volumeSeg[:, 1:, :]  # Bx(N-1)xW
-    thickness = (surface1 - surface0).astype(np.float32)  # Bx(N-1)xW
+    thickness = (surface1 - surface0).astype(float)  # Bx(N-1)xW
     thickness = np.swapaxes(thickness, 0, 1)  # (N-1)xBxW
     # do 3*3 mean filter on BxW dimension
     # because of the Z and X has big pixel resolution difference, cancel smooth.

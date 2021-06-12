@@ -30,8 +30,8 @@ surfaces = np.load(surfacesPath)         # size: (49x15)x9x1024
 with open(patientIDPath) as f:
     patientIDs = json.load(f)  # size:(49x15)x1
 
-dstImages = np.zeros(((nHC+nMS)*B, H,W),dtype=np.float32)
-dstSurfaces = np.zeros(((nHC+nMS)*B, N,W),dtype=np.float32)
+dstImages = np.zeros(((nHC+nMS)*B, H,W),dtype=float)
+dstSurfaces = np.zeros(((nHC+nMS)*B, N,W),dtype=float)
 dstPatientID = dict()
 
 # get dst data

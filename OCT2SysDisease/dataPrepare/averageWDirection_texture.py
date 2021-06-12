@@ -34,7 +34,7 @@ for volumePath in srcVolumeList:
     B, H, W1 = volume.shape
     assert B==9 and H==31 and W1==W
 
-    newVolume = np.empty((B,H,newW),dtype=np.float32)
+    newVolume = np.empty((B,H,newW),dtype=float)
     for i in range(newW):
         j1 = i*d
         j2 = (i+1)*d

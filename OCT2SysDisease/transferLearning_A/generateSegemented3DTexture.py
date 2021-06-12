@@ -104,7 +104,7 @@ def main():
 
     # first compute mean for each B-scan
     nPatients = 0
-    sumBscans = np.zeros((S), dtype=np.float)
+    sumBscans = np.zeros((S), dtype=float)
     for xmlPath in patientSegsList:
         volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction
         volumeName = volumeName[0:volumeName.find("_Sequence_Surfaces_Prediction")]  # 370_OD_458_Volume
@@ -122,7 +122,7 @@ def main():
 
     # compute std for each B-scan
     nPatients = 0
-    sumBscans = np.zeros((S), dtype=np.float)
+    sumBscans = np.zeros((S), dtype=float)
     meanBscansExpand = np.tile(meanBscans.reshape(S,1,1), reps=(1,H,W))
     for xmlPath in patientSegsList:
         volumeName = os.path.splitext(os.path.basename(xmlPath))[0]  # 370_OD_458_Volume_Sequence_Surfaces_Prediction

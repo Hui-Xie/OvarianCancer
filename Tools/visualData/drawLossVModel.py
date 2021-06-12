@@ -34,7 +34,7 @@ def main():
         data = data[pos+len(tableTitle):]
         lines = data.splitlines()
         lines.pop(0)   #erase tabel head.
-        array = np.zeros((len(lines),8),dtype=np.float32)
+        array = np.zeros((len(lines),8),dtype=float)
 
         countRow = 0
         for line in lines:

@@ -54,7 +54,7 @@ class PolarCartesianConverter():
         t[:,self.tMax-1] = np.where(t[:,self.tMax-1] == 0, 360, t[:,self.tMax-1])
 
         # interpolate into integer degree from 0 to 359
-        rInterpolation = np.zeros((C,N),dtype=np.float32)
+        rInterpolation = np.zeros((C,N),dtype=float)
         for c in range(C):
             tck = interpolate.splrep(t[c,:],r[c,:],xb=0, xe=360)
             rInterpolation[c, :] = interpolate.splev(np.arange(N),tck)

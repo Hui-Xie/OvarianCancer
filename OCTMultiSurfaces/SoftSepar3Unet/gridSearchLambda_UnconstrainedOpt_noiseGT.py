@@ -48,8 +48,8 @@ Naxis0 = len(lambda0List)
 Naxis1 = len(lambda1List)
 
 # lambda0 at x axis, and lambda1 is at y axis
-muErrorArray = np.ones((Naxis1, Naxis0),dtype=np.float32) * 1000.0
-hausdorfDArray = np.ones((Naxis1, Naxis0, N),dtype=np.float32)*1000.0
+muErrorArray = np.ones((Naxis1, Naxis0),dtype=float) * 1000.0
+hausdorfDArray = np.ones((Naxis1, Naxis0, N),dtype=float)*1000.0
 
 filename = f"muErr_{rSource}_sigma{noiseSigma}__lmd0_{lambda0_min}_{lambda0_max}_{lambda0_step}__lmd1_{lambda1_min}_{lambda1_max}_{lambda1_step}"
 outputErrorArrayFilename = os.path.join(outputDir, filename+".npy")
@@ -82,7 +82,7 @@ def main():
     g  = np.load(gPath)
     r  = np.load(rPath)    # size:3009x2x361
     riftGT = np.load(riftGTPath)
-    noiseRiftGT = np.load(noiseRiftGTPath).astype(np.float32)
+    noiseRiftGT = np.load(noiseRiftGTPath).astype(float)
 
     B,N1,W = sigma2.shape
     assert N == N1

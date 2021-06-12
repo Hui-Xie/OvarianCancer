@@ -109,10 +109,10 @@ def main():
 
     # load all volumes into memory
     assert hps.imageW == 1
-    volumes = np.empty((NVolumes, 2, hps.inputChannels, hps.imageH),  dtype=np.float)  # size:Nx2xlayerxH for OD/OS 9x9 sector array
+    volumes = np.empty((NVolumes, 2, hps.inputChannels, hps.imageH),  dtype=float)  # size:Nx2xlayerxH for OD/OS 9x9 sector array
     for i in range(NVolumes):
-        ODVolume = np.load(volumePaths[i*2]).astype(np.float)
-        OSVolume = np.load(volumePaths[i*2+1]).astype(np.float)
+        ODVolume = np.load(volumePaths[i*2]).astype(float)
+        OSVolume = np.load(volumePaths[i*2+1]).astype(float)
         volumes[i,0, :] = ODVolume
         volumes[i,1, :] = OSVolume
     volumes = volumes.reshape(-1, 2*hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
@@ -120,7 +120,7 @@ def main():
     # read clinical features
     fullLabels = readBESClinicalCsv(hps.GTPath)
 
-    labelTable = np.empty((NVolumes, 22), dtype=np.float)  # size: Nx22
+    labelTable = np.empty((NVolumes, 22), dtype=float)  # size: Nx22
     # labelTable head: patientID,                                          (0)
     #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$',
     # columnIndex:         1                           2        3       4          5             6          7             8              9                10

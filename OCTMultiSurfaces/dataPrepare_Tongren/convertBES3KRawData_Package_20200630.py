@@ -25,7 +25,7 @@ def saveVolumeToNumpy(volumesList, goalImageFile, goalPatientsIDFile):
     if len(volumesList) ==0:
         return
 
-    allPatientsImageArray = np.empty((len(volumesList)*NumSlices,H, W), dtype=np.float)
+    allPatientsImageArray = np.empty((len(volumesList)*NumSlices,H, W), dtype=float)
     patientIDDict = {}
 
     s = 0 # initial slice for each patient

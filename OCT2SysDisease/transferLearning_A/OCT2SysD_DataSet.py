@@ -174,7 +174,7 @@ class OCT2SysD_DataSet(data.Dataset):
         if self.hps.existGTLabel:
             label = self.m_targetLabels[index]
 
-        data = np.load(self.m_volumePaths[index]).astype(np.float32)
+        data = np.load(self.m_volumePaths[index]).astype(float)
         data =  torch.from_numpy(data).to(device=self.hps.device, dtype=torch.float32)
 
         H2 = self.hps.imageH * 2

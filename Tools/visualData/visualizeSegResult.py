@@ -39,9 +39,9 @@ def main():
         gtFilename  = os.path.join(groundTruthDir, patientID+suffix)
         predictFilename = file
 
-        rawImage = np.load(rawFilename).astype(np.float32)
-        gtImage = np.load(gtFilename).astype(np.float32)
-        predictImage = np.load(predictFilename).astype(np.float32)
+        rawImage = np.load(rawFilename).astype(float)
+        gtImage = np.load(gtFilename).astype(float)
+        predictImage = np.load(predictFilename).astype(float)
 
         # get sliceIndices for gtImage.
         nonzeroIndex = np.nonzero(gtImage)

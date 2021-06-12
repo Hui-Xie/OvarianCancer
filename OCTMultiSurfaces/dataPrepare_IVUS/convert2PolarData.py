@@ -40,8 +40,8 @@ def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPat
     if len(imagesList) ==0:
         return
 
-    allPatientsImageArray = np.empty((len(imagesList) , H, W), dtype=np.float)
-    allPatientsSurfaceArray = np.empty((len(imagesList), C, W), dtype=np.float) # the ground truth is float
+    allPatientsImageArray = np.empty((len(imagesList) , H, W), dtype=float)
+    allPatientsSurfaceArray = np.empty((len(imagesList), C, W), dtype=float) # the ground truth is float
     patientIDDict = {}
 
     imageShape = (rawH, rawW)
@@ -56,7 +56,7 @@ def saveVolumeSurfaceToNumpy(imagesList, goalImageFile, goalSurfaceFile, goalPat
         mediaLabel = genfromtxt(mediaSegFile, delimiter=',')
 
         cartesianLabel = np.array([lumenLabel, mediaLabel])
-        cartesianImage = imread(imagePath).astype(np.float32)
+        cartesianImage = imread(imagePath).astype(float)
 
         polarImage, polarLabel = polarConverter.cartesianImageLabel2Polar(cartesianImage, cartesianLabel, rotation=0)
         assert (H,W) == polarImage.shape

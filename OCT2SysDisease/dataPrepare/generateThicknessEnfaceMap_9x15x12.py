@@ -33,11 +33,11 @@ for xmlSegPath in xmlVolumeList:
     newW = math.ceil(W/stepW)
 
 
-    thicknessEnface = np.empty((N - 1, newH, newW), dtype=np.float)
+    thicknessEnface = np.empty((N - 1, newH, newW), dtype=float)
 
     surface0 = volumeSeg[:, 0:-1, :]  # Bx(N-1)xW
     surface1 = volumeSeg[:, 1:, :]  # Bx(N-1)xW
-    thickness = (surface1 - surface0).astype(np.float32)  # Bx(N-1)xW
+    thickness = (surface1 - surface0).astype(float)  # Bx(N-1)xW
     thickness = np.swapaxes(thickness, 0, 1)  # (N-1)xBxW
 
     for i in range(newH):

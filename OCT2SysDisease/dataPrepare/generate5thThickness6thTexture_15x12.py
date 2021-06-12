@@ -29,7 +29,7 @@ for thickessPath in thicknessVolumeList:
     outputFilename = outputFilename.replace("_thickness_", "_5thThickness_6thTexture_")
     outputPath = os.path.join(outputDir, outputFilename)
 
-    newVolume = np.empty((2,15,12), dtype=np.float)
+    newVolume = np.empty((2,15,12), dtype=float)
     # read volume
     thicknessVolume = np.load(thickessPath)  # BxHxW
     assert (9,15,12) == thicknessVolume.shape

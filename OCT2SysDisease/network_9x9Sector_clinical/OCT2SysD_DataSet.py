@@ -93,16 +93,16 @@ class OCT2SysD_DataSet(data.Dataset):
 
         # load all volumes into memory
         assert hps.imageW == 1
-        self.m_volumes = np.empty((self.m_NVolumes, hps.inputChannels, hps.imageH), dtype=np.float)  # size:NxCxH for 9x9 sector array
+        self.m_volumes = np.empty((self.m_NVolumes, hps.inputChannels, hps.imageH), dtype=float)  # size:NxCxH for 9x9 sector array
         for i, volumePath in enumerate(self.m_volumePaths):
-            oneVolume = np.load(volumePath).astype(np.float)
+            oneVolume = np.load(volumePath).astype(float)
             self.m_volumes[i, :] = oneVolume
         self.m_volumes = self.m_volumes.reshape(-1, hps.inputChannels * hps.imageH * hps.imageW)  # size: Nx(CxHxW)
 
         # read clinical features
         fullLabels = readBESClinicalCsv(hps.GTPath)
 
-        labelTable = np.empty((self.m_NVolumes, 13), dtype=np.float)  # size: Nx13
+        labelTable = np.empty((self.m_NVolumes, 13), dtype=float)  # size: Nx13
         # table head: patientID,                                          (0)
         #             "hypertension_bp_plus_history$", "gender", "Age$",'IOP$', 'AxialLength$', 'Height$', 'Weight$', 'Waist_Circum$', 'Hip_Circum$', 'SmokePackYears$'   (1:11)
         # columnIndex:         1                           2        3       4          5             6          7             8              9                10

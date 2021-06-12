@@ -104,12 +104,12 @@ class OVDataSegSet(data.Dataset):
     def __getitem__(self, index):
         ID = self.m_dataIDs[index]
         filename = self.m_dataPartitions.m_inputFilesList[ID]
-        data = np.load(filename).astype(np.float32)
+        data = np.load(filename).astype(float)
 
         patientID = getStemName(filename, self.m_dataPartitions.m_inputSuffix)
         if self.m_dataPartitions.m_inputLabelDir is not None:
             labelFile = os.path.join(self.m_dataPartitions.m_inputLabelDir, patientID+self.m_dataPartitions.m_inputSuffix)
-            label = np.load(labelFile).astype(np.float32)
+            label = np.load(labelFile).astype(float)
 
             if self.m_transform:
                 data, label = self.m_transform(data, label)

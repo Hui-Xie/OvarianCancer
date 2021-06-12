@@ -33,7 +33,7 @@ for file in filesList:
 
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
-    image3d = image3d.astype(np.float32)   # this is very important, otherwise, normalization will be meaningless.
+    image3d = image3d.astype(float)   # this is very important, otherwise, normalization will be meaningless.
 
     # normalize image with std  for each slice
     shape = image3d.shape
@@ -57,7 +57,7 @@ for file in filesList:
 
     # assemble in fixed size[231,251,251] in Z,Y, X direction
     z,y,x = image3d.shape
-    wall = np.zeros((Z,Y,X), dtype=np.float32)
+    wall = np.zeros((Z,Y,X), dtype=float)
     if z<Z:
         Z1 = (Z-z)//2
         Z2 = Z1+z

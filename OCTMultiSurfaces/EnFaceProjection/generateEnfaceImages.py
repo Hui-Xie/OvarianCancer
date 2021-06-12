@@ -40,8 +40,8 @@ for volumePath in volumesList:
     assert (B == B1) and (W == W1) and (N == N1)
 
     # define output empty array
-    enfaceVolume = np.empty((N-1, B, W), dtype=np.float)
-    layerWidthVolume = np.empty((N-1, B, W), dtype=np.float)
+    enfaceVolume = np.empty((N-1, B, W), dtype=float)
+    layerWidthVolume = np.empty((N-1, B, W), dtype=float)
     # fill the output array
     for i in range(N-1):
         surface0 = volumeSeg[:,i,:]  # BxW

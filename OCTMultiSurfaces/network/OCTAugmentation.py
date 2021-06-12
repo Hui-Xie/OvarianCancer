@@ -394,7 +394,7 @@ def scalePolarImage(polarImage, scaleNumerator, scaleDenominator):
     elif 3 == dim:
         B,H,W = polarImage.shape
         newH = int(H*scaleNumerator/scaleDenominator +0.5)
-        newPolarImage = np.zeros((B,newH,W),dtype=np.float32)
+        newPolarImage = np.zeros((B,newH,W),dtype=float)
         for b in range(B):
             temp = polarImage[b].cpu().numpy()
             newPolarImage[b] = cv2.resize(temp, (W,newH), interpolation=cv2.INTER_CUBIC)

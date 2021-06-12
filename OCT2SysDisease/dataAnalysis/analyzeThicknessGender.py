@@ -91,14 +91,14 @@ def retrieveImageData_label(mode, hps):
     assert (NVolumes == len(IDsCorrespondVolumes))
 
     # load all volumes into memory
-    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=np.float) # size:NxCxHxW
+    volumes = np.empty((NVolumes, hps.inputChannels, hps.imageH, hps.imageW), dtype=float) # size:NxCxHxW
     for i, volumePath in enumerate(volumePaths):
-        oneVolume = np.load(volumePath).astype(np.float)
+        oneVolume = np.load(volumePath).astype(float)
         volumes[i,] = oneVolume
 
     fullLabels = readBESClinicalCsv(hps.GTPath)
 
-    observationTable = np.empty((NVolumes, 22), dtype=np.float) #  size: Nx22
+    observationTable = np.empty((NVolumes, 22), dtype=float) #  size: Nx22
     # table head: patientID,                                          (0)
     #             thicknessMean0,thicknessMean1,... thicknessMean8,   (1:10)
     #             thicknessStd0,thicknessStd1,... thicknessStd8,      (10:19)

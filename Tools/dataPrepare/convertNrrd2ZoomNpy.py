@@ -35,7 +35,7 @@ for file in filesList:
     image = sitk.ReadImage(file)
     image3d = sitk.GetArrayFromImage(image)
     image3d = np.clip(image3d, -135, 215)  # standard window level 350/40 in 3D slicer.
-    image3d = image3d.astype(np.float32)  # this is very important, otherwise, normalization will be meaningless.
+    image3d = image3d.astype(float)  # this is very important, otherwise, normalization will be meaningless.
     imageShape = image3d.shape
     zoomFactor = [goalSize[0] / imageShape[0], goalSize[1] / imageShape[1], goalSize[2] / imageShape[2]]
     image3d = ndimage.zoom(image3d, zoomFactor, order=3)
@@ -53,7 +53,7 @@ for file in filesList:
     labelFile = os.path.join(inputLabelDir, patientID + "_pri_seg.nrrd")
     label = sitk.ReadImage(labelFile)
     label3d = sitk.GetArrayFromImage(label)
-    label3d = label3d.astype(np.float32)  # this is very important
+    label3d = label3d.astype(float)  # this is very important
     labelShape = label3d.shape
     if labelShape != imageShape:
         print(f"Error: images shape != label shape for {file} and {labelFile} ")

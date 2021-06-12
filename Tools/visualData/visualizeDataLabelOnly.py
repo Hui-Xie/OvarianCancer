@@ -29,9 +29,9 @@ for file in filesList:
     rawFilename = file
     gtFilename = os.path.join(labelDir, patientID + suffix)
 
-    rawImage = np.load(rawFilename).astype(np.float32)
+    rawImage = np.load(rawFilename).astype(float)
     S,H,W = rawImage.shape
-    gtImage = np.load(gtFilename).astype(np.float32)
+    gtImage = np.load(gtFilename).astype(float)
 
     # get sliceIndices for gtImage.
     nonzeroIndex = np.nonzero(gtImage)

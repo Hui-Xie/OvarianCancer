@@ -142,7 +142,7 @@ def main():
 
     # statistic dic
     numPatients = len(patientDiceMap)
-    diceValues = np.asarray(list(patientDiceMap.values()), dtype=np.float32)
+    diceValues = np.asarray(list(patientDiceMap.values()), dtype=float)
     print(f"total {numPatients} patients for test")
     print(f"min dice = {diceValues.min()}")
     print(f"max dice = {diceValues.max()}")
