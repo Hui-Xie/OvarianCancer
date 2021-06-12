@@ -42,7 +42,7 @@ testPatientDirList=[  # 2 patients
 "/home/hxie1/data/garvinlab/Data/IOWA_VIP_25_Subjects_Thin_Retina/Manual_Correction/PVIP2-4083_Macular_200x200_10-24-2012_10-24-46_OS_sn14353_cube_z",
 ]
 
-trainingCase = False
+trainingCase = True
 
 if  trainingCase:
     patientDirList = trainPatientDirList
