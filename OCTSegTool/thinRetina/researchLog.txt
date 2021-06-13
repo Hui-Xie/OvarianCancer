@@ -9,6 +9,15 @@ conda install --revision N  #  If you want to revert to a previous revision
 
 matplotlib 3.3.4 has segment fault problem. You must use matplotlib 3.4.2
 
+Notes for input data tidy:
+0  convert Ray's special raw and xml format into standard BxHxW for images and BxSxW format for surfaces.
+1  extracted 6 surfaces (0, 1, 3, 5, 6, 10)
+   their surface names: ["ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE"]
+2  convert all 1024x512 images and surfaces into 1024x200 size.
+3  flip all OS eyes into OD eyes;
+4  a slight smooth over the ground truth.
+5  make sure all surfaces not interleave.
+
 
 
 
