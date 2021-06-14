@@ -66,6 +66,7 @@ device: torch.device('cuda:1')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 learningRate: 0.1
+epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 network: "SurfaceSubnet_Q"
