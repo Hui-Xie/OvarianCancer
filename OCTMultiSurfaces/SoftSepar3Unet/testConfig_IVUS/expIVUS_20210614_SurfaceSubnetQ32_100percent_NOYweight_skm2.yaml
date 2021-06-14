@@ -1,4 +1,6 @@
 
+# this config inherits from expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_dot9W_skm2.yaml
+
 debug: False # debug mark
 dataIn1Parcel: True
 useIndependentValidation: True
@@ -39,7 +41,7 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:5')   #GPU ID
+device: torch.device('cuda:7')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 5
 learningRate: 0.1
@@ -108,7 +110,7 @@ smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
 weightL1Loss: 1.0
-useMultiSurfaceCEWeight: True
+useMultiSurfaceCEWeight: False
 useBEMA: True
 
 gradientRiftConvGoBack: False

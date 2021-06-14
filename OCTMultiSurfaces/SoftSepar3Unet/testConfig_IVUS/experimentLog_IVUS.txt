@@ -1,3 +1,13 @@
+# June 14th, Monday, 2021
+Ablation experiments on IVUS data.
+1  not use BEMA module.
+2  not use Y-weight
+3  not use input gradient.
+4  not use Topo.
+
+
+
+
 # May 21th, Friday, 2021:
 
 IVUS experiment Comparison:

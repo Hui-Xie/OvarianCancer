@@ -1,4 +1,6 @@
 
+# this config inherits from expIVUS_20210521_SurfaceSubnetQ32_BEMA_100percent_dot9W_skm2.yaml
+
 debug: False # debug mark
 dataIn1Parcel: True
 useIndependentValidation: True
@@ -56,11 +58,11 @@ inputHeight: 192   # original height
 inputWidth: 360   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # rawImage + gradChannels
+inputChannels: 1 # rawImage + gradChannels
 nLayers: 7
 numSurfaces: 2  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False

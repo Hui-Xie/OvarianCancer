@@ -95,7 +95,7 @@ class SurfaceSubnet_Q_BEMA(BasicModel):
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
 
         # smooth predicted S
-        if self.hps.useBMEA:
+        if self.hps.useBEMA:
             smoothM = self.m_smoothM.expand(B, W, W)  # size: BxWxW
             mu = torch.bmm(mu, smoothM)  # size: BxNxW
 

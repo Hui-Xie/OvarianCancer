@@ -6,9 +6,15 @@ Think the ablation experiments on JHU_MS data.
 4  without BMEA module on IVUS data.
 
 tassk:
-1  gradident input channel switch:--ok, no grad, no gradient weight.---   2 experiments.  --config ok.
-2  y-gradient weight switch: --ok; 1 experiment.  --config ok.
-3  topo weight switch: --ok;  1 experiments.  -- config ok.
+1  gradident input channel switch:--ok, no grad, no gradient weight.---   2 experiments.  --config ok.  run !
+2  y-gradient weight switch: --ok; 1 experiment.  --config ok.  run!
+3  topo weight switch: --ok;  1 experiments.  -- config ok.  run!
+Run JHU_MS experiments:
+1046  2021-06-14 13:15:50 nohup python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2.yaml &
+1047  2021-06-14 13:16:08 nohup python3 ./SurfaceSubnet_Train.py  ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2.yaml &
+1048  2021-06-14 13:16:26 nohup python3 ./SurfaceSubnet_Train.py  ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2.yaml &
+1049  2021-06-14 13:16:54 nohup python3 ./SurfaceSubnet_Train.py  ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_GradientInput_Yweight_skm2.yaml &
+
 4  BMEA module: --ok; 2 experiments.
 
 
