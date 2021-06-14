@@ -5,6 +5,11 @@ Ablation experiments on IVUS data.
 3  not use input gradient.
 4  not use Topo.
 
+Run experiments:
+1055  2021-06-14 13:47:46 nohup python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOBEMA_skm2.yaml &
+1056  2021-06-14 13:47:57 nohup python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOYweight_skm2.yaml &
+1057  2021-06-14 13:48:07 nohup python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOTopo_skm2.yaml &
+1058  2021-06-14 13:48:19 nohup python3 ./SurfaceSubnet_Train_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOGradientInput_skm2.yaml &
 
 
 
