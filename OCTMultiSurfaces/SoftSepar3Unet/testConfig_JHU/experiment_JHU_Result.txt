@@ -6,9 +6,9 @@ Think the ablation experiments on JHU_MS data.
 4  without BMEA module on IVUS data.
 
 tassk:
-1  gradident input channel switch:--ok, no grad, no gradient weight.---   2 experiments.
-2  y-gradient weight switch: --ok; 2 experiments.
-3  topo weight switch: --ok;  2 experiments.
+1  gradident input channel switch:--ok, no grad, no gradient weight.---   2 experiments.  --config ok.
+2  y-gradient weight switch: --ok; 1 experiment.  --config ok.
+3  topo weight switch: --ok;  1 experiments.  -- config ok.
 4  BMEA module: --ok; 2 experiments.
 
 
