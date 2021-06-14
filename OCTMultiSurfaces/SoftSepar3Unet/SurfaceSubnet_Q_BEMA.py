@@ -43,7 +43,7 @@ class SurfaceSubnet_Q_BEMA(BasicModel):
             nn.Conv2d( hps.segChannels, self.hps.numSurfaces, kernel_size=1, stride=1, padding=0)  # conv 1*1
         )  # output size:BxNxHxW
 
-        # define the Bidirectional Exponential Moving Average smooth matrix for IVUS circle surface.
+        # define the BEMA(Bidirectional Exponential Moving Average) smooth matrix for IVUS circle surface.
         # S <-  S*M, each column of M denotes a BEMA.
         W = hps.inputWidth
         b = hps.BEMAMomentum  # momentum, beta, which denotes the previous weight of momentum.
@@ -95,8 +95,9 @@ class SurfaceSubnet_Q_BEMA(BasicModel):
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
 
         # smooth predicted S
-        smoothM = self.m_smoothM.expand(B, W, W)  # size: BxWxW
-        mu = torch.bmm(mu, smoothM)  # size: BxNxW
+        if self.hps.useBMEA:
+            smoothM = self.m_smoothM.expand(B, W, W)  # size: BxWxW
+            mu = torch.bmm(mu, smoothM)  # size: BxNxW
 
         S = mu.clone()
         loss = 0.0

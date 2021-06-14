@@ -1,3 +1,22 @@
+# June 14th, Monday, 2021
+Think the ablation experiments on JHU_MS data.
+1  No gradient channels.
+2  without y-gradient weight.
+3  without Topo module
+4  without BMEA module on IVUS data.
+
+tassk:
+1  gradident input channel switch:--ok, no grad, no gradient weight.---   2 experiments.
+2  y-gradient weight switch: --ok; 2 experiments.
+3  topo weight switch: --ok;  2 experiments.
+4  BMEA module: --ok; 2 experiments.
+
+
+
+
+
+
+
 # May 13th, Thursday, 2021
 =============================================================================================================================================================================================================================================================================
                                                                                                 JHU data on test data: Comparison between our method and YufanHe's method.

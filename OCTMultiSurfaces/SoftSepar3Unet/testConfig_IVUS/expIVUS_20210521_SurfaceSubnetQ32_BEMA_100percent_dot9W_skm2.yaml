@@ -109,6 +109,7 @@ smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' 
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
 weightL1Loss: 1.0
 useMultiSurfaceCEWeight: True
+useBMEA: True
 
 gradientRiftConvGoBack: False
 
