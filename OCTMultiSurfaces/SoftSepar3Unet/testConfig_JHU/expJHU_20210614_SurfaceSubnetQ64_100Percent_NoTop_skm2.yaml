@@ -67,6 +67,7 @@ device: torch.device('cuda:3')   #GPU ID
 batchSize: 4
 learningRate: 0.1
 
+optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 network: "SurfaceSubnet_Q"
 inputHeight: 128   # original height
 inputWidth: 1024   # rawImageWidth
