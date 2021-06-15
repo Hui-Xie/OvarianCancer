@@ -14,6 +14,12 @@ Run experiments:
 axial attention mechanism:
  The core idea is to separate 2D attention into two steps that apply 1D attention in the height and width axes sequentially.
 
+Test:
+ 1019  2021-06-15 11:23:45 nohup python3 ./SurfaceSubnet_Test_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOYweight_skm2.yaml &
+ 1020  2021-06-15 11:23:57 nohup python3 ./SurfaceSubnet_Test_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOTopo_skm2.yaml &
+ 1021  2021-06-15 11:24:08 nohup python3 ./SurfaceSubnet_Test_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOGradientInput_skm2.yaml &
+ 1022  2021-06-15 11:24:22 nohup python3 ./SurfaceSubnet_Test_PolarImage.py ./testConfig_IVUS/expIVUS_20210614_SurfaceSubnetQ32_100percent_NOBEMA_skm2.yaml &
+
 
 # May 21th, Friday, 2021:
 

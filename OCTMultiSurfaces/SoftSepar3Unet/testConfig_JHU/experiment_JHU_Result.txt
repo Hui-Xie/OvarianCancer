@@ -1,3 +1,10 @@
+# June 15th, Tuesday, 2021
+Ablation experiments on 100% JHU_MS data:
+ExperimentName                                                      muMeanError ± std(um)    muSurfaceError ± std(um, 0-8)
+expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2          2.76±1.03              2.35±0.47, 2.91±0.72, 2.79±0.47, 3.18±0.63, 2.75±0.70, 2.59±0.76, 1.98±0.92, 3.29±0.81, 3.03±2.17
+expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2              2.74±0.95              2.41±0.51, 2.88±0.66, 2.86±0.40, 3.05±0.43, 2.67±0.60, 2.57±0.62, 1.93±0.80, 3.25±0.72, 3.02±2.07
+expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2    2.76±0.96              2.35±0.30, 3.00±0.66, 2.88±0.53, 3.12±0.42, 2.70±0.64, 2.53±0.66, 1.98±0.71, 3.31±0.78, 2.99±2.06
+
 # June 14th, Monday, 2021
 Think the ablation experiments on JHU_MS data.
 1  No gradient channels.
@@ -14,6 +21,12 @@ Run JHU_MS experiments:
 1047  2021-06-14 13:16:08 nohup python3 ./SurfaceSubnet_Train.py  ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2.yaml &
 1048  2021-06-14 13:16:26 nohup python3 ./SurfaceSubnet_Train.py  ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2.yaml &
 1049  2021-06-14 13:16:54 nohup python3 ./SurfaceSubnet_Train.py  ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_GradientInput_Yweight_skm2.yaml &
+
+Test:
+1011  2021-06-15 11:20:31 nohup python3 ./SurfaceSubnet_Test.py ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2.yaml &
+1012  2021-06-15 11:20:49 nohup python3 ./SurfaceSubnet_Test.py ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2.yaml &
+1013  2021-06-15 11:21:07 nohup python3 ./SurfaceSubnet_Test.py ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2.yaml &
+1014  2021-06-15 11:21:20 nohup python3 ./SurfaceSubnet_Test.py ./testConfig_JHU/expJHU_20210614_SurfaceSubnetQ64_100Percent_GradientInput_Yweight_skm2.yaml &
 
 4  BMEA module: --ok; 2 experiments.
 
