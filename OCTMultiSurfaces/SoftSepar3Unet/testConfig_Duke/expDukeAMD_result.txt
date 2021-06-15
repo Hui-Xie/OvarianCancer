@@ -1,3 +1,8 @@
+# June 15th, Tuesday, 2021
+Duke_AMD data Ablation experiments on 100% data:
+Base config: expDuke_20210507A_SurfaceSubnetQ128_iibi007, it use 100 epochs finished training.
+
+
 # Jun 3th, Thursday, 2021:
 For Duke_AMD, Leixin has different processing with Hui.
 1  original paper use Ascan resolution 3.24 um, my experiments also use 3.24 um, Leixin uses 3.23 um.
