@@ -8,6 +8,9 @@ Run Ablation experiments on Duke_AMD data.
   519  nohup python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007.yaml &
   520  nohup python3 ./SurfaceSubnet_Train.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007.yaml &
 
+  40 min/epoch, then 110 epoch need 110*40/(60*24) = 3.05 days. On Saturday(June 19th ) morning, we can check the result.
+
+
 
 
 # Jun 3th, Thursday, 2021:
