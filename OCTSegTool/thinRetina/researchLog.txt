@@ -1,3 +1,25 @@
+# Jun 16th, Wednesday, 2021
+Meeting with Ray.
+1  check the quality of rawGT;
+2  what is your thinking about the prediction:
+   A  which portion in the surface do you care more about?
+   B  what is the manifestation of OCT for glaucoma patients?
+
+Meeting time: 10am -10:40 am June 16th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: Preparation for the thin retina project.
+Minutes:
+1  Glaucoma patients normally have a thin RNFL. But thin RNFL does not mean a glaucoma.
+   Common OCT RNFL thickness near fovea is like a donut shape, while a thin RNFL or a broken donut means some damages on the OCT layers.
+2  VIP = Varlalibity In Perimetry Study.
+3  From Thursday, Hui wil work on the training script for this thin retina 10 patients.
+   Ray can prepare some new independent test cases for verifying the result of our training network.
+4  In this project, we need to consider to output all thickness map for all segmentation layer.
+
+
+
+
+
 # June 12th, Satursday, 2021
 Convert all data into
 1 packed Numpy array in training and validation.
