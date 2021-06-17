@@ -6,6 +6,9 @@ Prepare the training script on thinRetina project:
 4  check the writexml file details.  --done.
 4  consider different config: segHead width: try 32, 64, 96, 128
 
+reinstall pytorch 1.8.1 on June 17th, 2021
+conda install pytorch==1.8.1 torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+
 
 
 
