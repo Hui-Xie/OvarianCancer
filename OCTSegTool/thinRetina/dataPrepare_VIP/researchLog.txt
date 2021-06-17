@@ -1,3 +1,14 @@
+# June 17th, Thursday, 2021
+Prepare the training script on thinRetina project:
+1  config xml file.
+2  training scrirpt.
+3  test script.
+4  consider different config: segHead width.
+
+
+
+
+
 # Jun 16th, Wednesday, 2021
 Meeting with Ray.
 1  check the quality of rawGT;
