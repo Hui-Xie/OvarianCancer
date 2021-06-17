@@ -15,6 +15,7 @@ sys.path.append(".")
 sys.path.append("..")
 sys.path.append("../..")
 sys.path.append("../../..")
+print(f"sys.path = {sys.path}\n")
 
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
