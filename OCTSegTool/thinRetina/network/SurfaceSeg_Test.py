@@ -13,8 +13,8 @@ sys.path.append("../..")
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
-from framework.OCTData.OCTDataSet import  OCTDataSet
-from framework.OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean, batchPrediciton2OCTExplorerXML
+from OCTData.OCTDataSet import  OCTDataSet
+from OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean, batchPrediciton2OCTExplorerXML
 from framework.NetTools import columnHausdorffDist
 
 import time
@@ -156,11 +156,19 @@ def main():
 
 
         if outputXmlSegFiles:
-            batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir,
+            # different applications need modify this.
+            volumeIDs = []
+            volumeBscanStartIndexList = []
+            B = len(testIDs)
+            for i in range(0,B,hps.slicesPerPatient):
+                id = testIDs[i]
+                volumeIDs.append(id[:,id.rfind("_s000")])
+                volumeBscanStartIndexList.append(i)
+
+            batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, hps.xmlOutputDir,
                                            refXMLFile=hps.refXMLFile,
-                                           y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice,
-                                           penetrationChar=hps.penetrationChar, voxelSizeUnit=hps.voxelSizeUnit,
-                                           voxelSizex=hps.voxelSizex, voxelSizey=hps.voxelSizey, voxelSizez=hps.voxelSizez)
+                                           penetrationChar=hps.penetrationChar, penetrationPixels=hps.inputHeight, voxelSizeUnit=hps.voxelSizeUnit,
+                                           voxelSizeX=hps.voxelSizeX, voxelSizeY=hps.voxelSizeY, voxelSizeZ=hps.voxelSizeZ)
 
     testEndTime = time.time()
 

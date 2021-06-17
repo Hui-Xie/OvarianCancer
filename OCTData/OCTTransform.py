@@ -5,7 +5,7 @@ import torch
 import torchvision.transforms as TF
 import sys
 sys.path.append("../..")
-from framework.OCTData.OCTAugmentation import *
+from OCTData.OCTAugmentation import *
 
 class OCTDataTransform(object):
     def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False, flippingProb=0.0):

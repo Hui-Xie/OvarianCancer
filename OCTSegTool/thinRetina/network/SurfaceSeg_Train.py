@@ -19,9 +19,9 @@ sys.path.append("../../")
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
-from framework.OCTData.OCTDataSet import  OCTDataSet
-from framework.OCTData.OCTTransform import OCTDataTransform
-from framework.OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean
+from OCTData.OCTDataSet import  OCTDataSet
+from OCTData.OCTTransform import OCTDataTransform
+from OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean
 from utilities.TensorUtilities import convertTensor2Dict
 
 

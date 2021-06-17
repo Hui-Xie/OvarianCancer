@@ -7,7 +7,7 @@ import torchvision.transforms as TF
 
 import sys
 sys.path.append("../..")
-from framework.OCTData.OCTAugmentation import *
+from OCTData.OCTAugmentation import *
 
 
 class OCTDataSet(data.Dataset):

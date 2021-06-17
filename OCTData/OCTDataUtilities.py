@@ -42,14 +42,15 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
     std, mu = torch.std_mean(absErrorPatient)
     return stdSurface, muSurface, std,mu
 
-def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile, y=496, voxelSizeY=3.87, penetrationChar='y'):
+def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile,
+                             penetrationChar, penetrationPixels,
+                             voxelSizeUnit, voxelSizeX, voxelSizeY, voxelSizeZ):
     curTime = datetime.datetime.now()
     dateStr = f"{curTime.month:02d}/{curTime.day:02d}/{curTime.year}"
     timeStr = f"{curTime.hour:02d}:{curTime.minute:02d}:{curTime.second:02d}"
 
     # some parameters:
     B, S, W = predicition.shape
-    # assert W ==512 and B==31
     assert S == len(surfaceNames)
 
     # make print pretty
@@ -73,16 +74,24 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
 
     xmlTreeRoot.find('scan_characteristics/size/x').text = str(W)
     if penetrationChar=='y':
-        xmlTreeRoot.find('scan_characteristics/size/y').text = str(y)
+        xmlTreeRoot.find('scan_characteristics/size/y').text = str(penetrationPixels)
         xmlTreeRoot.find('scan_characteristics/size/z').text = str(B)
     else:
         xmlTreeRoot.find('scan_characteristics/size/y').text = str(B)
-        xmlTreeRoot.find('scan_characteristics/size/z').text = str(y)
-    xmlTreeRoot.find('scan_characteristics/voxel_size/unit').text = "um"
-    if
+        xmlTreeRoot.find('scan_characteristics/size/z').text = str(penetrationPixels)
+
+    xmlTreeRoot.find('scan_characteristics/voxel_size/unit').text = voxelSizeUnit
+    xmlTreeRoot.find('scan_characteristics/voxel_size/x').text = str(voxelSizeX)
     xmlTreeRoot.find('scan_characteristics/voxel_size/y').text = str(voxelSizeY)
+    xmlTreeRoot.find('scan_characteristics/voxel_size/z').text = str(voxelSizeZ)
+
     xmlTreeRoot.find('surface_size/x').text = str(W)
-    xmlTreeRoot.find('surface_size/z').text = str(B)
+    if penetrationChar == 'y':
+        xmlTreeRoot.find('surface_size/z').text = str(B)
+    else:
+        xmlTreeRoot.find('surface_size/y').text = str(B)
+
+
     xmlTreeRoot.find('surface_num').text = str(S)
 
     for surface in xmlTreeRoot.findall('surface'):
@@ -134,44 +143,24 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
             bscanElemeent = ET.SubElement(surfaceElement, 'bscan', {})
             surface = predicition[b,s,:]
             for i in range(W):
-                ET.SubElement(bscanElemeent, 'y', {}).text = str(surface[i])
+                ET.SubElement(bscanElemeent, penetrationChar, {}).text = str(surface[i])
 
     outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
-def batchPrediciton2OCTExplorerXML(testOutputs, testIDs, numBscan, surfaceNames, outputDir,
+def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, outputDir,
                                    refXMLFile="/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml",
-                                    y=496, voxelSizeY=3.87, dataInSlice=False, penetrationChar='y', voxelSizeUnit='um', voxelSizex=0, voxelSizey=0, voxelSizez=0):
-    B,S,W = testOutputs.shape
-    assert B == len(testIDs)
-    assert 0 == B%numBscan
+                                   penetrationChar='y', penetrationPixels=496, voxelSizeUnit='um', voxelSizeX=13.708, voxelSizeY=3.870, voxelSizeZ=292.068):
     if not os.path.isdir(outputDir):
         os.makedirs(outputDir)
-    i=0
-    while i<B:
-        predicition = testOutputs[i:i+numBscan,:,:]  # prediction volume
-        dirPath, fileName = os.path.split(testIDs[i])
-        for j in range(i+1,i+numBscan):
-            dirPath1, fileName1 = os.path.split(testIDs[j])
-            if dirPath !=  dirPath1:
-                print(f"Error: testID is not continous in {testIDs[j]} against {dirPath}")
-                assert False
-                return
-        if dataInSlice or dirPath=="":
-            if numBscan<100:
-                patientID = fileName[0:fileName.find("_s00.npy")]
-            else:
-                patientID = fileName[0:fileName.find("_s000")]
-        else: # data in volume
-            if "/OCT_Tongren/" in dirPath:
-                patientID = os.path.basename(dirPath)
-            elif "/OCT_JHU/" in dirPath:
-                patientID = fileName[0:fileName.rfind("_")]
-            else:
-                print(f"dirPath: {dirPath}")
-                print(f"fileName: {fileName}")
-                print(f"Program can not extract volume name correttly")
-                assert False
+    N = len(volumeIDs)
+    assert N == len(volumeBscanStartIndexList)
+    for i in range(N):
+        if i != N-1:
+            predicition = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i+1], :, :]  # prediction volume
+        else:
+            predicition = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
+        saveNumpy2OCTExplorerXML(volumeIDs[i], predicition, surfaceNames, outputDir, refXMLFile,
+                                 penetrationChar=penetrationChar, penetrationPixels=penetrationPixels,
+                                 voxelSizeUnit=voxelSizeUnit, voxelSizeX=voxelSizeX, voxelSizeY=voxelSizeY, voxelSizeZ=voxelSizeZ)
 
-        saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile, y=y, voxelSizeY=voxelSizeY, penetrationChar=penetrationChar)
-        i += numBscan
