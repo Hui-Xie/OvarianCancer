@@ -1,9 +1,10 @@
 # June 17th, Thursday, 2021
 Prepare the training script on thinRetina project:
-1  config xml file.
+1  config xml file.   --done.
 2  training scrirpt.
 3  test script.
-4  consider different config: segHead width.
+4  check the writexml file details.
+4  consider different config: segHead width: try 32, 64, 96, 128
 
 
 
@@ -22,7 +23,9 @@ Topic: Preparation for the thin retina project.
 Minutes:
 1  Glaucoma patients normally have a thin RNFL. But thin RNFL does not mean a glaucoma.
    Common OCT RNFL thickness near fovea is like a donut shape, while a thin RNFL or a broken donut means some damages on the OCT layers.
-2  VIP = Varlalibity In Perimetry Study.
+2  VIP = Variability In Perimetry Study.
+   In the Iowa Variability in Perimetry (VIP) Study, 120 glaucoma subjects and 60 normals were tested every six months for 4 years.
+
 3  From Thursday, Hui wil work on the training script for this thin retina 10 patients.
    Ray can prepare some new independent test cases for verifying the result of our training network.
 4  In this project, we need to consider to output all thickness map for all segmentation layer.
