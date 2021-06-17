@@ -140,7 +140,7 @@ def main():
             if hps.optim == "SGDOneCycle":
                 lrScheduler.step()  # for OneCycleLR
 
-            break
+            # break
 
         trLoss = trLoss / trBatch
         #lrScheduler.step(trLoss)
@@ -160,7 +160,7 @@ def main():
                 validOutputs = torch.cat((validOutputs, S)) if validBatch != 1 else S
                 validGts = torch.cat((validGts, batchData['GTs'])) if validBatch != 1 else batchData['GTs'] # Not Gaussian GTs
                 validIDs = validIDs + batchData['IDs'] if validBatch != 1 else batchData['IDs']  # for future output predict images
-                break
+                # break
 
             validLoss = validLoss / validBatch
             if hps.groundTruthInteger:
@@ -189,7 +189,7 @@ def main():
         if hps.optim == "AdamPlateau":
             lrScheduler.step(validLoss)
         # debug
-        print(f"epoch {epoch} ends...")  # for smoke debug
+        # print(f"epoch {epoch} ends...")  # for smoke debug
 
         writer.add_scalars('Loss', {"train":trLoss, "validation": validLoss}, epoch)
         writer.add_scalar('ValidationError/mean', muError, epoch)
@@ -207,7 +207,7 @@ def main():
             preErrorMean = muError
             netMgr.saveNet(hps.netPath)
 
-        break
+        #break
 
 
     print("============ End of Cross valiation training for OCT Multisurface Network ===========")

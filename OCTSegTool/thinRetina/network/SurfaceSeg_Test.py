@@ -9,7 +9,7 @@ import torch.nn as nn
 from torch.utils import data
 
 
-sys.path.append("../..")
+sys.path.append("../../..")
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
