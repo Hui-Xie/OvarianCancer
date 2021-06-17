@@ -14,7 +14,6 @@ from torch.utils.tensorboard import SummaryWriter
 sys.path.append("..")
 sys.path.append(".")
 sys.path.append("../../..")
-#from utilities.FilesUtilities import *
 
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader

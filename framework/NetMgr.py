@@ -4,7 +4,6 @@ import numpy as np
 
 import sys
 sys.path.append("..")
-from utilities.FilesUtilities import getFilesList
 
 
 class NetMgr:
