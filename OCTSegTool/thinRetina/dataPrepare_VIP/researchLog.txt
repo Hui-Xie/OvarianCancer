@@ -1,8 +1,8 @@
 # June 17th, Thursday, 2021
 Prepare the training script on thinRetina project:
 1  config xml file.   --done.
-2  training scrirpt.
-3  test script.
+2  training scrirpt.  --done
+3  test script.       --done
 4  check the writexml file details.
 4  consider different config: segHead width: try 32, 64, 96, 128
 

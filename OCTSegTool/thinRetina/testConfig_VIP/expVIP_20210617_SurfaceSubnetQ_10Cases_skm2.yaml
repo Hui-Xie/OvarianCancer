@@ -86,6 +86,12 @@ loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
 logDir: "/raid001/users/hxie1/data/thinRetina/numpy_10cases/log"
 refXMLFile: "/raid001/users/hxie1/data/thinRetina/numpy_10cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
+penetrationChar: 'z'  # use z or y to represent penetration direction.
+voxelSizeUnit: "um"
+voxelSizex: 30.150749
+voxelSizey: 30.150749
+voxelSizez: 1.955034
+
 
 useDynamicProgramming: False
 usePrimalDualIPM: False
