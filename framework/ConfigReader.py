@@ -1,14 +1,12 @@
 
-import torch
 import yaml
-import sys
-sys.path.append("../../..")
-from utilities.FilesUtilities import getStemName
 import os
 
 class ConfigReader(object):
     def __init__(self, yamlFilePath):
-        self.experimentName = getStemName(yamlFilePath, removedSuffix=".yaml")
+        baseName = os.path.basename(yamlFilePath)
+        baseName = baseName[0: baseName.find(".yaml")]
+        self.experimentName = baseName
         self.yamlFilePath = yamlFilePath
         self.read()
 
