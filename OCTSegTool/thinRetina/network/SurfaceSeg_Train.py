@@ -31,6 +31,7 @@ def printUsage(argv):
     print(argv[0], " yaml_Config_file_path")
 
 def main():
+    print(f"sys.path = {sys.path}\n")
 
     if len(sys.argv) != 2:
         print("Error: input parameters error.")
