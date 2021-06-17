@@ -44,8 +44,10 @@ device: torch.device('cuda:1')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8 # total 1312 training B-scans 1312 = 4*(200+128)
 learningRate: 0.1
+epochs: 800
 
-network: "SurfaceSubnet_Q"
+optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+network: "SurfaceSegNet_Q"
 inputHeight: 1024   # original height
 inputWidth: 200   # rawImageWidth
 scaleNumerator: 1
