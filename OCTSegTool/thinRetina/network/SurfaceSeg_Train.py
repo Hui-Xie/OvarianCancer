@@ -11,8 +11,9 @@ import torch.optim as optim
 from torch.utils import data
 from torch.utils.tensorboard import SummaryWriter
 
-sys.path.append("..")
 sys.path.append(".")
+sys.path.append("..")
+sys.path.append("../..")
 sys.path.append("../../..")
 
 from framework.NetMgr import NetMgr

@@ -2,7 +2,7 @@
 import torch
 import yaml
 import sys
-sys.path.append("..")
+sys.path.append("../../..")
 from utilities.FilesUtilities import getStemName
 import os
 
