@@ -137,7 +137,7 @@ def main():
                 volumeBscanStartIndexList.append(i)
 
         if hps.existGTLabel: # Error Std and mean
-            stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.slicesPerPatient)
+            stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.hPixelSize)
             testGts = testGts.cpu().numpy()
 
         images = images.cpu().numpy().squeeze()
@@ -185,7 +185,7 @@ def main():
             file.write(f"muSurfaceError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
-            file.write(f"hausdorff Distance = {hausdorffD}\n")
+            file.write(f"hausdorff Distance in pixels = {hausdorffD}\n")
 
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
