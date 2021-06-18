@@ -44,6 +44,7 @@ device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8 # total 1312 training B-scans 1312 = 4*(200+128)
 learningRate: 0.1
+lrPatience: 20
 epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"

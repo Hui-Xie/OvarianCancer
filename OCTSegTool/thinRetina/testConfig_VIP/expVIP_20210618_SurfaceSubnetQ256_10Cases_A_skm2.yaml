@@ -40,11 +40,11 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:7')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8 # total 1312 training B-scans 1312 = 4*(200+128)
 learningRate: 0.1
-lrPatience: 20
+lrPatience: 40
 epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
@@ -61,7 +61,7 @@ gradChannels: 7   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False
-segChannels: 64  # number of channel in the segmentation part.
+segChannels: 256  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 200  # for in the validation and test
