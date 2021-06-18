@@ -15,7 +15,6 @@ sys.path.append(".")
 sys.path.append("..")
 sys.path.append("../..")
 sys.path.append("../../..")
-print(f"sys.path = {sys.path}\n")
 
 from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
@@ -23,13 +22,18 @@ from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTTransform import OCTDataTransform
 from OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean
-from utilities.TensorUtilities import convertTensor2Dict
-
 
 def printUsage(argv):
     print("============ Cross Validation Train OCT MultiSurface Network =============")
     print("Usage:")
     print(argv[0], " yaml_Config_file_path")
+
+def convertTensor2Dict(aTensor):
+    result ={}
+    N = aTensor.numel()
+    for i in range(N):
+        result[str(i)] = aTensor[i]
+    return result
 
 def main():
     print(f"sys.path = {sys.path}\n")
