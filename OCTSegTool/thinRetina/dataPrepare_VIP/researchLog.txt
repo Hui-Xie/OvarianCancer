@@ -1,4 +1,14 @@
 #June 18th, Friday, 2021
+Run  MedianFilterSmoothing versions:
+  266  2021-06-18 18:34:19 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ64_10Cases_A_skm2.yaml &  16G
+  268  2021-06-18 18:36:35 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ96_10Cases_A_skm2.yaml &  17G
+  269  2021-06-18 18:36:41 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_A_skm2.yaml & 18G
+  270  2021-06-18 18:36:47 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_B_skm2.yaml &
+  271  2021-06-18 18:36:55 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ96_10Cases_B_skm2.yaml &
+  272  2021-06-18 18:37:03 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ64_10Cases_B_skm2.yaml &
+
+
+==============================
 About the thickness heatmap output
 
 Current we have 6 segmented surfaces (0, 1, 3, 5, 6, 10) with surface names ["ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE"].
