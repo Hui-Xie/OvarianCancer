@@ -36,8 +36,6 @@ def convertTensor2Dict(aTensor):
     return result
 
 def main():
-    print(f"sys.path = {sys.path}\n")
-
     if len(sys.argv) != 2:
         print("Error: input parameters error.")
         printUsage(sys.argv)
