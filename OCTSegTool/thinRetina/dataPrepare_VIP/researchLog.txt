@@ -4,16 +4,24 @@ Prepare the training script on thinRetina project:
 2  training scrirpt.  --done
 3  test script.       --done
 4  check the writexml file details.  --done.
-4  consider different config: segHead width: try 32, 64, 96, 128
+4  consider different config: segHead width: try 32, 64, 96, 128   --done.
 
 reinstall pytorch 1.8.1 on June 17th, 2021
 conda install pytorch==1.8.1 torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
 
+programs are training:
+ 71786 pts/0    Rl    19:18 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ32_10Cases_A_skm2.yaml     15GB
+ 130004 pts/0    Sl     1:48 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ32_10Cases_B_skm2.yaml
+ 72367 pts/0    Rl    10:34 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ64_10Cases_A_skm2.yaml     16GB
+  73093 pts/0    Rl     9:29 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ64_10Cases_B_skm2.yaml
+ 72505 pts/0    Rl    13:34 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ96_10Cases_A_skm2.yaml      17GB
+ 129806 pts/0    Rl     2:34 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ96_10Cases_B_skm2.yaml
+ 72671 pts/0    Rl    12:44 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ128_10Cases_A_skm2.yaml     18GB
+129696 pts/0    Sl     2:40 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ128_10Cases_B_skm2.yaml
 
-sys.path = ['/raid001/users/hxie1/projects/DeepLearningSeg/OCTSegTool/thinRetina/network',
-'/raid001/users/hxie1/anaconda3/lib/python38.zip', '/raid001/users/hxie1/anaconda3/lib/python3.8',
- '/raid001/users/hxie1/anaconda3/lib/python3.8/lib-dynload', '/raid001/users/hxie1/anaconda3/lib/python3.8/site-packages',
- '/raid001/users/hxie1/anaconda3/lib/python3.8/site-packages/locket-0.2.1-py3.8.egg', '.', '..', '../..', '../../..']
+
+
+
 
 
 
