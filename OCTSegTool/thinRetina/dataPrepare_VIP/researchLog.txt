@@ -9,6 +9,10 @@ C Anything else?
 
 Would you please give me your thickness heatmap example in pdf for me to reference for further output?
 
+# initial predicited result
+PVIP2_4083_S013_Raw_GT_Prediction: It looks the prediction is better than ground truth at right upper corner of 2 surface.
+
+
 
 # June 17th, Thursday, 2021
 Prepare the training script on thinRetina project:

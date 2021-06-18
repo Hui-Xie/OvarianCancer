@@ -21,7 +21,7 @@ from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTTransform import OCTDataTransform
-from OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean
+from OCTData.OCTDataUtilities import computeMASDError
 
 def printUsage(argv):
     print("============ Cross Validation Train OCT MultiSurface Network =============")
@@ -171,24 +171,19 @@ def main():
                 validOutputs = (validOutputs+0.5).int() # as ground truth are integer, make the output also integers.
             # print(f"epoch:{epoch}; validLoss ={validLoss}\n")
 
-            goodBScansInGtOrder =None
-            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
-                # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-                goodBScansInGtOrder = []
-                b = 0
-                while b < len(validIDs):
-                    patientPath, filename = os.path.split(validIDs[b])
-                    patientIDVolumeName = os.path.basename(patientPath)
-                    patientID = int(patientIDVolumeName[0:patientIDVolumeName.find("_OD_")])
-                    lowB = hps.goodBscans[patientID][0]-1
-                    highB = hps.goodBscans[patientID][1]
-                    goodBScansInGtOrder.append([lowB,highB])
-                    b += hps.slicesPerPatient #validation data and test data both have 31 Bscans per patient
+            volumeIDs = []
+            volumeBscanStartIndexList = []
+            B = len(validIDs)
+            for i in range(0, B):  # we need consider the different Bscan numbers for different volumes.
+                id = validIDs[i]
+                if '_s000' == id[-5:]:
+                    volumeIDs.append(id[: id.rfind("_s000")])
+                    volumeBscanStartIndexList.append(i)
 
-            stdSurfaceError, muSurfaceError, stdError, muError = computeErrorStdMuOverPatientDimMean(validOutputs, validGts,
-                                                                                                 slicesPerPatient=hps.slicesPerPatient,
-                                                                                                 hPixelSize=hps.hPixelSize,
-                                                                                                 goodBScansInGtOrder=goodBScansInGtOrder)
+            stdSurfaceError, muSurfaceError, stdError, muError = computeMASDError(validOutputs, validGts,
+                                                                                      volumeBscanStartIndexList,
+                                                                                      hPixelSize=hps.hPixelSize)
+
 
         if hps.optim == "AdamPlateau":
             lrScheduler.step(validLoss)
