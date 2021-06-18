@@ -156,7 +156,7 @@ def main():
     #generate predicted images
     B,H,W = images.shape
     B, S, W = testOutputs.shape
-    patientIDList = testIDs
+    patientIDList = volumeIDs
 
     if hps.existGTLabel:  # compute hausdorff distance
         hausdorffD = columnHausdorffDist(testOutputs, testGts).reshape(1, S)

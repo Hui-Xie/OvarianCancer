@@ -12,7 +12,85 @@ Would you please give me your thickness heatmap example in pdf for me to referen
 # initial predicited result
 PVIP2_4083_S013_Raw_GT_Prediction: It looks the prediction is better than ground truth at right upper corner of 2 surface.
 
+====Initial Test result================================
+expVIP_20210617_SurfaceSubnetQ32_10Cases_A_skm2:
+stdSurfaceError = tensor([0.4200, 1.3549, 1.1116, 0.2938, 0.2124, 0.0159], device='cuda:0')
+muSurfaceError = tensor([1.8166, 6.0350, 5.6631, 6.1231, 1.4365, 2.0916], device='cuda:0')
+stdError = 2.2550723552703857
+muError = 3.86098575592041
+hausdorff Distance in pixels = [[41.446075 59.708252 32.708252 45.46498  70.798325 24.3555  ]]
 
+=======================================================
+expVIP_20210617_SurfaceSubnetQ64_10Cases_A_skm2:
+stdSurfaceError = tensor([0.3303, 1.0405, 0.5636, 0.8235, 0.2273, 0.3663], device='cuda:1')
+muSurfaceError = tensor([1.8474, 5.5262, 5.0734, 4.9559, 1.6518, 3.0219], device='cuda:1')
+stdError = 1.7093156576156616
+muError = 3.6794302463531494
+hausdorff Distance in pixels = [[85.55847  78.22513  59.891815 61.44333  61.172333 54.518982]]
+pixel number of violating surface-separation constraints: 0
+
+========================================================
+expVIP_20210617_SurfaceSubnetQ96_10Cases_A_skm2:
+stdSurfaceError = tensor([0.3413, 0.5978, 0.3301, 0.3366, 0.2356, 0.1818], device='cuda:2')
+muSurfaceError = tensor([1.7604, 5.7159, 5.1152, 5.0721, 1.5017, 2.5713], device='cuda:2')
+stdError = 1.8178144693374634
+muError = 3.6227853298187256
+hausdorff Distance in pixels = [[70.60849  57.97238  40.63614  29.852936 17.944092 47.01535 ]]
+pixel number of violating surface-separation constraints: 0
+
+=======================================================
+expVIP_20210617_SurfaceSubnetQ128_10Cases_A_skm2:
+stdSurfaceError = tensor([0.2571, 0.6296, 0.7542, 0.9361, 0.1512, 0.1145], device='cuda:3')
+muSurfaceError = tensor([1.8171, 5.8194, 5.3940, 5.1244, 1.6977, 2.8741], device='cuda:3')
+stdError = 1.8366254568099976
+muError = 3.787794589996338
+hausdorff Distance in pixels = [[11.2256775 33.97307   32.227722  35.49765   21.374695  62.377167 ]]
+pixel number of violating surface-separation constraints: 0
+
+========================================================
+expVIP_20210617_SurfaceSubnetQ32_10Cases_B_skm2:
+stdSurfaceError = tensor([0.3440, 1.1740, 0.8124, 0.3985, 0.1454, 0.2812], device='cuda:0')
+muSurfaceError = tensor([2.1274, 6.3112, 5.1875, 4.9228, 1.8084, 2.9954], device='cuda:0')
+stdError = 1.8120994567871094
+muError = 3.892133951187134
+hausdorff Distance in pixels = [[95.019745 80.35309  56.68643  35.35309  42.99109  62.04956 ]]
+pixel number of violating surface-separation constraints: 0
+
+=======================================================
+expVIP_20210617_SurfaceSubnetQ64_10Cases_B_skm2: (second best)
+stdSurfaceError = tensor([0.3086, 0.3070, 1.0111, 0.4816, 0.3008, 0.2844], device='cuda:1')
+muSurfaceError = tensor([1.8607, 5.8555, 5.2226, 4.9455, 1.5389, 2.3094], device='cuda:1')
+stdError = 1.871992826461792
+muError = 3.622117757797241
+hausdorff Distance in pixels = [[76.24527  59.911957 42.24527  24.97818  32.24463  42.613953]]
+pixel number of violating surface-separation constraints: 0
+
+========================================================
+expVIP_20210617_SurfaceSubnetQ96_10Cases_B_skm2:
+stdSurfaceError = tensor([0.3795, 0.8918, 0.3502, 1.1913, 0.1290, 0.0049], device='cuda:4')
+muSurfaceError = tensor([1.9020, 5.6497, 5.3540, 5.2461, 1.5536, 2.7111], device='cuda:4')
+stdError = 1.8579832315444946
+muError = 3.7360854148864746
+hausdorff Distance in pixels = [[145.68288   55.66217   39.66217   33.73552   34.473175  59.21814 ]]
+pixel number of violating surface-separation constraints: 0
+
+=======================================================
+expVIP_20210617_SurfaceSubnetQ128_10Cases_B_skm2: (best)
+stdSurfaceError = tensor([0.3970, 0.0290, 1.1339, 0.5597, 0.2954, 0.0079], device='cuda:5')
+muSurfaceError = tensor([1.7762, 5.9154, 4.9997, 4.9378, 1.4898, 2.5318], device='cuda:5')
+stdError = 1.8563084602355957
+muError = 3.608466386795044
+hausdorff Distance in pixels = [[589.6748  576.6748  562.34155 536.6748  511.67484 487.34152]]
+pixel number of violating surface-separation constraints: 0
+========================================================
+
+
+========================================================
+
+=======================================================
+
+
+========================================================
 
 # June 17th, Thursday, 2021
 Prepare the training script on thinRetina project:
@@ -42,12 +120,7 @@ June 18th, 10:20 launch training:
 132445 pts/0    Sl     1:02 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ192_10Cases_A_skm2.yaml    20G
 132720 pts/0    Sl     0:39 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ256_10Cases_A_skm2.yaml    23G
 
-
-
-
-
-
-
+Test need only 6GB GPU memory.
 
 # Jun 16th, Wednesday, 2021
 Meeting with Ray.
