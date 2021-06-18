@@ -133,7 +133,7 @@ def main():
         for i in range(0, B):  # we need consider the different Bscan numbers for different volumes.
             id = testIDs[i]
             if '_s000' == id[-5:]:
-                volumeIDs.append(id[:, id.rfind("_s000")])
+                volumeIDs.append(id[: id.rfind("_s000")])
                 volumeBscanStartIndexList.append(i)
 
         if hps.existGTLabel: # Error Std and mean
