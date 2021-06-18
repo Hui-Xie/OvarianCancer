@@ -22,6 +22,7 @@ reinstall pytorch 1.8.1 on June 17th, 2021
 conda install pytorch==1.8.1 torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
 
 programs are training:
+June 17th, 19:20 launch training:
  71786 pts/0    Rl    19:18 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ32_10Cases_A_skm2.yaml     15GB
  130004 pts/0    Sl     1:48 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ32_10Cases_B_skm2.yaml
  72367 pts/0    Rl    10:34 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ64_10Cases_A_skm2.yaml     16GB
@@ -32,6 +33,11 @@ programs are training:
 129696 pts/0    Sl     2:40 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210617_SurfaceSubnetQ128_10Cases_B_skm2.yaml
 
 training speed at 2.5min/epoch.
+
+June 18th, 10:20 launch training:
+132445 pts/0    Sl     1:02 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ192_10Cases_A_skm2.yaml    20G
+132720 pts/0    Sl     0:39 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ256_10Cases_A_skm2.yaml    23G
+
 
 
 

@@ -6,10 +6,12 @@ from lxml import etree as ET
 
 def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870, goodBScansInGtOrder=None):
     '''
+
+    MASD(mean absolute surface distance error, $\mu m$)
+
     Compute error standard deviation and mean along different dimension.
 
     First convert absError on patient dimension
-
 
     :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
     :param gts: in (BatchSize, NumSurface, W) dimension
@@ -17,8 +19,6 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
     :param goodBScansInGtOrder:
     :return: muSurface: (NumSurface) dimension, mean for each surface
              stdSurface: (NumSurface) dimension
-             muPatient: (NumPatient) dimension, mean for each patient
-             stdPatient: (NumPatient) dimension
              mu: a scalar, mean over all surfaces and all batchSize
              std: a scalar
     '''
@@ -36,6 +36,42 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
         absErrorPatient = torch.zeros((P, N), device=device)
         for p in range(P):
             absErrorPatient[p,:] = torch.mean(absError[p * slicesPerPatient+goodBScansInGtOrder[p][0]:p * slicesPerPatient+goodBScansInGtOrder[p][1], ], dim=(0,2))*hPixelSize
+
+    stdSurface, muSurface = torch.std_mean(absErrorPatient, dim=0)
+    # size of stdSurface, muSurface: [N]
+    std, mu = torch.std_mean(absErrorPatient)
+    return stdSurface, muSurface, std,mu
+
+def computeMASDError(predicitons, gts, volumeBscanStartIndexList, hPixelSize=3.870):
+    '''
+
+    MASD(mean absolute surface distance error, $\mu m$),
+    support different Bscan numbers for different volumes.
+
+    Compute error standard deviation and mean along different dimension.
+
+    First convert absError on patient dimension
+
+    :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
+    :param gts: in (BatchSize, NumSurface, W) dimension
+    :param hPixelSize: in micrometer
+    :param goodBScansInGtOrder:
+    :return: muSurface: (NumSurface) dimension, mean for each surface
+             stdSurface: (NumSurface) dimension
+             mu: a scalar, mean over all surfaces and all batchSize
+             std: a scalar
+    '''
+    device = predicitons.device
+    B,N, W = predicitons.shape # where N is numSurface
+    absError = torch.abs(predicitons-gts)  # size: B,N,W
+
+    P = len(volumeBscanStartIndexList)
+    absErrorPatient = torch.zeros((P, N), device=device)
+    for p in range(P):
+        if p != P-1:
+            absErrorPatient[p,:] = torch.mean(absError[volumeBscanStartIndexList[p]:volumeBscanStartIndexList[p+1], ], dim=(0,2))*hPixelSize
+        else:
+            absErrorPatient[p, :] = torch.mean(absError[volumeBscanStartIndexList[p]:, ], dim=(0, 2)) * hPixelSize
 
     stdSurface, muSurface = torch.std_mean(absErrorPatient, dim=0)
     # size of stdSurface, muSurface: [N]

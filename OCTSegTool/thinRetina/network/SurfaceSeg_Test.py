@@ -19,7 +19,7 @@ from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
-from OCTData.OCTDataUtilities import computeErrorStdMuOverPatientDimMean, batchPrediciton2OCTExplorerXML
+from OCTData.OCTDataUtilities import computeMASDError, batchPrediciton2OCTExplorerXML
 from framework.NetTools import columnHausdorffDist
 
 import time
@@ -136,40 +136,25 @@ def main():
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
 
-        if hps.existGTLabel:
-            goodBScansInGtOrder = None
-            if "OCT_Tongren" in hps.dataDir and 0 != len(hps.goodBscans):
-                # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-                goodBScansInGtOrder = []
-                b = 0
-                while b < len(testIDs):
-                    patientPath, filename = os.path.split(testIDs[b])
-                    patientIDVolumeName = os.path.basename(patientPath)
-                    patientID = int(patientIDVolumeName[0:patientIDVolumeName.find("_OD_")])
-                    lowB = hps.goodBscans[patientID][0] - 1
-                    highB = hps.goodBscans[patientID][1]
-                    goodBScansInGtOrder.append([lowB, highB])
-                    b += hps.slicesPerPatient  # validation data and test data both have 31 Bscans per patient
+        # different applications need modify this.
+        # get volumeIDs and volumeBscanStartIndexList
+        volumeIDs = []
+        volumeBscanStartIndexList = []
+        B = len(testIDs)
+        for i in range(0, B):  # we need consider the different Bscan numbers for different volumes.
+            id = testIDs[i]
+            if '_s000' == id[-5:]:
+                volumeIDs.append(id[:, id.rfind("_s000")])
+                volumeBscanStartIndexList.append(i)
 
-            stdSurfaceError, muSurfaceError, stdError, muError  = computeErrorStdMuOverPatientDimMean(testOutputs, testGts,
-                                                                                  slicesPerPatient=hps.slicesPerPatient,
-                                                                                  hPixelSize=hps.hPixelSize, goodBScansInGtOrder=goodBScansInGtOrder)
+        if hps.existGTLabel:
+            stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.slicesPerPatient)
             testGts = testGts.cpu().numpy()
 
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
 
-
         if outputXmlSegFiles:
-            # different applications need modify this.
-            volumeIDs = []
-            volumeBscanStartIndexList = []
-            B = len(testIDs)
-            for i in range(0,B,hps.slicesPerPatient):
-                id = testIDs[i]
-                volumeIDs.append(id[:,id.rfind("_s000")])
-                volumeBscanStartIndexList.append(i)
-
             batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, hps.xmlOutputDir,
                                            refXMLFile=hps.refXMLFile,
                                            penetrationChar=hps.penetrationChar, penetrationPixels=hps.inputHeight, voxelSizeUnit=hps.voxelSizeUnit,
