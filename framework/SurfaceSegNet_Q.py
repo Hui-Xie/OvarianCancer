@@ -9,6 +9,7 @@ from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import logits2Prob, MultiSurfaceCrossEntropyLoss
 from framework.ConfigReader import ConfigReader
+from OCTData.OCTDataUtilities import medianFilterSmoothing
 
 class SurfaceSegNet_Q(BasicModel):
     def __init__(self, hps=None):
@@ -68,6 +69,9 @@ class SurfaceSegNet_Q(BasicModel):
 
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
+
+        if self.hps.useMedianFilterSmoothing:
+            mu = medianFilterSmoothing(mu, winSize=self.hps.medianFilterWinSize)
 
         S = mu.clone()
         loss = 0.0

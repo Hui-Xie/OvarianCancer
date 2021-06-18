@@ -228,5 +228,51 @@ def outputNumpyImagesSegs(images, segs, volumeIDs, volumeBscanStartIndexList, ou
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_volume.npy"), image)
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_segmentation.npy"), seg)
 
+def medianFilterSmoothing(input, winSize=7):
+    '''
+    apply 1D median filter along W direction at the outlier points  only.
+    :param input: in size of BxSxW
+    :param winSize: a int scalar, a odd number
+    :return:
+    '''
+    B,S,W = input.shape
+    ndim = input.ndim
+    mInput = torch.median(input, dim=-1, keepdim=True) # size: BxSx1
+    mInput = mInput.expand_as(input) # size: BxSxW
+
+    h = winSize//2 # half winSize
+    output = input.clone()
+
+    #scaled median absolute deviation (MAD)
+    # ref: https://www.mathworks.com/help/matlab/ref/isoutlier.html#bvolfgk
+    c = 1.4826
+    MAD = c*torch.median((input-mInput).abs(), dim=-1,keepdim=True) # size: BxSx1
+    MAD = MAD.expand_as(input) # size: BxSxW
+
+    # an outlier is a value that is more than three scaled median absolute deviations (MAD) away from the median.
+    outlierIndexes = torch.nonzero((input-mInput).abs() >= 3*MAD, as_tuple=False)
+    N,dims = outlierIndexes.shape
+    assert dims ==ndim
+    for i in range(N):
+        b = int(outlierIndexes[i,0])
+        s = int(outlierIndexes[i,1])
+        w = int(outlierIndexes[i,2])
+        low = w-h
+        high = w+h+1 # outside high boundary with 1
+        if low<0:
+            offset = -low
+            low +=offset
+            high +=offset
+        if high>W:
+            offset = high-W
+            high -= offset
+            low  -= offset
+        output[b,s,w] = torch.median(input[b,s,low:high],dim=-1,keepdim=False)
+
+    return output
+
+
+
+
 
 

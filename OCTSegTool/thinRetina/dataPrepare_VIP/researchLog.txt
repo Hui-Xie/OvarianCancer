@@ -10,7 +10,10 @@ C Anything else?
 Would you please give me your thickness heatmap example in pdf for me to reference for further output?
 
 # initial predicited result
-PVIP2_4083_S013_Raw_GT_Prediction: It looks the prediction is better than ground truth at right upper corner of 2 surface.
+1  good. PVIP2_4083_S013_Raw_GT_Prediction: It looks the prediction is better than ground truth at right upper corner of 2 surface.
+2  In expVIP_20210617_SurfaceSubnetQ128_10Cases_B_skm2 result.
+   It has spike in some slice, the spike of surface i will lead the spike of surface i+1.
+   c=-1/(sqrt(2)*erfcinv(3/2))= 1.4826
 
 ====Initial Test result================================
 expVIP_20210617_SurfaceSubnetQ32_10Cases_A_skm2:
