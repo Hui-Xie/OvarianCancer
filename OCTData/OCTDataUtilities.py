@@ -237,7 +237,7 @@ def medianFilterSmoothing(input, winSize=7):
     '''
     B,S,W = input.shape
     ndim = input.ndim
-    mInput = torch.median(input, dim=-1, keepdim=True) # size: BxSx1
+    mInput, _ = torch.median(input, dim=-1, keepdim=True) # size: BxSx1
     mInput = mInput.expand_as(input) # size: BxSxW
 
     h = winSize//2 # half winSize
@@ -246,8 +246,8 @@ def medianFilterSmoothing(input, winSize=7):
     #scaled median absolute deviation (MAD)
     # ref: https://www.mathworks.com/help/matlab/ref/isoutlier.html#bvolfgk
     c = 1.4826
-    MAD = c*torch.median((input-mInput).abs(), dim=-1,keepdim=True) # size: BxSx1
-    MAD = MAD.expand_as(input) # size: BxSxW
+    MAD, _ = torch.median((input-mInput).abs(), dim=-1,keepdim=True) # size: BxSx1
+    MAD = (c*MAD).expand_as(input) # size: BxSxW
 
     # an outlier is a value that is more than three scaled median absolute deviations (MAD) away from the median.
     outlierIndexes = torch.nonzero((input-mInput).abs() >= 3*MAD, as_tuple=False)
@@ -267,7 +267,7 @@ def medianFilterSmoothing(input, winSize=7):
             offset = high-W
             high -= offset
             low  -= offset
-        output[b,s,w] = torch.median(input[b,s,low:high],dim=-1,keepdim=False)
+        output[b,s,w] = torch.median(input[b,s,low:high])
 
     return output
 
