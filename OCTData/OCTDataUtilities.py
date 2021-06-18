@@ -2,12 +2,14 @@ import torch
 import datetime
 import os
 from lxml import etree as ET
+import numpy as np
 
 
 def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, hPixelSize=3.870, goodBScansInGtOrder=None):
     '''
 
-    MASD(mean absolute surface distance error, $\mu m$)
+    MASD(mean absolute surface distance error, $\mu m$),
+    this is for uniform Bscan number for all volumes.
 
     Compute error standard deviation and mean along different dimension.
 
@@ -199,4 +201,32 @@ def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndex
         saveNumpy2OCTExplorerXML(volumeIDs[i], predicition, surfaceNames, outputDir, refXMLFile,
                                  penetrationChar=penetrationChar, penetrationPixels=penetrationPixels,
                                  voxelSizeUnit=voxelSizeUnit, voxelSizeX=voxelSizeX, voxelSizeY=voxelSizeY, voxelSizeZ=voxelSizeZ)
+
+def outputNumpyImagesSegs(images, segs, volumeIDs, volumeBscanStartIndexList, outputDir):
+    '''
+
+    :param images:  in numpy format
+    :param segs: in numpy format.
+    :param volumeIDs:  a list
+    :param volumeBscanStartIndexList:
+    :param outputDir:
+    :return:
+    '''
+    B,H,W = images.shape
+    B1,N,W1 = segs.shape
+    assert B==B1 and W ==W1
+    numVolumes = len(volumeIDs)
+    assert numVolumes == len(volumeBscanStartIndexList)
+    for i in range(numVolumes):
+        if i != numVolumes-1:
+            image = images[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i+1],]
+            seg = segs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i+1],]
+        else:
+            image = images[volumeBscanStartIndexList[i]:, ]
+            seg = segs[volumeBscanStartIndexList[i]:, ]
+
+        np.save(os.path.join(outputDir,f"{volumeIDs[i]}_volume.npy"), image)
+        np.save(os.path.join(outputDir,f"{volumeIDs[i]}_segmentation.npy"), seg)
+
+
 

@@ -3,9 +3,7 @@
 
 import sys
 import os
-import yaml
 import torch
-import torch.nn as nn
 from torch.utils import data
 
 
@@ -19,11 +17,10 @@ from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
-from OCTData.OCTDataUtilities import computeMASDError, batchPrediciton2OCTExplorerXML
+from OCTData.OCTDataUtilities import computeMASDError, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs
 from framework.NetTools import columnHausdorffDist
 
 import time
-
 import matplotlib.pyplot as plt
 import numpy as np
 import datetime
@@ -56,7 +53,6 @@ def main():
 
     OnlyOutputGoodBscans =False
     needLegend = True
-
 
     # parse config file
     configFile = sys.argv[1]
@@ -95,6 +91,7 @@ def main():
     netMgr = NetMgr(net, hps.netPath, hps.device)
     netMgr.loadNet("test")
 
+    # Specific for different application
     assert hps.numSurfaces ==6
     surfaceNames = ("ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE")
     pltColors = ('tab:blue', 'tab:orange', 'tab:purple', 'tab:brown', 'tab:red', 'tab:green')
@@ -120,23 +117,15 @@ def main():
 
             testIDs = testIDs + batchData['IDs'] if testBatch != 1 else batchData['IDs']  # for future output predict images
 
-
-        if hps.debug == True:
-            print(f"sigma2.shape = {sigma2.shape}")
-            print(f"mean of sigma2 = {torch.mean(sigma2, dim=[0,2])}")
-            print(f"min of sigma2  = {torch.min(torch.min(sigma2, dim=0)[0], dim=-1)}")
-            print(f"max of sigma2  = {torch.max(torch.max(sigma2, dim=0)[0], dim=-1)}")
-
         #output testID
         with open(os.path.join(hps.outputDir, f"testID.txt"), "w") as file:
             for id in testIDs:
                 file.write(f"{id}\n")
 
-        # Error Std and mean
         if hps.groundTruthInteger:
             testOutputs = (testOutputs + 0.5).int()  # as ground truth are integer, make the output also integers.
 
-        # different applications need modify this.
+        # Specific for different application
         # get volumeIDs and volumeBscanStartIndexList
         volumeIDs = []
         volumeBscanStartIndexList = []
@@ -147,7 +136,7 @@ def main():
                 volumeIDs.append(id[:, id.rfind("_s000")])
                 volumeBscanStartIndexList.append(i)
 
-        if hps.existGTLabel:
+        if hps.existGTLabel: # Error Std and mean
             stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.slicesPerPatient)
             testGts = testGts.cpu().numpy()
 
@@ -159,6 +148,8 @@ def main():
                                            refXMLFile=hps.refXMLFile,
                                            penetrationChar=hps.penetrationChar, penetrationPixels=hps.inputHeight, voxelSizeUnit=hps.voxelSizeUnit,
                                            voxelSizeX=hps.voxelSizeX, voxelSizeY=hps.voxelSizeY, voxelSizeZ=hps.voxelSizeZ)
+            outputNumpyImagesSegs(images, testOutputs, volumeIDs, volumeBscanStartIndexList, hps.testOutputDir)
+
 
     testEndTime = time.time()
 
@@ -209,31 +200,7 @@ def main():
     assert S <= len(pltColors)
 
     for b in range(B):
-        if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
-            # example: "/home/hxie1/data/OCT_Tongren/control/4511_OD_29134_Volume/20110629044120_OCT06.jpg"
-            # example: "/home/hxie1/data/OCT_Tongren/Glaucoma/209_OD_1554_Volume/30.jpg"  for glaucoma
-            patientPath, filename = os.path.split(testIDs[b])
-            patientID = os.path.basename(patientPath)
-            if patientID not in patientIDList:
-                patientIDList.append(patientID)
-            volumePath = hps.imagesOutputDir+"/"+patientID
-            if not os.path.exists(volumePath):
-                os.makedirs(volumePath)  # recursive dir creation
-            index = os.path.splitext(filename)[0]
-            patientID_Index = patientID +"_" +index
-
-        if "OCT_JHU" in hps.dataDir:
-            # testIDs[0] = '/home/hxie1/data/OCT_JHU/preprocessedData/image/hc01_spectralis_macula_v1_s1_R_19.png'
-            patientID_Index = os.path.splitext(os.path.basename(testIDs[b]))[0]  #e.g. hc01_spectralis_macula_v1_s1_R_19
-            patient = patientID_Index[0:4] # e.g. hc01
-            if "_s1_R_19" in patientID_Index and patient not in patientIDList:
-                patientIDList.append(patient)
-
-        if "OCT_Duke" in hps.dataDir:
-            a = testIDs[b]
-            patientID_Index = os.path.splitext(os.path.basename(a))[0]  # get file name stem, like "Control_1014_images_s50"
-
-
+        patientID_Index = testIDs[b]
         if OutputNumImages ==0:
             continue
 
@@ -241,107 +208,36 @@ def main():
         # DPI = f.dpi
         DPI = 100.0
 
-        if OutputNumImages==2:
-            if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
-                subplotRow = 1
-                subplotCol = 2
-            else:
-                subplotRow = 2
-                subplotCol = 1
-            imageFileName = patientID_Index + "_GT_Predict.png"
-
-        elif OutputNumImages==1:
-            subplotRow = 1
-            subplotCol = 1
-            imageFileName = patientID_Index + "_Predict.png"
-        else:
-            if W/H > 16/9:  # normal screen resolution rate is 16:9
-                subplotRow = 3
-                subplotCol = 1
-            else:
-                subplotRow = 1
-                subplotCol = 3
-            if OutputNumImages == 4:
-                imageFileName = patientID_Index + f"_Raw_GT_Comparison_3S_center{comparisonSurfaceIndex:d}.png"
-            else:
-                imageFileName = patientID_Index + "_Raw_GT_Predict.png"
-        f.set_size_inches(W * subplotCol / float(DPI), H * subplotRow / float(DPI))
+        assert OutputNumImages ==3
+        rowSubplot = 1
+        colSubplot = 3
+        imageFileName = patientID_Index + "_Raw_GT_Predict.png"
+        f.set_size_inches(W * colSubplot / float(DPI), H * rowSubplot / float(DPI))
 
         plt.margins(0)
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,hspace=0)  # very important for erasing unnecessary margins.
 
-        subplotIndex = 0
+        subplot1 = plt.subplot(rowSubplot, colSubplot, 1)
+        subplot1.imshow(images[b, :, :], cmap='gray')
+        subplot1.axis('off')
 
-        if OutputNumImages>=3 and hps.existGTLabel:
-            subplotIndex += 1
+        subplot2 = plt.subplot(rowSubplot, colSubplot, 2)
+        subplot2.imshow(images[b, :, :], cmap='gray')
+        for s in range(0, S):
+            subplot2.plot(range(0, W), testGts[b, s, :], pltColors[s], linewidth=1.2)
+        if needLegend:
+            subplot2.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
+        subplot2.axis('off')
 
-            subplot1 = plt.subplot(subplotRow, subplotCol, subplotIndex)
-            subplot1.imshow(images[b,].squeeze(), cmap='gray')
-            if MarkGTDisorder:
-                gt0 = testGts[b, 0:-1, :]
-                gt1 = testGts[b, 1:,   :]
-                errorLocations = np.nonzero(gt0>gt1)  # return as tuple
-                if len(errorLocations[0]) > 0:
-                    subplot1.scatter(errorLocations[1], testGts[b, errorLocations[0], errorLocations[1]], s=1, c='r', marker='o')  # red for gt disorder
-            if MarkPredictDisorder:
-                predict0 = testOutputs[b, 0:-1, :]
-                predict1 = testOutputs[b, 1:,   :]
-                errorLocations = np.nonzero(predict0 > predict1)  # return as tuple
-                if len(errorLocations[0]) > 0:
-                    subplot1.scatter(errorLocations[1], testOutputs[b, errorLocations[0], errorLocations[1]], s=1, c='g', marker='o') # green for prediction disorder
-            subplot1.axis('off')
-
-        if OutputNumImages >=2 and hps.existGTLabel:
-            subplotIndex += 1
-            subplot2 = plt.subplot(subplotRow, subplotCol, subplotIndex)
-            subplot2.imshow(images[b,].squeeze(), cmap='gray')
-            for s in range(0, S):
-                subplot2.plot(range(0, W), testGts[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
-            if needLegend:
-                if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
-                    subplot2.legend(surfaceNames, loc='lower center', ncol=4, fontsize='x-small')
-                else:
-                    subplot2.legend(surfaceNames, loc='upper center', ncol=len(pltColors),  fontsize='x-small')
-            subplot2.axis('off')
-
-        subplotIndex += 1
-        if 1 == subplotRow and 1 == subplotCol:
-            subplot3 = plt
-        else:
-            subplot3 = plt.subplot(subplotRow, subplotCol, subplotIndex)
-        subplot3.imshow(images[b,].squeeze(), cmap='gray')
-        if OutputNumImages==4:
-            ls = comparisonSurfaceIndex -1 # low index for comparison surface index
-            if ls <0:
-                ls =0
-            hs =  comparisonSurfaceIndex +2 # high index
-            if hs > S:
-                hs = S
-            GTColor = ['tab:blue', 'tab:brown', 'tab:olive']
-            PredictionColor= ['tab:orange', 'tab:pink', 'tab:red',]
-            legendList = []
-            for s in range(ls, hs):
-                subplot3.plot(range(0, W), testGts[b, s, :].squeeze(), GTColor[s%3], linewidth=1.5)
-                legendList.append(f"GT_s{s}")
-            for s in range(ls, hs):
-                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), PredictionColor[s%3], linewidth=1.5)
-                legendList.append(f"Prediction_s{s}")
-            if needLegend:
-                subplot3.legend(legendList, loc='lower center', ncol=2, fontsize='x-small')
-        else:
-            for s in range(0, S):
-                subplot3.plot(range(0, W), testOutputs[b, s, :].squeeze(), pltColors[s], linewidth=1.5)
-            if needLegend:
-                if ("OCT_Tongren" in hps.dataDir) or ("OCT_Duke" in hps.dataDir):
-                    subplot3.legend(surfaceNames, loc='lower center', ncol=4, fontsize='x-small')
-                else:
-                    subplot3.legend(surfaceNames, loc='upper center', ncol=len(pltColors), fontsize='x-small')
+        subplot3 = plt.subplot(rowSubplot, colSubplot, 3)
+        subplot3.imshow(images[b, :, :], cmap='gray')
+        for s in range(0, S):
+            subplot3.plot(range(0, W), testOutputs[b, s, :], pltColors[s], linewidth=1.2)
+        if needLegend:
+            subplot3.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
         subplot3.axis('off')
 
-        if ("OCT_Tongren" in hps.dataDir) or ("BES_3K" in hps.dataDir) :
-            plt.savefig(os.path.join(volumePath,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
-        else:
-            plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
+        plt.savefig(os.path.join(hps.imagesOutputDir,imageFileName), dpi='figure', bbox_inches='tight', pad_inches=0)
         plt.close()
 
     print(f"============ End of Cross valiation test for OCT Multisurface Network: {hps.experimentName} ===========")
