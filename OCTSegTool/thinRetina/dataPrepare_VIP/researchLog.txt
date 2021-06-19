@@ -10,12 +10,12 @@
 5  adjust MAD(Median Average Diviation to 2.5)  -- done.
 
 Now running below trainings:
-  440  2021-06-19 17:32:42 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_A_skm2.yaml &
+  440  2021-06-19 17:32:42 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_A_skm2.yaml &  17GB
   441  2021-06-19 17:33:44 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_B_skm2.yaml &
   442  2021-06-19 17:33:59 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_A_skm2.yaml &
   443  2021-06-19 17:34:07 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_B_skm2.yaml &
   444  2021-06-19 17:34:19 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_A_skm2.yaml &
-  445  2021-06-19 17:34:25 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_B_skm2.yaml &
+  445  2021-06-19 17:34:25 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_B_skm2.yaml &   18GB
 
 
 
