@@ -9,7 +9,7 @@ from framework.BasicModel import BasicModel
 from framework.ConvBlocks import *
 from framework.CustomizedLoss import logits2Prob, MultiSurfaceCrossEntropyLoss
 from framework.ConfigReader import ConfigReader
-from OCTData.OCTDataUtilities import smoothSurfacesWithPrecision, medianFilterSmoothing
+from OCTData.OCTDataUtilities import smoothSurfacesWithPrecision, medianFilterSmoothing, adjustSurfacesUsingPrecision
 
 class SurfaceSegNet_Q(BasicModel):
     def __init__(self, hps=None):
@@ -70,8 +70,10 @@ class SurfaceSegNet_Q(BasicModel):
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
 
+        epsilon = 1.0e-8
+        precision =  1.0/(sigma2+epsilon)  # precision matrix
         if self.hps.useSmoothingWithPrecision:
-           mu = smoothSurfacesWithPrecision(mu, sigma2, windSize= self.hps.precisionSmoothWinSize)
+            mu = smoothSurfacesWithPrecision(mu, precision, windSize= self.hps.precisionSmoothWinSize)
 
         S = mu.clone()
         loss = 0.0
@@ -107,6 +109,10 @@ class SurfaceSegNet_Q(BasicModel):
         if 1 == self.hps.hardSeparation:
              for i in range(1, N):
                 S[:, i, :] = torch.where(S[:, i, :] < S[:, i - 1, :], S[:, i - 1, :], S[:, i, :])
+        elif 3 ==  self.hps.hardSeparation: # choose surface value with bigger precision when surfaces conflict.
+             S = adjustSurfacesUsingPrecision(S, precision)
+        else:
+            assert False
 
 
         return S, sigma2, loss, x  # return surfaceLocation S in (B,S,W) dimension, sigma2, and loss, UnetFetures x.

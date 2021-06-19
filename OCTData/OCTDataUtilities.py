@@ -228,7 +228,7 @@ def outputNumpyImagesSegs(images, segs, volumeIDs, volumeBscanStartIndexList, ou
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_volume.npy"), image)
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_segmentation.npy"), seg)
 
-def smoothSurfacesWithPrecision(mu, sigma2, windSize= 5):
+def smoothSurfacesWithPrecision(mu, precision, windSize= 5):
     '''
     For each surface,  implement a mu_s * M in dimension (Bx1xW)  *  (BxWxW), where M is a precision-weighed smooth matrix
     with slide window size windSize. and then assembly all smoothed surface.
@@ -238,11 +238,9 @@ def smoothSurfacesWithPrecision(mu, sigma2, windSize= 5):
     :param windSize:
     :return:
     '''
-    B,S,W = sigma2.shape
+    B,S,W = precision.shape
     assert mu.shape == (B,S,W)
-    device = sigma2.device
-    epsilon = 1e-8
-    P = 1.0/(sigma2+epsilon)  # precision matrix
+    device = precision.device
 
     assert windSize%2==1
     h = windSize//2  # half of the slide window size
@@ -250,7 +248,7 @@ def smoothSurfacesWithPrecision(mu, sigma2, windSize= 5):
     smoothMu = torch.zeros_like(mu)
     for s in range(S):
         mus = mu[:,s, :].unsqueeze(dim=1)  # s indicate specific surface, size: Bx1xW
-        Ps  = P[:,s, :] # size: BxW
+        P  = precision[:,s, :] # size: BxW
 
         M = torch.zeros((B,W, W), dtype=torch.float32, device=device)  # smooth matrix
         for c in range(0,W):
@@ -264,13 +262,40 @@ def smoothSurfacesWithPrecision(mu, sigma2, windSize= 5):
                 offset = bottom-W
                 bottom -=offset
                 top  +=offset
-            colSumP = torch.sum(Ps[:,top:bottom], dim=-1,keepdim=True) # size: Bx1
+            colSumP = torch.sum(P[:,top:bottom], dim=-1,keepdim=True) # size: Bx1
             colSump = colSumP.expand(B,bottom-top)  # size: Bx(bottom-top)
-            M[:,top:bottom,c] = Ps[:,top:bottom]/colSumP  # size: Bx(bottom-top)
+            M[:,top:bottom,c] = P[:,top:bottom]/colSumP  # size: Bx(bottom-top)
 
         smoothMu[:,s,:] = torch.bmm(mus, M).squeeze(dim=1)     # size: Bx1xW -> BxW
 
     return smoothMu # BxSxW
+
+def adjustSurfacesUsingPrecision(S, P):
+    '''
+    Choose surface value with a bigger precision when surfaces conflict.
+    :param S: surface tensor in BxNxW
+    :param P: Precision tensor in BxNxW
+    :return: adjusted Su
+    '''
+    B,N,W = S.shape
+    errorPoints = torch.nonzero(S[:, 0:-1, :] > S[:, 1:, :], as_tuple=False)
+    for i in range(errorPoints.shape[0]):
+        b = errorPoints[i, 0].item()
+        s = errorPoints[i, 1].item()
+        w = errorPoints[i, 2].item()
+        # first use majority rule, an invalidate surface crossing 2+ surfaces is an error
+        if s+2<N and S[b,s,w] >= S[b,s+2,w]:
+            S[b, s, w] = S[b, s + 1, w]
+        if s-1>=0 and S[b,s+1,w] <= S[b,s-1,w]:
+            S[b, s + 1, w] = S[b, s, w]
+        # choose the surface value with bigger precision when surfaces conflict
+        if S[b,s,w] > S[b,s+1,w]:
+            if P[b,s,w] > P[b,s+1,w]:
+                S[b,s+1,w] = S[b,s,w]  #ReLU
+            else:
+                S[b,s,w] = S[b,s+1,w]
+
+    return S
 
 
 def medianFilterSmoothing(input, winSize=21):
@@ -295,7 +320,8 @@ def medianFilterSmoothing(input, winSize=21):
     MAD = (c*MAD).expand_as(input) # size: BxSxW
 
     # an outlier is a value that is more than three scaled median absolute deviations (MAD) away from the median.
-    outlierIndexes = torch.nonzero((input-mInput).abs() >= 3*MAD, as_tuple=False)
+    factor = 2.5 # instead of 3 as matlab
+    outlierIndexes = torch.nonzero((input-mInput).abs() >= factor*MAD, as_tuple=False)
     N,dims = outlierIndexes.shape
     assert dims ==ndim
     for i in range(N):

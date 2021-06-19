@@ -120,8 +120,8 @@ gradientRiftConvGoBack: False
 
 # constrained model, both False meaning RelU
 # ReLU to guarantee layer order not to cross each other
-# 0: NoReLU; 1: ReLU;  2: IPM;
-hardSeparation: 1
+# 0: NoReLU; 1: ReLU;  2: IPM; 3: choose surface value with bigger precision when surfaces conflict
+hardSeparation: 3
 softSeparation: False
 useReLUInPretrain: True
 

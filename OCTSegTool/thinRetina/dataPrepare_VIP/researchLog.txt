@@ -2,11 +2,13 @@
 1  learning patience = 20 is better.
 2  putting medianFilterSmoothing after loss better.  --ok.
 3  median smooth window size = 21 is better.
-3  a slight smooth before loss may help with precision.
-4  Topo moudule's improvement: use variance to judge to choose above or bottom surface.
+3  a slight smooth before loss may help with precision.   --done
+4  Topo moudule's improvement: use precision to judge to choose above or bottom surface.  --done.
    for example, the spike on surface i will affect surfade i+1, and surface i+2.
    in /raid001/users/hxie1/data/thinRetina/numpy_10cases/log/SurfaceSegNet_Q/expVIP_20210618_SurfaceSubnetQ128_10Cases_D_skm2/testResult/
    PVIP2-4068_Macular_200x200_10-18-2012_12-10-55_OS_sn14463_cube_z_s007_Raw_GT_Predict.png
+5  adjust MAD(Median Average Diviation to 2.5)  -- done.
+
 
 
 
