@@ -7,6 +7,11 @@ Run  MedianFilterSmoothing versions:
   271  2021-06-18 18:36:55 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ96_10Cases_B_skm2.yaml &
   272  2021-06-18 18:37:03 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ64_10Cases_B_skm2.yaml &
 
+think:
+The medianFilter should postprocessing, instead put before Loss.
+If putting before loss, the error prediction will lost improvement opportunity as its backgradient disappear.
+
+
 
 ==============================
 About the thickness heatmap output
@@ -129,7 +134,7 @@ June 17th, 19:20 launch training:
 
 training speed at 2.5min/epoch.
 
-June 18th, 10:20 launch training:
+June 18th, 10:20 launch training:  finished Test!
 132445 pts/0    Sl     1:02 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ192_10Cases_A_skm2.yaml    20G
 132720 pts/0    Sl     0:39 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ256_10Cases_A_skm2.yaml    23G
 

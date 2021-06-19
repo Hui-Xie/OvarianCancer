@@ -228,7 +228,7 @@ def outputNumpyImagesSegs(images, segs, volumeIDs, volumeBscanStartIndexList, ou
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_volume.npy"), image)
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_segmentation.npy"), seg)
 
-def medianFilterSmoothing(input, winSize=7):
+def medianFilterSmoothing(input, winSize=21):
     '''
     apply 1D median filter along W direction at the outlier points  only.
     :param input: in size of BxSxW

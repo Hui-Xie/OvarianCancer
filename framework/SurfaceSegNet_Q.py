@@ -70,9 +70,6 @@ class SurfaceSegNet_Q(BasicModel):
         # compute surface mu and variance
         mu, sigma2 = computeMuVariance(surfaceProb, layerMu=None, layerConf=None)  # size: B,N W
 
-        if self.hps.useMedianFilterSmoothing:
-            mu = medianFilterSmoothing(mu, winSize=self.hps.medianFilterWinSize)
-
         S = mu.clone()
         loss = 0.0
         if (self.getStatus() != "test") and self.hps.existGTLabel:
@@ -99,6 +96,10 @@ class SurfaceSegNet_Q(BasicModel):
             #if torch.isnan(loss.sum()): # detect NaN
             #    print(f"Error: find NaN loss at epoch {self.m_epoch}")
             #    assert False
+
+        # puting medianFilter after loss avoids that error points lost improvements.
+        if self.hps.useMedianFilterSmoothing:
+            S = medianFilterSmoothing(S, winSize=self.hps.medianFilterWinSize)
 
         if 1 == self.hps.hardSeparation:
              for i in range(1, N):
