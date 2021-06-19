@@ -11,6 +11,11 @@ think:
 The medianFilter should postprocessing, instead put before Loss.
 If putting before loss, the error prediction will lost improvement opportunity as its backgradient disappear.
 
+# medianFilter after loss with windowsize 21.
+ 289  2021-06-19 00:16:20 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_C_skm2.yaml &   18G
+ 290  2021-06-19 00:16:31 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_D_skm2.yaml &   18G
+
+
 
 
 ==============================
