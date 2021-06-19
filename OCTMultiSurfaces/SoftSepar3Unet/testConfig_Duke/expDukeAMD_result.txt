@@ -1,3 +1,13 @@
+# June 19th, Saturday, 2021
+Run test program on Duke:
+
+  512  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_Yweight_iibi007.yaml &
+  513  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007.yaml &
+  514  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007.yaml &
+  515  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoYweight_iibi007.yaml &
+
+
+
 # June 15th, Tuesday, 2021
 Duke_AMD data Ablation experiments on 100% data:
 Base config: expDuke_20210507A_SurfaceSubnetQ128_iibi007, it use 100 epochs finished training. 15GB memory is ok.
