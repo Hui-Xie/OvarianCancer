@@ -1,6 +1,14 @@
 #June 19th, Saturday, 2021
 1  learning patience = 20 is better.
-2  putting medianFilterSmoothing after loss better.
+2  putting medianFilterSmoothing after loss better.  --ok.
+3  median smooth window size = 21 is better.
+3  a slight smooth before loss may help with precision.
+4  Topo moudule's improvement: use variance to judge to choose above or bottom surface.
+   for example, the spike on surface i will affect surfade i+1, and surface i+2.
+   in /raid001/users/hxie1/data/thinRetina/numpy_10cases/log/SurfaceSegNet_Q/expVIP_20210618_SurfaceSubnetQ128_10Cases_D_skm2/testResult/
+   PVIP2-4068_Macular_200x200_10-18-2012_12-10-55_OS_sn14463_cube_z_s007_Raw_GT_Predict.png
+
+
 
 Now prepare test below programs:
 57204 ?        Rl   1622:24 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ64_10Cases_A_skm2.yaml
@@ -12,6 +20,15 @@ Now prepare test below programs:
 131853 ?        Rl   1085:55 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_C_skm2.yaml
 132007 ?        Rl   1087:34 python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_D_skm2.yaml
 
+
+  424  2021-06-19 10:59:38 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ64_10Cases_A_skm2.yaml &   muError= 3.74, HD=41;
+  425  2021-06-19 10:59:53 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ96_10Cases_A_skm2.yaml &   muError=3.77   HD = 61
+  426  2021-06-19 11:00:09 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_A_skm2.yaml &  muError=3.75   HD = 79
+  427  2021-06-19 11:00:21 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_B_skm2.yaml &  muError=3.64   HD = 93 (best  in this batch)
+  428  2021-06-19 11:00:34 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ96_10Cases_B_skm2.yaml &   muError=4.11   HD = 111
+  429  2021-06-19 11:00:49 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ64_10Cases_B_skm2.yaml &   muError=3.90   HD = 75
+  430  2021-06-19 11:01:00 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_C_skm2.yaml &  muError=4.06   HD = 31
+  431  2021-06-19 11:01:17 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210618_SurfaceSubnetQ128_10Cases_D_skm2.yaml &  muError=3.82   HD = 96
 
 
 

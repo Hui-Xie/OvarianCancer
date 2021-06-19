@@ -228,6 +228,51 @@ def outputNumpyImagesSegs(images, segs, volumeIDs, volumeBscanStartIndexList, ou
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_volume.npy"), image)
         np.save(os.path.join(outputDir,f"{volumeIDs[i]}_segmentation.npy"), seg)
 
+def smoothSurfacesWithPrecision(mu, sigma2, windSize= 5):
+    '''
+    For each surface,  implement a mu_s * M in dimension (Bx1xW)  *  (BxWxW), where M is a precision-weighed smooth matrix
+    with slide window size windSize. and then assembly all smoothed surface.
+    Putting S out outer loop is to utilize matrix bmm.
+    :param mu:
+    :param sigma2:
+    :param windSize:
+    :return:
+    '''
+    B,S,W = sigma2.shape
+    assert mu.shape == (B,S,W)
+    device = sigma2.device
+    epsilon = 1e-8
+    P = 1.0/(sigma2+epsilon)  # precision matrix
+
+    assert windSize%2==1
+    h = windSize//2  # half of the slide window size
+
+    smoothMu = torch.zeros_like(mu)
+    for s in range(S):
+        mus = mu[:,s, :].unsqueeze(dim=1)  # s indicate specific surface, size: Bx1xW
+        Ps  = P[:,s, :] # size: BxW
+
+        M = torch.zeros((B,W, W), dtype=torch.float32, device=device)  # smooth matrix
+        for c in range(0,W):
+            top = c-h
+            bottom = c+h+1 # columen low boundary outside
+            if top < 0:
+                offset = -top
+                top +=offset
+                bottom -=offset
+            if bottom > W:
+                offset = bottom-W
+                bottom -=offset
+                top  +=offset
+            colSumP = torch.sum(Ps[:,top:bottom], dim=-1,keepdim=True) # size: Bx1
+            colSump = colSumP.expand(B,bottom-top)  # size: Bx(bottom-top)
+            M[:,top:bottom,c] = Ps[:,top:bottom]/colSumP  # size: Bx(bottom-top)
+
+        smoothMu[:,s,:] = torch.bmm(mus, M).squeeze(dim=1)     # size: Bx1xW -> BxW
+
+    return smoothMu # BxSxW
+
+
 def medianFilterSmoothing(input, winSize=21):
     '''
     apply 1D median filter along W direction at the outlier points  only.
