@@ -1,3 +1,13 @@
+# June 20th, Saturday, 2021
+
+launch traiing for different precision slide window size at 08:47 am June 20th.
+  510  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B3_iibi007.yaml &    18G
+  511  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B7_iibi007.yaml &
+  512  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B9_iibi007.yaml &
+  516  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B11_iibi007.yaml &   18G
+
+
+
 #June 19th, Saturday, 2021
 1  learning patience = 20 is better.
 2  putting medianFilterSmoothing after loss better.  --ok.
