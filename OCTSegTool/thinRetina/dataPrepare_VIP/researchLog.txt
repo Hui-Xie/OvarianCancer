@@ -6,6 +6,9 @@ launch traiing for different precision slide window size at 08:47 am June 20th.
   512  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B9_iibi007.yaml &
   516  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B11_iibi007.yaml &   18G
 
+  462  2021-06-20 09:00:58 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A7_skm2.yaml &   17GB
+  463  2021-06-20 09:01:08 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A11_skm2.yaml &  17GB
+
 
 
 #June 19th, Saturday, 2021
