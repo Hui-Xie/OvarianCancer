@@ -10,6 +10,10 @@ launch traiing for different precision slide window size at 08:47 am June 20th.
   463  2021-06-20 09:01:08 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A11_skm2.yaml &  17GB
 
 
+After introducing the smoothSurfacesWithPrecision and ajustSurfaceUsingPrecision:
+  25 hours/294 epoch = 25*60/294 = 7.14 min/epoch for training
+
+
 
 #June 19th, Saturday, 2021
 1  learning patience = 20 is better.

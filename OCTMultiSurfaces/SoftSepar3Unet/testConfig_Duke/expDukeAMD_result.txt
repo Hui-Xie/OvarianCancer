@@ -1,3 +1,21 @@
+# June 21st, Monday, 2021
+==========================================================================================================================================================================================
+                                                          Ablation experiment results meanError±Std on 100% Duke_AMD data
+==========================================================================================================================================================================================
+                   totalMeanError   totalMeanErrorControl  Surface0_Control  Surface1_Control   Surface2_Control    totalMeanErrorAMD   Surface0_AMD       Surface1_AMD   Surface2_AMD
+Baseline            1.83±1.89          1.40±0.93               0.53±0.22        1.59±1.07            2.07±0.41        2.03±2.16          1.31±3.04          1.74±0.92      3.03±1.56
+NoYweight           1.84±2.02
+NoTop
+NoGradientInput
+===========================================================================================================================================================================================
+
+Experiment Name:
+Baseline: expDuke_20210507A_SurfaceSubnetQ128_iibi007
+NoYweigh: expDuke_20210615_SurfaceSubnetQ128_NoYweight_iibi007
+NoTopo:   expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007
+NoGradientInput: expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007
+
+
 # June 19th, Saturday, 2021
 Run test program on Duke:
 
@@ -5,6 +23,10 @@ Run test program on Duke:
   513  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007.yaml &
   514  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007.yaml &
   515  nohup python3 ./SurfaceSubnet_Test.py ./testConfig_Duke/expDuke_20210615_SurfaceSubnetQ128_NoYweight_iibi007.yaml &
+==========================================================================================================================
+                                   Ablation experiment results on Duke_AMD data
+=========================================================================================================================
+
 
 
 
