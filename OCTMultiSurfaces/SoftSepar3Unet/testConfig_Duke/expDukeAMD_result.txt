@@ -40,6 +40,33 @@ muError = 1.370040774345398
 ===============
 
 
+Compute performance in AMD and Control group separately
+predictDir= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+===============
+GroupName: AMD
+case number = 41
+stdSurfaceError = tensor([3.0101, 1.4162, 1.7052])
+muSurfaceError = tensor([1.2903, 1.9015, 3.1011])
+HausdorffDistance in pixel = [[ 80. 236. 327.]]
+HausdorffDistance in physical size (micrometer) = [[ 259.2   764.64 1059.48]]
+stdError = 2.269777536392212
+muError = 2.097658157348633
+===============
+GroupName: Control
+case number = 18
+stdSurfaceError = tensor([0.3008, 0.9177, 0.4538])
+muSurfaceError = tensor([0.4994, 1.5403, 2.0655])
+HausdorffDistance in pixel = [[33. 21.  9.]]
+HausdorffDistance in physical size (micrometer) = [[106.92  68.04  29.16]]
+stdError = 0.8925947546958923
+muError = 1.3684145212173462
+===============
+
+
+
+
+
 
 # June 19th, Saturday, 2021
 Run test program on Duke:
