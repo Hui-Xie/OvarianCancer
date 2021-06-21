@@ -14,6 +14,114 @@ After introducing the smoothSurfacesWithPrecision and ajustSurfaceUsingPrecision
   25 hours/294 epoch = 25*60/294 = 7.14 min/epoch for training
 
 
+Layer Name and color suggested by Ray:
+Ray:
+
+I suggested that we keep these layer names as layer 0, 1, 3, 5, 6, 10, so we don't get confused about all these naming systems
+
+
+
+Here are the layers that Dr. Kardon are interested
+
+1. RNFL plot
+
+    --> surface 0, 1
+
+2. GCL-IPL complex plot
+
+    --> surface 1, 3
+
+3. Inner nuclear layer plot
+
+    --> surface 3, 4
+
+4. Outer+inner segments of photoreceptors (excluding RPE or including RPE if this is too hard to segment without RPE)
+
+    --> surface 6, 8
+
+5. Outer plexiform+outer nuclear layer plot
+
+    --> surface 4, 6
+
+6. Total retinal thickness plot
+
+    --> surface 0, 10
+
+7. Outer nuclear layer and all layers after
+
+    --> surface 5, 10
+
+
+
+For the RPE en-face view → surface 6, 10
+
+
+
+
+
+##
+
+Here is the color code range
+
+
+
+# Zeiss color map range
+
+layer_info = [{"Name":"RNFL", "Layer":[0,1], "ColorBar":[0,125]},  # Modifed from 350 --> 125; 06/17/2021
+
+              {"Name":"GCIPL", "Layer":[1,3], "ColorBar":[0,225]},
+
+              {"Name":"INL", "Layer":[3,4], "ColorBar":[0,100]},
+
+              {"Name":"OI_Segments", "Layer":[6,8], "ColorBar":[0,75]},
+
+              {"Name":"OPONL", "Layer":[4,6], "ColorBar":[0,250]},
+
+              {"Name":"TR", "Layer":[0,10], "ColorBar":[200,500]},
+
+              {"Name":"ONL_and_Below", "Layer":[5,10], "ColorBar":[100,300]}]
+
+
+
+
+
+## Function that
+
+## Returns a mimic Zeiss color matching
+
+def create_Zeiss_colorbar():
+
+    cvals = [0, 0.05, 0.25, 0.35, 0.65, 0.8, 0.93, 1]
+
+    colors = ["black", "blue", "cyan", "yellow", "red", "coral", "whitesmoke", "white"]
+
+    norm=plt.Normalize(min(cvals),max(cvals))
+
+    tuples = list(zip(map(norm,cvals), colors))
+
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", tuples)
+
+    return cmap, norm
+
+
+
+cmap_z, norm_z = fPlt.create_Zeiss_colorbar()
+
+
+
+Example:
+
+fig, ax = plt.subplots(figsize=(4,4))
+
+cf = plt.imshow(median_thickness_map, cmap=cmap_z, norm=norm_z, vmin=cf_min, vmax=cf_max)
+
+
+
+cf.set_clim(cf_min, cf_max)
+
+   
+
+
 
 #June 19th, Saturday, 2021
 1  learning patience = 20 is better.
