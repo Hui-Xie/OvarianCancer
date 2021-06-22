@@ -19,6 +19,17 @@ Initial Test result:
 It looks the best result with considering HD is:  testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_B_skm2.
 The whole looks good, but at right ends, there are some horizontal short line section, which is reason of overkilling of adjusting.
 
+Use new factor=3.0 for outlier, and switch on/off the smoothingwithprecison:
+  500  2021-06-21 22:27:10 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_B_skm2.yaml &
+  501  2021-06-21 22:27:17 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_C_skm2.yaml &
+  502  2021-06-21 22:27:23 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_E_skm2.yaml &
+  503  2021-06-21 22:27:29 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_F_skm2.yaml &
+  504  2021-06-21 22:27:38 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_B_skm2.yaml &
+  505  2021-06-21 22:27:43 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_C_skm2.yaml &
+  506  2021-06-21 22:27:48 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_E_skm2.yaml &
+  507  2021-06-21 22:27:54 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_F_skm2.yaml &
+
+
 
 
 
