@@ -1,13 +1,38 @@
 # June 22th, Tuesday, 2021:
-  500  2021-06-21 22:27:10 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_B_skm2.yaml &
-  501  2021-06-21 22:27:17 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_C_skm2.yaml &
-  502  2021-06-21 22:27:23 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_E_skm2.yaml &
-  503  2021-06-21 22:27:29 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_F_skm2.yaml &
-  504  2021-06-21 22:27:38 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_B_skm2.yaml &
-  505  2021-06-21 22:27:43 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_C_skm2.yaml &
-  506  2021-06-21 22:27:48 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_E_skm2.yaml &
-  507  2021-06-21 22:27:54 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_F_skm2.yaml &
+  500  2021-06-21 22:27:10 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_B_skm2.yaml &   muError=4.05, maxHD=69
+  501  2021-06-21 22:27:17 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_C_skm2.yaml &   muError=3.71, maxHD = 65
+  502  2021-06-21 22:27:23 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_E_skm2.yaml &   muError=4.02, maxHD = 74 , 1 validate constraint.
+  503  2021-06-21 22:27:29 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_F_skm2.yaml &   muError=3.94, maxHD = 68m  83 pixels validate constraint.
+  504  2021-06-21 22:27:38 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_B_skm2.yaml &  muError=3.97, maxHD = 61,   69 pixels validate constraint
+  505  2021-06-21 22:27:43 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_C_skm2.yaml &  muError=3.97, maxHD = 75.  10 pixels validate constraints.
+  506  2021-06-21 22:27:48 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_E_skm2.yaml &  muError=4.10, maxHD = 91.  19 pixels validate constraints.
+  507  2021-06-21 22:27:54 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ128_10Cases_F_skm2.yaml &  muError=3.68, maxHD =74,   9 pixels validate constraints.
 
+The best result: expVIP_20210621_SurfaceSubnetQ96_10Cases_C_skm2.yaml
+
+The initial validation result of thinRetina project.
+
+Dataset: training 8 patients, validate on the 2 patients. All patients are glaucoma cases.
+         InputSize: 1024x200 for each B-scan.
+         Patient volume has 2 kinds of size: 200x1024x200 or 128x1024x200 in #Bscan x PenetrationHeight x #Ascan dimension
+         Penetration pixel physical size: 1.955 um/pixel
+         surface number: 6
+         surface names: ["ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE"].
+
+
+Result:
+1   All raw/GT/Prediction visualization of the validated 2 patients: //garvinlab/thinRetina/expVIP_20210621_SurfaceSubnetQ96_10Cases_C_skm2/images/
+2   quantity result on the validation data:
+    patientIDList =['PVIP2-4068_Macular_200x200_10-18-2012_12-10-55_OS_sn14463_cube_z', 'PVIP2-4083_Macular_200x200_10-24-2012_10-24-46_OS_sn14353_cube_z']
+    stdSurfaceError = tensor([0.2852, 0.3435, 0.8223, 0.2081, 0.1183, 0.1554], device='cuda:1')
+    muSurfaceError = tensor([1.8456, 5.4753, 5.6793, 5.3225, 1.6251, 2.3658], device='cuda:1')
+    stdError = 1.8926666975021362
+    muError = 3.7189223766326904  (mean absolute surface distance error(MASD, um))
+    hausdorff Distance in pixels = [[23.239044 27.6427   28.632294 42.18402  39.45883  65.79611 ]]
+    pixel number of violating surface-separation constraints: 0
+3   Notes: This VIP data is different with JHU MS and Duke AMD data as it has just 200 Ascans and all surface are bumpy wave shape, and all are glaucoma cases without control group.
+           This VIP data does not has the flat surfaces at both ends, which will help reduce the MASD error on volume dimension.
+4   attachment are 2 middle Bscan for each patient for your quick review.
 
 
 # June 21th, Monday,2021
