@@ -359,7 +359,7 @@ def main():
             file.write(f"muSurfaceError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
-            file.write(f"hausdorff Distance (in pixels) = {hausdorffD}\n")
+            file.write(f"Hausdorff Distance (in pixels) = {hausdorffD}\n")
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
         if comparisonSurfaceIndex is not None:

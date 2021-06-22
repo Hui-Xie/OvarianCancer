@@ -192,7 +192,7 @@ def main():
             file.write(f"muSurfaceError = {muSurfaceError}\n")
             file.write(f"stdError = {stdError}\n")
             file.write(f"muError = {muError}\n")
-            file.write(f"hausdorff Distance = {hausdorffD}\n")
+            file.write(f"Hausdorff Distance = {hausdorffD}\n")
 
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")
 
