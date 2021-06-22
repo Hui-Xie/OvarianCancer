@@ -1,3 +1,19 @@
+#June 22nd, Tuesday, 2022
+Meeting minutes with professor:
+1  submit the IPM paper to "The application of AI and other advanced technology in studying Eye disease and visual development"
+   A. change introduction about diseases.
+   B. change paper structure.
+   C. Paper focus on disease.
+2  About current SimpleSegNN paper:
+   A.  use different B-Scan to descripe ablation module.
+   B.  put more discussion about ReLU in discussion.
+   C.  give P-value of ablation experiment.
+   D.  ReLU may not need visualization display in Ablation.
+
+
+
+
+
 # June 21st, Monday, 2021
 ==========================================================================================================================================================================================
                                                           Ablation experiment results meanError±Std on 100% Duke_AMD data

@@ -283,11 +283,14 @@ def adjustSurfacesUsingPrecision(S, P):
         b = errorPoints[i, 0].item()
         s = errorPoints[i, 1].item()
         w = errorPoints[i, 2].item()
+        # at this point: S[b,s,w] > S[b,s+1,w]
         # first use majority rule, an invalidate surface crossing 2+ surfaces is an error
         if s+2<N and S[b,s,w] >= S[b,s+2,w]:
             S[b, s, w] = S[b, s + 1, w]
         if s-1>=0 and S[b,s+1,w] <= S[b,s-1,w]:
-            S[b, s + 1, w] = S[b, s, w]
+            temp = S[b, s, w]
+            S[b, s, w] = 0.5*( S[b, s + 1, w] + S[b, s, w])
+            S[b, s + 1, w] = S[b, s, w] + 0.5*(temp-S[b, s, w])
         # choose the surface value with bigger precision when surfaces conflict
         if S[b,s,w] > S[b,s+1,w]:
             if P[b,s,w] > P[b,s+1,w]:
