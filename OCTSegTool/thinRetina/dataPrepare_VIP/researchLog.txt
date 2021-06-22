@@ -1,4 +1,29 @@
-# June 20th, Saturday, 2021
+# June 21th, Monday,2021
+Initial Test result:
+  510  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B3_iibi007.yaml &    18G      meanError = 3.96  maxHD = 118
+  511  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B7_iibi007.yaml &             meanError = 4.25  maxHD = 51    3 validate constraints.
+  512  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B9_iibi007.yaml &             meanError = 3.90  maxHD = 97
+  516  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B11_iibi007.yaml &   18G      meanError = 3.99  maxHD = 58
+
+  462  2021-06-20 09:00:58 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A7_skm2.yaml &   17GB   meanError=4.00 maxHD=64
+  463  2021-06-20 09:01:08 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A11_skm2.yaml &  17GB   meanError=3.94 maxHD=70
+
+  440  2021-06-19 17:32:42 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_A_skm2.yaml &  17GB     meanError=4.10  maxHD=56
+  441  2021-06-19 17:33:44 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_B_skm2.yaml &           meanError=3.95  maxHD=63
+  442  2021-06-19 17:33:59 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_A_skm2.yaml &           meanError=4.16  maxHD=98
+  443  2021-06-19 17:34:07 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_B_skm2.yaml &           meanError=3.88  maxHD=51  (best)
+  444  2021-06-19 17:34:19 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_A_skm2.yaml &          meanError=3.83  maxHD = 109
+  445  2021-06-19 17:34:25 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_B_skm2.yaml &   18GB   meanError=3.92  maxHD = 57
+
+
+It looks the best result with considering HD is:  testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_B_skm2.
+The whole looks good, but at right ends, there are some horizontal short line section, which is reason of overkilling of adjusting.
+
+
+
+
+
+# June 20th, Sunday, 2021
 
 launch traiing for different precision slide window size at 08:47 am June 20th.
   510  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B3_iibi007.yaml &    18G
@@ -6,8 +31,20 @@ launch traiing for different precision slide window size at 08:47 am June 20th.
   512  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B9_iibi007.yaml &
   516  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ128_10Cases_B11_iibi007.yaml &   18G
 
+  And their test program has run.
+
+===============================================
+Run its test program!
   462  2021-06-20 09:00:58 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A7_skm2.yaml &   17GB
   463  2021-06-20 09:01:08 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210620_SurfaceSubnetQ96_10Cases_A11_skm2.yaml &  17GB
+==============================================
+Now running below Test:
+  440  2021-06-19 17:32:42 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_A_skm2.yaml &  17GB
+  441  2021-06-19 17:33:44 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ64_10Cases_B_skm2.yaml &
+  442  2021-06-19 17:33:59 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_A_skm2.yaml &
+  443  2021-06-19 17:34:07 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ96_10Cases_B_skm2.yaml &
+  444  2021-06-19 17:34:19 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_A_skm2.yaml &
+  445  2021-06-19 17:34:25 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210619_SurfaceSubnetQ128_10Cases_B_skm2.yaml &   18GB
 
 
 After introducing the smoothSurfacesWithPrecision and ajustSurfaceUsingPrecision:
@@ -119,7 +156,7 @@ cf = plt.imshow(median_thickness_map, cmap=cmap_z, norm=norm_z, vmin=cf_min, vma
 
 cf.set_clim(cf_min, cf_max)
 
-   
+
 
 
 
