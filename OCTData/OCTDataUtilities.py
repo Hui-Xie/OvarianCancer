@@ -320,7 +320,7 @@ def medianFilterSmoothing(input, winSize=21):
     MAD = (c*MAD).expand_as(input) # size: BxSxW
 
     # an outlier is a value that is more than three scaled median absolute deviations (MAD) away from the median.
-    factor = 2.5 # instead of 3 as matlab
+    factor = 3.0 # instead of 3 as matlab
     outlierIndexes = torch.nonzero((input-mInput).abs() >= factor*MAD, as_tuple=False)
     N,dims = outlierIndexes.shape
     assert dims ==ndim
