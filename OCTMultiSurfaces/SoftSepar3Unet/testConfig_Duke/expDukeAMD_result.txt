@@ -1,6 +1,7 @@
 #June 22nd, Tuesday, 2022
 Meeting minutes with professor:
 1  submit the IPM paper to "The application of AI and other advanced technology in studying Eye disease and visual development"
+   link: https://www.frontiersin.org/research-topics/17382/the-application-of-ai-and-other-advanced-technology-in-studying-eye-diseases-and-visual-development
    A. change introduction about diseases.
    B. change paper structure.
    C. Paper focus on disease.
@@ -9,6 +10,8 @@ Meeting minutes with professor:
    B.  put more discussion about ReLU in discussion.
    C.  give P-value of ablation experiment.
    D.  ReLU may not need visualization display in Ablation.
+   E.  You may do the experiments for the JHU method without ReLU in the loss to see the performance.
+       If you observed the same performance increase as that for your method, this will well support your claim.
 
 
 
