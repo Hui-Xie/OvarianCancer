@@ -187,6 +187,10 @@ def main():
             batchPrediciton2OCTExplorerXML(testOutputs, testIDs, hps.slicesPerPatient, surfaceNames, hps.xmlOutputDir,
                                            refXMLFile=hps.refXMLFile,
                                            y=hps.inputHeight, voxelSizeY=hps.hPixelSize, dataInSlice=hps.dataInSlice)
+            # save image, GT, and segmentation into numpy
+            np.save(os.path.join(hps.testOutputDir, "testImages.npy"), images)
+            np.save(os.path.join(hps.testOutputDir, "testGts.npy"), testGts)
+            np.save(os.path.join(hps.testOutputDir, "testOutputs.npy"), testOutputs)
 
     testEndTime = time.time()
 

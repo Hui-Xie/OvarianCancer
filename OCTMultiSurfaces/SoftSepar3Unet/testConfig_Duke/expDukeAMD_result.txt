@@ -2,6 +2,112 @@
 YufanHe method: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
 Our method: expDuke_20210507A_SurfaceSubnetQ128_iibi007
 
+design table to compare p value
+==========================================================================
+                            control                               AMD
+                  surface0,     1 ,       2          surface0,      1 ,        2
+Signed Error:      0.3052        <0.0001  <0.0001     <0.0001     <0.0001   <0.0001
+Absolute Error:    <0.0001      <0.0001   <0.0001      0.1247      <0.0001   <0.0001
+============================================================================
+
+Compare MSE:
+========================================================================================================
+                                          control                                   AMD
+                                surface 0,    1,         2              surface 0,     1,    2
+YufanHe method
+                 MSE            47.11        10.63      10.71          26.04      24.71       36.88
+                 BiasSquare     0.02         0.002      0.006          0.34       0.10        0.05
+                 Variance       47.09        10.63      10.71          25.70      24.61       36.83
+Our method
+                 MSE            2.23         10.22      10.29          21.99      21.52       28.72
+                 BiasSquare     0.03         0.05       0.04           0.21       0.02        0.001
+                 Variance       2.20         10.17      10.25          21.78      21.50       28.72
+
+
+=============================================================================
+
+(base) [c-iibi007:dataPrepare_Duke]#python3 ./compareModelError.py
+Compare model accuracy in AMD and Control group separately
+predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml
+predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: AMD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 41
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-16.188212735399393, 6.178078450416327e-59, 1509700.0)
+ttestResult for surface 1: (-21.53961615369987, 6.866776917841865e-103, 1509700.0)
+ttestResult for surface 2: (29.814727390466413, 2.8699233158712825e-195, 1509700.0)
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (1.5351228126711907, 0.12475387320568725, 1509700.0)
+ttestResult for surface 1: (36.164972682848095, 2.873718069768228e-286, 1509700.0)
+ttestResult for surface 2: (24.342403064692146, 7.39634963104899e-131, 1509700.0)
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in JHUYufanHeModel:	 26.047503155987076	0.34434480176734894	25.703158354219727
+surface 0 in  OurSurfaceQ128:	 21.994490648883026	0.21014064278212885	21.784350006100897
+-----------------------------------
+surface 1 in JHUYufanHeModel:	 24.71557455020926	0.10073611029736895	24.614838439911892
+surface 1 in  OurSurfaceQ128:	 21.528541623181265	0.022207617398883883	21.50633400578238
+-----------------------------------
+surface 2 in JHUYufanHeModel:	 36.884666724426424	0.05677292889908614	36.82789379552734
+surface 2 in  OurSurfaceQ128:	 28.724432807004302	0.0015654563354345896	28.722867350668867
+-----------------------------------
+=======================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: Control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 18
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-1.0252994299744338, 0.3052222988782473, 662794.0)
+ttestResult for surface 1: (-22.557349462999973, 1.254463166905147e-112, 662794.0)
+ttestResult for surface 2: (35.338230226261686, 2.7383096954196185e-273, 662794.0)
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (13.786077524322165, 3.134007574157398e-43, 662794.0)
+ttestResult for surface 1: (5.501466890504414, 3.767829979389535e-08, 662794.0)
+ttestResult for surface 2: (4.564885038928961, 4.998577177102441e-06, 662794.0)
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in JHUYufanHeModel:	 47.11572416490144	0.025849848958280575	47.089874315943156
+surface 0 in  OurSurfaceQ128:	 2.232384813426756	0.030027123964252667	2.202357689462503
+-----------------------------------
+surface 1 in JHUYufanHeModel:	 10.633619814241486	0.0019150071945066571	10.63170480704698
+surface 1 in  OurSurfaceQ128:	 10.222551083591334	0.04950171816629023	10.173049365425044
+-----------------------------------
+surface 2 in JHUYufanHeModel:	 10.717563109010916	0.00616648463631897	10.711396624374597
+surface 2 in  OurSurfaceQ128:	 10.293158481342674	0.041020604767536994	10.252137876575137
+-----------------------------------
+=======================================
+
+
+
+
 
 #June 22nd, Tuesday, 2022
 Meeting minutes with professor:

@@ -63,7 +63,9 @@ device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 4
 learningRate: 0.01
+epochs: 800
 
+optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 network: "SurfacesUnet_YufanHe_2"
 inputHeight: 128   # original height
 inputWidth: 1024   # rawImageWidth
@@ -77,6 +79,7 @@ gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: True
+segChannels: 64  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 49

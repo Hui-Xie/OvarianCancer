@@ -15,6 +15,13 @@ ReLU outside loss on JHU method 100% experiments: training:
 598  2021-06-23 12:25:39 nohup python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2.yaml &   14GB
 
 
+Compare p-value and MSE of JHU method and our method in 100% training data:
+JHU method: expJHU_20210501_YufanHe_fullData_A_skm2
+Our method: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2
+
+
+
+
 
 
 # June 15th, Tuesday, 2021
