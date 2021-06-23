@@ -1,14 +1,14 @@
 # Compare model error with student t-test and MSE.
-# model 1: pure surface branch
-# model 2: SoftSeparation model 2 with gradient paitwise term.
+# model 1: YufanHe's model
+# model 2: Our model
 
 
 predictDir1 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml"
-predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SoftSeparationNet_A/expDuke_SoftSeparation_A_lambdaB_alpha001_20210409_iibi007/testResult/xml"
+predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml"
 gtDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test"
 
-model1Name ="       JHU_YufanHeModel"
-model2Name ="LossModelSoftSeparation"
+model1Name ="JHUYufanHeModel"
+model2Name =" OurSurfaceQ128"
 
 N = 3
 W = 361

@@ -1,4 +1,6 @@
-
+# Pvalue and MSE comparision:
+YufanHe method: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
+Our method: expDuke_20210507A_SurfaceSubnetQ128_iibi007
 
 
 #June 22nd, Tuesday, 2022
