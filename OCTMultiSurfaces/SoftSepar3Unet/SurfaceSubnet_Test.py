@@ -18,6 +18,7 @@ import time
 from SurfaceSubnet import SurfaceSubnet
 from SurfaceSubnet_M import SurfaceSubnet_M  # smooth module surface net
 from SurfacesUnet_YufanHe_2 import SurfacesUnet_YufanHe_2
+from SurfacesUnet_YufanHe_3 import SurfacesUnet_YufanHe_3
 from SurfaceSubnet_M5 import SurfaceSubnet_M5
 from SurfaceSubnet_P import SurfaceSubnet_P
 from SurfaceSubnet_Q import SurfaceSubnet_Q
