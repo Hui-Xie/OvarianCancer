@@ -218,10 +218,11 @@ def main():
         file.write(f"\n\n===============Formal Output Result ===========\n")
         file.write(f"patientIDList ={patientIDList}\n")
         if hps.existGTLabel:
-            file.write(f"stdSurfaceError = {stdSurfaceError}\n")
-            file.write(f"muSurfaceError = {muSurfaceError}\n")
-            file.write(f"stdError = {stdError}\n")
-            file.write(f"muError = {muError}\n")
+            file.write("Surface muError ± std: \n")
+            for i in range(S):
+                file.write(f"{muSurfaceError[i]:.2f}±{stdSurfaceError[i]:.2f}\t")
+            file.write("\n")
+            file.write(f"muError ± std: {muError:.2f}±{stdError:.2f}\n")
             file.write(f"Hausdorff Distance = {hausdorffD}\n")
 
         file.write(f"pixel number of violating surface-separation constraints: {len(violateConstraintErrors[0])}\n")

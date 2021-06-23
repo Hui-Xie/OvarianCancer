@@ -6,9 +6,9 @@ Professor idea: You may do the experiments for the JHU method without ReLU in th
 1  Use JHU MS data with JHU method:
 2  JHU base version: expJHU_20210501_YufanHe_fullData_A_skm2 on 100% data, with network name:SurfacesUnet_YufanHe_2
 3  Work:
-   A.   Cope a network from SurfacesUnet_YufanHe_2, with a ReLU outside of loss, and name as SurfacesUnet_YufanHe_3.
-   B    NoReLU config
-   C    ReLU outside of loss.
+   A.   Cope a network from SurfacesUnet_YufanHe_2, with a ReLU outside of loss, and name as SurfacesUnet_YufanHe_3.  --done.
+   B    NoReLU config   __done
+   C    ReLU outside of loss.    __done
 
 ReLU outside loss on JHU method 100% experiments: training:
 597  2021-06-23 12:25:24 nohup python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210623_YufanHe3_fullData_NoReLU_skm2.yaml &
