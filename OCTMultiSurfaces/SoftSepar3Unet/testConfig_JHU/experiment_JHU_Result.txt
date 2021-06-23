@@ -10,6 +10,11 @@ Professor idea: You may do the experiments for the JHU method without ReLU in th
    B    NoReLU config
    C    ReLU outside of loss.
 
+ReLU outside loss on JHU method 100% experiments: training:
+597  2021-06-23 12:25:24 nohup python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210623_YufanHe3_fullData_NoReLU_skm2.yaml &
+598  2021-06-23 12:25:39 nohup python3 ./SurfaceSubnet_Train.py ./testConfig_JHU/expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2.yaml &
+
+
 
 
 # June 15th, Tuesday, 2021
