@@ -1,3 +1,20 @@
+# Jun23th, Wenday, 2021
+Meeting with Ray, possbile discussion points:
+1   how is the initial segmentation quality?
+2   do you think what is possible improvement?
+3   I will launch new test set of 3 patient on Thursday.
+4   further work?
+5   Paper submission is good.
+    OMIA(https://sites.google.com/view/omia8/home, https://omia.grand-challenge.org/Home/)
+    submission deadline: July 9th.
+    Jul 24      Notification of OMIA8 decisions
+
+
+
+
+
+
+
 # June 22th, Tuesday, 2021:
   500  2021-06-21 22:27:10 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_B_skm2.yaml &   muError=4.05, maxHD=69
   501  2021-06-21 22:27:17 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210621_SurfaceSubnetQ96_10Cases_C_skm2.yaml &   muError=3.71, maxHD = 65
@@ -28,11 +45,11 @@ Result:
     muSurfaceError = tensor([1.8456, 5.4753, 5.6793, 5.3225, 1.6251, 2.3658], device='cuda:1')
     stdError = 1.8926666975021362
     muError = 3.7189223766326904  (mean absolute surface distance error(MASD, um))
-    hausdorff Distance in pixels = [[23.239044 27.6427   28.632294 42.18402  39.45883  65.79611 ]]
-    pixel number of violating surface-separation constraints: 0
+    Hausdorff Distance in pixels = [[23.239044 27.6427   28.632294 42.18402  39.45883  65.79611 ]]
+    Pixel number of violating surface-separation constraints: 0
 3   Notes: This VIP data is different with JHU MS and Duke AMD data as it has just 200 Ascans and all surface are bumpy wave shape, and all are glaucoma cases without control group.
            This VIP data does not has the flat surfaces at both ends, which will help reduce the MASD error on volume dimension.
-4   attachment are 2 middle Bscan for each patient for your quick review.
+4   attachment are 2 middle Bscan for each patient for your quick preview.
 
 
 # June 21th, Monday,2021
