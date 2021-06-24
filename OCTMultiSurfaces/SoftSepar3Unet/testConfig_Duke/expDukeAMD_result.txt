@@ -13,8 +13,8 @@ NoGradientInput: expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007
                   surface0,     1 ,       2          surface0,      1 ,        2
 -------------------------------------------------------------------------------------
                                     OurBaseline vs NoYweight
-signedError
-AbsoluteError
+signedError     0.0000	0.0000	0.0005	            0.0000	0.1108	0.0000
+AbsoluteError   0.0001	0.0000	0.0000              0.0000	0.5375	0.0831
 --------------------------------------------------------------------------------------
                                     OurBaseline vs NoTopo
 signedError
@@ -24,6 +24,105 @@ AbsoluteError
 signedError
 AbsoluteError
 ---------------------------------------------------------------------------------------
+
+(base) [c-iibi007:dataPrepare_Duke]#python3 ./pvalueMSEAnalysis.py
+Compare model accuracy in AMD and Control group separately
+predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml
+predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210615_SurfaceSubnetQ128_NoYweight_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: Control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 18
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (49.622592093982746, 0.0, 662794.0)
+ttestResult for surface 1: (37.654263653008435, 5.9470774539821e-310, 662794.0)
+ttestResult for surface 2: (3.498613926733754, 0.0004677138840157143, 662794.0)
+==================================
+p-value for signed errors: 3surfaces
+0.0000	0.0000	0.0005
+
+==================================
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (3.8546637347045287, 0.00011589972531405558, 662794.0)
+ttestResult for surface 1: (7.387480457090511, 1.4981142719737406e-13, 662794.0)
+ttestResult for surface 2: (4.43046374182318, 9.404569091366484e-06, 662794.0)
+==================================
+p-value for absolute errors: 3surfaces
+0.0001	0.0000	0.0000
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in OurSurfaceQ128Baseline:	 2.232384813426756	0.030027123964252667	2.202357689462503
+surface 0 in  NoYweight:	 3.564073912335018	0.0011350651780297483	3.562938847156988
+-----------------------------------
+surface 1 in OurSurfaceQ128Baseline:	 10.222551083591334	0.04950171816629023	10.173049365425044
+surface 1 in  NoYweight:	 9.621136972462116	0.0046903638444621976	9.616446608617654
+-----------------------------------
+surface 2 in OurSurfaceQ128Baseline:	 10.293158481342674	0.041020604767536994	10.252137876575137
+surface 2 in  NoYweight:	 10.293285188202704	0.05292173923802679	10.240363448964677
+-----------------------------------
+=======================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: AMD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 41
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (17.345243938754628, 2.1752370619250933e-67, 1509700.0)
+ttestResult for surface 1: (-1.594654539862642, 0.11078971844599696, 1509700.0)
+ttestResult for surface 2: (11.50393891487509, 1.2640133438247357e-30, 1509700.0)
+==================================
+p-value for signed errors: 3surfaces
+0.0000	0.1108	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-7.451707434634962, 9.21886147448839e-14, 1509700.0)
+ttestResult for surface 1: (0.616539358774167, 0.5375386965074126, 1509700.0)
+ttestResult for surface 2: (-1.7331869055953106, 0.08306265783709886, 1509700.0)
+==================================
+p-value for absolute errors: 3surfaces
+0.0000	0.5375	0.0831
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in OurSurfaceQ128Baseline:	 21.994490648883026	0.21014064278212885	21.784350006100897
+surface 0 in  NoYweight:	 25.051369362165513	0.353456587707516	24.697912774457997
+-----------------------------------
+surface 1 in OurSurfaceQ128Baseline:	 21.528541623181265	0.022207617398883883	21.50633400578238
+surface 1 in  NoYweight:	 20.413740674119804	0.018807733460011633	20.394932940659793
+-----------------------------------
+surface 2 in OurSurfaceQ128Baseline:	 28.724432807004302	0.0015654563354345896	28.722867350668867
+surface 2 in  NoYweight:	 31.427715939702033	0.020232350921443043	31.40748358878059
+-----------------------------------
+=======================================
 
 
 
