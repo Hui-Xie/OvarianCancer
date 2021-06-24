@@ -93,11 +93,11 @@ biasSquare2 = [0,]*N
 for n in range(N):
     mse1[n] = sm.tools.eval_measures.mse(predict1All[n]*hPixelSize, gtAll[n]*hPixelSize)
     var1[n]  = np.var(predict1All[n]*hPixelSize-gtAll[n]*hPixelSize)
-    biasSquare1[n] = mse1 - var1
+    biasSquare1[n] = mse1[n] - var1[n]
 
     mse2[n] = sm.tools.eval_measures.mse(predict2All[n]*hPixelSize, gtAll[n]*hPixelSize)
     var2[n] = np.var(predict2All[n]*hPixelSize-gtAll[n]*hPixelSize)
-    biasSquare2[n] = mse2 - var2
+    biasSquare2[n] = mse2[n]- var2[n]
 
 print(f"in model {model1Name}:")
 print(f"MSE\t", end="")
