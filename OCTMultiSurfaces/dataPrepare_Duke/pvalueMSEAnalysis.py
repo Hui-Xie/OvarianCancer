@@ -8,7 +8,7 @@ predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceS
 gtDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test"
 
 model1Name ="OurSurfaceQ128Baseline"
-model2Name =" NoYweight"
+model2Name =" NoTopo"
 
 N = 3
 W = 361
