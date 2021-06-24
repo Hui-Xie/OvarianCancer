@@ -5,8 +5,80 @@ Hui Method: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 (Best)
 NoYweight: expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2
 NoTopo: expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2
 NoGradientInput: expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2
-
+===============================================================================================================
+                                           p-value analysis:
+===============================================================================================================
+expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2:
+signedError:    0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+AbsoluteError:  0.0000	0.1023	0.3012	0.0018	0.0000	0.0000	0.0000	0.0006	0.0000	0.0000
+expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2
+signedError:
+AbsoluteError:
+expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2
+signedError:
+AbsoluteError:
+=======================================================================================================
 p-value on expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2:
+python3 ./pvalueMSEAnalysis.py
+Compute p-value and MSE:
+predictPath1= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy
+predictPath2= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2/testResult/test/testOutputs.npy
+gtPath = /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy
+============================================================
+segmentation array shape = (980, 9, 1024)
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 9 surfaces signed errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (59.45105718778737, 0.0, 2007038.0)
+ttestResult for surface 1: (5.722491799951332, 1.0498778116233778e-08, 2007038.0)
+ttestResult for surface 2: (-96.04507323243229, 0.0, 2007038.0)
+ttestResult for surface 3: (-45.781226076089155, 0.0, 2007038.0)
+ttestResult for surface 4: (15.008826749642246, 6.468569758877713e-51, 2007038.0)
+ttestResult for surface 5: (-56.05489013883744, 0.0, 2007038.0)
+ttestResult for surface 6: (-75.03250499562358, 0.0, 2007038.0)
+ttestResult for surface 7: (-20.172076516068117, 1.7585906779978413e-90, 2007038.0)
+ttestResult for surface 8: (-136.27525030664304, 0.0, 2007038.0)
+ttestResult for overll surfaces: (-110.41253295340493, 0.0, 18063358.0)
+==================================
+p-value for signed errors: 9surfaces + overall
+0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 9 surfaces absolute errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (18.912542930490428, 9.136683504216574e-80, 2007038.0)
+ttestResult for surface 1: (-1.6338767708106006, 0.10228488502969614, 2007038.0)
+ttestResult for surface 2: (1.033885036246832, 0.30119003583500875, 2007038.0)
+ttestResult for surface 3: (-3.120167717533604, 0.001807506549461128, 2007038.0)
+ttestResult for surface 4: (-10.568140146275741, 4.1937861338173743e-26, 2007038.0)
+ttestResult for surface 5: (-20.241035081909303, 4.3517177826730394e-91, 2007038.0)
+ttestResult for surface 6: (-27.776386311813244, 9.013261321676433e-170, 2007038.0)
+ttestResult for surface 7: (-3.4523303259789357, 0.0005557783340600985, 2007038.0)
+ttestResult for surface 8: (-85.64610921261766, 0.0, 2007038.0)
+ttestResult for overall surfaces: (-41.68448648126819, 0.0, 18063358.0)
+==================================
+p-value for absolute errors: 9surfaces + overall
+0.0000	0.1023	0.3012	0.0018	0.0000	0.0000	0.0000	0.0006	0.0000	0.0000
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um^2) ===============
+in model OurModelBaseLine: MSE of 9 surfaces + overall
+MSE	11.23	21.46	15.44	19.16	16.88	10.72	6.51	19.00	14.33	14.97
+BiasSquare	0.87	0.04	0.04	1.07	0.36	0.04	0.19	0.10	0.30	0.11
+Variance	10.36	21.42	15.40	18.08	16.52	10.68	6.32	18.90	14.03	14.86
+in model NoYweightAblation: MSE of 9 surfaces + overall
+MSE	10.46	22.86	16.58	18.67	21.41	13.37	8.08	19.75	18.49	16.63
+BiasSquare	0.44	0.06	0.11	1.71	0.26	0.22	0.51	0.03	1.69	0.29
+Variance	10.02	22.80	16.47	16.96	21.15	13.16	7.58	19.72	16.80	16.34
+=============END==============
 
 
 

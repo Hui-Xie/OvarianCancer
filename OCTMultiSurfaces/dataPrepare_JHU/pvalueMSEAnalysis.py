@@ -15,10 +15,10 @@
 
 # pvalue and MSE analysis:
 predictPath1 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy"
-predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2/testResult/test/testOutputs.npy"
+predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2/testResult/test/testOutputs.npy"
 gtPath = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy"
 model1Name ="OurModelBaseLine"
-model2Name ="NoYweightAblation"
+model2Name ="NoTopoAblation"
 
 
 hPixelSize =  3.86725 # um
