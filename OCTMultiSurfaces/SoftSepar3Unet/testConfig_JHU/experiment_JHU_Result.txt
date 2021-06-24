@@ -1,11 +1,30 @@
 # June 24th, Thursday, 2021
 The ablation experiment of JHU method.
-=========================================================================================================
+=============================================================================================================================================================================================
 ExpName                                                 surfaceMeanError±std (0-8)                                                                                      overallMeanError±std
 expJHU_20210501_YufanHe_fullData_A_skm2                 2.36±0.39	3.01±0.75	2.86±0.43	3.15±0.39	2.78±0.63	2.57±0.76	2.00±0.74	3.37±0.78	3.10±2.30       2.80±1.03
-expJHU_20210623_YufanHe3_fullData_NoReLU_skm2
-expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2
-==========================================================================================================
+expJHU_20210623_YufanHe3_fullData_NoReLU_skm2           2.36±0.27	3.09±0.65	2.85±0.44	3.22±0.34	2.72±0.62	2.62±0.51	2.02±0.53	3.30±0.73	2.94±1.62       2.79±0.82
+expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2  2.41±0.32	3.03±0.74	2.87±0.42	3.10±0.42	2.70±0.61	2.54±0.58	1.95±0.80	3.40±0.87	2.92±2.08       2.77±0.98
+==============================================================================================================================================================================================
+
+Test programs:
+739  2021-06-24 10:13:16 nohup python3 ./SurfaceSubnet_Test.py ./testConfig_JHU/expJHU_20210623_YufanHe3_fullData_NoReLU_skm2.yaml &
+740  2021-06-24 10:13:55 nohup python3 ./SurfaceSubnet_Test.py ./testConfig_JHU/expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2.yaml &
+
+For the expJHU_20210623_YufanHe3_fullData_NoReLU_skm2:
+pixel number of violating surface-separation constraints: 224
+slice number of violating surface-separation constraints: 8
+slice list of violating surface-separation constraints:
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/hc03_spectralis_macula_v1_s1_R_41.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/hc07_spectralis_macula_v1_s1_R_1.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_28.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/hc08_spectralis_macula_v1_s1_R_25.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms01_spectralis_macula_v1_s1_R_44.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/hc07_spectralis_macula_v1_s1_R_2.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms06_spectralis_macula_v1_s1_R_31.png
+	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_46.png
+
+
 
 
 # June 23rd, Wednesday, 2021
