@@ -13,16 +13,16 @@ NoGradientInput: expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007
                   surface0,     1 ,       2          surface0,      1 ,        2
 -------------------------------------------------------------------------------------
                                     OurBaseline vs NoYweight
-signedError     0.0000	0.0000	0.0005	            0.0000	0.1108	0.0000
+SignedError     0.0000	0.0000	0.0005	            0.0000	0.1108	0.0000
 AbsoluteError   0.0001	0.0000	0.0000              0.0000	0.5375	0.0831
 --------------------------------------------------------------------------------------
                                     OurBaseline vs NoTopo
-signedError     0.0000	0.0000	0.0000              0.0000	0.0015	0.0000
+SignedError     0.0000	0.0000	0.0000              0.0000	0.0015	0.0000
 AbsoluteError   0.0000	0.0000	0.0944	            0.0027	0.0000	0.0000
 --------------------------------------------------------------------------------------
                                     OurBaseline vs NoGradientInput
-signedError
-AbsoluteError
+SignedError     0.3846	0.0000	0.0000              0.0000	0.0000	0.0000
+AbsoluteError   0.1855	0.0000	0.0001              0.0000	0.0444	0.1382
 ---------------------------------------------------------------------------------------
 
 (base) [c-iibi007:dataPrepare_Duke]#python3 ./pvalueMSEAnalysis.py
@@ -224,6 +224,106 @@ surface 2 in  NoTopo:	                 69.82134547665699	0.10286977134549602	69.
 -----------------------------------
 =======================================
 
+
+(base) [c-iibi007:dataPrepare_Duke]#python3 ./pvalueMSEAnalysis.py
+Compare model accuracy in AMD and Control group separately
+predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml
+predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: Control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 18
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (0.8693878262672257, 0.3846353542432648, 662794.0)
+ttestResult for surface 1: (11.135341668610405, 8.491950964026238e-29, 662794.0)
+ttestResult for surface 2: (-43.95142677450954, 0.0, 662794.0)
+==================================
+p-value for signed errors: 3surfaces
+0.3846	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (1.3241014709929142, 0.18546980373954866, 662794.0)
+ttestResult for surface 1: (9.176201886341513, 4.477887015751731e-20, 662794.0)
+ttestResult for surface 2: (3.8114018169731394, 0.00013819341992516468, 662794.0)
+==================================
+p-value for absolute errors: 3surfaces
+0.1855	0.0000	0.0001
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in OurSurfaceQ128Baseline:	 2.232384813426756	0.030027123964252667	2.202357689462503
+surface 0 in  NoGradientInput:	         3.8781168649177116	0.028753372052914727	3.849363492864797
+-----------------------------------
+surface 1 in OurSurfaceQ128Baseline:	 10.222551083591334	0.04950171816629023	10.173049365425044
+surface 1 in  NoGradientInput:	          9.583885155613492	0.018646465436459536	9.565238690177033
+-----------------------------------
+surface 2 in OurSurfaceQ128Baseline:	 10.293158481342674	0.041020604767536994	10.252137876575137
+surface 2 in  NoGradientInput:	         10.15875417956656	0.020227263491964464	10.138526916074596
+-----------------------------------
+=======================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: AMD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 41
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (4.443032442723506, 8.870607850228018e-06, 1509700.0)
+ttestResult for surface 1: (-28.297558269403318, 4.1192478321813074e-176, 1509700.0)
+ttestResult for surface 2: (-34.264622584195415, 3.3200033551098737e-257, 1509700.0)
+==================================
+p-value for signed errors: 3surfaces
+0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-12.108968947887167, 9.501900540890708e-34, 1509700.0)
+ttestResult for surface 1: (2.0105955961680144, 0.04436836707879876, 1509700.0)
+ttestResult for surface 2: (1.4825207135848621, 0.13820200499800733, 1509700.0)
+==================================
+p-value for absolute errors: 3surfaces
+0.0000	0.0444	0.1382
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in OurSurfaceQ128Baseline:	 21.994490648883026	0.21014064278212885	21.784350006100897
+surface 0 in  NoGradientInput:	         26.769393858125646	0.243991560733555	26.52540229739209
+-----------------------------------
+surface 1 in OurSurfaceQ128Baseline:	 21.528541623181265	0.022207617398883883	21.50633400578238
+surface 1 in  NoGradientInput:	         19.290247943501434	0.003481129904987057	19.286766813596447
+-----------------------------------
+surface 2 in OurSurfaceQ128Baseline:	 28.724432807004302	0.0015654563354345896	28.722867350668867
+surface 2 in  NoGradientInput:	         32.81249057734572	0.07269559688919713	32.73979498045652
+-----------------------------------
+=======================================
+(base) [c-iibi007:dataPrepare_Duke]#
 
 
 
