@@ -83,12 +83,13 @@ print("------------------------------------------------\n")
 print("MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)")
 print(f"\n\n================MSE measure in physical size (um^2) ===============")
 
-mse1= [0,]*N
-var1 = [0,]*N
-biasSquare1 = [0,]*N
-mse2= [0,]*N
-var2 = [0,]*N
-biasSquare2 = [0,]*N
+# N surfaces + overall
+mse1= [0,]*(N+1)
+var1 = [0,]*(N+1)
+biasSquare1 = [0,]*(N+1)
+mse2= [0,]*(N+1)
+var2 = [0,]*(N+1)
+biasSquare2 = [0,]*(N+1)
 
 for n in range(N):
     mse1[n] = sm.tools.eval_measures.mse(predict1All[n]*hPixelSize, gtAll[n]*hPixelSize)
@@ -99,31 +100,41 @@ for n in range(N):
     var2[n] = np.var(predict2All[n]*hPixelSize-gtAll[n]*hPixelSize)
     biasSquare2[n] = mse2[n]- var2[n]
 
-print(f"in model {model1Name}:")
+# get overall MSE:
+mse1[N] = sm.tools.eval_measures.mse(predict1All.flatten()*hPixelSize, gtAll.flatten()*hPixelSize)
+var1[N]  = np.var(predict1All.flatten()*hPixelSize-gtAll.flatten()*hPixelSize)
+biasSquare1[N] = mse1[N] - var1[N]
+
+mse2[N] = sm.tools.eval_measures.mse(predict2All.flatten()*hPixelSize, gtAll.flatten()*hPixelSize)
+var2[N] = np.var(predict2All.flatten()*hPixelSize-gtAll.flatten()*hPixelSize)
+biasSquare2[N] = mse2[N]- var2[N]
+
+
+print(f"in model {model1Name}: MSE of {N} surfaces + overall")
 print(f"MSE\t", end="")
-for n in range(N):
+for n in range(N+1):
     print(f"{mse1[n]:.2f}\t",end="")
 print("")
 print(f"BiasSquare\t", end="")
-for n in range(N):
+for n in range(N+1):
     print(f"{biasSquare1[n]:.2f}\t",end="")
 print("")
 print(f"Variance\t", end="")
-for n in range(N):
+for n in range(N+1):
     print(f"{var1[n]:.2f}\t",end="")
 print("")
 
-print(f"in model {model2Name}:")
+print(f"in model {model2Name}: MSE of {N} surfaces + overall")
 print(f"MSE\t", end="")
-for n in range(N):
+for n in range(N+1):
     print(f"{mse2[n]:.2f}\t",end="")
 print("")
 print(f"BiasSquare\t", end="")
-for n in range(N):
+for n in range(N+1):
     print(f"{biasSquare2[n]:.2f}\t",end="")
 print("")
 print(f"Variance\t", end="")
-for n in range(N):
+for n in range(N+1):
     print(f"{var2[n]:.2f}\t",end="")
 print("")
 
