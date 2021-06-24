@@ -1,4 +1,42 @@
 # Pvalue and MSE comparision:
+==================================================================================
+Comparision ourbasine with its ablation experiment on Duke AMD data.
+Ourbaseline: expDuke_20210507A_SurfaceSubnetQ128_iibi007
+NoYweight: expDuke_20210615_SurfaceSubnetQ128_NoYweight_iibi007
+NoTopo: expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007
+NoGradientInput: expDuke_20210615_SurfaceSubnetQ128_NoGradientInput_iibi007
+
+--------------------------------------------------------------------------------------
+                                       p-value
+--------------------------------------------------------------------------------------
+                           control                               AMD
+                  surface0,     1 ,       2          surface0,      1 ,        2
+-------------------------------------------------------------------------------------
+                                    OurBaseline vs NoYweight
+signedError
+AbsoluteError
+--------------------------------------------------------------------------------------
+                                    OurBaseline vs NoTopo
+signedError
+AbsoluteError
+--------------------------------------------------------------------------------------
+                                    OurBaseline vs NoGradientInput
+signedError
+AbsoluteError
+---------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+==================================================================================
 YufanHe method: expDuke_20201208A_SurfaceNet_YufanHe_iibi007
 Our method: expDuke_20210507A_SurfaceSubnetQ128_iibi007
 

@@ -3,12 +3,12 @@
 # model 2: Our model
 
 
-predictDir1 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfacesUnet_YufanHe_2/expDuke_20201208A_SurfaceNet_YufanHe_iibi007/testResult/xml"
-predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml"
+predictDir1 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml"
+predictDir2 = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210615_SurfaceSubnetQ128_NoYweight_iibi007/testResult/xml"
 gtDir = "/localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test"
 
-model1Name ="JHUYufanHeModel"
-model2Name =" OurSurfaceQ128"
+model1Name ="OurSurfaceQ128Baseline"
+model2Name =" NoYweight"
 
 N = 3
 W = 361
@@ -39,7 +39,7 @@ print(f"predictDir2= {predictDir2}")
 print(f"gtDir = {gtDir}")
 print("============================================================")
 
-twoGroupDict = {"AMD":AMDXmlList1, "Control":ControlXmlList1}
+twoGroupDict = {"Control":ControlXmlList1, "AMD":AMDXmlList1}
 for groupName, xmlList in twoGroupDict.items():
     Num = len(xmlList)
     print("\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55")
@@ -80,17 +80,33 @@ for groupName, xmlList in twoGroupDict.items():
     print(f"ttestResult for {N} surfaces signed errors:");
     print(f"modleError shape = {model1Error.shape}")
     print("\t\t\t testStatistic \t\t pValue \t degreeFreedom")
+    signedErrorPvalue = [0,]*N
     for n in range(N):
         ttestResult = sm.stats.ttest_ind(model1Error[n,], model2Error[n,])
         print(f"ttestResult for surface {n}: {ttestResult}")
+        signedErrorPvalue[n] = ttestResult[1]
+    print(f"==================================")
+    print(f"p-value for signed errors: {N}surfaces")
+    for n in range(N):
+        print(f"{signedErrorPvalue[n]:.4f}\t", end="")
+    print(f"\n")
+    print(f"==================================")
 
     print("------------------------------------------------")
     print(f"ttestResult for {N} surfaces absolute errors:");
     print(f"modleError shape = {model1Error.shape}")
     print("\t\t\t testStatistic \t\t pValue \t degreeFreedom")
+    absoluteErrorPvalue = [0,]*N
     for n in range(N):
         ttestResult = sm.stats.ttest_ind(np.absolute(model1Error[n,]), np.absolute(model2Error[n,]))
         print(f"ttestResult for surface {n}: {ttestResult}")
+        absoluteErrorPvalue[n] = ttestResult[1]
+    print(f"==================================")
+    print(f"p-value for absolute errors: {N}surfaces")
+    for n in range(N):
+        print(f"{absoluteErrorPvalue[n]:.4f}\t", end="")
+    print(f"\n")
+    print(f"==================================")
 
     print("------------------------------------------------\n")
     print("MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)")
