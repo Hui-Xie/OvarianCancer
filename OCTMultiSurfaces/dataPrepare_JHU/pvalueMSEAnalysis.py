@@ -44,38 +44,90 @@ model2Error = predict2All -gtAll
 print(f"ttest tests the null hypothesis that the population means related to two independent, "
       f"random samples from an approximately normal distribution are equal. ")
 
+# make the output similar with Latex table.
 print(f"ttestResult for {N} surfaces signed errors:");
 print(f"modleError shape = {model1Error.shape}")
 print("\t\t\t testStatistic \t\t pValue \t degreeFreedom")
+signedpvalue = []
 for n in range(N):
     ttestResult = sm.stats.ttest_ind(model1Error[n,], model2Error[n,])
     print(f"ttestResult for surface {n}: {ttestResult}")
+    signedpvalue.append(ttestResult[1])
+
+print(f"==================================")
+print(f"p-value for signed errors:")
+for n in range(N):
+    print(f"{signedpvalue[n]:.4f}\t", end="")
+print(f"\n")
+print(f"==================================")
 
 print("------------------------------------------------")
 print(f"ttestResult for {N} surfaces absolute errors:");
 print(f"modleError shape = {model1Error.shape}")
 print("\t\t\t testStatistic \t\t pValue \t degreeFreedom")
+abspvalue=[]
 for n in range(N):
     ttestResult = sm.stats.ttest_ind(np.absolute(model1Error[n,]), np.absolute(model2Error[n,]))
     print(f"ttestResult for surface {n}: {ttestResult}")
+    abspvalue.append(ttestResult[1])
+
+print(f"==================================")
+print(f"p-value for absolute errors:")
+for n in range(N):
+    print(f"{abspvalue[n]:.4f}\t", end="")
+print(f"\n")
+print(f"==================================")
+
 
 print("------------------------------------------------\n")
 print("MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)")
-print(f"\n\n================MSE measure in physical size (um) ===============")
+print(f"\n\n================MSE measure in physical size (um^2) ===============")
 
-print(f"\t\t\t\t\t MSE \t\t\t BiasSquare \t\t\t Variance ")
+mse1= [0,]*N
+var1 = [0,]*N
+biasSquare1 = [0,]*N
+mse2= [0,]*N
+var2 = [0,]*N
+biasSquare2 = [0,]*N
+
 for n in range(N):
-    mse1 = sm.tools.eval_measures.mse(predict1All[n]*hPixelSize, gtAll[n]*hPixelSize)
-    var1  = np.var(predict1All[n]*hPixelSize-gtAll[n]*hPixelSize)
-    biasSquare1 = mse1 - var1
+    mse1[n] = sm.tools.eval_measures.mse(predict1All[n]*hPixelSize, gtAll[n]*hPixelSize)
+    var1[n]  = np.var(predict1All[n]*hPixelSize-gtAll[n]*hPixelSize)
+    biasSquare1[n] = mse1 - var1
 
-    mse2 = sm.tools.eval_measures.mse(predict2All[n]*hPixelSize, gtAll[n]*hPixelSize)
-    var2 = np.var(predict2All[n]*hPixelSize-gtAll[n]*hPixelSize)
-    biasSquare2 = mse2 - var2
-    print(f"surface {n} in {model1Name}:\t {mse1}\t{biasSquare1}\t{var1}")
-    print(f"surface {n} in {model2Name}:\t {mse2}\t{biasSquare2}\t{var2}")
-    print(f"-----------------------------------")
-print(f"=======================================")
+    mse2[n] = sm.tools.eval_measures.mse(predict2All[n]*hPixelSize, gtAll[n]*hPixelSize)
+    var2[n] = np.var(predict2All[n]*hPixelSize-gtAll[n]*hPixelSize)
+    biasSquare2[n] = mse2 - var2
+
+print(f"in model {model1Name}:")
+print(f"MSE\t", end="")
+for n in range(N):
+    print(f"{mse1[n]:.2f}\t",end="")
+print("")
+print(f"BiasSquare\t", end="")
+for n in range(N):
+    print(f"{biasSquare1[n]:.2f}\t",end="")
+print("")
+print(f"Variance\t", end="")
+for n in range(N):
+    print(f"{var1[n]:.2f}\t",end="")
+print("")
+
+print(f"in model {model2Name}:")
+print(f"MSE\t", end="")
+for n in range(N):
+    print(f"{mse2[n]:.2f}\t",end="")
+print("")
+print(f"BiasSquare\t", end="")
+for n in range(N):
+    print(f"{biasSquare2[n]:.2f}\t",end="")
+print("")
+print(f"Variance\t", end="")
+for n in range(N):
+    print(f"{var2[n]:.2f}\t",end="")
+print("")
+
+print(f"=============END==============")
 
 
 
