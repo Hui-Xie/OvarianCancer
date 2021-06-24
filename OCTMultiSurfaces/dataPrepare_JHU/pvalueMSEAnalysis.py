@@ -2,16 +2,24 @@
 # model 1: YufanHe's model
 # model 2: Our model
 
-#JHU method: expJHU_20210501_YufanHe_fullData_A_skm2
-#Our method: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2
+'''
+# JHU method: expJHU_20210501_YufanHe_fullData_A_skm2
+# Our method: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2
+# predictPath1 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testOutputs.npy"
+# predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy"
+# gtPath = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy"
+# model1Name ="JHUYufanHeModel"
+# model2Name =" OurSurfaceQ64"
 
+'''
 
+# pvalue and MSE analysis of expJHU_20210501_YufanHe_fullData_A_skm2 and expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2:
 predictPath1 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testOutputs.npy"
-predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy"
-gtPath = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy"
+predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_3/expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2/testResult/test/testOutputs.npy"
+gtPath = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testGts.npy"
+model1Name ="YufanHeModelBaseLine"
+model2Name ="YUfanHeReLUOutsideLoss"
 
-model1Name ="JHUYufanHeModel"
-model2Name =" OurSurfaceQ64"
 
 hPixelSize =  3.86725 # um
 
@@ -54,9 +62,13 @@ for n in range(N):
     print(f"ttestResult for surface {n}: {ttestResult}")
     signedpvalue.append(ttestResult[1])
 
+ttestResult = sm.stats.ttest_ind(model1Error.flatten(), model2Error.flatten())
+print(f"ttestResult for overll surfaces: {ttestResult}")
+signedpvalue.append(ttestResult[1])
+
 print(f"==================================")
-print(f"p-value for signed errors:")
-for n in range(N):
+print(f"p-value for signed errors: {N}surfaces + overall")
+for n in range(N+1):
     print(f"{signedpvalue[n]:.4f}\t", end="")
 print(f"\n")
 print(f"==================================")
@@ -71,9 +83,13 @@ for n in range(N):
     print(f"ttestResult for surface {n}: {ttestResult}")
     abspvalue.append(ttestResult[1])
 
+ttestResult = sm.stats.ttest_ind(np.absolute(model1Error.flatten()), np.absolute(model2Error.flatten()))
+print(f"ttestResult for overall surfaces: {ttestResult}")
+abspvalue.append(ttestResult[1])
+
 print(f"==================================")
-print(f"p-value for absolute errors:")
-for n in range(N):
+print(f"p-value for absolute errors: {N}surfaces + overall")
+for n in range(N+1):
     print(f"{abspvalue[n]:.4f}\t", end="")
 print(f"\n")
 print(f"==================================")

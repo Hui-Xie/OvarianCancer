@@ -24,6 +24,8 @@ slice list of violating surface-separation constraints:
 	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms06_spectralis_macula_v1_s1_R_31.png
 	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_46.png
 
+pvalue and MSE analysis of expJHU_20210501_YufanHe_fullData_A_skm2 and expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2:
+
 
 
 
