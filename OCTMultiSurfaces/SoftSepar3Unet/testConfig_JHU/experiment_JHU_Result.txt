@@ -19,8 +19,64 @@ Compare p-value and MSE of JHU method and our method in 100% training data:
 JHU method: expJHU_20210501_YufanHe_fullData_A_skm2
 Our method: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2
 
+(base) [sxm2:dataPrepare_JHU]#python3 ./pvalueMSEAnalysis.py
+Compute p-value and MSE:
+predictPath1= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testOutputs.npy
+predictPath2= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy
+gtPath = /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy
+============================================================
+segmentation array shape = (980, 9, 1024)
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 9 surfaces signed errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-126.69600642899128, 0.0, 2007038.0)
+ttestResult for surface 1: (129.55332854885913, 0.0, 2007038.0)
+ttestResult for surface 2: (57.68046030691207, 0.0, 2007038.0)
+ttestResult for surface 3: (-265.4309335515549, 0.0, 2007038.0)
+ttestResult for surface 4: (-166.91023275955342, 0.0, 2007038.0)
+ttestResult for surface 5: (109.9077713226798, 0.0, 2007038.0)
+ttestResult for surface 6: (-53.76616486981053, 0.0, 2007038.0)
+ttestResult for surface 7: (119.60446344800378, 0.0, 2007038.0)
+ttestResult for surface 8: (164.3659394667946, 0.0, 2007038.0)
+==================================
+p-value for signed errors:
+0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 9 surfaces absolute errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-18.32517053267342, 5.28593896401901e-75, 2007038.0)
+ttestResult for surface 1: (20.56064395761936, 6.320506386506426e-94, 2007038.0)
+ttestResult for surface 2: (15.714279802217138, 1.2167350191750677e-55, 2007038.0)
+ttestResult for surface 3: (-5.339230002066357, 9.33522687639594e-08, 2007038.0)
+ttestResult for surface 4: (17.768020991157126, 1.265957971359947e-70, 2007038.0)
+ttestResult for surface 5: (14.513679765300894, 9.980549272687991e-48, 2007038.0)
+ttestResult for surface 6: (37.61870611214097, 1.36474181945625e-309, 2007038.0)
+ttestResult for surface 7: (20.713156684132542, 2.697452369691525e-95, 2007038.0)
+ttestResult for surface 8: (99.26403339094395, 0.0, 2007038.0)
+==================================
+p-value for absolute errors:
+0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
 
 
+================MSE measure in physical size (um^2) ===============
+in model JHUYufanHeModel: MSE of 9 surfaces + overall
+MSE	        9.89	23.99	16.87	18.22	17.70	11.20	6.97	19.71	19.27	15.98
+BiasSquare	0.14	0.44	0.01	0.31	0.14	0.49	0.06	0.19	2.13	0.11
+Variance	9.75	23.55	16.85	17.92	17.56	10.71	6.91	19.52	17.14	15.87
+in model  OurSurfaceQ64: MSE of 9 surfaces + overall
+MSE	        11.23	21.46	15.44	19.16	16.88	10.72	6.51	19.00	14.33	14.97
+BiasSquare	0.87	0.04	0.04	1.07	0.36	0.04	0.19	0.10	0.30	0.11
+Variance	10.36	21.42	15.40	18.08	16.52	10.68	6.32	18.90	14.03	14.86
+=============END==============
 
 
 

@@ -119,7 +119,7 @@ Meeting minutes with professor:
 2  About current SimpleSegNN paper:
    A.  use different B-Scan to descripe ablation module.
    B.  put more discussion about ReLU in discussion.
-   C.  give P-value of ablation experiment in single side on absolue value and both sides for the raw values.
+   C.  give P-value of ablation experiment in single side on absolue value and both sides for the raw values.  -done
    D.  ReLU may not need visualization display in Ablation.
    E.  You may do the experiments for the JHU method without ReLU in the loss to see the performance.   __done, wait for test result
        If you observed the same performance increase as that for your method, this will well support your claim.
