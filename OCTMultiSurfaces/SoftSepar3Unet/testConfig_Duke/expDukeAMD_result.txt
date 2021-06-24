@@ -17,8 +17,8 @@ signedError     0.0000	0.0000	0.0005	            0.0000	0.1108	0.0000
 AbsoluteError   0.0001	0.0000	0.0000              0.0000	0.5375	0.0831
 --------------------------------------------------------------------------------------
                                     OurBaseline vs NoTopo
-signedError
-AbsoluteError
+signedError     0.0000	0.0000	0.0000              0.0000	0.0015	0.0000
+AbsoluteError   0.0000	0.0000	0.0944	            0.0027	0.0000	0.0000
 --------------------------------------------------------------------------------------
                                     OurBaseline vs NoGradientInput
 signedError
@@ -68,13 +68,13 @@ MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
 ================MSE measure in physical size (um) ===============
 					 MSE 			 BiasSquare 			 Variance
 surface 0 in OurSurfaceQ128Baseline:	 2.232384813426756	0.030027123964252667	2.202357689462503
-surface 0 in  NoYweight:	 3.564073912335018	0.0011350651780297483	3.562938847156988
+surface 0 in  NoYweight:	             3.564073912335018	0.0011350651780297483	3.562938847156988
 -----------------------------------
 surface 1 in OurSurfaceQ128Baseline:	 10.222551083591334	0.04950171816629023	10.173049365425044
-surface 1 in  NoYweight:	 9.621136972462116	0.0046903638444621976	9.616446608617654
+surface 1 in  NoYweight:	             9.621136972462116	0.0046903638444621976	9.616446608617654
 -----------------------------------
 surface 2 in OurSurfaceQ128Baseline:	 10.293158481342674	0.041020604767536994	10.252137876575137
-surface 2 in  NoYweight:	 10.293285188202704	0.05292173923802679	10.240363448964677
+surface 2 in  NoYweight:	             10.293285188202704	0.05292173923802679	10.240363448964677
 -----------------------------------
 =======================================
 
@@ -114,16 +114,115 @@ MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
 ================MSE measure in physical size (um) ===============
 					 MSE 			 BiasSquare 			 Variance
 surface 0 in OurSurfaceQ128Baseline:	 21.994490648883026	0.21014064278212885	21.784350006100897
-surface 0 in  NoYweight:	 25.051369362165513	0.353456587707516	24.697912774457997
+surface 0 in  NoYweight:	             25.051369362165513	0.353456587707516	24.697912774457997
 -----------------------------------
 surface 1 in OurSurfaceQ128Baseline:	 21.528541623181265	0.022207617398883883	21.50633400578238
-surface 1 in  NoYweight:	 20.413740674119804	0.018807733460011633	20.394932940659793
+surface 1 in  NoYweight:	             20.413740674119804	0.018807733460011633	20.394932940659793
 -----------------------------------
 surface 2 in OurSurfaceQ128Baseline:	 28.724432807004302	0.0015654563354345896	28.722867350668867
-surface 2 in  NoYweight:	 31.427715939702033	0.020232350921443043	31.40748358878059
+surface 2 in  NoYweight:	             31.427715939702033	0.020232350921443043	31.40748358878059
 -----------------------------------
 =======================================
 
+
+(base) [c-iibi007:dataPrepare_Duke]#python3 ./pvalueMSEAnalysis.py
+Compare model accuracy in AMD and Control group separately
+predictDir1= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210507A_SurfaceSubnetQ128_iibi007/testResult/xml
+predictDir2= /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/log/SurfaceSubnet_Q/expDuke_20210615_SurfaceSubnetQ128_NoTopo_iibi007/testResult/xml
+gtDir = /localscratch/Users/hxie1/data/OCT_Duke/numpy_slices/test
+============================================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: Control
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 18
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (39.969248928538356, 0.0, 662794.0)
+ttestResult for surface 1: (55.31796276600507, 0.0, 662794.0)
+ttestResult for surface 2: (-30.499009404924085, 3.723914182439927e-204, 662794.0)
+==================================
+p-value for signed errors: 3surfaces
+0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 331398)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (9.029212659950757, 1.7335595662186452e-19, 662794.0)
+ttestResult for surface 1: (7.578129908912185, 3.510227208928176e-14, 662794.0)
+ttestResult for surface 2: (1.6725783419197486, 0.09441080544957166, 662794.0)
+==================================
+p-value for absolute errors: 3surfaces
+0.0000	0.0000	0.0944
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in OurSurfaceQ128Baseline:	 2.232384813426756	0.030027123964252667	2.202357689462503
+surface 0 in  NoTopo:	                 3.2656159035359296	0.00011947412576063243	3.265496429410169
+-----------------------------------
+surface 1 in OurSurfaceQ128Baseline:	 10.222551083591334	0.04950171816629023	10.173049365425044
+surface 1 in  NoTopo:	                  9.973920547498778	0.04341488642006475	9.930505661078714
+-----------------------------------
+surface 2 in OurSurfaceQ128Baseline:	 10.293158481342674	0.041020604767536994	10.252137876575137
+surface 2 in  NoTopo:	                 10.434563337135407	0.001476302499160198	10.433087034636246
+-----------------------------------
+=======================================
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+GroupName: AMD
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
+case number = 41
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 3 surfaces signed errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (11.687006549226435, 1.4899611426894687e-31, 1509700.0)
+ttestResult for surface 1: (-3.1811003853975075, 0.0014671974742009224, 1509700.0)
+ttestResult for surface 2: (-31.55038422728357, 2.0878620315333854e-218, 1509700.0)
+==================================
+p-value for signed errors: 3surfaces
+0.0000	0.0015	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 3 surfaces absolute errors:
+modleError shape = (3, 754851)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (3.0019601012318047, 0.002682517168540452, 1509700.0)
+ttestResult for surface 1: (-20.851282004831276, 1.5313274337545536e-96, 1509700.0)
+ttestResult for surface 2: (-6.3271823623071, 2.4974776920365744e-10, 1509700.0)
+==================================
+p-value for absolute errors: 3surfaces
+0.0027	0.0000	0.0000
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um) ===============
+					 MSE 			 BiasSquare 			 Variance
+surface 0 in OurSurfaceQ128Baseline:	 21.994490648883026	0.21014064278212885	21.784350006100897
+surface 0 in  NoTopo:	                 24.33447121935323	0.30190875125505556	24.032562468098174
+-----------------------------------
+surface 1 in OurSurfaceQ128Baseline:	 21.528541623181265	0.022207617398883883	21.50633400578238
+surface 1 in  NoTopo:	                 26.916681311676083	0.015264052214302382	26.90141725946178
+-----------------------------------
+surface 2 in OurSurfaceQ128Baseline:	 28.724432807004302	0.0015654563354345896	28.722867350668867
+surface 2 in  NoTopo:	                 69.82134547665699	0.10286977134549602	69.71847570531149
+-----------------------------------
+=======================================
 
 
 
