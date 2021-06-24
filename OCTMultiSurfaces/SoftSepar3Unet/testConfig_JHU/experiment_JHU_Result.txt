@@ -25,6 +25,71 @@ slice list of violating surface-separation constraints:
 	/raid001/users/hxie1/data/OCT_JHU/preprocessedData/image/ms11_spectralis_macula_v1_s1_R_46.png
 
 pvalue and MSE analysis of expJHU_20210501_YufanHe_fullData_A_skm2 and expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2:
+(base) [sxm2:dataPrepare_JHU]#python3 ./pvalueMSEAnalysis.py
+Compute p-value and MSE:
+predictPath1= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testOutputs.npy
+predictPath2= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_3/expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2/testResult/test/testOutputs.npy
+gtPath = /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testGts.npy
+============================================================
+segmentation array shape = (980, 9, 1024)
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 9 surfaces signed errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (195.55746188787396, 0.0, 2007038.0)
+ttestResult for surface 1: (100.44328559826262, 0.0, 2007038.0)
+ttestResult for surface 2: (-3.490247409415446, 0.0004825839106329327, 2007038.0)
+ttestResult for surface 3: (-51.57052054356278, 0.0, 2007038.0)
+ttestResult for surface 4: (-65.65079792251102, 0.0, 2007038.0)
+ttestResult for surface 5: (150.3230533597153, 0.0, 2007038.0)
+ttestResult for surface 6: (-43.199592712390974, 0.0, 2007038.0)
+ttestResult for surface 7: (51.235880328127465, 0.0, 2007038.0)
+ttestResult for surface 8: (63.65146780791658, 0.0, 2007038.0)
+ttestResult for overll surfaces: (122.89584763906606, 0.0, 18063358.0)
+==================================
+p-value for signed errors: 9surfaces + overall
+0.0000	0.0000	0.0005	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 9 surfaces absolute errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (-17.556003874154868, 5.41535094460911e-69, 2007038.0)
+ttestResult for surface 1: (-2.1126980038765577, 0.03462674740080913, 2007038.0)
+ttestResult for surface 2: (-1.8410020524575825, 0.065621405431364, 2007038.0)
+ttestResult for surface 3: (12.259512475774665, 1.4982250437569587e-34, 2007038.0)
+ttestResult for surface 4: (17.73327222916786, 2.3501763465860772e-70, 2007038.0)
+ttestResult for surface 5: (10.308107398756432, 6.485698412213031e-25, 2007038.0)
+ttestResult for surface 6: (20.968041889450095, 1.3158657242884452e-97, 2007038.0)
+ttestResult for surface 7: (-7.15005751019668, 8.677089100113703e-13, 2007038.0)
+ttestResult for surface 8: (40.084164044669585, 0.0, 2007038.0)
+ttestResult for overall surfaces: (22.647584683322386, 1.4791090330575877e-113, 18063358.0)
+==================================
+p-value for absolute errors: 9surfaces + overall
+0.0000	0.0346	0.0656	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um^2) ===============
+in model YufanHeModelBaseLine: MSE of 9 surfaces + overall
+MSE	        9.89	23.99	16.87	18.22	17.70	11.20	6.97	19.71	19.27	15.98
+BiasSquare	0.14	0.44	0.01	0.31	0.14	0.49	0.06	0.19	2.13	0.11
+Variance	9.75	23.55	16.85	17.92	17.56	10.71	6.91	19.52	17.14	15.87
+in model YUfanHeReLUOutsideLoss: MSE of 9 surfaces + overall
+MSE	        11.32	28.21	19.14	19.68	18.63	10.71	6.74	20.25	17.25	16.88
+BiasSquare	0.27	0.00	0.02	0.06	0.00	0.00	0.16	0.01	1.20	0.01
+Variance	11.04	28.20	19.12	19.62	18.63	10.71	6.59	20.24	16.05	16.87
+=============END==============
+
+pvalue for 9 surface + overall
+signedError:   0.0000	0.0000	0.0005	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+AbsoluteError: 0.0000	0.0346	0.0656	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+=================================================================================================
 
 
 
