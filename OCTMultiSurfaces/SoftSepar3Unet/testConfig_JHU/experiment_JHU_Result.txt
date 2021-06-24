@@ -1,4 +1,16 @@
 # June 24th, Thursday, 2021
+The Ablation p-value comparision between our method and its ablation exepriments:
+
+Hui Method: expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 (Best)
+NoYweight: expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2
+NoTopo: expJHU_20210614_SurfaceSubnetQ64_100Percent_NoTop_skm2
+NoGradientInput: expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2
+
+
+
+
+
+===========================================================================================================================================================================================
 The ablation experiment of JHU method.
 =============================================================================================================================================================================================
 ExpName                                                 surfaceMeanError±std (0-8)                                                                                      overallMeanError±std
