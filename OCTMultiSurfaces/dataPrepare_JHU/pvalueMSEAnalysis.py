@@ -13,12 +13,12 @@
 
 '''
 
-# pvalue and MSE analysis of expJHU_20210501_YufanHe_fullData_A_skm2 and expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2:
-predictPath1 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testOutputs.npy"
-predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_3/expJHU_20210623_YufanHe3_fullData_ReLUOutsideLoss_skm2/testResult/test/testOutputs.npy"
-gtPath = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfacesUnet_YufanHe_2/expJHU_20210501_YufanHe_fullData_A_skm2/testResult/test/testGts.npy"
-model1Name ="YufanHeModelBaseLine"
-model2Name ="YUfanHeReLUOutsideLoss"
+# pvalue and MSE analysis:
+predictPath1 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy"
+predictPath2 = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2/testResult/test/testOutputs.npy"
+gtPath = "/raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy"
+model1Name ="OurModelBaseLine"
+model2Name ="NoYweightAblation"
 
 
 hPixelSize =  3.86725 # um
