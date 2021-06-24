@@ -15,9 +15,12 @@ expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubne
 signedError:    0.0000	0.0000	0.0000	0.0000	0.0000	0.7377	0.7166	0.0000	0.0000	0.0000
 AbsoluteError:  0.7878	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
 expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2
-signedError:
-AbsoluteError:
+signedError:    0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+AbsoluteError:  0.0000	0.0000	0.0000	0.0000	0.3827	0.0014	0.0000	0.0000	0.0000	0.0000
 =======================================================================================================
+
+
+
 p-value on expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2 vs expJHU_20210614_SurfaceSubnetQ64_100Percent_NoYweight_skm2:
 python3 ./pvalueMSEAnalysis.py
 Compute p-value and MSE:
@@ -147,6 +150,66 @@ Variance	10.55	20.81	19.42	17.37	17.21	10.97	6.51	18.17	16.41	15.47
 =============END==============
 
 ========================================================================================================================
+(base) [sxm2:dataPrepare_JHU]#python3 ./pvalueMSEAnalysis.py
+Compute p-value and MSE:
+predictPath1= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testOutputs.npy
+predictPath2= /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210614_SurfaceSubnetQ64_100Percent_NoGradientInput_skm2/testResult/test/testOutputs.npy
+gtPath = /raid001/users/hxie1/data/OCT_JHU/numpy/log/SurfaceSubnet_Q/expJHU_20210507_SurfaceSubnetQ64_fullData_A_skm2/testResult/test/testGts.npy
+============================================================
+segmentation array shape = (980, 9, 1024)
+ttest tests the null hypothesis that the population means related to two independent, random samples from an approximately normal distribution are equal.
+ttestResult for 9 surfaces signed errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (223.36364291233025, 0.0, 2007038.0)
+ttestResult for surface 1: (-102.58105632299994, 0.0, 2007038.0)
+ttestResult for surface 2: (-168.03710543781114, 0.0, 2007038.0)
+ttestResult for surface 3: (210.08998543508466, 0.0, 2007038.0)
+ttestResult for surface 4: (126.19182754456173, 0.0, 2007038.0)
+ttestResult for surface 5: (4.082502471622317, 4.4555060959311874e-05, 2007038.0)
+ttestResult for surface 6: (83.5215188690879, 0.0, 2007038.0)
+ttestResult for surface 7: (-32.28085845676342, 1.4869660919862373e-228, 2007038.0)
+ttestResult for surface 8: (-161.84258017310094, 0.0, 2007038.0)
+ttestResult for overll surfaces: (37.95783272251702, 0.0, 18063358.0)
+==================================
+p-value for signed errors: 9surfaces + overall
+0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+ttestResult for 9 surfaces absolute errors:
+modleError shape = (9, 1003520)
+			 testStatistic 		 pValue 	 degreeFreedom
+ttestResult for surface 0: (19.210321869004346, 3.085973794486595e-82, 2007038.0)
+ttestResult for surface 1: (-18.602888841092973, 3.090523494056158e-77, 2007038.0)
+ttestResult for surface 2: (-20.02245513926907, 3.58124387534004e-89, 2007038.0)
+ttestResult for surface 3: (10.904457002718097, 1.0994321990846788e-27, 2007038.0)
+ttestResult for surface 4: (-0.8729585922347298, 0.3826857523630075, 2007038.0)
+ttestResult for surface 5: (-3.2036807392341893, 0.0013568496351093902, 2007038.0)
+ttestResult for surface 6: (-32.53352732708575, 4.11769716550994e-232, 2007038.0)
+ttestResult for surface 7: (-8.646677167027857, 5.3058606160863076e-18, 2007038.0)
+ttestResult for surface 8: (-75.25883562850032, 0.0, 2007038.0)
+ttestResult for overall surfaces: (-41.754275710704476, 0.0, 18063358.0)
+==================================
+p-value for absolute errors: 9surfaces + overall
+0.0000	0.0000	0.0000	0.0000	0.3827	0.0014	0.0000	0.0000	0.0000	0.0000
+
+==================================
+------------------------------------------------
+
+MSE(predict-gt, 0)= bias^2(predict-gt,0) + variance(predict-gt)
+
+
+================MSE measure in physical size (um^2) ===============
+in model OurModelBaseLine: MSE of 9 surfaces + overall
+MSE	11.23	21.46	15.44	19.16	16.88	10.72	6.51	19.00	14.33	14.97
+BiasSquare	0.87	0.04	0.04	1.07	0.36	0.04	0.19	0.10	0.30	0.11
+Variance	10.36	21.42	15.40	18.08	16.52	10.68	6.32	18.90	14.03	14.86
+in model NoGradientInput: MSE of 9 surfaces + overall
+MSE	9.58	24.63	18.14	20.12	19.71	11.35	7.21	19.37	17.92	16.45
+BiasSquare	0.00	0.24	0.57	0.07	0.02	0.03	0.02	0.01	2.04	0.07
+Variance	9.58	24.39	17.57	20.05	19.69	11.32	7.19	19.35	15.89	16.38
+=============END==============
 
 
 
