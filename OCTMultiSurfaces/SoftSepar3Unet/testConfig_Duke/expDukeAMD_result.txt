@@ -1,4 +1,17 @@
-# Pvalue and MSE comparision:
+# June 26th, Saturday, 2021
+
+Polished Paper:  A simple and high accuracy surface segmentation network
+Update:
+1  added p-value and MSE analysis for experiments and ablation experiment.
+2  added ablation experiemnt for JHU method with and without ReLU.
+3  further polished paper.
+4  deleted unnecssary ablation visualization figures.
+
+
+
+
+# June 24th, Thursday, 2021
+Pvalue and MSE comparision:
 ==================================================================================
 Comparision ourbasine with its ablation experiment on Duke AMD data.
 Ourbaseline: expDuke_20210507A_SurfaceSubnetQ128_iibi007
@@ -453,11 +466,11 @@ Meeting minutes with professor:
    B. change paper structure.
    C. Paper focus on disease.
 2  About current SimpleSegNN paper:
-   A.  use different B-Scan to descripe ablation module.
-   B.  put more discussion about ReLU in discussion.
+   A.  use different B-Scan to descripe ablation module.   --cancel image details
+   B.  put more discussion about ReLU in discussion.    --done
    C.  give P-value of ablation experiment in single side on absolue value and both sides for the raw values.  -done
-   D.  ReLU may not need visualization display in Ablation.
-   E.  You may do the experiments for the JHU method without ReLU in the loss to see the performance.   __done, wait for test result
+   D.  ReLU may not need visualization display in Ablation.  --done
+   E.  You may do the experiments for the JHU method without ReLU in the loss to see the performance.   __done
        If you observed the same performance increase as that for your method, this will well support your claim.
 
 
