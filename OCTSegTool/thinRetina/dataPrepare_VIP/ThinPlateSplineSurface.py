@@ -9,14 +9,17 @@ import os
 
 
 extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
-outputImageDir = "/home/hxie1/temp"
+
 H = 1024
 N = len(extractIndexs)
 W = 200  # target image width
 B = 200 # number of slices
 surfaceIndex = 1
 
-surfacesXmlPath ="/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z_Surfaces_Iowa.xml"
+# surfacesXmlPath ="/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z_Surfaces_Iowa.xml"
+# outputImageDir = "/home/hxie1/temp"
+surfacesXmlPath = "/home/sheen/temp/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa.xml"
+outputImageDir = "/home/sheen/temp"
 
 basename = os.path.basename(surfacesXmlPath)
 basename = basename[0:basename.rfind("_Surfaces_Iowa.xml")]
@@ -33,9 +36,13 @@ assert W == W1
 surface = surfaces[:,surfaceIndex,:]  # choose surface 1, size: BxW
 coordinateSurface = np.mgrid[0:B, 0:W]
 coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
-interpolator = RBFInterpolator(coordinateSurface, surface.flatten(), neighbors=None, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)
+interpolator = RBFInterpolator(coordinateSurface, surface.flatten(), neighbors=40, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)
 newSurface = interpolator(coordinateSurface).reshape(B,W)
 
+allEqual = np.all(newSurface-surface == 0)
+print(f"allEqual between before TPS and after TPS = {allEqual}")
+max = np.absolute(newSurface-surface).max()
+print(f"max modification: = {max}")
 
 # display before TPS and after TPS image.
 
@@ -56,7 +63,9 @@ subplot2 = plt.subplot(rowSubplot, colSubplot, 2)
 subplot2.imshow(newSurface, cmap='viridis')
 subplot2.axis('off')
 
-curImagePath = os.path.join(outputImageDir, basename+f"_s{surfaceIndex:03d}_surfaceHeight.png")
+# plt.colorbar(subplot2, ax=subplot2.axis)
+
+curImagePath = os.path.join(outputImageDir, basename+f"_s{surfaceIndex:03d}_surfaceHotmap.png")
 
 plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
 plt.close()
