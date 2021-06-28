@@ -1,3 +1,47 @@
+# June 28th, Monday, 2021
+
+Task for thin retina improvment:
+1  The output xml segmentation file of OS case should flip back to original OS direction.
+
+2  research  3D-height sampling rate thin-plate spline:  Thin plate splines (TPS) are a spline-based technique for data interpolation and smoothing.
+    https://en.wikipedia.org/wiki/Thin_plate_spline
+   The thin plate spline method is often used to ﬁt data in high di-mensions.
+   Standard thin plate splines require the solution of a denselinear system of equations whose size increases
+   with the number of data points and can be expensive when used on large data sets.
+   advantages:
+   It produces smooth surfaces, which are infinitely differentiable.
+    There are no free parameters that need manual tuning.
+    It has closed-form solutions for both warping and parameter estimation.
+    There is a physical explanation for its energy function.
+
+    Splines are radial basis functions. In scipy terms, you want scipy.interpolate.Rbf.
+    I'd recommend using function="linear" or function="thin_plate" over cubic splines, but cubic is available as well.
+    (Cubic splines will exacerbate problems with "overshooting" compared to linear or thin-plate splines.)
+
+    scipy.interpolate.RBFInterpolator(y, d, neighbors=None, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)   ---done
+    
+3  we can consider to do the 3D-height sampling rate thin-plate spline on the ground truth and segmentation result.
+   same parameter should apply to both ground truth and segmentation result.
+
+4  For input raw images:
+   A. First, Average 3 B-scans as  the middle Bscans of 3 as input, to erase the noise of raw images and the spike the segmentation result.
+   B. Second, Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
+   C. After, Images need to do normalization.
+
+5  May consider to input continuous B-scans as RGB channel to input to network, and then check the ground truth of the middle of 3.
+   The top and bottom bscan use a repeat as 3-Bscan input.
+
+6  Gradient channel may just use the penetration gradient one channel, instead of many gradient channels.
+
+7  a new dataset class for thin retina project
+
+8  change current rawImage into unsmoothed one.
+
+
+
+
+
+
 # Jun23th, Wenday, 2021
 Meeting with Ray, possbile discussion points:
 1   how is the initial segmentation quality?
