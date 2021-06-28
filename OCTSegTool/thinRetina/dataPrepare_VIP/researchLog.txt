@@ -1,4 +1,16 @@
 # June 28th, Monday, 2021
+About 3D height sample rate thin-plate-spline (TPS) smoothing.
+1  random sample about 1000 points from original BxW surface.
+   A.  sample points near fovea region may occupy 25%, denser than the surround region.
+   B   use a fixed random seed to make sure sample points fixed for a same ground truth;
+   C   decide fovea, in the central region point where the thickness between surface 0 and surface 5 miminum;
+   D   segmentation result also need to use TPS to make result smooth in whole surface.
+   E   neighbor=0 as we use all control points.
+2  Ray's idea: from some OCT layer, its enface image may show neural fiber.
+
+
+
+============================
 
 Task for thin retina improvment:
 1  The output xml segmentation file of OS case should flip back to original OS direction.
@@ -19,7 +31,7 @@ Task for thin retina improvment:
     (Cubic splines will exacerbate problems with "overshooting" compared to linear or thin-plate splines.)
 
     scipy.interpolate.RBFInterpolator(y, d, neighbors=None, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)   ---done
-    
+
 3  we can consider to do the 3D-height sampling rate thin-plate spline on the ground truth and segmentation result.
    same parameter should apply to both ground truth and segmentation result.
 

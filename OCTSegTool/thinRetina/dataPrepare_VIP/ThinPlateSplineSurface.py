@@ -36,7 +36,7 @@ assert W == W1
 surface = surfaces[:,surfaceIndex,:]  # choose surface 1, size: BxW
 coordinateSurface = np.mgrid[0:B, 0:W]
 coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
-interpolator = RBFInterpolator(coordinateSurface, surface.flatten(), neighbors=40, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)
+interpolator = RBFInterpolator(coordinateSurface, surface.flatten(), neighbors=0, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)
 newSurface = interpolator(coordinateSurface).reshape(B,W)
 
 allEqual = np.all(newSurface-surface == 0)
