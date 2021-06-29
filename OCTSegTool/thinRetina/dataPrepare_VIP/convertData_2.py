@@ -16,9 +16,10 @@ import matplotlib.pyplot as plt
 print("I am at line 16")
 from utilities import  getSurfacesArray, scaleMatrix
 print("I am at line 18")
-
+from skimage import exposure
 print("I am at line 20")
-from scipy.interpolate import RBFInterpolator
+from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
+#from scipy.interpolate import Rbf   # for scipy 1.6.2
 import random
 
 print("I am at line 22")
@@ -144,13 +145,9 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             i0 = i-1 if i-1>=0 else 0
             i1 = i
             i2 = i+1 if i+1<B else B-1
-            smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0
+            smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255]
 
-        print(f"average = {np.average(smoothedImage[100])}")
-        print(f"smoothed image at 100 = {smoothedImage[100,]}")
-        assert  False
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
-        from skimage import exposure
         npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
         #  a slight smooth the ground truth before using:
