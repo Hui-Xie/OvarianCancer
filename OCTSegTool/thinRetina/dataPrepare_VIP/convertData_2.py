@@ -10,6 +10,8 @@ import glob as glob
 import sys
 import SimpleITK as sitk
 import json
+
+print("I am at line 14")
 import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray, scaleMatrix
 from skimage.exposure import equalize_adapthist
