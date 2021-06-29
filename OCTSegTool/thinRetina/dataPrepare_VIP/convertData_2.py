@@ -11,18 +11,13 @@ import sys
 import SimpleITK as sitk
 import json
 
-print("I am at line 14")
 import matplotlib.pyplot as plt
-print("I am at line 16")
 from utilities import  getSurfacesArray, scaleMatrix
-print("I am at line 18")
-from skimage import exposure
-print("I am at line 20")
+# from skimage import exposure  # for CLAHE
+import cv2 as cv  # for CLAHE
 from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
 #from scipy.interpolate import Rbf   # for scipy 1.6.2
 import random
-
-print("I am at line 22")
 import numpy as np
 
 extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
@@ -71,11 +66,6 @@ cases= {
     "validation": [validationPatientDirList, outputValidationNumpyDir, 2*200],
     "test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
 }
-
-print("I am at line 68")
-
-
-
 for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")
     outputNumpySurfacesPath = os.path.join(outputNumpyDir, f"surfaces.npy")
@@ -148,7 +138,14 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255]
 
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
-        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+
+        # use skimage
+        # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+
+        # use opencv, and opencv only suport 2D images.
+        clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
+        for i in range(B):
+            npImage[i,] = clahe.apply(smoothedImage[i,])
 
         #  a slight smooth the ground truth before using:
         #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the manual tracing artifact
