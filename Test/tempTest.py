@@ -1,6 +1,8 @@
-import torch
+#import torch
 
-from skimage import exposure
+# from skimage import exposure
+import cv2 as cv
+
 
 def main():
     print("I am here to stay!")
