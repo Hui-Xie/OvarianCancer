@@ -4,7 +4,7 @@
 import os
 import glob as glob
 import sys
-import SimpleITK as sitk
+#import SimpleITK as sitk
 import json
 
 import matplotlib.pyplot as plt
