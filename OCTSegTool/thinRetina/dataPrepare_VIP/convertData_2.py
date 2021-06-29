@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 print("I am at line 16")
 from utilities import  getSurfacesArray, scaleMatrix
 print("I am at line 18")
-from skimage.exposure import equalize_adapthist
+from skimage import exposure
 print("I am at line 20")
 from scipy.interpolate import RBFInterpolator
 import random
@@ -150,7 +150,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         print(f"smoothed image at 100 = {smoothedImage[100,]}")
         assert  False
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
-        npImage = equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
         #  a slight smooth the ground truth before using:
         #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the manual tracing artifact
