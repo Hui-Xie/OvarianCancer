@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 print("I am at line 16")
 from utilities import  getSurfacesArray, scaleMatrix
 print("I am at line 18")
-from scikit-image import exposure
+from skimage import exposure
 print("I am at line 20")
 from scipy.interpolate import RBFInterpolator
 import random
