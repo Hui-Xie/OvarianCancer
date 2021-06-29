@@ -1,5 +1,6 @@
 import torch
 
+from skimage import exposure
 
 def main():
     print("I am here to stay!")
