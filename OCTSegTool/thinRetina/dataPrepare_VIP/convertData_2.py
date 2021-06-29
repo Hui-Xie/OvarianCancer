@@ -11,7 +11,7 @@ import sys
 import SimpleITK as sitk
 import json
 import matplotlib.pyplot as plt
-from utilities import  getSurfacesArray, scaleMatrix, get3PointSmoothMatrix
+from utilities import  getSurfacesArray, scaleMatrix
 from skimage.exposure import equalize_adapthist
 from scipy.interpolate import RBFInterpolator
 import random
@@ -64,6 +64,8 @@ cases= {
     "validation": [validationPatientDirList, outputValidationNumpyDir, 2*200],
     "test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
 }
+
+print("I am at line 68")
 
 
 
@@ -129,7 +131,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                                          surfaces[:, i, :])
 
         print(f"I am at line 131")
-        
+
         # Average 3 Bscan smoothing.
         smoothedImage = np.zeros_like(npImage)
         for i in range(B):
