@@ -12,6 +12,9 @@ import SimpleITK as sitk
 import json
 import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray, scaleMatrix, get3PointSmoothMatrix
+from skimage.exposure import equalize_adapthist
+from scipy.interpolate import RBFInterpolator
+import random
 
 import numpy as np
 
@@ -23,6 +26,8 @@ needLegend = True
 H = 1024
 N = len(extractIndexs)
 W = 200  # target image width
+C = 1000 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
+
 
 # output Dir:
 outputImageDir = "/home/hxie1/data/thinRetina/numpy_13cases/rawGT"
@@ -60,13 +65,15 @@ cases= {
     "test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
 }
 
+
+
 for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")
     outputNumpySurfacesPath = os.path.join(outputNumpyDir, f"surfaces.npy")
     outputPatientIDPath = os.path.join(outputNumpyDir, "patientID.json")
 
     allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float)
-    allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of JHU data is float
+    allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of data is float
     patientIDDict = {}
 
 
@@ -121,11 +128,42 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
                                          surfaces[:, i, :])
 
+        # Average 3 Bscan smoothing.
+        smoothedImage = np.zeros_like(npImage)
+        for i in range(B):
+            i0 = i-1 if i-1>=0 else 0
+            i1 = i
+            i2 = i+1 if i+1<B else B-1
+            smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0
+        # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
+        npImage = equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+
         #  a slight smooth the ground truth before using:
         #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the manual tracing artifact
         #  Check the smoothing results again in the images to make sure they still look reasonable
-        smoothM = get3PointSmoothMatrix(B,W)
-        surfaces = np.matmul(surfaces, smoothM)
+
+        # determine the control points of thin-plate-spline
+        coordinateSurface = np.mgrid[0:B, 0:W]
+        coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
+
+        # random sample C control points in the original surface of size BxW, with a repeatable random.
+        randSeed = 20217  # fix this seed for ground truth and prediction.
+        random.seed(randSeed)
+        P = list(range(0, B * W))
+        chosenList = [0, ] * C
+        # use random.sample to choose unique element without replacement.
+        chosenList[0:C // 8] = random.sample(P[0:W * B // 4], k=C // 8)
+        chosenList[C // 8:C // 2] = random.sample(P[W * B // 4: W * B // 2], k=3 * C // 8)
+        chosenList[C // 2:7 * C // 8] = random.sample(P[W * B // 2: W * 3 * B // 4], k=3 * C // 8)
+        chosenList[7 * C // 8: C] = random.sample(P[W * 3 * B // 4: W * B], k=C // 8)
+        chosenList.sort()
+        controlCoordinates = coordinateSurface[chosenList, :]
+        for i in range(N):
+            surface = surfaces[:, i, :]  # choose surface i, size: BxW
+            controlValues = surface.flatten()[chosenList,]
+            interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
+                                           kernel='thin_plate_spline', epsilon=None, degree=None)
+            surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
 
         #  output  numpy array.
         allPatientsImageArray[s:s+B,:,:] = npImage

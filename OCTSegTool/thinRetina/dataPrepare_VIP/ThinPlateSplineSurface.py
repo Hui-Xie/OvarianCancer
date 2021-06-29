@@ -16,8 +16,7 @@ N = len(extractIndexs)
 W = 200  # target image width
 B = 200 # number of slices
 surfaceIndex = 1
-C = 1000 # the number of random chosed control points for TPS.
-# C is a multiple of 8.
+C = 1000 # the number of random chosed control points for TPS. C is a multiple of 8.
 
 
 # surfacesXmlPath ="/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z_Surfaces_Iowa.xml"
