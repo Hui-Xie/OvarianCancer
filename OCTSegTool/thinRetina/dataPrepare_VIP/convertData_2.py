@@ -13,11 +13,13 @@ import json
 
 print("I am at line 14")
 import matplotlib.pyplot as plt
+print("I am at line 16")
 from utilities import  getSurfacesArray, scaleMatrix
 from skimage.exposure import equalize_adapthist
 from scipy.interpolate import RBFInterpolator
 import random
 
+print("I am at line 22")
 import numpy as np
 
 extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
