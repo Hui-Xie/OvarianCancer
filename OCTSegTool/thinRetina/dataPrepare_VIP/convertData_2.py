@@ -135,6 +135,10 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             i1 = i
             i2 = i+1 if i+1<B else B-1
             smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0
+
+        print(f"average = {np.average(smoothedImage[100])}")
+        print(f"smoothed image at 100 = {smoothedImage[100,]}")
+        assert  False
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
         npImage = equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
