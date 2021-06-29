@@ -2,7 +2,34 @@
 For the 3D height sample:
 choose N random points from a BxW surface images, in order to make denser sample near fovea.
 row[0:B/4]: choices N/8 points.
-row[B/4: 3B/4]:
+row[B/4: B/2]:choices 3N/8 points.
+row[B/4: B*3/4]: sample 3N/8 points.
+row[B*3/4: B] : sample N/8 points.
+
+Task decomposition:
+1  The output xml segmentation file of OS case should flip back to original OS direction.
+
+2  research  3D-height sampling rate thin-plate spline:  --done
+
+3  we can consider to do the 3D-height sampling rate thin-plate spline on the ground truth and segmentation result.
+   same parameter should apply to both ground truth and segmentation result.
+
+4  For input raw images:
+   A. First, Average 3 B-scans as  the middle Bscans of 3 as input, to erase the noise of raw images and the spike the segmentation result.
+   B. Second, Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
+      skimage.exposure.equalize_adapthist(image, kernel_size=None, clip_limit=0.01, nbins=256)
+      Contrast Limited Adaptive Histogram Equalization (CLAHE).
+
+   C. After, Images need to do normalization.
+
+5  May consider to input continuous B-scans as RGB channel to input to network, and then check the ground truth of the middle of 3.
+   The top and bottom bscan use a repeat as 3-Bscan input.
+
+6  Gradient channel may just use the penetration gradient one channel, instead of many gradient channels.
+
+7  a new dataset class for thin retina project
+
+8  change current rawImage into unsmoothed one.
 
 
 
@@ -14,7 +41,7 @@ About 3D height sample rate thin-plate-spline (TPS) smoothing.
    B   use a fixed random seed to make sure sample points fixed for a same ground truth;
    C   decide fovea, in the central region point where the thickness between surface 0 and surface 5 miminum;
    D   segmentation result also need to use TPS to make result smooth in whole surface.
-   E   neighbor=0 as we use all control points.
+   E   neighbor=None as we use all control points.
    F   use random.seed(int) to make a repeatable random experiments.
 2  Ray's idea: from some OCT layer, its enface image may show neural fiber.
 
