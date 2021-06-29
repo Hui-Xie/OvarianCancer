@@ -128,6 +128,8 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
                                          surfaces[:, i, :])
 
+        print(f"I am at line 131")
+        
         # Average 3 Bscan smoothing.
         smoothedImage = np.zeros_like(npImage)
         for i in range(B):
