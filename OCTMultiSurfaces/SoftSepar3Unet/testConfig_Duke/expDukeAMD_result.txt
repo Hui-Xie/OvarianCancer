@@ -1,3 +1,20 @@
+#June 29th, Tuesday, 2021
+About paper modification:
+1   describe current problem;
+2   describe how to solve the problem;
+3   make reason and logic behind the argument;
+4   highlight and its behind reason:
+    A  attention.
+    B  gradient input.
+    C  ReLU.
+5  do not directly compare with JHU method.
+6  do not use history words.
+7  cite paper without year.
+
+
+
+
+
 # June 26th, Saturday, 2021
 
 Polished Paper:  A simple and high accuracy surface segmentation network
