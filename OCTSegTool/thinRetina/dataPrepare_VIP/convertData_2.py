@@ -14,11 +14,16 @@ import json
 import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray, scaleMatrix
 # from skimage import exposure  # for CLAHE
+print(f" I am here at line 17")
 import cv2 as cv  # for CLAHE
+print(f" I am here at line 19")
 from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
 #from scipy.interpolate import Rbf   # for scipy 1.6.2
+print(f" I am here at line 22")
 import random
 import numpy as np
+
+print(f" I am here at line 23")
 
 extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
 surfaceNames =  ("ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE")
