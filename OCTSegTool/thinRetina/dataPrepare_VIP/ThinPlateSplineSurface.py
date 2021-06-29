@@ -5,6 +5,7 @@ import numpy as np
 from scipy.interpolate import RBFInterpolator
 import matplotlib.pyplot as plt
 import os
+import random
 
 
 
@@ -15,6 +16,9 @@ N = len(extractIndexs)
 W = 200  # target image width
 B = 200 # number of slices
 surfaceIndex = 1
+C = 1000 # the number of random chosed control points for TPS.
+# C is a multiple of 8.
+
 
 # surfacesXmlPath ="/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z_Surfaces_Iowa.xml"
 # outputImageDir = "/home/hxie1/temp"
@@ -36,13 +40,35 @@ assert W == W1
 surface = surfaces[:,surfaceIndex,:]  # choose surface 1, size: BxW
 coordinateSurface = np.mgrid[0:B, 0:W]
 coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
-interpolator = RBFInterpolator(coordinateSurface, surface.flatten(), neighbors=0, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)
+
+# random sample C control points in the original surface of size BxW, with a repeatable random.
+randSeed = 20217  # fix this seed for ground truth and prediction.
+random.seed(randSeed)
+P = list(range(0, B*W))
+chosenList = [0,]*C
+# use random.sample to choose unique element without replacement.
+chosenList[0:C//8] = random.sample(P[0:W*B//4],k= C//8)
+chosenList[C//8:C//2] = random.sample(P[W*B//4: W*B//2],k= 3*C//8)
+chosenList[C//2:7*C//8] = random.sample(P[W*B//2: W*3*B//4],k= 3*C//8)
+chosenList[7*C//8: C] = random.sample(P[W*3*B//4: W*B],k= C//8)
+chosenList.sort()
+
+controlCoordinates = coordinateSurface[chosenList,:]
+controlValues = surface.flatten()[chosenList,]
+
+
+interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0, kernel='thin_plate_spline', epsilon=None, degree=None)
 newSurface = interpolator(coordinateSurface).reshape(B,W)
 
-allEqual = np.all(newSurface-surface == 0)
-print(f"allEqual between before TPS and after TPS = {allEqual}")
 max = np.absolute(newSurface-surface).max()
 print(f"max modification: = {max}")
+avg = np.average(newSurface-surface)
+print(f"average modification: = {avg}")
+'''
+max modification: = 9.183762819906661
+average modification: = -0.007614259520222018
+'''
+
 
 # display before TPS and after TPS image.
 
