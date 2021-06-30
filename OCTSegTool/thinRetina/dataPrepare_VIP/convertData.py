@@ -83,7 +83,7 @@ for patientDir in patientDirList:
     #  Ray mhd format in BxHxW dimension, but it flip the H and W dimension.
     #  for 200x1024x200 image, and 128x1024x512 in BxHxW direction.
     itkImage = sitk.ReadImage(octVolumePath)
-    npImage = sitk.GetArrayFromImage(itkImage)  # in BxHxW dimension
+    npImage = sitk.GetArrayFromImage(itkImage).astype(float)   # in BxHxW dimension
     npImage = np.flip(npImage, (1, 2))  # as ray's format filp H and W dimension.
     B,curH,curW = npImage.shape
     assert H == curH

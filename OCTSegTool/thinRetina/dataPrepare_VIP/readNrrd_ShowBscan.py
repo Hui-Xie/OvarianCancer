@@ -16,7 +16,7 @@ def readNrrd(nrrdPath, indexBscan):
     outputPath = os.path.join(outputDir, fileName)
 
     itkImage = sitk.ReadImage(nrrdPath)
-    npImage = sitk.GetArrayFromImage(itkImage)
+    npImage = sitk.GetArrayFromImage(itkImage).astype(float)
 
     S,H,W = npImage.shape
     print("\nVolume Information:")

@@ -36,7 +36,7 @@ for file in filesList:
     patientID = getStemName(file, ".nrrd")
     # read image data
     image = sitk.ReadImage(file)
-    image3d = sitk.GetArrayFromImage(image)
+    image3d = sitk.GetArrayFromImage(image).astype(float)
 
     image3d = np.clip(image3d, -135, 215)  # standard window level 350/40 in 3D slicer.
 
@@ -61,7 +61,7 @@ for file in filesList:
     # for label
     labelFile = os.path.join(inputLabelDir, patientID + "-label.nrrd")
     label = sitk.ReadImage(labelFile)
-    label3d = sitk.GetArrayFromImage(label)
+    label3d = sitk.GetArrayFromImage(label).astype(float)
     # repress label 2, only keep label 1. As some primary cancer is neighboring with label 2 metastases which is also in ROI.
     label3d = (label3d ==1).astype(float) # this is very important
     labelShape = label3d.shape

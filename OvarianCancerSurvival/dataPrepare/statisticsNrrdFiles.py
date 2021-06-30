@@ -23,7 +23,7 @@ for MRN in MRNList:
     else:
         N +=1
         itkImage = sitk.ReadImage(imagePath)
-        npVolume = sitk.GetArrayFromImage(itkImage)
+        npVolume = sitk.GetArrayFromImage(itkImage).astype(float)
         S, H, W = npVolume.shape
         if 1 == N:
             Smin = Smean = Smax = S  # min, mean, max

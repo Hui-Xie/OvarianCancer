@@ -16,7 +16,7 @@ def readMhd(mhdPath, indexBscan):
     outputPath = os.path.join(outputDir, fileName)
 
     itkImage = sitk.ReadImage(mhdPath)  # itk will switch the axis 0 and axis 2 of original data.
-    npImage = sitk.GetArrayFromImage(itkImage)
+    npImage = sitk.GetArrayFromImage(itkImage).astype(float)
 
     S,H,W = npImage.shape
     print("\nVolume Information:")

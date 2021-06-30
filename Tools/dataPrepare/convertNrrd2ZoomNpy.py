@@ -33,7 +33,7 @@ for file in filesList:
     patientID = getStemName(file, "_pri.nrrd")
     # for image data
     image = sitk.ReadImage(file)
-    image3d = sitk.GetArrayFromImage(image)
+    image3d = sitk.GetArrayFromImage(image).astype(float)
     image3d = np.clip(image3d, -135, 215)  # standard window level 350/40 in 3D slicer.
     image3d = image3d.astype(float)  # this is very important, otherwise, normalization will be meaningless.
     imageShape = image3d.shape
@@ -52,7 +52,7 @@ for file in filesList:
     # for label
     labelFile = os.path.join(inputLabelDir, patientID + "_pri_seg.nrrd")
     label = sitk.ReadImage(labelFile)
-    label3d = sitk.GetArrayFromImage(label)
+    label3d = sitk.GetArrayFromImage(label).astype(float)
     label3d = label3d.astype(float)  # this is very important
     labelShape = label3d.shape
     if labelShape != imageShape:

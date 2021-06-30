@@ -24,7 +24,7 @@ radius = goalSize[0]//2
 Notes = "Exception files without available labels: \n"
 
 for file in filesList:
-    label3d = sitk.GetArrayFromImage(sitk.ReadImage(file))
+    label3d = sitk.GetArrayFromImage(sitk.ReadImage(file)).astype(float)
 
     label3dB = (label3d > 0)  # label3D binary version
     if np.count_nonzero(label3d) ==0:

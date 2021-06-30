@@ -29,11 +29,12 @@ for file in filesList:
     patientID = getStemName(file, suffix)
 
     image = sitk.ReadImage(file)
-    image3d = sitk.GetArrayFromImage(image)
+    image3d = sitk.GetArrayFromImage(image).astype(float)
+    # this is very important, otherwise, normalization will be meaningless.
 
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
-    image3d = image3d.astype(float)   # this is very important, otherwise, normalization will be meaningless.
+
 
     # normalize image with std  for each slice
     shape = image3d.shape
@@ -53,7 +54,7 @@ for file in filesList:
     # image3d = image3d/ptp
 
     #label = file.replace("_CT.nrrd", "_Seg.nrrd").replace("images/", "labels/")
-    #label3d = sitk.GetArrayFromImage(sitk.ReadImage(label))
+    #label3d = sitk.GetArrayFromImage(sitk.ReadImage(label)).astype(float)
 
     # assemble in fixed size[231,251,251] in Z,Y, X direction
     z,y,x = image3d.shape

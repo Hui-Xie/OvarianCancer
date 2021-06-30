@@ -37,13 +37,13 @@ for patientID in fileIDList:
     labelFile = os.path.join(inputLabelDir, patientID+"_Seg.nrrd")
 
     image = sitk.ReadImage(imageFile)
-    image3d = sitk.GetArrayFromImage(image)
+    image3d = sitk.GetArrayFromImage(image).astype(float)
     # window level image into [0,300]
     image3d = np.clip(image3d, 0, 300)
     image3d = image3d.astype(float)   # this is very important, otherwise, normalization will be meaningless.
 
     label = sitk.ReadImage(labelFile)
-    label3d = sitk.GetArrayFromImage(label)
+    label3d = sitk.GetArrayFromImage(label).astype(float)
     label3d = label3d.astype(float)  # this is very important
 
     if image3d.shape != label3d.shape:

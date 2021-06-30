@@ -51,6 +51,7 @@ if not os.path.exists(outputValidationNumpyDir):
 if not os.path.exists(outputTestNumpyDir):
     os.makedirs(outputTestNumpyDir)
 
+
 # original patientDirList
 trainPatientDirList= [  #8 patients
 "/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z",
@@ -80,11 +81,13 @@ cases= {
     "test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
 }
 for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
-    outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")
+    outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")  # for smoothed image
+    outputNumpyImagesPathClahe = os.path.join(outputNumpyDir, f"images_clahe.npy")  # for CLAHE image
     outputNumpySurfacesPath = os.path.join(outputNumpyDir, f"surfaces.npy")
     outputPatientIDPath = os.path.join(outputNumpyDir, "patientID.json")
 
-    allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float)
+    allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float) # for smoothed image
+    allPatientsImageArrayClahe = np.empty((totalSlices , H, W), dtype=float) # for CLAHE image
     allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of data is float
     patientIDDict = {}
 
@@ -110,7 +113,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         #  Ray mhd format in BxHxW dimension, but it flip the H and W dimension.
         #  for 200x1024x200 image, and 128x1024x512 in BxHxW direction.
         itkImage = sitk.ReadImage(octVolumePath)
-        npImage = sitk.GetArrayFromImage(itkImage)  # in BxHxW dimension
+        npImage = sitk.GetArrayFromImage(itkImage).astype(float)  # in BxHxW dimension
         npImage = np.flip(npImage, (1, 2))  # as ray's format filp H and W dimension.
         B,curH,curW = npImage.shape
         assert H == curH
@@ -141,22 +144,25 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                                          surfaces[:, i, :])
 
         # Average 3 Bscan smoothing.
-        smoothedImage = np.zeros_like(npImage)
+        smoothedImage = np.zeros_like(npImage,dtype=float)
         for i in range(B):
             i0 = i-1 if i-1>=0 else 0
             i1 = i
             i2 = i+1 if i+1<B else B-1
-            smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255]
+            smoothedImage[i,] = (npImage[i0, ] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255] in float
 
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
         # use skimage
         # Rescale image data to range [0, 1]
         smoothedImage = np.clip(smoothedImage,
-                          np.percentile(smoothedImage, 5),
-                          np.percentile(smoothedImage, 95))
+                          np.percentile(smoothedImage, 1),
+                          np.percentile(smoothedImage, 100))
         smoothedImage = (smoothedImage - smoothedImage.min()) / (smoothedImage.max() - smoothedImage.min())
-        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        claheImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        # we need keep the smoothedImage and claheImage
+
+        # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
         # use opencv, and opencv only suport 2D images.
         # clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
@@ -197,7 +203,8 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                 surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
 
         #  output  numpy array.
-        allPatientsImageArray[s:s+B,:,:] = npImage
+        allPatientsImageArray[s:s+B,:,:] = smoothedImage
+        allPatientsImageArrayClahe[s:s+B,:,:] = claheImage
         allPatientsSurfaceArray[s:s+B, :, :] = surfaces
         for i in range(B):
             # basename: PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z
@@ -209,7 +216,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             f = plt.figure(frameon=False)
             DPI = 100
             rowSubplot = 1
-            colSubplot = 2
+            colSubplot = 4
             f.set_size_inches(W * colSubplot / float(DPI), H * rowSubplot / float(DPI))
 
             plt.margins(0)
@@ -220,20 +227,29 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             subplot1.axis('off')
 
             subplot2 = plt.subplot(rowSubplot, colSubplot, 2)
-            subplot2.imshow(npImage[i, :, :], cmap='gray')
-            for n in range(0, N):
-                subplot2.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
-            if needLegend:
-                subplot2.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
+            subplot2.imshow(smoothedImage[i, :, :], cmap='gray')
             subplot2.axis('off')
 
-            curImagePath = os.path.join(outputImageDir, basename+f"_s{i:03d}_raw_GT.png")
+            subplot3 = plt.subplot(rowSubplot, colSubplot, 3)
+            subplot3.imshow(claheImage[i, :, :], cmap='gray')
+            subplot3.axis('off')
+
+            subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
+            subplot4.imshow(claheImage[i, :, :], cmap='gray')
+            for n in range(0, N):
+                subplot4.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
+            if needLegend:
+                subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
+            subplot4.axis('off')
+
+            curImagePath = os.path.join(outputImageDir, basename+f"_s{i:03d}_raw_smoothed_clahe_GT.png")
 
             plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
 
     # after reading all patients, save numpy array
     np.save(outputNumpyImagesPath, allPatientsImageArray)
+    np.save(outputNumpyImagesPathClahe, allPatientsImageArrayClahe)
     np.save(outputNumpySurfacesPath, allPatientsSurfaceArray)
     with open(outputPatientIDPath, 'w') as fp:
         json.dump(patientIDDict, fp)

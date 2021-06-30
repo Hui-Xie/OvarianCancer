@@ -38,10 +38,10 @@ for file in filesList:
     patientID = DataMgr.getStemName(file, suffix)
 
     image = sitk.ReadImage(file)
-    image3d = sitk.GetArrayFromImage(image)
+    image3d = sitk.GetArrayFromImage(image).astype(float)
 
     label = file.replace("_CT.nrrd", "_Seg.nrrd").replace("images/", "labels/")
-    label3d = sitk.GetArrayFromImage(sitk.ReadImage(label))
+    label3d = sitk.GetArrayFromImage(sitk.ReadImage(label)).astype(float)
 
     # label3dBinary = (label3d > 0)
     # full0Labels = False

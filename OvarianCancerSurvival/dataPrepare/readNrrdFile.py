@@ -6,7 +6,7 @@ nrrdPath = "/home/hxie1/data/OvarianCancerCT/rawNrrd/images_1_1_3XYZSpacing/0162
 outputDir = "/home/hxie1/temp"
 
 itkImage = sitk.ReadImage(nrrdPath)
-npImage = sitk.GetArrayFromImage(itkImage)
+npImage = sitk.GetArrayFromImage(itkImage).astype(float)
 
 S,H,W = npImage.shape
 

@@ -19,7 +19,7 @@ def readMhd(mhdPath, indexBscan):
     outputPath = os.path.join(outputDir, fileName)
 
     itkImage = sitk.ReadImage(mhdPath)
-    npImage = sitk.GetArrayFromImage(itkImage) # in BxHxW dimension
+    npImage = sitk.GetArrayFromImage(itkImage).astype(float) # in BxHxW dimension
 
     # Ray mhd format in BxHxW dimension, but it flip the H and W dimension.
     npImage = np.flip(npImage, (1,2)) # as ray's format filp H and W dimension.
