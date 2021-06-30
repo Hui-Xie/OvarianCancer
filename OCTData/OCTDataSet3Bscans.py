@@ -220,70 +220,52 @@ class OCTDataSet3Bscans(data.Dataset):
 
     def __getitem__(self, index):
         if self.hps.dataIn1Parcel:
-            data = self.m_images[index,]
-
             label = None
             if self.m_labels is not None:
                 label = self.m_labels[index,] # size: N,W
             imageID = self.m_IDs[str(index)]
+
+            # get its below and up continuous Bscan by judging its imageID
+            if index >0 and index< self.__len__()-1:
+                data = self.m_images[index-1: index+2,]    # 3 Bscans.
+                # further judge imageID
+                ID0 = int((self.m_IDs[str(index-1)])[-3:])  # "*_s003" -> 003
+                ID1 = int((self.m_IDs[str(index)])[-3:])
+                ID2 = int((self.m_IDs[str(index+1)])[-3:])
+                if ID0+1 != ID1:
+                    data[0,] = data[1,]
+                if ID1+1 != ID2:
+                    data[2,] = data[1,]
+
+            elif index ==0:  # replicate boundary Bscan.
+                data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_image[index: index+2]), dim=0)
+            else: # index == N-1:
+                data = torch.cat((self.m_images[index-1: index+1,], self.m_image[index].unsqueeze(dim=0)), dim=0)
+
+
         else:
-            volumeIndex = index // self.hps.slicesPerPatient
-            offset = index % self.hps.slicesPerPatient
+            assert False
 
-            if self.hps.dataInSlice:  # one slice saved as one file
-                imagesRoot, imageExt = os.path.splitext(self.m_IDs[volumeIndex])
-                imageID = imagesRoot + f"_s{offset:02d}" + imageExt
-                lableID = imageID.replace("_images_", "_surfaces_")
-                data = torch.from_numpy(np.load(imageID).astype(float)).to(self.hps.device, dtype=torch.float)  # H, W
-                label = torch.from_numpy(np.load(lableID).astype(float)).to(self.hps.device, dtype=torch.float) # N, W
-
-            else:
-
-                # image uses float32
-                images = torch.from_numpy(np.load(self.m_images[volumeIndex]).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, H, W
-                # normalize images for each slice, which has done in converting from mat to numpy
-                # std, mean = torch.std_mean(images, dim=(1, 2))
-                # images = TF.Normalize(mean, std)(images)
-                data = images[offset,]
-
-                labels = torch.from_numpy(np.load(self.m_labels[volumeIndex]).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, num_surface, W
-                label = labels[offset,]
-
-                imageID = self.m_IDs[volumeIndex]+f".OCT{offset:2d}"
-
-        if self.m_transform:
-            data, label = self.m_transform(data, label)
+        if self.m_transform: # for volume transform
+            data[0,] = self.m_transform(data[0,])
+            data[1,], label = self.m_transform(data[1,], label)
+            data[2,] = self.m_transform(data[2,])
 
         # normalization should put outside of transform, as validation may not use transform
         std, mean = torch.std_mean(data)
-        data = TF.Normalize([mean], [std])(data.unsqueeze(dim=0))
-        data = data.squeeze(dim=0)
+        data = TF.Normalize([mean], [std])(data)  # size: 3xHxW
 
-        if self.hps.TTA and 0 != self.hps.TTA_Degree:
-            data, label = polarImageLabelRotate_Tensor(data, label, rotation=self.hps.TTA_Degree)
-
-        if 0 != self.hps.lacingWidth:
-            data, label = lacePolarImageLabel(data,label,self.hps.lacingWidth)
-
-        if 1 != self.hps.scaleNumerator or 1 != self.hps.scaleDenominator:  # this will change the Height of polar image
-            data = scalePolarImage(data, self.hps.scaleNumerator, self.hps.scaleDenominator)
-            label = scalePolarLabel(label, self.hps.scaleNumerator, self.hps.scaleDenominator)
-
-        H, W = data.shape
+        B, H, W = data.shape
+        assert B==3
         N, W1 = label.shape
         assert W==W1
         assert N == self.hps.numSurfaces
         if ("YufanHe" not in self.hps.network) and (0 != self.hps.gradChannels):
-            grads = self.generateGradientImage(data, self.hps.gradChannels)
+            grads = self.generateGradientImage(data[1], self.hps.gradChannels)
         else:
             grads = None
 
-        image = data.unsqueeze(dim=0)
-        if ("YufanHe" in self.hps.network) or self.hps.addCoordinatesXYChannels:  # YufanHe uses x,y index as extra channel.
-            X = torch.arange(W).view((1, W)).expand(data.size()).to(device=self.hps.device, dtype=torch.float).unsqueeze(dim=0)/W
-            Y = torch.arange(H).view((H, 1)).expand(data.size()).to(device=self.hps.device, dtype=torch.float).unsqueeze(dim=0)/H
-            image = torch.cat((image, Y, X), dim=0)
-
+        image = data
         if grads is not None:
             for grad in grads:
                 image = torch.cat((image, grad.unsqueeze(dim=0)), dim=0)
@@ -298,7 +280,7 @@ class OCTDataSet3Bscans(data.Dataset):
             if self.hps.smoothRift:
                 riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
 
-        result = {"images": image,
+        result = {"images": image,  # 3+gradientChannels
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": imageID,

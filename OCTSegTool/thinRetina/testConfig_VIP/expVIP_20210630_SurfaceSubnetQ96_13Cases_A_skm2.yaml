@@ -54,7 +54,7 @@ inputHeight: 1024   # original height
 inputWidth: 200   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # rawImage + gradChannels
+inputChannels: 3 # 3 continuous Bscans.
 nLayers: 7
 numSurfaces: 6  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
