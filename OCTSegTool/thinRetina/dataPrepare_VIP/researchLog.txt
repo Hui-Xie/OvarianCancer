@@ -7,6 +7,8 @@ Minutes:
 2  use 6 channels image(smoothed continues 3 Bscan, and their corresponding CLAHE images);
 3  plus 2 space location channels indicate B-scan location and A-scan location, total 8 channel inputs.
 
+reset git token.
+
 
 
 
