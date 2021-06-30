@@ -186,6 +186,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                 print(f"I am at line 186")
                 interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
                                            kernel='thin_plate_spline', epsilon=None, degree=None)
+                print(f"I am at line 188")
                 surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
                 print(f"I am at line 190")
             else:
