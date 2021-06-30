@@ -17,6 +17,7 @@ from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
+from OCTData.OCTDataSet3Bscans import  OCTDataSet3Bscans
 from OCTData.OCTDataUtilities import computeMASDError, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs
 from framework.NetTools import columnHausdorffDist
 

@@ -20,6 +20,7 @@ from framework.NetMgr import NetMgr
 from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
+from OCTData.OCTDataSet3Bscans import  OCTDataSet3Bscans
 from OCTData.OCTTransform import OCTDataTransform
 from OCTData.OCTDataUtilities import computeMASDError
 
