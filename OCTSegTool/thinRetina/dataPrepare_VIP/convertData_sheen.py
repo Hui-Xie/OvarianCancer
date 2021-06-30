@@ -84,7 +84,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     patientIDDict = {}
 
 
-    print(f"Program is outputing raw_GT images in {outputImageDir}, please wait ......")
+    print(f"Program is outputing raw_GT images in {outputImageDir} for {datasetName}, please wait ......")
     s = 0 # initial slice index
     for patientDir in patientDirList:
         # get volumePath and surfacesXmlPath
