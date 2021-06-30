@@ -188,17 +188,21 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
 
 def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, outputDir,
                                    refXMLFile="/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml",
-                                   penetrationChar='y', penetrationPixels=496, voxelSizeUnit='um', voxelSizeX=13.708, voxelSizeY=3.870, voxelSizeZ=292.068):
+                                   penetrationChar='y', penetrationPixels=496, voxelSizeUnit='um', voxelSizeX=13.708, voxelSizeY=3.870, voxelSizeZ=292.068, OSFlipBack=False):
     if not os.path.isdir(outputDir):
         os.makedirs(outputDir)
     N = len(volumeIDs)
     assert N == len(volumeBscanStartIndexList)
     for i in range(N):
         if i != N-1:
-            predicition = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i+1], :, :]  # prediction volume
+            prediction = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i+1], :, :]  # prediction volume
         else:
-            predicition = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
-        saveNumpy2OCTExplorerXML(volumeIDs[i], predicition, surfaceNames, outputDir, refXMLFile,
+            prediction = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
+
+        if ("_OS_" in volumeIDs[i]) and OSFlipBack:
+            prediction = np.flip(prediction, 2)
+
+        saveNumpy2OCTExplorerXML(volumeIDs[i], prediction, surfaceNames, outputDir, refXMLFile,
                                  penetrationChar=penetrationChar, penetrationPixels=penetrationPixels,
                                  voxelSizeUnit=voxelSizeUnit, voxelSizeX=voxelSizeX, voxelSizeY=voxelSizeY, voxelSizeZ=voxelSizeZ)
 
