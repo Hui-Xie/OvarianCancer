@@ -137,7 +137,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
                                          surfaces[:, i, :])
 
-        print(f"I am at line 131")
+        print(f"I am at line 140")
 
         # Average 3 Bscan smoothing.
         smoothedImage = np.zeros_like(npImage)
@@ -152,7 +152,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         # use skimage
         # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
         npImage = smoothedImage
-        
+
         # use opencv, and opencv only suport 2D images.
         # clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
         # for i in range(B):
@@ -188,8 +188,10 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                 surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
             else:
                 # for scipy 1.6.2
+                print(f"I am at line 191")
                 interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
                 surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
+                print(f"I am at line 194")
 
 
 
