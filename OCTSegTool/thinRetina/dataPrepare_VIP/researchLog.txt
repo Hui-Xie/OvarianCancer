@@ -1,3 +1,16 @@
+# June 30th, Wednesday, 2021
+Meeting time: 10am -11:50 am June 30th, Wednesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: Discussion on initial CLAHE images.
+Minutes:
+1  fixed  an error that loaded image should convert into float before using.
+2  use 6 channels image(smoothed continues 3 Bscan, and their corresponding CLAHE images);
+3  plus 2 space location channels indicate B-scan location and A-scan location, total 8 channel inputs.
+
+
+
+
+
 # June 29th, Tuesday, 2021
 For the 3D height sample:
 choose N random points from a BxW surface images, in order to make denser sample near fovea.

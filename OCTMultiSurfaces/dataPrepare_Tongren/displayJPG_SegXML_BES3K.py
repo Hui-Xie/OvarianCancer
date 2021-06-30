@@ -46,7 +46,7 @@ def getSurfacesArray(segFile):
             continue
 
     surface_num = int(xmlTreeRoot.find('surface_num').text)
-    surfacesArray = np.zeros((Z, surface_num, X))
+    surfacesArray = np.zeros((Z, surface_num, X),dtype=float)
 
     s = -1
     for surface in xmlTreeRoot:

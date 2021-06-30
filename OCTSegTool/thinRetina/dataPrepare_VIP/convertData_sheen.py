@@ -105,7 +105,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         #  Ray mhd format in BxHxW dimension, but it flip the H and W dimension.
         #  for 200x1024x200 image, and 128x1024x512 in BxHxW direction.
         itkImage = sitk.ReadImage(octVolumePath)
-        npImage = sitk.GetArrayFromImage(itkImage)  # in BxHxW dimension
+        npImage = sitk.GetArrayFromImage(itkImage).astype(float)  # in BxHxW dimension
         npImage = np.flip(npImage, (1, 2))  # as ray's format filp H and W dimension.
         B,curH,curW = npImage.shape
         assert H == curH
@@ -141,17 +141,19 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             i0 = i-1 if i-1>=0 else 0
             i1 = i
             i2 = i+1 if i+1<B else B-1
-            smoothedImage[i,] = (npImage[i0,] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255]
+            smoothedImage[i,] = (npImage[i0, ] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255]
 
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
         # use skimage
         # Rescale image data to range [0, 1]
         smoothedImage = np.clip(smoothedImage,
-                          np.percentile(smoothedImage, 5),
-                          np.percentile(smoothedImage, 95))
+                          np.percentile(smoothedImage, 1),
+                          np.percentile(smoothedImage, 100))
         smoothedImage = (smoothedImage - smoothedImage.min()) / (smoothedImage.max() - smoothedImage.min())
-        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        heImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        npImage = heImage
+        # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
         # use opencv, and opencv only suport 2D images.
         # clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
