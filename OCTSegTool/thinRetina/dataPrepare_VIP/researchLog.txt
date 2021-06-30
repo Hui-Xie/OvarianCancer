@@ -3,11 +3,9 @@ Meeting time: 10am -11:50 am June 30th, Wednesday, 2021
 Attendee:  Jui Kai, Hui
 Topic: Discussion on initial CLAHE images.
 Minutes:
-1  fixed  an error that loaded images should be converted into float before using.
-2  use 6 channels image(smoothed continues 3 Bscan, and their corresponding CLAHE images);
-3  plus 2 space location channels indicate B-scan location and A-scan location, total 8 channel inputs.
-
-reset git token.
+1  fixed  an error that loaded images should be converted into float before using.   --done
+2  use 6 channels image(smoothed continues 3 Bscan, and their corresponding CLAHE images);   --done
+3  plus 2 space location channels indicate B-scan location and A-scan location, total 8 channel inputs.  --done.
 
 
 
@@ -35,14 +33,14 @@ Task decomposition:
       skimage.exposure.equalize_adapthist(image, kernel_size=None, clip_limit=0.01, nbins=256)
       Contrast Limited Adaptive Histogram Equalization (CLAHE).
 
-   C. After, Images need to do normalization.
+   C. After, Images need to do normalization.  --done
 
 5  May consider to input continuous B-scans as RGB channel to input to network, and then check the ground truth of the middle of 3.
-   The top and bottom bscan use a repeat as 3-Bscan input.
+   The top and bottom bscan use a repeat as 3-Bscan input.  --done. 3 smoothed image +3 claheImages.
 
-6  Gradient channel may just use the penetration gradient one channel, instead of many gradient channels.
+6  Gradient channel may just use the penetration gradient one channel, instead of many gradient channels.  --ignore.
 
-7  a new dataset class for thin retina project
+7  a new dataset class for thin retina project.  --done
 
 8  change current rawImage into unsmoothed one.   --done, numpy_10cases
 

@@ -263,17 +263,18 @@ class OCTDataSet6Bscans(data.Dataset):
         else:
             assert False
 
+        B, H, W = data.shape
+        assert B == 6
+
         if self.m_transform: # for volume transform
-            data[0,] = self.m_transform(data[0,])
-            data[1,], label = self.m_transform(data[1,], label)
-            data[2,] = self.m_transform(data[2,])
+            # not support rotation.
+            for i in range(B):
+                data[i,] = self.m_transform(data[i,])
 
         # normalization should put outside of transform, as validation may not use transform
         std, mean = torch.std_mean(data)
         data = TF.Normalize([mean], [std])(data)  # size: 3xHxW
 
-        B, H, W = data.shape
-        assert B==3
         N, W1 = label.shape
         assert W==W1
         assert N == self.hps.numSurfaces
@@ -297,7 +298,13 @@ class OCTDataSet6Bscans(data.Dataset):
             if self.hps.smoothRift:
                 riftWidthGT = smoothCMA(riftWidthGT, self.hps.smoothHalfWidth, self.hps.smoothPadddingMode)
 
-        result = {"images": image,  # 3+gradientChannels
+        epsilon = 1.0e-8
+        if self.hps.useSpaceChannels:
+            bscanSpace = torch.ones((1,H,W), dtype=torch.float, device=data.device)*(s*1.0/(nB+epsilon))
+            ascanSpace =  torch.arange(epsilon,1,1.0/W).view(1,1,W).expand(1,H,W).to(device=data.device)
+            image = torch.cat((image,bscanSpace, ascanSpace), dim=0)
+
+        result = {"images": image,  # 6+2 space channels.
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": imageID,
