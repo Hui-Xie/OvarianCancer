@@ -15,7 +15,7 @@ import json
 
 import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray, scaleMatrix
-from skimage import exposure  # for CLAHE
+# from skimage import exposure  # for CLAHE
 print(f" I am here at line 17")
 # import cv2 as cv  # for CLAHE
 print(f" I am here at line 19")
@@ -150,8 +150,9 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
         # use skimage
-        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
-
+        # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        npImage = smoothedImage
+        
         # use opencv, and opencv only suport 2D images.
         # clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
         # for i in range(B):
@@ -234,6 +235,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     with open(outputPatientIDPath, 'w') as fp:
         json.dump(patientIDDict, fp)
 
+    print("pass smoke test")
     break
 
 print(f"===========END of Convert data==============")
