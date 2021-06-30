@@ -7,12 +7,12 @@ row[B/4: B*3/4]: sample 3N/8 points.
 row[B*3/4: B] : sample N/8 points.
 
 Task decomposition:
-1  The output xml segmentation file of OS case should flip back to original OS direction.
+1  The output xml segmentation file of OS case should flip back to original OS direction.   --done
 
 2  research  3D-height sampling rate thin-plate spline:  --done
 
 3  we can consider to do the 3D-height sampling rate thin-plate spline on the ground truth and segmentation result. --done for groundtruh
-   same parameters should apply to both ground truth and segmentation result.                                       ---For segmentation.
+   same parameters should apply to both ground truth and segmentation result.                                       ---For segmentation.  waiting to do
 
 4  For input raw images:
    A. First, Average 3 B-scans as  the middle Bscans of 3 as input, to erase the noise of raw images and the spike the segmentation result.  --done
@@ -29,7 +29,7 @@ Task decomposition:
 
 7  a new dataset class for thin retina project
 
-8  change current rawImage into unsmoothed one.
+8  change current rawImage into unsmoothed one.   --done, numpy_10cases
 
 
 

@@ -48,6 +48,7 @@ lrPatience: 20
 epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+datasetLoader:  "OCTDataSet"
 network: "SurfaceSegNet_Q"
 inputHeight: 1024   # original height
 inputWidth: 200   # rawImageWidth
@@ -115,6 +116,7 @@ useSmoothingWithPrecision: True
 precisionSmoothWinSize: 9
 
 gradientRiftConvGoBack: False
+OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.
 
 
 
