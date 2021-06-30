@@ -38,7 +38,7 @@ needLegend = True
 H = 1024
 N = len(extractIndexs)
 W = 200  # target image width
-C = 640 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
+C = 400 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
 
 
 # output Dir:
