@@ -183,16 +183,18 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             controlValues = surface.flatten()[chosenList,]
             # for scipy 1.7.0
             if scipy.__version__ =="1.7.0":
+                print(f"I am at line 186")
                 interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
                                            kernel='thin_plate_spline', epsilon=None, degree=None)
                 surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
+                print(f"I am at line 190")
             else:
                 # for scipy 1.6.2
-                print(f"I am at line 191")
-                interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
                 print(f"I am at line 193")
-                surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
+                interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
                 print(f"I am at line 195")
+                surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
+                print(f"I am at line 197")
 
 
 
