@@ -202,7 +202,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         allPatientsSurfaceArray[s:s+B, :, :] = surfaces
         for i in range(B):
             # basename: PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z
-            patientIDDict[str(s+i)] = basename + f"_s{i:03d}"
+            patientIDDict[str(s+i)] = basename + f"_B{B:03d}_s{i:03d}"  #e.g. "_B200_s120"
         s += B
 
         #  out Raw_GT images

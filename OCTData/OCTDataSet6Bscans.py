@@ -13,7 +13,7 @@ from OCTData.OCTAugmentation import *
 # this dataset loader load continuous 3 Bscan to predict the segmentation of the middle one.
 
 
-class OCTDataSet3Bscans(data.Dataset):
+class OCTDataSet6Bscans(data.Dataset):
     def __init__(self, imagesPath, IDPath=None, labelPath=None, transform=None, hps=None):
         super().__init__()
         self.hps = hps
@@ -28,7 +28,15 @@ class OCTDataSet3Bscans(data.Dataset):
                 images = torch.from_numpy(np.load(imagesPath).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, H, W
                 # normalize images for each slice
                 std,mean = torch.std_mean(images, dim=(1,2))
-                self.m_images = TF.Normalize(mean, std)(images)
+                self.m_images = TF.Normalize(mean, std)(images)  # standard smoothed images
+
+                # get CLAHE images
+                if hps.useCLAHEImages:
+                    pathBase, ext = os.path.splitext(imagesPath)
+                    claheImagePath = pathBase+"_clahe" + ext
+                    claheImages = torch.from_numpy(np.load(claheImagePath).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, H, W
+                    std, mean = torch.std_mean(claheImages, dim=(1, 2))
+                    self.m_claheImages = TF.Normalize(mean, std)(claheImages)  # CLAHE images
             else:
                 assert ((labelPath is None) and (IDPath is None))
                 with open(imagesPath, 'r') as f:
@@ -225,24 +233,33 @@ class OCTDataSet3Bscans(data.Dataset):
                 label = self.m_labels[index,] # size: N,W
             imageID = self.m_IDs[str(index)]
 
+            #get B and s index from "_B200_s120"
+            # get imageID and nB
+            ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
+            ID1 = int((self.m_IDs[str(index)])[-3:])
+            ID2 = int((self.m_IDs[str(index + 1)])[-3:])
+            nB = int((self.m_IDs[str(index)])[-8:-5])
+            s = ID1
+
             # get its below and up continuous Bscan by judging its imageID
             if index >0 and index< self.__len__()-1:
-                data = self.m_images[index-1: index+2,]    # 3 Bscans.
-                # further judge imageID
-                ID0 = int((self.m_IDs[str(index-1)])[-3:])  # "*_s003" -> 003
-                ID1 = int((self.m_IDs[str(index)])[-3:])
-                ID2 = int((self.m_IDs[str(index+1)])[-3:])
+                data = self.m_images[index-1: index+2,]    # 3 smoothed Bscans.
+                claheData = self.m_claheImages[index-1: index+2,] # 3 clahe Bscans.
                 if ID0+1 != ID1:
                     data[0,] = data[1,]
+                    claheData[0,] = claheData[1,]
                 if ID1+1 != ID2:
                     data[2,] = data[1,]
+                    claheData[2,] = claheData[1,]
 
             elif index ==0:  # replicate boundary Bscan.
                 data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_image[index: index+2]), dim=0)
+                claheData = torch.cat((self.m_claheImages[index].unsqueeze(dim=0), self.m_claheImages[index: index + 2]), dim=0)
             else: # index == N-1:
                 data = torch.cat((self.m_images[index-1: index+1,], self.m_image[index].unsqueeze(dim=0)), dim=0)
+                claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
 
-
+            data = torch.cat((data, claheData), dim=0)
         else:
             assert False
 
