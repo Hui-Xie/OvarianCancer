@@ -24,8 +24,8 @@ Task decomposition:
 
 2  research  3D-height sampling rate thin-plate spline:  --done
 
-3  we can consider to do the 3D-height sampling rate thin-plate spline on the ground truth and segmentation result. --done for groundtruh
-   same parameters should apply to both ground truth and segmentation result.                                       ---For segmentation.  waiting to do
+3  we can consider to do the 3D-height sampling rate thin-plate spline on the ground truth and segmentation result. --done for groundtruth
+   same parameters should apply to both ground truth and segmentation result.                                       ---done for prediction.
 
 4  For input raw images:
    A. First, Average 3 B-scans as  the middle Bscans of 3 as input, to erase the noise of raw images and the spike the segmentation result.  --done

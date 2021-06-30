@@ -5,6 +5,12 @@ import sys
 import os
 import torch
 from torch.utils import data
+import random
+import scipy
+if scipy.__version__ =="1.7.0":
+    from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
+else:
+    from scipy.interpolate import Rbf   # for scipy 1.6.2
 
 
 sys.path.append(".")
@@ -18,7 +24,7 @@ from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTDataSet6Bscans import  OCTDataSet6Bscans
-from OCTData.OCTDataUtilities import computeMASDError, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs
+from OCTData.OCTDataUtilities import computeMASDError_numpy, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs
 from framework.NetTools import columnHausdorffDist
 
 import time
@@ -49,10 +55,6 @@ def main():
     # 0: no image output; 1: Prediction; 2: GT and Prediction; 3: Raw, GT, Prediction
     # 4: Raw, GT, Prediction with GT superpose in one image
     comparisonSurfaceIndex = None
-    #comparisonSurfaceIndex = 2 # compare the surface 2 (index starts from  0)
-    # GT uses red, while prediction uses green
-
-    OnlyOutputGoodBscans =False
     needLegend = True
 
     # parse config file
@@ -79,7 +81,7 @@ def main():
             print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
             assert(False)
 
-    testData = OCTDataSet(testImagesPath, testIDPath, testLabelsPath,  transform=None, hps=hps)
+    testData = eval(hps.datasetLoader)(testImagesPath, testIDPath, testLabelsPath,  transform=None, hps=hps)
 
     # construct network
     net = eval(hps.network)(hps=hps)
@@ -107,7 +109,7 @@ def main():
             testBatch += 1
             # S is surface location in (B,S,W) dimension, the predicted Mu
             S, _sigma2, _loss, _x = net.forward(batchData['images'], gaussianGTs=batchData['gaussianGTs'], GTs = batchData['GTs'], layerGTs=batchData['layers'], riftGTs=batchData['riftWidth'])
-            batchImages = batchData['images'][:, 0, :, :]  # erase grad channels to save memory
+            batchImages = batchData['images'][:, 1, :, :]  # erase grad channels to save memory, the middle slice.
             images = torch.cat((images, batchImages)) if testBatch != 1 else batchImages # for output result
             testOutputs = torch.cat((testOutputs, S)) if testBatch != 1 else S
             sigma2 = torch.cat((sigma2, _sigma2)) if testBatch != 1 else _sigma2
@@ -137,12 +139,60 @@ def main():
                 volumeIDs.append(id[: id.rfind("_s000")])
                 volumeBscanStartIndexList.append(i)
 
-        if hps.existGTLabel: # Error Std and mean
-            stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.hPixelSize)
-            testGts = testGts.cpu().numpy()
-
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
+
+        # use thinPlateSpline to smooth the final output
+        #  a slight smooth the ground truth before using:
+        #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the prediction artifact
+        if hps.usePredictionTPS:
+            nVolumes = len(volumeBscanStartIndexList)
+            b = 0
+            for i in range(nVolumes):
+                if i != nVolumes - 1:
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :, :]  # prediction volume
+                else:
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
+                B,N,W = surfaces.shape
+                assert N == hps.numSurfaces
+
+                # determine the control points of thin-plate-spline
+                coordinateSurface = np.mgrid[0:B, 0:W]
+                coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
+
+                # random sample C control points in the original surface of size BxW, with a repeatable random.
+                randSeed = 20217  # fix this seed for ground truth and prediction.
+                random.seed(randSeed)
+                P = list(range(0, B * W))
+                C = 1000  # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
+                chosenList = [0, ] * C
+                # use random.sample to choose unique element without replacement.
+                chosenList[0:C // 8] = random.sample(P[0:W * B // 4], k=C // 8)
+                chosenList[C // 8:C // 2] = random.sample(P[W * B // 4: W * B // 2], k=3 * C // 8)
+                chosenList[C // 2:7 * C // 8] = random.sample(P[W * B // 2: W * 3 * B // 4], k=3 * C // 8)
+                chosenList[7 * C // 8: C] = random.sample(P[W * 3 * B // 4: W * B], k=C // 8)
+                chosenList.sort()
+                controlCoordinates = coordinateSurface[chosenList, :]
+                for i in range(N):
+                    surface = surfaces[:, i, :]  # choose surface i, size: BxW
+                    controlValues = surface.flatten()[chosenList,]
+                    # for scipy 1.7.0
+                    if scipy.__version__ == "1.7.0":
+                        interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
+                                                       kernel='thin_plate_spline', epsilon=None, degree=None)
+                        surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
+                    else:
+                        # for scipy 1.6.2
+                        interpolator = Rbf(controlCoordinates[:, 0], controlCoordinates[:, 1], controlValues,
+                                           function='thin_plate')
+                        surfaces[:, i, :] = interpolator(coordinateSurface[:, 0], coordinateSurface[:, 1]).reshape(B, W)
+                testOutputs[b:b+B,:,:] = surfaces
+                b +=B
+
+        if hps.existGTLabel: # Error Std and mean
+            testGts = testGts.cpu().numpy()
+            stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError_numpy(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.hPixelSize)
+
 
         if outputXmlSegFiles:
             batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, hps.xmlOutputDir,

@@ -260,6 +260,7 @@ class OCTDataSet6Bscans(data.Dataset):
                 claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
 
             data = torch.cat((data, claheData), dim=0)
+            # image order: smoothed_{i-1}, smoothed_{i}, smoothed_{i+1}, clahe_{i-1}, clahe_{i}, clahe_{i+1}
         else:
             assert False
 

@@ -46,7 +46,7 @@ def computeErrorStdMuOverPatientDimMean(predicitons, gts, slicesPerPatient=31, h
 
 def computeMASDError(predicitons, gts, volumeBscanStartIndexList, hPixelSize=3.870):
     '''
-
+    Tensor version.
     MASD(mean absolute surface distance error, $\mu m$),
     support different Bscan numbers for different volumes.
 
@@ -56,8 +56,9 @@ def computeMASDError(predicitons, gts, volumeBscanStartIndexList, hPixelSize=3.8
 
     :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
     :param gts: in (BatchSize, NumSurface, W) dimension
+    :param volumeBscanStartIndexList
     :param hPixelSize: in micrometer
-    :param goodBScansInGtOrder:
+
     :return: muSurface: (NumSurface) dimension, mean for each surface
              stdSurface: (NumSurface) dimension
              mu: a scalar, mean over all surfaces and all batchSize
@@ -68,7 +69,7 @@ def computeMASDError(predicitons, gts, volumeBscanStartIndexList, hPixelSize=3.8
     absError = torch.abs(predicitons-gts)  # size: B,N,W
 
     P = len(volumeBscanStartIndexList)
-    absErrorPatient = torch.zeros((P, N), device=device)
+    absErrorPatient = torch.zeros((P, N), dtype=torch.float,device=device)
     for p in range(P):
         if p != P-1:
             absErrorPatient[p,:] = torch.mean(absError[volumeBscanStartIndexList[p]:volumeBscanStartIndexList[p+1], ], dim=(0,2))*hPixelSize
@@ -78,6 +79,43 @@ def computeMASDError(predicitons, gts, volumeBscanStartIndexList, hPixelSize=3.8
     stdSurface, muSurface = torch.std_mean(absErrorPatient, dim=0)
     # size of stdSurface, muSurface: [N]
     std, mu = torch.std_mean(absErrorPatient)
+    return stdSurface, muSurface, std,mu
+
+def computeMASDError_numpy(predicitons, gts, volumeBscanStartIndexList, hPixelSize=3.870):
+    '''
+    Numpy version.
+    MASD(mean absolute surface distance error, $\mu m$),
+    support different Bscan numbers for different volumes.
+
+    Compute error standard deviation and mean along different dimension.
+
+    First convert absError on patient dimension
+
+    :param predicitons: in (BatchSize, NumSurface, W) dimension, in strictly patient order.
+    :param gts: in (BatchSize, NumSurface, W) dimension
+    :param volumeBscanStartIndexList
+    :param hPixelSize: in micrometer
+    :return: muSurface: (NumSurface) dimension, mean for each surface
+             stdSurface: (NumSurface) dimension
+             mu: a scalar, mean over all surfaces and all batchSize
+             std: a scalar
+    '''
+    B,N, W = predicitons.shape # where N is numSurface
+    absError = torch.abs(predicitons-gts)  # size: B,N,W
+
+    P = len(volumeBscanStartIndexList)
+    absErrorPatient = np.zeros((P, N), dtype=float)
+    for p in range(P):
+        if p != P-1:
+            absErrorPatient[p,:] = np.mean(absError[volumeBscanStartIndexList[p]:volumeBscanStartIndexList[p+1], ], axis=(0,2))*hPixelSize
+        else:
+            absErrorPatient[p, :] = np.mean(absError[volumeBscanStartIndexList[p]:, ], axis=(0, 2)) * hPixelSize
+
+    stdSurface= np.std(absErrorPatient, axis=0)
+    muSurface = np.mean(absErrorPatient, axis=0)
+    # size of stdSurface, muSurface: [N]
+    std = np.std(absErrorPatient)
+    mu  = np.mean(absErrorPatient)
     return stdSurface, muSurface, std,mu
 
 def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile,

@@ -87,8 +87,8 @@ def main():
     validationTransform = trainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
-    trainData = OCTDataSet(trainImagesPath, trainIDPath, trainLabelsPath,  transform=trainTransform, hps=hps)
-    validationData = OCTDataSet(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform,  hps=hps)
+    trainData = eval(hps.datasetLoader)(trainImagesPath, trainIDPath, trainLabelsPath,  transform=trainTransform, hps=hps)
+    validationData = eval(hps.datasetLoader)(validationImagesPath, validationIDPath, validationLabelsPath,  transform=validationTransform,  hps=hps)
 
     # construct network
     net = eval(hps.network)(hps=hps)

@@ -57,11 +57,11 @@ inputHeight: 1024   # original height
 inputWidth: 200   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 3 # 3 continuous Bscans.
+inputChannels: 8 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
 nLayers: 7
 numSurfaces: 6  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
-gradChannels: 7   # the added gradient channels beside raw image channel
+gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False
@@ -84,13 +84,13 @@ TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/raid001/users/hxie1/data/thinRetina/numpy_10cases/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/raid001/users/hxie1/data/thinRetina/numpy_13cases/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 # below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
 loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
-logDir: "/raid001/users/hxie1/data/thinRetina/numpy_10cases/log"
-refXMLFile: "/raid001/users/hxie1/data/thinRetina/numpy_10cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
+logDir: "/raid001/users/hxie1/data/thinRetina/numpy_13cases/log"
+refXMLFile: "/raid001/users/hxie1/data/thinRetina/numpy_13cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
 penetrationChar: 'z'  # use z or y to represent penetration direction.
 # physical size of voxel
 voxelSizeUnit: "um"
@@ -117,6 +117,7 @@ useMedianFilterSmoothing: True
 medianFilterWinSize: 11  # after loss
 useSmoothingWithPrecision: True
 precisionSmoothWinSize: 5
+usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
 
 gradientRiftConvGoBack: False
 OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.
