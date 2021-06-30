@@ -1,6 +1,7 @@
 # support various input size
 
 # need python package:  pillow(6.2.1), opencv, pytorch, torchvision, tensorboard
+# CUDA_LAUNCH_BLOCKING=1 python script.py args  # debug cuda error.
 
 import sys
 import os
