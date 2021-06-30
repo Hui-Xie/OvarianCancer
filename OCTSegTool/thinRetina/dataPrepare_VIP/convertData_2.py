@@ -5,6 +5,8 @@
 # C.  Add 3D-height sampling rate thin-plate spline smoothing on ground truth and prediction.
 # D.  add 3 patient as independent test set.
 
+# need python package: simpleitk, opencv, scipy, matplotlib
+
 import os
 import glob as glob
 import sys
@@ -13,12 +15,15 @@ import json
 
 import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray, scaleMatrix
-# from skimage import exposure  # for CLAHE
+from skimage import exposure  # for CLAHE
 print(f" I am here at line 17")
-import cv2 as cv  # for CLAHE
+# import cv2 as cv  # for CLAHE
 print(f" I am here at line 19")
-from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
-#from scipy.interpolate import Rbf   # for scipy 1.6.2
+import scipy
+if scipy.__version__ =="1.7.0":
+    from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
+else:
+    from scipy.interpolate import Rbf   # for scipy 1.6.2
 print(f" I am here at line 22")
 import random
 import numpy as np
@@ -145,12 +150,12 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
         # use skimage
-        # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
+        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
         # use opencv, and opencv only suport 2D images.
-        clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
-        for i in range(B):
-            npImage[i,] = clahe.apply(smoothedImage[i,])
+        # clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
+        # for i in range(B):
+        #    npImage[i,] = clahe.apply(smoothedImage[i,])
 
         #  a slight smooth the ground truth before using:
         #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the manual tracing artifact
@@ -175,9 +180,17 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         for i in range(N):
             surface = surfaces[:, i, :]  # choose surface i, size: BxW
             controlValues = surface.flatten()[chosenList,]
-            interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
+            # for scipy 1.7.0
+            if scipy.__version__ =="1.7.0":
+                interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
                                            kernel='thin_plate_spline', epsilon=None, degree=None)
-            surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
+                surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
+            else:
+                # for scipy 1.6.2
+                interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
+                surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
+
+
 
         #  output  numpy array.
         allPatientsImageArray[s:s+B,:,:] = npImage
@@ -220,5 +233,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     np.save(outputNumpySurfacesPath, allPatientsSurfaceArray)
     with open(outputPatientIDPath, 'w') as fp:
         json.dump(patientIDDict, fp)
+
+    break
 
 print(f"===========END of Convert data==============")

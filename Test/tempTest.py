@@ -8,7 +8,7 @@ import sys
 # import json
 
 # import matplotlib.pyplot as plt
-import cv2 as cv
+import cv2 as cv  # simpleitk and cv2 has conflict, which leads cv2 Segmentation fault (core dumped)
 
 
 def main():
