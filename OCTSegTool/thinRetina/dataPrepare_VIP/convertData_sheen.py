@@ -5,30 +5,24 @@
 # C.  Add 3D-height sampling rate thin-plate spline smoothing on ground truth and prediction.
 # D.  add 3 patient as independent test set.
 
-# need python package: simpleitk, opencv, scipy, matplotlib
+# need python package: simpleitk, scipy, matplotlib, scikit-image
 
 import os
 import glob as glob
-import sys
 import SimpleITK as sitk
 import json
 
 import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray, scaleMatrix
-# from skimage import exposure  # for CLAHE
-print(f" I am here at line 17")
+from skimage import exposure  # for CLAHE
 # import cv2 as cv  # for CLAHE
-print(f" I am here at line 19")
 import scipy
 if scipy.__version__ =="1.7.0":
     from scipy.interpolate import RBFInterpolator  # for scipy 1.7.0
 else:
     from scipy.interpolate import Rbf   # for scipy 1.6.2
-print(f" I am here at line 22")
 import random
 import numpy as np
-
-print(f" I am here at line 23")
 
 extractIndexs = (0, 1, 3, 5, 6, 10) # extracted surface indexes from original 11 surfaces.
 surfaceNames =  ("ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE")
@@ -38,26 +32,30 @@ needLegend = True
 H = 1024
 N = len(extractIndexs)
 W = 200  # target image width
-C = 400 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
+C = 1000 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
 
 
 # output Dir:
-outputImageDir = "/home/hxie1/data/thinRetina/numpy_13cases/rawGT"
-outputNumpyParentDir = "/home/hxie1/data/thinRetina/numpy_13cases"
+outputImageDir = "/home/sheen/temp/numpy_13cases/rawGT"
+outputNumpyParentDir = "/home/sheen/temp/numpy_13cases"
 outputTrainNumpyDir = os.path.join(outputNumpyParentDir, "training")
 outputValidationNumpyDir = os.path.join(outputNumpyParentDir, "validation")
 outputTestNumpyDir = os.path.join(outputNumpyParentDir, "test")
 
+if not os.path.exists(outputImageDir):
+    os.makedirs(outputImageDir)
+if not os.path.exists(outputTrainNumpyDir):
+    os.makedirs(outputTrainNumpyDir)
+if not os.path.exists(outputValidationNumpyDir):
+    os.makedirs(outputValidationNumpyDir)
+if not os.path.exists(outputTestNumpyDir):
+    os.makedirs(outputTestNumpyDir)
+
+
 # original patientDirList
 trainPatientDirList= [  #8 patients
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4060_Macular_200x200_8-25-2009_11-55-11_OD_sn16334_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4073_Macular_200x200_1-3-2013_15-52-39_OS_sn10938_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4084_Macular_512x128_5-14-2012_14-35-40_OD_sn26743_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set1/PVIP2-4081_Macular_512x128_11-11-2010_12-42-15_OS_sn14530_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Manual_Correction/Set1/PVIP2-4004_Macular_200x200_10-10-2012_12-17-24_OD_sn11266_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Manual_Correction/Set1/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Manual_Correction/Set1/PVIP2-4088_Macular_512x128_12-4-2012_9-48-42_OD_sn12365_cube_z",
-"/home/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Manual_Correction/Set1/PVIP2-4045_Macular_512x128_4-20-2010_14-18-22_OD_sn12908_cube_z",
+"/home/sheen/temp/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z",
+"/home/sheen/temp/PVIP2-4045_Macular_512x128_4-20-2010_14-18-22_OD_sn12908_cube_z",
 ]
 
 validationPatientDirList=[  # 2 patients
@@ -72,9 +70,9 @@ testPatientDirList=[
 ]
 
 cases= {
-    "training": [trainPatientDirList, outputTrainNumpyDir, 4*(200+128)], # the number is totalSlices.
-    "validation": [validationPatientDirList, outputValidationNumpyDir, 2*200],
-    "test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
+    "training": [trainPatientDirList, outputTrainNumpyDir, 2*(200)], # the number is totalSlices.
+    #"validation": [validationPatientDirList, outputValidationNumpyDir, 2*200],
+    #"test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
 }
 for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")
@@ -137,8 +135,6 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
                                          surfaces[:, i, :])
 
-        print(f"I am at line 140")
-
         # Average 3 Bscan smoothing.
         smoothedImage = np.zeros_like(npImage)
         for i in range(B):
@@ -150,8 +146,12 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
         # use skimage
-        # npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
-        npImage = smoothedImage
+        # Rescale image data to range [0, 1]
+        smoothedImage = np.clip(smoothedImage,
+                          np.percentile(smoothedImage, 5),
+                          np.percentile(smoothedImage, 95))
+        smoothedImage = (smoothedImage - smoothedImage.min()) / (smoothedImage.max() - smoothedImage.min())
+        npImage = exposure.equalize_adapthist(smoothedImage, kernel_size=[8,64,25], clip_limit=0.01, nbins=256)
 
         # use opencv, and opencv only suport 2D images.
         # clahe = cv.createCLAHE(clipLimit=40.0, tileGridSize=(64, 25))
@@ -183,21 +183,13 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             controlValues = surface.flatten()[chosenList,]
             # for scipy 1.7.0
             if scipy.__version__ =="1.7.0":
-                print(f"I am at line 186")
                 interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
                                            kernel='thin_plate_spline', epsilon=None, degree=None)
-                print(f"I am at line 188")
                 surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
-                print(f"I am at line 190")
             else:
                 # for scipy 1.6.2
-                print(f"I am at line 193")
                 interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
-                print(f"I am at line 195")
                 surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
-                print(f"I am at line 197")
-
-
 
         #  output  numpy array.
         allPatientsImageArray[s:s+B,:,:] = npImage
@@ -240,8 +232,5 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
     np.save(outputNumpySurfacesPath, allPatientsSurfaceArray)
     with open(outputPatientIDPath, 'w') as fp:
         json.dump(patientIDDict, fp)
-
-    print("pass smoke test")
-    break
 
 print(f"===========END of Convert data==============")
