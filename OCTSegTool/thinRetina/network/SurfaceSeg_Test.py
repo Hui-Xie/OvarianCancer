@@ -141,6 +141,7 @@ def main():
 
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
+        _,H,W = images.shape
 
         # use thinPlateSpline to smooth the final output
         #  a slight smooth the ground truth before using:
@@ -186,6 +187,11 @@ def main():
                         interpolator = Rbf(controlCoordinates[:, 0], controlCoordinates[:, 1], controlValues,
                                            function='thin_plate')
                         surfaces[:, i, :] = interpolator(coordinateSurface[:, 0], coordinateSurface[:, 1]).reshape(B, W)
+
+                # After TPS Interpolation, the surfaces values may exceed the range of [0,H), so it needs clip.
+                # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
+                surfaces = np.clip(surfaces, 0, H - 1)
+
                 testOutputs[b:b+B,:,:] = surfaces
                 b +=B
 

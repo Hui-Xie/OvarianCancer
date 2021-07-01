@@ -202,6 +202,10 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                 interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
                 surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
 
+        # After TPS Interpolation, the surfaces values may exceed the range of [0,H), so it needs clip.
+        # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
+        surfaces = np.clip(surfaces, 0, H-1)
+
         #  output  numpy array.
         allPatientsImageArray[s:s+B,:,:] = smoothedImage
         allPatientsImageArrayClahe[s:s+B,:,:] = claheImage
@@ -242,7 +246,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
                 subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
             subplot4.axis('off')
 
-            curImagePath = os.path.join(outputImageDir, basename+f"_s{i:03d}_raw_smoothed_clahe_GT.png")
+            curImagePath = os.path.join(outputImageDir, basename+f"_B{B:03d}_s{i:03d}_raw_smoothed_clahe_GT.png")
 
             plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
