@@ -255,10 +255,10 @@ class OCTDataSet6Bscans(data.Dataset):
                     claheData[2,] = claheData[1,]
 
             elif index ==0:  # replicate boundary Bscan.
-                data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_image[index: index+2]), dim=0)
+                data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_images[index: index+2]), dim=0)
                 claheData = torch.cat((self.m_claheImages[index].unsqueeze(dim=0), self.m_claheImages[index: index + 2]), dim=0)
             else: # index == N-1:
-                data = torch.cat((self.m_images[index-1: index+1,], self.m_image[index].unsqueeze(dim=0)), dim=0)
+                data = torch.cat((self.m_images[index-1: index+1,], self.m_images[index].unsqueeze(dim=0)), dim=0)
                 claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
 
             data = torch.cat((data, claheData), dim=0)
