@@ -9,6 +9,7 @@ dataInSlice: False
 existGTLabel: True
 useCLAHEImages: True # add CLAHE image as extra channels.
 useSpaceChannels: True  # use Bscan space and Ascan space channels.
+useCLAHEReplaceSmoothed: False
 
 dataDir: "/raid001/users/hxie1/data/thinRetina/numpy_13cases"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName

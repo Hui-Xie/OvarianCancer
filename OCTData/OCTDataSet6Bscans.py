@@ -39,6 +39,11 @@ class OCTDataSet6Bscans(data.Dataset):
                     self.m_claheImages = TF.Normalize(mean, std)(claheImages)  # CLAHE images
                 else:
                     self.m_claheImages = None
+
+                if hps.useCLAHEReplaceSmoothed:
+                    self.m_images = self.m_claheImages
+                    self.m_claheImages = None
+
             else:
                 assert ((labelPath is None) and (IDPath is None))
                 with open(imagesPath, 'r') as f:
@@ -321,7 +326,9 @@ class OCTDataSet6Bscans(data.Dataset):
             ascanSpace =  torch.arange(epsilon,1,1.0/W).view(1,1,W).expand(1,H,W).to(device=data.device)
             image = torch.cat((image,bscanSpace, ascanSpace), dim=0)
 
-        result = {"images": image,  # maybe 3 smoothed channel, 3 smoothed +3 clahe +2 space, or 3+2
+        assert image.shape[0] == self.hps.inputChannels
+
+        result = {"images": image,  #  Maybe: 3M,3C, 3M3C, 3M2S, 3C2S, 3M3C2S
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": imageID,

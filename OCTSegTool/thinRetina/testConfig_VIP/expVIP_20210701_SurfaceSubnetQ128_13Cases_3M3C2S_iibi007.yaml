@@ -11,7 +11,7 @@ useCLAHEImages: True # add CLAHE image as extra channels.
 useSpaceChannels: True  # use Bscan space and Ascan space channels.
 useCLAHEReplaceSmoothed: False
 
-dataDir: "/raid001/users/hxie1/data/thinRetina/numpy_13cases"
+dataDir: "/localscratch/Users/hxie1/data/thinRetina/numpy_13cases"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
 K: 0
 k: -1   # -1 means do not use cross validation
@@ -65,7 +65,7 @@ gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
 addCoordinatesXYChannels: False
-segChannels: 96  # number of channel in the segmentation part.
+segChannels: 128  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 200  # for in the validation and test
@@ -84,13 +84,13 @@ TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
 # data augmentation
 
-netPath: "/raid001/users/hxie1/data/thinRetina/numpy_13cases/netParameters"  # net is saved at netpath / network / self_filename
+netPath: "/localscratch/Users/hxie1/data/thinRetina/numpy_13cases/netParameters"  # net is saved at netpath / network / self_filename
 # if loadNetPath !="", netPath will be replaced by loadNetPath
 # below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
 loadNetPath:  ""  # this is pretrained network
 outputDir:  ""
-logDir: "/raid001/users/hxie1/data/thinRetina/numpy_13cases/log"
-refXMLFile: "/raid001/users/hxie1/data/thinRetina/numpy_13cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
+logDir: "/localscratch/Users/hxie1/data/thinRetina/numpy_13cases/log"
+refXMLFile: "/localscratch/Users/hxie1/data/thinRetina/numpy_13cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
 penetrationChar: 'z'  # use z or y to represent penetration direction.
 # physical size of voxel
 voxelSizeUnit: "um"

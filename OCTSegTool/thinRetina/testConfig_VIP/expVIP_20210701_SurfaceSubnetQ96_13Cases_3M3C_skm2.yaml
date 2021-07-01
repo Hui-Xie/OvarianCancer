@@ -8,7 +8,7 @@ useIndependentValidation: True
 dataInSlice: False
 existGTLabel: True
 useCLAHEImages: True # add CLAHE image as extra channels.
-useSpaceChannels: True  # use Bscan space and Ascan space channels.
+useSpaceChannels: False  # use Bscan space and Ascan space channels.
 useCLAHEReplaceSmoothed: False
 
 dataDir: "/raid001/users/hxie1/data/thinRetina/numpy_13cases"
@@ -43,7 +43,7 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:2')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8 # total 1312 training B-scans 1312 = 4*(200+128)
 learningRate: 0.1
@@ -57,7 +57,7 @@ inputHeight: 1024   # original height
 inputWidth: 200   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
-inputChannels: 8 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
+inputChannels: 6 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
 nLayers: 7
 numSurfaces: 6  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
