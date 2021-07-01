@@ -325,6 +325,7 @@ class OCTDataSet6Bscans(data.Dataset):
             bscanSpace = torch.ones((1,H,W), dtype=torch.float, device=data.device)*(s*1.0/(nB+epsilon))
             ascanSpace =  torch.arange(epsilon,1,1.0/W).view(1,1,W).expand(1,H,W).to(device=data.device)
             image = torch.cat((image,bscanSpace, ascanSpace), dim=0)
+            # Right/Left Eyes: OD/OS, and OS flip to OD, so A=0 indicates temporal and A=1 indicates nasal.
 
         assert image.shape[0] == self.hps.inputChannels
 
