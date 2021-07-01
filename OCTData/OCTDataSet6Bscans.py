@@ -37,6 +37,8 @@ class OCTDataSet6Bscans(data.Dataset):
                     claheImages = torch.from_numpy(np.load(claheImagePath).astype(float)).to(self.hps.device, dtype=torch.float)  # slice, H, W
                     std, mean = torch.std_mean(claheImages, dim=(1, 2))
                     self.m_claheImages = TF.Normalize(mean, std)(claheImages)  # CLAHE images
+                else:
+                    self.m_claheImages = None
             else:
                 assert ((labelPath is None) and (IDPath is None))
                 with open(imagesPath, 'r') as f:
@@ -235,48 +237,60 @@ class OCTDataSet6Bscans(data.Dataset):
 
             #get B and s index from "_B200_s120"
             # get imageID and nB
-            ID1 = int((self.m_IDs[str(index)])[-3:])      # "*_s003" -> 003
-            nB = int((self.m_IDs[str(index)])[-8:-5])
+            ID1 = int(imageID[-3:])      # "*_s003" -> 003
+            nB = int(imageID[-8:-5])
             s = ID1
 
             # get its below and up continuous Bscan by judging its imageID
             if index >0 and index< self.__len__()-1:
                 data = self.m_images[index-1: index+2,]    # 3 smoothed Bscans.
-                claheData = self.m_claheImages[index-1: index+2,] # 3 clahe Bscans.
-
                 ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
                 ID2 = int((self.m_IDs[str(index + 1)])[-3:])
 
                 if ID0+1 != ID1:
                     data[0,] = data[1,]
-                    claheData[0,] = claheData[1,]
                 if ID1+1 != ID2:
                     data[2,] = data[1,]
-                    claheData[2,] = claheData[1,]
+
+                if self.m_claheImages != None:
+                    claheData = self.m_claheImages[index - 1: index + 2, ]  # 3 clahe Bscans.
+                    if ID0 + 1 != ID1:
+                        claheData[0,] = claheData[1,]
+                    if ID1 + 1 != ID2:
+                        claheData[2,] = claheData[1,]
+                else:
+                    claheData = None
 
             elif index ==0:  # replicate boundary Bscan.
                 data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_images[index: index+2]), dim=0)
-                claheData = torch.cat((self.m_claheImages[index].unsqueeze(dim=0), self.m_claheImages[index: index + 2]), dim=0)
+                if self.m_claheImages != None:
+                    claheData = torch.cat((self.m_claheImages[index].unsqueeze(dim=0), self.m_claheImages[index: index + 2]), dim=0)
+                else:
+                    claheData = None
             else: # index == N-1:
                 data = torch.cat((self.m_images[index-1: index+1,], self.m_images[index].unsqueeze(dim=0)), dim=0)
-                claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
+                if self.m_claheImages != None:
+                    claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
+                else:
+                    claheData = None
 
-            data = torch.cat((data, claheData), dim=0)
-            # image order: smoothed_{i-1}, smoothed_{i}, smoothed_{i+1}, clahe_{i-1}, clahe_{i}, clahe_{i+1}
+            if claheData != None:
+                data = torch.cat((data, claheData), dim=0)
+                # image order: smoothed_{i-1}, smoothed_{i}, smoothed_{i+1}, clahe_{i-1}, clahe_{i}, clahe_{i+1}
         else:
             assert False
 
-        B, H, W = data.shape
-        assert B == 6
+        B, H, W = data.shape  # B ==3 or 6
 
         if self.m_transform: # for volume transform
             # not support rotation.
-            for i in range(B):
+            for i in range(B):  # each slice may has different noise or no noise.
                 data[i,] = self.m_transform(data[i,])
 
         # normalization should put outside of transform, as validation may not use transform
-        std, mean = torch.std_mean(data)
-        data = TF.Normalize([mean], [std])(data)  # size: 3xHxW
+        # normalization should on each slice.
+        std, mean = torch.std_mean(data, dim=(1,2))
+        data = TF.Normalize(mean, std)(data)  # size: BxHxW
 
         N, W1 = label.shape
         assert W==W1
@@ -307,7 +321,7 @@ class OCTDataSet6Bscans(data.Dataset):
             ascanSpace =  torch.arange(epsilon,1,1.0/W).view(1,1,W).expand(1,H,W).to(device=data.device)
             image = torch.cat((image,bscanSpace, ascanSpace), dim=0)
 
-        result = {"images": image,  # 6+2 space channels.
+        result = {"images": image,  # maybe 3 smoothed channel, 3 smoothed +3 clahe +2 space, or 3+2
                   "GTs": [] if label is None else label,
                   "gaussianGTs": [] if 0 == self.hps.sigma or label is None  else gaussianizeLabels(label, self.hps.sigma, H),
                   "IDs": imageID,

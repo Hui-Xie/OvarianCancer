@@ -3,6 +3,10 @@ Run training for 8 channel inputs(3 smoothed+3 Clahe + 2 space):
 909  2021-07-01 13:12:37 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210630_SurfaceSubnetQ96_13Cases_A_skm2.yaml &
 911  2021-07-01 13:23:12 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_B_skm2.yaml &
 
+about 4 min/epoch in training speed.
+
+
+
 
 # June 30th, Wednesday, 2021
 Meeting time: 10am -11:50 am June 30th, Wednesday, 2021
