@@ -235,9 +235,7 @@ class OCTDataSet6Bscans(data.Dataset):
 
             #get B and s index from "_B200_s120"
             # get imageID and nB
-            ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
-            ID1 = int((self.m_IDs[str(index)])[-3:])
-            ID2 = int((self.m_IDs[str(index + 1)])[-3:])
+            ID1 = int((self.m_IDs[str(index)])[-3:])      # "*_s003" -> 003
             nB = int((self.m_IDs[str(index)])[-8:-5])
             s = ID1
 
@@ -245,6 +243,10 @@ class OCTDataSet6Bscans(data.Dataset):
             if index >0 and index< self.__len__()-1:
                 data = self.m_images[index-1: index+2,]    # 3 smoothed Bscans.
                 claheData = self.m_claheImages[index-1: index+2,] # 3 clahe Bscans.
+
+                ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
+                ID2 = int((self.m_IDs[str(index + 1)])[-3:])
+
                 if ID0+1 != ID1:
                     data[0,] = data[1,]
                     claheData[0,] = claheData[1,]

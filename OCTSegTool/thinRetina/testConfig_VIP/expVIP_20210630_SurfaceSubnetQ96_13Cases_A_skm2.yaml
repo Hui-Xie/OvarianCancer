@@ -1,7 +1,6 @@
 # For 13 cases of VIP (Variability In Perimetry)
 # training: 8 volumes, validation: 2 volumes, test 3 volumes.
-# Use 3 smoothedImages, 3 CLAHE images, and 2 spaction informaiton channels. total 8 input channels.
-
+# Use 3 smoothedImages, 3 CLAHE images, and 2 spaction information channels. total 8 input channels.
 
 debug: False # debug mark
 dataIn1Parcel: True
