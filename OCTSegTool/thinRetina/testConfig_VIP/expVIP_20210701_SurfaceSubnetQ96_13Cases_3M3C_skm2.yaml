@@ -43,7 +43,7 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:2')   #GPU ID
+device: torch.device('cuda:4')   #GPU ID
 #device: torch.device('cpu')
 batchSize: 8 # total 1312 training B-scans 1312 = 4*(200+128)
 learningRate: 0.1
