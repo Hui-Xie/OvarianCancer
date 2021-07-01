@@ -2,6 +2,7 @@
 
 # need python package:  pillow(6.2.1), opencv, pytorch, torchvision, tensorboard
 # CUDA_LAUNCH_BLOCKING=1 python script.py args  # debug cuda error.
+# it is better use: conda install scipy=1.7.0 -c conda-forge
 
 import sys
 import os
