@@ -1,16 +1,28 @@
+# July 3rd, Saturday, 2021
+Further update paper:
+1   focus on OCT images and delete IVUS applications.
+2   rewrote abstract and introduction.
+
+
+
+
 #June 29th, Tuesday, 2021
 About paper modification:
-1   describe current problem;
-2   describe how to solve the problem;
-3   make reason and logic behind the argument;
-4   highlight and its behind reason:
+1   describe current problem;   --done
+2   describe how to solve the problem;   --done
+3   make reason and logic behind the argument;  --done
+4   highlight and its behind reason:   --done
     A  attention.
     B  gradient input.
     C  ReLU.
-5  do not directly compare with JHU method.
-6  do not use history words.
-7  cite paper without year.
+5  do not directly compare with JHU method.   --done
+6  do not use history words.  --done
+7  cite paper without year.  --done
 
+8  Notes on YufanFan's paper:
+   A  The drawback of the state-of-the-art methods.  --done
+   B  What is the new idea to address the drawbacks.   --done.
+   C  cite Yufan's MIA(Medical Image Analysis) paper.  --done.
 
 
 
