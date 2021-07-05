@@ -18,7 +18,8 @@ Check training result of 3M3C2S and its combinations:
 Analysis on Validation error:
 1  3M3C and 3M3C2S both are ok for Q96 and Q128. While other 3M or 3C all are diverge.
    More channels make training less diverge.
-2     
+2  One possible reason of training diverge is that too high learning rate.
+   More input channels make program easy to train???
 
 
 
