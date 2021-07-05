@@ -1,3 +1,29 @@
+#July 5th, Monday, 2021
+Check training result of 3M3C2S and its combinations:
+  537  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &   validation error jump. validation meanerror=160um.
+  538  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3M2S_iibi007.yaml &   validation error jump. validation meanerror=160um.
+  539  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3M3C_iibi007.yaml &   validation meanError=4.57um at epoch 41.
+  540  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3M3C2S_iibi007.yaml &  validation meanError=4.233um at epoch 53.
+
+  921  2021-07-01 17:05:16 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ96_13Cases_3M_skm2.yaml &  validation error jump.
+  922  2021-07-01 17:17:02 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ96_13Cases_3C_skm2.yaml &  validation error jump.
+  923  2021-07-01 17:17:14 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ96_13Cases_3M2S_skm2.yaml &  validation error jump.
+  924  2021-07-01 17:17:24 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ96_13Cases_3C2S_skm2.yaml &  validation error jump.  validationError=160um.
+  925  2021-07-01 17:17:38 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml &  validation meanError=4.141um at epoch 72.
+  926  2021-07-01 17:17:49 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ96_13Cases_3M3C2S_skm2.yaml &  validation meanError=4.367um at epoch 67.
+  927  2021-07-01 17:18:11 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3M_skm2.yaml &     validation error jump.
+  928  2021-07-01 17:18:25 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3C_skm2.yaml &    validation error jump.
+
+
+Analysis on Validation error:
+1  3M3C and 3M3C2S both are ok for Q96 and Q128. While other 3M or 3C all are diverge.
+   More channels make training less diverge.
+2     
+
+
+
+
+
 # July 1st, Thursday, 2021
 Run training for 8 channel inputs(3 smoothed+3 Clahe + 2 space):
 909  2021-07-01 13:12:37 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210630_SurfaceSubnetQ96_13Cases_A_skm2.yaml &
