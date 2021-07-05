@@ -101,7 +101,7 @@ def computeMASDError_numpy(predicitons, gts, volumeBscanStartIndexList, hPixelSi
              std: a scalar
     '''
     B,N, W = predicitons.shape # where N is numSurface
-    absError = torch.abs(predicitons-gts)  # size: B,N,W
+    absError = np.absolute(predicitons-gts)  # size: B,N,W
 
     P = len(volumeBscanStartIndexList)
     absErrorPatient = np.zeros((P, N), dtype=float)
