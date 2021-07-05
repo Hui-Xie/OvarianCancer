@@ -1,5 +1,22 @@
 #July 5th, Monday, 2021
 
+relauch thinRetina training:
+1000  2021-07-05 14:27:23 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C2S_skm2.yaml &
+ 1001  2021-07-05 14:27:34 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M2S_skm2.yaml &
+ 1002  2021-07-05 14:27:46 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3C_skm2.yaml &
+ 1003  2021-07-05 14:27:57 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3C2S_skm2.yaml &
+ 1004  2021-07-05 14:28:06 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M_skm2.yaml &
+ 1005  2021-07-05 14:28:16 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C_skm2.yaml &
+ 1006  2021-07-05 14:28:27 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M_skm2.yaml &
+ 1007  2021-07-05 14:28:37 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml &
+
+527  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C_iibi007.yaml &
+  528  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C2S_iibi007.yaml &
+  529  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M2S_iibi007.yaml &
+  530  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &
+
+
+
 All below experiments, as without clone in dataloder, its data were contaminated.
 Check training result of 3M3C2S and its combinations:
   537  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &   validation error jump. validation meanerror=160um.
