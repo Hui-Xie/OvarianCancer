@@ -1,4 +1,17 @@
-n# May 24th, Monday, 2021
+# July 5th, Monday, 2021
+New idea on July 5th, Monday, 2021:
+1   use 2 VAEs to prepare data:
+    VAE A:  input 3D volume image, and output 3D recontrcution images.
+    VAE B:  input latent vector of VAE A, and output medical clinical information without reponse.
+2   final 10-fold prediction:
+    use the latent vector of B to predict final response.
+3   the size of the latent vector of VAE B should be less than 0.4 of number of all sample, to avoid overfitting.
+    the size of the latent vector of VAE A should be less than 0.4x numberOfClinicalFeature of all sample.
+
+
+
+
+# May 24th, Monday, 2021
 Micorsoft Azure Cloud Service.
 DSVM:
 https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/overview

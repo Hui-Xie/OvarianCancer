@@ -1,3 +1,15 @@
+#July 5th, Monday, 2021
+TMI: IEEE Transactions on Medical Imaging.
+
+Submission:
+1  preprint version may put arxiv.
+2  limited to 10 pages.
+3  the abstract must not exceed 250 words.
+https://www.embs.org/tmi/authors-instructions/
+
+
+
+
 # July 3rd, Saturday, 2021
 Further update paper:
 1   focus on OCT images and delete IVUS applications.
