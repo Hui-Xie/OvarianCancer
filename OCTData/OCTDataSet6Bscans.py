@@ -237,20 +237,25 @@ class OCTDataSet6Bscans(data.Dataset):
         if self.hps.dataIn1Parcel:
             label = None
             if self.m_labels is not None:
-                label = self.m_labels[index,] # size: N,W
+                label = self.m_labels[index,].clone() # size: N,W
             imageID = self.m_IDs[str(index)]
 
             #get B and s index from "_B200_s120"
             # get imageID and nB
-            ID1 = int(imageID[-3:])      # "*_s003" -> 003
+            ID1 = int(imageID[-3:])      # "*_s003" -> 003, the middle ID.
             nB = int(imageID[-8:-5])
             s = ID1
 
             # get its below and up continuous Bscan by judging its imageID
             if index >0 and index< self.__len__()-1:
-                data = self.m_images[index-1: index+2,]    # 3 smoothed Bscans.
+                # below code must use clone, otherwise original data will be contaminated.
+                data = self.m_images[index-1: index+2,].clone()    # 3 smoothed Bscans.
                 ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
                 ID2 = int((self.m_IDs[str(index + 1)])[-3:])
+
+                if index ==200:
+                    print("debug")
+
 
                 if ID0+1 != ID1:
                     data[0,] = data[1,]
@@ -258,7 +263,8 @@ class OCTDataSet6Bscans(data.Dataset):
                     data[2,] = data[1,]
 
                 if self.m_claheImages != None:
-                    claheData = self.m_claheImages[index - 1: index + 2, ]  # 3 clahe Bscans.
+                    # below code must use clone, otherwise original data will be contaminated.
+                    claheData = self.m_claheImages[index - 1: index + 2, ].clone()  # 3 clahe Bscans.
                     if ID0 + 1 != ID1:
                         claheData[0,] = claheData[1,]
                     if ID1 + 1 != ID2:

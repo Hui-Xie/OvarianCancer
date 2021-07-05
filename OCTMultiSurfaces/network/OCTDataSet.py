@@ -217,11 +217,11 @@ class OCTDataSet(data.Dataset):
 
     def __getitem__(self, index):
         if self.hps.dataIn1Parcel:
-            data = self.m_images[index,]
+            data = self.m_images[index,].clone()
 
             label = None
             if self.m_labels is not None:
-                label = self.m_labels[index,] # size: N,W
+                label = self.m_labels[index,].clone() # size: N,W
             imageID = self.m_IDs[str(index)]
         else:
             volumeIndex = index // self.hps.slicesPerPatient

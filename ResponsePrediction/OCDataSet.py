@@ -156,7 +156,7 @@ class OVDataSet(data.Dataset):
             data = self.m_loadData[index,]
         else:
             data = np.load(filename).astype(float)
-        label = self.m_labels[index]
+        label = self.m_labels[index].clone()
         if isinstance(label, list):
             label = torch.tensor(label).t()
 

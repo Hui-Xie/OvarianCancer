@@ -72,8 +72,8 @@ class OCTDataSet(data.Dataset):
 
 
     def __getitem__(self, index):
-        data = self.m_images[index,]
-        label = self.m_labels[index,]
+        data = self.m_images[index,].clone()
+        label = self.m_labels[index,].clone()
         if self.m_transform:
             data, label = self.m_transform(data, label)
 

@@ -1,4 +1,6 @@
 #July 5th, Monday, 2021
+
+All below experiments, as without clone in dataloder, its data were contaminated.
 Check training result of 3M3C2S and its combinations:
   537  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &   validation error jump. validation meanerror=160um.
   538  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210701_SurfaceSubnetQ128_13Cases_3M2S_iibi007.yaml &   validation error jump. validation meanerror=160um.
