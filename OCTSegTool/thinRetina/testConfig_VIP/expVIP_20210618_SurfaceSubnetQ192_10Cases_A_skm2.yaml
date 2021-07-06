@@ -123,6 +123,6 @@ OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip b
 # 0: NoReLU; 1: ReLU;  2: IPM;
 hardSeparation: 1
 softSeparation: False
-useReLUInPretrain: True
+
 
 goodBscans: []

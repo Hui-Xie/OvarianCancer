@@ -20,6 +20,118 @@ Analysis:
 2   For segHead=128, 3C give the best result.
     For segHead=96,  3C2S give the best result.
 3   prepare test:
+    For segHead=96,  expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml got best result.
+    For segHead=128, expVIP_20210705_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml got best result.
+4  consider the validation and test set, expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml got best.
+
+
+
+506  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &
+Surface muError ± std:
+3.16±1.23	6.80±1.64	6.14±1.14	4.40±0.86	2.84±1.53	2.85±0.59
+muError ± std: 4.36±2.00
+Hausdorff Distance in pixels = [[155.47137  180.25293  180.25293   55.12863   21.492165  32.19763 ]]
+pixel number of violating surface-separation constraints: 538
+slice number of violating surface-separation constraints: 79
+
+
+507  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M2S_iibi007.yaml &
+Surface muError ± std:
+4.16±2.53	8.99±3.81	7.05±0.65	4.78±0.67	2.47±0.82	2.94±0.80
+muError ± std: 5.07±3.02
+Hausdorff Distance in pixels = [[132.74173  145.72864   85.954926  45.643127  50.504578  78.964966]]
+pixel number of violating surface-separation constraints: 480
+slice number of violating surface-separation constraints: 65
+
+
+508  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C2S_iibi007.yaml &
+Surface muError ± std:
+2.93±0.90	9.03±2.78	7.95±0.66	5.58±0.66	2.06±0.74	3.50±1.04
+muError ± std: 5.17±2.92
+Hausdorff Distance in pixels = [[134.61533   74.63693   99.51666   99.852325  17.48227   16.314194]]
+pixel number of violating surface-separation constraints: 382
+slice number of violating surface-separation constraints: 38
+
+
+509  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C_iibi007.yaml &
+Surface muError ± std:
+3.29±1.21	6.96±1.72	6.17±0.80	5.05±1.22	2.35±1.08	2.76±0.76
+muError ± std: 4.43±2.10
+Hausdorff Distance in pixels = [[108.75569   59.57962   34.135437  49.273804  17.511871  32.339417]]
+pixel number of violating surface-separation constraints: 95
+slice number of violating surface-separation constraints: 36
+
+
+ 1006  2021-07-06 16:07:10 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M_skm2.yaml &
+ Surface muError ± std:
+3.07±0.76	8.71±2.96	7.81±1.60	6.35±2.26	2.16±0.95	2.76±0.67
+muError ± std: 5.14±3.12
+Hausdorff Distance in pixels = [[119.71562  100.82657   64.380585  95.81357   15.284729  15.252045]]
+pixel number of violating surface-separation constraints: 677
+slice number of violating surface-separation constraints: 97
+
+
+ 1007  2021-07-06 16:07:15 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C_skm2.yaml &
+Surface muError ± std:
+7.33±7.01	11.59±7.93	9.11±3.56	5.63±1.04	2.66±1.66	3.25±0.89
+muError ± std: 6.60±5.61
+Hausdorff Distance in pixels = [[256.66132  279.2267   272.0573   127.746     69.222595  30.294373]]
+pixel number of violating surface-separation constraints: 877
+slice number of violating surface-separation constraints: 90
+
+ 1014  2021-07-06 16:09:06 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M_skm2.yaml &
+ Surface muError ± std:
+2.78±0.30	6.68±0.28	7.47±1.11	5.16±0.45	3.12±1.36	2.69±0.58
+muError ± std: 4.65±2.07
+Hausdorff Distance in pixels = [[112.07965  115.470276 140.67386   57.600433  51.123352  18.488861]]
+pixel number of violating surface-separation constraints: 1440
+slice number of violating surface-separation constraints: 109
+
+
+ 1015  2021-07-06 16:09:14 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3C_skm2.yaml &
+ Surface muError ± std:
+4.88±2.89	10.24±4.63	12.89±4.37	8.34±2.53	2.91±1.86	3.10±0.98
+muError ± std: 7.06±4.88
+Hausdorff Distance in pixels = [[134.18394  125.81911  157.05367  121.33557   22.409607  14.665695]]
+pixel number of violating surface-separation constraints: 682
+slice number of violating surface-separation constraints: 69
+
+
+ 1016  2021-07-06 16:09:22 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3C2S_skm2.yaml &
+ Surface muError ± std:
+5.85±4.96	10.68±6.01	7.65±1.61	5.58±0.58	2.29±1.18	2.91±0.74
+muError ± std: 5.83±4.35
+Hausdorff Distance in pixels = [[248.15622  272.41846  134.07211   41.79367   19.711304  15.971283]]
+pixel number of violating surface-separation constraints: 872
+slice number of violating surface-separation constraints: 83
+
+
+ 1017  2021-07-06 16:09:31 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M2S_skm2.yaml &
+ Surface muError ± std:
+3.60±2.01	6.78±0.89	9.35±2.30	5.15±1.08	2.29±1.25	3.01±0.66
+muError ± std: 5.03±2.85
+Hausdorff Distance in pixels = [[166.98978   56.805084  74.50253   99.66321   80.273315  16.556519]]
+pixel number of violating surface-separation constraints: 1228
+slice number of violating surface-separation constraints: 83
+
+
+ 1018  2021-07-06 16:09:40 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C2S_skm2.yaml &
+Surface muError ± std:
+4.81±2.10	7.48±0.73	7.31±0.61	5.51±0.68	2.94±1.51	3.14±0.82
+muError ± std: 5.20±2.16
+Hausdorff Distance in pixels = [[140.62566   69.608154  39.32544   54.47      40.985962  16.459808]]
+pixel number of violating surface-separation constraints: 1222
+slice number of violating surface-separation constraints: 149
+
+
+ 1019  2021-07-06 16:09:46 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml &
+Surface muError ± std:
+2.85±0.68	6.58±0.53	6.60±0.80	4.64±0.42	2.21±1.03	2.97±0.68
+muError ± std: 4.31±1.91
+Hausdorff Distance in pixels = [[154.33438   97.43851  137.8135    33.1362    19.136642  15.956696]]
+pixel number of violating surface-separation constraints: 670
+slice number of violating surface-separation constraints: 68
+
 
 
 
