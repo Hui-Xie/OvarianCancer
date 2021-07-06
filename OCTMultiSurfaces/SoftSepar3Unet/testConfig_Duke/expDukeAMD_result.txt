@@ -1,3 +1,25 @@
+#July 6th, Tuesday, 2021
+Professor's review comments on the segmentation paper:
+0  about ReLU:  structure topologic order is the basic of JHU method.
+                Graph search use some method to gurantee order, IPM use some method to guarantee order.
+                our method's some thing.
+1  emphasize main contribution: domain-knowlege-aware loss;
+2  Using gradient in the loss is related with Mona's paper;
+3  domain-knowledge-aware   -> domain-aware;
+4  what is general atttention machinism? its drawback? why is it not good for our application?
+5  for reduce traing samples experiment, what is performace drop rate?
+   Or we can use 50% data get a same result of JHU method.
+6  remove all p-value tables.
+7  paper[19,20]: this kind of citation method is not good.
+   implied citation, like graph search, and glaucoma, or HufanHe etc is a better citation method.
+8  Ahbey's method is not one pixel accuracy, we need make it accurate.
+9  Table 13: the ablation experiment result of JHU method. In Control group, performance drop.
+   We may merge this control group and AMD group.  Or add discussion on this method.
+   Or NNUnet, a dynamic Unet method.
+10  Change Control group to normal group.
+11  IPM paper need to submit to Biomed Opt. Express paper.
+12  Milan's ovarian cancer project needs to submit a word document.
+
 #July 5th, Monday, 2021
 TMI: IEEE Transactions on Medical Imaging.
 

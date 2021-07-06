@@ -7,8 +7,23 @@ New idea on July 5th, Monday, 2021:
     use the latent vector of B to predict final response.
 3   the size of the latent vector of VAE B should be less than 0.4 of number of all sample, to avoid overfitting.
     the size of the latent vector of VAE A should be less than 0.4x numberOfClinicalFeature of all sample.
+4   consider to use Wasserstein Auto-Encoders.
 
 
+search:
+
+https://towardsdatascience.com/compressionvae-a-powerful-and-versatile-alternative-to-t-sne-and-umap-5c50898b8696
+
+A good dimensionality reduction technique allows us to create data that is more suitable for downstream tasks,
+allowing us to build more compact models and preventing us from suffering the curse of dimensionality.
+
+For a long time t-Distributed Stochastic Neighbor Embedding (t-SNE), and particularly its implementation
+as part of scikit-learn, has been the workhorse of dimensionality reduction (along with PCA).
+
+More recently, Uniform Manifold Approximation and Projection (UMAP) has become popular and started to supplement or
+ even replace t-SNE for many applications, thanks to several advantages it offers. UMAP is considerably faster and
+ scales better to high-dimensional data. It also preserves global structure better,
+ making it more suitable for many applications beyond visualisation.
 
 
 # May 24th, Monday, 2021
