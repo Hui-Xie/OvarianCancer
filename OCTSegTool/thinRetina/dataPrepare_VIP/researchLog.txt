@@ -1,3 +1,30 @@
+#July 6th, Tuesday, 2021:
+
+Validation result On July 6th 15:52                                                                                                     validation     ValidationError
+1000  2021-07-05 14:27:23 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C2S_skm2.yaml &  epoch 29, meanError=4.19 um
+1001  2021-07-05 14:27:34 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M2S_skm2.yaml &  epoch 37, meanError=4.24 um
+1002  2021-07-05 14:27:46 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3C_skm2.yaml &  epoch 26, meanError=4.84 um
+1003  2021-07-05 14:27:57 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3C2S_skm2.yaml &  epoch 46 meanError=3.91 um
+1004  2021-07-05 14:28:06 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M_skm2.yaml &          22           4.04um
+1005  2021-07-05 14:28:16 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C_skm2.yaml &          60           3.93um
+1006  2021-07-05 14:28:27 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M_skm2.yaml &  epoch 54, meanError=4.4um
+1007  2021-07-05 14:28:37 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml &       62           4.02 um
+
+527  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C_iibi007.yaml &               21              4.01um
+528  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C2S_iibi007.yaml &             27              4.236um
+529  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M2S_iibi007.yaml &               36              4.21um
+530  nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &               38              3.99um
+
+Analysis:
+1   if data has un-aligned error with ground truth(in other words, data is mismatch with groundtruth). It may be arise validation error jump up!
+2   For segHead=128, 3C give the best result.
+    For segHead=96,  3C2S give the best result.
+3   prepare test:
+
+
+
+
+
 #July 5th, Monday, 2021
 
 relauch thinRetina training:

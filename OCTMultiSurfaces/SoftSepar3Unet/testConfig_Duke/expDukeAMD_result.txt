@@ -1,4 +1,22 @@
 #July 6th, Tuesday, 2021
+IPM Paper submission:
+https://www.osapublishing.org/submit/templates/default.cfm?source=authorhomeguide
+Biomedical Optic Express.
+https://www.osapublishing.org/submit/style/osa-styleguide.cfm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Professor's review comments on the segmentation paper:
 0  about ReLU:  structure topologic order is the basic of JHU method.
                 Graph search use some method to gurantee order, IPM use some method to guarantee order.
@@ -18,6 +36,8 @@ Professor's review comments on the segmentation paper:
    Or NNUnet, a dynamic Unet method.
 10  Change Control group to normal group.
 11  IPM paper need to submit to Biomed Opt. Express paper.
+    https://www.osapublishing.org/boe/home.cfm:
+
 12  Milan's ovarian cancer project needs to submit a word document.
 
 #July 5th, Monday, 2021
