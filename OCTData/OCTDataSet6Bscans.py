@@ -253,10 +253,6 @@ class OCTDataSet6Bscans(data.Dataset):
                 ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
                 ID2 = int((self.m_IDs[str(index + 1)])[-3:])
 
-                if index ==200:
-                    print("debug")
-
-
                 if ID0+1 != ID1:
                     data[0,] = data[1,]
                 if ID1+1 != ID2:
