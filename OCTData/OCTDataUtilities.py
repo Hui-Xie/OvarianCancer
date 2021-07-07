@@ -403,6 +403,7 @@ def BWSurfacesSmooth(surfaces):
     N,dims = outlierIndexes.shape
     assert dims ==ndim
     i = 0
+    print(f"outliers N= {N} => BWSurfaceSmooth => ", end="")
     while (N > 0):
         i +=1
         if i >nMaxIterations:
@@ -414,20 +415,24 @@ def BWSurfacesSmooth(surfaces):
             s = int(outlierIndexes[i,1])  # current surface.
             w = int(outlierIndexes[i,2])
 
-            # surface coordinates:
+            # surface coordinates 5x5 neighbor.
             #  0   1    2
             #  3   4    5
             #  6   7    8
-            blow = b-1 if b-1 >=0 else 0
-            bhigh = b+2 if b+2 <=B else B
-            wlow = w-1 if w-1>=0  else 0
-            whigh = w+2 if w+2<=W else W
+            blow = b-2 if b-2 >=0 else 0
+            bhigh = b+3 if b+3 <=B else B
+            wlow = w-2 if w-2>=0  else 0
+            whigh = w+3 if w+3<=W else W
             surfaces[b,s,w] = np.median(surfaces[blow:bhigh, s, wlow:whigh])
             surfaces[b,s+1, w] = np.median(surfaces[blow:bhigh, s+1, wlow:whigh])
+            if surfaces[b,s,w] > surfaces[b,s+1, w]:
+                average = (surfaces[b,s,w] + surfaces[b,s+1, w])/2.0
+                surfaces[b, s, w] = average
+                surfaces[b, s + 1, w] = average
 
         outlierIndexes = np.transpose(np.nonzero(surfaces[:, 0:-1, :] > surfaces[:, 1:, :]))  # as_tuple=False
         N, dims = outlierIndexes.shape
-
+    print(f"outliers N= {N}")
     return surfaces
 
 
