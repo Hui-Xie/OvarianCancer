@@ -6,7 +6,7 @@ import sys
 import SimpleITK as sitk
 import json
 import matplotlib.pyplot as plt
-from utilities import  getSurfacesArray, scaleMatrix, get3PointSmoothMatrix
+from utilities import  getSurfacesArray, scaleDownMatrix, get3PointSmoothMatrix
 
 import numpy as np
 
@@ -97,7 +97,7 @@ for patientDir in patientDirList:
 
     #  scale down image and surface, if W = 512.
     if npImage.shape == (128, 1024, 512):  # scale image to 1024x200.
-        scaleM = scaleMatrix(B, curW, W)
+        scaleM = scaleDownMatrix(B, curW, W)
         npImage = np.matmul(npImage, scaleM)
         surfaces = np.matmul(surfaces, scaleM)
     else:

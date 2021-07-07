@@ -13,7 +13,7 @@ import SimpleITK as sitk
 import json
 
 import matplotlib.pyplot as plt
-from utilities import  getSurfacesArray, scaleMatrix
+from utilities import  getSurfacesArray, scaleDownMatrix
 from skimage import exposure  # for CLAHE
 # import cv2 as cv  # for CLAHE
 import scipy
@@ -127,7 +127,7 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
 
         #  scale down image and surface, if W = 512.
         if npImage.shape == (128, 1024, 512):  # scale image to 1024x200.
-            scaleM = scaleMatrix(B, curW, W)
+            scaleM = scaleDownMatrix(B, curW, W)
             npImage = np.matmul(npImage, scaleM)
             surfaces = np.matmul(surfaces, scaleM)
         else:

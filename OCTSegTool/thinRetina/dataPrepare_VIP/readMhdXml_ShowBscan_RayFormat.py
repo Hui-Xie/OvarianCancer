@@ -3,7 +3,7 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 import os
 
-from utilities import  getSurfacesArray, scaleMatrix, getAllSurfaceNames
+from utilities import  getSurfacesArray, scaleDownMatrix, getAllSurfaceNames
 
 import numpy as np
 
@@ -41,7 +41,7 @@ def readMhdXml(mhdPath, segXmlPath, indexBscan):
     print(f"After extraction, surface dimension: {surfaces.shape}")
 
     if npImage.shape==(128,1024,512): # scale image to 1024x200.
-        scaleM = scaleMatrix(B,curW, W)
+        scaleM = scaleDownMatrix(B, curW, W)
         npImage = np.matmul(npImage, scaleM)
         surfaces = np.matmul(surfaces, scaleM)
     else:

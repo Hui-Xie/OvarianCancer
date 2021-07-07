@@ -6,9 +6,9 @@ import numpy as np
 import sys
 sys.path.append("..")
 
-from OCTSegTool.thinRetina.utilities import scaleMatrix
+from OCTSegTool.thinRetina.dataPrepare_VIP.utilities import scaleDownMatrix
 
-M = scaleMatrix(B, W1,W2)
+M = scaleDownMatrix(B, W1, W2)
 
 smallM = M[0,0:10,0:10]
 print("normalization matrix:")

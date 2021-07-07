@@ -443,6 +443,44 @@ def BWSurfacesSmooth(surfaces):
         N, dims = outlierIndexes.shape
     return outputSurfaces
 
+def scaleUpMatrix(B, W1, W2):
+    '''
+    return a scale matrix with W1xW2 size with batch size B.
+    it scale up surface and image  from BxNxW1 to BxNxW2, where W1 < W2
+    :param B:
+    :param W1:
+    :param W2:
+    :return:
+    '''
+    M = np.zeros((W1, W2),dtype=float)  # scale matrix
+    assert W2 > W1
+    s = W2*1.0/W1 # scale factor
+    sr = s # remaining s waiting for allocating along the current row
+    sp = 0 # spare space to fill to 1.
+    cp = 0 # previous column.
+    # sum(eachRow in M) = s, and sum(each column in M) = 1
+    for r in range(0, W1):
+        for c in range(cp,W2):
+            if sp != 0:
+                M[r,c] = sp
+                sr = s- sp
+                sp = 0
+            elif sr > 1.0:
+                M[r,c] = 1.0
+                sr -= 1.0
+            else: #  1>= sr >0
+                M[r, c] = sr
+                sp = 1.0 - sr
+                sr = s
+                if sp == 0:
+                    cp = c + 1
+                else:
+                    cp = c
+                break
+
+    M = np.expand_dims(M,axis=0) # 1xW1xW2
+    M = np.repeat(M,B,axis=0)
+    return M  # BxW1xW2
 
 
 

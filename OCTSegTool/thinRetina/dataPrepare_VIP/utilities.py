@@ -66,17 +66,18 @@ def getAllSurfaceNames(segFile):
 
     return namesList
 
-def scaleMatrix(B,W1,W2):
+def scaleDownMatrix(B, W1, W2):
     '''
-    return a scale matrix with W1xW2 size with batch B.
-    it scale image and surface from HxW1 to HxW2
+    return a scale down matrix with W1xW2 size with batch B.
+    it scale down image and surface from HxW1 to HxW2, , where W1 > W2
     :param B:
     :param W1:
     :param W2:
     :return:
     '''
-    M = np.zeros((W1, W2))  # scale matrix
+    M = np.zeros((W1, W2),dtype=float)  # scale matrix
     s = W1*1.0/W2 # scale factor
+    assert W1 > W2
     sr = s # remaining s waiting for allocating along the current column
     sp = 0 # spare space to fill to 1.
     rp = 0 # previous row.

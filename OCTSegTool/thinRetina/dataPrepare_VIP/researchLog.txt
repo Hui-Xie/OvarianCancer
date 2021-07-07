@@ -1,4 +1,56 @@
-#July 7th, Wednesday, 2021:
+# July 7th, Wednesday, 2021
+
+current best config: testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1200_skm2.yaml
+Use 1200 point. Surface 0 uses extra median filter. use different seed of 11117.
+Hausdorff distance is our focus.
+
+
+
+
+
+
+Add control points:
+
+1042  2021-07-07 16:43:27 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1000_skm2.yaml &
+Surface 0 uses extra 5x5 median filter.
+Surface muError ± std:
+3.53±0.40	6.70±0.47	6.39±0.64	4.90±0.28	3.00±0.70	3.53±0.42
+muError ± std: 4.67±1.53
+Hausdorff Distance in pixels = [[46.2175   29.621887 43.39154  34.50998  18.048569 17.245605]]
+pixel number of violating surface-separation constraints: 0
+
+ 1059  2021-07-07 17:22:56 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1200_skm2.yaml &
+Surface muError ± std:
+3.44±0.38	6.60±0.48	6.29±0.62	4.85±0.26	2.94±0.75	3.45±0.49
+muError ± std: 4.60±1.52
+Hausdorff Distance in pixels = [[45.97397  32.59146  44.40387  35.078705 17.647995 17.135895]]
+
+
+ 1060  2021-07-07 17:23:01 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1600_skm2.yaml &
+Surface muError ± std:
+3.37±0.44	6.44±0.53	6.43±0.58	4.83±0.38	2.88±0.80	3.44±0.54
+muError ± std: 4.56±1.55
+Hausdorff Distance in pixels = [[65.283905 32.333344 46.70456  39.70822  17.70871  16.637085]]
+
+
+ 1061  2021-07-07 17:23:07 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1800_skm2.yaml &
+Surface muError ± std:
+3.37±0.46	6.44±0.54	6.38±0.61	4.79±0.34	2.81±0.82	3.37±0.54
+muError ± std: 4.52±1.57
+Hausdorff Distance in pixels = [[73.34888  32.31427  48.53235  35.21393  17.734787 16.71843 ]]
+
+
+ 1062  2021-07-07 17:23:14 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C2000_skm2.yaml &
+Surface muError ± std:
+3.37±0.45	6.48±0.51	6.40±0.57	4.85±0.39	2.81±0.85	3.40±0.58
+muError ± std: 4.55±1.58
+Hausdorff Distance in pixels = [[79.194855 29.14264  48.941956 34.169586 18.6678   16.687317]]
+pixel number of violating surface-separation constraints: 0
+
+
+
+
+
 Use diffferent TPS number of control points:
  1037  2021-07-07 16:42:51 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C400_skm2.yaml &
  Surface muError ± std:
@@ -111,8 +163,8 @@ Topic: Discussion on test result on the 13 glaucoma cases.
 Minutes:
 1  current method uses 3 smoothed continuous Bscans and corresponding 3 CLAHE Bscans as input.
 2  TPS may not strictly stick the control points, and it may allow some deviation distance to the control points values.
-   This will allieviate the spike prediction.
-3  1000 control points is too big? we may consider to use 600 points.
+   This will allieviate the spike prediction.   --done. reduce spike to reduce Hausdorff distance.
+3  1000 control points is too big? we may consider to use 600 points.  --done. use 1200 points is best.
 4  For 512x128 original images, final output result needs to resize back.
 5  Put the original raw files into xml directory.
 6  after a good segmentation result, we need to consider to output thickness map.
