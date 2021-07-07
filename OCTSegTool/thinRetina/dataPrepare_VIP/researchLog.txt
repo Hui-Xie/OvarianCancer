@@ -1,4 +1,6 @@
 #July 7th, Wednesday, 2021:
+
+with 5x5 BWsurface median filter.
 testOutputDir:/raid001/users/hxie1/data/thinRetina/numpy_13cases/log/SurfaceSegNet_Q/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2/testResult/test
 =============== End of Config  ===========
 
