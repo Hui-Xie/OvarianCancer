@@ -1,4 +1,13 @@
 #July 7th, Wednesday, 2021:
+Use diffferent TPS number of control points:
+ 1037  2021-07-07 16:42:51 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C400_skm2.yaml &
+ 1040  2021-07-07 16:43:16 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C600_skm2.yaml &
+ 1041  2021-07-07 16:43:21 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C800_skm2.yaml &
+ 1042  2021-07-07 16:43:27 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1000_skm2.yaml &
+
+
+
+
 Test different TPS smoothing:
  1028  2021-07-07 13:14:26 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_A_skm2.yaml &
  Surface muError ± std:
