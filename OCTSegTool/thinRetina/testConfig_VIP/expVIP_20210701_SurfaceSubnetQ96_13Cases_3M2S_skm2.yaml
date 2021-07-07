@@ -118,6 +118,7 @@ medianFilterWinSize: 11  # after loss
 useSmoothingWithPrecision: True
 precisionSmoothWinSize: 5
 usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
+TPSSmoothing:  0   # the TPS smoothing parameter
 
 gradientRiftConvGoBack: False
 OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.

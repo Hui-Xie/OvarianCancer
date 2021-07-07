@@ -196,13 +196,13 @@ def main():
                     controlValues = surface.flatten()[chosenList,]
                     # for scipy 1.7.0
                     if scipy.__version__ == "1.7.0":
-                        interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
+                        interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=hps.TPSSmoothing,
                                                        kernel='thin_plate_spline', epsilon=None, degree=None)
                         surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
                     else:
                         # for scipy 1.6.2
                         interpolator = Rbf(controlCoordinates[:, 0], controlCoordinates[:, 1], controlValues,
-                                           function='thin_plate')
+                                           function='thin_plate', smooth=hps.TPSSmoothing)
                         surfaces[:, i, :] = interpolator(coordinateSurface[:, 0], coordinateSurface[:, 1]).reshape(B, W)
 
                 # After TPS Interpolation, the surfaces values may exceed the range of [0,H), so it needs clip.
