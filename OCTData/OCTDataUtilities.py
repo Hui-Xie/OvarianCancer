@@ -413,7 +413,7 @@ def BWSurfacesSmooth(surfaces):
         if nIterations > MaxInteration:
             print(f"BWSurfaceSmooth exit exceeding the MaxInteration={MaxInteration}")
             break
-            
+
         for i in range(N):
             b,s,w = outlierIndexes[i,]  # s is current surface.
             # surface coordinates 5x5 neighbor.
