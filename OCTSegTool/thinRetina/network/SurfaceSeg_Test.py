@@ -142,10 +142,10 @@ def main():
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
         _,H,W = images.shape
+        nVolumes = len(volumeBscanStartIndexList)
 
-        # here make sure surfaces do not violate topological constraints for each  BxW surface and each volume
+        # here make sure surfaces do not violate topological constraints for each BxW surface and each volume
         if hps.BWSurfaceSmooth:
-            nVolumes = len(volumeBscanStartIndexList)
             b = 0
             for i in range(nVolumes):
                 if i != nVolumes - 1:
@@ -163,8 +163,8 @@ def main():
         # use thinPlateSpline to smooth the final output
         #  a slight smooth the ground truth before using:
         #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the prediction artifact
+        #  TPS may lead violation of surface interference constraints.
         if hps.usePredictionTPS:
-            nVolumes = len(volumeBscanStartIndexList)
             b = 0
             for i in range(nVolumes):
                 if i != nVolumes - 1:
@@ -209,8 +209,10 @@ def main():
                 # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
                 surfaces = np.clip(surfaces, 0, H - 1)
 
+                surfaces = BWSurfacesSmooth(surfaces)  # make sure surfaces not violate constraints.
                 testOutputs[b:b+B,:,:] = surfaces
                 b +=B
+
 
         if hps.existGTLabel: # Error Std and mean
             testGts = testGts.cpu().numpy()
