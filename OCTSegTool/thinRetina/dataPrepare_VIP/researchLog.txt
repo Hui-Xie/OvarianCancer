@@ -8,7 +8,7 @@ After BW surface medianFilter and Smoothing, re-Test Q128_iibi007 programs:
   512  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C2S_iibi007.yaml &
 
   513  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C_iibi007.yaml &
-  
+
 
 
 
