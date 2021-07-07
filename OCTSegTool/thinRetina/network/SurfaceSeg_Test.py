@@ -151,9 +151,9 @@ def main():
             b = 0
             for i in range(nVolumes):
                 if i != nVolumes - 1:
-                    surfaces = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :, :].clone()  # prediction volume
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :, :].copy()  # prediction volume
                 else:
-                    surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :].clone()  # prediction volume
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :].copy()  # prediction volume
                 B,N,W = surfaces.shape
                 assert N == hps.numSurfaces
 
@@ -179,7 +179,7 @@ def main():
                 chosenList.sort()
                 controlCoordinates = coordinateSurface[chosenList, :]
                 for i in range(N):
-                    surface = surfaces[:, i, :].clone()  # choose surface i, size: BxW
+                    surface = surfaces[:, i, :].copy()  # choose surface i, size: BxW
                     controlValues = surface.flatten()[chosenList,]
                     # for scipy 1.7.0
                     if scipy.__version__ == "1.7.0":
