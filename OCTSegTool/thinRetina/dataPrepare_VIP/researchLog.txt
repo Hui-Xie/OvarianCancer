@@ -1,11 +1,38 @@
 #July 7th, Wednesday, 2021:
 Use diffferent TPS number of control points:
  1037  2021-07-07 16:42:51 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C400_skm2.yaml &
+ Surface muError ± std:
+4.21±0.44	6.97±0.71	6.90±0.64	4.98±0.32	3.36±0.61	3.89±0.38
+muError ± std: 5.05±1.51
+Hausdorff Distance in pixels = [[78.94992  27.624817 52.515167 33.677338 16.83947  15.502167]]
+
  1040  2021-07-07 16:43:16 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C600_skm2.yaml &
+ Surface muError ± std:
+3.90±0.52	6.66±0.60	6.69±0.65	4.86±0.29	3.15±0.61	3.73±0.40
+muError ± std: 4.83±1.49
+Hausdorff Distance in pixels = [[86.55713  38.569977 48.763733 35.63202  16.646164 15.016449]]
+
+
  1041  2021-07-07 16:43:21 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C800_skm2.yaml &
+ Surface muError ± std:
+3.90±0.52	6.66±0.60	6.69±0.65	4.86±0.29	3.15±0.61	3.73±0.40
+muError ± std: 4.83±1.49
+Hausdorff Distance in pixels = [[86.55713  38.569977 48.763733 35.63202  16.646164 15.016449]]
+
+
  1042  2021-07-07 16:43:27 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1000_skm2.yaml &
+Surface muError ± std:
+3.53±0.40	6.70±0.47	6.39±0.64	4.90±0.28	3.00±0.70	3.53±0.42
+muError ± std: 4.67±1.53
+Hausdorff Distance in pixels = [[46.2175   29.621887 43.39154  34.50998  18.048569 17.245605]]
+pixel number of violating surface-separation constraints: 0
 
-
+compare:
+1035  2021-07-07 13:15:01 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_H_skm2.yaml &  TPSSmoothing=2.1
+ Surface muError ± std:
+2.72±0.66	6.26±0.61	6.05±0.54	4.51±0.41	2.23±1.01	2.96±0.69
+muError ± std: 4.12±1.74
+Hausdorff Distance in pixels = [[90.181885 32.309204 51.41562  34.081818 17.028656 17.509949]]
 
 
 Test different TPS smoothing:
