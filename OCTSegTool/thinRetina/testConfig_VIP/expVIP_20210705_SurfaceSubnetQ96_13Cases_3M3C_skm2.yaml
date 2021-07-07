@@ -118,7 +118,7 @@ medianFilterWinSize: 11  # after loss
 useSmoothingWithPrecision: False
 precisionSmoothWinSize: 5
 usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
-BWSurfaceSmooth: True  # here guarantee topological order in BW surface inside TPS
+BWSurfaceSmooth: True  # here guarantee topological order in BW surface
 
 gradientRiftConvGoBack: False
 OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.

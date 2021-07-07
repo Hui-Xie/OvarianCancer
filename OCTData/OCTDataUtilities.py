@@ -396,20 +396,12 @@ def BWSurfacesSmooth(surfaces):
     '''
     B,S,W = surfaces.shape
     ndim = surfaces.ndim
-    nMaxIterations = 20
 
     # the outlier are s_{i-1} > s_{i}
     outlierIndexes = np.transpose(np.nonzero(surfaces[:,0:-1,:] > surfaces[:,1:,:])) # as_tuple=False
     N,dims = outlierIndexes.shape
     assert dims ==ndim
-    i = 0
-    print(f"outliers N= {N} => BWSurfaceSmooth => ", end="")
     while (N > 0):
-        i +=1
-        if i >nMaxIterations:
-            print(f"BWSurfaceSmooth exits in nMaxIteration= {nMaxIterations}.")
-            break
-
         for i in range(N):
             b = int(outlierIndexes[i,0])
             s = int(outlierIndexes[i,1])  # current surface.
@@ -423,16 +415,22 @@ def BWSurfacesSmooth(surfaces):
             bhigh = b+3 if b+3 <=B else B
             wlow = w-2 if w-2>=0  else 0
             whigh = w+3 if w+3<=W else W
-            surfaces[b,s,w] = np.median(surfaces[blow:bhigh, s, wlow:whigh])
-            surfaces[b,s+1, w] = np.median(surfaces[blow:bhigh, s+1, wlow:whigh])
-            if surfaces[b,s,w] > surfaces[b,s+1, w]:
-                average = (surfaces[b,s,w] + surfaces[b,s+1, w])/2.0
-                surfaces[b, s, w] = average
-                surfaces[b, s + 1, w] = average
+            surface0 = np.median(surfaces[blow:bhigh, s, wlow:whigh])
+            surface1 = np.median(surfaces[blow:bhigh, s+1, wlow:whigh])
+            if surface0 > surface1:
+                # the surface with smaller std is more reliable.
+                std0 = np.std(surfaces[blow:bhigh, s, wlow:whigh])
+                std1 = np.std(surfaces[blow:bhigh, s+1, wlow:whigh])
+                # uniform at the surface with smaller std.
+                if std0 < std1:
+                    surface1 = surface0
+                else:
+                    surface0 = surface1
+            surfaces[b, s, w] = surface0
+            surfaces[b, s + 1, w] = surface1
 
         outlierIndexes = np.transpose(np.nonzero(surfaces[:, 0:-1, :] > surfaces[:, 1:, :]))  # as_tuple=False
         N, dims = outlierIndexes.shape
-    print(f"outliers N= {N}")
     return surfaces
 
 

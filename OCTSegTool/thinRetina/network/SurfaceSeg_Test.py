@@ -143,6 +143,23 @@ def main():
         testOutputs = testOutputs.cpu().numpy()
         _,H,W = images.shape
 
+        # here make sure surfaces do not violate topological constraints for each  BxW surface and each volume
+        if hps.BWSurfaceSmooth:
+            nVolumes = len(volumeBscanStartIndexList)
+            b = 0
+            for i in range(nVolumes):
+                if i != nVolumes - 1:
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :, :].copy()  # prediction volume
+                else:
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :].copy()  # prediction volume
+                B, N, W = surfaces.shape
+                assert N == hps.numSurfaces
+
+                surfaces = BWSurfacesSmooth(surfaces)
+                testOutputs[b:b + B, :, :] = surfaces
+                b += B
+
+
         # use thinPlateSpline to smooth the final output
         #  a slight smooth the ground truth before using:
         #  A "very gentle" 3D smoothing process (or thin-plate-spline) should be applied to reduce the prediction artifact
@@ -156,10 +173,6 @@ def main():
                     surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :].copy()  # prediction volume
                 B,N,W = surfaces.shape
                 assert N == hps.numSurfaces
-
-                # here make sure surfaces do not violate topological constraints
-                if hps.BWSurfaceSmooth:
-                    surfaces = BWSurfacesSmooth(surfaces)
 
                 # determine the control points of thin-plate-spline
                 coordinateSurface = np.mgrid[0:B, 0:W]
