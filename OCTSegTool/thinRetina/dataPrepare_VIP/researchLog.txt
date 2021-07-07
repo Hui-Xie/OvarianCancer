@@ -21,11 +21,23 @@ Hausdorff Distance in pixels = [[86.55713  38.569977 48.763733 35.63202  16.6461
 
 
  1042  2021-07-07 16:43:27 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1000_skm2.yaml &
+Surface 0 uses extra 5x5 median filter.
 Surface muError ± std:
 3.53±0.40	6.70±0.47	6.39±0.64	4.90±0.28	3.00±0.70	3.53±0.42
 muError ± std: 4.67±1.53
 Hausdorff Distance in pixels = [[46.2175   29.621887 43.39154  34.50998  18.048569 17.245605]]
 pixel number of violating surface-separation constraints: 0
+
+
+Surface 0 does not use extra 5x5 median filter.
+===============Formal Output Result ===========
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B128', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+3.56±0.45	6.73±0.45	6.39±0.64	4.90±0.28	3.00±0.70	3.53±0.42
+muError ± std: 4.68±1.53
+Hausdorff Distance in pixels = [[54.3132   31.302032 43.39154  34.50998  18.048569 17.245605]]
+pixel number of violating surface-separation constraints: 0
+
 
 compare:
 1035  2021-07-07 13:15:01 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_H_skm2.yaml &  TPSSmoothing=2.1
