@@ -113,12 +113,12 @@ smoothHalfWidth: 15  # 5% of image width
 smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
 smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
 useMultiSurfaceCEWeight:  False
-useMedianFilterSmoothing: False
+useMedianFilterSmoothing: True
 medianFilterWinSize: 11  # after loss
-useSmoothingWithPrecision: False
+useSmoothingWithPrecision: True
 precisionSmoothWinSize: 5
 usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
-BWSurfaceSmooth: True  # here guarantee topological order in BW surface inside TPS
+BWSurfaceSmooth: True
 
 gradientRiftConvGoBack: False
 OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.
@@ -128,7 +128,7 @@ OSFlipBack: True  # the OS eyes flip into OD eye in training, and it will flip b
 # constrained model, both False meaning RelU
 # ReLU to guarantee layer order not to cross each other
 # 0: NoReLU; 1: ReLU;  2: IPM; 3: choose surface value with bigger precision when surfaces conflict
-hardSeparation: 0
+hardSeparation: 3
 softSeparation: False
 
 

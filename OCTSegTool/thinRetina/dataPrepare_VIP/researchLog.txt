@@ -1,5 +1,24 @@
 #July 6th, Tuesday, 2021:
+ThinRetina: prediction result of using 3 smoothed slice and 3 CLAHE slices
+dir: /garvinlab/thinRetina/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2_testResult
+training: 8 volumes; validation: 2 volumes; test: 3 volumes.
 
+Inintial analysis:
+1  Experiments tried 3M, 3C, 3M3C, 3M2S, 3C2S, 3M3C2S different input configs.
+   Here, M: smoothed slices; C: CLAHE slices; S: Bscan and Ascan index slices.
+2  Experiments shows adding Bscan and Ascan index didn't improvement result.
+3  The best result used 3 smoothed slices and 3 CLAHE slices.
+4  The visualization result at garvinlab/thinRetina/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2_testResult/images
+5  Tomorrow we can review these result together and discuss the improvement direction.
+
+possbile improvement: at TPS to consider topoglogical constraint.
+
+
+
+
+
+
+=================================
 Validation result On July 6th 15:52                                                                                                     validation     ValidationError
 1000  2021-07-05 14:27:23 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C2S_skm2.yaml &  epoch 29, meanError=4.19 um
 1001  2021-07-05 14:27:34 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M2S_skm2.yaml &  epoch 37, meanError=4.24 um

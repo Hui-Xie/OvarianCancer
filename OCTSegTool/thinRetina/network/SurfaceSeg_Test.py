@@ -24,7 +24,7 @@ from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTDataSet6Bscans import  OCTDataSet6Bscans
-from OCTData.OCTDataUtilities import computeMASDError_numpy, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs
+from OCTData.OCTDataUtilities import computeMASDError_numpy, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs, BWSurfacesSmooth
 from framework.NetTools import columnHausdorffDist
 
 import time
@@ -151,11 +151,15 @@ def main():
             b = 0
             for i in range(nVolumes):
                 if i != nVolumes - 1:
-                    surfaces = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :, :]  # prediction volume
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :, :].clone()  # prediction volume
                 else:
-                    surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
+                    surfaces = testOutputs[volumeBscanStartIndexList[i]:, :, :].clone()  # prediction volume
                 B,N,W = surfaces.shape
                 assert N == hps.numSurfaces
+
+                # here make sure surfaces do not violate topological constraints
+                if hps.BWSurfaceSmooth:
+                    surfaces = BWSurfacesSmooth(surfaces)
 
                 # determine the control points of thin-plate-spline
                 coordinateSurface = np.mgrid[0:B, 0:W]
@@ -175,7 +179,7 @@ def main():
                 chosenList.sort()
                 controlCoordinates = coordinateSurface[chosenList, :]
                 for i in range(N):
-                    surface = surfaces[:, i, :]  # choose surface i, size: BxW
+                    surface = surfaces[:, i, :].clone()  # choose surface i, size: BxW
                     controlValues = surface.flatten()[chosenList,]
                     # for scipy 1.7.0
                     if scipy.__version__ == "1.7.0":

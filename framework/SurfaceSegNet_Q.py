@@ -112,7 +112,7 @@ class SurfaceSegNet_Q(BasicModel):
         elif 3 ==  self.hps.hardSeparation: # choose surface value with bigger precision when surfaces conflict.
              S = adjustSurfacesUsingPrecision(S, precision)
         else:
-            assert False
+            pass
 
 
         return S, sigma2, loss, x  # return surfaceLocation S in (B,S,W) dimension, sigma2, and loss, UnetFetures x.

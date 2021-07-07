@@ -387,6 +387,48 @@ def medianFilterSmoothing(input, winSize=21):
 
     return output
 
+def BWSurfacesSmooth(surfaces):
+    '''
+     Smooth each enface surface if there are topological order violations, with inplace median smoothing.
+    :param surfaces: in size of BxSxW for a volume in numpy array.
+    :param winSize: a int scalar, an odd number
+    :return:
+    '''
+    B,S,W = surfaces.shape
+    ndim = surfaces.ndim
+    nMaxIterations = 20
+
+    # the outlier are s_{i-1} > s_{i}
+    outlierIndexes = np.transpose(np.nonzero(surfaces[:,0:-1,:] > surfaces[:,1:,:])) # as_tuple=False
+    N,dims = outlierIndexes.shape
+    assert dims ==ndim
+    i = 0
+    while (N > 0):
+        i +=1
+        if i >nMaxIterations:
+            print(f"BWSurfaceSmooth exits in nMaxIteration= {nMaxIterations}.")
+            break
+
+        for i in range(N):
+            b = int(outlierIndexes[i,0])
+            s = int(outlierIndexes[i,1])  # current surface.
+            w = int(outlierIndexes[i,2])
+
+            # surface coordinates:
+            #  0   1    2
+            #  3   4    5
+            #  6   7    8
+            blow = b-1 if b-1 >=0 else 0
+            bhigh = b+2 if b+2 <=B else B
+            wlow = w-1 if w-1>=0  else 0
+            whigh = w+2 if w+2<=W else W
+            surfaces[b,s,w] = np.median(surfaces[blow:bhigh, s, wlow:whigh])
+            surfaces[b,s+1, w] = np.median(surfaces[blow:bhigh, s+1, wlow:whigh])
+
+        outlierIndexes = np.transpose(np.nonzero(surfaces[:, 0:-1, :] > surfaces[:, 1:, :]))  # as_tuple=False
+        N, dims = outlierIndexes.shape
+
+    return surfaces
 
 
 
