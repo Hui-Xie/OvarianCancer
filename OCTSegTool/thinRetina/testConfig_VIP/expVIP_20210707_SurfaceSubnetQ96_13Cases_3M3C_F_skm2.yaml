@@ -120,6 +120,7 @@ useSmoothingWithPrecision: False
 precisionSmoothWinSize: 5
 
 usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
+TPSNumControlPoints: 1000
 TPSSmoothing:  1.5   # the TPS smoothing parameter
 BWSurfaceSmooth: True  # medianfilter smoothing and guarantee topological order in BW surface
 

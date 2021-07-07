@@ -118,6 +118,7 @@ medianFilterWinSize: 11  # after loss
 useSmoothingWithPrecision: True
 precisionSmoothWinSize: 5
 usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
+TPSNumControlPoints: 1000
 TPSSmoothing:  0   # the TPS smoothing parameter
 
 gradientRiftConvGoBack: False

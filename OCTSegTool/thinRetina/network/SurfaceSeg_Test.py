@@ -179,10 +179,10 @@ def main():
                 coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
 
                 # random sample C control points in the original surface of size BxW, with a repeatable random.
-                randSeed = 20217  # fix this seed for ground truth and prediction.
+                randSeed = 11117 # 20217 before  # fix this seed for ground truth and prediction.
                 random.seed(randSeed)
                 P = list(range(0, B * W))
-                C = 1000  # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
+                C = hps.TPSNumControlPoints  # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
                 chosenList = [0, ] * C
                 # use random.sample to choose unique element without replacement.
                 chosenList[0:C // 8] = random.sample(P[0:W * B // 4], k=C // 8)
