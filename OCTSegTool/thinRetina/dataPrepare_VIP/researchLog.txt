@@ -11,7 +11,7 @@ Inintial analysis:
 4  The visualization result at garvinlab/thinRetina/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2_testResult/images
 5  Tomorrow we can review these result together and discuss the improvement direction.
 
-possbile improvement: at TPS to consider topoglogical constraint.
+
 
 
 
