@@ -1,3 +1,28 @@
+#July 7th, Wednesday, 2021:
+testOutputDir:/raid001/users/hxie1/data/thinRetina/numpy_13cases/log/SurfaceSegNet_Q/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2/testResult/test
+=============== End of Config  ===========
+
+
+=======net running parameters=========
+B,S,H,W = (528, 6, 1024, 200)
+Test time: 55.17128348350525 seconds.
+net.m_runParametersDict:
+	validationLoss:1.632839071750641
+	epoch:62
+	errorMean:4.019517421722412
+	learningRate:0.05
+
+
+===============Formal Output Result ===========
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B128', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+2.73±0.67	6.28±0.62	6.07±0.54	4.52±0.41	2.21±1.00	2.95±0.69
+muError ± std: 4.13±1.75
+Hausdorff Distance in pixels = [[94.66498  34.613647 48.364105 33.89804  17.14444  17.554321]]
+pixel number of violating surface-separation constraints: 0
+
+
+
 #July 6th, Tuesday, 2021:
 ThinRetina: prediction result of using 3 smoothed slice and 3 CLAHE slices
 dir: /garvinlab/thinRetina/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2_testResult
