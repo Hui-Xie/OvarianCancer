@@ -1,5 +1,17 @@
 #July 7th, Wednesday, 2021:
 
+After BW surface medianFilter and Smoothing, re-Test Q128_iibi007 programs:
+  510  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M2S_iibi007.yaml &
+
+  511  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3C2S_iibi007.yaml &
+
+  512  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C2S_iibi007.yaml &
+
+  513  nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210705_SurfaceSubnetQ128_13Cases_3M3C_iibi007.yaml &
+  
+
+
+
 with 5x5 BWsurface median filter: expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2
 testOutputDir:/raid001/users/hxie1/data/thinRetina/numpy_13cases/log/SurfaceSegNet_Q/expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2/testResult/test
 =============== End of Config  ===========
