@@ -172,7 +172,7 @@ Minutes:
    This will allieviate the spike prediction.   --done. reduce spike to reduce Hausdorff distance.
 3  1000 control points is too big? we may consider to use 600 points.  --done. use 1200 points is best.
 4  For 512x128 original images, final output result needs to resize back.   --done.
-5  Put the original raw files into xml directory.
+5  Put the original raw files into xml directory.   --done.
 6  after a good segmentation result, we need to consider to output thickness map.
 
 Current best result: expVIP_20210705_SurfaceSubnetQ96_13Cases_3M3C_skm2.yaml  &   muError ± std: 4.13±1.75   BEST.
