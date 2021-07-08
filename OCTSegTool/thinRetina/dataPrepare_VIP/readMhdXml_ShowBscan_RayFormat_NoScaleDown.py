@@ -34,7 +34,7 @@ def readMhdXml(mhdPath, segXmlPath, indexBscan):
     allSurfaceNames = getAllSurfaceNames(segXmlPath)
     print(f"allSurfaceNames = {allSurfaceNames}")
     _, N, W = surfaces.shape
-    print(f"After extraction, surface dimension: {surfaces.shape}")
+    print(f"Surface dimension: {surfaces.shape}")
 
     f = plt.figure(frameon=False)
     DPI = 100
