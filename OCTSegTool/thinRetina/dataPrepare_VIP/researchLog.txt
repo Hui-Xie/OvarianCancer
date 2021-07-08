@@ -1,5 +1,7 @@
 # July 7th, Wednesday, 2021
 
+best config: expVIP_20210708_SurfaceSubnetQ96_13Cases_3M3C_A_skm2.yaml
+
 current best config: testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3C_C1200_skm2.yaml
 Use 1200 point. Surface 0 uses extra median filter. use different seed of 11117.
 Hausdorff distance is our focus.
