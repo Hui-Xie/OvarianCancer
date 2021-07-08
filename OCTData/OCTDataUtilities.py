@@ -239,6 +239,15 @@ def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndex
 
         if ("_OS_" in volumeIDs[i]) and OSFlipBack:
             prediction = np.flip(prediction, 2)
+        if ("_512x128_" in volumeIDs[i]) and ("PVIP2" in volumeIDs[i]):
+            B,S,W1 = prediction.shape
+            assert B == 128
+            W2 = 512
+            scaleM = scaleUpMatrix(B,W1,W2)
+            prediction = np.matmul(prediction, scaleM)
+            voxelSizeX = 11.741680
+            voxelSizeY = 47.244091
+            voxelSizeZ = 1.955034
 
         saveNumpy2OCTExplorerXML(volumeIDs[i], prediction, surfaceNames, outputDir, refXMLFile,
                                  penetrationChar=penetrationChar, penetrationPixels=penetrationPixels,

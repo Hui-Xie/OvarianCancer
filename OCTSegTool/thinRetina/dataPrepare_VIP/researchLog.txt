@@ -4,6 +4,12 @@ current best config: testConfig_VIP/expVIP_20210707_SurfaceSubnetQ96_13Cases_3M3
 Use 1200 point. Surface 0 uses extra median filter. use different seed of 11117.
 Hausdorff distance is our focus.
 
+Out 128x512 xml segmentation image:
+1  x
+2  y
+3  x physical resolution.  --ok
+3  y physical resolution.  --ok
+
 
 
 
@@ -165,7 +171,7 @@ Minutes:
 2  TPS may not strictly stick the control points, and it may allow some deviation distance to the control points values.
    This will allieviate the spike prediction.   --done. reduce spike to reduce Hausdorff distance.
 3  1000 control points is too big? we may consider to use 600 points.  --done. use 1200 points is best.
-4  For 512x128 original images, final output result needs to resize back.
+4  For 512x128 original images, final output result needs to resize back.   --done.
 5  Put the original raw files into xml directory.
 6  after a good segmentation result, we need to consider to output thickness map.
 
