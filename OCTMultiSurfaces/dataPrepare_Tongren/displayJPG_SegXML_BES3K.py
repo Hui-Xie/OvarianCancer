@@ -60,7 +60,7 @@ def getSurfacesArray(segFile):
                    for item in bscan:
                        if item.tag =='y':
                            x +=1
-                           surfacesArray[z,s,x] = int(item.text)
+                           surfacesArray[z,s,x] = float(item.text)
     return surfacesArray
 
 
