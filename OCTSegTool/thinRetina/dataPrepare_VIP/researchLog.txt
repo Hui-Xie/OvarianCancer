@@ -1,3 +1,19 @@
+# July 13th, Tuesday, 2021
+Meeting time: 01 pm -02:30 pm July 13th, Tuesday, 2021
+Attendee:  Jui Kai, Hui
+Topic: further discussion the spike improvement
+Minutes:
+1  512x128 volumes needs to resize into 200x200 volumes.
+2  use perpendicular B-scan slices also as data augmentation input.
+3  use flip as data augmentation.
+4  original OCT volume is 6x6x2 mm volume in physical size.
+5  may consider to resize the penetration depth to 512 pixels, which will make image smoother.
+6  finally, we need to make thick map comparable with ground truth thickness.
+   x axis: thickness of gt; y axis thickness of prediction.
+
+
+
+
 # July 7th, Wednesday, 2021
 
 best config: expVIP_20210708_SurfaceSubnetQ96_13Cases_3M3C_A_skm2.yaml

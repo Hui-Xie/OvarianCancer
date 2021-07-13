@@ -1,19 +1,26 @@
+#July 13th, Tuesday, 2021:
+The IPM Paper Review Comments:
+1  In abstract, "better sub-pixel accuracy" with which?
+2  Not make code public;
+3  focus on OCT images.
+4  In introduction, move  2-end sentences from the paragraph 1 to the after the 1st sentence of papagraph 1;
+5  Yufan He citation, not use full name, use surname.
+6  restore original figure 1 of professor wu.
+7  figure 2, sample ouput put into 2 figures.
+8  Merge Bx<b. (BOE and OCT seg, not need.)
+9  put ablation and samples  into main context;
+10  Ablation description: first desciption, then result.
+11  delete ablation 3 and 5, make the ablation 7 outstanding.
+12  add dicussion section.
+
+
+
+
 #July 6th, Tuesday, 2021
 IPM Paper submission:
 https://www.osapublishing.org/submit/templates/default.cfm?source=authorhomeguide
 Biomedical Optic Express.
 https://www.osapublishing.org/submit/style/osa-styleguide.cfm
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -37,6 +44,8 @@ Professor's review comments on the segmentation paper:
 10  Change Control group to normal group.
 11  IPM paper need to submit to Biomed Opt. Express paper.
     https://www.osapublishing.org/boe/home.cfm:
+12  add discussion part.
+
 
 12  Milan's ovarian cancer project needs to submit a word document.
 
