@@ -33,7 +33,7 @@ H = 1024
 N = len(extractIndexs)
 W = 200  # target image width
 C = 1000 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
-
+TPSSmoothing = 2.1
 
 # output Dir:
 outputImageDir = "/home/hxie1/data/thinRetina/numpy_13cases/rawGT"
@@ -194,12 +194,12 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
             controlValues = surface.flatten()[chosenList,]
             # for scipy 1.7.0
             if scipy.__version__ =="1.7.0":
-                interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=0.0,
+                interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=TPSSmoothing,
                                            kernel='thin_plate_spline', epsilon=None, degree=None)
                 surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
             else:
                 # for scipy 1.6.2
-                interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate')
+                interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate',smooth=TPSSmoothing)
                 surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
 
         # After TPS Interpolation, the surfaces values may exceed the range of [0,H), so it needs clip.

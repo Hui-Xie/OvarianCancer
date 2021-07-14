@@ -10,8 +10,11 @@ Minutes:
 5  may consider to resize the penetration depth to 512 pixels, which will make image smoother.
 6  finally, we need to make thick map comparable with ground truth thickness.
    x axis: thickness of gt; y axis thickness of prediction.
-7  data preprocessing:  TPS use same smoothing parameter with test.
+7  data preprocessing:  TPS use same smoothing parameter with test.    --done.
 8  output xml for smoothed ground truth for you to help me have a look in  the viewer.
+9  output no need flip back. -- done.
+10  dataload need to flip for all images slices.
+
 
 
 # July 7th, Wednesday, 2021

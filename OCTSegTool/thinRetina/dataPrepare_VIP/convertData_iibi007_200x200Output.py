@@ -1,9 +1,17 @@
-# convert 10 patients data into ground truth images, and numpy array.
+# convert 19 patients data into ground truth images, and numpy array.
 # June 29th, Monday, 2021:
 # A.  add 3-Bsacn average.
 # B.  Add image CLAHE (Contrast Limited Adaptive Histogram Equalization)
 # C.  Add 3D-height sampling rate thin-plate spline smoothing on ground truth and prediction.
 # D.  add 3 patient as independent test set.
+
+# July 14th, Wednesday, 2021:
+# A  uniform output 200x512x200(BxHxW)for all kind of raw image.
+# B  if input image has 6 surface, do not extract surfaces.
+# C  add pependicular Bscan in z-y  plane as data agumentation, while normal B-scan is in z-x plane.
+# D  do not flip OS images.
+# E  output smoothed xml ground truth in orginal image dimension.
+
 
 # need python package: simpleitk, scipy, matplotlib, scikit-image
 
@@ -13,7 +21,10 @@ import SimpleITK as sitk
 import json
 
 import matplotlib.pyplot as plt
-from utilities import  getSurfacesArray, scaleDownMatrix
+from utilities import  getSurfacesArray
+import sys
+sys.path.append("../../..")
+from OCTData.OCTDataUtilities import scaleDownMatrix, scaleUpMatrix,BWSurfacesSmooth
 from skimage import exposure  # for CLAHE
 # import cv2 as cv  # for CLAHE
 import scipy
@@ -29,19 +40,23 @@ surfaceNames =  ("ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE")
 pltColors = ('tab:blue', 'tab:orange',  'tab:purple',  'tab:brown',  'tab:red', 'tab:green')
 needLegend = True
 
-H = 1024
+# output image size:
+B = 200
+H = 512
 N = len(extractIndexs)
 W = 200  # target image width
-C = 1000 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
+C = 1200 # the number of random chosed control points for Thin-Plate-Spline. C is a multiple of 8.
 TPSSmoothing = 2.1
 
 
 # output Dir:
-outputImageDir = "/localscratch/Users/hxie1/data/thinRetina/numpy_13cases/rawGT"
-outputNumpyParentDir = "/localscratch/Users/hxie1/data/thinRetina/numpy_13cases"
+outputImageDir = "/localscratch/Users/hxie1/data/thinRetina/numpy_19cases/rawGT"
+outputNumpyParentDir = "/localscratch/Users/hxie1/data/thinRetina/numpy_19cases"
+outputSmoothXmlDir = os.path.join(outputNumpyParentDir, "smoothxml")
 outputTrainNumpyDir = os.path.join(outputNumpyParentDir, "training")
 outputValidationNumpyDir = os.path.join(outputNumpyParentDir, "validation")
 outputTestNumpyDir = os.path.join(outputNumpyParentDir, "test")
+outputNoGTTestNumpyDir = os.path.join(outputNumpyParentDir, "noGT_Test1")
 
 if not os.path.exists(outputImageDir):
     os.makedirs(outputImageDir)
@@ -51,6 +66,10 @@ if not os.path.exists(outputValidationNumpyDir):
     os.makedirs(outputValidationNumpyDir)
 if not os.path.exists(outputTestNumpyDir):
     os.makedirs(outputTestNumpyDir)
+if not os.path.exists(outputSmoothXmlDir):
+    os.makedirs(outputSmoothXmlDir)
+if not os.path.exists(outputNoGTTestNumpyDir):
+    os.makedirs(outputNoGTTestNumpyDir)
 
 
 # original patientDirList
@@ -76,16 +95,28 @@ testPatientDirList=[
 "/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Manual_Correction/Set2/PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z",
 ]
 
+noGTTestPatientDirList=[
+"/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set3/PVIP2-4100_Macular_512x128_2-4-2010_9-7-27_OS_sn12662_cube_z",
+"/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set3/PVIP2-4119_Macular_200x200_4-7-2015_13-6-21_OD_sn30561_cube_z",
+"/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set3/PVIP2-4124_Macular_200x200_5-13-2010_12-29-8_OD_sn16873_cube_z",
+"/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set3/PVIP2-4105_Macular_512x128_5-19-2010_11-29-4_OD_sn18925_cube_z",
+"/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set3/PVIP2-4122_Macular_200x200_2-27-2012_12-32-59_OS_sn16534_cube_z",
+"/localscratch/Users/hxie1/data/thinRetina/rawMhd/IOWA_VIP_25_Subjects_Thin_Retina/Graph_Search/Set3/PVIP2-4126_Macular_200x200_1-5-2012_9-53-23_OS_sn20578_cube_z",
+]
+
 cases= {
-    "training": [trainPatientDirList, outputTrainNumpyDir, 4*(200+128)], # the number is totalSlices.
-    "validation": [validationPatientDirList, outputValidationNumpyDir, 2*200],
-    "test": [testPatientDirList, outputTestNumpyDir, 2*(200)+128]
+    "training": [trainPatientDirList, outputTrainNumpyDir],
+    "validation": [validationPatientDirList, outputValidationNumpyDir],
+    "test": [testPatientDirList, outputTestNumpyDir],
+    "noGTTest1":[noGTTestPatientDirList, outputNoGTTestNumpyDir]
 }
-for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
+for datasetName,[patientDirList, outputNumpyDir] in cases.items():
     outputNumpyImagesPath = os.path.join(outputNumpyDir, f"images.npy")  # for smoothed image
     outputNumpyImagesPathClahe = os.path.join(outputNumpyDir, f"images_clahe.npy")  # for CLAHE image
     outputNumpySurfacesPath = os.path.join(outputNumpyDir, f"surfaces.npy")
     outputPatientIDPath = os.path.join(outputNumpyDir, "patientID.json")
+
+    totalSlices = B*len(patientDirList)
 
     allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float) # for smoothed image
     allPatientsImageArrayClahe = np.empty((totalSlices , H, W), dtype=float) # for CLAHE image
@@ -103,12 +134,15 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         dirname = os.path.dirname(octVolumePath)
         basename = os.path.basename(octVolumePath)
         basename = basename[0:basename.rfind("_OCT_Iowa.mhd")]
-        surfacesXmlPath = os.path.join(dirname, basename+f"_Surfaces_Iowa_Ray.xml")
-        if not os.path.isfile(surfacesXmlPath):
-            surfacesXmlPath = os.path.join(dirname, basename+f"_Surfaces_Iowa.xml")
+        if "noGTTest" not in datasetName:
+            surfacesXmlPath = os.path.join(dirname, basename+f"_Surfaces_Iowa_Ray.xml")
             if not os.path.isfile(surfacesXmlPath):
-                print("Error: can not find surface xml file")
-                assert False
+                surfacesXmlPath = os.path.join(dirname, basename+f"_Surfaces_Iowa.xml")
+                if not os.path.isfile(surfacesXmlPath):
+                    print("Error: can not find surface xml file")
+                    assert False
+        else:
+            surfacesXmlPath = None
 
         #  convert Ray's special raw format to standard BxHxW for image, and BxSxW format for surface.
         #  Ray mhd format in BxHxW dimension, but it flip the H and W dimension.
@@ -116,33 +150,79 @@ for datasetName,[patientDirList, outputNumpyDir, totalSlices] in cases.items():
         itkImage = sitk.ReadImage(octVolumePath)
         npImage = sitk.GetArrayFromImage(itkImage).astype(float)  # in BxHxW dimension
         npImage = np.flip(npImage, (1, 2))  # as ray's format filp H and W dimension.
-        B,curH,curW = npImage.shape
-        assert H == curH
+        B1,H1,W1 = npImage.shape  # 1 indicates image
 
-        surfaces = getSurfacesArray(surfacesXmlPath)  # size: SxNxW, where N is number of surfacres.
-        surfaces = surfaces[:, extractIndexs, :]   #  extract 6 surfaces (0, 1, 3, 5, 6, 10)
-        # its surface names: ["ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE"]
-        B1, curN, _ = surfaces.shape
-        assert N == curN
-        assert B == B1
-
-        #  scale down image and surface, if W = 512.
-        if npImage.shape == (128, 1024, 512):  # scale image to 1024x200.
-            scaleM = scaleDownMatrix(B, curW, W)
-            npImage = np.matmul(npImage, scaleM)
-            surfaces = np.matmul(surfaces, scaleM)
+        if "noGTTest" not in datasetName:
+            surfaces = getSurfacesArray(surfacesXmlPath)  # size: SxNxW, where N is number of surfacres.
+            B2,N2,W2 = surfaces.shape  # 2 indicates surfaces.
+            if N2!= N:
+                surfaces = surfaces[:, extractIndexs, :]   #  extract 6 surfaces (0, 1, 3, 5, 6, 10)
+                # its surface names: ["ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE"]
+                B2, N2, W2 = surfaces.shape  # 2 indicates surfaces.
+            assert B1==B2
+            assert W1==W2
         else:
-            assert curW == W
+            surfaces = None
 
-        #  flip all OS eyes into OD eyes
-        if "_OS_" in basename:
-            npImage = np.flip(npImage, 2)
-            surfaces = np.flip(surfaces, 2)
+
+        #  scale down image and surface
+        if npImage.shape == (128, 1024, 512):  # scale image to 200x512x200
+            # scale down W dimension
+            M = scaleDownMatrix(B1, W1, W)
+            npImage = np.matmul(npImage, M)  # size: 128x1024x200
+            if surfaces is not None:
+                surfaces = np.matmul(surfaces, M)  #size: 128xNx200
+
+            # scale up B dimension.
+            npImage = np.swapaxes(npImage,axis1=0,axis2=2)  # size: 200x1024x128 in WxHxB
+            W,H1,B1 = npImage.shape
+            M = scaleUpMatrix(W,B1,B)
+            npImage = np.matmul(npImage,M)  # size: WxH1xB
+            npImage = np.swapaxes(npImage, axis1=0, axis2=2)  # size: BxH1xW
+            if surfaces is not None:
+                surfaces = np.swapaxes(surfaces, axis1=0, axis2=2)  # size: 200xNx128 in WxNxB2
+                surfaces = np.matmul(surfaces, M)  # size: WxNxB
+                surfaces = np.swapaxes(surfaces, axis1=0, axis2=2)  # size: BxNxW
+
+            # scale down H dimension.
+            npImage = np.swapaxes(npImage, axis1=1, axis2=2)  # size: 200x200x1024
+            B1, W1, H1 = npImage.shape
+            M = scaleDownMatrix(B1, H1, H)
+            npImage = np.matmul(npImage, M)  # 200x200x512
+            npImage = np.swapaxes(npImage, axis1=1, axis2=2)  # size: 200x512x200
+
+            if surfaces is not None:
+                surfaces = surfaces * (H / H1)  # 200xNx200
+
+        elif npImage.shape == (200, 1024, 200):  # scale image to 200x512x200
+            # scale down H dimension.
+            npImage = np.swapaxes(npImage,axis1=1,axis2=2) # size: 200x200x1024
+            B1,W1,H1 = npImage.shape
+            M = scaleDownMatrix(B1,H1,H)
+            npImage = np.matmul(npImage,M)  # 200x200x512
+            npImage = np.swapaxes(npImage,axis1=1,axis2=2) # size: 200x512x200
+
+            if surfaces is not None:
+                surfaces = surfaces*(H/H1) # 200xNx200
+
+        else:
+            print(f"Error: npImage size error")
+            assert False
+
+
+        #  Not flip all OS eyes into OD eyes
+        #if "_OS_" in basename:
+        #    npImage = np.flip(npImage, 2)
+        #    surfaces = np.flip(surfaces, 2)
 
         # Make sure alll surfaces not interleave, especially the top surface of GCIPL (i.e., surface_1) is NOT above ILM (surface_0)
-        for i in range(1, N):
-            surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
-                                         surfaces[:, i, :])
+        #for i in range(1, N):
+        #    surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
+        #                                 surfaces[:, i, :])
+
+        # use BW surface smooth.
+        surfaces =BWSurfacesSmooth(surfaces)
+
 
         # Average 3 Bscan smoothing.
         smoothedImage = np.zeros_like(npImage,dtype=float)

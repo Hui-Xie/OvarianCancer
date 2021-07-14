@@ -491,6 +491,42 @@ def scaleUpMatrix(B, W1, W2):
     M = np.repeat(M,B,axis=0)
     return M  # BxW1xW2
 
-
+def scaleDownMatrix(B, W1, W2):
+    '''
+    return a scale down matrix with W1xW2 size with batch B.
+    it scale down image and surface from HxW1 to HxW2, , where W1 > W2
+    :param B:
+    :param W1:
+    :param W2:
+    :return:
+    '''
+    M = np.zeros((W1, W2),dtype=float)  # scale matrix
+    s = W1*1.0/W2 # scale factor
+    assert W1 > W2
+    sr = s # remaining s waiting for allocating along the current column
+    sp = 0 # spare space to fill to 1.
+    rp = 0 # previous row.
+    for c in range(0, W2):
+        for r in range(rp,W1):
+            if sp != 0:
+                M[r,c] = sp
+                sr = s- sp
+                sp = 0
+            elif sr > 1:
+                M[r,c] = 1.0
+                sr -= 1.0
+            else:  #  1>= sr >0
+                M[r, c] = sr
+                sp = 1.0 - sr
+                sr = s
+                if sp ==0:
+                    rp = r+1
+                else:
+                    rp = r
+                break
+    M = M/s  # normalization along each column
+    M = np.expand_dims(M,axis=0) # 1xW1xW2
+    M = np.repeat(M,B,axis=0)
+    return M  # BxW1xW2
 
 
