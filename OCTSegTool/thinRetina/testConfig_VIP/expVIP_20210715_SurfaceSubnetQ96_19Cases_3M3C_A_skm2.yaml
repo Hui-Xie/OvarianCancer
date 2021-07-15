@@ -53,12 +53,12 @@ epochs: 800
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
 datasetLoader: "OCTDataSet6Bscans"  # use 3 continuous Bscan as input to predict the segmentation of middle one.
 network: "SurfaceSegNet_Q"
-inputHeight: 1024   # original height
+inputHeight: 512   # original height
 inputWidth: 200   # rawImageWidth
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 6 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
-nLayers: 7
+nLayers: 6 # as width is just 200, 6 layers is ok.
 numSurfaces: 6  # num of surfaces in an image
 startFilters: 24  # the num of filters in first layer of Unet
 gradChannels: 0   # the added gradient channels beside raw image channel
