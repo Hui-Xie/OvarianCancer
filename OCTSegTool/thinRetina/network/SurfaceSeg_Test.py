@@ -155,7 +155,7 @@ def main():
                 B, N, W = surfaces.shape
                 assert N == hps.numSurfaces
 
-                surfaces = BWSurfacesSmooth(surfaces)
+                surfaces = BWSurfacesSmooth(surfaces, smoothSurfaceZero=True)
                 testOutputs[b:b + B, :, :] = surfaces
                 b += B
 
@@ -209,7 +209,7 @@ def main():
                 # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
                 surfaces = np.clip(surfaces, 0, H - 1)
 
-                surfaces = BWSurfacesSmooth(surfaces)  # make sure surfaces not violate constraints.
+                surfaces = BWSurfacesSmooth(surfaces, smoothSurfaceZero=False)  # make sure surfaces not violate constraints.
                 testOutputs[b:b+B,:,:] = surfaces
                 b +=B
 

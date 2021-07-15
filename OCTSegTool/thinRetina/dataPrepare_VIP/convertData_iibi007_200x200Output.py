@@ -6,10 +6,10 @@
 # D.  add 3 patient as independent test set.
 
 # July 14th, Wednesday, 2021:
-# A  uniform output 200x512x200(BxHxW)for all kind of raw image.
-# B  if input image has 6 surface, do not extract surfaces.
-# C  add pependicular Bscan in z-y  plane as data agumentation, while normal B-scan is in z-x plane.
-# D  do not flip OS images.
+# A  uniform output 200x512x200(BxHxW)for all kind of raw image.  --done
+# B  if input image has 6 surface, do not extract surfaces.   --done
+# C  add pependicular Bscan in z-y  plane as data agumentation, while normal B-scan is in z-x plane.  --done
+# D  do not flip OS images.  --done.
 # E  output smoothed xml ground truth in orginal image dimension.
 
 
@@ -116,11 +116,14 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
     outputNumpySurfacesPath = os.path.join(outputNumpyDir, f"surfaces.npy")
     outputPatientIDPath = os.path.join(outputNumpyDir, "patientID.json")
 
-    totalSlices = B*len(patientDirList)
+    totalSlices = (B+W)*len(patientDirList)  # B+W is for Bscan and Ascan plane(y-z plane)
 
     allPatientsImageArray = np.empty((totalSlices , H, W), dtype=float) # for smoothed image
     allPatientsImageArrayClahe = np.empty((totalSlices , H, W), dtype=float) # for CLAHE image
-    allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of data is float
+    if "noGTTest" not in datasetName:
+        allPatientsSurfaceArray = np.empty((totalSlices, N, W), dtype=float) # the ground truth of data is float
+    else:
+        allPatientsSurfaceArray = None
     patientIDDict = {}
 
 
@@ -161,6 +164,7 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
                 B2, N2, W2 = surfaces.shape  # 2 indicates surfaces.
             assert B1==B2
             assert W1==W2
+            assert N2==N
         else:
             surfaces = None
 
@@ -190,9 +194,11 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             M = scaleDownMatrix(B1, H1, H)
             npImage = np.matmul(npImage, M)  # 200x200x512
             npImage = np.swapaxes(npImage, axis1=1, axis2=2)  # size: 200x512x200
+            assert (B, H, W == npImage.shape)
 
             if surfaces is not None:
                 surfaces = surfaces * (H / H1)  # 200xNx200
+                assert (B, N, W == surfaces.shape)
 
         elif npImage.shape == (200, 1024, 200):  # scale image to 200x512x200
             # scale down H dimension.
@@ -201,9 +207,13 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             M = scaleDownMatrix(B1,H1,H)
             npImage = np.matmul(npImage,M)  # 200x200x512
             npImage = np.swapaxes(npImage,axis1=1,axis2=2) # size: 200x512x200
+            assert (B,H,W == npImage.shape)
 
             if surfaces is not None:
                 surfaces = surfaces*(H/H1) # 200xNx200
+                assert (B,N,W == surfaces.shape)
+
+
 
         else:
             print(f"Error: npImage size error")
@@ -220,17 +230,25 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
         #    surfaces[:, i, :] = np.where(surfaces[:, i, :] < surfaces[:, i - 1, :], surfaces[:, i - 1, :],
         #                                 surfaces[:, i, :])
 
-        # use BW surface smooth.
-        surfaces =BWSurfacesSmooth(surfaces)
+        # use BW surface smooth, and guarantee the topological order.
+        if surfaces is not None:
+            surfaces =BWSurfacesSmooth(surfaces, smoothSurfaceZero=False)  # this is ground truth, no need smoothSurfaceZero again.
 
 
         # Average 3 Bscan smoothing.
         smoothedImage = np.zeros_like(npImage,dtype=float)
-        for i in range(B):
+        for i in range(B): # along B dimension
             i0 = i-1 if i-1>=0 else 0
             i1 = i
             i2 = i+1 if i+1<B else B-1
             smoothedImage[i,] = (npImage[i0, ] +npImage[i1,] +npImage[i2,])/3.0  # intensity in [0,255] in float
+        # smoothing in 3 continous A-scan direction.
+        tempImage = smoothedImage.copy()
+        for i in range(W): # along W dimension
+            i0 = i-1 if i-1>=0 else 0
+            i1 = i
+            i2 = i+1 if i+1<W else W-1
+            smoothedImage[i,] = (tempImage[:,:,i0] +tempImage[:,:,i1] +tempImage[:,:,i2])/3.0  # intensity in [0,255] in float
 
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
@@ -255,42 +273,44 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
         #  Check the smoothing results again in the images to make sure they still look reasonable
 
         # determine the control points of thin-plate-spline
-        coordinateSurface = np.mgrid[0:B, 0:W]
-        coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
+        if surfaces is not None:
+            coordinateSurface = np.mgrid[0:B, 0:W]
+            coordinateSurface = coordinateSurface.reshape(2, -1).T  # size (BxW) x2  in 2 dimension.
 
-        # random sample C control points in the original surface of size BxW, with a repeatable random.
-        randSeed = 20217  # fix this seed for ground truth and prediction.
-        random.seed(randSeed)
-        P = list(range(0, B * W))
-        chosenList = [0, ] * C
-        # use random.sample to choose unique element without replacement.
-        chosenList[0:C // 8] = random.sample(P[0:W * B // 4], k=C // 8)
-        chosenList[C // 8:C // 2] = random.sample(P[W * B // 4: W * B // 2], k=3 * C // 8)
-        chosenList[C // 2:7 * C // 8] = random.sample(P[W * B // 2: W * 3 * B // 4], k=3 * C // 8)
-        chosenList[7 * C // 8: C] = random.sample(P[W * 3 * B // 4: W * B], k=C // 8)
-        chosenList.sort()
-        controlCoordinates = coordinateSurface[chosenList, :]
-        for i in range(N):
-            surface = surfaces[:, i, :]  # choose surface i, size: BxW
-            controlValues = surface.flatten()[chosenList,]
-            # for scipy 1.7.0
-            if scipy.__version__ =="1.7.0":
-                interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=TPSSmoothing,
-                                           kernel='thin_plate_spline', epsilon=None, degree=None)
-                surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
-            else:
-                # for scipy 1.6.2
-                interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate',smooth=TPSSmoothing)
-                surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
+            # random sample C control points in the original surface of size BxW, with a repeatable random.
+            randSeed = 20217  # fix this seed for ground truth and prediction.
+            random.seed(randSeed)
+            P = list(range(0, B * W))
+            chosenList = [0, ] * C
+            # use random.sample to choose unique element without replacement.
+            chosenList[0:C // 8] = random.sample(P[0:W * B // 4], k=C // 8)
+            chosenList[C // 8:C // 2] = random.sample(P[W * B // 4: W * B // 2], k=3 * C // 8)
+            chosenList[C // 2:7 * C // 8] = random.sample(P[W * B // 2: W * 3 * B // 4], k=3 * C // 8)
+            chosenList[7 * C // 8: C] = random.sample(P[W * 3 * B // 4: W * B], k=C // 8)
+            chosenList.sort()
+            controlCoordinates = coordinateSurface[chosenList, :]
+            for i in range(N):
+                surface = surfaces[:, i, :]  # choose surface i, size: BxW
+                controlValues = surface.flatten()[chosenList,]
+                # for scipy 1.7.0
+                if scipy.__version__ =="1.7.0":
+                    interpolator = RBFInterpolator(controlCoordinates, controlValues, neighbors=None, smoothing=TPSSmoothing,
+                                               kernel='thin_plate_spline', epsilon=None, degree=None)
+                    surfaces[:, i, :] = interpolator(coordinateSurface).reshape(B, W)
+                else:
+                    # for scipy 1.6.2
+                    interpolator = Rbf(controlCoordinates[:,0], controlCoordinates[:,1], controlValues, function='thin_plate',smooth=TPSSmoothing)
+                    surfaces[:, i, :] = interpolator(coordinateSurface[:,0], coordinateSurface[:,1]).reshape(B, W)
 
-        # After TPS Interpolation, the surfaces values may exceed the range of [0,H), so it needs clip.
-        # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
-        surfaces = np.clip(surfaces, 0, H-1)
+            # After TPS Interpolation, the surfaces values may exceed the range of [0,H), so it needs clip.
+            # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
+            surfaces = np.clip(surfaces, 0, H-1)
 
-        #  output  numpy array.
-        allPatientsImageArray[s:s+B,:,:] = smoothedImage
-        allPatientsImageArrayClahe[s:s+B,:,:] = claheImage
-        allPatientsSurfaceArray[s:s+B, :, :] = surfaces
+        #  output  numpy array for all B-scan.
+        allPatientsImageArray[s:s+B,:,:] = smoothedImage  # BxHxW
+        allPatientsImageArrayClahe[s:s+B,:,:] = claheImage #BxHxW
+        if surfaces is not None:
+            allPatientsSurfaceArray[s:s+B, :, :] = surfaces
         for i in range(B):
             # basename: PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z
             patientIDDict[str(s+i)] = basename + f"_B{B:03d}_s{i:03d}"  #e.g. "_B200_s120"
@@ -332,10 +352,63 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
 
+        #  output  numpy array for all y-z plane
+        npImage = np.swapaxes(npImage, axis1=0, axis2=2)  # WxHxB
+        smoothedImage = np.swapaxes(smoothedImage, axis1=0, axis2=2)
+        claheImage = np.swapaxes(claheImage, axis1=0, axis2=2)
+        allPatientsImageArray[s:s + W, :, :] = smoothedImage  # WxHxB
+        allPatientsImageArrayClahe[s:s + W, :, :] = claheImage  # WxHxB
+        if surfaces is not None:
+            surfaces = np.swapaxes(surfaces,axis1=0, axis2=2)
+            allPatientsSurfaceArray[s:s + W, :, :] = surfaces  # WxNxB
+        for i in range(W):
+            # basename: PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z
+            patientIDDict[str(s + i)] = basename + f"_W{W:03d}_s{i:03d}"  # e.g. "_W200_s120"
+        s += W
+
+        #  out Raw_GT images
+        for i in range(W):
+            f = plt.figure(frameon=False)
+            DPI = 100
+            rowSubplot = 1
+            colSubplot = 4
+            f.set_size_inches(B * colSubplot / float(DPI), H * rowSubplot / float(DPI))
+
+            plt.margins(0)
+            plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0,
+                                hspace=0)  # very important for erasing unnecessary margins.
+
+            subplot1 = plt.subplot(rowSubplot, colSubplot, 1)
+            subplot1.imshow(npImage[i, :, :], cmap='gray')
+            subplot1.axis('off')
+
+            subplot2 = plt.subplot(rowSubplot, colSubplot, 2)
+            subplot2.imshow(smoothedImage[i, :, :], cmap='gray')
+            subplot2.axis('off')
+
+            subplot3 = plt.subplot(rowSubplot, colSubplot, 3)
+            subplot3.imshow(claheImage[i, :, :], cmap='gray')
+            subplot3.axis('off')
+
+            subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
+            subplot4.imshow(claheImage[i, :, :], cmap='gray')
+            for n in range(0, N):
+                subplot4.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
+            if needLegend:
+                subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
+            subplot4.axis('off')
+
+            curImagePath = os.path.join(outputImageDir, basename + f"_W{W:03d}_s{i:03d}_raw_smoothed_clahe_GT.png")
+
+            plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
+            plt.close()
+            
+
     # after reading all patients, save numpy array
     np.save(outputNumpyImagesPath, allPatientsImageArray)
     np.save(outputNumpyImagesPathClahe, allPatientsImageArrayClahe)
-    np.save(outputNumpySurfacesPath, allPatientsSurfaceArray)
+    if allPatientsSurfaceArray is not None:
+        np.save(outputNumpySurfacesPath, allPatientsSurfaceArray)
     with open(outputPatientIDPath, 'w') as fp:
         json.dump(patientIDDict, fp)
 
