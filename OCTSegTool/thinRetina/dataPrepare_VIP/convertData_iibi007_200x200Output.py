@@ -10,7 +10,7 @@
 # B  if input image has 6 surface, do not extract surfaces.   --done
 # C  add pependicular Bscan in z-y  plane as data agumentation, while normal B-scan is in z-x plane.  --done
 # D  do not flip OS images.  --done.
-# E  output smoothed xml ground truth in orginal image dimension.
+# E  output smoothed xml ground truth in orginal image dimension.   --done.
 
 
 # need python package: simpleitk, scipy, matplotlib, scikit-image
