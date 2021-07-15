@@ -26,7 +26,7 @@ from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTDataSet6Bscans import  OCTDataSet6Bscans
-from OCTData.OCTDataUtilities import computeMASDError_numpy, batchPrediciton2OCTExplorerXML, outputNumpyImagesSegs, BWSurfacesSmooth
+from OCTData.OCTDataUtilities import computeMASDError_numpy, saveNumpy2OCTExplorerXML, outputNumpyImagesSegs, BWSurfacesSmooth, scaleUpMatrix , scaleDownMatrix
 from framework.NetTools import columnHausdorffDist
 
 import time
@@ -182,13 +182,14 @@ def main():
                 b += nB
 
             images = newImages
-            testGts = newTestGts
+            if hps.existGTLabel:
+                testGts = newTestGts
             testOutputs = newTestOutputs
             volumeBscanStartIndexList = newVolumeBscanStartIndexList
             volumeIDs = newVolumeIDs
             nVolumes = len(volumeBscanStartIndexList)
             B,H,W = images.shape
-  
+
         # here make sure surfaces do not violate topological constraints for each BxW surface and each volume
         if hps.BWSurfaceSmooth:
             b = 0
@@ -263,11 +264,78 @@ def main():
             stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError_numpy(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.hPixelSize)
 
 
-        if outputXmlSegFiles:
-            batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, hps.xmlOutputDir,
-                                           refXMLFile=hps.refXMLFile,
-                                           penetrationChar=hps.penetrationChar, penetrationPixels=hps.inputHeight, voxelSizeUnit=hps.voxelSizeUnit,
-                                           voxelSizeX=hps.voxelSizeX, voxelSizeY=hps.voxelSizeY, voxelSizeZ=hps.voxelSizeZ, OSFlipBack=hps.OSFlipBack)
+        if outputXmlSegFiles: # sale back original size.
+            nVolumes = len(volumeIDs)
+            assert nVolumes == len(volumeBscanStartIndexList)
+            for i in range(nVolumes):
+                if i != nVolumes - 1:
+                    prediction = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :,:]  # prediction volume
+                else:
+                    prediction = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
+
+                if ("_OS_" in volumeIDs[i]) and hps.OSFlipBack:
+                    prediction = np.flip(prediction, -1)
+
+                # output smoothed surface into xml with original size.
+                # surfaces of size BxNxW in H height will restore to B0xNxW0 size and in H0 height.
+                restoredSurfaces = prediction.copy()
+                B,N,W = restoredSurfaces.shape
+                if "PVIP2-" in volumeIDs[i]:
+                    H0 = 1024
+                else:
+                    print("Error: maybe file ID error")
+                    assert False
+                # a 6mm x 6mmx x2mm volume.
+                if "_Macular_200x200_" in volumeIDs[i]:
+                    B0 = 200
+                    W0 = 200
+                    voxelSizeX = 30.150749
+                    voxelSizeY = 30.150749
+                    voxelSizeZ = 1.955034
+                elif "_Macular_512x128_" in volumeIDs[i]:
+                    B0 = 128
+                    W0 = 512
+                    voxelSizeX = 11.741680
+                    voxelSizeY = 47.244091
+                    voxelSizeZ = 1.955034
+                else:
+                    print("Error: original file size error")
+                    assert False
+
+                if W < W0:
+                    M = scaleUpMatrix(B, W, W0)
+                elif W > W0:
+                    M = scaleDownMatrix(B, W, W0)
+                else:
+                    M = None
+                if M is not None:
+                    restoredSurfaces = np.matmul(restoredSurfaces, M)  # size: BxNxW0
+
+                if B < B0:
+                    M = scaleUpMatrix(W0, B, B0)
+                elif B > B0:
+                    M = scaleDownMatrix(W0, B, B0)
+                else:
+                    M = None
+                if M is not None:
+                    restoredSurfaces = np.swapaxes(restoredSurfaces, axis1=0, axis2=2)  # W0xNxB
+                    restoredSurfaces = np.matmul(restoredSurfaces, M)  # size: W0xNxB0
+                    restoredSurfaces = np.swapaxes(restoredSurfaces, axis1=0, axis2=2)  # B0xNxW0
+
+                if H != H0:
+                    restoredSurfaces *= H0 / H
+
+                penetrationChar = 'z'  # use z or y to represent penetration direction.
+                # physical size of voxel
+                voxelSizeUnit = "um"
+                penetrationPixels = H0
+                a = volumeIDs[i]
+                basename = a[0:a.rfind("_B200_s000")]
+                saveNumpy2OCTExplorerXML(basename, restoredSurfaces, surfaceNames, hps.xmlOutputDir, hps.refXMLFile,
+                                         penetrationChar=penetrationChar, penetrationPixels=penetrationPixels,
+                                         voxelSizeUnit=voxelSizeUnit, voxelSizeX=voxelSizeX, voxelSizeY=voxelSizeY,
+                                         voxelSizeZ=voxelSizeZ, nameModification=None)
+
             outputNumpyImagesSegs(images, testOutputs, volumeIDs, volumeBscanStartIndexList, hps.testOutputDir)
 
 

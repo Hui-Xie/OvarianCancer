@@ -228,7 +228,7 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
 
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
-def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, outputDir,
+def batchPrediciton2OCTExplorerXML_deprecated(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, outputDir,
                                    refXMLFile="/home/hxie1/data/OCT_Tongren/refXML/1062_OD_9512_Volume_Sequence_Surfaces_Iowa.xml",
                                    penetrationChar='y', penetrationPixels=496, voxelSizeUnit='um', voxelSizeX=13.708, voxelSizeY=3.870, voxelSizeZ=292.068, OSFlipBack=False):
     if not os.path.isdir(outputDir):
@@ -241,6 +241,7 @@ def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndex
         else:
             prediction = testOutputs[volumeBscanStartIndexList[i]:, :, :]  # prediction volume
 
+        # application layer logic should not be here.
         if ("_OS_" in volumeIDs[i]) and OSFlipBack:
             prediction = np.flip(prediction, 2)
         if ("_512x128_" in volumeIDs[i]) and ("PVIP2" in volumeIDs[i]):

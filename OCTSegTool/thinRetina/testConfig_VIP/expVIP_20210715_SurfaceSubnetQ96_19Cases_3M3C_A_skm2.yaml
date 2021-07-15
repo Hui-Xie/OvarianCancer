@@ -128,6 +128,7 @@ BWSurfaceSmooth: True  # medianfilter smoothing and guarantee topological order 
 
 gradientRiftConvGoBack: False
 OSFlipBack: False  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.
+# if flippingProb >0, the OSFlipBack should be false
 
 # constrained model, both False meaning RelU
 # ReLU to guarantee layer order not to cross each other
