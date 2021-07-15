@@ -49,6 +49,7 @@ lrPatience: 20
 epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+datasetTransform:  "OCTDataTransform3D"
 datasetLoader:  "OCTDataSet"
 network: "SurfaceSegNet_Q"
 inputHeight: 1024   # original height

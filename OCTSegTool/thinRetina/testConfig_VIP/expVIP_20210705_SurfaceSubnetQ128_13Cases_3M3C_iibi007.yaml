@@ -51,6 +51,7 @@ lrPatience: 20
 epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+datasetTransform:  "OCTDataTransform3D"
 datasetLoader: "OCTDataSet6Bscans"  # use 3 continuous Bscan as input to predict the segmentation of middle one.
 network: "SurfaceSegNet_Q"
 inputHeight: 1024   # original height

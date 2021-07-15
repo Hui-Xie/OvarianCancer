@@ -243,7 +243,7 @@ class OCTDataSet6Bscans(data.Dataset):
             #get B and s index from "_B200_s120"
             # get imageID and nB
             ID1 = int(imageID[-3:])      # "*_s003" -> 003, the middle ID.
-            nB = int(imageID[-8:-5])
+            nB = int(imageID[-8:-5])     # "*_W200_s120"
             s = ID1
 
             # get its below and up continuous Bscan by judging its imageID
@@ -290,9 +290,8 @@ class OCTDataSet6Bscans(data.Dataset):
         B, H, W = data.shape  # B ==3 or 6
 
         if self.m_transform: # for volume transform
-            # not support rotation.
-            for i in range(B):  # each slice may has different noise or no noise.
-                data[i,] = self.m_transform(data[i,])
+            # support rotation, flip on 3D data and 2D label.
+            data, label = self.m_transform(data, label)
 
         # normalization should put outside of transform, as validation may not use transform
         # normalization should on each slice.

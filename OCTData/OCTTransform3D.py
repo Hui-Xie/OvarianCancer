@@ -7,7 +7,7 @@ import sys
 sys.path.append("../..")
 from OCTData.OCTAugmentation import *
 
-class OCTDataTransform(object):
+class OCTDataTransform3D(object):
     def __init__(self, prob=0, noiseStd=0.1, saltPepperRate=0.05, saltRate=0.5, rotation=False, flippingProb=0.0):
         super().__init__()
         self.m_prob = prob
@@ -21,11 +21,10 @@ class OCTDataTransform(object):
         '''
          # normalization should put outside of transform, as validation may not use transform
 
-        :param inputData:  a normalized Tensor of size(H,W),
+        :param inputData:  a Tensor of size(B,H,W) in 3D or 2D in (H,W)
                intputLabel: NxW
         :return:
         '''
-        H,W = inputData.shape
         device = inputData.device
         dirt =False
         # not contaminate memory data.
@@ -42,9 +41,9 @@ class OCTDataTransform(object):
 
         # flip is second.
         if random.uniform(0, 1) < self.m_flippingProb:
-            data = torch.flip(data, [1])  # flip horizontal
+            data = torch.flip(data, [-1])  # flip horizontal
             if label is not None:
-                label = torch.flip(label, [1])
+                label = torch.flip(label, [-1])
 
         # gaussian noise
         if random.uniform(0, 1) < self.m_prob:

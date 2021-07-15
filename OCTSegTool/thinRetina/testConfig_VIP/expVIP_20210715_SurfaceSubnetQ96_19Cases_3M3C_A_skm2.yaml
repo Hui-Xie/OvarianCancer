@@ -10,6 +10,7 @@ existGTLabel: True
 useCLAHEImages: True # add CLAHE image as extra channels.
 useSpaceChannels: False  # use Bscan space and Ascan space channels.
 useCLAHEReplaceSmoothed: False
+useAScanPlane: True # add Ascan plane (yz plane) for training and test.
 
 dataDir: "/raid001/users/hxie1/data/thinRetina/numpy_19cases"
 # log will save at: dataDir + "/log/" + network + "/" + experimentName
@@ -51,10 +52,11 @@ lrPatience: 20
 epochs: 800
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+datasetTransform:  "OCTDataTransform3D"
 datasetLoader: "OCTDataSet6Bscans"  # use 3 continuous Bscan as input to predict the segmentation of middle one.
 network: "SurfaceSegNet_Q"
-inputHeight: 512   # original height
-inputWidth: 200   # rawImageWidth
+inputHeight: 512   # scaled input image height
+inputWidth: 200   # scaled input image width
 scaleNumerator: 1
 scaleDenominator: 1
 inputChannels: 6 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
@@ -78,7 +80,7 @@ gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
 saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
 saltRate: 0.5  # saltRate = salt/(salt+pepper)
 rotation: False
-flippingProb: 0.5  #  do not flip withd direction, as the nasal and temporal direction is not symmetric in OD/OS eye.
+flippingProb: 0.5  #  0 means do not flip withd direction, as the nasal and temporal direction is not symmetric in OD/OS eye.
 lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
 TTA: False       #Test-Time Augmentation
 TTA_StepDegree: 0 # roration step degree of TTA, in integer degree

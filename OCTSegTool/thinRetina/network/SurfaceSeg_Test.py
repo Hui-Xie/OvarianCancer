@@ -136,7 +136,7 @@ def main():
         for i in range(0, B):  # we need consider the different Bscan numbers for different volumes.
             id = testIDs[i]
             if '_s000' == id[-5:]:
-                volumeIDs.append(id[: id.rfind("_s000")])
+                volumeIDs.append(id[: id.rfind("_s000")])  #B200_s000 or W200_s000
                 volumeBscanStartIndexList.append(i)
 
         images = images.cpu().numpy().squeeze()

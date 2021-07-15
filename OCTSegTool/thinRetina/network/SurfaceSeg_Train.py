@@ -23,7 +23,7 @@ from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTDataSet6Bscans import  OCTDataSet6Bscans
-from OCTData.OCTTransform import OCTDataTransform
+from OCTData.OCTTransform3D import OCTDataTransform3D
 from OCTData.OCTDataUtilities import computeMASDError
 
 def printUsage(argv):
@@ -85,7 +85,7 @@ def main():
             print(f"Current do not support Cross Validation and not dataIn1Parcel\n")
             assert(False)
 
-    trainTransform = OCTDataTransform(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation,  flippingProb=hps.flippingProb)
+    trainTransform = eval(hps.datasetTransform)(prob=hps.augmentProb, noiseStd=hps.gaussianNoiseStd, saltPepperRate=hps.saltPepperRate, saltRate=hps.saltRate, rotation=hps.rotation, flippingProb=hps.flippingProb)
     validationTransform = trainTransform
     # validation supporting data augmentation benefits both learning rate decaying and generalization.
 
