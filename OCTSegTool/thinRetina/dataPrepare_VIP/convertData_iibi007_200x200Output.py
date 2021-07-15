@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from utilities import  getSurfacesArray
 import sys
 sys.path.append("../../..")
-from OCTData.OCTDataUtilities import scaleDownMatrix, scaleUpMatrix,BWSurfacesSmooth
+from OCTData.OCTDataUtilities import scaleDownMatrix, scaleUpMatrix,BWSurfacesSmooth, saveNumpy2OCTExplorerXML
 from skimage import exposure  # for CLAHE
 # import cv2 as cv  # for CLAHE
 import scipy
@@ -40,6 +40,7 @@ surfaceNames =  ("ILM", "RNFL-GCL", "IPL-INL", "OPL-HFL", "BMEIS", "OB_RPE")
 pltColors = ('tab:blue', 'tab:orange',  'tab:purple',  'tab:brown',  'tab:red', 'tab:green')
 needLegend = True
 
+
 # output image size:
 B = 200
 H = 512
@@ -50,6 +51,7 @@ TPSSmoothing = 2.1
 
 
 # output Dir:
+refXMLFile = "/localscratch/Users/hxie1/data/thinRetina/numpy_19cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
 outputImageDir = "/localscratch/Users/hxie1/data/thinRetina/numpy_19cases/rawGT"
 outputNumpyParentDir = "/localscratch/Users/hxie1/data/thinRetina/numpy_19cases"
 outputSmoothXmlDir = os.path.join(outputNumpyParentDir, "smoothxml")
@@ -134,6 +136,11 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
         octVolumeFileList = glob.glob(patientDir + f"/*_OCT_Iowa.mhd")
         assert len(octVolumeFileList) == 1
         octVolumePath = octVolumeFileList[0]
+        os.system(f"cp {octVolumePath} {outputSmoothXmlDir}")
+        octVolumeRawPath = octVolumePath.replace(".mhd", ".raw")
+        os.system(f"cp {octVolumeRawPath} {outputSmoothXmlDir}")
+
+
         dirname = os.path.dirname(octVolumePath)
         basename = os.path.basename(octVolumePath)
         basename = basename[0:basename.rfind("_OCT_Iowa.mhd")]
@@ -144,6 +151,7 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
                 if not os.path.isfile(surfacesXmlPath):
                     print("Error: can not find surface xml file")
                     assert False
+
         else:
             surfacesXmlPath = None
 
@@ -153,6 +161,7 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
         itkImage = sitk.ReadImage(octVolumePath)
         npImage = sitk.GetArrayFromImage(itkImage).astype(float)  # in BxHxW dimension
         npImage = np.flip(npImage, (1, 2))  # as ray's format filp H and W dimension.
+        B0,H0,W0 = npImage.shape  # record original image size.
         B1,H1,W1 = npImage.shape  # 1 indicates image
 
         if "noGTTest" not in datasetName:
@@ -306,6 +315,57 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             # for example PVIP2_4045_B128_s127 and s_126 may exceed the low range.
             surfaces = np.clip(surfaces, 0, H-1)
 
+            # output smoothed surface into xml with original size.
+            # surfaces of size BxNxW in H height will restore to B0xNxW0 size and in H0 height.
+            restoredSurfaces = surfaces.copy()
+            if W<W0:
+                M = scaleUpMatrix(B, W, W0)
+            elif W>W0:
+                M = scaleDownMatrix(B, W, W0)
+            else:
+                M = None
+            if M is not None:
+                restoredSurfaces = np.matmul(restoredSurfaces, M)  # size: BxNxW0
+
+            if B < B0:
+                M = scaleUpMatrix(W0, B, B0)
+            elif B > B0:
+                M = scaleDownMatrix(W0, B, B0)
+            else:
+                M = None
+            if M is not None:
+                restoredSurfaces = np.swapaxes(restoredSurfaces,axis1=0, axis2=2)  # W0xNxB
+                restoredSurfaces = np.matmul(restoredSurfaces, M)  # size: W0xNxB0
+                restoredSurfaces = np.swapaxes(restoredSurfaces, axis1=0, axis2=2)  # B0xNxW0
+
+            if H != H0:
+                restoredSurfaces *= H0/H
+
+            penetrationChar = 'z'  # use z or y to represent penetration direction.
+            # physical size of voxel
+            voxelSizeUnit = "um"
+            penetrationPixels = H0
+            # a 6mm x 6mmx x2mm volume.
+            if B0==200 and W0==200:
+                voxelSizeX = 30.150749
+                voxelSizeY =  30.150749
+                voxelSizeZ =  1.955034
+            elif B0==128 and W0 ==512:
+                voxelSizeX = 11.741680
+                voxelSizeY = 47.244091
+                voxelSizeZ = 1.955034
+            else:
+                print("Error: maybe image size eror before save xml file.")
+                assert False
+
+            saveNumpy2OCTExplorerXML(basename, restoredSurfaces, surfaceNames, outputSmoothXmlDir, refXMLFile,
+                                     penetrationChar=penetrationChar, penetrationPixels=penetrationPixels,
+                                     voxelSizeUnit=voxelSizeUnit, voxelSizeX=voxelSizeX, voxelSizeY=voxelSizeY,
+                                     voxelSizeZ=voxelSizeZ, nameModification="smoothGT")
+
+
+
+
         #  output  numpy array for all B-scan.
         allPatientsImageArray[s:s+B,:,:] = smoothedImage  # BxHxW
         allPatientsImageArrayClahe[s:s+B,:,:] = claheImage #BxHxW
@@ -321,7 +381,7 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             f = plt.figure(frameon=False)
             DPI = 100
             rowSubplot = 1
-            colSubplot = 4
+            colSubplot = 4 if surfaces is not None else 3
             f.set_size_inches(W * colSubplot / float(DPI), H * rowSubplot / float(DPI))
 
             plt.margins(0)
@@ -339,18 +399,28 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             subplot3.imshow(claheImage[i, :, :], cmap='gray')
             subplot3.axis('off')
 
-            subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
-            subplot4.imshow(claheImage[i, :, :], cmap='gray')
-            for n in range(0, N):
-                subplot4.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
-            if needLegend:
-                subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
-            subplot4.axis('off')
+            if surfaces is not None:
+                subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
+                subplot4.imshow(claheImage[i, :, :], cmap='gray')
+                for n in range(0, N):
+                    subplot4.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
+                if needLegend:
+                    subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
+                subplot4.axis('off')
 
-            curImagePath = os.path.join(outputImageDir, basename+f"_B{B:03d}_s{i:03d}_raw_smoothed_clahe_GT.png")
+            if surfaces is not None:
+                curImagePath = os.path.join(outputImageDir, basename+f"_B{B:03d}_s{i:03d}_raw_smoothed_clahe_GT.png")
+            else:
+                curImagePath = os.path.join(outputImageDir, basename + f"_B{B:03d}_s{i:03d}_raw_smoothed_clahe.png")
 
             plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()
+
+
+
+
+
+
 
         #  output  numpy array for all y-z plane
         npImage = np.swapaxes(npImage, axis1=0, axis2=2)  # WxHxB
@@ -371,7 +441,7 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             f = plt.figure(frameon=False)
             DPI = 100
             rowSubplot = 1
-            colSubplot = 4
+            colSubplot = 4 if surfaces is not None else 3
             f.set_size_inches(B * colSubplot / float(DPI), H * rowSubplot / float(DPI))
 
             plt.margins(0)
@@ -390,15 +460,19 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             subplot3.imshow(claheImage[i, :, :], cmap='gray')
             subplot3.axis('off')
 
-            subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
-            subplot4.imshow(claheImage[i, :, :], cmap='gray')
-            for n in range(0, N):
-                subplot4.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
-            if needLegend:
-                subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
-            subplot4.axis('off')
+            if surfaces is not None:
+                subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
+                subplot4.imshow(claheImage[i, :, :], cmap='gray')
+                for n in range(0, N):
+                    subplot4.plot(range(0, W), surfaces[i, n, :], pltColors[n], linewidth=1.2)
+                if needLegend:
+                    subplot4.legend(surfaceNames, loc='lower left', ncol=2, fontsize='x-small')
+                subplot4.axis('off')
 
-            curImagePath = os.path.join(outputImageDir, basename + f"_W{W:03d}_s{i:03d}_raw_smoothed_clahe_GT.png")
+            if surfaces is not None:
+                curImagePath = os.path.join(outputImageDir, basename + f"_W{W:03d}_s{i:03d}_raw_smoothed_clahe_GT.png")
+            else:
+                curImagePath = os.path.join(outputImageDir, basename + f"_W{W:03d}_s{i:03d}_raw_smoothed_clahe.png")
 
             plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
             plt.close()

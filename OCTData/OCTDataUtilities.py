@@ -120,7 +120,7 @@ def computeMASDError_numpy(predicitons, gts, volumeBscanStartIndexList, hPixelSi
 
 def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, refXMLFile,
                              penetrationChar, penetrationPixels,
-                             voxelSizeUnit, voxelSizeX, voxelSizeY, voxelSizeZ):
+                             voxelSizeUnit, voxelSizeX, voxelSizeY, voxelSizeZ, nameModification=None):
     curTime = datetime.datetime.now()
     dateStr = f"{curTime.month:02d}/{curTime.day:02d}/{curTime.year}"
     timeStr = f"{curTime.hour:02d}:{curTime.minute:02d}:{curTime.second:02d}"
@@ -221,7 +221,11 @@ def saveNumpy2OCTExplorerXML(patientID, predicition, surfaceNames, outputDir, re
             for i in range(W):
                 ET.SubElement(bscanElemeent, penetrationChar, {}).text = str(surface[i])
 
-    outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
+    if nameModification is None:
+        outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_Prediction.xml"
+    else:
+        outputXMLFilename = outputDir + f"/{patientID}_Sequence_Surfaces_{nameModification}.xml"
+
     xmlTree.write(outputXMLFilename, pretty_print=True)
 
 def batchPrediciton2OCTExplorerXML(testOutputs, volumeIDs, volumeBscanStartIndexList, surfaceNames, outputDir,
