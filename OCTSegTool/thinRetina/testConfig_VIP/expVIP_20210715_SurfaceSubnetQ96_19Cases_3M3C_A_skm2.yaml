@@ -46,7 +46,7 @@ groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
 device: torch.device('cuda:0')   #GPU ID
 #device: torch.device('cpu')
-batchSize: 8 # total 1312 training B-scans 1312 = 4*(200+128)
+batchSize: 16  # 8 volume x 200 slice/volume.
 learningRate: 0.1
 lrPatience: 20
 epochs: 800
@@ -71,7 +71,7 @@ segChannels: 96  # number of channel in the segmentation part.
 
 # some physical parameter of images
 slicesPerPatient: 200  # for in the validation and test
-hPixelSize: 1.955034  # unit: micrometer or micron, in y/height direction
+hPixelSize: 3.910068   #1.955034um/pixel x2, as inputHeight scale down from 1024 to 512.  # unit: micrometer or micron, in y/height direction
 
 # data augmentation
 augmentProb: 0.4  #  data augmentation rate
@@ -98,7 +98,7 @@ penetrationChar: 'z'  # use z or y to represent penetration direction.
 voxelSizeUnit: "um"
 voxelSizeX: 30.150749
 voxelSizeY: 30.150749
-voxelSizeZ: 1.955034
+voxelSizeZ: 1.955034  # for 1024 penetration pixel
 
 
 useDynamicProgramming: False

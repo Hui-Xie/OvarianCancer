@@ -2,6 +2,11 @@
 PVIP2-4084_Macular_512x128_5-14-2012_14-35-40_OD_sn26743_cube_z_W200_s109_raw_smoothed_clahe_GT.png:
 Groun truth has incorrect error.
 
+Launch training:
+1007  2021-07-15 17:53:05 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml &
+2.25 min/epoch for training.
+this training use 1.95
+
 
 
 # July 13th, Tuesday, 2021
