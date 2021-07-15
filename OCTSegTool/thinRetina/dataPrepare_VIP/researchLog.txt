@@ -1,3 +1,9 @@
+# July 15th, Thursday, 2021
+PVIP2-4084_Macular_512x128_5-14-2012_14-35-40_OD_sn26743_cube_z_W200_s109_raw_smoothed_clahe_GT.png:
+Groun truth has incorrect error.
+
+
+
 # July 13th, Tuesday, 2021
 Meeting time: 01 pm -02:30 pm July 13th, Tuesday, 2021
 Attendee:  Jui Kai, Hui

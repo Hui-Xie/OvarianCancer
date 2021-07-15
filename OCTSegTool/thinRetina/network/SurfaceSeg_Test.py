@@ -3,6 +3,8 @@
 
 import sys
 import os
+
+import skimage.feature
 import torch
 from torch.utils import data
 import random
@@ -139,11 +141,54 @@ def main():
                 volumeIDs.append(id[: id.rfind("_s000")])  #B200_s000 or W200_s000
                 volumeBscanStartIndexList.append(i)
 
+
+
+
         images = images.cpu().numpy().squeeze()
         testOutputs = testOutputs.cpu().numpy()
-        _,H,W = images.shape
+        B,H,W = images.shape
+        _,S,_ = testOutputs.shape
         nVolumes = len(volumeBscanStartIndexList)
+        if hps.existGTLabel:
+            testGts = testGts.cpu().numpy()
 
+        # merger Bscan and Ascan output, and delete Ascan ground truth
+        if hps.useAScanPlane:
+            newImages = np.zeros((B//2,H,W),dtype=float)
+            newTestOutputs = np.zeros((B//2,S, W),dtype=float)
+            if hps.existGTLabel:
+                newTestGts = np.zeros((B//2,S, W),dtype=float)
+            newVolumeBscanStartIndexList=[]
+            newVolumeIDs = []
+
+            b = 0
+            for i in range(0, nVolumes, 2):
+                # first judge volumeID corresponding
+                assert (volumeIDs[i] == volumeIDs[i+1].replace(f"_W{W:03d}_",f"_B{W:03d}_"))
+
+                surfacesBscan = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :,:].copy()  # prediction volume  in BxNxW
+                if i != nVolumes - 2:
+                    surfacesAscan = testOutputs[volumeBscanStartIndexList[i+1]:volumeBscanStartIndexList[i + 2], :,:].copy()  # prediction volume in WxNxB
+                else:
+                    surfacesAscan = testOutputs[volumeBscanStartIndexList[i+1]:, :, :].copy()  # prediction volume  in WxNxB
+                surfaces = (surfacesBscan + np.swapaxes(surfacesAscan,axis1=0, axis2=2))/2.0  # BxNxW
+                nB,_,_ = surfaces.shape
+                newTestOutputs[b:b+nB,] = surfaces
+                newImages[b: b+nB,] = images[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1],:,:]
+                newVolumeBscanStartIndexList.append(b)
+                newVolumeIDs.append(volumeIDs[i])
+                if hps.existGTLabel:
+                    newTestGts[b:b+nB,] = testGts[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1],:,:]
+                b += nB
+
+            images = newImages
+            testGts = newTestGts
+            testOutputs = newTestOutputs
+            volumeBscanStartIndexList = newVolumeBscanStartIndexList
+            volumeIDs = newVolumeIDs
+            nVolumes = len(volumeBscanStartIndexList)
+            B,H,W = images.shape
+  
         # here make sure surfaces do not violate topological constraints for each BxW surface and each volume
         if hps.BWSurfaceSmooth:
             b = 0
@@ -215,7 +260,6 @@ def main():
 
 
         if hps.existGTLabel: # Error Std and mean
-            testGts = testGts.cpu().numpy()
             stdSurfaceError, muSurfaceError, stdError, muError =  computeMASDError_numpy(testOutputs, testGts, volumeBscanStartIndexList, hPixelSize=hps.hPixelSize)
 
 
