@@ -203,11 +203,9 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             M = scaleDownMatrix(B1, H1, H)
             npImage = np.matmul(npImage, M)  # 200x200x512
             npImage = np.swapaxes(npImage, axis1=1, axis2=2)  # size: 200x512x200
-            assert (B, H, W == npImage.shape)
 
             if surfaces is not None:
                 surfaces = surfaces * (H / H1)  # 200xNx200
-                assert (B, N, W == surfaces.shape)
 
         elif npImage.shape == (200, 1024, 200):  # scale image to 200x512x200
             # scale down H dimension.
@@ -216,14 +214,9 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             M = scaleDownMatrix(B1,H1,H)
             npImage = np.matmul(npImage,M)  # 200x200x512
             npImage = np.swapaxes(npImage,axis1=1,axis2=2) # size: 200x512x200
-            assert (B,H,W == npImage.shape)
 
             if surfaces is not None:
                 surfaces = surfaces*(H/H1) # 200xNx200
-                assert (B,N,W == surfaces.shape)
-
-
-
         else:
             print(f"Error: npImage size error")
             assert False
@@ -257,7 +250,7 @@ for datasetName,[patientDirList, outputNumpyDir] in cases.items():
             i0 = i-1 if i-1>=0 else 0
             i1 = i
             i2 = i+1 if i+1<W else W-1
-            smoothedImage[i,] = (tempImage[:,:,i0] +tempImage[:,:,i1] +tempImage[:,:,i2])/3.0  # intensity in [0,255] in float
+            smoothedImage[:,:,i] = (tempImage[:,:,i0] +tempImage[:,:,i1] +tempImage[:,:,i2])/3.0  # intensity in [0,255] in float
 
         # Use CLAHE (Contrast Limited Adaptive Histogram Equalization) method to increase the contrast of smoothed Bscan.
 
