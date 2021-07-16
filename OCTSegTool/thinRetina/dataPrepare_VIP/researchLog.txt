@@ -2,11 +2,15 @@
 PVIP2-4084_Macular_512x128_5-14-2012_14-35-40_OD_sn26743_cube_z_W200_s109_raw_smoothed_clahe_GT.png:
 Groun truth has incorrect error.
 
-Launch training: A use 24 filters in Unet, B use 36 filters in Unet.
+Launch training: A use 24 filters in Unet, B use 36 filters in Unet. C,D use 20 batchsize .
  1015  2021-07-15 18:35:11 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml &
  1018  2021-07-15 18:45:42 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.yaml &
  1019  2021-07-15 18:45:54 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_A_skm2.yaml &
  1020  2021-07-15 18:45:58 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_B_skm2.yaml &
+ 1022  2021-07-15 19:09:15 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_C_skm2.yaml &
+ 1023  2021-07-15 19:09:21 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_D_skm2.yaml &
+ 1024  2021-07-15 19:09:31 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_C_skm2.yaml &
+ 1025  2021-07-15 19:09:38 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_D_skm2.yaml &
 
 1.5 min/epoch for training at batchsize=16,  use 17-23GB GPU memory
 
