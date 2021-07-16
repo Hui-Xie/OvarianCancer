@@ -1,0 +1,140 @@
+# For 13 cases of VIP (Variability In Perimetry)
+# training: 8 volumes, validation: 2 volumes, test 3 volumes.
+# Use 3 smoothedImages, 3 CLAHE images, and 2 spaction information channels. total 8 input channels.
+
+debug: False # debug mark
+dataIn1Parcel: True
+useIndependentValidation: True
+dataInSlice: False
+existGTLabel: True
+useCLAHEImages: True # add CLAHE image as extra channels.
+useSpaceChannels: False  # use Bscan space and Ascan space channels.
+useCLAHEReplaceSmoothed: False
+useAScanPlane: True # add Ascan plane (yz plane) for training and test.
+
+dataDir: "/raid001/users/hxie1/data/thinRetina/numpy_19cases"
+# log will save at: dataDir + "/log/" + network + "/" + experimentName
+K: 0
+k: -1   # -1 means do not use cross validation
+# when use cross validation:
+# training data:  dataDir + training + images_CV{k}.npy
+#         label: dataDir + training + surfaces_CV{k}.npy
+#         IDs  : dataDir + training + patientID_CV{k}.json
+
+# validation data:  dataDir + validation + images_CV{k}.npy
+#           label: dataDir + validation + surfaces_CV{k}.npy
+#           IDs  : dataDir + validation + patientID_CV{k}.json
+
+# test data:  dataDir + test + images_CV{k}.npy
+#     label: dataDir + test + surfaces_CV{k}.npy
+#     IDs  : dataDir + test + patientID_CV{k}.json
+
+# when do not use cross validation:
+# training data:  dataDir + training + images.npy
+#         label: dataDir + training + surfaces.npy
+#         IDs  : dataDir + training + patientID.json
+
+# validation data:  dataDir + validation + images.npy
+#           label: dataDir + validation + surfaces.npy
+#           IDs  : dataDir + validation + patientID.json
+
+# test data:  dataDir + test + images.npy
+#     label: dataDir + test + surfaces.npy
+#     IDs  : dataDir + test + patientID.json
+
+groundTruthInteger: False
+sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
+device: torch.device('cuda:4')   #GPU ID
+#device: torch.device('cpu')
+batchSize: 20  # 8 volume x 200 slice/volume.
+learningRate: 0.1
+lrPatience: 20
+epochs: 800
+
+optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
+datasetTransform:  "OCTDataTransform3D"
+datasetLoader: "OCTDataSet6Bscans"  # use 3 continuous Bscan as input to predict the segmentation of middle one.
+network: "SurfaceSegNet_Q"
+inputHeight: 512   # scaled input image height
+inputWidth: 200   # scaled input image width
+scaleNumerator: 1
+scaleDenominator: 1
+inputChannels: 6 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
+nLayers: 6 # as width is just 200, 6 layers is ok.
+numSurfaces: 6  # num of surfaces in an image
+startFilters: 24  # the num of filters in first layer of Unet
+gradChannels: 0   # the added gradient channels beside raw image channel
+bothSideGrad: True # False use singleSideGrad
+gradWeight: 10   # image grade weight to adjust WeightedDivLoss.
+addCoordinatesXYChannels: False
+segChannels: 96  # number of channel in the segmentation part.
+
+# some physical parameter of images
+slicesPerPatient: 200  # for in the validation and test
+hPixelSize: 3.910068   #1.955034um/pixel x2, as inputHeight scale down from 1024 to 512.  # unit: micrometer or micron, in y/height direction
+
+# data augmentation
+augmentProb: 0.4  #  data augmentation rate
+gaussianNoiseStd: 0.1 # gausssian nosie std with mean =0
+# for salt-pepper noise
+saltPepperRate: 0.05  # rate = (salt+pepper)/allPixels
+saltRate: 0.5  # saltRate = salt/(salt+pepper)
+rotation: False
+flippingProb: 0.5  #  0 means do not flip withd direction, as the nasal and temporal direction is not symmetric in OD/OS eye.
+lacingWidth: 0  # Lace the both end of 0 or 360 degree to offset inaccurate segementation at boundary of input image
+TTA: False       #Test-Time Augmentation
+TTA_StepDegree: 0 # roration step degree of TTA, in integer degree
+# data augmentation
+
+netPath: "/raid001/users/hxie1/data/thinRetina/numpy_19cases/netParameters"  # net is saved at netpath / network / self_filename
+# if loadNetPath !="", netPath will be replaced by loadNetPath
+# below loadNetPath is copied from "/raid001/users/hxie1/data/OCT_JHU/numpy/netParameters/OCTUnetJHU/expUnetJHU_20200130" on 20200201 17:33
+loadNetPath:  ""  # this is pretrained network
+outputDir:  ""
+logDir: "/raid001/users/hxie1/data/thinRetina/numpy_19cases/log"
+refXMLFile: "/raid001/users/hxie1/data/thinRetina/numpy_19cases/refSegXml/PVIP2-4074_Macular_200x200_11-7-2013_8-14-8_OD_sn26558_cube_z_Surfaces_Iowa_Ray.xml"
+penetrationChar: 'z'  # use z or y to represent penetration direction.
+# physical size of voxel
+voxelSizeUnit: "um"
+voxelSizeX: 30.150749
+voxelSizeY: 30.150749
+voxelSizeZ: 1.955034  # for 1024 penetration pixel
+
+
+useDynamicProgramming: False
+usePrimalDualIPM: False
+useLayerDice: False
+useReferSurfaceFromLayer: False
+useLayerCE: False
+useCEReplaceKLDiv: False
+useSmoothSurfaceLoss: False
+useWeightedDivLoss: False
+useRift: False
+smoothRift: False  # smooth Rift in ground truth
+smoothHalfWidth: 15  # 5% of image width
+smoothPadddingMode: "reflect" # paddingMode: 'constant', 'reflect', 'replicate' or 'circular'.
+smoothRbeforeLoss: False  # use smooth predicted R to compare loss with smooth ground truth R
+useMultiSurfaceCEWeight:  False
+
+useMedianFilterSmoothing: False
+medianFilterWinSize: 11  # after loss
+useSmoothingWithPrecision: False
+precisionSmoothWinSize: 5
+
+usePredictionTPS: True  # use thin-plate-spline to smooth the final prediction result.
+TPSNumControlPoints: 1200
+TPSSmoothing:  2.1   # the TPS smoothing parameter
+BWSurfaceSmooth: True  # medianfilter smoothing and guarantee topological order in BW surface
+
+gradientRiftConvGoBack: False
+OSFlipBack: False  # the OS eyes flip into OD eye in training, and it will flip back in final output xml.
+# if flippingProb >0, the OSFlipBack should be false
+
+# constrained model, both False meaning RelU
+# ReLU to guarantee layer order not to cross each other
+# 0: NoReLU; 1: ReLU;  2: IPM; 3: choose surface value with bigger precision when surfaces conflict
+hardSeparation: 0
+softSeparation: False
+
+
+goodBscans: []
