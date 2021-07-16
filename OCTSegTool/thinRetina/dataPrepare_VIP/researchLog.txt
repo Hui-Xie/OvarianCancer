@@ -1,5 +1,22 @@
+#July 16th, Friday, 2021
+Meeting time: 12:10 pm -01:50 pm July 16th, Friday, 2021
+Attendee:  Jui Kai, Hui
+Topic: discussion smoothed ground truth
+Minutes:
+1  The ground truth result of graph search is not perfect, like the case 4084 and 4081.
+   But we do not try to modify it, we hope network can still tolerate  this ground truth errors.
+2  For data augmentation, if we distort the bottom surface, and keep distances with other surfaces unchange,
+   the whole surfaces can shift some distance, change corresponding imagesa and ground truth can get a new data augmentation sample.
+   this can be stage 3 data augmentation.
+3  we can name normal B-scan as horizontal-Bscan in x-z plane, another as vertical-Bscan in y-z plane.
+4  Radical-B-scan can be stage 2 data augmentation.
+5  Glaucoma focus on GCL-IPL layer thickness changes.
+
+
+
 # July 15th, Thursday, 2021
 PVIP2-4084_Macular_512x128_5-14-2012_14-35-40_OD_sn26743_cube_z_W200_s109_raw_smoothed_clahe_GT.png:
+PVIP2-4081_Macular_512x128_11-11-2010_12-42-15_OS_sn14530_cube_z_B200_s100_raw_smoothed_clahe_GT.png
 Groun truth has incorrect error.
 
 Launch training: A use 24 filters in Unet, B use 36 filters in Unet. C,D use 20 batchsize .
