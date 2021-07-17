@@ -13,6 +13,12 @@ Minutes:
 5  Glaucoma focus on GCL-IPL layer thickness changes.
 
 
+For meerge the prediction result between horizontal Bscan and vertical Bsan.
+1  if difference is less than 3, get its mean.
+2  if difference is bigger than 3, choose the value whose neighbors regions has smaller std.
+
+
+
 
 # July 15th, Thursday, 2021
 PVIP2-4084_Macular_512x128_5-14-2012_14-35-40_OD_sn26743_cube_z_W200_s109_raw_smoothed_clahe_GT.png:
