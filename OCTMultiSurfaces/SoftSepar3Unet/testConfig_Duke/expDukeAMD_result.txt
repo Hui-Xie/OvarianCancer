@@ -27,12 +27,27 @@ Professor's review comments on the segmentation paper:
 0  about ReLU:  structure topologic order is the basic of JHU method.
                 Graph search use some method to gurantee order, IPM use some method to guarantee order.
                 our method's some thing.  in a separate paragraph.   --done.
-1  emphasize main contribution: domain-knowlege-aware loss;
+1  emphasize main contribution: domain-knowlege-aware loss;  --done.
 2  Using gradient in the loss is related with Mona's paper;  Paper of Mona, IPM use gradient.  --done.
 3  domain-knowledge-aware   -> domain-aware;   --done.
-4  what is general atttention machinism? its drawback? why is it not good for our application?
-5  for reduce traing samples experiment, what is performace drop rate?
+4  what is general atttention machinism? its drawback? why is it not good for our application?   --done.
+5  for reduce traing samples experiment, what is performace drop rate?    --- cancel, with the reason below.
    Or we can use 50% data get a same result of JHU method.
+
+   Performace drop rate is not a fair comparison, as their individual baselines are different.
+   Directly comparing their error number for same exam is fair.
+   For an example:
+   for 2 students A and B attending 2 exams. Below table displays their error quantity in the exams.
+   ===================================================
+   ErrorNum         A                 B
+   easy Exam:       1                 5
+   difficult Exam:  2                 8
+   performDropRate: 100%              60%
+   formula:         (2-1)/1           (8-5)/5
+   ===================================================
+   From performance drop rate, we can not conclude that the student B is more excellent,
+        and we also can not conclude that the student A is less stable in more difficult exam than student B.
+
 6  remove all p-value tables.
 7  paper[19,20]: this kind of citation method is not good.
    implied citation, like graph search, and glaucoma, or He etc is a better citation method.
