@@ -26,7 +26,7 @@ from framework.ConfigReader import ConfigReader
 from framework.SurfaceSegNet_Q import SurfaceSegNet_Q
 from OCTData.OCTDataSet import  OCTDataSet
 from OCTData.OCTDataSet6Bscans import  OCTDataSet6Bscans
-from OCTData.OCTDataUtilities import computeMASDError_numpy, saveNumpy2OCTExplorerXML, outputNumpyImagesSegs, BWSurfacesSmooth, scaleUpMatrix , scaleDownMatrix
+from OCTData.OCTDataUtilities import computeMASDError_numpy, saveNumpy2OCTExplorerXML, outputNumpyImagesSegs, BWSurfacesSmooth, scaleUpMatrix , scaleDownMatrix, harmonize2Predictions
 from framework.NetTools import columnHausdorffDist
 
 import time
@@ -165,13 +165,13 @@ def main():
             for i in range(0, nVolumes, 2):
                 # first judge volumeID corresponding
                 assert (volumeIDs[i] == volumeIDs[i+1].replace(f"_W{W:03d}_",f"_B{W:03d}_"))
-
+                # horizontal Bsan
                 surfacesBscan = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :,:].copy()  # prediction volume  in BxNxW
-                if i != nVolumes - 2:
+                if i != nVolumes - 2:  # vertical Bsan = Ascan
                     surfacesAscan = testOutputs[volumeBscanStartIndexList[i+1]:volumeBscanStartIndexList[i + 2], :,:].copy()  # prediction volume in WxNxB
                 else:
                     surfacesAscan = testOutputs[volumeBscanStartIndexList[i+1]:, :, :].copy()  # prediction volume  in WxNxB
-                surfaces = (surfacesBscan + np.swapaxes(surfacesAscan,axis1=0, axis2=2))/2.0  # BxNxW
+                surfaces = harmonize2Predictions(surfacesBscan, np.swapaxes(surfacesAscan,axis1=0, axis2=2))
                 nB,_,_ = surfaces.shape
                 newTestOutputs[b:b+nB,] = surfaces
                 newImages[b: b+nB,] = images[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1],:,:]

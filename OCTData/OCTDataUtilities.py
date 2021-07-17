@@ -452,11 +452,53 @@ def BWSurfacesSmooth(surfaces, smoothSurfaceZero=True):
             outputSurfaces[b, s, w] = surface0
             outputSurfaces[b, s + 1, w] = surface1
 
-        # modfity the relation of s and s+1, then s+1 and s+2 relation may be affected. So it needs to check again.
+        # modify the relation of s and s+1, then s+1 and s+2 relation may be affected. So it needs to check again.
         surfaces = outputSurfaces.copy()
         outlierIndexes = np.transpose(np.nonzero(surfaces[:, 0:-1, :] > surfaces[:, 1:, :]))  # as_tuple=False
         N, dims = outlierIndexes.shape
     return outputSurfaces
+
+def harmonize2Predictions(predict1, predict2):
+    '''
+    merge the prediction results between horizontal Bscan and vertical Bscan, with a surface smoothness assumption:
+    1  if difference is less than 3, get its mean.
+    2  if difference is bigger than 3, choose the value whose neighbors regions has smaller std.
+    
+    :param predict1: BxNxW surface prediction from horizontal Bsans, in numpy format.
+    :param predict2: BxNxW surface prediction form vertical Bsans, in numpy format.
+    :return: harmonized BxNxW surface prediction
+    '''
+
+    B, S, W = predict1.shape
+    assert (B,S,W) == predict2.shape
+    ndim = predict1.ndim
+
+    # the outlier are |predict1- predict2| > 3 in pixel
+    outlierIndexes = np.transpose(np.nonzero((predict1 - predict2).absolute() > 3.0))  # as_tuple=False
+    N, dims = outlierIndexes.shape
+    harmonizedSurfaces = (predict1 + predict2)/2.0
+    assert dims == ndim
+
+    for i in range(N):
+        b, s, w = outlierIndexes[i,]  # s is current surface.
+        # surface coordinates 5x5 neighbor.
+        blow = b - 2 if b - 2 >= 0 else 0
+        bhigh = b + 3 if b + 3 <= B else B
+        wlow = w - 2 if w - 2 >= 0 else 0
+        whigh = w + 3 if w + 3 <= W else W
+
+        # the surface with smaller std is more reliable.
+        std1 = np.std(predict1[blow:bhigh, s, wlow:whigh])
+        std2 = np.std(predict2[blow:bhigh, s, wlow:whigh])
+        # choose the value with a smaller std.
+        if std1 <= std2:
+            harmonizedSurfaces[b, s, w] = predict1[b,s,w]
+        else:
+            harmonizedSurfaces[b, s, w] = predict2[b,s,w]
+
+    return harmonizedSurfaces
+    
+    
 
 def scaleUpMatrix(B, W1, W2):
     '''

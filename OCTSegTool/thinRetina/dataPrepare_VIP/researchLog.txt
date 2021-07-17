@@ -1,3 +1,18 @@
+# July 17th, Satuday, 2021
+A unlimited zigzag Bscan data augmentation plan:
+Here a Bscan is BxW size scan with B=W, z indicate penetration direction.
+zigzag horizontal Bscan (xz plan): [b_0, b_1,b_2,..., b_{W-1}], where b_i = b_{i-1} + {-1,0,1};
+zigzag vetical Bscan (yz plan): [w_0, w_1,w_2,...., w_{B-1}], where w_i = w_{i-1} + {-1,0,1}.
+
+In theory, it will has at least 2*B*2^(B-1) possible zigzag Bscans for data augmentation.
+It will greatly reduce the quantity requirement of training sample with expert-marked ground truth.
+It still can support 3M3C input form.
+
+
+
+
+
+
 #July 16th, Friday, 2021
 Meeting time: 12:10 pm -01:50 pm July 16th, Friday, 2021
 Attendee:  Jui Kai, Hui
@@ -13,9 +28,9 @@ Minutes:
 5  Glaucoma focus on GCL-IPL layer thickness changes.
 
 
-For meerge the prediction result between horizontal Bscan and vertical Bsan.
-1  if difference is less than 3, get its mean.
-2  if difference is bigger than 3, choose the value whose neighbors regions has smaller std.
+merge the prediction results between horizontal Bscan and vertical Bscan.
+    1  if difference is less than 3, get its mean.
+    2  if difference is bigger than 3, choose the value whose neighbors regions has smaller std.
 
 
 
