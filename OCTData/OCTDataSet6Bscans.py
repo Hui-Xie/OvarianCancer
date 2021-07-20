@@ -355,6 +355,7 @@ class OCTDataSet6Bscans(data.Dataset):
         :return:  data, claheData, label
         '''
         # from s to start, random generate all slice index for a zigzag Bscan
+        # each zigzag Bscan cross each H column only once.
         sliceOffsetRange=(-1,0,1)
         s1List = [s,]*W  # middle slice index along W direction
         for i in range(1, W, 1):
