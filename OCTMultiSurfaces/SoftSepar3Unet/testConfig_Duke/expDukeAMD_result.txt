@@ -14,15 +14,16 @@ Professor's review comments on IPM paper:
 
 For TMI paper:
 1   add table, figure [htbp];
-2   In introduction, brief OCT segmentation method. we can refer to the JHU's paper.
-3   In the ablation study, first introduce the whole architecture components, describe the experiments.
+2   Lwmce, put the negative sign into below denominator.
+3   In introduction, brief OCT segmentation method. we can refer to the JHU's paper.
+4   In the ablation study, first introduce the whole architecture components, describe the experiments.
     And then analysis the ablations.  e.g. what is 6 ablation experiemnt.
-4  In the discussion parrt, refer to JHU paper.
+5  In the discussion parrt, refer to JHU paper.
    emphasize the our novolty, and then discuss the next step.
    analyze the drawback of JHU's method, and connect our method with them.
-   ReLU's spike down case can be an example.
+    ReLU's spike down case can be an example.
 
-   
+
 
 # July 19th, Monday, 2021
 https://www.embs.org/tmi/authors-instructions/
