@@ -474,7 +474,7 @@ def harmonize2Predictions(predict1, predict2):
     ndim = predict1.ndim
 
     # the outlier are |predict1- predict2| > 3 in pixel
-    outlierIndexes = np.transpose(np.nonzero((predict1 - predict2).absolute() > 3.0))  # as_tuple=False
+    outlierIndexes = np.transpose(np.nonzero(np.absolute(predict1 - predict2) > 3.0))  # as_tuple=False
     N, dims = outlierIndexes.shape
     harmonizedSurfaces = (predict1 + predict2)/2.0
     assert dims == ndim
