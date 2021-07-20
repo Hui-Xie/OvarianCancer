@@ -395,6 +395,66 @@ class OCTDataSet6Bscans(data.Dataset):
 
         return data, claheData, label
 
+    def __displayImageLabel__(self, data, claheData, label):
+        '''
+        internal test zigzag B-scan and its label.
+        :param data:
+        :param claheData:
+        :param label:
+        :return:
+        '''
+        pltColors = ('tab:blue', 'tab:orange', 'tab:purple', 'tab:brown', 'tab:red', 'tab:green')
+        B1,H,W =data.shape
+        B2,_,_ = claheData.shape
+        N,_ = label.shape
+
+        import matplotlib.pyplot as plt
+        f = plt.figure(frameon=False)
+        DPI = 100
+        rowSubplot = 1
+        colSubplot = B1+B2+1 # 1 for label
+        f.set_size_inches(W * colSubplot / float(DPI), H * rowSubplot / float(DPI))
+
+        plt.margins(0)
+        plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)  # very important for erasing unnecessary margins.
+
+        subplot1 = plt.subplot(rowSubplot, colSubplot, 1)
+        subplot1.imshow(data[0, :, :], cmap='gray')
+        subplot1.axis('off')
+
+        subplot2 = plt.subplot(rowSubplot, colSubplot, 2)
+        subplot2.imshow(data[1, :, :], cmap='gray')
+        subplot2.axis('off')
+
+        subplot3 = plt.subplot(rowSubplot, colSubplot, 3)
+        subplot3.imshow(data[2, :, :], cmap='gray')
+        subplot3.axis('off')
+
+        subplot4 = plt.subplot(rowSubplot, colSubplot, 4)
+        subplot4.imshow(claheData[0, :, :], cmap='gray')
+        subplot4.axis('off')
+
+        subplot5 = plt.subplot(rowSubplot, colSubplot, 5)
+        subplot5.imshow(claheData[1, :, :], cmap='gray')
+        subplot5.axis('off')
+
+        subplot6 = plt.subplot(rowSubplot, colSubplot, 6)
+        subplot6.imshow(claheData[2, :, :], cmap='gray')
+        subplot6.axis('off')
+
+
+        subplot7 = plt.subplot(rowSubplot, colSubplot, 7)
+        subplot7.imshow(data[1, :, :], cmap='gray')
+        for n in range(0, N):
+            subplot7.plot(range(0, W), label[n, :], pltColors[n], linewidth=1.5)
+        subplot7.axis('off')
+
+        plt.imshow()
+
+        #curImagePath = os.path.join(os.getcwd(), "tempTest" + f"_3smoothed_3clahe_GT.png")
+
+        #plt.savefig(curImagePath, dpi='figure', bbox_inches='tight', pad_inches=0)
+        #plt.close()
 
 
 
