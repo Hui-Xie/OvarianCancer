@@ -1,3 +1,7 @@
+# July 20th, Tuesday, 2021
+1  general 300 epoch are enough.
+2
+
 # July 17th, Satuday, 2021
 A unlimited zigzag Bscan data augmentation plan:
 Here a Bscan is BxW size scan with B=W, z indicate penetration direction.

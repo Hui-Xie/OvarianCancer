@@ -139,6 +139,7 @@ def main():
             id = testIDs[i]
             if '_s000' == id[-5:]:
                 volumeIDs.append(id[: id.rfind("_s000")])  #B200_s000 or W200_s000
+                # volumeID is like "PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_W200"
                 volumeBscanStartIndexList.append(i)
 
 
@@ -164,7 +165,7 @@ def main():
             b = 0
             for i in range(0, nVolumes, 2):
                 # first judge volumeID corresponding
-                assert (volumeIDs[i] == volumeIDs[i+1].replace(f"_W{W:03d}_",f"_B{W:03d}_"))
+                assert (volumeIDs[i] == volumeIDs[i+1].replace(f"_W{W:03d}",f"_B{W:03d}"))
                 # horizontal Bsan
                 surfacesBscan = testOutputs[volumeBscanStartIndexList[i]:volumeBscanStartIndexList[i + 1], :,:].copy()  # prediction volume  in BxNxW
                 if i != nVolumes - 2:  # vertical Bsan = Ascan
