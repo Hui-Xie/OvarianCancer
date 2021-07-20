@@ -1,3 +1,64 @@
+# July 20th, Tuesday, 2021
+Professor's review comments on IPM paper:
+1  In introduction, brief OCT segmentation method. we can refer to the JHU's paper.
+   change the tone to OCT segmentation method, instead of a general method.
+2  In the ablation study, first introduce the whole architecture components, describe the experiments.
+   And then analysis the ablations.  e.g. what is 6 ablation experiemnt.
+3  In the ablation study, delete ablation 3 and ablation 4 (dynamic sigma and region branch).
+4  In the discussion parrt, refer to JHU paper.
+   emphasize the our novolty, and then discuss the next step.
+   analyze the drawback of JHU's method, and connect our method with them.
+   ReLU's spike down case can be an example.
+
+
+
+For TMI paper:
+1   add table, figure [htbp];
+2   In introduction, brief OCT segmentation method. we can refer to the JHU's paper.
+3   In the ablation study, first introduce the whole architecture components, describe the experiments.
+    And then analysis the ablations.  e.g. what is 6 ablation experiemnt.
+4  In the discussion parrt, refer to JHU paper.
+   emphasize the our novolty, and then discuss the next step.
+   analyze the drawback of JHU's method, and connect our method with them.
+   ReLU's spike down case can be an example.
+
+   
+
+# July 19th, Monday, 2021
+https://www.embs.org/tmi/authors-instructions/
+
+TMI submission Notes:
+1  less than 10 pages.   --ok
+2  The author list should only include each author’s name and IEEE membership rank. There should be no superscript tags next to the author names.  --ok
+3  Authors’ affiliations, e-mails, and sponsor and financial support acknowledgment should be included in a footnote at the bottom of the first page.  --ok
+4  Abstract appears at the beginning and is followed by Index Terms (keywords).   --ok
+The abstract must be self-contained without abbreviations, footnotes, or references. It should be a microcosm of the full article.  --ok
+The abstract must not exceed 250 words.  -ok
+5  Manuscript contents are on double-columned, single-spaced, and justified alignment indented pages.  -ok
+6  References should 1) use the format of author names exactly as shown in the reference section of the TMI template file;
+2) follow the IEEE convention that lists the names of all authors if there are six or fewer co-authors,
+otherwise list the first author’s name followed by et al.; and 3) have complete information –
+for example, a reference of a journal article should include the article’s volume, issue, and page numbers.
+
+7  do not write abbreviation in title.   --- done.
+8  Use Fig.  -- done.
+9  figure name with author name.
+10  use whereas, instead while, when not contrast time.  --done.
+11  do not replicate the abstract as conclusion.  --done.
+12  Not use footnotes  done.
+
+
+
+
+# July 17th, Saturday, 2021:
+OCT_Duke Ablation Experiment:
+                  MASD±std                                              Haundorff Distance(pixel)
+Method              &ILM        &InterRPEDC       &OBM          &overall            &ILM        &InterRPEDC       &OBM
+Baseline:           &1.07±2.56    &1.69±0.96       &2.74±1.39       &1.83±1.89      52              105           79
+NoGradientInput     &1.14±3.05    &1.67±1.04       &2.73±1.51       &1.85±2.15      52              28            72
+NoYweight           &1.11±2.77    &1.68±0.99       &2.74±1.54       &1.85±2.02      75              61            80
+NoTopo              &1.05±2.53    &1.79±1.29       &2.78±1.52       &1.88±1.98      80              236          327
+
 #July 13th, Tuesday, 2021:
 The IPM Paper Review Comments:
 1  In abstract, "better sub-pixel accuracy" with which?  --done.
@@ -48,17 +109,17 @@ Professor's review comments on the segmentation paper:
    From performance drop rate, we can not conclude that the student B is more excellent,
         and we also can not conclude that the student A is less stable in more difficult exam than student B.
 
-6  remove all p-value tables.
-7  paper[19,20]: this kind of citation method is not good.
+6  remove all p-value tables.  --done
+7  paper[19,20]: this kind of citation method is not good.   --done.
    implied citation, like graph search, and glaucoma, or He etc is a better citation method.
-8  Ahbey's method is not one pixel accuracy, we need make it accurate.
+8  Ahbey's method is not one pixel accuracy, we need make it accurate.   --done.
 9  Table 13: the ablation experiment result of JHU method. In Control group, performance drop.
    We may merge this control group and AMD group.  Or add discussion on this method.
-   Or NNUnet, a dynamic Unet method.
+   Or NNUnet, a dynamic Unet method.  --done, use ungrouded result compare.
 10  Change Control group to normal group.  --done.
 11  IPM paper need to submit to Biomed Opt. Express paper.   --done modification. waiting to submission.
     https://www.osapublishing.org/boe/home.cfm:
-12  add discussion part: topological order should in 3D plane consider.
+12  add discussion part: topological order should in 3D plane consider.   --done.
 
 
 12  Milan's ovarian cancer project needs to submit a word document.
