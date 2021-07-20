@@ -246,7 +246,7 @@ class OCTDataSet6Bscans(data.Dataset):
             _,N,_ = self.m_labels.shape
 
             label = None
-            if self.m_transform and self.hps.useZigzagBscanProb >0 and random.uniform(0, 1) < self.useZigzagBscanProb:
+            if self.m_transform and self.hps.useZigzagBscanProb >0 and random.uniform(0, 1) < self.hps.useZigzagBscanProb:
                 data, claheData, label = self.generateZigzagBscanDataLabel(nB, H, W, N, s, index)
             else: # for normal horizontal Bscan and vertical Bscan extraction.
                 if self.m_labels is not None:
@@ -408,6 +408,10 @@ class OCTDataSet6Bscans(data.Dataset):
         B2,_,_ = claheData.shape
         N,_ = label.shape
 
+        data = data.cpu().numpy()
+        claheData = claheData.cpu().numpy()
+        label = label.cpu().numpy()
+
         import matplotlib.pyplot as plt
         f = plt.figure(frameon=False)
         DPI = 100
@@ -449,7 +453,7 @@ class OCTDataSet6Bscans(data.Dataset):
             subplot7.plot(range(0, W), label[n, :], pltColors[n], linewidth=1.5)
         subplot7.axis('off')
 
-        plt.imshow()
+        plt.show()
 
         #curImagePath = os.path.join(os.getcwd(), "tempTest" + f"_3smoothed_3clahe_GT.png")
 
