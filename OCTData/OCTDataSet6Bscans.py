@@ -9,6 +9,7 @@ import sys
 sys.path.append("../..")
 from OCTData.OCTAugmentation import *
 
+import random
 
 # this dataset loader load continuous 3 Bscan to predict the segmentation of the middle one.
 
@@ -235,51 +236,55 @@ class OCTDataSet6Bscans(data.Dataset):
 
     def __getitem__(self, index):
         if self.hps.dataIn1Parcel:
-            label = None
-            if self.m_labels is not None:
-                label = self.m_labels[index,].clone() # size: N,W
-            imageID = self.m_IDs[str(index)]
-
-            #get B and s index from "_B200_s120"
+            # get BorW and s index from "_B200_s120"
             # get imageID and nB
-            ID1 = int(imageID[-3:])      # "*_s003" -> 003, the middle ID.
-            nB = int(imageID[-8:-5])     # "*_W200_s120"
+            imageID = self.m_IDs[str(index)]
+            ID1 = int(imageID[-3:])  # "*_s003" -> 003, the middle ID.
+            nB = int(imageID[-8:-5])  # "*_W200_s120", the slice number for each volume
             s = ID1
+            _,H,W = self.m_images.shape
+            _,N,_ = self.m_labels.shape
 
-            # get its below and up continuous Bscan by judging its imageID
-            if index >0 and index< self.__len__()-1:
-                # below code must use clone, otherwise original data will be contaminated.
-                data = self.m_images[index-1: index+2,].clone()    # 3 smoothed Bscans.
-                ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
-                ID2 = int((self.m_IDs[str(index + 1)])[-3:])
-
-                if ID0+1 != ID1:
-                    data[0,] = data[1,]
-                if ID1+1 != ID2:
-                    data[2,] = data[1,]
-
-                if self.m_claheImages != None:
+            label = None
+            if self.m_transform and self.hps.useZigzagBscanProb >0 and random.uniform(0, 1) < self.useZigzagBscanProb:
+                data, claheData, label = self.generateZigzagBscanDataLabel(nB, H, W, N, s, index)
+            else: # for normal horizontal Bscan and vertical Bscan extraction.
+                if self.m_labels is not None:
+                    label = self.m_labels[index,].clone() # size: N,W
+                # get its below and up continuous Bscan by judging its imageID
+                if index >0 and index< self.__len__()-1:
                     # below code must use clone, otherwise original data will be contaminated.
-                    claheData = self.m_claheImages[index - 1: index + 2, ].clone()  # 3 clahe Bscans.
-                    if ID0 + 1 != ID1:
-                        claheData[0,] = claheData[1,]
-                    if ID1 + 1 != ID2:
-                        claheData[2,] = claheData[1,]
-                else:
-                    claheData = None
+                    data = self.m_images[index-1: index+2,].clone()    # 3 smoothed Bscans.
+                    ID0 = int((self.m_IDs[str(index - 1)])[-3:])  # "*_s003" -> 003
+                    ID2 = int((self.m_IDs[str(index + 1)])[-3:])
 
-            elif index ==0:  # replicate boundary Bscan.
-                data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_images[index: index+2]), dim=0)
-                if self.m_claheImages != None:
-                    claheData = torch.cat((self.m_claheImages[index].unsqueeze(dim=0), self.m_claheImages[index: index + 2]), dim=0)
-                else:
-                    claheData = None
-            else: # index == N-1:
-                data = torch.cat((self.m_images[index-1: index+1,], self.m_images[index].unsqueeze(dim=0)), dim=0)
-                if self.m_claheImages != None:
-                    claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
-                else:
-                    claheData = None
+                    if ID0+1 != ID1:
+                        data[0,] = data[1,]
+                    if ID1+1 != ID2:
+                        data[2,] = data[1,]
+
+                    if self.m_claheImages is not None:
+                        # below code must use clone, otherwise original data will be contaminated.
+                        claheData = self.m_claheImages[index - 1: index + 2, ].clone()  # 3 clahe Bscans.
+                        if ID0 + 1 != ID1:
+                            claheData[0,] = claheData[1,]
+                        if ID1 + 1 != ID2:
+                            claheData[2,] = claheData[1,]
+                    else:
+                        claheData = None
+
+                elif index ==0:  # replicate boundary Bscan.
+                    data = torch.cat((self.m_images[index].unsqueeze(dim=0), self.m_images[index: index+2]), dim=0)
+                    if self.m_claheImages != None:
+                        claheData = torch.cat((self.m_claheImages[index].unsqueeze(dim=0), self.m_claheImages[index: index + 2]), dim=0)
+                    else:
+                        claheData = None
+                else: # index == N-1:
+                    data = torch.cat((self.m_images[index-1: index+1,], self.m_images[index].unsqueeze(dim=0)), dim=0)
+                    if self.m_claheImages != None:
+                        claheData = torch.cat((self.m_claheImages[index - 1: index + 1, ], self.m_claheImages[index].unsqueeze(dim=0)), dim=0)
+                    else:
+                        claheData = None
 
             if claheData != None:
                 data = torch.cat((data, claheData), dim=0)
@@ -338,6 +343,56 @@ class OCTDataSet6Bscans(data.Dataset):
                   "riftWidth": riftWidthGT}
         return result
 
+    def generateZigzagBscanDataLabel(self, B, H, W, N, s, index):
+        '''
+        random generate Zigzag Bscan on xy plane, while penetrating full z depth.
+        :param B: Bscan number of each volume
+        :param H: image Height
+        :param W: image width
+        :param N: surface number
+        :param s: index inside one volume.
+        :param index:  global slice index
+        :return:  data, claheData, label
+        '''
+        # from s to start, random generate all slice index for a zigzag Bscan
+        sliceOffsetRange=(-1,0,1)
+        s1List = [s,]*W  # middle slice index along W direction
+        for i in range(1, W, 1):
+            s1List[i] = s1List[i-1] + random.choice(sliceOffsetRange)
+            if s1List[i] < 0:
+                s1List[i] = 0
+            if s1List[i] >= B:
+                s1List[i] = B-1
+        s0List =[v-1 if v-1>=0 else 0  for v in s1List]
+        s2List =[v+1 if v+1<B else B-1  for v in s1List]
+
+        # convert sList into global indexList
+        s0Indices = [index + (v - s) for v in s0List]
+        s1Indices = [index + (v - s) for v in s1List]
+        s2Indices = [index + (v - s) for v in s2List]
+
+        device = self.hps.device
+        data = torch.zeros((3,H,W), device=device, dtype=torch.float)
+        label = None
+        if self.m_labels is not None:
+            label = torch.zeros((N,W), device=device, dtype=torch.float)
+        claheData = None
+        if self.m_claheImages != None:
+            claheData = torch.zeros((3,H,W), device=device, dtype=torch.float)
+
+        # copy label, data, claheData, one Ascan by one Ascan
+        for i in range(W):
+            data[0, :, i] = self.m_images[s0Indices[i], :, i].clone()  # H
+            data[1, :, i] = self.m_images[s1Indices[i], :, i].clone()
+            data[2, :, i] = self.m_images[s2Indices[i], :, i].clone()
+            if label is not None:
+                label[:,i] = self.m_labels[s1Indices[i], :, i].clone()  # N
+            if claheData is not None:
+                claheData[0, :, i] = self.m_claheImages[s0Indices[i], :, i].clone()
+                claheData[1, :, i] = self.m_claheImages[s1Indices[i], :, i].clone()
+                claheData[2, :, i] = self.m_claheImages[s2Indices[i], :, i].clone()
+
+        return data, claheData, label
 
 
 

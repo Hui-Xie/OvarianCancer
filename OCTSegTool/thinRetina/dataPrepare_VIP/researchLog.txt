@@ -1,6 +1,136 @@
 # July 20th, Tuesday, 2021
-1  general 300 epoch are enough.
-2
+Further improvement:
+1  general 300 epoch are enough.  --done .from expVIP_20210721_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml
+2  use zigzag Bsans.
+3  inherit the config of expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.  --done. from expVIP_20210721_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml
+
+
+
+Test result on indepentdent test set of 3 volumes:
+experiment name: expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2
+Highlight:
+1  input used vertical Bscans, and input size 512x200 with penetration deepth 3.91 um/pixel
+2  mean error less than 1 pixel in the test set.
+3  the maximum hausdorff distance is 17 pixel.
+4  all visualization result on: garvinlab/thinRetina/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2/testResult
+5  its xml prediciton output: /raid001/users/hxie1/data/thinRetina/numpy_19cases/log/SurfaceSegNet_Q/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2/testResult/xml
+
+===============Formal Output Result ===========
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200',
+                'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200',
+                'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+2.77±0.31 5.93±1.25 5.04±0.57 4.62±0.63 2.31±0.32 2.67±0.28
+muError ± std: 3.89±1.52
+Hausdorff Distance in pixels = [[ 7.81570349 11.43974415 12.05888832 17.61143655  7.39754111  5.19623617]]
+pixel number of violating surface-separation constraints: 0
+
+
+
+Test result: A use 24 filters in Unet, B use 36 filters in Unet. C,D use 20 batchsize .
+
+The best result: expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.yaml
+ 1015  2021-07-20 11:31:42 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+2.77±0.31	5.93±1.25	5.04±0.57	4.62±0.63	2.31±0.32	2.67±0.28
+muError ± std: 3.89±1.52
+Hausdorff Distance in pixels = [[ 7.81570349 11.43974415 12.05888832 17.61143655  7.39754111  5.19623617]]
+pixel number of violating surface-separation constraints: 0
+
+
+==========================================================================================
+ 1013  2021-07-20 11:27:50 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+2.86±0.34	6.20±1.06	5.52±0.70	4.46±0.66	2.11±0.12	2.40±0.03
+muError ± std: 3.93±1.68
+Hausdorff Distance in pixels = [[46.06560608 48.08140961 67.42280184 21.83533833  7.1836242   5.59689464]]
+pixel number of violating surface-separation constraints: 0
+
+ 1015  2021-07-20 11:31:42 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+2.77±0.31	5.93±1.25	5.04±0.57	4.62±0.63	2.31±0.32	2.67±0.28
+muError ± std: 3.89±1.52
+Hausdorff Distance in pixels = [[ 7.81570349 11.43974415 12.05888832 17.61143655  7.39754111  5.19623617]]
+pixel number of violating surface-separation constraints: 0
+
+ 1016  2021-07-20 11:31:47 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_C_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+2.87±0.19	6.58±0.94	7.17±1.48	4.69±0.32	2.54±0.36	2.76±0.21
+muError ± std: 4.43±2.02
+Hausdorff Distance in pixels = [[14.39551616 15.65419731 29.42788323 19.58736288  9.78782205  5.98531155]]
+pixel number of violating surface-separation constraints: 0
+
+
+ 1017  2021-07-20 11:31:52 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_D_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+3.16±0.65	6.82±0.51	6.07±0.94	5.26±0.60	2.32±0.26	3.04±0.41
+muError ± std: 4.45±1.79
+Hausdorff Distance in pixels = [[73.41433579 41.48961853 42.62600963 21.23784658  8.42390174  7.74187402]]
+pixel number of violating surface-separation constraints: 0
+
+
+ 1018  2021-07-20 11:32:04 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_A_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+4.10±1.71	7.75±2.41	8.42±2.85	5.18±0.44	2.55±0.33	2.92±0.33
+muError ± std: 5.15±2.81
+Hausdorff Distance in pixels = [[55.59560798 61.96657905 59.65026173 24.28034663  8.21878835  6.93146   ]]
+pixel number of violating surface-separation constraints: 22
+slice number of violating surface-separation constraints: 17
+slice list of violating surface-separation constraints:
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s056
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s088
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s085
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s101
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s102
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s083
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s104
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s105
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s076
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s077
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s084
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s050
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s051
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s052
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s053
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s054
+	PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_W200_s087
+
+
+ 1019  2021-07-20 11:32:08 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_B_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+3.15±0.59	6.68±1.23	5.37±0.79	4.41±0.59	2.44±0.42	2.86±0.29
+muError ± std: 4.15±1.66
+Hausdorff Distance in pixels = [[62.64767922 54.80549664 18.05462975 22.80092621  8.26724683  6.39550051]]
+pixel number of violating surface-separation constraints: 0
+
+
+ 1020  2021-07-20 11:32:12 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_C_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+4.86±2.91	8.26±3.15	7.83±2.71	5.61±0.84	2.90±0.55	2.98±0.43
+muError ± std: 5.41±2.98
+Hausdorff Distance in pixels = [[85.04990752 55.77895673 45.46271086 22.64513611  9.42012462  6.13796414]]
+pixel number of violating surface-separation constraints: 0
+
+
+ 1021  2021-07-20 11:32:20 nohup python3 ./SurfaceSeg_Test.py ../testConfig_VIP/expVIP_20210715_SurfaceSubnetQ128_19Cases_3M3C_D_skm2.yaml &
+patientIDList =['PVIP2-4093_Macular_200x200_8-28-2013_12-3-48_OS_sn26990_cube_z_B200', 'PVIP2-4089_Macular_512x128_3-30-2011_10-5-50_OS_sn17026_cube_z_B200', 'PVIP2-4095_Macular_200x200_3-27-2012_10-17-17_OD_sn18398_cube_z_B200']
+Surface muError ± std:
+4.91±3.06	8.90±4.65	5.10±0.65	4.60±0.59	2.35±0.21	3.25±0.32
+muError ± std: 4.85±3.09
+Hausdorff Distance in pixels = [[100.86818741 114.07375605  15.10629279  20.08721936   7.83164364
+   16.51233295]]
+pixel number of violating surface-separation constraints: 0
+
+
+
 
 # July 17th, Satuday, 2021
 A unlimited zigzag Bscan data augmentation plan:
@@ -11,6 +141,10 @@ zigzag vetical Bscan (yz plan): [w_0, w_1,w_2,...., w_{B-1}], where w_i = w_{i-1
 In theory, it will has at least 2*B*2^(B-1) possible zigzag Bscans for data augmentation.
 It will greatly reduce the quantity requirement of training sample with expert-marked ground truth.
 It still can support 3M3C input form.
+
+As data has added xz plan and yz plan in total input data.
+there, augmentation in the fly only consider xz plane.
+''
 
 
 
