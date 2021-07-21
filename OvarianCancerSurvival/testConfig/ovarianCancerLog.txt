@@ -1,3 +1,119 @@
+# July 21th, Wednesday, 2021
+Ovarian Cancer Project Report
+Outline:
+1  Dataset.
+2  Predictin goal.
+3  challenges.
+4  Tried experiments.
+5  Conclusion.
+
+https://builtin.com/machine-learning/why-do-machine-learning-projects-fail:
+Such an expectation from a model is absurd because the world we live in is indeterministic.
+Setting some pie-in-the-sky, out-of-this-world expectations is only going to disappoint you and your client and stop your project from going to production.
+
+https://retina.ai/blog/7-ways-machine-learning-projects-fail/  Brad. CTO of Retina.ai   Good.
+Machine learning is transforming the world. However, not all machine learning projects succeed.
+Good data—that is, data which is clean, available, and relevant—is essential to machine learning.
+In these cases, explanation is more important than making highly accurate predictions.
+Consequently, this means data transformations — and your choices of model — must be kept simple.
+
+Correlation is not causation. It is vital to keep this fundamental mantra from Statistics 101 in mind
+ when you apply the outputs from machine learning. Machine learning finds correlations in data,
+ but not direct causal relationships.
+
+ In this case, the power of machine learning reveals hidden and unexpected correlations
+ in the mountains of data you have available.
+
+
+https://www.kdnuggets.com/2018/07/why-machine-learning-project-fail.html:
+If you ask the wrong questions, you will get the wrong answers.
+An example comes to mind from the financial industry and the problem of fraud identification.
+The initial question might be “Is this particular transaction fraud or not?”.
+A potentially better question to ask could be “Is this transaction anomalous or not?”.
+
+2. Trying to use it to solve the wrong problem: Poor problem formulation: solving the wrong problem,
+
+
+https://iiot-world.com/industrial-iot/connected-industry/why-85-of-machine-learning-projects-fail/
+According to Gartner, 85% of Machine Learning (ML) projects fail.
+(https://www.gartner.com/en/newsroom/press-releases/2018-02-13-gartner-says-nearly-half-of-cios-are-planning-to-deploy-artificial-intelligence)
+Worse yet, the research company predicts that this trend will continue through 2022.
+
+Machine learning can do remarkable things with data, but it has to be ML-ready or “clean” data.
+Deep learning is like the hammer in search of nail.
+
+When ML Is Chosen to Solve a Random Problem
+However, ML isn’t good for absolutely everything.
+
+“begin with the end in mind.”
+
+
+https://venturebeat.com/2019/07/19/why-do-87-of-data-science-projects-never-make-it-into-production/:
+ Transform 2019 of VentureBeat predicted that 87% of AI projects will never make it into production.
+
+Chris Chapo, SVP of data and analytics at Gap:
+only 13% of data science projects, or just one out of every 10, actually make it into production?
+“One of the biggest [reasons] is sometimes people think, all I need to do is throw money at a problem
+or put a technology in, and success comes out the other end, and that just doesn’t happen,” Chapo said
+
+https://www.lexalytics.com/lexablog/stories-ai-failure-avoid-ai-fails-2020:
+
+Nobody believes that every AI project succeeds. Just ask MD Anderson.
+Anderson blew $60 million on a Watson project before pulling the plug.
+Fail: IBM’s “Watson for Oncology” Cancelled After $62 million and Unsafe Treatment Recommendations
+No AI project captures the “moonshot” attitude of big tech companies quite like Watson for Oncology. In 2013, IBM partnered with The University of Texas MD Anderson Cancer Center to develop a new “Oncology Expert Advisor” system. The goal? Nothing less than to cure cancer.
+
+The first line of the press release boldly declares, “MD Anderson is using the IBM Watson cognitive computing system for its mission to eradicate cancer.” IBM’s role was to enable clinicians to “uncover valuable insights from the cancer center’s rich patient and research databases.”
+
+So, how’d that go?
+
+“This product is a piece of sh–.”
+
+In July 2018, StatNews reviewed internal IBM documents and found that IBM’s Watson was making erroneous, downright dangerous cancer treatment advice.
+
+According to StatNews, the documents (internal slide decks) largely place the blame on IBM’s engineers. Evidently, they trained the software on a small number of hypothetical cancer patients, rather than real patient data.
+
+The result? Medical specialists and customers identified “multiple examples of unsafe and incorrect treatment recommendations,” including one case where Watson suggested that doctors give a cancer patient with severe bleeding a drug that could worsen the bleeding.
+
+From this Verge article:
+
+“This product is a piece of s—,” one doctor at Jupiter Hospital in Florida told IBM executives, according to the documents. “We bought it for marketing and with hopes that you would achieve the vision. We can’t use it for most cases.”
+
+In February 2017, Forbes reported that MD Anderson had “benched” the Watson for Oncology project. A special report from University of Texas auditors said that MD Anderson had spent more than $62 million without reaching their goals.
+
+
+
+https://ml4devs.substack.com/p/003-why-machine-learning-projects-fail
+Jan 2019: Gartner predicted that through 2020, 80% of AI projects will remain alchemy, run by wizards and through 2022, only 20% of analytic insights will deliver business outcomes.
+
+May 2019: Dimensional Research - Alegion Survey reported 78% of AI or ML projects stall at some stage before deployment, and 81% admit the process of training AI with data is more difficult than they expected.
+
+July 2019: VentureBeat reported 87% of data science projects never make it into production.
+
+July 2019: International Data Corporation (IDC) survey found that a quarter of organizations reported up to 50% AI project failure rate.
+
+
+https://viso.ai/computer-vision/why-computer-vision-projects-fail/:
+As simple as it sounds: AI vision is not magic and cannot overcome physics.
+A problem that deals with things that are not visible cannot be solved using Computer Vision.
+A computer’s ability to “see” can only be as good as the image quality of the underlying camera’s video stream or a video file.
+
+
+Unrealistic expectations
+
+
+In most cases, the customer and vendor share responsibility for that failure. The vendor may make misleading or exaggerated claims, the customer may fail to define requirements, or the customer may not perform the necessary due diligence.
+
+It’s easier to blame the technology, though.
+
+
+
+
+
+
+
+
+
 # July 5th, Monday, 2021
 New idea on July 5th, Monday, 2021:
 1   use 2 VAEs to prepare data:
@@ -24,6 +140,7 @@ More recently, Uniform Manifold Approximation and Projection (UMAP) has become p
  even replace t-SNE for many applications, thanks to several advantages it offers. UMAP is considerably faster and
  scales better to high-dimensional data. It also preserves global structure better,
  making it more suitable for many applications beyond visualisation.
+
 
 
 # May 24th, Monday, 2021
