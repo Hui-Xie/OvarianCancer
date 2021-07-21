@@ -356,7 +356,10 @@ class OCTDataSet6Bscans(data.Dataset):
         '''
         # from s to start, random generate all slice index for a zigzag Bscan
         # each zigzag Bscan cross each H column only once.
-        sliceOffsetRange=(-1,-1,-1,-1,0,1,1,1,1,1)  # add more offset possibility
+        if s >= B//2:
+            sliceOffsetRange=(-1,-1,-1,-1,-1,-1,0, 0,1,1)  # add more offset possibility
+        else:
+            sliceOffsetRange=(-1,-1, 0, 0, 1, 1,1, 1,1,1)  # add more offset possibility
         s1List = [s,]*W  # middle slice index along W direction
         for i in range(1, W, 1):
             s1List[i] = s1List[i-1] + random.choice(sliceOffsetRange)

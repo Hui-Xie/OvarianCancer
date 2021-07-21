@@ -1,6 +1,7 @@
 # For 13 cases of VIP (Variability In Perimetry)
 # training: 8 volumes, validation: 2 volumes, test 3 volumes.
 # Use 3 smoothedImages, 3 CLAHE images, and 2 spaction information channels. total 8 input channels.
+# config tag: B: batchSize:16 or 08;  P: LrPatience: 20 or 40; F: startFilter: 36 or 48
 
 debug: False # debug mark
 dataIn1Parcel: True
@@ -44,11 +45,11 @@ k: -1   # -1 means do not use cross validation
 
 groundTruthInteger: False
 sigma: 0  # For gaussian  ground truth, in float; 0 means use dynamic Sigma or not use Gaussian.
-device: torch.device('cuda:1')   #GPU ID
+device: torch.device('cuda:3')   #GPU ID
 #device: torch.device('cpu')
-batchSize: 16  # 8 volume x 200 slice/volume.
+batchSize: 8  # 8 volume x 200 slice/volume.
 learningRate: 0.1
-lrPatience: 20
+lrPatience: 40
 epochs: 500
 
 optim: "AdamPlateau" # "AdamPlateau", "SGDOneCycle"
@@ -62,7 +63,7 @@ scaleDenominator: 1
 inputChannels: 6 # 3 smoothed image + 3 CLAHE images + 2 spacechannels.
 nLayers: 6 # as width is just 200, 6 layers is ok.
 numSurfaces: 6  # num of surfaces in an image
-startFilters: 36  # the num of filters in first layer of Unet
+startFilters: 48  # the num of filters in first layer of Unet
 gradChannels: 0   # the added gradient channels beside raw image channel
 bothSideGrad: True # False use singleSideGrad
 gradWeight: 10   # image grade weight to adjust WeightedDivLoss.

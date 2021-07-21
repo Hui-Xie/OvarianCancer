@@ -1,9 +1,15 @@
 # July 20th, Tuesday, 2021
 Further improvement:
 1  general 300 epoch are enough.  --done .from expVIP_20210721_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml
-2  use zigzag Bsans.
-3  inherit the config of expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.  --done. from expVIP_20210721_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml
+2  use zigzag Bsans.   --done
+3  inherit the config of expVIP_20210715_SurfaceSubnetQ96_19Cases_3M3C_B_skm2.  --done. from expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_A_skm2.yaml
 
+# config tag: B: batchSize:16 or 08;  P: LrPatience: 20 or 40; F: startFilter: 36 or 48
+B: batchSize:16 or 08
+P: LrPatience: 20 or 40
+F: startFilter: 36 or 48
+
+B
 
 
 Test result on indepentdent test set of 3 volumes:
