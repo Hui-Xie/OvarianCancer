@@ -10,6 +10,7 @@ P: LrPatience: 20 or 40
 F: startFilter: 36 or 48
 
 Below programs are training, support zigzag Bscan. B:batchsize, P:LrPatience, F:startFiler
+training speed: 4 min/epoch.
  1028  2021-07-20 21:34:58 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P20F36_skm2.yaml &
  1029  2021-07-20 21:36:04 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P20F48_skm2.yaml &
  1030  2021-07-20 21:36:21 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P40F36_skm2.yaml &
