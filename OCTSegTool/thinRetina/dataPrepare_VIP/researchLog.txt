@@ -9,7 +9,16 @@ B: batchSize:16 or 08
 P: LrPatience: 20 or 40
 F: startFilter: 36 or 48
 
-B
+Below programs are training, support zigzag Bscan. B:batchsize, P:LrPatience, F:startFiler
+ 1028  2021-07-20 21:34:58 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P20F36_skm2.yaml &
+ 1029  2021-07-20 21:36:04 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P20F48_skm2.yaml &
+ 1030  2021-07-20 21:36:21 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P40F36_skm2.yaml &
+ 1031  2021-07-20 21:36:30 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B08P40F48_skm2.yaml &
+ 1032  2021-07-20 21:36:46 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B16P20F36_skm2.yaml &
+ 1033  2021-07-20 21:36:54 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B16P20F48_skm2.yaml &
+ 1034  2021-07-20 21:37:05 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B16P40F36_skm2.yaml &
+ 1035  2021-07-20 21:37:13 nohup python3 ./SurfaceSeg_Train.py ../testConfig_VIP/expVIP_20210720_SurfaceSubnetQ96_19Cases_3M3C_B16P40F48_skm2.yaml &
+
 
 
 Test result on indepentdent test set of 3 volumes:
